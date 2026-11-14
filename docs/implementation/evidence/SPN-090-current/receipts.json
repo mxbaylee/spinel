@@ -1,0 +1,340 @@
+{
+  "format": 1,
+  "existingHead": "af7a6cf0562d132be76b251473d917c5cce97bf4",
+  "integratedMain": "ebf0842f51b60d54649cf8a03065914bec0944bf",
+  "identity": "Tested integration working tree; source SHA256 values below identify exact content. Final commit also includes these evidence-only records.",
+  "sources": {
+    ".github/workflows/ci.yml": "ed3faec98afdcd322901a6898d1a9db244ebb69f57c2eafb754b0f79345c9353",
+    ".github/workflows/desktop-offline.yml": "cb1dde646b4daef6857644831e8bd28d7a4b68dff7a04bf0d122dface1cd6c94",
+    "e2e/doc-touch-raster.ts": "a908a2739416f825dc4e74377a839bf2ba00fa75e97fe4eb17e2929211f77c79",
+    "e2e/doc-touch.ts": "bb45ba78a9753672e310717c7fe66691e281d943881eb3ab10d868839385c2ed",
+    "e2e/offline-device.spec.ts": "2bbc9ce167291ff250949637c9eceef32f9073f57a881271842ededee7eae7d7",
+    "e2e/offline.spec.ts": "d4d4dc845ef13e655691ea5f3c5cc7c19ac2d2564fcdbd20884b0335f7135580",
+    "e2e/pwa.spec.ts": "3927f23caa019a608c22d3ae2b7880968ce986f3ec453bc85aff2b2f8e96d59a",
+    "e2e/sync-client.spec.ts": "584737fe76e56f2d7bb08b52109f4175c87002e6e1b1b9d3754f2dded860de1f",
+    "scripts/ci/bootstrap-evidence.test.ts": "44f5720064e8659cd99f266e426bdfdc4508cf4e7a208d78e7ac462a3763a5f6",
+    "scripts/ci/desktop-fixture-origin.test.ts": "8ebd883320b22d36d25c80b3232a2d6231dd79475c5cfa83a2fbdb478219e7af",
+    "scripts/ci/desktop-fixture-origin.ts": "f5b2cc2d64880d679ef1e6d7228ccc2a2b4de097f43d7c56974b53cc66766bb5",
+    "scripts/ci/desktop-offline-fixture.ts": "4a6aa42097788935f78e1bd28f455dd7c9507fb20c87a1dbe8434a5aab26ffa2",
+    "scripts/ci/desktop-offline.ts": "c9402c442182c38b941ca44d9633c2418dedea7669ff9fc1f3a723b4b61d2802",
+    "scripts/ci/offline-image-pixels.test.ts": "015986f2cdb6b53d2432f5747bbb4191a44ac0b0de94b0768c30e14ca1c7acc7",
+    "scripts/ci/offline-image-pixels.ts": "0ea79635b3b22b20bf995ea4d3fb7e4684c7bc94d927102b11292b63e05d19e1",
+    "scripts/ci/plan.test.ts": "e52e4b46ab51b99ea17dae4f3c5565474ddd6d49533ce6d879d73e3b903acac1",
+    "scripts/ci/plan.ts": "e8bbe93b23e83a10cb4362861a9781ecad2158d74074202c098f0e63a6271dd0",
+    "scripts/ci/renderer-chunks.test.ts": "49a632770431a26c9cb863bb0126f34098c25c6726135ff57f2e438b1376751e",
+    "src/build/rendererChunks.ts": "cd5f0262fa69fc66883b04bb3424317009cc7f92f6180826dd21a6ec7fb8ffc9",
+    "src/server/pwa.ts": "6d79b175f0e40afa36cc0018b59ad2d88146dee3eadf654f4d3fb2e8362ccfd0",
+    "src/shared/bootstrapEvidence.ts": "ee645d41cb6bf18afe12e782b6906fa72f9486c68568570b4e6d632d27fc6586",
+    "src/shared/offlineShell.test.ts": "d115d5809bf0b6c1ddf186fea7d7f8f37b3dbb0108e3eebd1db00aaab7c1f148",
+    "src/shared/offlineShell.ts": "16603867cac068ec607719b02e74ca7733ed36fb341e456f7959f16aa670de27",
+    "src/shared/pwa.ts": "8f0c0b0d90eed4d33fdfffe3e01769b9220f397ed9314cb5ef8795c8e4e2d882",
+    "src/ui/appIcon.test.ts": "6975b9e1eb6ffba3968f471d58d537dd412b516af1b529ff66bf5d94961f03c5",
+    "src/ui/appIcon.ts": "fcfb1c778d7c4c5e01c8a0af84a337a6d46dbab97a1f1ef34b3cc5b12a862744",
+    "src/ui/bootstrapFailure.test.ts": "a680188f3ef07cb73779230e33701f0a00c974f2411a12ab612e318112a835e3",
+    "src/ui/offlineDownload.test.ts": "0297c8f1554389fb264ac2e9040e0cbba6ce099992da75aa6b690cca2b54ee3f",
+    "src/ui/offlineProtection.test.ts": "5d28cdec3c1338955841be4d68702d95053f5b7283e928e0e069eea958f031b1",
+    "src/ui/offlineRuntime.test.ts": "fc1151e2eec00a1cee93047d8baa199f247207fee71a8d0534b6ea4ce8f15cf4",
+    "src/ui/spinelSync.test.ts": "ad1b58c9831abb54426d1cfae9e752681514570622908f86d88aee82830e8b77",
+    "src/ui/startupDeadlines.test.ts": "f419d0d0ee4233950563b60a561cf6c13c2932c6c29089f9c58288f8ceacbce9",
+    "src/ui/warmCatalog.test.ts": "112fb4adcce841173812e764f1efa6c231a4a313cdfe8e3a23e599f9b41299df",
+    "src/ui/warmOpen.test.ts": "d06b47a02296e722275c96b1c6d5c8b53e18f1e9f63e307e60e12624798eeeb4",
+    "vite.config.ts": "ed9b61633ae1b5c686ceeba5d4db79091bc5a92348113694c1f970db9ded021d",
+    "web/App.tsx": "9a4d8dff66a9ad39a2afc387d58f82c30d31ce3d99c4106f0d3e42ff3087df53",
+    "web/Dashboard.tsx": "795af2e8497bea3335d53068a867dae551536dc1b5b54ee8de967ad8029ecac5",
+    "web/SpaceOfflineActions.tsx": "490a58791083ce476cfed1d1ff36bb105dffb6c039881e09327683e569bfe33e",
+    "web/StartupStage.stories.tsx": "21153f93485e5c08d138e30f6035564ab1988f306aa8d0f29a91c916c93b27f8",
+    "web/itemsApi.ts": "4eb3f566c4038c3111e33807206926810d216fb963c91ebffeae033ccd6883ee",
+    "web/main.tsx": "37e2461eb93e2f5e5803ed8b8d0394e36e19a892118ee86e983277f0239de0f3",
+    "web/offline/OfflineAvailability.stories.tsx": "310adb9c2c44c04aaf5d42ac8e0121a49a3a87bbe9da3e5474d015b99fbece28",
+    "web/offline/OfflineAvailability.tsx": "eb9ac406e5dce2713fef20b49388180959d529cad22f047485efaf477f16d1a5",
+    "web/offline/deadlines.ts": "eee5839a9d203bb559ae8fcb57d01d355ad850d5b9abdb070d5268fac654b646",
+    "web/offline/localStart.ts": "562388f23718f45dd1e19d21a330be96fb9e849f5f060618d35f542cc3dc9830",
+    "web/offline/protection.ts": "7250087e58f919a11edd1816cf4a1d6aa4c32086bfa2016b2b97970ddf7715a6",
+    "web/offline/runtimeCache.ts": "47eb75e2edb666a760017d185a28279d74ed7b3143db4e1e9140434b07ceb812",
+    "web/offline/useOfflineDownloads.ts": "cd598c988d8d808929b6815d8cd2f4a13c555e9f9309939fc69587bd94aa26ba",
+    "web/offline/warmCatalog.ts": "c35782b7860cb58b08409dafd62351cdbe488d549604c57008c21c1c69403685",
+    "web/offline/warmOpen.ts": "300c9152342f0ac15b8849bdaf53096aab1e751591fa59172a3b761ca0b847d9",
+    "web/service-worker.ts": "28d24f84bc9caa01b3c64e828ef28baf2b2237e4ae55694b477780d49a169d9c",
+    "web/spinelSync.ts": "94f9bb6edc530bf839bc48eaf56301e2b5d6e53511aeb787be9b5835ffa34afc",
+    "web/startupStage.ts": "2403310d1e6b2683924c5a0c4b6973bd549896ae60b89414eca452973a8aac49"
+  },
+  "checks": [
+    {
+      "name": "spn090-current-new154",
+      "args": [
+        "npm",
+        "run",
+        "backlog:new",
+        "--",
+        "\ud83d\udccb",
+        "Pasting",
+        "an",
+        "image",
+        "keeps",
+        "the",
+        "page",
+        "and",
+        "the",
+        "edit"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 323,
+      "peakKiB": 156048
+    },
+    {
+      "name": "spn090-current-new155",
+      "args": [
+        "npm",
+        "run",
+        "backlog:new",
+        "--",
+        "\ud83d\udca8",
+        "No",
+        "false",
+        "offline",
+        "message",
+        "when",
+        "a",
+        "Doc",
+        "opens",
+        "online"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 293,
+      "peakKiB": 159808
+    },
+    {
+      "name": "spn090-current-new156",
+      "args": [
+        "npm",
+        "run",
+        "backlog:new",
+        "--",
+        "\ud83d\udd01",
+        "Sync",
+        "saved",
+        "edits",
+        "while",
+        "the",
+        "file",
+        "list",
+        "is",
+        "open"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 254,
+      "peakKiB": 223744
+    },
+    {
+      "name": "spn090-current-install",
+      "args": [
+        "npm",
+        "ci"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 6206,
+      "peakKiB": 1114720
+    },
+    {
+      "name": "spn090-current-format-normal",
+      "args": [
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        "web/main.tsx",
+        "vite.config.ts",
+        "web/Dashboard.tsx",
+        "web/offline/warmCatalog.ts",
+        "web/startupStage.ts",
+        "web/StartupStage.stories.tsx",
+        "src/ui/warmCatalog.test.ts",
+        "src/ui/bootstrapFailure.test.ts",
+        "e2e/offline.spec.ts",
+        "docs/todo/SPN-154.md",
+        "docs/todo/SPN-155.md",
+        "docs/todo/SPN-156.md",
+        "docs/todo/backlog.json"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 517,
+      "peakKiB": 288928
+    },
+    {
+      "name": "spn090-current-index",
+      "args": [
+        "npm",
+        "run",
+        "backlog:index"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 324,
+      "peakKiB": 158112
+    },
+    {
+      "name": "spn090-current-focused",
+      "args": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "src/ui/warmCatalog.test.ts",
+        "src/ui/warmOpen.test.ts",
+        "src/ui/startupDeadlines.test.ts",
+        "src/ui/bootstrapFailure.test.ts",
+        "src/ui/appIcon.test.ts",
+        "src/ui/offlineProtection.test.ts",
+        "src/ui/offlineRuntime.test.ts",
+        "src/ui/offlineDownload.test.ts",
+        "src/ui/spinelSync.test.ts",
+        "src/shared/offlineShell.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 3777,
+      "peakKiB": 527264
+    },
+    {
+      "name": "spn090-current-node",
+      "args": [
+        "node",
+        "--test",
+        "scripts/ci/bootstrap-evidence.test.ts",
+        "scripts/ci/desktop-fixture-origin.test.ts",
+        "scripts/ci/offline-image-pixels.test.ts",
+        "scripts/ci/renderer-chunks.test.ts",
+        "scripts/ci/plan.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 205,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn090-current-typecheck",
+      "args": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "."
+      ],
+      "code": 1,
+      "signal": null,
+      "reason": "Resource guard",
+      "elapsedMs": 2296,
+      "peakKiB": 1505152
+    },
+    {
+      "name": "spn090-current-focused-storybook",
+      "args": [
+        "node",
+        "node_modules/storybook/bin/index.cjs",
+        "build",
+        "--config-dir",
+        "/tmp/spn090-current-focused-storybook",
+        "--output-dir",
+        "storybook-static"
+      ],
+      "code": 1,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 108,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn090-current-focused-storybook-entry",
+      "args": [
+        "node",
+        "node_modules/storybook/dist/bin/dispatcher.js",
+        "build",
+        "--config-dir",
+        "/tmp/spn090-current-focused-storybook",
+        "--output-dir",
+        "storybook-static"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 4802,
+      "peakKiB": 1020976
+    },
+    {
+      "name": "spn090-current-capture",
+      "args": [
+        "node",
+        "artifacts/spn090-capture.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 3081,
+      "peakKiB": 717008
+    },
+    {
+      "name": "spn090-current-lint",
+      "args": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 12027,
+      "peakKiB": 767792
+    },
+    {
+      "name": "spn090-current-backlog",
+      "args": [
+        "npm",
+        "run",
+        "backlog:check"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 271,
+      "peakKiB": 224448
+    },
+    {
+      "name": "spn090-current-pr",
+      "args": [
+        "npm",
+        "run",
+        "backlog:pr",
+        "--",
+        "--base",
+        "origin/main",
+        "--title",
+        "\ud83e\uddea SPN-090 Verify offline launches on real phones"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 486,
+      "peakKiB": 258240
+    }
+  ],
+  "pending": [
+    "Full compiler: process resource-aborted, not passed",
+    "Full hosted browser/native/Storybook and seven current-head gates",
+    "Two exact-commit independent reviews and visual approval"
+  ],
+  "refusedStart": {
+    "check": "format",
+    "reason": "Ambient memory pressure elevated before process start; log retained; later pressure1 formatter succeeded"
+  },
+  "checkedCandidateBeforeEvidenceOnlyUpdate": "e057940b3a63f7e479237121bf318054a6ebbd90"
+}

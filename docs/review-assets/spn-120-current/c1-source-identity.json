@@ -1,0 +1,27 @@
+{
+  "common": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "prior": "5356f085f84302c85490acf473adab72cc0b7eb9",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "priorNonDocs": 23,
+  "mainNonDocs": 61,
+  "overlap": [
+    ".github/workflows/ci.yml",
+    "e2e/sync-client.spec.ts"
+  ],
+  "allOtherChangedSourceByteExact": true,
+  "workflowResolution": "Exactmain plusfixture-evidence artifact; syncflag andfeedbackpair retained",
+  "syncResolution": "Exact5356 plusmain bootstrap import/assertions inside recorded fixture wrapper",
+  "allOtherLiveTicketsExactMain": true,
+  "SPN110HandoffExactMain": true,
+  "SPN090CanonicalExactMain": true,
+  "bookkeeping": {
+    "every": 7,
+    "last": "2026-11-14",
+    "completed_since": [
+      "SPN-098",
+      "SPN-090",
+      "SPN-120"
+    ]
+  },
+  "sourceOnly": true
+}

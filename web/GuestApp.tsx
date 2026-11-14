@@ -10,6 +10,7 @@ import { AccessState } from './AccessState.tsx';
 import type { ConnectionState } from './connectionState.ts';
 import { useBrowserOnline } from './useConnectionStatus.ts';
 import { Space } from './Space.tsx';
+import { startupDone } from './startupStage.ts';
 const Sheet = lazy(() => import('./SheetEditor.tsx').then((m) => ({ default: m.SheetEditor })));
 const Doc = lazy(() => import('./DocEditor.tsx').then((m) => ({ default: m.DocEditor })));
 
@@ -37,6 +38,11 @@ type Item = {
   access: 'viewer' | 'editor';
 };
 export function GuestApp() {
+  useEffect(() => {
+    // The mounted guest UI owns loading, unavailable and terminal link states.
+    // Account entry instead keeps its reporter until admission finishes.
+    startupDone();
+  }, []);
   // The browser capability guard runs before every network effect, including
   // public maintenance polling; unsupported clients never exchange a link.
   if (!navigator.locks) return <GuestContent />;

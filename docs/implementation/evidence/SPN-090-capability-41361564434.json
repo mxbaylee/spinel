@@ -1,0 +1,1700 @@
+{
+  "schemaVersion": 1,
+  "runId": "41361564434",
+  "attempt": "1",
+  "sourceSha": "1fae4a7e0a6653c4bb9b3c8344fe4389503a3077",
+  "testedSha": "e4804654b385d99bb8f7769a64d0982adbaf0076",
+  "scope": "Bounded native installation, same-session offline relaunch and production download capability; full SPN-090 acceptance remains separate.",
+  "stage": "finished",
+  "reservationId": "41361564434-1-1fae4a7e0a6653c4bb9b3c8344fe4389503a3077",
+  "receipt": {
+    "runId": "41361564434",
+    "attempt": "1",
+    "sourceSha": "1fae4a7e0a6653c4bb9b3c8344fe4389503a3077",
+    "testedSha": "e4804654b385d99bb8f7769a64d0982adbaf0076",
+    "finishedAt": "2026-11-01T23:22:22.179Z",
+    "sessionIds": [
+      "a04772b90ef42987e3ea976cf4e2261eb8f377d9",
+      "6e4005be4ded0e0576b96fae55711fdd4fbaadff",
+      "d8b1f51a8d0d854be3e89d0b7d4d6f619cd0f5e8"
+    ],
+    "uncertainAllocation": false
+  },
+  "lanes": [
+    {
+      "target": {
+        "browser": "chrome",
+        "device": "Google Pixel 11 Pro XL",
+        "osVersion": "17.0"
+      },
+      "status": "failed",
+      "startedAt": "2026-11-01T23:21:01.764Z",
+      "stage": "native-install",
+      "command": "GET session/{sessionId}/source",
+      "allocation": "known",
+      "uncertainAllocation": false,
+      "observations": [
+        {
+          "stage": "certificate",
+          "value": {
+            "hostname": "bs-local.com",
+            "selfSigned": true,
+            "fingerprint256": "EA:9B:7F:E6:46:F3:66:03:5D:6F:2C:6A:CD:49:38:2C:C6:D9:9B:AE:9E:69:9B:F6:23:CA:72:92:14:89:3B:FA",
+            "validFrom": "2026-11-01T23:20:58.000Z",
+            "validTo": "2026-11-02T23:20:58.000Z"
+          }
+        },
+        {
+          "stage": "returned-capabilities",
+          "value": {
+            "browserName": "chrome",
+            "platformName": "Android",
+            "platformVersion": "17",
+            "deviceName": "66030DLDV0006V"
+          }
+        },
+        {
+          "stage": "initial-environment",
+          "value": {
+            "anonymousReady": false,
+            "controller": null,
+            "invalidCertificate": false,
+            "navigatorStandalone": false,
+            "online": true,
+            "origin": "https://bs-local.com:8176",
+            "path": "/sign-in",
+            "secureContext": true,
+            "serviceWorkerAvailable": true,
+            "standalone": false,
+            "title": "Spinel",
+            "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Mobile Safari/537.36"
+          }
+        },
+        {
+          "stage": "anonymous-https:secure-context",
+          "value": {
+            "anonymousReady": true,
+            "controller": "https://bs-local.com:8176/service-worker.js",
+            "invalidCertificate": false,
+            "navigatorStandalone": false,
+            "online": true,
+            "origin": "https://bs-local.com:8176",
+            "path": "/sign-in",
+            "secureContext": true,
+            "serviceWorkerAvailable": true,
+            "standalone": false,
+            "title": "Spinel",
+            "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/152.0.0.0 Mobile Safari/537.36",
+            "registration": {
+              "active": "https://bs-local.com:8176/service-worker.js",
+              "scope": "https://bs-local.com:8176/",
+              "state": "activated"
+            }
+          }
+        },
+        {
+          "stage": "initial-window-handles",
+          "value": [
+            "333DB4CB1807D6ADC0060A689AEB2735"
+          ]
+        },
+        {
+          "stage": "initial-native-contexts",
+          "value": [
+            "NATIVE_APP",
+            "CHROMIUM"
+          ]
+        },
+        {
+          "stage": "native-install:native-controls",
+          "value": {
+            "sourceSha256": "672041fbfdcbde72254740885d2a9dff320288d188123bc78c2be3bfa8786fb6",
+            "labels": [
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/action_bar_root"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "android:id/content"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/edge_to_edge_base_layout"
+              },
+              {
+                "type": "android.view.ViewGroup",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/coordinator"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/compositor_view_holder"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "content-desc",
+                "value": "Web View"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/control_container"
+              },
+              {
+                "type": "android.view.ViewGroup",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/toolbar_container"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/toolbar"
+              },
+              {
+                "type": "android.widget.ImageButton",
+                "attribute": "content-desc",
+                "value": "Open the home page"
+              },
+              {
+                "type": "android.widget.ImageButton",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/home_button"
+              },
+              {
+                "type": "android.view.ViewGroup",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/location_bar"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/location_bar_status"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/location_bar_status_icon_view"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "content-desc",
+                "value": "This page is dangerous"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/location_bar_status_icon"
+              },
+              {
+                "type": "android.widget.EditText",
+                "attribute": "text",
+                "value": "https://bs-local.com:8176/sign-in"
+              },
+              {
+                "type": "android.widget.EditText",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/url_bar"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/toolbar_buttons"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/optional_toolbar_button_container"
+              },
+              {
+                "type": "android.widget.ImageButton",
+                "attribute": "content-desc",
+                "value": "New tab"
+              },
+              {
+                "type": "android.widget.ImageButton",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/optional_toolbar_button"
+              },
+              {
+                "type": "android.widget.ImageButton",
+                "attribute": "content-desc",
+                "value": "See 1 tab"
+              },
+              {
+                "type": "android.widget.ImageButton",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/tab_switcher_button"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_button_wrapper"
+              },
+              {
+                "type": "android.widget.ImageButton",
+                "attribute": "content-desc",
+                "value": "Customize and control Google Chrome"
+              },
+              {
+                "type": "android.widget.ImageButton",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_button"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/toolbar_hairline"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/toolbar_progress_bar_container"
+              },
+              {
+                "type": "android.view.View",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/edge_to_edge_bottom_chin"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "native-install:native-controls",
+          "value": {
+            "sourceSha256": "b08c83d885c4ed2deda52f9b0dee627448bfc461c299af27436506e48ad3ce50",
+            "labels": [
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/app_menu_content_container"
+              },
+              {
+                "type": "android.widget.ListView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/app_menu_list"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_wrapper_one"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_wrapper_two"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "content-desc",
+                "value": "Bookmark"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_two"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_wrapper_three"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "content-desc",
+                "value": "Download"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_three"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_wrapper_four"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "content-desc",
+                "value": "Page info"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_four"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_wrapper_five"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "content-desc",
+                "value": "Refresh"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_five"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/new_tab_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "New tab"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/new_incognito_tab_menu_id"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "New Incognito tab"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/title"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/add_to_group_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Add tab to new group"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/open_history_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "History"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/quick_delete_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Delete browsing data"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/downloads_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Downloads"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/all_bookmarks_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Bookmarks"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/recent_tabs_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Recent tabs"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/share_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Share…"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/find_in_page_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Find in page"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/translate_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Translate…"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/reader_mode_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Show Reading mode"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/universal_install"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Install and create shortcut"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.RelativeLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/request_desktop_site_id"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_container"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "content-desc",
+                "value": "Turn on Request desktop site"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Desktop site"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/action_icon_container"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/checkbox"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/preferences_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Settings"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/help_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Help & feedback"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "native-install:native-controls",
+          "value": {
+            "sourceSha256": "b08c83d885c4ed2deda52f9b0dee627448bfc461c299af27436506e48ad3ce50",
+            "labels": [
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/app_menu_content_container"
+              },
+              {
+                "type": "android.widget.ListView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/app_menu_list"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_wrapper_one"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_wrapper_two"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "content-desc",
+                "value": "Bookmark"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_two"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_wrapper_three"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "content-desc",
+                "value": "Download"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_three"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_wrapper_four"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "content-desc",
+                "value": "Page info"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_four"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_wrapper_five"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "content-desc",
+                "value": "Refresh"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_five"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/new_tab_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "New tab"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/new_incognito_tab_menu_id"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "New Incognito tab"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/title"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/add_to_group_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Add tab to new group"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/open_history_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "History"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/quick_delete_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Delete browsing data"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/downloads_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Downloads"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/all_bookmarks_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Bookmarks"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/recent_tabs_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Recent tabs"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/share_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Share…"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/find_in_page_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Find in page"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/translate_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Translate…"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/reader_mode_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Show Reading mode"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/universal_install"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Install and create shortcut"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.RelativeLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/request_desktop_site_id"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_container"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "content-desc",
+                "value": "Turn on Request desktop site"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Desktop site"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/action_icon_container"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/checkbox"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/preferences_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Settings"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/help_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Help & feedback"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "native-install:native-controls",
+          "value": {
+            "sourceSha256": "b08c83d885c4ed2deda52f9b0dee627448bfc461c299af27436506e48ad3ce50",
+            "labels": [
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/app_menu_content_container"
+              },
+              {
+                "type": "android.widget.ListView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/app_menu_list"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_wrapper_one"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_wrapper_two"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "content-desc",
+                "value": "Bookmark"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_two"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_wrapper_three"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "content-desc",
+                "value": "Download"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_three"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_wrapper_four"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "content-desc",
+                "value": "Page info"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_four"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_wrapper_five"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "content-desc",
+                "value": "Refresh"
+              },
+              {
+                "type": "android.widget.Button",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/button_five"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/new_tab_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "New tab"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/new_incognito_tab_menu_id"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "New Incognito tab"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/title"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/add_to_group_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Add tab to new group"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/open_history_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "History"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/quick_delete_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Delete browsing data"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/downloads_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Downloads"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/all_bookmarks_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Bookmarks"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/recent_tabs_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Recent tabs"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/share_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Share…"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/find_in_page_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Find in page"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/translate_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Translate…"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/reader_mode_menu_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Show Reading mode"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/universal_install"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Install and create shortcut"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.RelativeLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/request_desktop_site_id"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_container"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "content-desc",
+                "value": "Turn on Request desktop site"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Desktop site"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.FrameLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/action_icon_container"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/checkbox"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/preferences_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Settings"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              },
+              {
+                "type": "android.widget.LinearLayout",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/help_id"
+              },
+              {
+                "type": "android.widget.ImageView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_icon"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "text",
+                "value": "Help & feedback"
+              },
+              {
+                "type": "android.widget.TextView",
+                "attribute": "resource-id",
+                "value": "com.android.chrome:id/menu_item_text"
+              }
+            ]
+          }
+        },
+        {
+          "stage": "native-install",
+          "value": {
+            "screenshot": "unavailable"
+          }
+        }
+      ],
+      "nativeActions": [
+        {
+          "stage": "native-install",
+          "label": "Customize and control Google Chrome",
+          "type": "android.widget.ImageButton",
+          "sourceSha256": "672041fbfdcbde72254740885d2a9dff320288d188123bc78c2be3bfa8786fb6"
+        }
+      ],
+      "screenshots": [
+        "artifacts/browserstack-capability/chrome-anonymous-secure.png"
+      ],
+      "cleanup": {
+        "network": "restored-4g-lte-good",
+        "session": "deleted",
+        "fixture": "closed"
+      },
+      "sessionId": "a04772b90ef42987e3ea976cf4e2261eb8f377d9",
+      "failure": "capability-native-install-control-unavailable",
+      "finishedAt": "2026-11-01T23:21:32.645Z"
+    },
+    {
+      "target": {
+        "browser": "firefox",
+        "device": "Google Pixel 11 Pro XL",
+        "osVersion": "17.0"
+      },
+      "status": "failed",
+      "startedAt": "2026-11-01T23:21:33.348Z",
+      "stage": "native-install",
+      "command": "GET session/{sessionId}/contexts",
+      "allocation": "known",
+      "uncertainAllocation": false,
+      "observations": [
+        {
+          "stage": "certificate",
+          "value": {
+            "hostname": "bs-local.com",
+            "selfSigned": true,
+            "fingerprint256": "65:A2:EB:F2:55:E9:CF:AD:D2:F6:79:0C:DE:39:17:94:8E:42:FC:F7:57:35:7D:22:54:30:DE:7A:1E:5B:40:BC",
+            "validFrom": "2026-11-01T23:21:32.000Z",
+            "validTo": "2026-11-02T23:21:32.000Z"
+          }
+        },
+        {
+          "stage": "returned-capabilities",
+          "value": {
+            "browserName": "MozillaFirefox",
+            "platformName": "linux"
+          }
+        },
+        {
+          "stage": "initial-environment",
+          "value": {
+            "anonymousReady": false,
+            "controller": null,
+            "invalidCertificate": false,
+            "navigatorStandalone": false,
+            "online": true,
+            "origin": "https://bs-local.com:8176",
+            "path": "/sign-in",
+            "secureContext": true,
+            "serviceWorkerAvailable": true,
+            "standalone": false,
+            "title": "Spinel",
+            "userAgent": "Mozilla/5.0 (Android 17; Mobile; rv:151.0) Gecko/151.0 Firefox/151.0"
+          }
+        },
+        {
+          "stage": "anonymous-https:secure-context",
+          "value": {
+            "anonymousReady": true,
+            "controller": "https://bs-local.com:8176/service-worker.js",
+            "invalidCertificate": false,
+            "navigatorStandalone": false,
+            "online": true,
+            "origin": "https://bs-local.com:8176",
+            "path": "/sign-in",
+            "secureContext": true,
+            "serviceWorkerAvailable": true,
+            "standalone": false,
+            "title": "Spinel",
+            "userAgent": "Mozilla/5.0 (Android 17; Mobile; rv:151.0) Gecko/151.0 Firefox/151.0",
+            "registration": {
+              "active": "https://bs-local.com:8176/service-worker.js",
+              "scope": "https://bs-local.com:8176/",
+              "state": "activated"
+            }
+          }
+        },
+        {
+          "stage": "initial-window-handles",
+          "value": [
+            "86da76d6-a3af-4f09-bfe6-0f1085d6c8ee"
+          ]
+        }
+      ],
+      "nativeActions": [],
+      "screenshots": [
+        "artifacts/browserstack-capability/firefox-anonymous-secure.png",
+        "artifacts/browserstack-capability/firefox-failure.png"
+      ],
+      "cleanup": {
+        "network": "restored-4g-lte-good",
+        "session": "deleted",
+        "fixture": "closed"
+      },
+      "sessionId": "6e4005be4ded0e0576b96fae55711fdd4fbaadff",
+      "failure": "http-400",
+      "finishedAt": "2026-11-01T23:21:47.694Z"
+    },
+    {
+      "target": {
+        "browser": "safari",
+        "device": "iPhone 18 Pro Max",
+        "osVersion": "27"
+      },
+      "status": "failed",
+      "startedAt": "2026-11-01T23:21:48.123Z",
+      "stage": "anonymous-https",
+      "command": "POST session/{sessionId}/execute/async",
+      "allocation": "known",
+      "uncertainAllocation": false,
+      "observations": [
+        {
+          "stage": "certificate",
+          "value": {
+            "hostname": "bs-local.com",
+            "selfSigned": true,
+            "fingerprint256": "B6:78:83:2B:1F:B5:91:F7:F8:35:2F:4A:DF:92:FE:F7:63:6B:63:1A:FE:02:9B:C0:2F:A3:26:AE:1A:F1:66:FE",
+            "validFrom": "2026-11-01T23:21:47.000Z",
+            "validTo": "2026-11-02T23:21:47.000Z"
+          }
+        },
+        {
+          "stage": "returned-capabilities",
+          "value": {
+            "browserName": "safari",
+            "platformName": "iOS",
+            "deviceName": "iPhone 18 Pro Max"
+          }
+        },
+        {
+          "stage": "initial-environment",
+          "value": {
+            "origin": "https://bs-local.com:8176",
+            "path": "/sign-in",
+            "title": "Spinel",
+            "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Mobile/15E148 Safari/604.1",
+            "secureContext": true,
+            "serviceWorkerAvailable": true,
+            "controller": "https://bs-local.com:8176/service-worker.js",
+            "standalone": false,
+            "navigatorStandalone": false,
+            "online": true,
+            "anonymousReady": true,
+            "invalidCertificate": false
+          }
+        }
+      ],
+      "nativeActions": [],
+      "screenshots": [
+        "artifacts/browserstack-capability/safari-failure.png"
+      ],
+      "cleanup": {
+        "network": "restored-4g-lte-good",
+        "session": "deleted",
+        "fixture": "closed"
+      },
+      "sessionId": "d8b1f51a8d0d854be3e89d0b7d4d6f619cd0f5e8",
+      "failure": "http-408",
+      "finishedAt": "2026-11-01T23:22:22.178Z"
+    }
+  ]
+}
