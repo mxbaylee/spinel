@@ -119,6 +119,20 @@ function NativeDrawingCapture() {
       const failures: string[] = [];
       let resized = 0;
       let controlsCreated = 0;
+      let phase = 'selection';
+      const transitions: unknown[] = [];
+      const measure = () => ({
+        phase,
+        hostWidth: host.current!.getBoundingClientRect().width,
+        canvasWidth: render.engine.getCanvasElement().getBoundingClientRect().width,
+        engineWidth: render.engine.width,
+        engineHeight: render.engine.height,
+        resized,
+        controlsCreated,
+      });
+      const trace = (event: string) => {
+        if (transitions.length < 32) transitions.push({ event, ...measure() });
+      };
       const observe = () => {
         if (disposed || !client) return;
         const checkpoint = client.checkpoint();
@@ -158,6 +172,8 @@ function NativeDrawingCapture() {
             failures,
             resized,
             controlsCreated,
+            geometry: measure(),
+            transitions,
             pending: client.state.pendingMutations,
             pendingIds: [...checkpoint.inflight, ...checkpoint.buffer.flat()].map(
               (mutation) => mutation.id,
@@ -194,10 +210,14 @@ function NativeDrawingCapture() {
       });
       cleanups.push(() => stream.dispose());
       const resize = render.engine.onTransformChange$.subscribeEvent((event) => {
-        if (event.type === TRANSFORM_CHANGE_OBSERVABLE_TYPE.resize) resized++;
+        if (event.type === TRANSFORM_CHANGE_OBSERVABLE_TYPE.resize) {
+          resized++;
+          trace('resize');
+        }
       });
       const controls = render.scene.getTransformerByCreate().createControl$.subscribe(() => {
         controlsCreated++;
+        trace('controls');
       });
       cleanups.push(
         () => resize.unsubscribe(),
@@ -225,9 +245,13 @@ function NativeDrawingCapture() {
         },
         // A real host resize exercises DocDrawingTransformUpdateController's native refresh.
         resize: () => {
+          phase = 'narrow';
+          trace('requested');
           host.current!.style.width = 'calc(100% - 8px)';
         },
         restore: () => {
+          phase = 'restore';
+          trace('requested');
           host.current!.style.width = '100%';
         },
       };
