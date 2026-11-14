@@ -1,0 +1,44 @@
+{
+  "head": "5356f085f84302c85490acf473adab72cc0b7eb9",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "manifestSha256": "5691315f969c06a9d28b75fc6a7d97d0a8f4e66816ef31942979457937179de9",
+  "bindingsVerified": 1518,
+  "historicalNumericalAssessmentMatches": [],
+  "manuallyClassifiedOtherMatches": [
+    {
+      "path": "source/AGENTS.md",
+      "line": 99,
+      "classification": "Required review threshold"
+    },
+    {
+      "path": "source/.github/pull_request_template.md",
+      "line": 33,
+      "classification": "Required review threshold"
+    },
+    {
+      "path": "source/lib/sync-transform/tests/cells.test.ts",
+      "line": 906,
+      "classification": "B100 cell address"
+    },
+    {
+      "path": "source/docs/design/redesign.md",
+      "line": 97,
+      "classification": "Inspected design typography/spacing/icon dimensions"
+    },
+    {
+      "path": "source/docs/design/redesign.md",
+      "line": 99,
+      "classification": "Inspected design typography/spacing/icon dimensions"
+    },
+    {
+      "path": "source/docs/design/component-review.md",
+      "line": 40,
+      "classification": "Inspected design typography/spacing/icon dimensions"
+    },
+    {
+      "path": "source/docs/design/README.md",
+      "line": 176,
+      "classification": "Inspected design typography/spacing/icon dimensions"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "source": "5356f085f84302c85490acf473adab72cc0b7eb9",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "review": {
+    "tag": "archive/spn-120-review-5356f085-20261114",
+    "path": "docs/review-assets/spn-120-review-5356f085",
+    "published": false
+  },
+  "validation": {
+    "tag": "archive/spn-120-validation-5356f085-20261114",
+    "path": "docs/review-assets/spn-120-validation-5356f085",
+    "published": false
+  },
+  "completion": {
+    "tag": "archive/spn-120-completion-5356f085-20261114",
+    "path": "docs/review-assets/spn-120-completion-5356f085",
+    "published": false
+  },
+  "priorValidation": "50d6e592e7f676b23a8ea5ab3851c7110ce20456",
+  "priorFailedValidation": "4bd84e3be7645a3b18c794c966e0007e6770cc9c"
+}
