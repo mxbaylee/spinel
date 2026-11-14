@@ -1,0 +1,4941 @@
+{
+  "recordedAt": "2026-11-14T08:53:29.295Z",
+  "head": "88b24d96a65cdb92712c94674399a86b129c57b3",
+  "base": "754e65317744e5ce97ede501935c6586e4875f2a",
+  "tested": "b7d51a6f3a2fb3d98da5dd230ea4387fad989804",
+  "planDigest": "a564fc7a248b88614008a6ebb1c320c2c3fbd955c31c5002ec7558d03b850e19",
+  "selectedSuiteCount": 15,
+  "requiredGates": [
+    {
+      "id": 132386982859,
+      "name": "Pull request",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132386982859"
+    },
+    {
+      "id": 132387217163,
+      "name": "Typecheck",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217163"
+    },
+    {
+      "id": 132387217166,
+      "name": "Backlog",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217166"
+    },
+    {
+      "id": 132387217174,
+      "name": "Lint",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217174"
+    },
+    {
+      "id": 132389469301,
+      "name": "Lib tests",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132389469301"
+    },
+    {
+      "id": 132391108745,
+      "name": "Unit tests",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132391108745"
+    },
+    {
+      "id": 132394146239,
+      "name": "Playwright smoke",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132394146239"
+    }
+  ],
+  "runs": [
+    {
+      "id": 43574921187,
+      "name": "💎 CI",
+      "attempt": 1,
+      "head": "88b24d96a65cdb92712c94674399a86b129c57b3",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 132386982859,
+          "name": "Pull request",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132386982859",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:15:21Z",
+              "completed_at": "2026-11-14T08:15:22Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:15:22Z",
+              "completed_at": "2026-11-14T08:15:57Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:15:57Z",
+              "completed_at": "2026-11-14T08:16:02Z"
+            },
+            {
+              "name": "Title, ticket, IDs and size",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:16:02Z",
+              "completed_at": "2026-11-14T08:16:02Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:16:02Z",
+              "completed_at": "2026-11-14T08:16:02Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-14T08:16:02Z",
+              "completed_at": "2026-11-14T08:16:02Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:16:02Z",
+              "completed_at": "2026-11-14T08:16:03Z"
+            }
+          ]
+        },
+        {
+          "id": 132386983036,
+          "name": "Classify changes (43574921187)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132386983036",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:15:22Z",
+              "completed_at": "2026-11-14T08:15:23Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:15:23Z",
+              "completed_at": "2026-11-14T08:16:03Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:16:03Z",
+              "completed_at": "2026-11-14T08:16:07Z"
+            },
+            {
+              "name": "Run node scripts/ci/changes.ts",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:16:07Z",
+              "completed_at": "2026-11-14T08:16:07Z"
+            },
+            {
+              "name": "Retain immutable coverage plan",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:16:07Z",
+              "completed_at": "2026-11-14T08:16:09Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:16:09Z",
+              "completed_at": "2026-11-14T08:16:09Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:16:09Z",
+              "completed_at": "2026-11-14T08:16:09Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:16:09Z",
+              "completed_at": "2026-11-14T08:16:09Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217163,
+          "name": "Typecheck",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217163",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:27:05Z",
+              "completed_at": "2026-11-14T08:27:05Z"
+            },
+            {
+              "name": "Require complete applicability",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:27:05Z",
+              "completed_at": "2026-11-14T08:27:05Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:27:05Z",
+              "completed_at": "2026-11-14T08:27:10Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:27:10Z",
+              "completed_at": "2026-11-14T08:27:15Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:27:15Z",
+              "completed_at": "2026-11-14T08:27:24Z"
+            },
+            {
+              "name": "Typecheck",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:27:24Z",
+              "completed_at": "2026-11-14T08:27:29Z"
+            },
+            {
+              "name": "Documentation-only change",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:27:29Z",
+              "completed_at": "2026-11-14T08:27:29Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:27:29Z",
+              "completed_at": "2026-11-14T08:27:29Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:27:29Z",
+              "completed_at": "2026-11-14T08:27:29Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-14T08:27:29Z",
+              "completed_at": "2026-11-14T08:27:29Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217166,
+          "name": "Backlog",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217166",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:16:16Z",
+              "completed_at": "2026-11-14T08:16:16Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:16:16Z",
+              "completed_at": "2026-11-14T08:16:25Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:16:25Z",
+              "completed_at": "2026-11-14T08:16:29Z"
+            },
+            {
+              "name": "Tickets and index",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:16:29Z",
+              "completed_at": "2026-11-14T08:16:30Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:16:30Z",
+              "completed_at": "2026-11-14T08:16:30Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-14T08:16:30Z",
+              "completed_at": "2026-11-14T08:16:30Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:16:30Z",
+              "completed_at": "2026-11-14T08:16:30Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217174,
+          "name": "Lint",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217174",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:26:59Z",
+              "completed_at": "2026-11-14T08:27:00Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:27:00Z",
+              "completed_at": "2026-11-14T08:27:04Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:27:04Z",
+              "completed_at": "2026-11-14T08:27:08Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:27:08Z",
+              "completed_at": "2026-11-14T08:27:16Z"
+            },
+            {
+              "name": "Lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:27:16Z",
+              "completed_at": "2026-11-14T08:27:32Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:27:32Z",
+              "completed_at": "2026-11-14T08:27:32Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:27:32Z",
+              "completed_at": "2026-11-14T08:27:33Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:27:33Z",
+              "completed_at": "2026-11-14T08:27:33Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217180,
+          "name": "Container smoke",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217180",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:16:15Z",
+              "completed_at": "2026-11-14T08:16:16Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:16:16Z",
+              "completed_at": "2026-11-14T08:16:20Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:16:20Z",
+              "completed_at": "2026-11-14T08:16:25Z"
+            },
+            {
+              "name": "Install PDF verification tools",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:16:25Z",
+              "completed_at": "2026-11-14T08:16:35Z"
+            },
+            {
+              "name": "Build and exercise the final image",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:16:35Z",
+              "completed_at": "2026-11-14T08:17:50Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:17:50Z",
+              "completed_at": "2026-11-14T08:17:50Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:17:50Z",
+              "completed_at": "2026-11-14T08:17:50Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:17:50Z",
+              "completed_at": "2026-11-14T08:17:50Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217196,
+          "name": "Doc responsiveness (mobile)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217196",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:16:15Z",
+              "completed_at": "2026-11-14T08:16:16Z"
+            },
+            {
+              "name": "Require comparison applicability",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:16:16Z",
+              "completed_at": "2026-11-14T08:16:16Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:16:16Z",
+              "completed_at": "2026-11-14T08:16:20Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:16:20Z",
+              "completed_at": "2026-11-14T08:16:24Z"
+            },
+            {
+              "name": "Install candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:16:24Z",
+              "completed_at": "2026-11-14T08:16:32Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:16:32Z",
+              "completed_at": "2026-11-14T08:16:52Z"
+            },
+            {
+              "name": "Immutable uncapped source with matched compatibility and native observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:16:52Z",
+              "completed_at": "2026-11-14T08:16:54Z"
+            },
+            {
+              "name": "Use identical browser workload on both sources",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-14T08:16:54Z",
+              "completed_at": "2026-11-14T08:16:54Z"
+            },
+            {
+              "name": "Install and build baseline",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:16:54Z",
+              "completed_at": "2026-11-14T08:17:02Z"
+            },
+            {
+              "name": "Observe baseline first attempts",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:17:02Z",
+              "completed_at": "2026-11-14T08:30:53Z"
+            },
+            {
+              "name": "Build candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:30:53Z",
+              "completed_at": "2026-11-14T08:30:55Z"
+            },
+            {
+              "name": "Verify candidate responsiveness and boundaries",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-14T08:30:55Z",
+              "completed_at": "2026-11-14T08:37:53Z"
+            },
+            {
+              "name": "Verify candidate evidence and selected paired comparison",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:37:53Z",
+              "completed_at": "2026-11-14T08:37:54Z"
+            },
+            {
+              "name": "Retain every baseline and candidate attempt",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:37:54Z",
+              "completed_at": "2026-11-14T08:37:56Z"
+            },
+            {
+              "name": "Post Immutable uncapped source with matched compatibility and native observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 26,
+              "started_at": "2026-11-14T08:37:56Z",
+              "completed_at": "2026-11-14T08:37:56Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 27,
+              "started_at": "2026-11-14T08:37:56Z",
+              "completed_at": "2026-11-14T08:37:56Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-14T08:37:56Z",
+              "completed_at": "2026-11-14T08:37:56Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-14T08:37:56Z",
+              "completed_at": "2026-11-14T08:37:56Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217201,
+          "name": "Retained sync transition",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217201",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:16:15Z",
+              "completed_at": "2026-11-14T08:16:16Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:16:16Z",
+              "completed_at": "2026-11-14T08:16:21Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:16:21Z",
+              "completed_at": "2026-11-14T08:16:26Z"
+            },
+            {
+              "name": "Install current application",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:16:26Z",
+              "completed_at": "2026-11-14T08:16:37Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:16:37Z",
+              "completed_at": "2026-11-14T08:16:39Z"
+            },
+            {
+              "name": "Install pinned legacy export environment",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:16:39Z",
+              "completed_at": "2026-11-14T08:16:51Z"
+            },
+            {
+              "name": "Retain, interrupt, resume and verify real legacy data",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:16:51Z",
+              "completed_at": "2026-11-14T08:16:55Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-14T08:16:55Z",
+              "completed_at": "2026-11-14T08:16:55Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:16:55Z",
+              "completed_at": "2026-11-14T08:16:55Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:16:55Z",
+              "completed_at": "2026-11-14T08:16:55Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-14T08:16:55Z",
+              "completed_at": "2026-11-14T08:16:55Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217258,
+          "name": "Unit tests (recovery)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217258",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:16:15Z",
+              "completed_at": "2026-11-14T08:16:16Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:16:16Z",
+              "completed_at": "2026-11-14T08:16:20Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:16:20Z",
+              "completed_at": "2026-11-14T08:16:24Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:16:24Z",
+              "completed_at": "2026-11-14T08:16:34Z"
+            },
+            {
+              "name": "Install fixture init",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:16:34Z",
+              "completed_at": "2026-11-14T08:16:55Z"
+            },
+            {
+              "name": "Unit tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:16:55Z",
+              "completed_at": "2026-11-14T08:20:21Z"
+            },
+            {
+              "name": "PDF collaboration overlap evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:20:21Z",
+              "completed_at": "2026-11-14T08:20:21Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:20:21Z",
+              "completed_at": "2026-11-14T08:20:21Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:20:21Z",
+              "completed_at": "2026-11-14T08:20:22Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-14T08:20:22Z",
+              "completed_at": "2026-11-14T08:20:22Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217266,
+          "name": "Unit tests (remaining)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217266",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:20:00Z",
+              "completed_at": "2026-11-14T08:20:01Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:20:01Z",
+              "completed_at": "2026-11-14T08:20:05Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:20:05Z",
+              "completed_at": "2026-11-14T08:20:10Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:20:10Z",
+              "completed_at": "2026-11-14T08:20:21Z"
+            },
+            {
+              "name": "Install fixture init",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:20:21Z",
+              "completed_at": "2026-11-14T08:20:31Z"
+            },
+            {
+              "name": "Unit tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:20:31Z",
+              "completed_at": "2026-11-14T08:25:19Z"
+            },
+            {
+              "name": "PDF collaboration overlap evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:25:19Z",
+              "completed_at": "2026-11-14T08:25:21Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:25:21Z",
+              "completed_at": "2026-11-14T08:25:21Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:25:21Z",
+              "completed_at": "2026-11-14T08:25:21Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-14T08:25:21Z",
+              "completed_at": "2026-11-14T08:25:21Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217270,
+          "name": "Lib tests (mixed-fuzz)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217270",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:16:59Z",
+              "completed_at": "2026-11-14T08:17:00Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:17:00Z",
+              "completed_at": "2026-11-14T08:17:05Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:17:05Z",
+              "completed_at": "2026-11-14T08:17:09Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:17:09Z",
+              "completed_at": "2026-11-14T08:17:20Z"
+            },
+            {
+              "name": "Lib tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:17:20Z",
+              "completed_at": "2026-11-14T08:23:22Z"
+            },
+            {
+              "name": "Synthetic Sheet PDF evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6,
+              "started_at": "2026-11-14T08:23:22Z",
+              "completed_at": "2026-11-14T08:23:22Z"
+            },
+            {
+              "name": "Synthetic Doc PDF evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:23:22Z",
+              "completed_at": "2026-11-14T08:23:22Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:23:22Z",
+              "completed_at": "2026-11-14T08:23:22Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:23:22Z",
+              "completed_at": "2026-11-14T08:23:22Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-14T08:23:22Z",
+              "completed_at": "2026-11-14T08:23:22Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217275,
+          "name": "Sized restore acceptance",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217275",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:16:20Z",
+              "completed_at": "2026-11-14T08:16:21Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:16:21Z",
+              "completed_at": "2026-11-14T08:16:26Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:16:26Z",
+              "completed_at": "2026-11-14T08:16:30Z"
+            },
+            {
+              "name": "Install acceptance driver and Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:16:30Z",
+              "completed_at": "2026-11-14T08:17:02Z"
+            },
+            {
+              "name": "Build the exact production image",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:17:02Z",
+              "completed_at": "2026-11-14T08:18:05Z"
+            },
+            {
+              "name": "Measure and verify the real 256 MiB restore",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:18:05Z",
+              "completed_at": "2026-11-14T08:22:45Z"
+            },
+            {
+              "name": "Preserve safe timing and integrity evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:22:45Z",
+              "completed_at": "2026-11-14T08:22:46Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:22:46Z",
+              "completed_at": "2026-11-14T08:22:46Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:22:46Z",
+              "completed_at": "2026-11-14T08:22:46Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-14T08:22:46Z",
+              "completed_at": "2026-11-14T08:22:47Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217283,
+          "name": "Doc callback lifetimes (desktop)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217283",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:16:15Z",
+              "completed_at": "2026-11-14T08:16:16Z"
+            },
+            {
+              "name": "Require comparison applicability",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:16:16Z",
+              "completed_at": "2026-11-14T08:16:16Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:16:16Z",
+              "completed_at": "2026-11-14T08:16:20Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:16:20Z",
+              "completed_at": "2026-11-14T08:16:24Z"
+            },
+            {
+              "name": "Install candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:16:24Z",
+              "completed_at": "2026-11-14T08:16:38Z"
+            },
+            {
+              "name": "Prepare pinned callback trace converter",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:16:38Z",
+              "completed_at": "2026-11-14T08:16:38Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:16:38Z",
+              "completed_at": "2026-11-14T08:17:05Z"
+            },
+            {
+              "name": "Immutable merged SPN-108 baseline",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-14T08:17:05Z",
+              "completed_at": "2026-11-14T08:17:07Z"
+            },
+            {
+              "name": "Match callback workload and read-only observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:17:07Z",
+              "completed_at": "2026-11-14T08:17:07Z"
+            },
+            {
+              "name": "Install and build baseline with source maps",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:17:07Z",
+              "completed_at": "2026-11-14T08:17:24Z"
+            },
+            {
+              "name": "Retain baseline first attempt",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:17:24Z",
+              "completed_at": "2026-11-14T08:20:38Z"
+            },
+            {
+              "name": "Build candidate with identical source-map settings",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-14T08:20:38Z",
+              "completed_at": "2026-11-14T08:20:43Z"
+            },
+            {
+              "name": "Verify candidate first attempt",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:20:43Z",
+              "completed_at": "2026-11-14T08:23:36Z"
+            },
+            {
+              "name": "Verify complete paired callback evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:23:36Z",
+              "completed_at": "2026-11-14T08:24:02Z"
+            },
+            {
+              "name": "Retain raw traces, source maps and every first attempt",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-14T08:24:02Z",
+              "completed_at": "2026-11-14T08:24:13Z"
+            },
+            {
+              "name": "Post Immutable merged SPN-108 baseline",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-14T08:24:13Z",
+              "completed_at": "2026-11-14T08:24:13Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-14T08:24:13Z",
+              "completed_at": "2026-11-14T08:24:13Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 30,
+              "started_at": "2026-11-14T08:24:13Z",
+              "completed_at": "2026-11-14T08:24:14Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 31,
+              "started_at": "2026-11-14T08:24:14Z",
+              "completed_at": "2026-11-14T08:24:14Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217284,
+          "name": "Lib tests (remaining)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217284",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:16:37Z",
+              "completed_at": "2026-11-14T08:16:37Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:16:37Z",
+              "completed_at": "2026-11-14T08:16:42Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:16:42Z",
+              "completed_at": "2026-11-14T08:16:46Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:16:46Z",
+              "completed_at": "2026-11-14T08:16:56Z"
+            },
+            {
+              "name": "Lib tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:16:56Z",
+              "completed_at": "2026-11-14T08:24:30Z"
+            },
+            {
+              "name": "Synthetic Sheet PDF evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:24:30Z",
+              "completed_at": "2026-11-14T08:24:31Z"
+            },
+            {
+              "name": "Synthetic Doc PDF evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:24:31Z",
+              "completed_at": "2026-11-14T08:24:34Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:24:34Z",
+              "completed_at": "2026-11-14T08:24:34Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:24:34Z",
+              "completed_at": "2026-11-14T08:24:34Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-14T08:24:34Z",
+              "completed_at": "2026-11-14T08:24:34Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217300,
+          "name": "Doc responsiveness (desktop)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217300",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:21:12Z",
+              "completed_at": "2026-11-14T08:21:12Z"
+            },
+            {
+              "name": "Require comparison applicability",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:21:12Z",
+              "completed_at": "2026-11-14T08:21:12Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:21:12Z",
+              "completed_at": "2026-11-14T08:21:16Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:21:16Z",
+              "completed_at": "2026-11-14T08:21:21Z"
+            },
+            {
+              "name": "Install candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:21:21Z",
+              "completed_at": "2026-11-14T08:21:34Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:21:34Z",
+              "completed_at": "2026-11-14T08:21:55Z"
+            },
+            {
+              "name": "Immutable uncapped source with matched compatibility and native observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:21:55Z",
+              "completed_at": "2026-11-14T08:21:56Z"
+            },
+            {
+              "name": "Use identical browser workload on both sources",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-14T08:21:56Z",
+              "completed_at": "2026-11-14T08:21:56Z"
+            },
+            {
+              "name": "Install and build baseline",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:21:56Z",
+              "completed_at": "2026-11-14T08:22:09Z"
+            },
+            {
+              "name": "Observe baseline first attempts",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:22:09Z",
+              "completed_at": "2026-11-14T08:30:10Z"
+            },
+            {
+              "name": "Build candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:30:10Z",
+              "completed_at": "2026-11-14T08:30:12Z"
+            },
+            {
+              "name": "Verify candidate responsiveness and boundaries",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-14T08:30:12Z",
+              "completed_at": "2026-11-14T08:36:09Z"
+            },
+            {
+              "name": "Verify candidate evidence and selected paired comparison",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:36:09Z",
+              "completed_at": "2026-11-14T08:36:09Z"
+            },
+            {
+              "name": "Retain every baseline and candidate attempt",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:36:09Z",
+              "completed_at": "2026-11-14T08:36:11Z"
+            },
+            {
+              "name": "Post Immutable uncapped source with matched compatibility and native observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 26,
+              "started_at": "2026-11-14T08:36:11Z",
+              "completed_at": "2026-11-14T08:36:11Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 27,
+              "started_at": "2026-11-14T08:36:11Z",
+              "completed_at": "2026-11-14T08:36:11Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-14T08:36:11Z",
+              "completed_at": "2026-11-14T08:36:11Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-14T08:36:11Z",
+              "completed_at": "2026-11-14T08:36:11Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217309,
+          "name": "Lib tests (dense-cells)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217309",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:17:57Z",
+              "completed_at": "2026-11-14T08:17:58Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:17:58Z",
+              "completed_at": "2026-11-14T08:18:05Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:18:05Z",
+              "completed_at": "2026-11-14T08:18:09Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:18:09Z",
+              "completed_at": "2026-11-14T08:18:22Z"
+            },
+            {
+              "name": "Lib tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:18:22Z",
+              "completed_at": "2026-11-14T08:25:12Z"
+            },
+            {
+              "name": "Synthetic Sheet PDF evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6,
+              "started_at": "2026-11-14T08:25:12Z",
+              "completed_at": "2026-11-14T08:25:12Z"
+            },
+            {
+              "name": "Synthetic Doc PDF evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:25:12Z",
+              "completed_at": "2026-11-14T08:25:12Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:25:12Z",
+              "completed_at": "2026-11-14T08:25:12Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:25:12Z",
+              "completed_at": "2026-11-14T08:25:12Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-14T08:25:12Z",
+              "completed_at": "2026-11-14T08:25:12Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217327,
+          "name": "Lib tests (cells)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217327",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:17:20Z",
+              "completed_at": "2026-11-14T08:17:24Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:17:24Z",
+              "completed_at": "2026-11-14T08:17:33Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:17:33Z",
+              "completed_at": "2026-11-14T08:17:37Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:17:37Z",
+              "completed_at": "2026-11-14T08:17:45Z"
+            },
+            {
+              "name": "Lib tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:17:45Z",
+              "completed_at": "2026-11-14T08:21:19Z"
+            },
+            {
+              "name": "Synthetic Sheet PDF evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6,
+              "started_at": "2026-11-14T08:21:19Z",
+              "completed_at": "2026-11-14T08:21:19Z"
+            },
+            {
+              "name": "Synthetic Doc PDF evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:21:19Z",
+              "completed_at": "2026-11-14T08:21:19Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:21:19Z",
+              "completed_at": "2026-11-14T08:21:19Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:21:19Z",
+              "completed_at": "2026-11-14T08:21:19Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-14T08:21:19Z",
+              "completed_at": "2026-11-14T08:21:19Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217336,
+          "name": "Doc callback lifetimes (mobile)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217336",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:17:01Z",
+              "completed_at": "2026-11-14T08:17:01Z"
+            },
+            {
+              "name": "Require comparison applicability",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:17:01Z",
+              "completed_at": "2026-11-14T08:17:01Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:17:01Z",
+              "completed_at": "2026-11-14T08:17:14Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:17:14Z",
+              "completed_at": "2026-11-14T08:17:19Z"
+            },
+            {
+              "name": "Install candidate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:17:19Z",
+              "completed_at": "2026-11-14T08:17:30Z"
+            },
+            {
+              "name": "Prepare pinned callback trace converter",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:17:30Z",
+              "completed_at": "2026-11-14T08:17:30Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:17:30Z",
+              "completed_at": "2026-11-14T08:17:55Z"
+            },
+            {
+              "name": "Immutable merged SPN-108 baseline",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-14T08:17:55Z",
+              "completed_at": "2026-11-14T08:17:57Z"
+            },
+            {
+              "name": "Match callback workload and read-only observations",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:17:57Z",
+              "completed_at": "2026-11-14T08:17:57Z"
+            },
+            {
+              "name": "Install and build baseline with source maps",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:17:57Z",
+              "completed_at": "2026-11-14T08:18:10Z"
+            },
+            {
+              "name": "Retain baseline first attempt",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:18:10Z",
+              "completed_at": "2026-11-14T08:23:38Z"
+            },
+            {
+              "name": "Build candidate with identical source-map settings",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-14T08:23:38Z",
+              "completed_at": "2026-11-14T08:23:42Z"
+            },
+            {
+              "name": "Verify candidate first attempt",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:23:42Z",
+              "completed_at": "2026-11-14T08:27:20Z"
+            },
+            {
+              "name": "Verify complete paired callback evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:27:20Z",
+              "completed_at": "2026-11-14T08:27:37Z"
+            },
+            {
+              "name": "Retain raw traces, source maps and every first attempt",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-14T08:27:37Z",
+              "completed_at": "2026-11-14T08:27:45Z"
+            },
+            {
+              "name": "Post Immutable merged SPN-108 baseline",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-14T08:27:45Z",
+              "completed_at": "2026-11-14T08:27:45Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-14T08:27:45Z",
+              "completed_at": "2026-11-14T08:27:46Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 30,
+              "started_at": "2026-11-14T08:27:46Z",
+              "completed_at": "2026-11-14T08:27:46Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 31,
+              "started_at": "2026-11-14T08:27:46Z",
+              "completed_at": "2026-11-14T08:27:46Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217515,
+          "name": "Unit tests (supervisor)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217515",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:24:19Z",
+              "completed_at": "2026-11-14T08:24:20Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:24:20Z",
+              "completed_at": "2026-11-14T08:24:35Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:24:35Z",
+              "completed_at": "2026-11-14T08:24:40Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:24:40Z",
+              "completed_at": "2026-11-14T08:24:53Z"
+            },
+            {
+              "name": "Install fixture init",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:24:53Z",
+              "completed_at": "2026-11-14T08:25:09Z"
+            },
+            {
+              "name": "Unit tests",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:25:09Z",
+              "completed_at": "2026-11-14T08:32:06Z"
+            },
+            {
+              "name": "PDF collaboration overlap evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:32:06Z",
+              "completed_at": "2026-11-14T08:32:06Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:32:06Z",
+              "completed_at": "2026-11-14T08:32:06Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:32:06Z",
+              "completed_at": "2026-11-14T08:32:06Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-14T08:32:06Z",
+              "completed_at": "2026-11-14T08:32:06Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217552,
+          "name": "Playwright smoke (supervised-restore)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217552",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:24:40Z",
+              "completed_at": "2026-11-14T08:24:41Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:24:41Z",
+              "completed_at": "2026-11-14T08:24:45Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:24:45Z",
+              "completed_at": "2026-11-14T08:24:50Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:24:50Z",
+              "completed_at": "2026-11-14T08:25:01Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:25:01Z",
+              "completed_at": "2026-11-14T08:25:25Z"
+            },
+            {
+              "name": "Install maintenance fixture init",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:25:25Z",
+              "completed_at": "2026-11-14T08:25:28Z"
+            },
+            {
+              "name": "Immutable offline source for adoption evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:25:28Z",
+              "completed_at": "2026-11-14T08:25:28Z"
+            },
+            {
+              "name": "Install immutable offline build dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 8,
+              "started_at": "2026-11-14T08:25:28Z",
+              "completed_at": "2026-11-14T08:25:28Z"
+            },
+            {
+              "name": "Immutable last 1.1.0 offline host and backend",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 9,
+              "started_at": "2026-11-14T08:25:28Z",
+              "completed_at": "2026-11-14T08:25:28Z"
+            },
+            {
+              "name": "Install previous offline host dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 10,
+              "started_at": "2026-11-14T08:25:28Z",
+              "completed_at": "2026-11-14T08:25:28Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:25:28Z",
+              "completed_at": "2026-11-14T08:25:30Z"
+            },
+            {
+              "name": "Playwright smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-14T08:25:30Z",
+              "completed_at": "2026-11-14T08:31:31Z"
+            },
+            {
+              "name": "Artifact name",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:31:31Z",
+              "completed_at": "2026-11-14T08:31:31Z"
+            },
+            {
+              "name": "Theme screenshots",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:31:31Z",
+              "completed_at": "2026-11-14T08:31:32Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 27,
+              "started_at": "2026-11-14T08:31:32Z",
+              "completed_at": "2026-11-14T08:31:32Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-14T08:31:32Z",
+              "completed_at": "2026-11-14T08:31:32Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-14T08:31:32Z",
+              "completed_at": "2026-11-14T08:31:32Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217554,
+          "name": "Playwright smoke (development 1/2)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217554",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:23:29Z",
+              "completed_at": "2026-11-14T08:23:32Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:23:32Z",
+              "completed_at": "2026-11-14T08:23:41Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:23:41Z",
+              "completed_at": "2026-11-14T08:23:45Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:23:45Z",
+              "completed_at": "2026-11-14T08:23:52Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:23:52Z",
+              "completed_at": "2026-11-14T08:24:28Z"
+            },
+            {
+              "name": "Install maintenance fixture init",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6,
+              "started_at": "2026-11-14T08:24:28Z",
+              "completed_at": "2026-11-14T08:24:28Z"
+            },
+            {
+              "name": "Immutable offline source for adoption evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:24:28Z",
+              "completed_at": "2026-11-14T08:24:28Z"
+            },
+            {
+              "name": "Install immutable offline build dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 8,
+              "started_at": "2026-11-14T08:24:28Z",
+              "completed_at": "2026-11-14T08:24:28Z"
+            },
+            {
+              "name": "Immutable last 1.1.0 offline host and backend",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 9,
+              "started_at": "2026-11-14T08:24:28Z",
+              "completed_at": "2026-11-14T08:24:28Z"
+            },
+            {
+              "name": "Install previous offline host dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 10,
+              "started_at": "2026-11-14T08:24:28Z",
+              "completed_at": "2026-11-14T08:24:28Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:24:28Z",
+              "completed_at": "2026-11-14T08:24:30Z"
+            },
+            {
+              "name": "Playwright smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-14T08:24:30Z",
+              "completed_at": "2026-11-14T08:35:57Z"
+            },
+            {
+              "name": "Artifact name",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:35:57Z",
+              "completed_at": "2026-11-14T08:35:57Z"
+            },
+            {
+              "name": "Theme screenshots",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:35:57Z",
+              "completed_at": "2026-11-14T08:36:01Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 27,
+              "started_at": "2026-11-14T08:36:01Z",
+              "completed_at": "2026-11-14T08:36:01Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-14T08:36:01Z",
+              "completed_at": "2026-11-14T08:36:01Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-14T08:36:01Z",
+              "completed_at": "2026-11-14T08:36:01Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217560,
+          "name": "Playwright smoke (offline-upgrade)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217560",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:22:52Z",
+              "completed_at": "2026-11-14T08:22:53Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:22:53Z",
+              "completed_at": "2026-11-14T08:22:57Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:22:57Z",
+              "completed_at": "2026-11-14T08:23:01Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:23:01Z",
+              "completed_at": "2026-11-14T08:23:15Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:23:15Z",
+              "completed_at": "2026-11-14T08:23:42Z"
+            },
+            {
+              "name": "Install maintenance fixture init",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6,
+              "started_at": "2026-11-14T08:23:42Z",
+              "completed_at": "2026-11-14T08:23:42Z"
+            },
+            {
+              "name": "Immutable offline source for adoption evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:23:42Z",
+              "completed_at": "2026-11-14T08:23:43Z"
+            },
+            {
+              "name": "Install immutable offline build dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-14T08:23:43Z",
+              "completed_at": "2026-11-14T08:23:55Z"
+            },
+            {
+              "name": "Immutable last 1.1.0 offline host and backend",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:23:55Z",
+              "completed_at": "2026-11-14T08:23:59Z"
+            },
+            {
+              "name": "Install previous offline host dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:23:59Z",
+              "completed_at": "2026-11-14T08:24:10Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 11,
+              "started_at": "2026-11-14T08:24:10Z",
+              "completed_at": "2026-11-14T08:24:10Z"
+            },
+            {
+              "name": "Playwright smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-14T08:24:10Z",
+              "completed_at": "2026-11-14T08:24:59Z"
+            },
+            {
+              "name": "Artifact name",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:24:59Z",
+              "completed_at": "2026-11-14T08:24:59Z"
+            },
+            {
+              "name": "Theme screenshots",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:24:59Z",
+              "completed_at": "2026-11-14T08:25:01Z"
+            },
+            {
+              "name": "Post Immutable last 1.1.0 offline host and backend",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 25,
+              "started_at": "2026-11-14T08:25:01Z",
+              "completed_at": "2026-11-14T08:25:01Z"
+            },
+            {
+              "name": "Post Immutable offline source for adoption evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 26,
+              "started_at": "2026-11-14T08:25:01Z",
+              "completed_at": "2026-11-14T08:25:01Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 27,
+              "started_at": "2026-11-14T08:25:01Z",
+              "completed_at": "2026-11-14T08:25:01Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-14T08:25:01Z",
+              "completed_at": "2026-11-14T08:25:02Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-14T08:25:02Z",
+              "completed_at": "2026-11-14T08:25:02Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217587,
+          "name": "Playwright smoke (production 2/2)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217587",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:22:00Z",
+              "completed_at": "2026-11-14T08:22:01Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:22:01Z",
+              "completed_at": "2026-11-14T08:22:07Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:22:07Z",
+              "completed_at": "2026-11-14T08:22:11Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:22:11Z",
+              "completed_at": "2026-11-14T08:22:21Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:22:21Z",
+              "completed_at": "2026-11-14T08:23:01Z"
+            },
+            {
+              "name": "Install maintenance fixture init",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:23:01Z",
+              "completed_at": "2026-11-14T08:23:04Z"
+            },
+            {
+              "name": "Immutable offline source for adoption evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:23:04Z",
+              "completed_at": "2026-11-14T08:23:04Z"
+            },
+            {
+              "name": "Install immutable offline build dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 8,
+              "started_at": "2026-11-14T08:23:04Z",
+              "completed_at": "2026-11-14T08:23:04Z"
+            },
+            {
+              "name": "Immutable last 1.1.0 offline host and backend",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 9,
+              "started_at": "2026-11-14T08:23:04Z",
+              "completed_at": "2026-11-14T08:23:04Z"
+            },
+            {
+              "name": "Install previous offline host dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 10,
+              "started_at": "2026-11-14T08:23:04Z",
+              "completed_at": "2026-11-14T08:23:04Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:23:04Z",
+              "completed_at": "2026-11-14T08:23:06Z"
+            },
+            {
+              "name": "Playwright smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-14T08:23:06Z",
+              "completed_at": "2026-11-14T08:35:32Z"
+            },
+            {
+              "name": "Artifact name",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:35:32Z",
+              "completed_at": "2026-11-14T08:35:32Z"
+            },
+            {
+              "name": "Theme screenshots",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:35:32Z",
+              "completed_at": "2026-11-14T08:35:35Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 27,
+              "started_at": "2026-11-14T08:35:35Z",
+              "completed_at": "2026-11-14T08:35:36Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-14T08:35:36Z",
+              "completed_at": "2026-11-14T08:35:36Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-14T08:35:36Z",
+              "completed_at": "2026-11-14T08:35:36Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217610,
+          "name": "Playwright smoke (sync-production)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217610",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:24:11Z",
+              "completed_at": "2026-11-14T08:24:11Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:24:11Z",
+              "completed_at": "2026-11-14T08:24:15Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:24:15Z",
+              "completed_at": "2026-11-14T08:24:21Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:24:21Z",
+              "completed_at": "2026-11-14T08:24:28Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:24:28Z",
+              "completed_at": "2026-11-14T08:24:46Z"
+            },
+            {
+              "name": "Install maintenance fixture init",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6,
+              "started_at": "2026-11-14T08:24:46Z",
+              "completed_at": "2026-11-14T08:24:46Z"
+            },
+            {
+              "name": "Immutable offline source for adoption evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:24:46Z",
+              "completed_at": "2026-11-14T08:24:46Z"
+            },
+            {
+              "name": "Install immutable offline build dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 8,
+              "started_at": "2026-11-14T08:24:46Z",
+              "completed_at": "2026-11-14T08:24:46Z"
+            },
+            {
+              "name": "Immutable last 1.1.0 offline host and backend",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 9,
+              "started_at": "2026-11-14T08:24:46Z",
+              "completed_at": "2026-11-14T08:24:46Z"
+            },
+            {
+              "name": "Install previous offline host dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 10,
+              "started_at": "2026-11-14T08:24:46Z",
+              "completed_at": "2026-11-14T08:24:46Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:24:46Z",
+              "completed_at": "2026-11-14T08:24:48Z"
+            },
+            {
+              "name": "Playwright smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-14T08:24:48Z",
+              "completed_at": "2026-11-14T08:34:16Z"
+            },
+            {
+              "name": "Artifact name",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:34:16Z",
+              "completed_at": "2026-11-14T08:34:16Z"
+            },
+            {
+              "name": "Theme screenshots",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:34:16Z",
+              "completed_at": "2026-11-14T08:34:17Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 27,
+              "started_at": "2026-11-14T08:34:17Z",
+              "completed_at": "2026-11-14T08:34:17Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-14T08:34:17Z",
+              "completed_at": "2026-11-14T08:34:18Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-14T08:34:18Z",
+              "completed_at": "2026-11-14T08:34:18Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217643,
+          "name": "Playwright smoke (mobile-https)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217643",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:25:08Z",
+              "completed_at": "2026-11-14T08:25:09Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:25:09Z",
+              "completed_at": "2026-11-14T08:25:13Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:25:13Z",
+              "completed_at": "2026-11-14T08:25:17Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:25:17Z",
+              "completed_at": "2026-11-14T08:25:31Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:25:31Z",
+              "completed_at": "2026-11-14T08:25:53Z"
+            },
+            {
+              "name": "Install maintenance fixture init",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6,
+              "started_at": "2026-11-14T08:25:53Z",
+              "completed_at": "2026-11-14T08:25:53Z"
+            },
+            {
+              "name": "Immutable offline source for adoption evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:25:53Z",
+              "completed_at": "2026-11-14T08:25:53Z"
+            },
+            {
+              "name": "Install immutable offline build dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 8,
+              "started_at": "2026-11-14T08:25:53Z",
+              "completed_at": "2026-11-14T08:25:53Z"
+            },
+            {
+              "name": "Immutable last 1.1.0 offline host and backend",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 9,
+              "started_at": "2026-11-14T08:25:53Z",
+              "completed_at": "2026-11-14T08:25:53Z"
+            },
+            {
+              "name": "Install previous offline host dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 10,
+              "started_at": "2026-11-14T08:25:53Z",
+              "completed_at": "2026-11-14T08:25:53Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:25:53Z",
+              "completed_at": "2026-11-14T08:25:55Z"
+            },
+            {
+              "name": "Playwright smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-14T08:25:55Z",
+              "completed_at": "2026-11-14T08:26:57Z"
+            },
+            {
+              "name": "Artifact name",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:26:57Z",
+              "completed_at": "2026-11-14T08:26:58Z"
+            },
+            {
+              "name": "Theme screenshots",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:26:58Z",
+              "completed_at": "2026-11-14T08:26:59Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 27,
+              "started_at": "2026-11-14T08:26:59Z",
+              "completed_at": "2026-11-14T08:26:59Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-14T08:26:59Z",
+              "completed_at": "2026-11-14T08:26:59Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-14T08:26:59Z",
+              "completed_at": "2026-11-14T08:26:59Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217676,
+          "name": "Playwright smoke (sync-development)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217676",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:26:42Z",
+              "completed_at": "2026-11-14T08:26:43Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:26:43Z",
+              "completed_at": "2026-11-14T08:26:48Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:26:48Z",
+              "completed_at": "2026-11-14T08:26:54Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:26:54Z",
+              "completed_at": "2026-11-14T08:27:04Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:27:04Z",
+              "completed_at": "2026-11-14T08:27:30Z"
+            },
+            {
+              "name": "Install maintenance fixture init",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6,
+              "started_at": "2026-11-14T08:27:30Z",
+              "completed_at": "2026-11-14T08:27:30Z"
+            },
+            {
+              "name": "Immutable offline source for adoption evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:27:30Z",
+              "completed_at": "2026-11-14T08:27:30Z"
+            },
+            {
+              "name": "Install immutable offline build dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 8,
+              "started_at": "2026-11-14T08:27:30Z",
+              "completed_at": "2026-11-14T08:27:30Z"
+            },
+            {
+              "name": "Immutable last 1.1.0 offline host and backend",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 9,
+              "started_at": "2026-11-14T08:27:30Z",
+              "completed_at": "2026-11-14T08:27:30Z"
+            },
+            {
+              "name": "Install previous offline host dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 10,
+              "started_at": "2026-11-14T08:27:30Z",
+              "completed_at": "2026-11-14T08:27:30Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:27:30Z",
+              "completed_at": "2026-11-14T08:27:32Z"
+            },
+            {
+              "name": "Playwright smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-14T08:27:32Z",
+              "completed_at": "2026-11-14T08:30:39Z"
+            },
+            {
+              "name": "Artifact name",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:30:39Z",
+              "completed_at": "2026-11-14T08:30:39Z"
+            },
+            {
+              "name": "Theme screenshots",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:30:39Z",
+              "completed_at": "2026-11-14T08:30:41Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 27,
+              "started_at": "2026-11-14T08:30:41Z",
+              "completed_at": "2026-11-14T08:30:41Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-14T08:30:41Z",
+              "completed_at": "2026-11-14T08:30:41Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-14T08:30:41Z",
+              "completed_at": "2026-11-14T08:30:41Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217681,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217681",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:25:27Z",
+              "completed_at": "2026-11-14T08:25:28Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:25:28Z",
+              "completed_at": "2026-11-14T08:25:33Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:25:33Z",
+              "completed_at": "2026-11-14T08:25:38Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:25:38Z",
+              "completed_at": "2026-11-14T08:25:48Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:25:48Z",
+              "completed_at": "2026-11-14T08:26:12Z"
+            },
+            {
+              "name": "Install maintenance fixture init",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6,
+              "started_at": "2026-11-14T08:26:12Z",
+              "completed_at": "2026-11-14T08:26:12Z"
+            },
+            {
+              "name": "Immutable offline source for adoption evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:26:12Z",
+              "completed_at": "2026-11-14T08:26:12Z"
+            },
+            {
+              "name": "Install immutable offline build dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 8,
+              "started_at": "2026-11-14T08:26:12Z",
+              "completed_at": "2026-11-14T08:26:12Z"
+            },
+            {
+              "name": "Immutable last 1.1.0 offline host and backend",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 9,
+              "started_at": "2026-11-14T08:26:12Z",
+              "completed_at": "2026-11-14T08:26:12Z"
+            },
+            {
+              "name": "Install previous offline host dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 10,
+              "started_at": "2026-11-14T08:26:12Z",
+              "completed_at": "2026-11-14T08:26:12Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:26:12Z",
+              "completed_at": "2026-11-14T08:26:14Z"
+            },
+            {
+              "name": "Playwright smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-14T08:26:14Z",
+              "completed_at": "2026-11-14T08:26:52Z"
+            },
+            {
+              "name": "Artifact name",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:26:52Z",
+              "completed_at": "2026-11-14T08:26:52Z"
+            },
+            {
+              "name": "Theme screenshots",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:26:52Z",
+              "completed_at": "2026-11-14T08:26:53Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 27,
+              "started_at": "2026-11-14T08:26:53Z",
+              "completed_at": "2026-11-14T08:26:53Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-14T08:26:53Z",
+              "completed_at": "2026-11-14T08:26:54Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-14T08:26:54Z",
+              "completed_at": "2026-11-14T08:26:54Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217683,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217683",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:25:18Z",
+              "completed_at": "2026-11-14T08:25:19Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:25:19Z",
+              "completed_at": "2026-11-14T08:25:23Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:25:23Z",
+              "completed_at": "2026-11-14T08:25:27Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:25:27Z",
+              "completed_at": "2026-11-14T08:25:41Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:25:41Z",
+              "completed_at": "2026-11-14T08:26:00Z"
+            },
+            {
+              "name": "Install maintenance fixture init",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6,
+              "started_at": "2026-11-14T08:26:00Z",
+              "completed_at": "2026-11-14T08:26:00Z"
+            },
+            {
+              "name": "Immutable offline source for adoption evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:26:00Z",
+              "completed_at": "2026-11-14T08:26:00Z"
+            },
+            {
+              "name": "Install immutable offline build dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 8,
+              "started_at": "2026-11-14T08:26:00Z",
+              "completed_at": "2026-11-14T08:26:00Z"
+            },
+            {
+              "name": "Immutable last 1.1.0 offline host and backend",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 9,
+              "started_at": "2026-11-14T08:26:00Z",
+              "completed_at": "2026-11-14T08:26:00Z"
+            },
+            {
+              "name": "Install previous offline host dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 10,
+              "started_at": "2026-11-14T08:26:00Z",
+              "completed_at": "2026-11-14T08:26:00Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:26:00Z",
+              "completed_at": "2026-11-14T08:26:02Z"
+            },
+            {
+              "name": "Playwright smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-14T08:26:02Z",
+              "completed_at": "2026-11-14T08:27:27Z"
+            },
+            {
+              "name": "Artifact name",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:27:27Z",
+              "completed_at": "2026-11-14T08:27:27Z"
+            },
+            {
+              "name": "Theme screenshots",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:27:27Z",
+              "completed_at": "2026-11-14T08:27:28Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 27,
+              "started_at": "2026-11-14T08:27:28Z",
+              "completed_at": "2026-11-14T08:27:29Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-14T08:27:29Z",
+              "completed_at": "2026-11-14T08:27:29Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-14T08:27:29Z",
+              "completed_at": "2026-11-14T08:27:29Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217704,
+          "name": "Playwright smoke (development 2/2)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217704",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:25:25Z",
+              "completed_at": "2026-11-14T08:25:26Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:25:26Z",
+              "completed_at": "2026-11-14T08:25:30Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:25:30Z",
+              "completed_at": "2026-11-14T08:25:34Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:25:34Z",
+              "completed_at": "2026-11-14T08:25:48Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:25:48Z",
+              "completed_at": "2026-11-14T08:26:11Z"
+            },
+            {
+              "name": "Install maintenance fixture init",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6,
+              "started_at": "2026-11-14T08:26:11Z",
+              "completed_at": "2026-11-14T08:26:11Z"
+            },
+            {
+              "name": "Immutable offline source for adoption evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:26:11Z",
+              "completed_at": "2026-11-14T08:26:11Z"
+            },
+            {
+              "name": "Install immutable offline build dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 8,
+              "started_at": "2026-11-14T08:26:11Z",
+              "completed_at": "2026-11-14T08:26:11Z"
+            },
+            {
+              "name": "Immutable last 1.1.0 offline host and backend",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 9,
+              "started_at": "2026-11-14T08:26:11Z",
+              "completed_at": "2026-11-14T08:26:11Z"
+            },
+            {
+              "name": "Install previous offline host dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 10,
+              "started_at": "2026-11-14T08:26:11Z",
+              "completed_at": "2026-11-14T08:26:11Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:26:11Z",
+              "completed_at": "2026-11-14T08:26:13Z"
+            },
+            {
+              "name": "Playwright smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-14T08:26:13Z",
+              "completed_at": "2026-11-14T08:44:50Z"
+            },
+            {
+              "name": "Artifact name",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:44:50Z",
+              "completed_at": "2026-11-14T08:44:50Z"
+            },
+            {
+              "name": "Theme screenshots",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:44:50Z",
+              "completed_at": "2026-11-14T08:44:52Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 27,
+              "started_at": "2026-11-14T08:44:52Z",
+              "completed_at": "2026-11-14T08:44:52Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-14T08:44:52Z",
+              "completed_at": "2026-11-14T08:44:52Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-14T08:44:52Z",
+              "completed_at": "2026-11-14T08:44:52Z"
+            }
+          ]
+        },
+        {
+          "id": 132387217715,
+          "name": "Playwright smoke (production 1/2)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132387217715",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:26:43Z",
+              "completed_at": "2026-11-14T08:26:44Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:26:44Z",
+              "completed_at": "2026-11-14T08:26:49Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:26:49Z",
+              "completed_at": "2026-11-14T08:26:53Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:26:53Z",
+              "completed_at": "2026-11-14T08:27:03Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:27:03Z",
+              "completed_at": "2026-11-14T08:27:24Z"
+            },
+            {
+              "name": "Install maintenance fixture init",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:27:24Z",
+              "completed_at": "2026-11-14T08:27:26Z"
+            },
+            {
+              "name": "Immutable offline source for adoption evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:27:26Z",
+              "completed_at": "2026-11-14T08:27:26Z"
+            },
+            {
+              "name": "Install immutable offline build dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 8,
+              "started_at": "2026-11-14T08:27:26Z",
+              "completed_at": "2026-11-14T08:27:26Z"
+            },
+            {
+              "name": "Immutable last 1.1.0 offline host and backend",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 9,
+              "started_at": "2026-11-14T08:27:26Z",
+              "completed_at": "2026-11-14T08:27:26Z"
+            },
+            {
+              "name": "Install previous offline host dependencies",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 10,
+              "started_at": "2026-11-14T08:27:26Z",
+              "completed_at": "2026-11-14T08:27:26Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:27:26Z",
+              "completed_at": "2026-11-14T08:27:29Z"
+            },
+            {
+              "name": "Playwright smoke",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 12,
+              "started_at": "2026-11-14T08:27:29Z",
+              "completed_at": "2026-11-14T08:36:50Z"
+            },
+            {
+              "name": "Artifact name",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 13,
+              "started_at": "2026-11-14T08:36:50Z",
+              "completed_at": "2026-11-14T08:36:50Z"
+            },
+            {
+              "name": "Theme screenshots",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 14,
+              "started_at": "2026-11-14T08:36:50Z",
+              "completed_at": "2026-11-14T08:36:53Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 27,
+              "started_at": "2026-11-14T08:36:53Z",
+              "completed_at": "2026-11-14T08:36:53Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 28,
+              "started_at": "2026-11-14T08:36:53Z",
+              "completed_at": "2026-11-14T08:36:53Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 29,
+              "started_at": "2026-11-14T08:36:53Z",
+              "completed_at": "2026-11-14T08:36:53Z"
+            }
+          ]
+        },
+        {
+          "id": 132389469301,
+          "name": "Lib tests",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132389469301",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:27:17Z",
+              "completed_at": "2026-11-14T08:27:18Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:27:18Z",
+              "completed_at": "2026-11-14T08:27:22Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:27:22Z",
+              "completed_at": "2026-11-14T08:27:27Z"
+            },
+            {
+              "name": "Verify selected evidence and publish result",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:27:27Z",
+              "completed_at": "2026-11-14T08:27:27Z"
+            },
+            {
+              "name": "Retain coverage result",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:27:27Z",
+              "completed_at": "2026-11-14T08:27:28Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:27:28Z",
+              "completed_at": "2026-11-14T08:27:28Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:27:28Z",
+              "completed_at": "2026-11-14T08:27:29Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:27:29Z",
+              "completed_at": "2026-11-14T08:27:29Z"
+            }
+          ]
+        },
+        {
+          "id": 132391108745,
+          "name": "Unit tests",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132391108745",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:32:14Z",
+              "completed_at": "2026-11-14T08:32:14Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:32:14Z",
+              "completed_at": "2026-11-14T08:32:20Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:32:20Z",
+              "completed_at": "2026-11-14T08:32:24Z"
+            },
+            {
+              "name": "Verify selected evidence and publish result",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:32:24Z",
+              "completed_at": "2026-11-14T08:32:24Z"
+            },
+            {
+              "name": "Retain coverage result",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:32:24Z",
+              "completed_at": "2026-11-14T08:32:25Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:32:25Z",
+              "completed_at": "2026-11-14T08:32:25Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:32:25Z",
+              "completed_at": "2026-11-14T08:32:26Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:32:26Z",
+              "completed_at": "2026-11-14T08:32:26Z"
+            }
+          ]
+        },
+        {
+          "id": 132394146239,
+          "name": "Playwright smoke",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921187/job/132394146239",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:44:56Z",
+              "completed_at": "2026-11-14T08:44:58Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:44:58Z",
+              "completed_at": "2026-11-14T08:45:05Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:45:05Z",
+              "completed_at": "2026-11-14T08:45:09Z"
+            },
+            {
+              "name": "Verify selected evidence and publish result",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:45:09Z",
+              "completed_at": "2026-11-14T08:45:09Z"
+            },
+            {
+              "name": "Retain coverage result",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:45:09Z",
+              "completed_at": "2026-11-14T08:45:10Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:45:10Z",
+              "completed_at": "2026-11-14T08:45:10Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:45:10Z",
+              "completed_at": "2026-11-14T08:45:10Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:45:10Z",
+              "completed_at": "2026-11-14T08:45:10Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 43574921255,
+      "name": "📚 Storybook",
+      "attempt": 1,
+      "head": "88b24d96a65cdb92712c94674399a86b129c57b3",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 132386983170,
+          "name": "Classify changes",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921255/job/132386983170",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:15:21Z",
+              "completed_at": "2026-11-14T08:15:22Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:15:22Z",
+              "completed_at": "2026-11-14T08:15:59Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:15:59Z",
+              "completed_at": "2026-11-14T08:16:03Z"
+            },
+            {
+              "name": "Run if [ \"$GITHUB_EVENT_NAME\" = pull_request ]; then",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:16:03Z",
+              "completed_at": "2026-11-14T08:16:03Z"
+            },
+            {
+              "name": "Choose screenshot evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:16:03Z",
+              "completed_at": "2026-11-14T08:16:03Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:16:03Z",
+              "completed_at": "2026-11-14T08:16:04Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:16:04Z",
+              "completed_at": "2026-11-14T08:16:04Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-14T08:16:04Z",
+              "completed_at": "2026-11-14T08:16:04Z"
+            }
+          ]
+        },
+        {
+          "id": 132387194628,
+          "name": "Build Storybook",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921255/job/132387194628",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:16:10Z",
+              "completed_at": "2026-11-14T08:16:11Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:16:11Z",
+              "completed_at": "2026-11-14T08:16:15Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:16:15Z",
+              "completed_at": "2026-11-14T08:16:19Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:16:19Z",
+              "completed_at": "2026-11-14T08:16:32Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:16:32Z",
+              "completed_at": "2026-11-14T08:16:52Z"
+            },
+            {
+              "name": "Upload interactive review build",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:16:52Z",
+              "completed_at": "2026-11-14T08:16:54Z"
+            },
+            {
+              "name": "Upload for Pages",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:16:54Z",
+              "completed_at": "2026-11-14T08:16:54Z"
+            },
+            {
+              "name": "Documentation-only change",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 8,
+              "started_at": "2026-11-14T08:16:54Z",
+              "completed_at": "2026-11-14T08:16:54Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-14T08:16:54Z",
+              "completed_at": "2026-11-14T08:16:54Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16,
+              "started_at": "2026-11-14T08:16:54Z",
+              "completed_at": "2026-11-14T08:16:54Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17,
+              "started_at": "2026-11-14T08:16:54Z",
+              "completed_at": "2026-11-14T08:16:54Z"
+            }
+          ]
+        },
+        {
+          "id": 132387397908,
+          "name": "Review Storybook mobile (dark)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921255/job/132387397908",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:20:27Z",
+              "completed_at": "2026-11-14T08:20:28Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:20:28Z",
+              "completed_at": "2026-11-14T08:20:32Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:20:32Z",
+              "completed_at": "2026-11-14T08:20:37Z"
+            },
+            {
+              "name": "Run npm ci --no-audit",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:20:37Z",
+              "completed_at": "2026-11-14T08:20:44Z"
+            },
+            {
+              "name": "Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:20:44Z",
+              "completed_at": "2026-11-14T08:20:45Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:20:45Z",
+              "completed_at": "2026-11-14T08:21:04Z"
+            },
+            {
+              "name": "Review stories and verify shared controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:21:04Z",
+              "completed_at": "2026-11-14T08:27:28Z"
+            },
+            {
+              "name": "Upload review evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-14T08:27:28Z",
+              "completed_at": "2026-11-14T08:27:29Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-14T08:27:29Z",
+              "completed_at": "2026-11-14T08:27:29Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16,
+              "started_at": "2026-11-14T08:27:29Z",
+              "completed_at": "2026-11-14T08:27:30Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17,
+              "started_at": "2026-11-14T08:27:30Z",
+              "completed_at": "2026-11-14T08:27:30Z"
+            }
+          ]
+        },
+        {
+          "id": 132387397962,
+          "name": "Review Storybook mobile (light)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921255/job/132387397962",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:17:02Z",
+              "completed_at": "2026-11-14T08:17:03Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:17:03Z",
+              "completed_at": "2026-11-14T08:17:09Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:17:09Z",
+              "completed_at": "2026-11-14T08:17:14Z"
+            },
+            {
+              "name": "Run npm ci --no-audit",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:17:14Z",
+              "completed_at": "2026-11-14T08:17:24Z"
+            },
+            {
+              "name": "Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:17:24Z",
+              "completed_at": "2026-11-14T08:17:26Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:17:26Z",
+              "completed_at": "2026-11-14T08:18:03Z"
+            },
+            {
+              "name": "Review stories and verify shared controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:18:03Z",
+              "completed_at": "2026-11-14T08:25:17Z"
+            },
+            {
+              "name": "Upload review evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-14T08:25:17Z",
+              "completed_at": "2026-11-14T08:25:19Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-14T08:25:19Z",
+              "completed_at": "2026-11-14T08:25:19Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16,
+              "started_at": "2026-11-14T08:25:19Z",
+              "completed_at": "2026-11-14T08:25:19Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17,
+              "started_at": "2026-11-14T08:25:19Z",
+              "completed_at": "2026-11-14T08:25:19Z"
+            }
+          ]
+        },
+        {
+          "id": 132387397978,
+          "name": "Review Storybook desktop (light)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921255/job/132387397978",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:18:44Z",
+              "completed_at": "2026-11-14T08:18:45Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:18:45Z",
+              "completed_at": "2026-11-14T08:18:49Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:18:49Z",
+              "completed_at": "2026-11-14T08:18:53Z"
+            },
+            {
+              "name": "Run npm ci --no-audit",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:18:53Z",
+              "completed_at": "2026-11-14T08:19:05Z"
+            },
+            {
+              "name": "Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:19:05Z",
+              "completed_at": "2026-11-14T08:19:06Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:19:06Z",
+              "completed_at": "2026-11-14T08:19:31Z"
+            },
+            {
+              "name": "Check icon and integration stories",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:19:31Z",
+              "completed_at": "2026-11-14T08:19:43Z"
+            },
+            {
+              "name": "Upload icon evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-14T08:19:43Z",
+              "completed_at": "2026-11-14T08:19:45Z"
+            },
+            {
+              "name": "Review stories and verify shared controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:19:45Z",
+              "completed_at": "2026-11-14T08:27:36Z"
+            },
+            {
+              "name": "Upload review evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:27:36Z",
+              "completed_at": "2026-11-14T08:27:37Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19,
+              "started_at": "2026-11-14T08:27:37Z",
+              "completed_at": "2026-11-14T08:27:37Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 20,
+              "started_at": "2026-11-14T08:27:37Z",
+              "completed_at": "2026-11-14T08:27:38Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21,
+              "started_at": "2026-11-14T08:27:38Z",
+              "completed_at": "2026-11-14T08:27:38Z"
+            }
+          ]
+        },
+        {
+          "id": 132387397984,
+          "name": "Review Storybook desktop (dark)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921255/job/132387397984",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:20:04Z",
+              "completed_at": "2026-11-14T08:20:05Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:20:05Z",
+              "completed_at": "2026-11-14T08:20:10Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:20:10Z",
+              "completed_at": "2026-11-14T08:20:16Z"
+            },
+            {
+              "name": "Run npm ci --no-audit",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:20:16Z",
+              "completed_at": "2026-11-14T08:20:26Z"
+            },
+            {
+              "name": "Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:20:26Z",
+              "completed_at": "2026-11-14T08:20:28Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:20:28Z",
+              "completed_at": "2026-11-14T08:20:50Z"
+            },
+            {
+              "name": "Check icon and integration stories",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-14T08:20:50Z",
+              "completed_at": "2026-11-14T08:20:50Z"
+            },
+            {
+              "name": "Upload icon evidence",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 8,
+              "started_at": "2026-11-14T08:20:50Z",
+              "completed_at": "2026-11-14T08:20:50Z"
+            },
+            {
+              "name": "Review stories and verify shared controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:20:50Z",
+              "completed_at": "2026-11-14T08:27:51Z"
+            },
+            {
+              "name": "Upload review evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:27:51Z",
+              "completed_at": "2026-11-14T08:27:52Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19,
+              "started_at": "2026-11-14T08:27:52Z",
+              "completed_at": "2026-11-14T08:27:52Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 20,
+              "started_at": "2026-11-14T08:27:52Z",
+              "completed_at": "2026-11-14T08:27:52Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21,
+              "started_at": "2026-11-14T08:27:52Z",
+              "completed_at": "2026-11-14T08:27:52Z"
+            }
+          ]
+        },
+        {
+          "id": 132387398070,
+          "name": "Review Storybook tablet",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921255/job/132387398070",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:21:26Z",
+              "completed_at": "2026-11-14T08:21:26Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:21:26Z",
+              "completed_at": "2026-11-14T08:21:31Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:21:31Z",
+              "completed_at": "2026-11-14T08:21:35Z"
+            },
+            {
+              "name": "Run npm ci --no-audit",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:21:35Z",
+              "completed_at": "2026-11-14T08:21:48Z"
+            },
+            {
+              "name": "Run actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:21:48Z",
+              "completed_at": "2026-11-14T08:21:49Z"
+            },
+            {
+              "name": "Install Chromium",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:21:49Z",
+              "completed_at": "2026-11-14T08:22:15Z"
+            },
+            {
+              "name": "Review stories and verify shared controls",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:22:15Z",
+              "completed_at": "2026-11-14T08:29:38Z"
+            },
+            {
+              "name": "Upload review evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-14T08:29:38Z",
+              "completed_at": "2026-11-14T08:29:39Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 15,
+              "started_at": "2026-11-14T08:29:39Z",
+              "completed_at": "2026-11-14T08:29:39Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 16,
+              "started_at": "2026-11-14T08:29:39Z",
+              "completed_at": "2026-11-14T08:29:39Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 17,
+              "started_at": "2026-11-14T08:29:39Z",
+              "completed_at": "2026-11-14T08:29:40Z"
+            }
+          ]
+        },
+        {
+          "id": 132387398874,
+          "name": "Publish PR preview to GitHub Pages",
+          "conclusion": "skipped",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921255/job/132387398874",
+          "steps": []
+        },
+        {
+          "id": 132390509908,
+          "name": "Review Storybook states and interactions",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921255/job/132390509908",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:29:45Z",
+              "completed_at": "2026-11-14T08:29:45Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:29:45Z",
+              "completed_at": "2026-11-14T08:29:50Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:29:50Z",
+              "completed_at": "2026-11-14T08:29:54Z"
+            },
+            {
+              "name": "Require every viewport review",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:29:54Z",
+              "completed_at": "2026-11-14T08:29:54Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:29:55Z",
+              "completed_at": "2026-11-14T08:29:55Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-14T08:29:55Z",
+              "completed_at": "2026-11-14T08:29:55Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:29:55Z",
+              "completed_at": "2026-11-14T08:29:55Z"
+            }
+          ]
+        },
+        {
+          "id": 132390575253,
+          "name": "Deploy to GitHub Pages",
+          "conclusion": "skipped",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921255/job/132390575253",
+          "steps": []
+        }
+      ]
+    },
+    {
+      "id": 43574921249,
+      "name": "💻 Desktop offline",
+      "attempt": 1,
+      "head": "88b24d96a65cdb92712c94674399a86b129c57b3",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 132386982861,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921249/job/132386982861",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:15:20Z",
+              "completed_at": "2026-11-14T08:15:22Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:15:22Z",
+              "completed_at": "2026-11-14T08:15:39Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:15:39Z",
+              "completed_at": "2026-11-14T08:15:47Z"
+            },
+            {
+              "name": "Use current vendor stable browsers",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:15:47Z",
+              "completed_at": "2026-11-14T08:16:57Z"
+            },
+            {
+              "name": "Prove same-profile ordinary Safari restart",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 5,
+              "started_at": "2026-11-14T08:16:57Z",
+              "completed_at": "2026-11-14T08:16:57Z"
+            },
+            {
+              "name": "Install locked application dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:16:57Z",
+              "completed_at": "2026-11-14T08:17:11Z"
+            },
+            {
+              "name": "Build the production offline runtime",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:17:11Z",
+              "completed_at": "2026-11-14T08:17:14Z"
+            },
+            {
+              "name": "Trust the disposable loopback fixture certificate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-14T08:17:14Z",
+              "completed_at": "2026-11-14T08:17:14Z"
+            },
+            {
+              "name": "Verify retained documents, edits, images and reconnect",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:17:14Z",
+              "completed_at": "2026-11-14T08:18:33Z"
+            },
+            {
+              "name": "Retain native profile and application evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:18:33Z",
+              "completed_at": "2026-11-14T08:18:34Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19,
+              "started_at": "2026-11-14T08:18:34Z",
+              "completed_at": "2026-11-14T08:18:35Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 20,
+              "started_at": "2026-11-14T08:18:35Z",
+              "completed_at": "2026-11-14T08:18:35Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21,
+              "started_at": "2026-11-14T08:18:35Z",
+              "completed_at": "2026-11-14T08:18:38Z"
+            }
+          ]
+        },
+        {
+          "id": 132386983054,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921249/job/132386983054",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:15:22Z",
+              "completed_at": "2026-11-14T08:15:23Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:15:23Z",
+              "completed_at": "2026-11-14T08:15:32Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:15:32Z",
+              "completed_at": "2026-11-14T08:15:40Z"
+            },
+            {
+              "name": "Use current vendor stable browsers",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:15:40Z",
+              "completed_at": "2026-11-14T08:16:39Z"
+            },
+            {
+              "name": "Prove same-profile ordinary Safari restart",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 5,
+              "started_at": "2026-11-14T08:16:39Z",
+              "completed_at": "2026-11-14T08:16:39Z"
+            },
+            {
+              "name": "Install locked application dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:16:39Z",
+              "completed_at": "2026-11-14T08:17:05Z"
+            },
+            {
+              "name": "Build the production offline runtime",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:17:05Z",
+              "completed_at": "2026-11-14T08:17:09Z"
+            },
+            {
+              "name": "Trust the disposable loopback fixture certificate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-14T08:17:09Z",
+              "completed_at": "2026-11-14T08:17:09Z"
+            },
+            {
+              "name": "Verify retained documents, edits, images and reconnect",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:17:09Z",
+              "completed_at": "2026-11-14T08:19:47Z"
+            },
+            {
+              "name": "Retain native profile and application evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:19:47Z",
+              "completed_at": "2026-11-14T08:19:50Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19,
+              "started_at": "2026-11-14T08:19:50Z",
+              "completed_at": "2026-11-14T08:19:51Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 20,
+              "started_at": "2026-11-14T08:19:51Z",
+              "completed_at": "2026-11-14T08:19:52Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21,
+              "started_at": "2026-11-14T08:19:52Z",
+              "completed_at": "2026-11-14T08:19:58Z"
+            }
+          ]
+        },
+        {
+          "id": 132386983102,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "conclusion": "success",
+          "url": "https://github.com/mxbaylee/spinel/actions/runs/43574921249/job/132386983102",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-14T08:15:22Z",
+              "completed_at": "2026-11-14T08:15:25Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-14T08:15:25Z",
+              "completed_at": "2026-11-14T08:15:34Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-14T08:15:34Z",
+              "completed_at": "2026-11-14T08:15:52Z"
+            },
+            {
+              "name": "Use current vendor stable browsers",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-14T08:15:52Z",
+              "completed_at": "2026-11-14T08:16:57Z"
+            },
+            {
+              "name": "Prove same-profile ordinary Safari restart",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-14T08:16:57Z",
+              "completed_at": "2026-11-14T08:17:26Z"
+            },
+            {
+              "name": "Install locked application dependencies",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 6,
+              "started_at": "2026-11-14T08:17:26Z",
+              "completed_at": "2026-11-14T08:18:10Z"
+            },
+            {
+              "name": "Build the production offline runtime",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-14T08:18:10Z",
+              "completed_at": "2026-11-14T08:18:17Z"
+            },
+            {
+              "name": "Trust the disposable loopback fixture certificate",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-14T08:18:17Z",
+              "completed_at": "2026-11-14T08:18:17Z"
+            },
+            {
+              "name": "Verify retained documents, edits, images and reconnect",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-14T08:18:17Z",
+              "completed_at": "2026-11-14T08:23:56Z"
+            },
+            {
+              "name": "Retain native profile and application evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-14T08:23:56Z",
+              "completed_at": "2026-11-14T08:24:00Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 19,
+              "started_at": "2026-11-14T08:24:00Z",
+              "completed_at": "2026-11-14T08:24:00Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 20,
+              "started_at": "2026-11-14T08:24:00Z",
+              "completed_at": "2026-11-14T08:24:02Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 21,
+              "started_at": "2026-11-14T08:24:02Z",
+              "completed_at": "2026-11-14T08:24:04Z"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "storyVariants": [
+    {
+      "name": "desktop-light",
+      "artifact": 14105743439,
+      "viewport": "desktop",
+      "theme": "light",
+      "variants": [
+        "light"
+      ],
+      "drawing": {
+        "id": "editor-sync-native--doc-drawing-capture",
+        "variant": "light"
+      },
+      "requested": 1041,
+      "checked": 1041,
+      "failures": [],
+      "captures": 0,
+      "receipt": "artifacts/storybook-check-desktop-light/manifest.json"
+    },
+    {
+      "name": "desktop-dark",
+      "artifact": 14105998629,
+      "viewport": "desktop",
+      "theme": "dark",
+      "variants": [
+        "dark"
+      ],
+      "drawing": {
+        "id": "editor-sync-native--doc-drawing-capture",
+        "variant": "dark"
+      },
+      "requested": 1041,
+      "checked": 1041,
+      "failures": [],
+      "captures": 0,
+      "receipt": "artifacts/storybook-check-desktop-dark/manifest.json"
+    },
+    {
+      "name": "mobile-light",
+      "artifact": 14105603776,
+      "viewport": "mobile",
+      "theme": "light",
+      "variants": [
+        "phone"
+      ],
+      "drawing": {
+        "id": "editor-sync-native--doc-drawing-capture",
+        "variant": "phone"
+      },
+      "requested": 1041,
+      "checked": 1041,
+      "failures": [],
+      "captures": 0,
+      "receipt": "artifacts/storybook-check-mobile-light/manifest.json"
+    },
+    {
+      "name": "mobile-dark",
+      "artifact": 14105653733,
+      "viewport": "mobile",
+      "theme": "dark",
+      "variants": [
+        "phone-dark"
+      ],
+      "drawing": {
+        "id": "editor-sync-native--doc-drawing-capture",
+        "variant": "phone-dark"
+      },
+      "requested": 1041,
+      "checked": 1041,
+      "failures": [],
+      "captures": 0,
+      "receipt": "artifacts/storybook-check-mobile-dark/manifest.json"
+    },
+    {
+      "name": "tablet",
+      "artifact": 14106193346,
+      "viewport": "tablet",
+      "theme": "all",
+      "variants": [
+        "tablet"
+      ],
+      "drawing": {
+        "id": "editor-sync-native--doc-drawing-capture",
+        "variant": "tablet"
+      },
+      "requested": 1041,
+      "checked": 1041,
+      "failures": [],
+      "captures": 0,
+      "receipt": "artifacts/storybook-check-tablet/manifest.json"
+    }
+  ],
+  "observerReceipt": "local-evidence/integrated/corrected-native.json",
+  "observerReceiptScope": "Original local source5108 event trace; hosted manifests certify story assertions passed, without exporting successful per-event trace."
+}

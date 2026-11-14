@@ -1,0 +1,17 @@
+{
+  "name": "spn159-review-a-unit-88b24d96",
+  "args": [
+    "node",
+    "node_modules/.bin/vitest",
+    "run",
+    "src/ui/nativeDrawingResize.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn159-review-a-cache-88b24d96"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 497,
+  "peakKiB": 276624
+}

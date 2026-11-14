@@ -1,0 +1,332 @@
+[
+  {
+    "id": 14107385136,
+    "name": "ci-results-browser",
+    "size": 2992,
+    "digest": "sha256:222f18fe5c33f1a5e0f13cfeb960194543b21b9bd6e76feca2d89ff237cc4582",
+    "expiresAt": "2026-12-14T08:45:09Z",
+    "expired": false,
+    "originalZipPreserved": true,
+    "disposition": "Original ZIP retained and GitHub digest verified."
+  },
+  {
+    "id": 14107215858,
+    "name": "theme-screenshots-development-2",
+    "size": 16579571,
+    "digest": "sha256:e33071038231321ee20007f7f995a32b6f64b6df579a44a5c12a35e6e97cf2ec",
+    "expiresAt": "2026-11-21T08:44:50Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14106950490,
+    "name": "theme-screenshots-production-1",
+    "size": 35136825,
+    "digest": "sha256:a1ebecaf4148b411dfab7e0657e26b6fcd4f21e92c551c436303fe94d682592b",
+    "expiresAt": "2026-11-21T08:36:50Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14106700377,
+    "name": "theme-screenshots-development-1",
+    "size": 33520532,
+    "digest": "sha256:c8f710280a72998ea952ef5f5baa833b2a027486c727805eff27b6025c54bc41",
+    "expiresAt": "2026-11-21T08:35:57Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14106610835,
+    "name": "doc-responsiveness-mobile",
+    "size": 1678805,
+    "digest": "sha256:8f72626abe82b7788a8cf06046a3ae8e0909cbef79e39f003ac85aaa592f177e",
+    "expiresAt": "2026-11-21T08:37:54Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14106516121,
+    "name": "doc-responsiveness-desktop",
+    "size": 1589793,
+    "digest": "sha256:46ecbd694510cd9d8b95cc35c87e6e59ce3316914b642956353d02762ccd003c",
+    "expiresAt": "2026-11-21T08:36:10Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14106466536,
+    "name": "sized-restore-acceptance",
+    "size": 72193,
+    "digest": "sha256:fb502d53ad0ce28496ff69066451e6af0a2c31107226518aa9bae61e6e58ddf2",
+    "expiresAt": "2026-11-28T08:22:46Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14106402040,
+    "name": "sheet-pdf-evidence",
+    "size": 735475,
+    "digest": "sha256:ec5f52dd6b401c44fee6b76188e3a395458a9231a2f01e771a4c33933de82202",
+    "expiresAt": "2026-11-21T08:24:30Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14106397613,
+    "name": "ci-results-lib",
+    "size": 2413,
+    "digest": "sha256:51b960d08c7892f9a98d638540f2263facc9be7ac603db6bb1b13901172af6a6",
+    "expiresAt": "2026-12-14T08:27:27Z",
+    "expired": false,
+    "originalZipPreserved": true,
+    "disposition": "Original ZIP retained and GitHub digest verified."
+  },
+  {
+    "id": 14106338256,
+    "name": "theme-screenshots-supervised-restore",
+    "size": 274440,
+    "digest": "sha256:8f81cdf68de0845899247ab070206c7ef43406416ebf595603faca73f287ec60",
+    "expiresAt": "2026-11-21T08:31:31Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14106298217,
+    "name": "theme-screenshots-sync-development",
+    "size": 2064933,
+    "digest": "sha256:40afe2f65eebe64369b0202da0df5b9f77c8b5f253b7b953a5d306eb6a24cbd6",
+    "expiresAt": "2026-11-21T08:30:39Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14106288681,
+    "name": "ci-results-unit",
+    "size": 2353,
+    "digest": "sha256:3d2f7836875576c2792be77ba006d5486c883dbe466744612ac274084e9c027d",
+    "expiresAt": "2026-12-14T08:32:24Z",
+    "expired": false,
+    "originalZipPreserved": true,
+    "disposition": "Original ZIP retained and GitHub digest verified."
+  },
+  {
+    "id": 14105952176,
+    "name": "ci-plan",
+    "size": 1717,
+    "digest": "sha256:ece8af70e849e0ec5f6851d449ed573778d5197021601c87eb50b5743f43d533",
+    "expiresAt": "2026-12-14T08:16:08Z",
+    "expired": false,
+    "originalZipPreserved": true,
+    "disposition": "Original ZIP retained and GitHub digest verified."
+  },
+  {
+    "id": 14105943675,
+    "name": "pdf-collaboration-overlap",
+    "size": 179616,
+    "digest": "sha256:7a8f03897f706bcef86b46626352c5fc630d84800f468f3bbac7fc8ed5942993",
+    "expiresAt": "2026-11-21T08:25:20Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14105868675,
+    "name": "theme-screenshots-sync-production",
+    "size": 4847925,
+    "digest": "sha256:f925ea340aef5e09e8405a10e0da8441d043c36a981bcb2e26d17c5fe3058182",
+    "expiresAt": "2026-11-21T08:34:16Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14105819219,
+    "name": "doc-pdf-evidence",
+    "size": 8558394,
+    "digest": "sha256:ed121f9e0b78ab9a905e0ac7e878fdc6bf209612c4e88607f38653c8f74cedaa",
+    "expiresAt": "2026-11-21T08:24:32Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14105779312,
+    "name": "theme-screenshots-production-2",
+    "size": 18556366,
+    "digest": "sha256:636b7c5ffa55588c51b82391dc37758b3c8ae8173871eaf33fdbf6f8a9aed418",
+    "expiresAt": "2026-11-21T08:35:33Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14105748485,
+    "name": "doc-callback-lifetimes-mobile",
+    "size": 182036247,
+    "digest": "sha256:3475c1505c1f2c10262f18b9d07340c0d213316656d308cf52528bed31a6ab59",
+    "expiresAt": "2026-11-21T08:27:37Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14105633640,
+    "name": "theme-screenshots-offline-upgrade",
+    "size": 323827,
+    "digest": "sha256:d38b97f6e580b1bddff1c822ae508bace9ca7637f66efef9927f883d2efedebb",
+    "expiresAt": "2026-11-21T08:24:59Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14105618877,
+    "name": "theme-screenshots-mobile-https",
+    "size": 1450613,
+    "digest": "sha256:a1355d752d41937b9cd382654f790e80ca21f16f08df0bc00e269a796066b72e",
+    "expiresAt": "2026-11-21T08:26:58Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14105608943,
+    "name": "theme-screenshots-sync-soak-sheet",
+    "size": 369616,
+    "digest": "sha256:775984c9cea2ff313c55a5966de836794cc6e2698eacaa98edeb98e13079ad33",
+    "expiresAt": "2026-11-21T08:27:28Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14105509001,
+    "name": "doc-callback-lifetimes-desktop",
+    "size": 203271780,
+    "digest": "sha256:e0b69a23e6a1594050c444d7a03417f3f86c0ae57dd02f7e30533cd77e49cb1b",
+    "expiresAt": "2026-11-21T08:24:02Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14105444357,
+    "name": "theme-screenshots-sync-soak-doc",
+    "size": 383888,
+    "digest": "sha256:f996e4a2983620c0d64ebabef8e02577875dba149824ad2c51bcf3a19b72f336",
+    "expiresAt": "2026-11-21T08:26:52Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14106306705,
+    "name": "entity-icon-checks",
+    "size": 509,
+    "digest": "sha256:fc5ef96a6efdbaf7bcfe1273820aad678ade40ec9b9798247a62e135c3f90310",
+    "expiresAt": "2027-02-12T08:15:17Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14106193346,
+    "name": "storybook-check-tablet",
+    "size": 17167,
+    "digest": "sha256:997e062436b3cf5d5ae78f42204e21744a4605b37bd60798ca060767cd67964c",
+    "expiresAt": "2026-11-28T08:29:38Z",
+    "expired": false,
+    "originalZipPreserved": true,
+    "disposition": "Original ZIP retained and GitHub digest verified."
+  },
+  {
+    "id": 14105998629,
+    "name": "storybook-check-desktop-dark",
+    "size": 17170,
+    "digest": "sha256:f436fe7746514156a00bab05109154bf46de52c660b7e45f8f9aa639e295aa47",
+    "expiresAt": "2026-11-28T08:27:51Z",
+    "expired": false,
+    "originalZipPreserved": true,
+    "disposition": "Original ZIP retained and GitHub digest verified."
+  },
+  {
+    "id": 14105743439,
+    "name": "storybook-check-desktop-light",
+    "size": 17229,
+    "digest": "sha256:c2cd7837606af8c9f1434ad48dc405ebac4992f8aca9ad299d325254d84ae632",
+    "expiresAt": "2026-11-28T08:27:36Z",
+    "expired": false,
+    "originalZipPreserved": true,
+    "disposition": "Original ZIP retained and GitHub digest verified."
+  },
+  {
+    "id": 14105653733,
+    "name": "storybook-check-mobile-dark",
+    "size": 17232,
+    "digest": "sha256:b227019a0a65d6d6ec70c88c585fb39bbabf7bb21b285b822f15a9cb2fd505d7",
+    "expiresAt": "2026-11-28T08:27:28Z",
+    "expired": false,
+    "originalZipPreserved": true,
+    "disposition": "Original ZIP retained and GitHub digest verified."
+  },
+  {
+    "id": 14105603776,
+    "name": "storybook-check-mobile-light",
+    "size": 17148,
+    "digest": "sha256:31f25b0ee48578c817b90d9ab4c04b4d90cf71cbfe096dab02cc9c4c6d44b73b",
+    "expiresAt": "2026-11-28T08:25:17Z",
+    "expired": false,
+    "originalZipPreserved": true,
+    "disposition": "Original ZIP retained and GitHub digest verified."
+  },
+  {
+    "id": 14105583034,
+    "name": "storybook-review",
+    "size": 6242570,
+    "digest": "sha256:2dd98873d149c86f80cec3babb8c1ca22d0efbb7d8b640d4b9a7f9006e0e7ac2",
+    "expiresAt": "2026-11-21T08:16:52Z",
+    "expired": false,
+    "originalZipPreserved": false,
+    "disposition": "Not copied: broader-suite raw artifact remains expiring supplementary evidence; full workflow logs and immutable plan/aggregate results retained."
+  },
+  {
+    "id": 14106151612,
+    "name": "desktop-offline-chrome-macos-26-43574921249-1",
+    "size": 221342,
+    "digest": "sha256:fa843d1523ded80f6de9af84b93e6aee57ef80d9dc2b73a45102e25f07570cdb",
+    "expiresAt": "2026-11-28T08:18:34Z",
+    "expired": false,
+    "originalZipPreserved": true,
+    "disposition": "Original ZIP retained and GitHub digest verified."
+  },
+  {
+    "id": 14106146989,
+    "name": "desktop-offline-firefox-macos-26-43574921249-1",
+    "size": 455823,
+    "digest": "sha256:396fc2aad3876de0872e12a309221ad615dc1e4808e6c87b4b13dde8c3642a4b",
+    "expiresAt": "2026-11-28T08:19:49Z",
+    "expired": false,
+    "originalZipPreserved": true,
+    "disposition": "Original ZIP retained and GitHub digest verified."
+  },
+  {
+    "id": 14105384197,
+    "name": "desktop-offline-safari-macos-15-intel-43574921249-1",
+    "size": 1024098,
+    "digest": "sha256:4f5fcc74919f4563055490eba54f567aaab6ebdf475ce2493427f3d28a7f1391",
+    "expiresAt": "2026-11-28T08:23:57Z",
+    "expired": false,
+    "originalZipPreserved": true,
+    "disposition": "Original ZIP retained and GitHub digest verified."
+  }
+]

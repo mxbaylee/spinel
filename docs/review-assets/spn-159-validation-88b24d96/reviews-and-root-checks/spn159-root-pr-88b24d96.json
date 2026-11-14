@@ -1,0 +1,17 @@
+{
+  "name": "spn159-root-pr-88b24d96",
+  "args": [
+    "node",
+    "scripts/backlog/cli.ts",
+    "pr",
+    "--base",
+    "754e65317744e5ce97ede501935c6586e4875f2a",
+    "--title",
+    "📐 SPN-159 Observe completed native drawing resizes"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 461,
+  "peakKiB": 186832
+}

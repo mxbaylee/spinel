@@ -1,0 +1,323 @@
+{
+  "source": "f0cb3d401b82762428f668557f9b44f7bdf341d3",
+  "node": "v26.13.0",
+  "chromium": "156.0.8078.4",
+  "viewport": {
+    "width": 1280,
+    "height": 900
+  },
+  "withheld": "narrow",
+  "result": {
+    "probe": {
+      "withheld": "narrow",
+      "clicks": [
+        {
+          "phase": "narrow",
+          "observation": {
+            "raw": [
+              "doc.mutation.rich-text-editing"
+            ],
+            "failures": [],
+            "resized": 1,
+            "controlsCreated": 2,
+            "geometry": {
+              "phase": "selection",
+              "hostWidth": 1280,
+              "canvasWidth": 1280,
+              "engineWidth": 1280,
+              "engineHeight": 618,
+              "resized": 1,
+              "controlsCreated": 2
+            },
+            "transitions": [
+              {
+                "event": "resize",
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 0
+              },
+              {
+                "event": "controls",
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 1
+              },
+              {
+                "event": "controls",
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 2
+              }
+            ],
+            "pending": 1,
+            "pendingIds": [
+              "doc.mutation.rich-text-editing"
+            ],
+            "drawings": 1,
+            "rendered": 1,
+            "focused": 1,
+            "controls": 1,
+            "imageBounds": {
+              "left": 226.66666666666669,
+              "right": 386.6666666666667,
+              "top": 369.8541666666667,
+              "bottom": 449.8541666666667
+            },
+            "textBounds": {
+              "left": 400.5177714029948,
+              "right": 408.67095438639325,
+              "top": 366.8541666666667,
+              "bottom": 449.8541666666667
+            }
+          },
+          "host": {
+            "x": 0,
+            "y": 204.1875,
+            "width": 1280,
+            "height": 695.8125,
+            "top": 204.1875,
+            "right": 1280,
+            "bottom": 900,
+            "left": 0
+          }
+        },
+        {
+          "phase": "restore",
+          "observation": {
+            "raw": [
+              "doc.mutation.rich-text-editing"
+            ],
+            "failures": [],
+            "resized": 2,
+            "controlsCreated": 3,
+            "geometry": {
+              "phase": "selection",
+              "hostWidth": 1280,
+              "canvasWidth": 1280,
+              "engineWidth": 1280,
+              "engineHeight": 570,
+              "resized": 2,
+              "controlsCreated": 3
+            },
+            "transitions": [
+              {
+                "event": "resize",
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 0
+              },
+              {
+                "event": "controls",
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 1
+              },
+              {
+                "event": "controls",
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 618,
+                "resized": 1,
+                "controlsCreated": 2
+              },
+              {
+                "event": "resize",
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 570,
+                "resized": 2,
+                "controlsCreated": 2
+              },
+              {
+                "event": "controls",
+                "phase": "selection",
+                "hostWidth": 1280,
+                "canvasWidth": 1280,
+                "engineWidth": 1280,
+                "engineHeight": 570,
+                "resized": 2,
+                "controlsCreated": 3
+              }
+            ],
+            "pending": 1,
+            "pendingIds": [
+              "doc.mutation.rich-text-editing"
+            ],
+            "drawings": 1,
+            "rendered": 1,
+            "focused": 1,
+            "controls": 1,
+            "imageBounds": {
+              "left": 226.66666666666669,
+              "right": 386.6666666666667,
+              "top": 369.8541666666667,
+              "bottom": 449.8541666666667
+            },
+            "textBounds": {
+              "left": 400.5177714029948,
+              "right": 408.67095438639325,
+              "top": 366.8541666666667,
+              "bottom": 449.8541666666667
+            }
+          },
+          "host": {
+            "x": 0,
+            "y": 204.1875,
+            "width": 1280,
+            "height": 687.8125,
+            "top": 204.1875,
+            "right": 1280,
+            "bottom": 892,
+            "left": 0
+          }
+        }
+      ]
+    },
+    "observation": {
+      "raw": [
+        "doc.mutation.rich-text-editing"
+      ],
+      "failures": [],
+      "resized": 2,
+      "controlsCreated": 3,
+      "geometry": {
+        "phase": "restore",
+        "hostWidth": 1280,
+        "canvasWidth": 1280,
+        "engineWidth": 1280,
+        "engineHeight": 570,
+        "resized": 2,
+        "controlsCreated": 3
+      },
+      "transitions": [
+        {
+          "event": "resize",
+          "phase": "selection",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 618,
+          "resized": 1,
+          "controlsCreated": 0
+        },
+        {
+          "event": "controls",
+          "phase": "selection",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 618,
+          "resized": 1,
+          "controlsCreated": 1
+        },
+        {
+          "event": "controls",
+          "phase": "selection",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 618,
+          "resized": 1,
+          "controlsCreated": 2
+        },
+        {
+          "event": "resize",
+          "phase": "selection",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 570,
+          "resized": 2,
+          "controlsCreated": 2
+        },
+        {
+          "event": "controls",
+          "phase": "selection",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 570,
+          "resized": 2,
+          "controlsCreated": 3
+        },
+        {
+          "event": "requested",
+          "phase": "restore",
+          "hostWidth": 1280,
+          "canvasWidth": 1280,
+          "engineWidth": 1280,
+          "engineHeight": 570,
+          "resized": 2,
+          "controlsCreated": 3
+        }
+      ],
+      "pending": 1,
+      "pendingIds": [
+        "doc.mutation.rich-text-editing"
+      ],
+      "drawings": 1,
+      "rendered": 1,
+      "focused": 1,
+      "controls": 1,
+      "imageBounds": {
+        "left": 226.66666666666669,
+        "right": 386.6666666666667,
+        "top": 369.8541666666667,
+        "bottom": 449.8541666666667
+      },
+      "textBounds": {
+        "left": 400.5177714029948,
+        "right": 408.67095438639325,
+        "top": 366.8541666666667,
+        "bottom": 449.8541666666667
+      }
+    },
+    "finished": [
+      {
+        "storyId": "editor-sync-native--doc-drawing-capture",
+        "status": "success",
+        "reporters": []
+      }
+    ],
+    "playErrors": [
+      {
+        "event": "playFunctionThrewException",
+        "errors": [
+          {
+            "name": "AssertionError",
+            "message": "expected 2 to be greater than 2\n\nIgnored nodes: comments, script, style\n<html\n  data-theme=\"light\"\n  lang=\"en\"\n  style=\"color-scheme: light; --entity-doc-0: #254c8b; --entity-doc-1: #3267bc; --entity-doc-2: #5287dc; --entity-doc-3: #82acf0; --entity-doc-4: #b5d1fc; --entity-sheet-0: #185c43; --entity-sheet-1: #247c56; --entity-sheet-2: #3b9f70; --entity-sheet-3: #72c59a; --entity-sheet-4: #ade3c4; --entity-space-0: #56318a; --entity-space-1: #7849ae; --entity-space-2: #9b70cf; --entity-space-3: #bd9be6; --entity-space-4: #dcc7f6; --entity-mark: #ffffff; --sp-bg: #fff5f2; --sp-panel: #ffffff; --sp-rail: #c42c58; --sp-rail-ink: #ffe4ec; --sp-accent: #c42c58; --sp-on-accent: #ffffff; --sp-accent-2: #c24a35; --sp-text: #4a1e33; --sp-muted: #7e4d61; --sp-border: #f0c2cf; --sp-header: #ffeaf0; --sp-tint-1: #ffdde6; --sp-tint-2: #ffe6dc; --sp-select: rgba(196, 44, 88, 0.1); --fill-primary-soft-bg: #ffdde6; --fill-primary-soft-fg: #8a1d3f; --fill-primary-strong-bg: #c42c58; --fill-primary-strong-fg: #ffffff; --fill-secondary-soft-bg: #ffe3da; --fill-secondary-soft-fg: #8a3020; --fill-secondary-strong-bg: #c24a35; --fill-secondary-strong-fg: #ffffff; --fill-success-soft-bg: #ddf3e8; --fill-success-soft-fg: #1b5e42; --fill-success-strong-bg: #23825a; --fill-success-strong-fg: #ffffff; --fill-warning-soft-bg: #fff0d2; --fill-warning-soft-fg: #7a4e05; --fill-warning-strong-bg: #f2a93b; --fill-warning-strong-fg: #3a2500; --fill-error-soft-bg: #fddcd8; --fill-error-soft-fg: #8a1f18; --fill-error-strong-bg: #c3352c; --fill-error-strong-fg: #ffffff; --fill-info-soft-bg: #e0e9fb; --fill-info-soft-fg: #22427f; --fill-info-strong-bg: #3f6cc9; --fill-info-strong-fg: #ffffff; --fill-neutral-soft-bg: #f1e8ec; --fill-neutral-soft-fg: #4a3640; --fill-neutral-strong-bg: #6e5864; --fill-neutral-strong-fg: #ffffff; --fill-highlight-soft-bg: #fff6b8; --fill-highlight-soft-fg: #5a4a00; --fill-highlight-strong-bg: #f2d433; --fill-highlight-strong-fg: #3a3000; --gem-1: #a8124a; --gem-2: #d4245d; --gem-3: #f0457c; --gem-4: #ff7aa3; --gem-5: #ffaec6; --gem-6: #ffe1ea; --gem-edge: #5e0b29;\"\n>\n  <head>\n    \n    \n    <meta\n      charset=\"utf-8\"\n    />\n    \n    \n    <title>\n      editor-sync-native--doc-drawing-capture\n    </title>\n    \n    \n    <meta\n      content=\"width=device-width, initial-scale=1\"\n      name=\"viewport\"\n    />\n    \n\n    \n    \n\n    \n    \n    \n    <base\n      target=\"_parent\"\n    />\n    \n\n\n    \n\n\n    \n\n    <link\n      href=\"data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Ctitle%3ESpinel%3C%2Ftitle%3E%3Cstyle%3E.gem%7Btransform%3Amatrix(1%2C0%2C0%2C1%2C0%2C0)%7D.edge%7Bstroke%3A%235e0b29%7D.facet-1%7Bfill%3A%23a8124a%3Bstroke%3A%23a8124a%7D.facet-2%7Bfill%3A%23d4245d%3Bstroke%3A%23d4245d%7D.facet-3%7Bfill%3A%23f0457c%3Bstroke%3A%23f0457c%7D.facet-4%7Bfill%3A%23ff7aa3%3Bstroke%3A%23ff7aa3%7D.facet-5%7Bfill%3A%23ffaec6%3Bstroke%3A%23ffaec6%7D.facet-6%7Bfill%3A%23ffe1ea%3Bstroke%3A%23ffe1ea%7D%40media%20(prefers-color-scheme%3Adark)%7B.gem%7Btransform%3Amatrix(-1%2C0%2C0%2C-1%2C100%2C100)%7D.edge%7Bstroke%3A%234d0026%7D.facet-1%7Bfill%3A%238a0040%3Bstroke%3A%238a0040%7D.facet-2%7Bfill%3A%23c2005e%3Bstroke%3A%23c2005e%7D.facet-3%7Bfill%3A%23ff1a85%3Bstroke%3A%23ff1a85%7D.facet-4%7Bfill%3A%23ff6ab4%3Bstroke%3A%23ff6ab4%7D.facet-5%7Bfill%3A%23ffa6d6%3Bstroke%3A%23ffa6d6%7D.facet-6%7Bfill%3A%23ffd9f2%3Bstroke%3A%23ffd9f2%7D%7D%3C%2Fstyle%3E%3Cdefs%3E%3CclipPath%20id%3D%22heart%22%3E%3Cpath%20d%3D%22M50%2027C44%2013%2031%206%2020%209%208%2012%202%2024%204%2037%207%2056%2029%2076%2050%2094%2071%2076%2093%2056%2096%2037%2098%2024%2092%2012%2080%209%2069%206%2056%2013%2050%2027Z%22%2F%3E%3C%2FclipPath%3E%3C%2Fdefs%3E%3Cg%20class%3D%22gem%22%3E%3Cg%20clip-path%3D%22url(%23heart)%22%20stroke-width%3D%22.6%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20class%3D%22facet-3%22%20d%3D%22M20%20-10L50%20-10L50%2022L34%2012Z%22%2F%3E%3Cpath%20class%3D%22facet-2%22%20d%3D%22M50%20-10L80%20-10L66%2012L50%2022Z%22%2F%3E%3Cpath%20class%3D%22facet-3%22%20d%3D%22M20%20-10L34%2012L7%2030L-10%2020Z%22%2F%3E%3Cpath%20class%3D%22facet-2%22%20d%3D%22M80%20-10L110%2020L93%2030L66%2012Z%22%2F%3E%3Cpath%20class%3D%22facet-4%22%20d%3D%22M-10%2020L7%2030L15%2060L-10%2062Z%22%2F%3E%3Cpath%20class%3D%22facet-3%22%20d%3D%22M-10%2062L15%2060L38%2085L50%2094L50%20110Z%22%2F%3E%3Cpath%20class%3D%22facet-2%22%20d%3D%22M110%2020L110%2062L85%2060L93%2030Z%22%2F%3E%3Cpath%20class%3D%22facet-1%22%20d%3D%22M110%2062L50%20110L50%2094L62%2085L85%2060Z%22%2F%3E%3Cpath%20class%3D%22facet-4%22%20d%3D%22M23%2033L34%2012L50%2022Z%22%2F%3E%3Cpath%20class%3D%22facet-3%22%20d%3D%22M50%2022L66%2012L77%2033Z%22%2F%3E%3Cpath%20class%3D%22facet-2%22%20d%3D%22M23%2033L50%2022L77%2033Z%22%2F%3E%3Cpath%20class%3D%22facet-5%22%20d%3D%22M7%2030L34%2012L23%2033Z%22%2F%3E%3Cpath%20class%3D%22facet-2%22%20d%3D%22M77%2033L66%2012L93%2030Z%22%2F%3E%3Cpath%20class%3D%22facet-6%22%20d%3D%22M7%2030L23%2033L15%2060Z%22%2F%3E%3Cpath%20class%3D%22facet-5%22%20d%3D%22M15%2060L23%2033L50%2080Z%22%2F%3E%3Cpath%20class%3D%22facet-3%22%20d%3D%22M15%2060L50%2080L38%2085Z%22%2F%3E%3Cpath%20class%3D%22facet-3%22%20d%3D%22M93%2030L85%2060L77%2033Z%22%2F%3E%3Cpath%20class%3D%22facet-1%22%20d%3D%22M85%2060L50%2080L77%2033Z%22%2F%3E%3Cpath%20class%3D%22facet-2%22%20d%3D%22M85%2060L62%2085L50%2080Z%22%2F%3E%3Cpath%20class%3D%22facet-2%22%20d%3D%22M38%2085L50%2080L50%2094Z%22%2F%3E%3Cpath%20class%3D%22facet-1%22%20d%3D%22M50%2080L62%2085L50%2094Z%22%2F%3E%3Cpath%20class%3D%22facet-4%22%20d%3D%22M23%2033L77%2033L50%2080Z%22%2F%3E%3C%2Fg%3E%3Cpath%20class%3D%22edge%22%20d%3D%22M50%2027C44%2013%2031%206%2020%209%208%2012%202%2024%204%2037%207%2056%2029%2076%2050%2094%2071%2076%2093%2056%2096%2037%2098%2024%2092%2012%2080%209%2069%206%2056%2013%2050%2027Z%22%20fill%3D%22none%22%20stroke-width%3D%223.2%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E\"\n      rel=\"icon\"\n      sizes=\"any\"\n      type=\"image/svg+xml\"\n    />\n    \n    \n    \n    \n    <link\n      crossorigin=\"\"\n      href=\"./assets/rolldown-runtime-sJBDdmOt.js\"\n      rel=\"modulepreload\"\n    />\n    \n    \n    <link\n      crossorigin=\"\"\n      href=\"./assets/preload-helper-Dt5pTa-y.js\"\n      rel=\"modulepreload\"\n    />\n    \n    \n    <link\n      crossorigin=\"\"\n      href=\"./assets/iframe-B953svoA.js\"\n      rel=\"modulepreload\"\n    />\n    \n    \n    <link\n      crossorigin=\"\"\n      href=\"./assets/iframe-mgzSPPzi.css\"\n      rel=\"stylesheet\"\n    />\n    \n  \n    <link\n      as=\"script\"\n      crossorigin=\"\"\n      href=\"http://127.0.0.1:6019/assets/SyncNative.stories-ZmMBRs7z.js\"\n      rel=\"modulepreload\"\n    />\n    <link\n      as=\"script\"\n      crossorigin=\"\"\n      href=\"http://127.0.0.1:6019/assets/client-DGRpYkPC.js\"\n      rel=\"modulepreload\"\n    />\n    <link\n      crossorigin=\"\"\n      href=\"http://127.0.0.1:6019/assets/SyncNative-U8q1hx4-.css\"\n      rel=\"stylesheet\"\n    />\n    <link\n      as=\"script\"\n      crossorigin=\"\"\n      href=\"http://127.0.0.1:6019/assets/react-18-hbojE1nh.js\"\n      rel=\"modulepreload\"\n    />\n  </hea...",
+            "stack": "AssertionError: expected 2 to be greater than 2\n    at http://127.0.0.1:6019/assets/SyncNative.stories-ZmMBRs7z.js:250:6145\n    at vf (http://127.0.0.1:6019/assets/iframe-B953svoA.js:119:2384)\n    at y (http://127.0.0.1:6019/assets/iframe-B953svoA.js:130:2996)\n    at v (http://127.0.0.1:6019/assets/iframe-B953svoA.js:130:2952)"
+          }
+        ]
+      },
+      {
+        "event": "unhandledErrorsWhilePlaying"
+      }
+    ]
+  },
+  "errors": []
+}

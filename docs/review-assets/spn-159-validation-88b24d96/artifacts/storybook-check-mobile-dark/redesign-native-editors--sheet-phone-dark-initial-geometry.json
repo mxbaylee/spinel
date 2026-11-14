@@ -1,0 +1,51 @@
+{
+  "viewport": {
+    "width": 390,
+    "height": 900,
+    "scale": 1
+  },
+  "host": {
+    "x": 0,
+    "y": 62,
+    "width": 390,
+    "height": 838,
+    "top": 62,
+    "right": 390,
+    "bottom": 900,
+    "left": 0
+  },
+  "layout": {
+    "x": 0,
+    "y": 62,
+    "width": 390,
+    "height": 838,
+    "top": 62,
+    "right": 390,
+    "bottom": 900,
+    "left": 0
+  },
+  "mount": {
+    "x": 0,
+    "y": 150,
+    "width": 390,
+    "height": 749,
+    "top": 150,
+    "right": 390,
+    "bottom": 899,
+    "left": 0
+  },
+  "canvas": {
+    "x": 0,
+    "y": 150,
+    "width": 390,
+    "height": 749,
+    "top": 150,
+    "right": 390,
+    "bottom": 899,
+    "left": 0
+  },
+  "bitmap": {
+    "width": 390,
+    "height": 749
+  }
+}

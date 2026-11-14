@@ -1,0 +1,13 @@
+{
+  "name": "spn159-native-controls",
+  "args": [
+    "node",
+    "test-results/spn159/experiment.ts",
+    "controls"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 4632,
+  "peakKiB": 790000
+}

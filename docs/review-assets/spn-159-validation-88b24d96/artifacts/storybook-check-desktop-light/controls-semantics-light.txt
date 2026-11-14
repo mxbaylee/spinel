@@ -1,0 +1,13 @@
+- heading "Quiet, familiar controls" [level=1]
+- paragraph: One emphasis. Clear labels. Room to touch.
+- button "Save changes"
+- text: File type
+- combobox "File type": Space
+- radiogroup "Appearance":
+  - radio "Follow system"
+  - radio "Light"
+  - radio "Dark" [checked]
+- button "File actions": File actions ⌄
+- button "Open confirmation"
+- button "✓ Saved"
+- status
