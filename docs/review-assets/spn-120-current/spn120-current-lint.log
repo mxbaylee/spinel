@@ -1,0 +1,17 @@
+
+> lint
+> npm run dependencies:check && oxlint --deny-warnings . && npm run format:check
+
+
+> dependencies:check
+> node scripts/dependencies/no-univer-pro.ts
+
+No Univer Pro dependencies in 8 manifests or the resolved lockfile.
+
+> format:check
+> prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/e2e-server.ts scripts/deploy scripts/dependencies scripts/sync-transition scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts *.config.ts
+
+Checking formatting...
+[warn] scripts/ci/fixture-session-http.test.ts
+[warn] Code style issues found in the above file. Run Prettier with --write to fix.
+{"name":"spn120-current-lint","args":["npm","run","lint"],"code":1,"signal":null,"reason":null,"elapsedMs":11397,"peakKiB":670304}

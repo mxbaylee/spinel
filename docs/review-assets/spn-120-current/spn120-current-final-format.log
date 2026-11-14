@@ -1,0 +1,3 @@
+Checking formatting...
+All matched files use Prettier code style!
+{"name":"spn120-current-final-format","args":["node","node_modules/prettier/bin/prettier.cjs","--check","scripts/ci/fixture-session-http.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":205,"peakKiB":0}
