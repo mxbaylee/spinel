@@ -199,6 +199,29 @@ files for seven days. Extracted artifacts preserve `test-results/` and
 Investigate the first failed attempt and its durations before rerunning;
 `failOnFlakyTests` deliberately keeps a retry-only success red.
 
+The named SPN-120 historical cases retain their first failing attempt's trace.
+Their normal HTTP servers also retain bounded, sanitized process evidence in
+`playwright-report/server-<port>.json`; per-test `fixture-evidence.json` records
+source, repetition, phase, exact-account setup and cleanup status. The wrapper's
+readiness marker follows its first atomic evidence write. Primary responsiveness
+and callback measurements retain plain servers and disabled tracing.
+
+Non-authentication fixtures seed real disposable sessions, then verify the
+browser context's exact account before feature actions. Only that preparation
+GET can recover once from a classified connection reset within its original
+five-second deadline, after fresh owned-process and HTTP health checks. Denial,
+expiry, wrong identity, authentication mutations, product assertions and saved
+snapshot observations never receive that recovery. Both preparation attempts
+remain in evidence. See [SPN-120](implementation/SPN-120.md) for negative controls,
+first-cause-preserving bounded cleanup and the fixed historical sample.
+
+For a deliberately bounded fixture audit, add `ci-fixture-baseline` or
+`ci-fixture-audit` to a same-repository PR, or manually dispatch the Browser
+fixture audit with an immutable baseline SHA. Each explicit label event runs
+the declared 24 first attempts once; ordinary pushes do not repeat the audit.
+The candidate proof disables setup recovery. Review every outcome before a
+new invocation; a later green retry never explains or removes an earlier failure.
+
 Every PR edit, including title/body changes and base retargets, runs fresh full
 validation. Edits have isolated concurrency so they do not cancel or replace
 pending code runs; new code pushes still supersede older code runs for that PR.

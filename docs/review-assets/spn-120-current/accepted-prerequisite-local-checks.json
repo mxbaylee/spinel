@@ -1,0 +1,117 @@
+{
+  "source": "d777c01c655762b112caa4846de07987fe628f49",
+  "base": "87c34e30ed810e6789d876e55b23dcbb349fa506",
+  "checkedAt": "2026-11-14T09:53:19.047231+00:00",
+  "runtime": "Node26.13.0",
+  "typecheckEnvironment": {
+    "GOMEMLIMIT": "640MiB",
+    "GOGC": "50",
+    "GOMAXPROCS": "2"
+  },
+  "sourceMapScope": "Every tracked non-doc file plus every tracked docs/**/*.ts and docs/**/*.tsx; no untracked runtime inputs introduced",
+  "sourceMapCount": 1359,
+  "sourceMapSha256": "3bca258ebe8743bf59e8751c9053fd91843e9769af47482957e54637bfb2527d",
+  "checks": [
+    {
+      "name": "spn120-d777-controls",
+      "args": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "scripts/ci/app-process.test.ts",
+        "scripts/ci/fixture-audit.test.ts",
+        "scripts/ci/fixture-evidence.test.ts",
+        "scripts/ci/fixture-session-http.test.ts",
+        "scripts/ci/fixture-session.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 6645,
+      "peakKiB": 297216
+    },
+    {
+      "name": "spn120-d777-types",
+      "args": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "."
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 9000,
+      "peakKiB": 1753568
+    },
+    {
+      "name": "spn120-d777-dependencies",
+      "args": [
+        "node",
+        "scripts/dependencies/no-univer-pro.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 118,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn120-d777-lint",
+      "args": [
+        "node",
+        "node_modules/oxlint/bin/oxlint",
+        "--deny-warnings",
+        "."
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 191,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn120-d777-format",
+      "args": [
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--check",
+        ".github/workflows/ci.yml",
+        ".github/workflows/fixture-audit.yml",
+        "e2e/app-process.ts",
+        "e2e/doc-phone-navigation.spec.ts",
+        "e2e/fixture-evidence.ts",
+        "e2e/fixture-session.ts",
+        "e2e/offline-fixture.ts",
+        "e2e/offline-recovery.spec.ts",
+        "e2e/offline-sign-out.spec.ts",
+        "e2e/owned-process.ts",
+        "e2e/passkey-management.spec.ts",
+        "e2e/sync-client.spec.ts",
+        "package.json",
+        "playwright.config.ts",
+        "scripts/ci/app-process.test.ts",
+        "scripts/ci/fixture-audit-reporter.ts",
+        "scripts/ci/fixture-audit.test.ts",
+        "scripts/ci/fixture-audit.ts",
+        "scripts/ci/fixture-evidence.test.ts",
+        "scripts/ci/fixture-session-http.test.ts",
+        "scripts/ci/fixture-session.test.ts",
+        "scripts/e2e-server.ts",
+        "docs/review-assets/spn-120-current/collection-driver.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 580,
+      "peakKiB": 317248
+    }
+  ],
+  "limits": [
+    "All executions belong to exactd777; future documentation-only integration requires actual source equivalence before carrying these results.",
+    "Full tsc includes retained docs TypeScript; a later new/changed docs TS input invalidates the unchanged-compiler-input premise.",
+    "Formatting is targeted; no full repository format pass is claimed.",
+    "Fixed24 hosted audit and required final-head CI/native/Storybook acceptance remain pending; historical47 audit is not relabelled.",
+    "Final backlog/generated-index/title/size checks and two independent reviews follow actual final-base bookkeeping."
+  ]
+}

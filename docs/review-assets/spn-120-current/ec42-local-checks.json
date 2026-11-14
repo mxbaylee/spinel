@@ -1,0 +1,156 @@
+{
+  "source": "df7ad8bcca5492e9c88035d6839dacf2dbde7c2c",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "runtime": "Node26.13.0",
+  "typeEnvironment": {
+    "GOMEMLIMIT": "640MiB",
+    "GOGC": "50",
+    "GOMAXPROCS": "2"
+  },
+  "checks": [
+    {
+      "name": "spn120-ec42-index",
+      "args": [
+        "node",
+        "scripts/backlog/cli.ts",
+        "index"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 150,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn120-ec42-format",
+      "args": [
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        ".github/workflows/ci.yml",
+        "docs/todo/backlog.json"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 172,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn120-df7-controls",
+      "args": [
+        "node",
+        "--test",
+        "--test-concurrency=1",
+        "scripts/ci/app-process.test.ts",
+        "scripts/ci/fixture-audit.test.ts",
+        "scripts/ci/fixture-evidence.test.ts",
+        "scripts/ci/fixture-session-http.test.ts",
+        "scripts/ci/fixture-session.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 6574,
+      "peakKiB": 317936
+    },
+    {
+      "name": "spn120-df7-types",
+      "args": [
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "."
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 9261,
+      "peakKiB": 1787024
+    },
+    {
+      "name": "spn120-df7-dependencies",
+      "args": [
+        "node",
+        "scripts/dependencies/no-univer-pro.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 115,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn120-df7-lint",
+      "args": [
+        "node",
+        "node_modules/oxlint/bin/oxlint",
+        "--deny-warnings",
+        "."
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 194,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn120-df7-backlog",
+      "args": [
+        "node",
+        "scripts/backlog/cli.ts",
+        "check"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 145,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn120-df7-format",
+      "args": [
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--check",
+        ".github/workflows/ci.yml",
+        ".github/workflows/fixture-audit.yml",
+        "e2e/app-process.ts",
+        "e2e/doc-phone-navigation.spec.ts",
+        "e2e/fixture-evidence.ts",
+        "e2e/fixture-session.ts",
+        "e2e/offline-fixture.ts",
+        "e2e/offline-recovery.spec.ts",
+        "e2e/offline-sign-out.spec.ts",
+        "e2e/owned-process.ts",
+        "e2e/passkey-management.spec.ts",
+        "e2e/sync-client.spec.ts",
+        "package.json",
+        "playwright.config.ts",
+        "scripts/ci/app-process.test.ts",
+        "scripts/ci/fixture-audit-reporter.ts",
+        "scripts/ci/fixture-audit.test.ts",
+        "scripts/ci/fixture-audit.ts",
+        "scripts/ci/fixture-evidence.test.ts",
+        "scripts/ci/fixture-session-http.test.ts",
+        "scripts/ci/fixture-session.test.ts",
+        "scripts/e2e-server.ts",
+        "docs/review-assets/spn-120-current/collection-driver.ts",
+        "docs/todo/backlog.json"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 581,
+      "peakKiB": 299200
+    }
+  ],
+  "runtimeCompilerMapCount": 1376,
+  "runtimeCompilerMapSha256": "c865f1e5e0449c58fa86bfe02d6a100232591255f804aa96c91218ece4e5e350",
+  "limits": [
+    "Index and format-write were run during integration before df7 commit; the six df7 jobs ran after exact df7 commit.",
+    "All checks passed, no resource abort this batch. Historical aborts remain separately retained.",
+    "Targeted formatting is not full repository formatting.",
+    "Actual final-head PR check and fresh independent reviews follow evidence-only commit; all new published-head hosted/native/Storybook/fixed24 acceptance pending."
+  ]
+}
