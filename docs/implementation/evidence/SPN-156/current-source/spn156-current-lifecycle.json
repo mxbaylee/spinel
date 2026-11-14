@@ -1,0 +1,22 @@
+{
+  "name": "spn156-current-lifecycle",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/offlinePersistence.test.ts",
+    "src/ui/offlineLifecycle.test.ts",
+    "src/ui/offlineTransactionErrors.test.ts",
+    "src/ui/offlineWriterHandoff.test.ts",
+    "src/ui/offlineReplay.test.ts",
+    "src/ui/spinelSync.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn156-vitest-current"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 4825,
+  "peakKiB": 986496
+}
