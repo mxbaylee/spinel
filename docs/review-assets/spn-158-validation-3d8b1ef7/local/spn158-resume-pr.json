@@ -1,0 +1,17 @@
+{
+  "name": "spn158-resume-pr",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "scripts/backlog/cli.ts",
+    "pr",
+    "--base",
+    "ecef3c6d6ea5093bdd9fcf7c0a69c5e5218b4a6f",
+    "--title",
+    "🛂 SPN-158 Wait for writable admission after restore"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 419,
+  "peakKiB": 181584
+}

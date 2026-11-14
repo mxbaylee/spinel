@@ -1,0 +1,10 @@
+{
+  "head": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+  "base": "ecef3c6d6ea5093bdd9fcf7c0a69c5e5218b4a6f",
+  "checkedAt": "2026-11-14T05:50:43.023377+00:00",
+  "sourceClean": true,
+  "ownedSurvivors": [],
+  "kills": [],
+  "verifiedPayloads": 50,
+  "method": "ps pid/parent/start-time/command plus lsof cwd; no survivor in owned worktree"
+}

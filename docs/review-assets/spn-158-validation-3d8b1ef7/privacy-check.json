@@ -1,0 +1,20 @@
+{
+  "checkedAt": "2026-11-14T06:23:19.474833+00:00",
+  "textPayloadsScanned": 114,
+  "patterns": [
+    "github_token",
+    "private_key",
+    "aws_key",
+    "url_credentials",
+    "set_cookie",
+    "auth_bearer"
+  ],
+  "matches": [],
+  "excluded": [
+    "databases",
+    "browser profiles",
+    "cookie jars",
+    "protocol traces"
+  ],
+  "scope": "Exact GitHub-masked logs plus structured synthetic acceptance and metadata. Large bundles retained by artifact ID/digest; selected JSON extracted only after verifying original ZIP digest."
+}

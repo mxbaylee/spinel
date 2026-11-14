@@ -1,0 +1,2956 @@
+{
+  "schemaVersion": 1,
+  "preparedAt": "2026-11-14T06:25:39.099704+00:00",
+  "pr": "https://github.com/mxbaylee/spinel/pull/285",
+  "source": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+  "base": "ecef3c6d6ea5093bdd9fcf7c0a69c5e5218b4a6f",
+  "testedMerge": "6506eeebf195a4f53e15212584892fa9f9bbb818",
+  "sourceTree": "43f29c59840828ab89b62840a2537707a7901c1d",
+  "testedTree": "43f29c59840828ab89b62840a2537707a7901c1d",
+  "archiveParent": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+  "validationPassed": true,
+  "prAtSnapshot": {
+    "headRepository": "mxbaylee/spinel",
+    "headRef": "codex/spn-158-restore-admission",
+    "head": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+    "base": "ecef3c6d6ea5093bdd9fcf7c0a69c5e5218b4a6f",
+    "draft": true,
+    "merged": false,
+    "mergeable": true
+  },
+  "mergeDisposition": "Validation ready for manager verification; no squash, ready-state mutation or cleanup claimed.",
+  "terminalJobs": 47,
+  "successfulJobs": 45,
+  "expectedSkippedJobs": [
+    {
+      "id": 132353489202,
+      "name": "Publish PR preview to GitHub Pages"
+    },
+    {
+      "id": 132357086982,
+      "name": "Deploy to GitHub Pages"
+    }
+  ],
+  "requiredGates": [
+    {
+      "id": 132353114746,
+      "name": "Pull request",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353114746"
+    },
+    {
+      "id": 132353317775,
+      "name": "Lint",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317775"
+    },
+    {
+      "id": 132353317780,
+      "name": "Typecheck",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317780"
+    },
+    {
+      "id": 132353317789,
+      "name": "Backlog",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317789"
+    },
+    {
+      "id": 132354939279,
+      "name": "Unit tests",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132354939279"
+    },
+    {
+      "id": 132355111474,
+      "name": "Lib tests",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132355111474"
+    },
+    {
+      "id": 132359924082,
+      "name": "Playwright smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132359924082"
+    }
+  ],
+  "runs": [
+    {
+      "id": 43563807488,
+      "name": "\ud83d\udc8e CI",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-14T05:55:12Z",
+      "updated_at": "2026-11-14T06:22:48Z",
+      "run_started_at": "2026-11-14T05:55:12Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488"
+    },
+    {
+      "id": 43563807485,
+      "name": "\ud83d\udcda Storybook",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-14T05:55:12Z",
+      "updated_at": "2026-11-14T06:11:21Z",
+      "run_started_at": "2026-11-14T05:55:12Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807485"
+    },
+    {
+      "id": 43563807495,
+      "name": "\ud83e\udd88 DigitalOcean Spaces",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-14T05:55:12Z",
+      "updated_at": "2026-11-14T05:55:56Z",
+      "run_started_at": "2026-11-14T05:55:12Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807495"
+    },
+    {
+      "id": 43563807530,
+      "name": "\ud83d\udcbb Desktop offline",
+      "run_attempt": 1,
+      "event": "pull_request",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-11-14T05:55:12Z",
+      "updated_at": "2026-11-14T06:03:57Z",
+      "run_started_at": "2026-11-14T05:55:12Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807530"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 132353114746,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Pull request",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:55:15Z",
+      "completed_at": "2026-11-14T05:55:59Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353114746",
+      "runner_name": "GitHub Actions 1000053225",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353114955,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Classify changes (43563807488)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:55:16Z",
+      "completed_at": "2026-11-14T05:56:05Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353114955",
+      "runner_name": "GitHub Actions 1000053227",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317765,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Unit tests (remaining)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:08Z",
+      "completed_at": "2026-11-14T06:00:44Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317765",
+      "runner_name": "GitHub Actions 1000053234",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317775,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Lint",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:08Z",
+      "completed_at": "2026-11-14T05:56:51Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317775",
+      "runner_name": "GitHub Actions 1000053235",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317780,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Typecheck",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:08Z",
+      "completed_at": "2026-11-14T05:56:37Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317780",
+      "runner_name": "GitHub Actions 1000053237",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317781,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Unit tests (recovery)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:07Z",
+      "completed_at": "2026-11-14T06:01:42Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317781",
+      "runner_name": "GitHub Actions 1000053236",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317786,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Unit tests (supervisor)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:07Z",
+      "completed_at": "2026-11-14T06:02:46Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317786",
+      "runner_name": "GitHub Actions 1000053238",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317789,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Backlog",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:08Z",
+      "completed_at": "2026-11-14T05:56:20Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317789",
+      "runner_name": "GitHub Actions 1000053245",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317792,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Doc responsiveness (desktop)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:08Z",
+      "completed_at": "2026-11-14T06:12:07Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317792",
+      "runner_name": "GitHub Actions 1000053232",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317795,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Doc callback lifetimes (desktop)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:07Z",
+      "completed_at": "2026-11-14T06:01:54Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317795",
+      "runner_name": "GitHub Actions 1000053233",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317798,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Retained sync transition",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:07Z",
+      "completed_at": "2026-11-14T05:56:51Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317798",
+      "runner_name": "GitHub Actions 1000053239",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317805,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Sized restore acceptance",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:40Z",
+      "completed_at": "2026-11-14T06:01:53Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317805",
+      "runner_name": "GitHub Actions 1000053249",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317806,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Doc responsiveness (mobile)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:08Z",
+      "completed_at": "2026-11-14T06:18:04Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317806",
+      "runner_name": "GitHub Actions 1000053242",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317824,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Container smoke",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:52Z",
+      "completed_at": "2026-11-14T05:58:44Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317824",
+      "runner_name": "GitHub Actions 1000053250",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317826,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Lib tests (cells)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:08Z",
+      "completed_at": "2026-11-14T06:00:52Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317826",
+      "runner_name": "GitHub Actions 1000053240",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317827,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Lib tests (remaining)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:08Z",
+      "completed_at": "2026-11-14T06:03:28Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317827",
+      "runner_name": "GitHub Actions 1000053244",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317829,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Lib tests (dense-cells)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:08Z",
+      "completed_at": "2026-11-14T06:03:03Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317829",
+      "runner_name": "GitHub Actions 1000053241",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317834,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Doc callback lifetimes (mobile)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:08Z",
+      "completed_at": "2026-11-14T06:07:25Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317834",
+      "runner_name": "GitHub Actions 1000053243",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317847,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Lib tests (mixed-fuzz)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:23Z",
+      "completed_at": "2026-11-14T06:03:23Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317847",
+      "runner_name": "GitHub Actions 1000053248",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317898,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Playwright smoke (development 1/2)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:08Z",
+      "completed_at": "2026-11-14T06:09:44Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317898",
+      "runner_name": "GitHub Actions 1000053246",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317907,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Playwright smoke (production 1/2)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T06:01:56Z",
+      "completed_at": "2026-11-14T06:12:25Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317907",
+      "runner_name": "GitHub Actions 1000053260",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317924,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Playwright smoke (supervised-restore)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T06:01:18Z",
+      "completed_at": "2026-11-14T06:07:51Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317924",
+      "runner_name": "GitHub Actions 1000053258",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317928,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Playwright smoke (production 2/2)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:08Z",
+      "completed_at": "2026-11-14T06:08:13Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317928",
+      "runner_name": "GitHub Actions 1000053247",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317939,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Playwright smoke (sync-production)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T06:00:55Z",
+      "completed_at": "2026-11-14T06:11:53Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317939",
+      "runner_name": "GitHub Actions 1000053257",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317940,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Playwright smoke (development 2/2)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T06:03:06Z",
+      "completed_at": "2026-11-14T06:22:25Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317940",
+      "runner_name": "GitHub Actions 1000053263",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317952,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Playwright smoke (sync-development)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T06:00:47Z",
+      "completed_at": "2026-11-14T06:04:10Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317952",
+      "runner_name": "GitHub Actions 1000053256",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317962,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Playwright smoke (sync-soak-sheet)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T06:02:49Z",
+      "completed_at": "2026-11-14T06:05:09Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317962",
+      "runner_name": "GitHub Actions 1000053262",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317972,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Playwright smoke (offline-upgrade)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:58:56Z",
+      "completed_at": "2026-11-14T06:01:16Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317972",
+      "runner_name": "GitHub Actions 1000053254",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317975,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Playwright smoke (mobile-https)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T06:01:45Z",
+      "completed_at": "2026-11-14T06:03:37Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317975",
+      "runner_name": "GitHub Actions 1000053259",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353317977,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Playwright smoke (sync-soak-doc)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T06:01:57Z",
+      "completed_at": "2026-11-14T06:03:29Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132353317977",
+      "runner_name": "GitHub Actions 1000053261",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132354939279,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Unit tests",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T06:03:31Z",
+      "completed_at": "2026-11-14T06:03:45Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132354939279",
+      "runner_name": "GitHub Actions 1000053265",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132355111474,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Lib tests",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T06:03:31Z",
+      "completed_at": "2026-11-14T06:03:49Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132355111474",
+      "runner_name": "GitHub Actions 1000053266",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132359924082,
+      "run_id": 43563807488,
+      "run_attempt": 1,
+      "name": "Playwright smoke",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T06:22:28Z",
+      "completed_at": "2026-11-14T06:22:47Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807488/job/132359924082",
+      "runner_name": "GitHub Actions 1000053268",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353114649,
+      "run_id": 43563807485,
+      "run_attempt": 1,
+      "name": "Classify changes",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:55:15Z",
+      "completed_at": "2026-11-14T05:56:02Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807485/job/132353114649",
+      "runner_name": "GitHub Actions 1000053224",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353307665,
+      "run_id": 43563807485,
+      "run_attempt": 1,
+      "name": "Build Storybook",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:05Z",
+      "completed_at": "2026-11-14T05:56:49Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807485/job/132353307665",
+      "runner_name": "GitHub Actions 1000053231",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353487647,
+      "run_id": 43563807485,
+      "run_attempt": 1,
+      "name": "Review Storybook desktop (light)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:53Z",
+      "completed_at": "2026-11-14T06:04:51Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807485/job/132353487647",
+      "runner_name": "GitHub Actions 1000053251",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353487675,
+      "run_id": 43563807485,
+      "run_attempt": 1,
+      "name": "Review Storybook desktop (dark)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:59:04Z",
+      "completed_at": "2026-11-14T06:06:43Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807485/job/132353487675",
+      "runner_name": "GitHub Actions 1000053255",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353487689,
+      "run_id": 43563807485,
+      "run_attempt": 1,
+      "name": "Review Storybook mobile (dark)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:56:54Z",
+      "completed_at": "2026-11-14T06:03:56Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807485/job/132353487689",
+      "runner_name": "GitHub Actions 1000053252",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353487698,
+      "run_id": 43563807485,
+      "run_attempt": 1,
+      "name": "Review Storybook mobile (light)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:58:47Z",
+      "completed_at": "2026-11-14T06:05:46Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807485/job/132353487698",
+      "runner_name": "GitHub Actions 1000053253",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353487738,
+      "run_id": 43563807485,
+      "run_attempt": 1,
+      "name": "Review Storybook tablet",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T06:03:25Z",
+      "completed_at": "2026-11-14T06:11:06Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807485/job/132353487738",
+      "runner_name": "GitHub Actions 1000053264",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353489202,
+      "run_id": 43563807485,
+      "run_attempt": 1,
+      "name": "Publish PR preview to GitHub Pages",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-14T05:56:50Z",
+      "completed_at": "2026-11-14T05:56:50Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807485/job/132353489202",
+      "runner_name": null,
+      "runner_group_name": null,
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132357024242,
+      "run_id": 43563807485,
+      "run_attempt": 1,
+      "name": "Review Storybook states and interactions",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T06:11:08Z",
+      "completed_at": "2026-11-14T06:11:20Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807485/job/132357024242",
+      "runner_name": "GitHub Actions 1000053267",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132357086982,
+      "run_id": 43563807485,
+      "run_attempt": 1,
+      "name": "Deploy to GitHub Pages",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "skipped",
+      "started_at": "2026-11-14T06:11:21Z",
+      "completed_at": "2026-11-14T06:11:20Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807485/job/132357086982",
+      "runner_name": null,
+      "runner_group_name": null,
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353114692,
+      "run_id": 43563807495,
+      "run_attempt": 1,
+      "name": "\ud83e\udd88 DigitalOcean Spaces",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:55:15Z",
+      "completed_at": "2026-11-14T05:55:55Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807495/job/132353114692",
+      "runner_name": "GitHub Actions 1000053228",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "ubuntu-latest"
+      ]
+    },
+    {
+      "id": 132353114678,
+      "run_id": 43563807530,
+      "run_attempt": 1,
+      "name": "Native desktop offline (chrome, macos-26)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:55:16Z",
+      "completed_at": "2026-11-14T05:59:02Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807530/job/132353114678",
+      "runner_name": "GitHub Actions 1000053226",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "macos-26"
+      ]
+    },
+    {
+      "id": 132353114846,
+      "run_id": 43563807530,
+      "run_attempt": 1,
+      "name": "Native desktop offline (firefox, macos-26)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:55:17Z",
+      "completed_at": "2026-11-14T05:58:53Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807530/job/132353114846",
+      "runner_name": "GitHub Actions 1000053229",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "macos-26"
+      ]
+    },
+    {
+      "id": 132353115034,
+      "run_id": 43563807530,
+      "run_attempt": 1,
+      "name": "Native desktop offline (safari, macos-15-intel)",
+      "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "status": "completed",
+      "conclusion": "success",
+      "started_at": "2026-11-14T05:55:17Z",
+      "completed_at": "2026-11-14T06:03:56Z",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43563807530/job/132353115034",
+      "runner_name": "GitHub Actions 1000053230",
+      "runner_group_name": "GitHub Actions",
+      "labels": [
+        "macos-15-intel"
+      ]
+    }
+  ],
+  "sourceHashes": [
+    {
+      "path": "src/server/maintenance/http.test.ts",
+      "bytes": 26029,
+      "sha256": "209ec3c1c18d4045ade193aecd375cbf125c80d64a57176545863c77200b44f4"
+    },
+    {
+      "path": "src/server/maintenance/restore-http-test-client.ts",
+      "bytes": 11401,
+      "sha256": "44eeb0d2d7ea264bcbdded9a7e49b86841d041cd62b448407377e42f92fc3504"
+    },
+    {
+      "path": "src/server/maintenance/restore-crash.integration.test.ts",
+      "bytes": 23911,
+      "sha256": "214024d2ba68a45d57ae4e9a5d92c31a9ffff179d2090a4bf2836fa35cea1604"
+    }
+  ],
+  "planCanonicalSha256": "dd7790ef1eb4b8ebc63af3ccae2acf3f15bd672cd2dbd1fd37e64aceb4cd615b",
+  "planFileSha256": "a3d9bcfa63e91c537072781d89bd6b982db81ecddf5fea0c69743e4a3dfb652c",
+  "coverage": [
+    {
+      "group": "ci-results-lib",
+      "passed": true,
+      "path": "acceptance/ci-results-lib/ci-results-lib.json.gz"
+    },
+    {
+      "group": "ci-results-browser",
+      "passed": true,
+      "path": "acceptance/ci-results-browser/ci-results-browser.json.gz"
+    },
+    {
+      "group": "ci-results-unit",
+      "passed": true,
+      "path": "acceptance/ci-results-unit/ci-results-unit.json.gz"
+    }
+  ],
+  "pairedAcceptance": [
+    {
+      "job": 132353317792,
+      "name": "Doc responsiveness (desktop)",
+      "conclusion": "success",
+      "selectedSteps": [
+        {
+          "name": "Require comparison applicability",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:56:10Z",
+          "completed_at": "2026-11-14T05:56:10Z"
+        },
+        {
+          "name": "Install candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:56:18Z",
+          "completed_at": "2026-11-14T05:56:32Z"
+        },
+        {
+          "name": "Install and build baseline",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:56:59Z",
+          "completed_at": "2026-11-14T05:57:13Z"
+        },
+        {
+          "name": "Observe baseline first attempts",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:57:13Z",
+          "completed_at": "2026-11-14T06:05:41Z"
+        },
+        {
+          "name": "Build candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T06:05:41Z",
+          "completed_at": "2026-11-14T06:05:43Z"
+        },
+        {
+          "name": "Verify candidate responsiveness and boundaries",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T06:05:43Z",
+          "completed_at": "2026-11-14T06:12:01Z"
+        },
+        {
+          "name": "Verify candidate evidence and selected paired comparison",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T06:12:01Z",
+          "completed_at": "2026-11-14T06:12:02Z"
+        },
+        {
+          "name": "Retain every baseline and candidate attempt",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T06:12:02Z",
+          "completed_at": "2026-11-14T06:12:04Z"
+        }
+      ]
+    },
+    {
+      "job": 132353317795,
+      "name": "Doc callback lifetimes (desktop)",
+      "conclusion": "success",
+      "selectedSteps": [
+        {
+          "name": "Require comparison applicability",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:56:11Z",
+          "completed_at": "2026-11-14T05:56:11Z"
+        },
+        {
+          "name": "Install candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:56:20Z",
+          "completed_at": "2026-11-14T05:56:28Z"
+        },
+        {
+          "name": "Immutable merged SPN-108 baseline",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:56:55Z",
+          "completed_at": "2026-11-14T05:56:56Z"
+        },
+        {
+          "name": "Install and build baseline with source maps",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:56:56Z",
+          "completed_at": "2026-11-14T05:57:06Z"
+        },
+        {
+          "name": "Retain baseline first attempt",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:57:06Z",
+          "completed_at": "2026-11-14T05:59:25Z"
+        },
+        {
+          "name": "Build candidate with identical source-map settings",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:59:25Z",
+          "completed_at": "2026-11-14T05:59:28Z"
+        },
+        {
+          "name": "Verify candidate first attempt",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:59:28Z",
+          "completed_at": "2026-11-14T06:01:27Z"
+        },
+        {
+          "name": "Verify complete paired callback evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T06:01:27Z",
+          "completed_at": "2026-11-14T06:01:44Z"
+        },
+        {
+          "name": "Post Immutable merged SPN-108 baseline",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T06:01:53Z",
+          "completed_at": "2026-11-14T06:01:53Z"
+        }
+      ]
+    },
+    {
+      "job": 132353317806,
+      "name": "Doc responsiveness (mobile)",
+      "conclusion": "success",
+      "selectedSteps": [
+        {
+          "name": "Require comparison applicability",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:56:09Z",
+          "completed_at": "2026-11-14T05:56:09Z"
+        },
+        {
+          "name": "Install candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:56:18Z",
+          "completed_at": "2026-11-14T05:56:25Z"
+        },
+        {
+          "name": "Install and build baseline",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:56:49Z",
+          "completed_at": "2026-11-14T05:56:57Z"
+        },
+        {
+          "name": "Observe baseline first attempts",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:56:57Z",
+          "completed_at": "2026-11-14T06:10:44Z"
+        },
+        {
+          "name": "Build candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T06:10:44Z",
+          "completed_at": "2026-11-14T06:10:46Z"
+        },
+        {
+          "name": "Verify candidate responsiveness and boundaries",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T06:10:46Z",
+          "completed_at": "2026-11-14T06:17:58Z"
+        },
+        {
+          "name": "Verify candidate evidence and selected paired comparison",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T06:17:58Z",
+          "completed_at": "2026-11-14T06:17:59Z"
+        },
+        {
+          "name": "Retain every baseline and candidate attempt",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T06:17:59Z",
+          "completed_at": "2026-11-14T06:18:01Z"
+        }
+      ]
+    },
+    {
+      "job": 132353317834,
+      "name": "Doc callback lifetimes (mobile)",
+      "conclusion": "success",
+      "selectedSteps": [
+        {
+          "name": "Require comparison applicability",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:56:10Z",
+          "completed_at": "2026-11-14T05:56:10Z"
+        },
+        {
+          "name": "Install candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:56:18Z",
+          "completed_at": "2026-11-14T05:56:30Z"
+        },
+        {
+          "name": "Immutable merged SPN-108 baseline",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:56:57Z",
+          "completed_at": "2026-11-14T05:56:59Z"
+        },
+        {
+          "name": "Install and build baseline with source maps",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:56:59Z",
+          "completed_at": "2026-11-14T05:57:12Z"
+        },
+        {
+          "name": "Retain baseline first attempt",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T05:57:12Z",
+          "completed_at": "2026-11-14T06:03:05Z"
+        },
+        {
+          "name": "Build candidate with identical source-map settings",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T06:03:05Z",
+          "completed_at": "2026-11-14T06:03:09Z"
+        },
+        {
+          "name": "Verify candidate first attempt",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T06:03:09Z",
+          "completed_at": "2026-11-14T06:06:55Z"
+        },
+        {
+          "name": "Verify complete paired callback evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T06:06:55Z",
+          "completed_at": "2026-11-14T06:07:12Z"
+        },
+        {
+          "name": "Post Immutable merged SPN-108 baseline",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-11-14T06:07:21Z",
+          "completed_at": "2026-11-14T06:07:21Z"
+        }
+      ]
+    }
+  ],
+  "actualLinuxAcceptance": {
+    "job": 132353317781,
+    "filesPassed": 47,
+    "testsPassed": 609,
+    "durationSeconds": 299.07,
+    "postcommitCasePassed": true,
+    "postcommitCaseDurationMs": 14867,
+    "fullHttpTestsPassed": 11,
+    "fullHttpDurationMs": 1753,
+    "rawLogSha256": "c55685a1fbe353a953958c26f464ffdd89167f6551234157e2db10332e9bbf4a",
+    "historical503CauseEstablished": false
+  },
+  "integratedRevocationAcceptance": {
+    "source": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+    "testedMerge": "6506eeebf195a4f53e15212584892fa9f9bbb818",
+    "run": 43563807488,
+    "job": 132353317907,
+    "artifact": 14101564070,
+    "artifactDigest": "sha256:3418a2e0a8474fd84d49628a17d9a8fa292f58402193717eb711a378b1d599b0",
+    "stats": {
+      "startTime": "2026-11-14T06:02:45.534Z",
+      "duration": 574839.841,
+      "expected": 81,
+      "skipped": 3,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "collaborationCases": [
+      {
+        "title": "two authenticated editors receive each other\u2019s sheet edits without reloading",
+        "status": "expected",
+        "attempts": [
+          {
+            "retry": 0,
+            "status": "passed",
+            "duration": 71094
+          }
+        ]
+      },
+      {
+        "title": "two document editors merge text and navigate to a collaborator selection",
+        "status": "expected",
+        "attempts": [
+          {
+            "retry": 0,
+            "status": "passed",
+            "duration": 6657
+          }
+        ]
+      },
+      {
+        "title": "revoking one login preserves another login\u2019s queued edit and stops later broadcasts",
+        "status": "expected",
+        "attempts": [
+          {
+            "retry": 0,
+            "status": "passed",
+            "duration": 4674
+          }
+        ]
+      }
+    ],
+    "skippedCases": [
+      {
+        "file": "doc-mobile.spec.ts",
+        "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+        "status": "skipped"
+      },
+      {
+        "file": "doc-mobile.spec.ts",
+        "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+        "status": "skipped"
+      },
+      {
+        "file": "doc-mobile.spec.ts",
+        "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+        "status": "skipped"
+      }
+    ],
+    "skippedCasesIdenticalToPriorBfeb": true
+  },
+  "priorFailures": [
+    {
+      "source": "67111d9c106c6518b813c6f1cf332068526c254c",
+      "archive": "fdc2d7351527607ed67d3d540df7ae22e19a9db6",
+      "disposition": "Original pre-acknowledgement authentication-options503 cause remains unproved; source-proven readiness weakness repaired."
+    },
+    {
+      "source": "bfeb0b23953a67aae8afcba8af6eadd8b24f1040",
+      "archive": "0cadd4707e659fcc79b26f15ea9802fb7fd45e7f",
+      "disposition": "Prior revocation first-attempt failure and failed gate remain; accepted SPN149 observer repair integrated from main, current case passes retry0. No retrospective pass."
+    }
+  ],
+  "reviews": [
+    {
+      "reviewer": "independent A",
+      "source": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "score": 100,
+      "report": "reviews/spn158-review-a-3d8b1ef7.md"
+    },
+    {
+      "reviewer": "independent B",
+      "source": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb",
+      "score": 100,
+      "report": "reviews/spn158-review-b-3d8b1ef7.md"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14102615491,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMjYxNTQ5MQ==",
+      "name": "theme-screenshots-development-2",
+      "size_in_bytes": 16645243,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14102615491",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14102615491/zip",
+      "expired": false,
+      "digest": "sha256:7a56c0de1215b90e8cd9a981964ba38ca109a4330504badba4846f399fb28125",
+      "created_at": "2026-11-14T06:22:22Z",
+      "updated_at": "2026-11-14T06:22:22Z",
+      "expires_at": "2026-11-21T06:22:19Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14102290769,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMjI5MDc2OQ==",
+      "name": "doc-responsiveness-mobile",
+      "size_in_bytes": 1693423,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14102290769",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14102290769/zip",
+      "expired": false,
+      "digest": "sha256:2cc92d1296ddb0ffa4a9c8213c58a1259ad21e1f0be1f7ab03283430920ab21d",
+      "created_at": "2026-11-14T06:18:01Z",
+      "updated_at": "2026-11-14T06:18:01Z",
+      "expires_at": "2026-11-21T06:17:59Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14102290039,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMjI5MDAzOQ==",
+      "name": "theme-screenshots-sync-production",
+      "size_in_bytes": 4933977,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14102290039",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14102290039/zip",
+      "expired": false,
+      "digest": "sha256:e3dd239e7eb1b42a11c334e8f59744ea9607572f0080db6afbe55cda0ef14b39",
+      "created_at": "2026-11-14T06:11:50Z",
+      "updated_at": "2026-11-14T06:11:50Z",
+      "expires_at": "2026-11-21T06:11:49Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14102120476,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMjEyMDQ3Ng==",
+      "name": "theme-screenshots-mobile-https",
+      "size_in_bytes": 1521418,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14102120476",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14102120476/zip",
+      "expired": false,
+      "digest": "sha256:06c1b68bcb9e11d128929d9a3cdb59eb4c4e9040b1d5e70421d17d3a8ad08c7b",
+      "created_at": "2026-11-14T06:03:35Z",
+      "updated_at": "2026-11-14T06:03:35Z",
+      "expires_at": "2026-11-21T06:03:34Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14102110811,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMjExMDgxMQ==",
+      "name": "theme-screenshots-sync-development",
+      "size_in_bytes": 2153718,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14102110811",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14102110811/zip",
+      "expired": false,
+      "digest": "sha256:e19d3d58fbb4e7af4e3cfff645d0bbc56489208ffb11d2ac2d09a25653807209",
+      "created_at": "2026-11-14T06:04:08Z",
+      "updated_at": "2026-11-14T06:04:08Z",
+      "expires_at": "2026-11-21T06:04:07Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14102094045,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMjA5NDA0NQ==",
+      "name": "ci-results-browser",
+      "size_in_bytes": 3421,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14102094045",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14102094045/zip",
+      "expired": false,
+      "digest": "sha256:b048507b0f1317ad3a671296728f24664a6bddf5d7aeb215bb9500af358ae016",
+      "created_at": "2026-11-14T06:22:44Z",
+      "updated_at": "2026-11-14T06:22:44Z",
+      "expires_at": "2026-12-14T06:22:43Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14102026845,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMjAyNjg0NQ==",
+      "name": "doc-callback-lifetimes-mobile",
+      "size_in_bytes": 183575753,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14102026845",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14102026845/zip",
+      "expired": false,
+      "digest": "sha256:6e76f67956dd3225644a3b0d5904f4cded9b95322413e13b32dd39b745d3bd25",
+      "created_at": "2026-11-14T06:07:21Z",
+      "updated_at": "2026-11-14T06:07:21Z",
+      "expires_at": "2026-11-21T06:07:12Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101987006,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTk4NzAwNg==",
+      "name": "theme-screenshots-supervised-restore",
+      "size_in_bytes": 344644,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101987006",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101987006/zip",
+      "expired": false,
+      "digest": "sha256:1f4c7ae0c575fa557a46ab5236da8935f74e44abd748cc0901a0f27da0d65da1",
+      "created_at": "2026-11-14T06:07:49Z",
+      "updated_at": "2026-11-14T06:07:49Z",
+      "expires_at": "2026-11-21T06:07:48Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101951761,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTk1MTc2MQ==",
+      "name": "theme-screenshots-sync-soak-sheet",
+      "size_in_bytes": 439609,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101951761",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101951761/zip",
+      "expired": false,
+      "digest": "sha256:962985e6b4a7260e63fb5b29f7993b818bf2cf36ea01e65dc0f65300a15dd455",
+      "created_at": "2026-11-14T06:05:07Z",
+      "updated_at": "2026-11-14T06:05:07Z",
+      "expires_at": "2026-11-21T06:05:06Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101887368,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTg4NzM2OA==",
+      "name": "theme-screenshots-production-2",
+      "size_in_bytes": 18630042,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101887368",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101887368/zip",
+      "expired": false,
+      "digest": "sha256:ec116ee5218677de72f822d4830acca17949a9c5902cfc80731587bb9a912866",
+      "created_at": "2026-11-14T06:08:09Z",
+      "updated_at": "2026-11-14T06:08:09Z",
+      "expires_at": "2026-11-21T06:08:06Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101602231,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTYwMjIzMQ==",
+      "name": "ci-results-lib",
+      "size_in_bytes": 2674,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101602231",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101602231/zip",
+      "expired": false,
+      "digest": "sha256:e40e34fff08d7fff27dbf5e8172b01639a0256fdbdf13c7a2a657adf59c68ffc",
+      "created_at": "2026-11-14T06:03:46Z",
+      "updated_at": "2026-11-14T06:03:46Z",
+      "expires_at": "2026-12-14T06:03:45Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101593264,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTU5MzI2NA==",
+      "name": "theme-screenshots-development-1",
+      "size_in_bytes": 33508551,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101593264",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101593264/zip",
+      "expired": false,
+      "digest": "sha256:3f56668396d7f6a29796d235c37c9a7bfa216c247f434a76086c4ae03e946ff8",
+      "created_at": "2026-11-14T06:09:40Z",
+      "updated_at": "2026-11-14T06:09:40Z",
+      "expires_at": "2026-11-21T06:09:38Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101564070,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTU2NDA3MA==",
+      "name": "theme-screenshots-production-1",
+      "size_in_bytes": 35242068,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101564070",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101564070/zip",
+      "expired": false,
+      "digest": "sha256:3418a2e0a8474fd84d49628a17d9a8fa292f58402193717eb711a378b1d599b0",
+      "created_at": "2026-11-14T06:12:22Z",
+      "updated_at": "2026-11-14T06:12:22Z",
+      "expires_at": "2026-11-21T06:12:20Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101473385,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTQ3MzM4NQ==",
+      "name": "ci-results-unit",
+      "size_in_bytes": 2614,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101473385",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101473385/zip",
+      "expired": false,
+      "digest": "sha256:210174af82ff38ba07c98f20a6be67c227e7a2d1821cfb765ae7d0617da0d2a0",
+      "created_at": "2026-11-14T06:03:43Z",
+      "updated_at": "2026-11-14T06:03:43Z",
+      "expires_at": "2026-12-14T06:03:43Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101339179,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTMzOTE3OQ==",
+      "name": "doc-responsiveness-desktop",
+      "size_in_bytes": 1352799,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101339179",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101339179/zip",
+      "expired": false,
+      "digest": "sha256:4d80f2aad8654b3832870b78c61257b212f6784175ef0eea321d26495a6f990c",
+      "created_at": "2026-11-14T06:12:04Z",
+      "updated_at": "2026-11-14T06:12:04Z",
+      "expires_at": "2026-11-21T06:12:02Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101268517,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTI2ODUxNw==",
+      "name": "theme-screenshots-sync-soak-doc",
+      "size_in_bytes": 453291,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101268517",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101268517/zip",
+      "expired": false,
+      "digest": "sha256:b8088a977b34266a0e59ee7992883604044d103c8e40080b455b61987469eb71",
+      "created_at": "2026-11-14T06:03:26Z",
+      "updated_at": "2026-11-14T06:03:26Z",
+      "expires_at": "2026-11-21T06:03:25Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101252656,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTI1MjY1Ng==",
+      "name": "ci-plan",
+      "size_in_bytes": 1835,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101252656",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101252656/zip",
+      "expired": false,
+      "digest": "sha256:a50ea64b4dd846736cbba59a860641ce129f62152e67d7b1512d8ec5f5c52d21",
+      "created_at": "2026-11-14T05:56:02Z",
+      "updated_at": "2026-11-14T05:56:02Z",
+      "expires_at": "2026-12-14T05:56:01Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101213536,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTIxMzUzNg==",
+      "name": "doc-callback-lifetimes-desktop",
+      "size_in_bytes": 187059656,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101213536",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101213536/zip",
+      "expired": false,
+      "digest": "sha256:e38d7006443a37446e674f34d83f9b0db16ed1de5fcc7e7eebb438e471e0342d",
+      "created_at": "2026-11-14T06:01:52Z",
+      "updated_at": "2026-11-14T06:01:52Z",
+      "expires_at": "2026-11-21T06:01:44Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101173712,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTE3MzcxMg==",
+      "name": "sized-restore-acceptance",
+      "size_in_bytes": 71965,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101173712",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101173712/zip",
+      "expired": false,
+      "digest": "sha256:7916ccfdea8bf0356d5435305a7df2e947fbd11ed434d946b990e03a3cc2f566",
+      "created_at": "2026-11-14T06:01:50Z",
+      "updated_at": "2026-11-14T06:01:50Z",
+      "expires_at": "2026-11-28T06:01:48Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101054010,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTA1NDAxMA==",
+      "name": "sheet-pdf-evidence",
+      "size_in_bytes": 735473,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101054010",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101054010/zip",
+      "expired": false,
+      "digest": "sha256:7c1e5b9cb07e93ec2ad13eb218a93bd2b0cad41a74e4c0286fe28c95a72a5aac",
+      "created_at": "2026-11-14T06:03:22Z",
+      "updated_at": "2026-11-14T06:03:22Z",
+      "expires_at": "2026-11-21T06:03:20Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14100839107,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMDgzOTEwNw==",
+      "name": "theme-screenshots-offline-upgrade",
+      "size_in_bytes": 394832,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14100839107",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14100839107/zip",
+      "expired": false,
+      "digest": "sha256:7ff9f360cbc2062159a2f5c2ae346ec78da421f7fed61794c7585eb2b4d27f52",
+      "created_at": "2026-11-14T06:01:11Z",
+      "updated_at": "2026-11-14T06:01:11Z",
+      "expires_at": "2026-11-21T06:01:10Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14100829031,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMDgyOTAzMQ==",
+      "name": "pdf-collaboration-overlap",
+      "size_in_bytes": 179613,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14100829031",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14100829031/zip",
+      "expired": false,
+      "digest": "sha256:92fef6aa93beb4481713206673b0bc92982a1084e07a045858fc457cc69e2db7",
+      "created_at": "2026-11-14T06:00:41Z",
+      "updated_at": "2026-11-14T06:00:41Z",
+      "expires_at": "2026-11-21T06:00:39Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14100459751,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMDQ1OTc1MQ==",
+      "name": "doc-pdf-evidence",
+      "size_in_bytes": 8558403,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14100459751",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14100459751/zip",
+      "expired": false,
+      "digest": "sha256:52945bce82038482f7a4d7e5f553a6d4fdda423789c7b8a48c07940af3bbd31f",
+      "created_at": "2026-11-14T06:03:25Z",
+      "updated_at": "2026-11-14T06:03:25Z",
+      "expires_at": "2026-11-21T06:03:23Z",
+      "workflow_run": {
+        "id": 43563807488,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14102016296,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMjAxNjI5Ng==",
+      "name": "storybook-check-mobile-dark",
+      "size_in_bytes": 17234,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14102016296",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14102016296/zip",
+      "expired": false,
+      "digest": "sha256:2edc3a8a0aa1044b06fcf00497509964cfa59bb9182076a9723ded85b02712e6",
+      "created_at": "2026-11-14T06:03:53Z",
+      "updated_at": "2026-11-14T06:03:53Z",
+      "expires_at": "2026-11-28T06:03:53Z",
+      "workflow_run": {
+        "id": 43563807485,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101800842,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTgwMDg0Mg==",
+      "name": "entity-icon-checks",
+      "size_in_bytes": 509,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101800842",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101800842/zip",
+      "expired": false,
+      "digest": "sha256:0a6a4ace04d47048cd0d5f26b8d40868b90dd8aa62cf4b87d1d063e7191f6747",
+      "created_at": "2026-11-14T05:57:41Z",
+      "updated_at": "2026-11-14T05:57:41Z",
+      "expires_at": "2027-02-12T05:55:12Z",
+      "workflow_run": {
+        "id": 43563807485,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101363892,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTM2Mzg5Mg==",
+      "name": "storybook-check-tablet",
+      "size_in_bytes": 17168,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101363892",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101363892/zip",
+      "expired": false,
+      "digest": "sha256:334582c4a8dac937c4ed2154847a04d4cad79fc19a7fc50e4ff5cd198a8928b7",
+      "created_at": "2026-11-14T06:11:04Z",
+      "updated_at": "2026-11-14T06:11:04Z",
+      "expires_at": "2026-11-28T06:11:04Z",
+      "workflow_run": {
+        "id": 43563807485,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101263785,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTI2Mzc4NQ==",
+      "name": "storybook-check-mobile-light",
+      "size_in_bytes": 17152,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101263785",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101263785/zip",
+      "expired": false,
+      "digest": "sha256:9e8d2112287c2f88e4d9b45cbd37e9817f0697798e692986868fb8a8b305c23f",
+      "created_at": "2026-11-14T06:05:43Z",
+      "updated_at": "2026-11-14T06:05:43Z",
+      "expires_at": "2026-11-28T06:05:43Z",
+      "workflow_run": {
+        "id": 43563807485,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14100809800,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMDgwOTgwMA==",
+      "name": "storybook-check-desktop-dark",
+      "size_in_bytes": 17171,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14100809800",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14100809800/zip",
+      "expired": false,
+      "digest": "sha256:2b6cf2ee8677d94d2d05d87e757e68b2daf76a3484932d385c6ac98600f3db1e",
+      "created_at": "2026-11-14T06:06:41Z",
+      "updated_at": "2026-11-14T06:06:41Z",
+      "expires_at": "2026-11-28T06:06:41Z",
+      "workflow_run": {
+        "id": 43563807485,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14100784566,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMDc4NDU2Ng==",
+      "name": "storybook-check-desktop-light",
+      "size_in_bytes": 17228,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14100784566",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14100784566/zip",
+      "expired": false,
+      "digest": "sha256:18cef3aade24818686a25569463a75275ee475ef0236d0a2c5d37fc64ebdfc59",
+      "created_at": "2026-11-14T06:04:49Z",
+      "updated_at": "2026-11-14T06:04:49Z",
+      "expires_at": "2026-11-28T06:04:48Z",
+      "workflow_run": {
+        "id": 43563807485,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14100763748,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMDc2Mzc0OA==",
+      "name": "storybook-review",
+      "size_in_bytes": 6242048,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14100763748",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14100763748/zip",
+      "expired": false,
+      "digest": "sha256:8500ebbe3299715c45346bbe4a129f874ef1d9f8c35c5067b3674b1fee5d0465",
+      "created_at": "2026-11-14T05:56:47Z",
+      "updated_at": "2026-11-14T05:56:47Z",
+      "expires_at": "2026-11-21T05:56:44Z",
+      "workflow_run": {
+        "id": 43563807485,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101377081,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTM3NzA4MQ==",
+      "name": "spaces-acceptance",
+      "size_in_bytes": 669,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101377081",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101377081/zip",
+      "expired": false,
+      "digest": "sha256:e5599c66251c1e3ada1b1360802e66e6da15b6457b5db6a5429221bc34d563d8",
+      "created_at": "2026-11-14T05:55:53Z",
+      "updated_at": "2026-11-14T05:55:53Z",
+      "expires_at": "2026-11-28T05:55:52Z",
+      "workflow_run": {
+        "id": 43563807495,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101980672,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTk4MDY3Mg==",
+      "name": "desktop-offline-chrome-macos-26-43563807530-1",
+      "size_in_bytes": 222352,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101980672",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101980672/zip",
+      "expired": false,
+      "digest": "sha256:1a31033a6ac90b4eb5bcb023c2eded5c4a789d2fe98d98da19cd4451d235f7c1",
+      "created_at": "2026-11-14T05:58:53Z",
+      "updated_at": "2026-11-14T05:58:53Z",
+      "expires_at": "2026-11-28T05:58:52Z",
+      "workflow_run": {
+        "id": 43563807530,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101851674,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTg1MTY3NA==",
+      "name": "desktop-offline-safari-macos-15-intel-43563807530-1",
+      "size_in_bytes": 1027803,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101851674",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101851674/zip",
+      "expired": false,
+      "digest": "sha256:16a11d944759ad60b4e280556e5823edf41ccc2f3ec7ab6ead73ebd886fd6a0f",
+      "created_at": "2026-11-14T06:03:50Z",
+      "updated_at": "2026-11-14T06:03:50Z",
+      "expires_at": "2026-11-28T06:03:48Z",
+      "workflow_run": {
+        "id": 43563807530,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    },
+    {
+      "id": 14101701168,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEwMTcwMTE2OA==",
+      "name": "desktop-offline-firefox-macos-26-43563807530-1",
+      "size_in_bytes": 453270,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101701168",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14101701168/zip",
+      "expired": false,
+      "digest": "sha256:c31c4c751becba513d02dcc95bd6ab44b7cb55ba24eb02d872a7beed8ce063e5",
+      "created_at": "2026-11-14T05:58:42Z",
+      "updated_at": "2026-11-14T05:58:42Z",
+      "expires_at": "2026-11-28T05:58:40Z",
+      "workflow_run": {
+        "id": 43563807530,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-158-restore-admission",
+        "head_sha": "3d8b1ef775b0a71ec4e1512a0cca3b033f2c41bb"
+      }
+    }
+  ],
+  "downloadedArtifactsVerified": [
+    {
+      "id": 14102094045,
+      "name": "ci-results-browser",
+      "bytes": 3421,
+      "digest": "sha256:b048507b0f1317ad3a671296728f24664a6bddf5d7aeb215bb9500af358ae016",
+      "originalZipLocalPath": "/tmp/spn158-hosted-3d8b1ef7/ci-results-browser.zip",
+      "originalZipIncludedInArchive": false
+    },
+    {
+      "id": 14101602231,
+      "name": "ci-results-lib",
+      "bytes": 2674,
+      "digest": "sha256:e40e34fff08d7fff27dbf5e8172b01639a0256fdbdf13c7a2a657adf59c68ffc",
+      "originalZipLocalPath": "/tmp/spn158-hosted-3d8b1ef7/ci-results-lib.zip",
+      "originalZipIncludedInArchive": false
+    },
+    {
+      "id": 14101564070,
+      "name": "theme-screenshots-production-1",
+      "bytes": 35242068,
+      "digest": "sha256:3418a2e0a8474fd84d49628a17d9a8fa292f58402193717eb711a378b1d599b0",
+      "originalZipLocalPath": "/tmp/spn158-hosted-3d8b1ef7/theme-screenshots-production-1.zip",
+      "originalZipIncludedInArchive": false
+    },
+    {
+      "id": 14101473385,
+      "name": "ci-results-unit",
+      "bytes": 2614,
+      "digest": "sha256:210174af82ff38ba07c98f20a6be67c227e7a2d1821cfb765ae7d0617da0d2a0",
+      "originalZipLocalPath": "/tmp/spn158-hosted-3d8b1ef7/ci-results-unit.zip",
+      "originalZipIncludedInArchive": false
+    },
+    {
+      "id": 14101252656,
+      "name": "ci-plan",
+      "bytes": 1835,
+      "digest": "sha256:a50ea64b4dd846736cbba59a860641ce129f62152e67d7b1512d8ec5f5c52d21",
+      "originalZipLocalPath": "/tmp/spn158-hosted-3d8b1ef7/ci-plan.zip",
+      "originalZipIncludedInArchive": false
+    },
+    {
+      "id": 14101173712,
+      "name": "sized-restore-acceptance",
+      "bytes": 71965,
+      "digest": "sha256:7916ccfdea8bf0356d5435305a7df2e947fbd11ed434d946b990e03a3cc2f566",
+      "originalZipLocalPath": "/tmp/spn158-hosted-3d8b1ef7/sized-restore-acceptance.zip",
+      "originalZipIncludedInArchive": false
+    },
+    {
+      "id": 14102016296,
+      "name": "storybook-check-mobile-dark",
+      "bytes": 17234,
+      "digest": "sha256:2edc3a8a0aa1044b06fcf00497509964cfa59bb9182076a9723ded85b02712e6",
+      "originalZipLocalPath": "/tmp/spn158-hosted-3d8b1ef7/storybook-check-mobile-dark.zip",
+      "originalZipIncludedInArchive": false
+    },
+    {
+      "id": 14101800842,
+      "name": "entity-icon-checks",
+      "bytes": 509,
+      "digest": "sha256:0a6a4ace04d47048cd0d5f26b8d40868b90dd8aa62cf4b87d1d063e7191f6747",
+      "originalZipLocalPath": "/tmp/spn158-hosted-3d8b1ef7/entity-icon-checks.zip",
+      "originalZipIncludedInArchive": false
+    },
+    {
+      "id": 14101363892,
+      "name": "storybook-check-tablet",
+      "bytes": 17168,
+      "digest": "sha256:334582c4a8dac937c4ed2154847a04d4cad79fc19a7fc50e4ff5cd198a8928b7",
+      "originalZipLocalPath": "/tmp/spn158-hosted-3d8b1ef7/storybook-check-tablet.zip",
+      "originalZipIncludedInArchive": false
+    },
+    {
+      "id": 14101263785,
+      "name": "storybook-check-mobile-light",
+      "bytes": 17152,
+      "digest": "sha256:9e8d2112287c2f88e4d9b45cbd37e9817f0697798e692986868fb8a8b305c23f",
+      "originalZipLocalPath": "/tmp/spn158-hosted-3d8b1ef7/storybook-check-mobile-light.zip",
+      "originalZipIncludedInArchive": false
+    },
+    {
+      "id": 14100809800,
+      "name": "storybook-check-desktop-dark",
+      "bytes": 17171,
+      "digest": "sha256:2b6cf2ee8677d94d2d05d87e757e68b2daf76a3484932d385c6ac98600f3db1e",
+      "originalZipLocalPath": "/tmp/spn158-hosted-3d8b1ef7/storybook-check-desktop-dark.zip",
+      "originalZipIncludedInArchive": false
+    },
+    {
+      "id": 14100784566,
+      "name": "storybook-check-desktop-light",
+      "bytes": 17228,
+      "digest": "sha256:18cef3aade24818686a25569463a75275ee475ef0236d0a2c5d37fc64ebdfc59",
+      "originalZipLocalPath": "/tmp/spn158-hosted-3d8b1ef7/storybook-check-desktop-light.zip",
+      "originalZipIncludedInArchive": false
+    },
+    {
+      "id": 14101377081,
+      "name": "spaces-acceptance",
+      "bytes": 669,
+      "digest": "sha256:e5599c66251c1e3ada1b1360802e66e6da15b6457b5db6a5429221bc34d563d8",
+      "originalZipLocalPath": "/tmp/spn158-hosted-3d8b1ef7/spaces-acceptance.zip",
+      "originalZipIncludedInArchive": false
+    },
+    {
+      "id": 14101980672,
+      "name": "desktop-offline-chrome-macos-26-43563807530-1",
+      "bytes": 222352,
+      "digest": "sha256:1a31033a6ac90b4eb5bcb023c2eded5c4a789d2fe98d98da19cd4451d235f7c1",
+      "originalZipLocalPath": "/tmp/spn158-hosted-3d8b1ef7/desktop-offline-chrome-macos-26-43563807530-1.zip",
+      "originalZipIncludedInArchive": false
+    },
+    {
+      "id": 14101851674,
+      "name": "desktop-offline-safari-macos-15-intel-43563807530-1",
+      "bytes": 1027803,
+      "digest": "sha256:16a11d944759ad60b4e280556e5823edf41ccc2f3ec7ab6ead73ebd886fd6a0f",
+      "originalZipLocalPath": "/tmp/spn158-hosted-3d8b1ef7/desktop-offline-safari-macos-15-intel-43563807530-1.zip",
+      "originalZipIncludedInArchive": false
+    },
+    {
+      "id": 14101701168,
+      "name": "desktop-offline-firefox-macos-26-43563807530-1",
+      "bytes": 453270,
+      "digest": "sha256:c31c4c751becba513d02dcc95bd6ab44b7cb55ba24eb02d872a7beed8ce063e5",
+      "originalZipLocalPath": "/tmp/spn158-hosted-3d8b1ef7/desktop-offline-firefox-macos-26-43563807530-1.zip",
+      "originalZipIncludedInArchive": false
+    }
+  ],
+  "rerunDisposition": "All four current runs attempt1 after changed source publication; no unchanged failing workflow rerun.",
+  "phoneDisposition": "Owner-retired BrowserStack workflow not triggered; no new phone acceptance or paid-provider gate.",
+  "remainingScopes": [
+    "SPN090 own integrated acceptance",
+    "SPN120 own integrated acceptance and SPN159 prerequisite",
+    "SPN157 complete L investigation and SPN160 prerequisite"
+  ],
+  "payloads": [
+    {
+      "path": "README.md",
+      "bytes": 8437,
+      "sha256": "c95134208536fc78403b74832cb4b8749dffd4d8c120d7d93ecfc9da775a0ad5"
+    },
+    {
+      "path": "acceptance/ci-results-browser/ci-results-browser.json.gz",
+      "bytes": 3296,
+      "sha256": "069b6e66ef307c5ead92f99110a030f36a62de46df8b6518af39b967884e0b87",
+      "decompressedBytes": 137842,
+      "decompressedSha256": "ee71aa604484ebb8887c50708f2f03f4f3b030ea6ad417d493b6cb79744695ab"
+    },
+    {
+      "path": "acceptance/ci-results-lib/ci-results-lib.json.gz",
+      "bytes": 2561,
+      "sha256": "928a6bd7d52165e7efe4f1798afdec17cfc3f4ed58b7a0a7577b0b11de1d65bb",
+      "decompressedBytes": 84492,
+      "decompressedSha256": "7e78bff4c7e9a431c60554cb9b3ff06a22f70fa50d1831dc147d2c99b1555ca9"
+    },
+    {
+      "path": "acceptance/ci-results-unit/ci-results-unit.json.gz",
+      "bytes": 2501,
+      "sha256": "535ab84bf8f0de757df51692e19806e041290dfb3b5507fab7f8b35b61b1b837",
+      "decompressedBytes": 84385,
+      "decompressedSha256": "f0432ad372a66e70eb10138c655f1e1b9db18a4d1c9fe8337dca5cbb001bdbe4"
+    },
+    {
+      "path": "acceptance/desktop-offline-chrome-macos-26-43563807530-1/chrome/acceptance.json.gz",
+      "bytes": 7170,
+      "sha256": "2dd3bc21eb4d528350ba17df23438f1b976919ee6422961aaa0337db0bd9f03b",
+      "decompressedBytes": 55210,
+      "decompressedSha256": "f6e8e8a3ef774e2eff8a99c8e30660f2f7542b890852fddf42531692c0d62dbe"
+    },
+    {
+      "path": "acceptance/desktop-offline-chrome-macos-26-43563807530-1/chrome/versions.json.gz",
+      "bytes": 525,
+      "sha256": "c812db9c51ded284a6a11c7ce6bae77f53bf74c8a0845fc9ce08ac5a69788830",
+      "decompressedBytes": 824,
+      "decompressedSha256": "2bf343dcc94a38bef8abbcffad851e8f3b108f2a0489a5ab4c04adcbf722eff3"
+    },
+    {
+      "path": "acceptance/desktop-offline-firefox-macos-26-43563807530-1/firefox/acceptance.json.gz",
+      "bytes": 7341,
+      "sha256": "151657a5674d8558daf62aea86af8e57f0d228a683696a0f3f9c3fcb47b41a25",
+      "decompressedBytes": 56425,
+      "decompressedSha256": "3636e5a36fa3cad53f43e1984c15516ac8b31e6b2c611ea19ba6024bb5a1376a"
+    },
+    {
+      "path": "acceptance/desktop-offline-firefox-macos-26-43563807530-1/firefox/firefox-storage-prompt-1.json.gz",
+      "bytes": 1806,
+      "sha256": "605710bca354e714ecce8f564aa6c0385c41905a4373e749a5d1e4f50daf41dc",
+      "decompressedBytes": 21983,
+      "decompressedSha256": "6774db46e3f34f1119072034a343295ce3c5019ec1b5dbb42187019d4558393f"
+    },
+    {
+      "path": "acceptance/desktop-offline-firefox-macos-26-43563807530-1/firefox/versions.json.gz",
+      "bytes": 420,
+      "sha256": "e7e799504f0d89334790bf50450b87cd5c247a11eae1af0b5d5dd3a6ec0301c0",
+      "decompressedBytes": 644,
+      "decompressedSha256": "e117b9f056130496dc8d45887124233f38b8e3de1d4e5a16bf63c04d1922071d"
+    },
+    {
+      "path": "acceptance/desktop-offline-safari-macos-15-intel-43563807530-1/safari/acceptance.json.gz",
+      "bytes": 7198,
+      "sha256": "88fd8384349a480ccab003c0956e4d8d53c01ee5192b4448b10165888cc79acc",
+      "decompressedBytes": 53108,
+      "decompressedSha256": "0a688e7270644283a8619dd063258541b11fc3f21b23258fb1bf7c714a7bf1e5"
+    },
+    {
+      "path": "acceptance/desktop-offline-safari-macos-15-intel-43563807530-1/safari/versions.json.gz",
+      "bytes": 564,
+      "sha256": "c474c97bfc8caea248d0921c3a09347f63d5e251a9301f21780bad21e803108b",
+      "decompressedBytes": 1136,
+      "decompressedSha256": "b279c0b0efea73933c0af613ee232ea073c7f16a1bba1066efb0840cf09d3f31"
+    },
+    {
+      "path": "acceptance/desktop-offline-safari-macos-15-intel-43563807530-1/safari-profile-probe.json.gz",
+      "bytes": 13067,
+      "sha256": "3f69ea29864e2d2ee007be981487e303a06bc931e224574230b4654407318619",
+      "decompressedBytes": 166807,
+      "decompressedSha256": "0e091d7eafd74ee53b3c1a8189325d6a3858235fc6357a4e720d7d499485d74d"
+    },
+    {
+      "path": "acceptance/entity-icon-checks/manifest.json.gz",
+      "bytes": 386,
+      "sha256": "ed09ed2923401f060f64541b38edc2053530bb71d0c5a346eac126f28c989c2d",
+      "decompressedBytes": 3611,
+      "decompressedSha256": "4e7d3e59e598e95a6a5e644e38307bdc2f7291f75b37f8fc045d91595bf764d1"
+    },
+    {
+      "path": "acceptance/production-1-report.json.gz",
+      "bytes": 354723,
+      "sha256": "8bd255f015155207177dd707f3934a731a0a5cb776333fe52f3502a4ae508273",
+      "decompressedBytes": 1483853,
+      "decompressedSha256": "fc3618d96120699d32499f02056e56b030eafd84e80e0276a1ce0b4a14c137ce"
+    },
+    {
+      "path": "acceptance/production-1-summary.json.gz",
+      "bytes": 723,
+      "sha256": "04ceb069f8b85574c685ff3d024747dd02a598a0cbdaa7417d7fe2c0849ebc8e",
+      "decompressedBytes": 1878,
+      "decompressedSha256": "1422d321a9346e0fc357a03ac4864f784e0c1a46121a87a5b0d61f59c7b440ed"
+    },
+    {
+      "path": "acceptance/sized-restore-acceptance/evidence.json.gz",
+      "bytes": 75179,
+      "sha256": "922dd267cf5b9f6699bbe40faaefbb7b038d75e57f2e392274b2ececc392ba52",
+      "decompressedBytes": 172363,
+      "decompressedSha256": "63005fd3b70a9f806fa5387e2ab602d35035435c0c50afc70d7b0e9b979f5598"
+    },
+    {
+      "path": "acceptance/storybook-check-desktop-dark/bundle-size.json.gz",
+      "bytes": 132,
+      "sha256": "2aa71c6b87f3197ce1486ff23f60793b302f45dd33d71612cc81f6802bde2a5e",
+      "decompressedBytes": 193,
+      "decompressedSha256": "2e6bcb7b6c8a1f90b07b479f92dcea3136aecbe28aeed900ea1301433f9a8bde"
+    },
+    {
+      "path": "acceptance/storybook-check-desktop-dark/manifest.json.gz",
+      "bytes": 15602,
+      "sha256": "7dc67b1e1092aeac2c7c9dbf445f2f2f52674646be9e749aa8e8de77d2a3695c",
+      "decompressedBytes": 139591,
+      "decompressedSha256": "dfd51c5806b519eeb393c8807d7ce3ff478a598948aafebe5b41e01ef3ed3aa8"
+    },
+    {
+      "path": "acceptance/storybook-check-desktop-dark/redesign-native-editors--doc-dark-initial-geometry.json.gz",
+      "bytes": 276,
+      "sha256": "6ace318243a84b55cb5a68a56b5d1780b69ba308120a6d76235654d76ae18b82",
+      "decompressedBytes": 1226,
+      "decompressedSha256": "0b492d18d7c2238eb0b9c288ec31cd9f5d1185c5bee107ad172966f65e3d7379"
+    },
+    {
+      "path": "acceptance/storybook-check-desktop-dark/redesign-native-editors--sheet-dark-initial-geometry.json.gz",
+      "bytes": 223,
+      "sha256": "ce384d34cf99ea0ead27450a9d7694775ba59be7341cd8ac71c179043c0bb3b6",
+      "decompressedBytes": 888,
+      "decompressedSha256": "7c8fb2c6363a42eab744501493befabc52e147109a42ba54295a0d2997627b44"
+    },
+    {
+      "path": "acceptance/storybook-check-desktop-light/bundle-size.json.gz",
+      "bytes": 132,
+      "sha256": "2aa71c6b87f3197ce1486ff23f60793b302f45dd33d71612cc81f6802bde2a5e",
+      "decompressedBytes": 193,
+      "decompressedSha256": "2e6bcb7b6c8a1f90b07b479f92dcea3136aecbe28aeed900ea1301433f9a8bde"
+    },
+    {
+      "path": "acceptance/storybook-check-desktop-light/manifest.json.gz",
+      "bytes": 15662,
+      "sha256": "63a4e685c11316b5577f8b677721784924691f10caba89a5a3ee847189222d6e",
+      "decompressedBytes": 140859,
+      "decompressedSha256": "4df61db5435a8d74d0a3e249510c2d776257bdb8226292d075e960ed2ba40f12"
+    },
+    {
+      "path": "acceptance/storybook-check-desktop-light/redesign-native-editors--doc-light-initial-geometry.json.gz",
+      "bytes": 276,
+      "sha256": "6ace318243a84b55cb5a68a56b5d1780b69ba308120a6d76235654d76ae18b82",
+      "decompressedBytes": 1226,
+      "decompressedSha256": "0b492d18d7c2238eb0b9c288ec31cd9f5d1185c5bee107ad172966f65e3d7379"
+    },
+    {
+      "path": "acceptance/storybook-check-desktop-light/redesign-native-editors--sheet-light-initial-geometry.json.gz",
+      "bytes": 223,
+      "sha256": "ce384d34cf99ea0ead27450a9d7694775ba59be7341cd8ac71c179043c0bb3b6",
+      "decompressedBytes": 888,
+      "decompressedSha256": "7c8fb2c6363a42eab744501493befabc52e147109a42ba54295a0d2997627b44"
+    },
+    {
+      "path": "acceptance/storybook-check-mobile-dark/bundle-size.json.gz",
+      "bytes": 132,
+      "sha256": "2aa71c6b87f3197ce1486ff23f60793b302f45dd33d71612cc81f6802bde2a5e",
+      "decompressedBytes": 193,
+      "decompressedSha256": "2e6bcb7b6c8a1f90b07b479f92dcea3136aecbe28aeed900ea1301433f9a8bde"
+    },
+    {
+      "path": "acceptance/storybook-check-mobile-dark/manifest.json.gz",
+      "bytes": 15676,
+      "sha256": "1114ece5a06bf6b153e9960cb2c12dba6fd1d55296d877720d79421c45ed5e0c",
+      "decompressedBytes": 145896,
+      "decompressedSha256": "4c13fba0853296a0a0b3af6b7c882f500255a8a7e715e5113a9bf46acefb8fbd"
+    },
+    {
+      "path": "acceptance/storybook-check-mobile-dark/redesign-native-editors--doc-phone-dark-initial-geometry.json.gz",
+      "bytes": 278,
+      "sha256": "b82175168e50a46821f2ab906a5efbd879776a570777959d484863a7edc1ffb1",
+      "decompressedBytes": 1214,
+      "decompressedSha256": "636f24123ca74786f1c9e9bf7a2363744e1e8726bf4f77dc209098ff1a59b162"
+    },
+    {
+      "path": "acceptance/storybook-check-mobile-dark/redesign-native-editors--sheet-phone-dark-initial-geometry.json.gz",
+      "bytes": 183,
+      "sha256": "28e60844b83623923a846ddd7b5341f71b4a4526d4221757ea28392d01bac409",
+      "decompressedBytes": 719,
+      "decompressedSha256": "335196a0601155359d0d43121c377d241fdee0c9ce31835b2bc40a1d943fa638"
+    },
+    {
+      "path": "acceptance/storybook-check-mobile-light/bundle-size.json.gz",
+      "bytes": 132,
+      "sha256": "2aa71c6b87f3197ce1486ff23f60793b302f45dd33d71612cc81f6802bde2a5e",
+      "decompressedBytes": 193,
+      "decompressedSha256": "2e6bcb7b6c8a1f90b07b479f92dcea3136aecbe28aeed900ea1301433f9a8bde"
+    },
+    {
+      "path": "acceptance/storybook-check-mobile-light/manifest.json.gz",
+      "bytes": 15618,
+      "sha256": "4d4872b344ad7fbe1729d34c3400807c135c73c5abb5677391cf523125793b8b",
+      "decompressedBytes": 140642,
+      "decompressedSha256": "1bdef8f039153f7d1e6395e9fddb4e78bd847a903dcff01abec884e0aa29eec0"
+    },
+    {
+      "path": "acceptance/storybook-check-mobile-light/redesign-native-editors--doc-phone-initial-geometry.json.gz",
+      "bytes": 278,
+      "sha256": "b82175168e50a46821f2ab906a5efbd879776a570777959d484863a7edc1ffb1",
+      "decompressedBytes": 1214,
+      "decompressedSha256": "636f24123ca74786f1c9e9bf7a2363744e1e8726bf4f77dc209098ff1a59b162"
+    },
+    {
+      "path": "acceptance/storybook-check-mobile-light/redesign-native-editors--sheet-phone-initial-geometry.json.gz",
+      "bytes": 183,
+      "sha256": "28e60844b83623923a846ddd7b5341f71b4a4526d4221757ea28392d01bac409",
+      "decompressedBytes": 719,
+      "decompressedSha256": "335196a0601155359d0d43121c377d241fdee0c9ce31835b2bc40a1d943fa638"
+    },
+    {
+      "path": "acceptance/storybook-check-tablet/bundle-size.json.gz",
+      "bytes": 132,
+      "sha256": "2aa71c6b87f3197ce1486ff23f60793b302f45dd33d71612cc81f6802bde2a5e",
+      "decompressedBytes": 193,
+      "decompressedSha256": "2e6bcb7b6c8a1f90b07b479f92dcea3136aecbe28aeed900ea1301433f9a8bde"
+    },
+    {
+      "path": "acceptance/storybook-check-tablet/manifest.json.gz",
+      "bytes": 15627,
+      "sha256": "7bb34394f11149ebf365451c48ed7985d101c5fac7c46e544d60c1fd91777798",
+      "decompressedBytes": 141691,
+      "decompressedSha256": "c47becdc48031b6dbe49fd300c61945f206d2c923b0268fac109a95ef55b5941"
+    },
+    {
+      "path": "acceptance/storybook-check-tablet/redesign-native-editors--doc-tablet-initial-geometry.json.gz",
+      "bytes": 278,
+      "sha256": "23bb7db983fd6b2e84ae2a518479445b0b34388f9f608bce67f776ae97c9e098",
+      "decompressedBytes": 1214,
+      "decompressedSha256": "b27eaf73d36b052b1cf2a6a43724e8ab5d6ed9f0666f6b87a26d206b8cdf2233"
+    },
+    {
+      "path": "acceptance/storybook-check-tablet/redesign-native-editors--sheet-tablet-initial-geometry.json.gz",
+      "bytes": 183,
+      "sha256": "3ab758fc8ebfd2ebeb4b7bedd6ee8147032c6971b30631772d6b3c8ef10e3160",
+      "decompressedBytes": 719,
+      "decompressedSha256": "dc177b69762f8ac5d8674418e7368fccc88fd2e9d4501d54e7c3b0348a09a160"
+    },
+    {
+      "path": "coverage/ci-plan.json",
+      "bytes": 64356,
+      "sha256": "a3d9bcfa63e91c537072781d89bd6b982db81ecddf5fea0c69743e4a3dfb652c"
+    },
+    {
+      "path": "coverage/spaces-acceptance.json",
+      "bytes": 1244,
+      "sha256": "7fd71b56267d2eb169aa49310c2d8ea2effe8307e57f56f0d5a5d729c713882f"
+    },
+    {
+      "path": "local/spn158-resume-final-cleanup.json",
+      "bytes": 343,
+      "sha256": "b9c8b36d7dff19d71aac717b9bf01ca1e6debe3bc2fc4d661bf7f0166048bb52"
+    },
+    {
+      "path": "local/spn158-resume-pr.json",
+      "bytes": 395,
+      "sha256": "437f805725af5b14a7364a51636411cb2e4282be9eb92c307e178f2c7267da0e"
+    },
+    {
+      "path": "local/spn158-resume-pr.log.gz",
+      "bytes": 287,
+      "sha256": "09871f5fcbbe2a2192ab92174c027df8ec17db39a45c2ac8ae5fd56f4d1b8b93",
+      "decompressedBytes": 344,
+      "decompressedSha256": "d34012d75b88989c90a575e6ef47ea53f55e05c6a68ac724d0d570e83c2ee85a"
+    },
+    {
+      "path": "logs/job-132353114649.log.gz",
+      "bytes": 19049,
+      "sha256": "d7c1b9420ec7e34f802970a407d7af374a6d7a6cd5351be9ff0c71d77df9a3c6",
+      "decompressedBytes": 153087,
+      "decompressedSha256": "d0cb06c438b55f3d7f76d35eb15c779c012608d8f47b598ac3df0c46c0a73d83"
+    },
+    {
+      "path": "logs/job-132353114678.log.gz",
+      "bytes": 26486,
+      "sha256": "b749a44dd3541ee795bbd12c4a3ce1aa8f9bb038b4a971ce05036bedcda9261b",
+      "decompressedBytes": 141801,
+      "decompressedSha256": "7f4196c573b6ff48294f383005f9d603f5b67cb5517fa572d396050a99cd789c"
+    },
+    {
+      "path": "logs/job-132353114692.log.gz",
+      "bytes": 7334,
+      "sha256": "5c620e44a29fb601d65c3ceecc6300b2f5c90deaa390b38b53b0c1e7cc995ecf",
+      "decompressedBytes": 29373,
+      "decompressedSha256": "825b43f36d1298b8774baee02d93e127f328c6b96ee404e301d5a476363ab285"
+    },
+    {
+      "path": "logs/job-132353114746.log.gz",
+      "bytes": 8535,
+      "sha256": "f2090db326df612be1d68857209aab6a09aebebb3d714f4c0c42ee8e9734c0a1",
+      "decompressedBytes": 43136,
+      "decompressedSha256": "51a2fb2b8c84ca20190bb2a6a035b25bdce99b64d9095a6e8f70e6d8ef3d4c9a"
+    },
+    {
+      "path": "logs/job-132353114846.log.gz",
+      "bytes": 26274,
+      "sha256": "c4f54c7590fe16df397a536c2e44bd0347194fc425994b2d8188ccf6e2520184",
+      "decompressedBytes": 139843,
+      "decompressedSha256": "434fa1e4cb1dcdef5a8790696053fd992124492123659d9ef1944e1e90c5b6e5"
+    },
+    {
+      "path": "logs/job-132353114955.log.gz",
+      "bytes": 19524,
+      "sha256": "9b61effeac1aa1474cc99511cc5c2ac89d411ce1764d7be1dde482d1ce64bd8f",
+      "decompressedBytes": 154969,
+      "decompressedSha256": "14e54f9ac0dac399f47e707a134d890ad479f7654951951902a609f6d942bbdc"
+    },
+    {
+      "path": "logs/job-132353115034.log.gz",
+      "bytes": 44851,
+      "sha256": "5bd869534e60c95b1899d0935c2c08da3785e65dbe347e01686227bff5656051",
+      "decompressedBytes": 333757,
+      "decompressedSha256": "93f0e33462555c2ecf94db2d51c6a6687d85464d6d8f51ede4a6195d82a36298"
+    },
+    {
+      "path": "logs/job-132353307665.log.gz",
+      "bytes": 19026,
+      "sha256": "799f6579fcb259d754196f1a7d0e306dc854dd0238d65affce0dff6952c7c1d2",
+      "decompressedBytes": 83305,
+      "decompressedSha256": "fb9ec3b127366e99ada6aa23e04be40f152a3a3817b5ec4836801387e83d163e"
+    },
+    {
+      "path": "logs/job-132353317765.log.gz",
+      "bytes": 80985,
+      "sha256": "9b57006b32b3b610c55422a2595fa3f487a4e1cd90b93e4610196c9752e9abae",
+      "decompressedBytes": 727656,
+      "decompressedSha256": "6f08ef04be6bcd4a71c5c5e6fce4636e76e1133ed318d7d778668fb529f7513d"
+    },
+    {
+      "path": "logs/job-132353317775.log.gz",
+      "bytes": 5125,
+      "sha256": "7e0946240ea2c0fd28856ec88db4e5abc506be3ad699765b1b49b82b73d05afd",
+      "decompressedBytes": 20315,
+      "decompressedSha256": "3c1d751cf86f6c4d20e44dedd10895714044bd367d40460685ae79f42e7918b5"
+    },
+    {
+      "path": "logs/job-132353317780.log.gz",
+      "bytes": 4978,
+      "sha256": "a40aabeb3e87d3c9129fc9f19ca58ff7d0a9a2f3afe0687d41dd48e00553a0c6",
+      "decompressedBytes": 19989,
+      "decompressedSha256": "74063428ce6599ce873064dab047e39d2d8b185742c8f666e2352f26ff3975da"
+    },
+    {
+      "path": "logs/job-132353317781.log.gz",
+      "bytes": 15187,
+      "sha256": "b323aebb3dedd433206f2c19b23a76955c001b6c183bb6539c4afe6ca2eba966",
+      "decompressedBytes": 106297,
+      "decompressedSha256": "c55685a1fbe353a953958c26f464ffdd89167f6551234157e2db10332e9bbf4a"
+    },
+    {
+      "path": "logs/job-132353317786.log.gz",
+      "bytes": 16797,
+      "sha256": "6dede5c139a54a87aea0f38b3a88ae1259223df28d3c7bc50d79c4f19281935b",
+      "decompressedBytes": 137701,
+      "decompressedSha256": "7dd495d2f4e6388926db61e99cfbf136c6f72364f2d1c1f4010e05ff200d980d"
+    },
+    {
+      "path": "logs/job-132353317789.log.gz",
+      "bytes": 4544,
+      "sha256": "8b4ac72c13f810e667c125483d08a31e0865cd96bf196da41dbd846ebd31f1aa",
+      "decompressedBytes": 20156,
+      "decompressedSha256": "ba8ade5c01440b5e62b38bded30fcc853bcbf732240a1dc8a7d2dee5899bb4c1"
+    },
+    {
+      "path": "logs/job-132353317792.log.gz",
+      "bytes": 20752,
+      "sha256": "ff6a18d7968423c332ffef2866e48598c906cc68dfc33c2beb785e968c102916",
+      "decompressedBytes": 95727,
+      "decompressedSha256": "c9ce592abd965fe76d17baaba805c09d9111bf33f5a72453992122c67a0bc2af"
+    },
+    {
+      "path": "logs/job-132353317795.log.gz",
+      "bytes": 19372,
+      "sha256": "0ccbf6014afbaadb6c68812a97de9ca899ebfe2e974314a9d13f6fbe40805171",
+      "decompressedBytes": 89999,
+      "decompressedSha256": "9d85e817f1c94d6a46265fb8ab14c3f948516ee4fb971b9a67172f2a6a7e154f"
+    },
+    {
+      "path": "logs/job-132353317798.log.gz",
+      "bytes": 7181,
+      "sha256": "b4ab8d18fd1a0ad533f9b5681f3128c0a454f844667478e6beb6a27d7b8e019b",
+      "decompressedBytes": 37376,
+      "decompressedSha256": "75cbc2e9a3e746da62c25cfd556bbac121a9777438c1eeebf4d55069c073aa4a"
+    },
+    {
+      "path": "logs/job-132353317805.log.gz",
+      "bytes": 14760,
+      "sha256": "97c75d726f3433e2818d0ac9c1786a559f7fdf40d38ba8be84c7d8e0fecae9d5",
+      "decompressedBytes": 64246,
+      "decompressedSha256": "5625e49f9c875d84afbabf4dd46739f7d15809bcce2ed5ee462133a4cb5b5e54"
+    },
+    {
+      "path": "logs/job-132353317806.log.gz",
+      "bytes": 20643,
+      "sha256": "fee51cf7f23f3a9e658d6a212084caf618fcbc61a79a0ad6a8afccc44e026baa",
+      "decompressedBytes": 95673,
+      "decompressedSha256": "6224778b76c5c7184231139a7ce1c19c5317c3e1f08dc474a71f2031ca00d1de"
+    },
+    {
+      "path": "logs/job-132353317824.log.gz",
+      "bytes": 9673,
+      "sha256": "11ad15dcfd36db4587addb93ee905c06bf952cc080ba60b2bdc409f2c9c63ddf",
+      "decompressedBytes": 38667,
+      "decompressedSha256": "d18fae0809229a7c90928343eeeeaefb0f9cfae8d25b88ef678a895e8fc27c41"
+    },
+    {
+      "path": "logs/job-132353317826.log.gz",
+      "bytes": 5849,
+      "sha256": "5b0c9383ba5fd6bf463eede300d77119ae5d444734265b177e4c410fedd93571",
+      "decompressedBytes": 24126,
+      "decompressedSha256": "1bac2345aca2f7399b2edfe540af4d466ff2cb2ab7e01f08469e8d5dccd2434f"
+    },
+    {
+      "path": "logs/job-132353317827.log.gz",
+      "bytes": 18188,
+      "sha256": "eb7b5d5aead7d7db67042c633eaccaa0a2f238402c4eda97bd96fa9d6f96d2c5",
+      "decompressedBytes": 110092,
+      "decompressedSha256": "706a80b88b64062f859d8968c9f42b177b022c77db35bbb4817d254f5a8b30a3"
+    },
+    {
+      "path": "logs/job-132353317829.log.gz",
+      "bytes": 5710,
+      "sha256": "ed9568777e8180352430f686f05c25fcf6e575c5b3b688373bf3f4805060199e",
+      "decompressedBytes": 23834,
+      "decompressedSha256": "d8e957213a47d1df5cf4b1878dcbd95e37e7683222e2f56793060e2c61c76156"
+    },
+    {
+      "path": "logs/job-132353317834.log.gz",
+      "bytes": 19599,
+      "sha256": "fa33e33e397cd1059bcb5b7a7e64bb5d7b2e80bdd64d0ab6d05887879b0cb2c9",
+      "decompressedBytes": 90916,
+      "decompressedSha256": "ee8b7d97685b8452df2bc0a7fde9a65cbe3fbcce26bdcca7d21f860919827e80"
+    },
+    {
+      "path": "logs/job-132353317847.log.gz",
+      "bytes": 6491,
+      "sha256": "1001e315e877e8c28a58859dd75e19f2d7118f84202ebcb0fe22755bbd319d9e",
+      "decompressedBytes": 25950,
+      "decompressedSha256": "0e9553b0933223a77cb96a20ce7f7eb801b6f5497f69fbc2cd0460cd5321ce6e"
+    },
+    {
+      "path": "logs/job-132353317898.log.gz",
+      "bytes": 26621,
+      "sha256": "e1e16862683fc4766b2606efa8c023ada9e3e0b3e1ecedf3b5fe47edb13c996d",
+      "decompressedBytes": 210593,
+      "decompressedSha256": "cd1cb2fa30ceb970dd43b3d4a79d268d888bc1b062f775952219460b4e2a3d5c"
+    },
+    {
+      "path": "logs/job-132353317907.log.gz",
+      "bytes": 26105,
+      "sha256": "efeae6c6dce0d3399bac5f71806d7c98a69cd6eeb0e7cebb7f7304e9b5fccca1",
+      "decompressedBytes": 192573,
+      "decompressedSha256": "e34495606251d00ec7dd91ed318425fae2fec2d3f68b268ddfd03bf8da0f8110"
+    },
+    {
+      "path": "logs/job-132353317924.log.gz",
+      "bytes": 13435,
+      "sha256": "b9f0e5e624d9453bae491408fb63dfaf7dcc8f93b50c463589e18c41d1302805",
+      "decompressedBytes": 57724,
+      "decompressedSha256": "3caeed36a7a93b23e43d8d39371c7c627efe7ffb66b706a39a90fcf4e34f88b2"
+    },
+    {
+      "path": "logs/job-132353317928.log.gz",
+      "bytes": 17883,
+      "sha256": "8e1b96c2ba400e762e5141f5b56ebb2293e83b73826f1115b0223d12c6080261",
+      "decompressedBytes": 75350,
+      "decompressedSha256": "3c79851bc431a9ffedc3bb6c5a8f0fcb4b025df660ae516976f8f7b8fabe81e6"
+    },
+    {
+      "path": "logs/job-132353317939.log.gz",
+      "bytes": 19597,
+      "sha256": "cbacd853297bf17a24b6ee3b4fa43a9280e7940aa8763a2e545b4967f944c1bd",
+      "decompressedBytes": 115175,
+      "decompressedSha256": "ed6120b5581516c8b9ad6f7f6bdcd8ae045d10b923986eb1b597bd1061c9c360"
+    },
+    {
+      "path": "logs/job-132353317940.log.gz",
+      "bytes": 16807,
+      "sha256": "a31d44afb673d96ec19b492860908b828193f19b71154962ad6bfcb294716b70",
+      "decompressedBytes": 70454,
+      "decompressedSha256": "10b35cf81ddef3e18ca09c6851033a00f612ea2a37e77c0a244e1adb1bcd7100"
+    },
+    {
+      "path": "logs/job-132353317952.log.gz",
+      "bytes": 16029,
+      "sha256": "094262864b4220378463929ed7f696a5802b344aa40c4897e4dec082c3c03ca5",
+      "decompressedBytes": 89271,
+      "decompressedSha256": "1346072aaf6404b59523e42b46d440f6452994b1b7b869d8da55cce08fc00764"
+    },
+    {
+      "path": "logs/job-132353317962.log.gz",
+      "bytes": 13044,
+      "sha256": "26226d538cfc61b0e4bde6950afbd60ed9d8173c49ff825a3295af8eb00bc41d",
+      "decompressedBytes": 56149,
+      "decompressedSha256": "ea178fcb82f2450b6669e7cadfd30913d75db3768e1432cb2d04952bbf3445c4"
+    },
+    {
+      "path": "logs/job-132353317972.log.gz",
+      "bytes": 15769,
+      "sha256": "d5cf10cae8b3785f5623e0ac85cfc617f9825d7466bc6935b2b81baa2fb9f356",
+      "decompressedBytes": 80525,
+      "decompressedSha256": "023e2a19f464a4270b84d76f02587cebf72df9e4d89bf6abc2404d84cf56ffc6"
+    },
+    {
+      "path": "logs/job-132353317975.log.gz",
+      "bytes": 14420,
+      "sha256": "c2e657d4aea293610806fcdb8a95d747bda5e65c344a30dee8e9afac10d7953e",
+      "decompressedBytes": 70223,
+      "decompressedSha256": "9824a0264c7c1e8c477a3217d41cf6d57886680c7c5b8154c85658c5f6cf0579"
+    },
+    {
+      "path": "logs/job-132353317977.log.gz",
+      "bytes": 12981,
+      "sha256": "4276e07c09f7ccaa57087ce500fdb8e043ece574c2255c34924953f3fb52ef7e",
+      "decompressedBytes": 56067,
+      "decompressedSha256": "4bf7d4a67f8cec5a31712619d485d89f8b5437dd45f1a7f4ced5378bad875b10"
+    },
+    {
+      "path": "logs/job-132353487647.log.gz",
+      "bytes": 27731,
+      "sha256": "95b50da4b86df032ce6a434515db7e11b93d24126ae425f83ababf2df525bbcd",
+      "decompressedBytes": 133805,
+      "decompressedSha256": "cb86a47c9282f3077d210e0cede6fcb93e6f1e5965d456e47b1c43d5681f0de9"
+    },
+    {
+      "path": "logs/job-132353487675.log.gz",
+      "bytes": 26927,
+      "sha256": "485660f1e4b32db2dd57bdaa8ab73c5d9f98c313e92b7b60c0a7962a81127560",
+      "decompressedBytes": 130016,
+      "decompressedSha256": "5593370c51b445b80318f19992f6669ef32de795f1beb99cdeffc6327c8dfca0"
+    },
+    {
+      "path": "logs/job-132353487689.log.gz",
+      "bytes": 27106,
+      "sha256": "140629a535814240dc88fdd1979117eb3fd90cc0b4ff6bb32d88e357aaaa2064",
+      "decompressedBytes": 136256,
+      "decompressedSha256": "7cc5d53c964e71eaaa17d3cea1ea9ac55f64c8670fa6c7770f675d12dd7e9542"
+    },
+    {
+      "path": "logs/job-132353487698.log.gz",
+      "bytes": 27008,
+      "sha256": "86ec480432c9c16e6df69b01cce3250548cb94cc86605e0af8a522f2b8157ae7",
+      "decompressedBytes": 131058,
+      "decompressedSha256": "ff72ae24131ed414f2a15b58cff78f5bac44a4c53b88dcfd4ca698a29ba1887a"
+    },
+    {
+      "path": "logs/job-132353487738.log.gz",
+      "bytes": 26957,
+      "sha256": "c2c9f19b1a22ec3e40143f1d04c343a02c70eba998b092ba0e9e3b9e0360649c",
+      "decompressedBytes": 131975,
+      "decompressedSha256": "e821824561fa09fc1a1896d912890ad031ced06caa34f06b06621bd000eeb4a0"
+    },
+    {
+      "path": "logs/job-132354939279.log.gz",
+      "bytes": 17867,
+      "sha256": "be2b81df4f1dddf888e1e88e29e09bf7aa7948d8dfbfdc66837e2a171540f0a8",
+      "decompressedBytes": 205452,
+      "decompressedSha256": "62115369486025b19df8232fec8d4c4b99697922c0d213b3dddc4a04711439a3"
+    },
+    {
+      "path": "logs/job-132355111474.log.gz",
+      "bytes": 17783,
+      "sha256": "4b7f369c972c253ed3b23eac51ef15e0f62617ae1278028804b022965060c51b",
+      "decompressedBytes": 205618,
+      "decompressedSha256": "48ae3b20b90b3f4bb1c8b6360cfb64e1bafc3886958431a23fa55cdc3b9bd775"
+    },
+    {
+      "path": "logs/job-132357024242.log.gz",
+      "bytes": 4411,
+      "sha256": "f219ebfba44a7de460c61b06d9ca0ccc1878520314e8c40405c86dc7c1965bcc",
+      "decompressedBytes": 17858,
+      "decompressedSha256": "cba306ac7e65ce6d8814b52b2748cb5399997b2fa71615e1edecfeb5cfa12806"
+    },
+    {
+      "path": "logs/job-132359924082.log.gz",
+      "bytes": 24304,
+      "sha256": "23a202c0df31164607f219fe5ec62947aa466ef4b34831d11613bf7b100834bf",
+      "decompressedBytes": 283594,
+      "decompressedSha256": "8459c332b279516db4e3d55f2e1763ea2a0b81c60f00141643aae89186b5f4d3"
+    },
+    {
+      "path": "metadata/artifacts-43563807485.json.gz",
+      "bytes": 1044,
+      "sha256": "e2f67b10df830dc9e30dab7cfc5972e4e4056174d78d27a1a4a8f6950b2ab137",
+      "decompressedBytes": 4994,
+      "decompressedSha256": "8ddb00a242a8b93a2835665e1e7ac24aff48406c420244e5997ebc099fe0818c"
+    },
+    {
+      "path": "metadata/artifacts-43563807488.json.gz",
+      "bytes": 2583,
+      "sha256": "10c01fa78ef1326ee9b0aa5416c82b9b8dad410a57527c197dae07fd91b98f33",
+      "decompressedBytes": 16420,
+      "decompressedSha256": "542ff7925ef9591eda94d273b916f0504afb2d924365a3a53f51dc5a8b1e8c57"
+    },
+    {
+      "path": "metadata/artifacts-43563807495.json.gz",
+      "bytes": 439,
+      "sha256": "678aad677b9727aec090da9808881e4c694b620bc17841d7dffef0d2ee0f1c62",
+      "decompressedBytes": 731,
+      "decompressedSha256": "d523b98edf0eb33b42c6b15068a8847d0d0cca3d364978e184553f606638734f"
+    },
+    {
+      "path": "metadata/artifacts-43563807530.json.gz",
+      "bytes": 668,
+      "sha256": "228c394c1382d7367d9760507156f483e076835226779d98848d2580774f0d8b",
+      "decompressedBytes": 2232,
+      "decompressedSha256": "6d2622cd33fb4e6849b5139b5bf2f6322a5dd51ad04356e35a0aadf2abb949e3"
+    },
+    {
+      "path": "metadata/commit-runs.json.gz",
+      "bytes": 2365,
+      "sha256": "b67f5658238997d502fe3dc0b62669b6336d0378f0e2383fd24452ebade4c2d7",
+      "decompressedBytes": 48853,
+      "decompressedSha256": "8752c28d69c2e28ba776150f3003066905257699c97d7afeddc7546669dad9b4"
+    },
+    {
+      "path": "metadata/jobs-43563807485.json.gz",
+      "bytes": 2152,
+      "sha256": "a97b9253f1973e7a5b18de71b0ac031c6640fe8411c6f222f572fe39b9d2f0e5",
+      "decompressedBytes": 24535,
+      "decompressedSha256": "f0f2fa0ebedb1dc74015246643b73def9f39d5ba427e52cdac245b4733c25459"
+    },
+    {
+      "path": "metadata/jobs-43563807488.json.gz",
+      "bytes": 6339,
+      "sha256": "147db88aa91265da8304eff064b47740efcf61c655c4dd7a858691b0047d97ed",
+      "decompressedBytes": 105941,
+      "decompressedSha256": "5fffe4effaaf5f50680ad397e92b101132a1729e602f2f8a07101dab4caa9c0a"
+    },
+    {
+      "path": "metadata/jobs-43563807495.json.gz",
+      "bytes": 801,
+      "sha256": "8a61aaf508685da852490cc49214e64545a6451138a852223000ce159f5d240a",
+      "decompressedBytes": 2842,
+      "decompressedSha256": "46cfb227b3c17e7956add398f6cf05729a3ad0a56d974fbfd649b78980198c5f"
+    },
+    {
+      "path": "metadata/jobs-43563807530.json.gz",
+      "bytes": 1285,
+      "sha256": "e4b70592e2d96d1aab3e9d501347d52f6b455e6b6f0b0eee25b09a1342771d55",
+      "decompressedBytes": 10089,
+      "decompressedSha256": "afa7a8aab5aa9a41e99604070d01f0594ca0859c88f57d5f91865d703dabc7ee"
+    },
+    {
+      "path": "metadata/main-ref.json.gz",
+      "bytes": 207,
+      "sha256": "e7ccffdd242ef3b4447a56659328fe924ebbdbc108c7fb4755a87c05956ebaa0",
+      "decompressedBytes": 328,
+      "decompressedSha256": "70fd17013ec248dcf1aaf7c783585523cce5109b85bd5aa5ada0c741cd581ac5"
+    },
+    {
+      "path": "metadata/pr-285.json.gz",
+      "bytes": 5131,
+      "sha256": "e503602a7edf93f0cf52dcc123b86fcddfd1e33adb0af69fd09939eb6e5fda6b",
+      "decompressedBytes": 22742,
+      "decompressedSha256": "ebf15f23a13312ae1e3189b45078bdd5fb3d0b08416aecb6eaba296b264b0b0a"
+    },
+    {
+      "path": "metadata/run-43563807485.json.gz",
+      "bytes": 1651,
+      "sha256": "5fffe190402361af8898a1b858bb1d746853e15724450b91c2611cfd4329ece0",
+      "decompressedBytes": 12200,
+      "decompressedSha256": "ebec0c1f411ccf57805c0b610ebbb2b8759f28bd36e8c57ca82a2057de5b34fa"
+    },
+    {
+      "path": "metadata/run-43563807488.json.gz",
+      "bytes": 1648,
+      "sha256": "7f115ad3af4168aa3d41b2898b4758ad38ccede7ffbd190b794ce628693bdc2f",
+      "decompressedBytes": 12186,
+      "decompressedSha256": "8238a359b7090d6edfb7b178ffb98c91bda66867c10390cf7dd8d48d78c0e100"
+    },
+    {
+      "path": "metadata/run-43563807495.json.gz",
+      "bytes": 1663,
+      "sha256": "0c462cb1449fef32972a23b42f728d069853bf7349abbb11bc67758b6a9dfebe",
+      "decompressedBytes": 12217,
+      "decompressedSha256": "bdd96ac95e8ffebda1a7d60fbc9648efdc4e529890e7ff3c3f993969709ca424"
+    },
+    {
+      "path": "metadata/run-43563807530.json.gz",
+      "bytes": 1658,
+      "sha256": "855b578e089f949f17e77b0a6a3023a9f42a5c636b0a01911406988f5ab0b077",
+      "decompressedBytes": 12211,
+      "decompressedSha256": "768108d56ec738c250d0b77dd2b065a49d7df094ffea7cfa55f303cc7e481db2"
+    },
+    {
+      "path": "metadata/source-checks.json.gz",
+      "bytes": 5767,
+      "sha256": "43672e9194c95b0b5dd01cb0d030660c8ef3429f36d6ec6397c51499c8f94a9e",
+      "decompressedBytes": 164867,
+      "decompressedSha256": "1f00f4dae33d6b78939982a5ef8df3c4716e8ae46a43b192856ea3c1c98ef9d5"
+    },
+    {
+      "path": "metadata/source-commit.json.gz",
+      "bytes": 496,
+      "sha256": "813557bc1924b80a0af569277bf8695406cee26f630671595c9f55a2c1a0b5a8",
+      "decompressedBytes": 1145,
+      "decompressedSha256": "f3a320a18b24d684298b43b8449502e84d597c8455e930c59d4266beac17b4a4"
+    },
+    {
+      "path": "metadata/source-ref.json.gz",
+      "bytes": 262,
+      "sha256": "8ed080c88796408938898fbf6d5e6c6c6f94015d68dc85b0ccaef93774f6822b",
+      "decompressedBytes": 421,
+      "decompressedSha256": "358e879f0a829f961bb5c8d52e7a18f63046e84db9272a17c91cb2bd1d96c2dc"
+    },
+    {
+      "path": "metadata/spn158-publication-3d8b1ef7-after-metadata.json.gz",
+      "bytes": 254,
+      "sha256": "15052a89986e8030cccf16ab1feada3e78ac36732c0fe5d2bff14f77011f86a1",
+      "decompressedBytes": 727,
+      "decompressedSha256": "2a460440d9c1e2a9942be177531ef6fbd883ad0e690971ce3fe80bcb87786d98"
+    },
+    {
+      "path": "metadata/spn158-publication-3d8b1ef7-before.json.gz",
+      "bytes": 254,
+      "sha256": "15052a89986e8030cccf16ab1feada3e78ac36732c0fe5d2bff14f77011f86a1",
+      "decompressedBytes": 727,
+      "decompressedSha256": "2a460440d9c1e2a9942be177531ef6fbd883ad0e690971ce3fe80bcb87786d98"
+    },
+    {
+      "path": "metadata/tested-commit.json.gz",
+      "bytes": 1245,
+      "sha256": "2885ebc28620e71f25eb8c378594dffa5e03bd91a0024388ad7c7bc351a4ad88",
+      "decompressedBytes": 2648,
+      "decompressedSha256": "aa23473a660acd53656f4fa5e8dc02a7ad886ce366e12d0d69214bf00ef57246"
+    },
+    {
+      "path": "privacy-check.json",
+      "bytes": 540,
+      "sha256": "7ee1e84f7f3d2f54fc0c5339efbd7032fec032ce2cf6f05cbb247f661d3880a1"
+    },
+    {
+      "path": "reviews/spn158-review-a-3d8b1ef7.md",
+      "bytes": 5927,
+      "sha256": "fe28f8d43b842c1a47dc535e78169eadd24e33afec7959f77b91179c062b5b8c"
+    },
+    {
+      "path": "reviews/spn158-review-a-http-3d8b1ef7.json",
+      "bytes": 406,
+      "sha256": "7f0739afc0edc491227a04e937ec7e690886ec45fe973310551f531804980d35"
+    },
+    {
+      "path": "reviews/spn158-review-a-http-3d8b1ef7.log.gz",
+      "bytes": 380,
+      "sha256": "021af6ff68646b8130ecc48d43e4308a0254df74264bde61541e482f92bb131d",
+      "decompressedBytes": 535,
+      "decompressedSha256": "003a4c60fe632e3f127773fa8e755b2e88f9d20ec38194f0996459f72c3faf98"
+    },
+    {
+      "path": "reviews/spn158-review-b-3d8b-cleanup.json",
+      "bytes": 213,
+      "sha256": "f835e43b217cb61a15b416520bac406e8f2b2b5dd8d5f17f5589c970b90977ec"
+    },
+    {
+      "path": "reviews/spn158-review-b-3d8b-http.json",
+      "bytes": 434,
+      "sha256": "dee24af611b903b122aab5e466e3655ac82e647630ca1b994b1ae4210eaabfc1"
+    },
+    {
+      "path": "reviews/spn158-review-b-3d8b-http.log.gz",
+      "bytes": 394,
+      "sha256": "c647ef172fdc2b0ddcccee0d620bb8d99441c1d425d6237c17764ee363d29e04",
+      "decompressedBytes": 563,
+      "decompressedSha256": "f123c56170b675f363afbd82f621c043a61d722905eef8bd595c91305508e8f4"
+    },
+    {
+      "path": "reviews/spn158-review-b-3d8b1ef7.md",
+      "bytes": 4402,
+      "sha256": "7f9bc6eb431b1052485b44853df87c3571bd7bb4a2fc52ca9e5b32f888c56af5"
+    }
+  ],
+  "terminalObservedAt": "2026-11-14T06:23:19.474833+00:00"
+}
