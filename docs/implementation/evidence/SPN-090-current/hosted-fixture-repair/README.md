@@ -63,8 +63,7 @@ first attempts; no automatic retry was used locally. All work used pinned Node
 
 ## 🎨 Applicability and remaining gates
 
-There is no runtime, component, layout, theme, icon or story-render change from
-724. Its 13 retained useful image embeds remain tied to their original source,
+There is no runtime, component, layout, theme, icon or story-render change from 724. Its 13 retained useful image embeds remain tied to their original source,
 theme and viewport; no new screenshot is represented as a proposal. Negative
 images here diagnose failed controls only. Independent exact-head code and
 visual/interaction revalidation and fresh hosted types, Linux maintenance and all

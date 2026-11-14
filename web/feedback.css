@@ -1,0 +1,110 @@
+.feedback-form,
+.feedback-form label,
+.feedback-downloads {
+  display: grid;
+  gap: 16px;
+}
+.feedback-form p,
+.feedback-downloads p {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.feedback-form label,
+.feedback-message {
+  display: grid;
+  gap: 8px;
+}
+.feedback-form textarea {
+  width: 100%;
+  min-height: 128px;
+  resize: vertical;
+  font: inherit;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.feedback-form textarea[readonly] {
+  background: var(--sp-panel);
+}
+.feedback-recovery-link {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  min-width: 44px;
+  min-height: 44px;
+}
+.feedback-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.feedback-menu {
+  flex: none;
+}
+.feedback-menu > button {
+  min-width: 44px;
+  min-height: 44px;
+}
+.workspace > header .feedback-menu > button {
+  color: inherit;
+  border-color: transparent;
+  background: transparent;
+}
+.space-account-controls .feedback-menu > button {
+  color: inherit;
+  border-color: transparent;
+  background: transparent;
+}
+.admin-feedback-flag {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.admin-feedback-flag > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.feedback-downloads .feedback-window {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  background: var(--sp-tint-1);
+  border-radius: 8px;
+}
+.feedback-downloads .feedback-window time {
+  overflow-wrap: anywhere;
+}
+.feedback-download-buttons {
+  display: grid;
+  gap: 8px;
+}
+.feedback-downloads details > summary {
+  display: list-item;
+  list-style-position: inside;
+  min-height: 44px;
+  padding: 12px 0;
+  cursor: pointer;
+}
+.feedback-downloads details ul {
+  padding-left: 24px;
+  margin: 8px 0;
+}
+@media (max-width: 640px), (pointer: coarse) {
+  .feedback-form .sp-control,
+  .feedback-downloads .sp-control,
+  .admin-feedback-flag .sp-control {
+    min-height: 44px;
+  }
+}
+@media (max-width: 640px) {
+  .workspace > header:has(.feedback-menu),
+  .workspace.files-workspace > header.file-rail:has(.feedback-menu),
+  .space-site-header:has(.feedback-menu) {
+    flex-wrap: wrap;
+    height: auto;
+  }
+}

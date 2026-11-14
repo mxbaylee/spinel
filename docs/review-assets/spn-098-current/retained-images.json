@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "sourceSha": "8e986617a40977eb96d016be7dc361366003384f",
+  "buildIdentity": "storybook-source.json",
+  "sourceCaptureDirectory": "test-results/spn098-current-visual",
+  "reviewedAt": "2026-11-14T01:18:50.766Z",
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "rendering": "Current production components and dependency lock at 8e986617 with synthetic API fixtures; not device acceptance.",
+  "localConfiguration": "Focused story catalog; reactDocgen:false; canonical production components, story args, decorators, themes and play assertions retained.",
+  "variantViewports": {
+    "light": {
+      "theme": "light",
+      "width": 1280,
+      "height": 900,
+      "isMobile": false,
+      "hasTouch": false
+    },
+    "dark": {
+      "theme": "dark",
+      "width": 1280,
+      "height": 900,
+      "isMobile": false,
+      "hasTouch": false
+    },
+    "phone": {
+      "theme": "light",
+      "width": 390,
+      "height": 900,
+      "isMobile": true,
+      "hasTouch": true
+    },
+    "phone-dark": {
+      "theme": "dark",
+      "width": 390,
+      "height": 900,
+      "isMobile": true,
+      "hasTouch": true
+    },
+    "tablet": {
+      "theme": "light",
+      "width": 768,
+      "height": 900,
+      "isMobile": false,
+      "hasTouch": true
+    }
+  },
+  "screenshotOptions": {
+    "fullPage": true,
+    "animations": "disabled",
+    "reducedMotion": "reduce"
+  },
+  "manifest": {
+    "file": "storybook-manifest.json.gz",
+    "sha256": "8da3307e25313179567a5034ff2fa821242f0704f56714d26d1648c4b6f49dd5",
+    "requestedStoryCount": 44,
+    "checkedStateCount": 220,
+    "capturedImageCount": 220,
+    "failureCount": 0,
+    "retainedImageCount": 16,
+    "note": "Gzip decompression reproduces the unmodified manifest. Only the selected PNGs listed below are retained in this directory.",
+    "decodedSha256": "e697843bc3c38c8372d28500835c19ba77268fb1d541c8cde48faf3810c4ffdf"
+  },
+  "images": [
+    {
+      "file": "account-draft-light.png",
+      "sha256": "7209f871cd25fdafa67849af16b2d6e9da18f6da21f541b00a61433f65946c25",
+      "bytes": 51210,
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "storyId": "current-production-account-feedback--draft",
+      "variant": "light",
+      "originalFilename": "current-production-account-feedback--draft-light.png",
+      "title": "Current production/Account/Feedback / Draft"
+    },
+    {
+      "file": "account-draft-dark.png",
+      "sha256": "aabb1b0dc9259abc44d60a05d541a7b44a51fd681d74fba1d52b10ca4f2a6ca9",
+      "bytes": 55716,
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "storyId": "current-production-account-feedback--draft",
+      "variant": "dark",
+      "originalFilename": "current-production-account-feedback--draft-dark.png",
+      "title": "Current production/Account/Feedback / Draft"
+    },
+    {
+      "file": "account-draft-phone.png",
+      "sha256": "ec83cfbba0ce832afd00310cfd11992a209021fec4c265ba9ddf2fef75a34138",
+      "bytes": 41958,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "storyId": "current-production-account-feedback--draft",
+      "variant": "phone",
+      "originalFilename": "current-production-account-feedback--draft-phone.png",
+      "title": "Current production/Account/Feedback / Draft"
+    },
+    {
+      "file": "account-failed-draft-phone-dark.png",
+      "sha256": "fbedc06be82fd3a9aa7e14ab1e95b226f2df27d8e8f16b27e30c5bf12ad46984",
+      "bytes": 61135,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "storyId": "current-production-account-feedback--failed-draft",
+      "variant": "phone-dark",
+      "originalFilename": "current-production-account-feedback--failed-draft-phone-dark.png",
+      "title": "Current production/Account/Feedback / Failed Draft"
+    },
+    {
+      "file": "account-long-message-phone.png",
+      "sha256": "4e2ed8b3d7827e2ee45e6c7638bd556105b2349bd505d3a2ffecaf43100435ff",
+      "bytes": 47310,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "storyId": "current-production-account-feedback--long-message",
+      "variant": "phone",
+      "originalFilename": "current-production-account-feedback--long-message-phone.png",
+      "title": "Current production/Account/Feedback / Long Message"
+    },
+    {
+      "file": "account-access-changed-phone.png",
+      "sha256": "9d9dfb2006e0d3857ab5bfd0c1b2ec171cef30d9467df444a0dae51977d0f0e8",
+      "bytes": 57589,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "storyId": "current-production-account-feedback--access-changed",
+      "variant": "phone",
+      "originalFilename": "current-production-account-feedback--access-changed-phone.png",
+      "title": "Current production/Account/Feedback / Access Changed"
+    },
+    {
+      "file": "admin-feedback-flag-light.png",
+      "sha256": "924c6b29fc5b82b52f2140e2cf8b69269f833a8ba6c815f7805b3de79a82f9c6",
+      "bytes": 34269,
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "storyId": "current-production-admin-feedback--flag",
+      "variant": "light",
+      "originalFilename": "current-production-admin-feedback--flag-light.png",
+      "title": "Current production/Admin/Feedback / Flag"
+    },
+    {
+      "file": "admin-paired-downloads-light.png",
+      "sha256": "5f759f97ad06e1369f9fc7f0f2d675c7bd722d431ebbf057f8a70b22570aa8d8",
+      "bytes": 105409,
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "storyId": "current-production-admin-feedback--paired-downloads",
+      "variant": "light",
+      "originalFilename": "current-production-admin-feedback--paired-downloads-light.png",
+      "title": "Current production/Admin/Feedback / Paired Downloads"
+    },
+    {
+      "file": "admin-paired-downloads-dark.png",
+      "sha256": "b015e28cb8abc4dc89f1db5c1158ff1ccdbea7418ce6577d787dfa3c44269a80",
+      "bytes": 110667,
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "storyId": "current-production-admin-feedback--paired-downloads",
+      "variant": "dark",
+      "originalFilename": "current-production-admin-feedback--paired-downloads-dark.png",
+      "title": "Current production/Admin/Feedback / Paired Downloads"
+    },
+    {
+      "file": "admin-paired-downloads-phone-dark.png",
+      "sha256": "583ac14ae788624d89088304ba009094204568816a6bf634c06cac5cd8b323bf",
+      "bytes": 71709,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "storyId": "current-production-admin-feedback--paired-downloads",
+      "variant": "phone-dark",
+      "originalFilename": "current-production-admin-feedback--paired-downloads-phone-dark.png",
+      "title": "Current production/Admin/Feedback / Paired Downloads"
+    },
+    {
+      "file": "admin-download-failed-phone.png",
+      "sha256": "73500bb866a79508eeae01ece39cbc107de476bbda8247f39ad51ee8ac79d2e9",
+      "bytes": 60150,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "storyId": "current-production-admin-feedback--download-failed",
+      "variant": "phone",
+      "originalFilename": "current-production-admin-feedback--download-failed-phone.png",
+      "title": "Current production/Admin/Feedback / Download Failed"
+    },
+    {
+      "file": "admin-expanded-limits-phone.png",
+      "sha256": "d95e1adaaf39f5d71f58fb3e05ce0eea17e727b9be1dbc47244aec86f729da8b",
+      "bytes": 80082,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "storyId": "current-production-admin-feedback--expanded-limits",
+      "variant": "phone",
+      "originalFilename": "current-production-admin-feedback--expanded-limits-phone.png",
+      "title": "Current production/Admin/Feedback / Expanded Limits"
+    },
+    {
+      "file": "admin-access-changed-phone-dark.png",
+      "sha256": "df9b0e5d70e56626edad622fc8940ddfed8aa699eca1a01c23f3e4c9c4485ce8",
+      "bytes": 56147,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "storyId": "current-production-admin-feedback--access-changed",
+      "variant": "phone-dark",
+      "originalFilename": "current-production-admin-feedback--access-changed-phone-dark.png",
+      "title": "Current production/Admin/Feedback / Access Changed"
+    },
+    {
+      "file": "admin-old-feedback-only-phone.png",
+      "sha256": "bdb4c65c53a532f0674d323187f325f03ac48b5ad11401dc5ab9106ee6b88732",
+      "bytes": 72022,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "storyId": "current-production-admin-feedback--old-feedback-only",
+      "variant": "phone",
+      "originalFilename": "current-production-admin-feedback--old-feedback-only-phone.png",
+      "title": "Current production/Admin/Feedback / Old Feedback Only"
+    },
+    {
+      "file": "editor-guest-phone.png",
+      "sha256": "7b46deb1342caac26c87c6e53fb9e3340d8918ae8c655b2cf5a4542208c191ca",
+      "bytes": 19872,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "storyId": "editor-frame--guest",
+      "variant": "phone",
+      "originalFilename": "editor-frame--guest-phone.png",
+      "title": "Current production/Editor/Frame / Guest"
+    },
+    {
+      "file": "admin-diagnostics-clear-phone.png",
+      "sha256": "b197250e0f4a98bb0757582bdd562175845230d3cd45c51f14f99a0419195865",
+      "bytes": 338429,
+      "pixelWidth": 390,
+      "pixelHeight": 4083,
+      "storyId": "admin-page--diagnostics-clear-blocks-navigation",
+      "variant": "phone",
+      "originalFilename": "admin-page--diagnostics-clear-blocks-navigation-phone.png",
+      "title": "Current production/Admin/Administration / Diagnostics Clear Blocks Navigation"
+    }
+  ]
+}

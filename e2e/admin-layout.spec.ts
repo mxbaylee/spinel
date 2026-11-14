@@ -176,6 +176,14 @@ test('pending invitations prevent section changes, manual copying works, and lea
     await page.goto('/admin#invites');
     await page.getByRole('button', { name: 'Create invite', exact: true }).click();
     const dialog = page.getByRole('dialog', { name: 'Create invite', exact: true });
+    const creationResponse = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === '/api/auth/invites' &&
+        response.request().method() === 'POST',
+    );
+    // Preserve the primary assertion if fixture cleanup closes this pending wait.
+    // The same promise is still awaited below; an actual response error must fail.
+    void creationResponse.catch(() => {});
     await dialog.getByRole('button', { name: 'Create invite', exact: true }).click();
     await expect(dialog.getByRole('button', { name: 'Creating…' })).toBeDisabled();
     await page.evaluate(() => {
@@ -185,6 +193,12 @@ test('pending invitations prevent section changes, manual copying works, and lea
     await page.keyboard.press('Escape');
     await expect(dialog).toBeVisible();
     release();
+    // Releasing the route permits delivery; it does not complete the mutation.
+    // Observe the real response within the unchanged overall test deadline before
+    // starting the existing five-second UI publication assertion.
+    const response = await creationResponse;
+    expect(response.status()).toBe(201);
+    expect(await response.finished()).toBeNull();
     const address = page.getByRole('textbox', { name: 'New invite link' });
     await expect(address).toBeVisible();
     await expect(address).toBeFocused();
