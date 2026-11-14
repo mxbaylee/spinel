@@ -1,0 +1,14 @@
+{
+  "name": "spn098-post157-final-size",
+  "args": [
+    "node",
+    "--input-type=module",
+    "-e",
+    "import {execFileSync} from \"node:child_process\"; import {readFileSync} from \"node:fs\"; import {changedLines} from \"./scripts/backlog/lib.ts\"; const base=\"c525aa933505d6e78b8fdd7a89940d87506d5cb3\"; const config=JSON.parse(readFileSync(\"docs/todo/backlog.json\",\"utf8\")); const size=changedLines(execFileSync(\"git\",[\"diff\",\"--numstat\",base,\"HEAD\"],{encoding:\"utf8\"}),config.size.exclude); console.log(JSON.stringify({head:execFileSync(\"git\",[\"rev-parse\",\"HEAD\"],{encoding:\"utf8\"}).trim(),base,total:size.total,soft:config.size.soft}));"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 158,
+  "peakKiB": 0
+}

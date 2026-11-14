@@ -1,0 +1,33 @@
+{
+  "candidate": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "intendedParent": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "reservedTag": "archive/spn-098-validation-7a045191-20261114",
+  "reservedPath": "docs/review-assets/spn-098-validation-7a045191",
+  "reservedCompletionTag": "archive/spn-098-completion-7a045191-20261114",
+  "reservedCompletionPath": "docs/review-assets/spn-098-completion-7a045191",
+  "archiveReady": false,
+  "notYetCollected": "New-head hosted runs, exact plan/tested source and terminal original artifacts/logs. No archive commit or publication yet.",
+  "blindingIncident": "First presentation masked /100 forms but missed unspaced rubrics and bare iteration numbers. A observed numerical values; B exposure uncertain after truncated search. Both stopped before test execution or grading and issued nonqualifying technical handoffs. Root made three exact presentation replacements, preserved originals and provenance, and assigned fresh independent A/B using only corrected packet. Both fresh reviews qualify on unchanged candidate; replacement preceded any grade and was not outcome selection.",
+  "freshReviews": {
+    "A": {
+      "report": "reviews/fresh/fresh-reviewer-a.md",
+      "score": 100,
+      "visual": "approved; agent review only",
+      "tests": 71,
+      "elapsedMs": 4517,
+      "peakKiB": 541472
+    },
+    "B": {
+      "report": "reviews/fresh/fresh-reviewer-b.md",
+      "score": 100,
+      "visual": "approved; agent review only",
+      "tests": 71,
+      "elapsedMs": 4206,
+      "peakKiB": 538416
+    }
+  },
+  "retention": "Exact source/report/log/packet bytes retained; already-gzip decoded hashes computed by actual decompression. No missing raw report or cleanup file fabricated. Original historical reviews/hosted outcomes remain immutable d34f2ff3 and predecessor archives. Source-bound48 images remain in candidate.",
+  "historicalValidation": "d34f2ff3cf2b33217e6d8959d97ba2af483fd692",
+  "payloadFiles": 88
+}

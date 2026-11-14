@@ -1,0 +1,13 @@
+{
+  "name": "spn098-post157-final-format",
+  "args": [
+    "npm",
+    "run",
+    "format:check"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 11215,
+  "peakKiB": 621888
+}

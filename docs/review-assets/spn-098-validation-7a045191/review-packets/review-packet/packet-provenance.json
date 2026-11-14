@@ -1,0 +1,57 @@
+{
+  "candidate": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "countedChangedTextLines": 9798,
+  "copies": [
+    {
+      "file": "implementation-SPN-098.md",
+      "original": "docs/implementation/SPN-098.md",
+      "originalGitBlob": "3abbd38b4d7830d484ccd4e9be1e4878f22853ff",
+      "originalSha256": "59ca056a6bdbfdf2144d5e8e69fa26dba533ce5fb10a7f1a1235aa8369c0fdb3",
+      "packetSha256": "59ca056a6bdbfdf2144d5e8e69fa26dba533ce5fb10a7f1a1235aa8369c0fdb3",
+      "omission": "None; no prior numerical review assessment present"
+    },
+    {
+      "file": "implementation-SPN-110.md",
+      "original": "docs/implementation/SPN-110.md",
+      "originalGitBlob": "7702073fa860e4f5eb136c3e06c26776d0635f66",
+      "originalSha256": "8cceeb3f85f7c2aa695139369aad907021baef62ec4bcc69f78b5a20e4cfb07b",
+      "packetSha256": "8cceeb3f85f7c2aa695139369aad907021baef62ec4bcc69f78b5a20e4cfb07b",
+      "omission": "None; no prior numerical review assessment present"
+    },
+    {
+      "file": "landed-SPN-157-contract-audit.md",
+      "original": "docs/implementation/SPN-157-contract-audit.md",
+      "originalGitBlob": "b4f208a11a9cbb1567da1c2b133f1be7cccf50cd",
+      "originalSha256": "29664a67ce0b669934fa7553b7c8fda43a4646d3fc572499db81c77ff457d8a7",
+      "packetSha256": "29664a67ce0b669934fa7553b7c8fda43a4646d3fc572499db81c77ff457d8a7",
+      "omission": "None; no prior numerical review assessment present"
+    },
+    {
+      "file": "complete-ticket-main.md",
+      "original": "c525aa933505d6e78b8fdd7a89940d87506d5cb3:docs/todo/SPN-098.md",
+      "originalGitBlob": "74cbdfd0376f59ef591b0ae7e43fd01f62154191",
+      "originalSha256": "03fb05be06ac4d40aeb30e1d146b5a1264f22cb691de6ef8a12992562ae4ecd1",
+      "packetSha256": "03fb05be06ac4d40aeb30e1d146b5a1264f22cb691de6ef8a12992562ae4ecd1",
+      "omission": "None; no prior numerical review assessment present"
+    },
+    {
+      "file": "prior-pr-technical-history.md",
+      "original": "/tmp/spn098-post160-20261114/pr-body-pre-review.md",
+      "originalGitBlob": null,
+      "originalSha256": "94cdde16d49df70ea555f4b686170c5f1c53e89d6f4912e20324ac77ecbe91de",
+      "packetSha256": "c5d86ec46cfd85f39e2a1871cdfa7de34424f6e68f75b7b8c495d29a2e5e1e76",
+      "omission": "Prior numerical review grades/subscores omitted from this packet copy only; technical findings and outcomes preserved. Original bytes remain at the recorded source."
+    },
+    {
+      "file": "prior-validation-technical-evidence.md",
+      "original": "d34f2ff3:docs/review-assets/spn-098-validation-5e72d33a/README.md",
+      "originalGitBlob": "3ef42702c64c94d863d8da3a5cd4bb24eb539cec",
+      "originalSha256": "ab5b7d05546840246a33359c9af196db6c851649999e069a03560a86cbcb465e",
+      "packetSha256": "1f1d29403019b96a4d3ecefe6517494478a3a471250b93a5626d8b527be5bc20",
+      "omission": "Prior numerical review grades/subscores omitted from this packet copy only; technical findings and outcomes preserved. Original bytes remain at the recorded source."
+    }
+  ],
+  "fullDiffSha256": "bb1a819021ddad7f828966177ff1e99e4d718606ddcbbf55597b7b6b4ac4fe7a",
+  "visualPolicy": "Independent new-head approval pending; original source-equivalent images retain source/viewport/fullpage identities. No fresh captures claimed."
+}

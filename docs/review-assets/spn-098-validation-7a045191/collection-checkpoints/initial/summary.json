@@ -1,0 +1,87 @@
+{
+  "at": "2026-11-14T18:24:33.773980+00:00",
+  "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "pr": 227,
+  "draft": true,
+  "mergeCommit": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9",
+  "runs": [
+    {
+      "name": "ci",
+      "id": 43626337966,
+      "attempt": 1,
+      "createdAt": "2026-11-14T18:23:30Z",
+      "status": "queued",
+      "conclusion": null,
+      "jobs": [
+        {
+          "id": 132542877452,
+          "name": "Classify changes (43626337966)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132542877635,
+          "name": "Pull request",
+          "status": "queued",
+          "conclusion": null
+        }
+      ],
+      "artifacts": []
+    },
+    {
+      "name": "storybook",
+      "id": 43626337816,
+      "attempt": 1,
+      "createdAt": "2026-11-14T18:23:30Z",
+      "status": "queued",
+      "conclusion": null,
+      "jobs": [
+        {
+          "id": 132542876942,
+          "name": "Classify changes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132543130777,
+          "name": "Build Storybook",
+          "status": "queued",
+          "conclusion": null
+        }
+      ],
+      "artifacts": []
+    },
+    {
+      "name": "desktop",
+      "id": 43626337825,
+      "attempt": 1,
+      "createdAt": "2026-11-14T18:23:30Z",
+      "status": "queued",
+      "conclusion": null,
+      "jobs": [
+        {
+          "id": 132542877044,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132542877239,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132542877432,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "status": "queued",
+          "conclusion": null
+        }
+      ],
+      "artifacts": []
+    }
+  ],
+  "archiveReady": false,
+  "note": "Initial GET-only first-attempt snapshot; active jobs and absent results are pending. No retries/cancellations or acceptance inferred."
+}

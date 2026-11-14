@@ -1,0 +1,345 @@
+{
+  "observedAt": "2026-11-14T18:35:17.521Z",
+  "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "pr": 227,
+  "workflows": [
+    {
+      "kind": "ci",
+      "id": "43626337966",
+      "attempt": 1,
+      "status": "queued",
+      "conclusion": null,
+      "allJobsTerminal": false,
+      "jobs": [
+        {
+          "id": 132542877452,
+          "name": "Classify changes (43626337966)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542877635,
+          "name": "Pull request",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132544274014,
+          "name": "Container smoke",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132544274042,
+          "name": "Backlog",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132544274062,
+          "name": "Unit tests (supervisor)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132544274066,
+          "name": "Lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132544274077,
+          "name": "Unit tests (recovery)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132544274118,
+          "name": "Unit tests (remaining)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132544274152,
+          "name": "Doc callback lifetimes (desktop)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132544274171,
+          "name": "Doc callback lifetimes (mobile)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132544274213,
+          "name": "Typecheck",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274219,
+          "name": "Doc responsiveness (mobile)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274238,
+          "name": "Retained sync transition",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132544274241,
+          "name": "Lib tests (mixed-fuzz)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274254,
+          "name": "Doc responsiveness (desktop)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132544274273,
+          "name": "Sized restore acceptance",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274274,
+          "name": "Lib tests (cells)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274315,
+          "name": "Lib tests (remaining)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274337,
+          "name": "Playwright smoke (sync-production)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274358,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274368,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274384,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274385,
+          "name": "Playwright smoke (mobile-https)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274392,
+          "name": "Playwright smoke (sync-development)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274393,
+          "name": "Playwright smoke (offline-upgrade)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274407,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274409,
+          "name": "Lib tests (dense-cells)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274414,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274424,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132544274449,
+          "name": "Playwright smoke (supervised-restore)",
+          "status": "queued",
+          "conclusion": null
+        }
+      ]
+    },
+    {
+      "kind": "storybook",
+      "id": "43626337816",
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "allJobsTerminal": false,
+      "jobs": [
+        {
+          "id": 132542876942,
+          "name": "Classify changes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132543130777,
+          "name": "Build Storybook",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132543550854,
+          "name": "Review Storybook tablet",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132543550894,
+          "name": "Review Storybook desktop (dark)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132543550910,
+          "name": "Review Storybook mobile (dark)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132543550928,
+          "name": "Review Storybook desktop (light)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132543550935,
+          "name": "Review Storybook mobile (light)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132543552448,
+          "name": "Publish PR preview to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        }
+      ]
+    },
+    {
+      "kind": "desktop",
+      "id": "43626337825",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "allJobsTerminal": true,
+      "jobs": [
+        {
+          "id": 132542877044,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542877239,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132542877432,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "downloads": [
+    {
+      "id": 14126271381,
+      "name": "ci-plan",
+      "run": 43626337966,
+      "attempt": 1,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "path": "original-zips/artifact-14126271381.zip",
+      "expiresAt": "2026-12-14T18:28:13Z",
+      "githubDigest": "sha256:53c18bcead69447e789c58372fb01aae7d79dd7c91e51b59f34e73d34cd645f4",
+      "apiBytes": 933,
+      "complete": true,
+      "bytes": 933,
+      "sha256": "53c18bcead69447e789c58372fb01aae7d79dd7c91e51b59f34e73d34cd645f4"
+    },
+    {
+      "id": 14126666872,
+      "name": "desktop-offline-chrome-macos-26-43626337825-1",
+      "run": 43626337825,
+      "attempt": 1,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "path": "original-zips/artifact-14126666872.zip",
+      "expiresAt": "2026-11-28T18:32:00Z",
+      "githubDigest": "sha256:3be08900ab89072e247db16cea8989cffb12807aeb226037e1430196279f16b7",
+      "apiBytes": 225728,
+      "complete": true,
+      "bytes": 225728,
+      "sha256": "3be08900ab89072e247db16cea8989cffb12807aeb226037e1430196279f16b7"
+    },
+    {
+      "id": 14126362529,
+      "name": "desktop-offline-firefox-macos-26-43626337825-1",
+      "run": 43626337825,
+      "attempt": 1,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "path": "original-zips/artifact-14126362529.zip",
+      "expiresAt": "2026-11-28T18:31:15Z",
+      "githubDigest": "sha256:ca0da85190f51d0d8b6678da6d61aa776a8569a3efdd9ea8ded62f2233c34d1e",
+      "apiBytes": 450775,
+      "complete": true,
+      "bytes": 450775,
+      "sha256": "ca0da85190f51d0d8b6678da6d61aa776a8569a3efdd9ea8ded62f2233c34d1e"
+    },
+    {
+      "id": 14126097508,
+      "name": "desktop-offline-safari-macos-15-intel-43626337825-1",
+      "run": 43626337825,
+      "attempt": 1,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "path": "original-zips/artifact-14126097508.zip",
+      "expiresAt": "2026-11-28T18:33:32Z",
+      "githubDigest": "sha256:95a6767b7871ca50af6a56cbcc1e91750c0f5aa60542df6d4b1ca41ab98fb276",
+      "apiBytes": 1048783,
+      "complete": true,
+      "bytes": 1048783,
+      "sha256": "95a6767b7871ca50af6a56cbcc1e91750c0f5aa60542df6d4b1ca41ab98fb276"
+    }
+  ],
+  "errors": [],
+  "archiveReady": false,
+  "note": "GET-only raw checkpoint, not acceptance. Preserve every first result. Exact plan canonical/raw digests, source/tested trees, gate selection and original artifact member/CRC/privacy checks remain necessary. Original full ZIPs are scratch retention; no compact archive, merge, rerun or publication is performed."
+}

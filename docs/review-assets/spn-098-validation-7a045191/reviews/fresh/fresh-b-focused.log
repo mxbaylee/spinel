@@ -1,0 +1,16 @@
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (../../../../private/tmp/spn098-post157-20261114/fresh-b-vitest.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-098-production
+
+
+ Test Files  11 passed (11)
+      Tests  71 passed (71)
+   Start at  10:11:30
+   Duration  3.93s (tests 66%, import 20%, transform 13%, worker 1%)
+
+    Isolate  11 workers spawned · ~56ms startup each (spawn + environment, per file)
+             at least ~556ms faster with isolate: false — reuses workers across files instead of one per file
+
+{"name":"spn098-fresh-b-focused","args":["node","node_modules/vitest/vitest.mjs","run","--config","/tmp/spn098-post157-20261114/fresh-b-vitest.config.ts","src/server/diagnostics","src/ui/feedbackContext.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":4206,"peakKiB":538416}

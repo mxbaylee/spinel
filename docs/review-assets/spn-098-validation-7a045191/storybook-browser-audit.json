@@ -1,0 +1,520 @@
+{
+  "source": {
+    "sha": "7a0451917ef38524138fa2eac432d4520fbed008",
+    "checkedOutSha": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9",
+    "branch": "codex/spn-098-feedback-diagnostics",
+    "pullRequest": 227,
+    "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/43626337816",
+    "builtAt": "2026-11-14T18:25:44.667Z"
+  },
+  "indexedStoryCount": 1076,
+  "storybook": [
+    {
+      "artifact": 14127181840,
+      "name": "design-review-mobile-light",
+      "variant": "phone",
+      "manifestFile": "original-json/14127181840-747.json.gz",
+      "originalSha256": "b6f4f07fff600595658f510755b7e6d4ece33f70ec5da084e98ecc0a293d2efb",
+      "requested": 1076,
+      "checked": 1076,
+      "captures": 1076,
+      "failures": 0,
+      "exactIndexedSetMatches": true,
+      "fixtureTime": "2026-10-20T16:00:00Z",
+      "durationMs": 497121
+    },
+    {
+      "artifact": 14127142480,
+      "name": "design-review-desktop-dark",
+      "variant": "dark",
+      "manifestFile": "original-json/14127142480-747.json.gz",
+      "originalSha256": "45ab9854917fbde554fc1179ae3997e95a1e7d67b3ad7cbb106804e25c012f06",
+      "requested": 1076,
+      "checked": 1076,
+      "captures": 1076,
+      "failures": 0,
+      "exactIndexedSetMatches": true,
+      "fixtureTime": "2026-10-20T16:00:00Z",
+      "durationMs": 515596
+    },
+    {
+      "artifact": 14126598565,
+      "name": "design-review-desktop-light",
+      "variant": "light",
+      "manifestFile": "original-json/14126598565-748.json.gz",
+      "originalSha256": "6f3e28d8d6a53811ef6216aabd5596fe88b284186a92e00aac7e100696e20781",
+      "requested": 1076,
+      "checked": 1076,
+      "captures": 1076,
+      "failures": 0,
+      "exactIndexedSetMatches": true,
+      "fixtureTime": "2026-10-20T16:00:00Z",
+      "durationMs": 523293
+    },
+    {
+      "artifact": 14126393782,
+      "name": "design-review-tablet",
+      "variant": "tablet",
+      "manifestFile": "original-json/14126393782-748.json.gz",
+      "originalSha256": "774315c580e215a2289d2e2cc40f5d0b0cb709f6957913c0388ffe48079b55a5",
+      "requested": 1076,
+      "checked": 1076,
+      "captures": 1076,
+      "failures": 0,
+      "exactIndexedSetMatches": true,
+      "fixtureTime": "2026-10-20T16:00:00Z",
+      "durationMs": 489038
+    },
+    {
+      "artifact": 14126374244,
+      "name": "design-review-mobile-dark",
+      "variant": "phone-dark",
+      "manifestFile": "original-json/14126374244-747.json.gz",
+      "originalSha256": "9ec2ace6f5b953ac805d649a150a89a839cc9b0ffc9395c871eee28dce2ac08d",
+      "requested": 1076,
+      "checked": 1076,
+      "captures": 1076,
+      "failures": 0,
+      "exactIndexedSetMatches": true,
+      "fixtureTime": "2026-10-20T16:00:00Z",
+      "durationMs": 504276
+    }
+  ],
+  "pairs": [
+    {
+      "project": "production",
+      "artifact": 14127113528,
+      "file": "original-json/14127113528-2.json.gz",
+      "attempt": 0,
+      "initialPreparations": 1,
+      "userRows": 2,
+      "systemRows": 3,
+      "window": {
+        "start": 1794681832613,
+        "end": 1794681833595
+      },
+      "snapshotId": "dce2d3e9-288b-4edf-957e-387b6e3acf76",
+      "generation": "5ebe02cb-31a5-44fd-8cd1-469e521aa6bb",
+      "excludedLaterReportId": "42c83969-4f0b-4161-986a-b15e66b40b7c",
+      "exactRowsVerified": true,
+      "limits": "Feedback-only browser fixture; mixed observation/unattributed membership belongs separate real-SQLite unit contracts. Manifest build label retained exactly; project identity comes from original Playwright report."
+    },
+    {
+      "project": "development",
+      "artifact": 14126519534,
+      "file": "original-json/14126519534-3.json.gz",
+      "attempt": 0,
+      "initialPreparations": 1,
+      "userRows": 2,
+      "systemRows": 3,
+      "window": {
+        "start": 1794682229038,
+        "end": 1794682231551
+      },
+      "snapshotId": "04d0b352-12c8-4116-b1ab-04221d88a4f2",
+      "generation": "71f9be4b-edd8-496f-8d5d-f1d983d46c6b",
+      "excludedLaterReportId": "246ce1b1-8cbc-406d-8718-6b69a62b4ab6",
+      "exactRowsVerified": true,
+      "limits": "Feedback-only browser fixture; mixed observation/unattributed membership belongs separate real-SQLite unit contracts. Manifest build label retained exactly; project identity comes from original Playwright report."
+    }
+  ],
+  "browserReports": [
+    {
+      "artifact": 14127800573,
+      "name": "theme-screenshots-production-2",
+      "file": "original-json/14127800573-350.json.gz",
+      "stats": {
+        "startTime": "2026-11-14T18:42:24.029Z",
+        "duration": 869492.8359999999,
+        "expected": 85,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "diagnosticsCases": []
+    },
+    {
+      "artifact": 14127481157,
+      "name": "theme-screenshots-development-2",
+      "file": "original-json/14127481157-333.json.gz",
+      "stats": {
+        "startTime": "2026-11-14T18:39:12.601Z",
+        "duration": 1047938.328,
+        "expected": 76,
+        "skipped": 1,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "diagnosticsCases": []
+    },
+    {
+      "artifact": 14127113528,
+      "name": "theme-screenshots-production-1",
+      "file": "original-json/14127113528-494.json.gz",
+      "stats": {
+        "startTime": "2026-11-14T18:39:46.115Z",
+        "duration": 528569.115,
+        "expected": 82,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "diagnosticsCases": [
+        {
+          "title": "feedback survives a lost acknowledgment and paired user/system downloads preserve one complete snapshot",
+          "project": "production",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 4360
+            }
+          ]
+        },
+        {
+          "title": "truncation clears feedback flags and an unconfirmed old report needs deliberate new submission",
+          "project": "production",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 2533
+            }
+          ]
+        },
+        {
+          "title": "Operator downloads real correlated diagnostics without document data and clears only a freshly confirmed generation",
+          "project": "production",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 7712
+            }
+          ]
+        },
+        {
+          "title": "diagnostics failures, cancelled downloads, pending clear navigation and expired Operator sessions stay honest",
+          "project": "production",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 7699
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14126519534,
+      "name": "theme-screenshots-development-1",
+      "file": "original-json/14126519534-455.json.gz",
+      "stats": {
+        "startTime": "2026-11-14T18:43:51.380Z",
+        "duration": 859455.734,
+        "expected": 75,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "diagnosticsCases": [
+        {
+          "title": "feedback survives a lost acknowledgment and paired user/system downloads preserve one complete snapshot",
+          "project": "development",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 11300
+            }
+          ]
+        },
+        {
+          "title": "truncation clears feedback flags and an unconfirmed old report needs deliberate new submission",
+          "project": "development",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 6502
+            }
+          ]
+        },
+        {
+          "title": "Operator downloads real correlated diagnostics without document data and clears only a freshly confirmed generation",
+          "project": "development",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 15572
+            }
+          ]
+        },
+        {
+          "title": "diagnostics failures, cancelled downloads, pending clear navigation and expired Operator sessions stay honest",
+          "project": "development",
+          "status": "expected",
+          "results": [
+            {
+              "status": "passed",
+              "retry": 0,
+              "duration": 10839
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "images": [
+    {
+      "file": "current-visual/account-draft-light.png",
+      "artifact": 14126598565,
+      "originalMember": "current-production-account-feedback--draft-light.png",
+      "bytes": 48063,
+      "sha256": "518bcd8a989a7dbc26c1b28bc0d72d4cec1aca96cec241f354b5b5f434282c7d",
+      "storyId": "current-production-account-feedback--draft",
+      "variant": "light",
+      "viewportWidth": 1280,
+      "viewportHeight": 900,
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9"
+    },
+    {
+      "file": "current-visual/account-draft-dark.png",
+      "artifact": 14127142480,
+      "originalMember": "current-production-account-feedback--draft-dark.png",
+      "bytes": 53174,
+      "sha256": "2e03dd4a3b499647e028a83844537e170e97abcb880243066044eb458e19d3d2",
+      "storyId": "current-production-account-feedback--draft",
+      "variant": "dark",
+      "viewportWidth": 1280,
+      "viewportHeight": 900,
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9"
+    },
+    {
+      "file": "current-visual/account-draft-phone.png",
+      "artifact": 14127181840,
+      "originalMember": "current-production-account-feedback--draft-phone.png",
+      "bytes": 39034,
+      "sha256": "3abc3a59142cac551ec4e438c6068204cbaedbf2d8136eb465b62f041d901332",
+      "storyId": "current-production-account-feedback--draft",
+      "variant": "phone",
+      "viewportWidth": 390,
+      "viewportHeight": 900,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9"
+    },
+    {
+      "file": "current-visual/account-failed-draft-phone-dark.png",
+      "artifact": 14126374244,
+      "originalMember": "current-production-account-feedback--failed-draft-phone-dark.png",
+      "bytes": 57730,
+      "sha256": "027ca08ae2d10fbce1faa6149efce0a5d6c890a30c89dc03ee82279110ea7d8d",
+      "storyId": "current-production-account-feedback--failed-draft",
+      "variant": "phone-dark",
+      "viewportWidth": 390,
+      "viewportHeight": 900,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9"
+    },
+    {
+      "file": "current-visual/account-long-message-phone.png",
+      "artifact": 14127181840,
+      "originalMember": "current-production-account-feedback--long-message-phone.png",
+      "bytes": 46894,
+      "sha256": "8f55660ff8d8edad2b977dc9d69c1ce6c87bd7924eb715c3c40c0ebb1e9bada8",
+      "storyId": "current-production-account-feedback--long-message",
+      "variant": "phone",
+      "viewportWidth": 390,
+      "viewportHeight": 900,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9"
+    },
+    {
+      "file": "current-visual/account-access-changed-phone.png",
+      "artifact": 14127181840,
+      "originalMember": "current-production-account-feedback--access-changed-phone.png",
+      "bytes": 53707,
+      "sha256": "9d048725de3fe1d65f01d60b556a8ddfa68ce39e6d7a672418a598a7b6e63d1a",
+      "storyId": "current-production-account-feedback--access-changed",
+      "variant": "phone",
+      "viewportWidth": 390,
+      "viewportHeight": 900,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9"
+    },
+    {
+      "file": "current-visual/admin-feedback-flag-light.png",
+      "artifact": 14126598565,
+      "originalMember": "current-production-admin-feedback--flag-light.png",
+      "bytes": 33400,
+      "sha256": "ecce3da59b0b92c4bf2ea3a220b1a01f9ae268a1eecb498528ac72256341201b",
+      "storyId": "current-production-admin-feedback--flag",
+      "variant": "light",
+      "viewportWidth": 1280,
+      "viewportHeight": 900,
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9"
+    },
+    {
+      "file": "current-visual/admin-paired-downloads-light.png",
+      "artifact": 14126598565,
+      "originalMember": "current-production-admin-feedback--paired-downloads-light.png",
+      "bytes": 99658,
+      "sha256": "f8efe9038eb42118d6768945bd25f3c70964200ffc2d5a143ad0a70ab549ad38",
+      "storyId": "current-production-admin-feedback--paired-downloads",
+      "variant": "light",
+      "viewportWidth": 1280,
+      "viewportHeight": 900,
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9"
+    },
+    {
+      "file": "current-visual/admin-paired-downloads-dark.png",
+      "artifact": 14127142480,
+      "originalMember": "current-production-admin-feedback--paired-downloads-dark.png",
+      "bytes": 105109,
+      "sha256": "0fad5bb21a49c00e03c01b003e06758abd369dff6cdc9f6cfa62546bd2785e12",
+      "storyId": "current-production-admin-feedback--paired-downloads",
+      "variant": "dark",
+      "viewportWidth": 1280,
+      "viewportHeight": 900,
+      "pixelWidth": 1280,
+      "pixelHeight": 900,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9"
+    },
+    {
+      "file": "current-visual/admin-paired-downloads-phone-dark.png",
+      "artifact": 14126374244,
+      "originalMember": "current-production-admin-feedback--paired-downloads-phone-dark.png",
+      "bytes": 64654,
+      "sha256": "8f69b003d6288e68160df08ca5a5b570cb9e7deee165e386e4d53e1ec9f15574",
+      "storyId": "current-production-admin-feedback--paired-downloads",
+      "variant": "phone-dark",
+      "viewportWidth": 390,
+      "viewportHeight": 900,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9"
+    },
+    {
+      "file": "current-visual/admin-download-failed-phone.png",
+      "artifact": 14127181840,
+      "originalMember": "current-production-admin-feedback--download-failed-phone.png",
+      "bytes": 56158,
+      "sha256": "4b2a1ff283f93826768d7e1b2106f449f2c379f3e4e7e4b3bd6fd3a4448ad44a",
+      "storyId": "current-production-admin-feedback--download-failed",
+      "variant": "phone",
+      "viewportWidth": 390,
+      "viewportHeight": 900,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9"
+    },
+    {
+      "file": "current-visual/admin-expanded-limits-phone.png",
+      "artifact": 14127181840,
+      "originalMember": "current-production-admin-feedback--expanded-limits-phone.png",
+      "bytes": 76445,
+      "sha256": "64e34d2f5c8be8f9b3906063bca9a88dbc2502046494efa7abd5a20af66adabe",
+      "storyId": "current-production-admin-feedback--expanded-limits",
+      "variant": "phone",
+      "viewportWidth": 390,
+      "viewportHeight": 900,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9"
+    },
+    {
+      "file": "current-visual/admin-access-changed-phone-dark.png",
+      "artifact": 14126374244,
+      "originalMember": "current-production-admin-feedback--access-changed-phone-dark.png",
+      "bytes": 52306,
+      "sha256": "7a9d64a2b3e53d3f363ca23bbd65bca6c09bebfa0b7d07115950cfb5f9dcce5d",
+      "storyId": "current-production-admin-feedback--access-changed",
+      "variant": "phone-dark",
+      "viewportWidth": 390,
+      "viewportHeight": 900,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9"
+    },
+    {
+      "file": "current-visual/admin-old-feedback-only-phone.png",
+      "artifact": 14127181840,
+      "originalMember": "current-production-admin-feedback--old-feedback-only-phone.png",
+      "bytes": 70328,
+      "sha256": "f61cb1f8177310b7b78348b82eb8a605787815061bd96e4d9d1eb3e43b36f3d6",
+      "storyId": "current-production-admin-feedback--old-feedback-only",
+      "variant": "phone",
+      "viewportWidth": 390,
+      "viewportHeight": 900,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9"
+    },
+    {
+      "file": "current-visual/editor-guest-phone.png",
+      "artifact": 14127181840,
+      "originalMember": "editor-frame--guest-phone.png",
+      "bytes": 20821,
+      "sha256": "8639970399ce2fbaa68a1cce64223968d9ab76966fcc0f6fd44e59ebb8f904d3",
+      "storyId": "editor-frame--guest",
+      "variant": "phone",
+      "viewportWidth": 390,
+      "viewportHeight": 900,
+      "pixelWidth": 390,
+      "pixelHeight": 900,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9"
+    },
+    {
+      "file": "current-visual/admin-diagnostics-clear-phone.png",
+      "artifact": 14127181840,
+      "originalMember": "admin-page--diagnostics-clear-blocks-navigation-phone.png",
+      "bytes": 332323,
+      "sha256": "f797d26bc6962ea7ad0da91917b1b2dffe3a37455b78f94e140a7585ca5c4b69",
+      "storyId": "admin-page--diagnostics-clear-blocks-navigation",
+      "variant": "phone",
+      "viewportWidth": 390,
+      "viewportHeight": 900,
+      "pixelWidth": 390,
+      "pixelHeight": 4311,
+      "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9"
+    }
+  ],
+  "note": "Terminal first-attempt acceptance verified separately in receipt.json; current CI captures are supplemental to independent exact-head approvals on source-equivalent retained images."
+}

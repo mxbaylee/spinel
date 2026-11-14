@@ -1,0 +1,378 @@
+[
+  {
+    "name": "doc-responsiveness-mobile",
+    "artifact": 14127425894,
+    "file": "original-json/14127425894-16.json.gz",
+    "passed": true,
+    "drainAcceptance": {
+      "metric": "first-verified-browser-local-empty",
+      "maximumMs": 1000,
+      "lateReadUpperBound": "descriptive-only"
+    },
+    "candidateSamples": [
+      {
+        "role": "candidate",
+        "sample": "profile",
+        "source": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9",
+        "inputP95Ms": 42.5999999998603,
+        "longestTaskMs": 111,
+        "capacityPairedFlushMs": {
+          "count": 130,
+          "p50": 3.1000000000931323,
+          "p95": 6.400000000139698,
+          "max": 22.800000000046566,
+          "sum": 486.3999999985099
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 1.3999999999068677,
+          "p95": 1.3999999999068677,
+          "max": 1.3999999999068677,
+          "sum": 1.3999999999068677
+        },
+        "pairedFlushMaximumMs": 22.800000000046566,
+        "nativeDrainUpperBoundMs": 2951.8000000000466,
+        "firstVerifiedBrowserLocalDrainMs": 351.5,
+        "lateReadMinusLocalWitnessMs": 2600.3000000000466,
+        "drainPollCount": 1,
+        "firstEmptyAfterFinalKeyMs": 1254.1000000000931,
+        "typingWallMs": 69223.21323700005,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "plain-3",
+        "source": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9",
+        "inputP95Ms": 41,
+        "longestTaskMs": 112,
+        "capacityPairedFlushMs": {
+          "count": 130,
+          "p50": 2.9000000001396984,
+          "p95": 5.800000000046566,
+          "max": 22.300000000046566,
+          "sum": 444.60000000032596
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 1.7000000001862645,
+          "p95": 1.7000000001862645,
+          "max": 1.7000000001862645,
+          "sum": 1.7000000001862645
+        },
+        "pairedFlushMaximumMs": 22.300000000046566,
+        "nativeDrainUpperBoundMs": 2878,
+        "firstVerifiedBrowserLocalDrainMs": 346.80000000004657,
+        "lateReadMinusLocalWitnessMs": 2531.1999999999534,
+        "drainPollCount": 1,
+        "firstEmptyAfterFinalKeyMs": 1249.5999999998603,
+        "typingWallMs": 72340.72474,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "plain-2",
+        "source": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9",
+        "inputP95Ms": 51.5,
+        "longestTaskMs": 99,
+        "capacityPairedFlushMs": {
+          "count": 130,
+          "p50": 3,
+          "p95": 5.199999999953434,
+          "max": 21.899999999906868,
+          "sum": 447.9999999990687
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 2.3999999999068677,
+          "p95": 2.3999999999068677,
+          "max": 2.3999999999068677,
+          "sum": 2.3999999999068677
+        },
+        "pairedFlushMaximumMs": 21.899999999906868,
+        "nativeDrainUpperBoundMs": 3130.0999999998603,
+        "firstVerifiedBrowserLocalDrainMs": 385.5999999998603,
+        "lateReadMinusLocalWitnessMs": 2744.5,
+        "drainPollCount": 1,
+        "firstEmptyAfterFinalKeyMs": 685.5,
+        "typingWallMs": 91545.951891,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "plain-1",
+        "source": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9",
+        "inputP95Ms": 52.199999999953434,
+        "longestTaskMs": 106,
+        "capacityPairedFlushMs": {
+          "count": 130,
+          "p50": 3,
+          "p95": 6.300000000046566,
+          "max": 21.699999999953434,
+          "sum": 459.699999999837
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 2.099999999976717,
+          "p95": 2.099999999976717,
+          "max": 2.099999999976717,
+          "sum": 2.099999999976717
+        },
+        "pairedFlushMaximumMs": 21.699999999953434,
+        "nativeDrainUpperBoundMs": 2971.29999999993,
+        "firstVerifiedBrowserLocalDrainMs": 385.69999999995343,
+        "lateReadMinusLocalWitnessMs": 2585.5999999999767,
+        "drainPollCount": 1,
+        "firstEmptyAfterFinalKeyMs": 918,
+        "typingWallMs": 90004.20486099999,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 131
+      }
+    ],
+    "physicalDevice": false
+  },
+  {
+    "name": "doc-responsiveness-desktop",
+    "artifact": 14127251391,
+    "file": "original-json/14127251391-16.json.gz",
+    "passed": true,
+    "drainAcceptance": {
+      "metric": "first-verified-browser-local-empty",
+      "maximumMs": 1000,
+      "lateReadUpperBound": "descriptive-only"
+    },
+    "candidateSamples": [
+      {
+        "role": "candidate",
+        "sample": "profile",
+        "source": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9",
+        "inputP95Ms": 28,
+        "longestTaskMs": 57,
+        "capacityPairedFlushMs": {
+          "count": 130,
+          "p50": 0.9000000000232831,
+          "p95": 2.200000000069849,
+          "max": 4.199999999953434,
+          "sum": 143.60000000009313
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 0.30000000004656613,
+          "p95": 0.30000000004656613,
+          "max": 0.30000000004656613,
+          "sum": 0.30000000004656613
+        },
+        "pairedFlushMaximumMs": 4.199999999953434,
+        "nativeDrainUpperBoundMs": 946,
+        "firstVerifiedBrowserLocalDrainMs": 337.0999999999767,
+        "lateReadMinusLocalWitnessMs": 608.9000000000233,
+        "drainPollCount": 1,
+        "firstEmptyAfterFinalKeyMs": 830.5,
+        "typingWallMs": 41222.777168,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "plain-3",
+        "source": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9",
+        "inputP95Ms": 27.599999999976717,
+        "longestTaskMs": 0,
+        "capacityPairedFlushMs": {
+          "count": 130,
+          "p50": 0.9000000000232831,
+          "p95": 1.7000000000698492,
+          "max": 4,
+          "sum": 136.2000000004191
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 0.40000000002328306,
+          "p95": 0.40000000002328306,
+          "max": 0.40000000002328306,
+          "sum": 0.40000000002328306
+        },
+        "pairedFlushMaximumMs": 4,
+        "nativeDrainUpperBoundMs": 912.7999999999302,
+        "firstVerifiedBrowserLocalDrainMs": 364.69999999995343,
+        "lateReadMinusLocalWitnessMs": 548.0999999999767,
+        "drainPollCount": 2,
+        "firstEmptyAfterFinalKeyMs": 794.3999999999069,
+        "typingWallMs": 40602.383723000006,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "plain-2",
+        "source": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9",
+        "inputP95Ms": 27.300000000046566,
+        "longestTaskMs": 0,
+        "capacityPairedFlushMs": {
+          "count": 130,
+          "p50": 0.8999999999068677,
+          "p95": 2.1000000000931323,
+          "max": 5,
+          "sum": 135.3000000003958
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 0.40000000002328306,
+          "p95": 0.40000000002328306,
+          "max": 0.40000000002328306,
+          "sum": 0.40000000002328306
+        },
+        "pairedFlushMaximumMs": 5,
+        "nativeDrainUpperBoundMs": 911.5,
+        "firstVerifiedBrowserLocalDrainMs": 368.29999999993015,
+        "lateReadMinusLocalWitnessMs": 543.2000000000698,
+        "drainPollCount": 2,
+        "firstEmptyAfterFinalKeyMs": 817.1999999999534,
+        "typingWallMs": 40320.782179,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 1
+      },
+      {
+        "role": "candidate",
+        "sample": "plain-1",
+        "source": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9",
+        "inputP95Ms": 28,
+        "longestTaskMs": 0,
+        "capacityPairedFlushMs": {
+          "count": 130,
+          "p50": 0.8999999999650754,
+          "p95": 1.7999999999883585,
+          "max": 5.900000000023283,
+          "sum": 135.39999999984866
+        },
+        "idlePairedFlushMs": {
+          "count": 1,
+          "p50": 0.40000000002328306,
+          "p95": 0.40000000002328306,
+          "max": 0.40000000002328306,
+          "sum": 0.40000000002328306
+        },
+        "pairedFlushMaximumMs": 5.900000000023283,
+        "nativeDrainUpperBoundMs": 1098.0999999999767,
+        "firstVerifiedBrowserLocalDrainMs": 367,
+        "lateReadMinusLocalWitnessMs": 731.0999999999767,
+        "drainPollCount": 2,
+        "firstEmptyAfterFinalKeyMs": 973.8000000000466,
+        "typingWallMs": 42118.006208,
+        "initialIntegrity": true,
+        "redoOutcome": "passed",
+        "undoRedoGroups": 131
+      }
+    ],
+    "physicalDevice": false
+  },
+  {
+    "name": "doc-callback-lifetimes-desktop",
+    "artifact": 14126977747,
+    "file": "original-json/14126977747-91.json.gz",
+    "accepted": true,
+    "families": {
+      "cursor": {
+        "pendingHighWater": 4,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 2,
+          "finalKey": 2,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0
+      },
+      "zoom-init": {
+        "pendingHighWater": 1,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 0,
+          "finalKey": 0,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0
+      },
+      "zoom-update": {
+        "pendingHighWater": 1,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 0,
+          "finalKey": 1,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0
+      }
+    },
+    "candidateSource": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9",
+    "traceSha256": "1b6504281011c364dad7c9c3f8a9412651f816e8377899a604645d3903423283",
+    "timing": "Traced callback observations are descriptive; unchanged unprofiled SPN-108 gates remain required."
+  },
+  {
+    "name": "doc-callback-lifetimes-mobile",
+    "artifact": 14126788383,
+    "file": "original-json/14126788383-91.json.gz",
+    "accepted": true,
+    "families": {
+      "cursor": {
+        "pendingHighWater": 4,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 2,
+          "finalKey": 2,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0
+      },
+      "zoom-init": {
+        "pendingHighWater": 1,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 0,
+          "finalKey": 0,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0
+      },
+      "zoom-update": {
+        "pendingHighWater": 1,
+        "pendingAt": {
+          "beforeMount": 0,
+          "inputStart": 0,
+          "finalKey": 1,
+          "disposed": 0,
+          "end": 0
+        },
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0
+      }
+    },
+    "candidateSource": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9",
+    "traceSha256": "4d6bd52a495190ada8595eaba1a3b7dfd2bb3e9c2f808eb62c20c6a32b0c9067",
+    "timing": "Traced callback observations are descriptive; unchanged unprofiled SPN-108 gates remain required."
+  }
+]

@@ -1,0 +1,23 @@
+[
+  {
+    "path": "run.json.gz",
+    "bytes": 1656,
+    "sha256": "4d564d520ea32d6144aa4b45b0df6a713f7f751a7f92b30f9efb244a3056818b",
+    "decodedBytes": 12210,
+    "decodedSha256": "2b1ed6de88acbd7efe15c9d4ff218c6e35a81e5ee6d0277d11000cd5d789f1bd"
+  },
+  {
+    "path": "jobs.json.gz",
+    "bytes": 2149,
+    "sha256": "ea0968066c2bd1dd4415d1180e8ea3d49c6630a7603032c21f3e9c68aaf32ec8",
+    "decodedBytes": 24567,
+    "decodedSha256": "3b7a1675f43b64caa586db446a5c9b62a200042aa1d0fa23a7d888240008e26c"
+  },
+  {
+    "path": "artifacts.json.gz",
+    "bytes": 1067,
+    "sha256": "078ddd2f46e958eb79ac0e44395f34ca479eda776eadeee700a97d525e9df02e",
+    "decodedBytes": 5031,
+    "decodedSha256": "c0b774a3e4a5f80b7c0a585c9b18b1b569da58220532380d95a4a4673a37a915"
+  }
+]

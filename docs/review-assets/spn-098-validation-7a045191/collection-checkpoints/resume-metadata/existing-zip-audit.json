@@ -1,0 +1,145 @@
+[
+  {
+    "path": "/tmp/spn098-publication-7a045191/hosted/collection-first/original-zips/artifact-14126097508.zip",
+    "id": 14126097508,
+    "name": "desktop-offline-safari-macos-15-intel-43626337825-1",
+    "bytes": 1048783,
+    "sha256": "95a6767b7871ca50af6a56cbcc1e91750c0f5aa60542df6d4b1ca41ab98fb276",
+    "apiBytes": 1048783,
+    "apiDigest": "sha256:95a6767b7871ca50af6a56cbcc1e91750c0f5aa60542df6d4b1ca41ab98fb276",
+    "complete": true,
+    "crcVerified": true
+  },
+  {
+    "path": "/tmp/spn098-publication-7a045191/hosted/collection-first/original-zips/artifact-14126271381.zip",
+    "id": 14126271381,
+    "name": "ci-plan",
+    "bytes": 933,
+    "sha256": "53c18bcead69447e789c58372fb01aae7d79dd7c91e51b59f34e73d34cd645f4",
+    "apiBytes": 933,
+    "apiDigest": "sha256:53c18bcead69447e789c58372fb01aae7d79dd7c91e51b59f34e73d34cd645f4",
+    "complete": true,
+    "crcVerified": true
+  },
+  {
+    "path": "/tmp/spn098-publication-7a045191/hosted/collection-first/original-zips/artifact-14126362529.zip",
+    "id": 14126362529,
+    "name": "desktop-offline-firefox-macos-26-43626337825-1",
+    "bytes": 450775,
+    "sha256": "ca0da85190f51d0d8b6678da6d61aa776a8569a3efdd9ea8ded62f2233c34d1e",
+    "apiBytes": 450775,
+    "apiDigest": "sha256:ca0da85190f51d0d8b6678da6d61aa776a8569a3efdd9ea8ded62f2233c34d1e",
+    "complete": true,
+    "crcVerified": true
+  },
+  {
+    "path": "/tmp/spn098-publication-7a045191/hosted/collection-first/original-zips/artifact-14126666872.zip",
+    "id": 14126666872,
+    "name": "desktop-offline-chrome-macos-26-43626337825-1",
+    "bytes": 225728,
+    "sha256": "3be08900ab89072e247db16cea8989cffb12807aeb226037e1430196279f16b7",
+    "apiBytes": 225728,
+    "apiDigest": "sha256:3be08900ab89072e247db16cea8989cffb12807aeb226037e1430196279f16b7",
+    "complete": true,
+    "crcVerified": true
+  },
+  {
+    "path": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/original-zips/artifact-14126233450.zip",
+    "id": 14126233450,
+    "name": "sized-restore-acceptance",
+    "bytes": 72904,
+    "sha256": "3ef53d45c8aa8f02a03c78c790bd7cdf2d3c959b0ba55db7896f181a0cb6514b",
+    "apiBytes": 72904,
+    "apiDigest": "sha256:3ef53d45c8aa8f02a03c78c790bd7cdf2d3c959b0ba55db7896f181a0cb6514b",
+    "complete": true,
+    "crcVerified": true
+  },
+  {
+    "path": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/original-zips/artifact-14126271381.zip",
+    "id": 14126271381,
+    "name": "ci-plan",
+    "bytes": 933,
+    "sha256": "53c18bcead69447e789c58372fb01aae7d79dd7c91e51b59f34e73d34cd645f4",
+    "apiBytes": 933,
+    "apiDigest": "sha256:53c18bcead69447e789c58372fb01aae7d79dd7c91e51b59f34e73d34cd645f4",
+    "complete": true,
+    "crcVerified": true
+  },
+  {
+    "path": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/original-zips/artifact-14126788383.zip",
+    "id": 14126788383,
+    "name": "doc-callback-lifetimes-mobile",
+    "bytes": 176601245,
+    "sha256": "268be4e3972297b3ae0b9233644ac0afc8a026b4af7fd150ce5ea0ed718df24d",
+    "apiBytes": 176601245,
+    "apiDigest": "sha256:268be4e3972297b3ae0b9233644ac0afc8a026b4af7fd150ce5ea0ed718df24d",
+    "complete": true,
+    "crcVerified": true
+  },
+  {
+    "path": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/original-zips/artifact-14126977747.zip",
+    "id": 14126977747,
+    "name": "doc-callback-lifetimes-desktop",
+    "bytes": 201394403,
+    "sha256": "5edfd13da6f66cc3fb4c2bae88fd91dd995bff850194e8a255fcfcd4bdccdf84",
+    "apiBytes": 201394403,
+    "apiDigest": "sha256:5edfd13da6f66cc3fb4c2bae88fd91dd995bff850194e8a255fcfcd4bdccdf84",
+    "complete": true,
+    "crcVerified": true
+  },
+  {
+    "path": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/original-zips/artifact-14127113528.zip",
+    "id": 14127113528,
+    "name": "theme-screenshots-production-1",
+    "bytes": 35632223,
+    "sha256": "9535555e76ed4d3616902c7ebada6a58c8bea873417391d79e7284ba94250d96",
+    "apiBytes": 35632223,
+    "apiDigest": "sha256:9535555e76ed4d3616902c7ebada6a58c8bea873417391d79e7284ba94250d96",
+    "complete": true,
+    "crcVerified": true
+  },
+  {
+    "path": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/original-zips/artifact-14127142480.zip",
+    "id": 14127142480,
+    "name": "design-review-desktop-dark",
+    "bytes": 34881536,
+    "sha256": "30a2a7a3dfa952e253667619c003882f5e4c3895c65f1f52d6c280cc2a56816b",
+    "apiBytes": 51191752,
+    "apiDigest": "sha256:d0a119e6ebcd7d9909dd43f53907b3c6b17936a642e37e4097b6c93b90107b1b",
+    "complete": false,
+    "crcVerified": false
+  },
+  {
+    "path": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/original-zips/artifact-14127181840.zip",
+    "id": 14127181840,
+    "name": "design-review-mobile-light",
+    "bytes": 42238491,
+    "sha256": "63f9bc8c75a9712d9384e5a92c2b9c7acadfc3b88bf8ea24d71b9315849a7721",
+    "apiBytes": 42238491,
+    "apiDigest": "sha256:63f9bc8c75a9712d9384e5a92c2b9c7acadfc3b88bf8ea24d71b9315849a7721",
+    "complete": true,
+    "crcVerified": true
+  },
+  {
+    "path": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/original-zips/artifact-14127250694.zip",
+    "id": 14127250694,
+    "name": "ci-results-unit",
+    "bytes": 1156,
+    "sha256": "c9791a29654477fe9e59914f393c562990c6e36b1be6d47e1305202ea6523f99",
+    "apiBytes": 1156,
+    "apiDigest": "sha256:c9791a29654477fe9e59914f393c562990c6e36b1be6d47e1305202ea6523f99",
+    "complete": true,
+    "crcVerified": true
+  },
+  {
+    "path": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/original-zips/artifact-14127251391.zip",
+    "id": 14127251391,
+    "name": "doc-responsiveness-desktop",
+    "bytes": 1351878,
+    "sha256": "ffc1349cc4c1b7470e140076a130d0b0e717a8b7b781b422d51c8320f6660f8a",
+    "apiBytes": 1351878,
+    "apiDigest": "sha256:ffc1349cc4c1b7470e140076a130d0b0e717a8b7b781b422d51c8320f6660f8a",
+    "complete": true,
+    "crcVerified": true
+  }
+]

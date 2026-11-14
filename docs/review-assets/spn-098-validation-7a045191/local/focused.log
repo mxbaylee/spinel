@@ -1,0 +1,13 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-098-production
+
+
+ Test Files  11 passed (11)
+      Tests  71 passed (71)
+   Start at  09:57:29
+   Duration  4.33s (tests 61%, import 23%, transform 15%, worker 1%)
+
+    Isolate  11 workers spawned · ~58ms startup each (spawn + environment, per file)
+             at least ~576ms faster with isolate: false — reuses workers across files instead of one per file
+
+{"name":"spn098-post157-focused","args":["node","node_modules/vitest/vitest.mjs","run","--config","test-results/spn098-post157-vitest.config.ts","src/server/diagnostics","src/ui/feedbackContext.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":4670,"peakKiB":557216}

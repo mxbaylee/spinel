@@ -1,0 +1,12 @@
+{
+  "at": "2026-11-14T18:23:02.212953+00:00",
+  "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "allFilesVerified": 91,
+  "originalBytesCompared": 88,
+  "gzipDecoded": 12,
+  "bodySha256": "46815902bc6f59f00a5d983d7969ac6f9415bcca2c651be9c4de670a9b30a94e",
+  "manifestSha256": "e51c3f13d2a1929c8b8300cda11246c71ee67093931de0d4a53a4ae2b96a1c88",
+  "bothFreshReportsRootRead": true,
+  "reservedReviewsExist": true,
+  "status": "preparedsourcequalified,currenthostedpending,nopushyet"
+}

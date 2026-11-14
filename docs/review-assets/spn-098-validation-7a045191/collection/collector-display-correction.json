@@ -1,0 +1,5 @@
+{
+  "recordedAt": "2026-11-14T18:24:33.773980+00:00",
+  "disposition": "Earlier090/156parser concern resolved as JSON/display escaping, confirmed by raw codepoints and manager probe. No actual parser failure or code repair established. Keep separate from the actual090already-gzip manifest metadata bug.",
+  "source": "Root correction message; no source or collector mutation required."
+}

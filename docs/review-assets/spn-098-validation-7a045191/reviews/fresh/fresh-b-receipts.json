@@ -1,0 +1,15 @@
+{
+  "candidate": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "node": "v26.13.0",
+  "pressure": "1",
+  "sharedLockPresent": false,
+  "worktreeStatus": "",
+  "cleanup": "Immediately after focused run process inventory contained no watchdog, serial or vitest descendants; only the inspection shell and rg matched. Slot released to manager then. No app/browser launched, dependency install or shared cache mutation.",
+  "receipts": {
+    "fresh-b-focused.json": "8fd481d3ee024ae87274b9659da94f9b6bc28424d3a676fd7a74abbe5962d643",
+    "fresh-b-focused.log": "90fb4f110fbd7f4b9c0e4cb11d26284fda0d22c8e08ec1137977a7a19a7ce696",
+    "fresh-b-vitest.config.ts": "4ff9fe2a0e67487873b391eaf8d0904c95e83146db9ee4dac696985d9a713bfa",
+    "fresh-b-watch.ts": "203c67c3a455f630bd6b79156834cdfc18b4f9c5bb78591fffbe7214057e9dba",
+    "fresh-b-bindings.json": "033f4e488bb12b6e85ff391a7ce97e44482cea6c6e1be27a087492dd8fe87378"
+  }
+}

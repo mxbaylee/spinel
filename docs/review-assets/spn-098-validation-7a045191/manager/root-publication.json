@@ -1,0 +1,41 @@
+{
+  "at": "2026-11-14T18:23:52.694086+00:00",
+  "pr": 227,
+  "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "draft": true,
+  "bodySha256": "46815902bc6f59f00a5d983d7969ac6f9415bcca2c651be9c4de670a9b30a94e",
+  "published": "normalfastforward5e72\u21927a aftertwofresh100exactreviews;batchedmetadata18:23:18Z",
+  "runs": [
+    {
+      "conclusion": "",
+      "createdAt": "2026-11-14T18:23:30Z",
+      "databaseId": 43626337816,
+      "event": "pull_request",
+      "headSha": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "status": "in_progress",
+      "workflowName": "\ud83d\udcda Storybook"
+    },
+    {
+      "conclusion": "",
+      "createdAt": "2026-11-14T18:23:30Z",
+      "databaseId": 43626337966,
+      "event": "pull_request",
+      "headSha": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "status": "queued",
+      "workflowName": "\ud83d\udc8e CI"
+    },
+    {
+      "conclusion": "",
+      "createdAt": "2026-11-14T18:23:30Z",
+      "databaseId": 43626337825,
+      "event": "pull_request",
+      "headSha": "7a0451917ef38524138fa2eac432d4520fbed008",
+      "status": "queued",
+      "workflowName": "\ud83d\udcbb Desktop offline"
+    }
+  ],
+  "supersededMetadataRunObserved": false,
+  "cancellationPerformed": false,
+  "pending": "allcurrentheadhostedacceptance"
+}

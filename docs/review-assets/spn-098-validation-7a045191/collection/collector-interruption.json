@@ -1,0 +1,8 @@
+{
+  "at": "2026-11-14T18:58:26.281752+00:00",
+  "originalSession": 40148,
+  "resumePoll": "write_stdin failed: Unknown process id 40148",
+  "observed": "Root observed PID59129 absent. Current original directory lacks final collection-summary.json/raw-manifest.json.",
+  "cause": "Unknown; no retained terminal exit code, exception, or stderr establishes an interruption cause. No product job failure is inferred.",
+  "retained": "Original script/staging hashes, partial output files and bounded checkpoint remain unchanged; validated ZIPs will be reused, partial originals preserved."
+}

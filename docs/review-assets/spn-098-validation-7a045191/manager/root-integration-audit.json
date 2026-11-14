@@ -1,0 +1,53 @@
+{
+  "at": "2026-11-14T18:04:39.745809+00:00",
+  "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "previous": "5e72d33ac9cb3a86b3496345209493d6c86e469c",
+  "verified_retained_inputs": 51,
+  "verified_dependency_build_inputs": 26,
+  "incoming_non_doc_paths_exact_main": [
+    "scripts/screenshots.ts",
+    "src/ui/nativeDrawingResize.test.ts",
+    "web/SyncNative.stories.tsx",
+    "web/nativeDrawingResize.ts"
+  ],
+  "full_diff_sha256": "bb1a819021ddad7f828966177ff1e99e4d718606ddcbbf55597b7b6b4ac4fe7a",
+  "packet_original_bindings_verified": 6,
+  "status": "No source changes by root; fresh reviews pending; historical checks not current gates.",
+  "reviews": {
+    "a": {
+      "path": "/tmp/spn098-post157-20261114/fresh-reviewer-a.md",
+      "sha256": "56c79c8e2bf558100c445292d411f7d514c30299304415562b64b6b769073c82",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "root_read_full": true,
+      "visual": "approved agent review only",
+      "findings": "none"
+    },
+    "b": {
+      "path": "/tmp/spn098-post157-20261114/fresh-reviewer-b.md",
+      "sha256": "c60d60b8d3d187185ba25ca913e3b87374b29c45b95c9464cce2d944ca40f5df",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "root_read_full": true,
+      "visual": "approved agent review only",
+      "findings": "none"
+    }
+  },
+  "reviewIndependenceCorrection": "Initial integrated A numerical exposure / B uncertain unsafehistorysearch; no grades/tests issued. Both replaced beforegrading using correctedv2. Originaltechnicalhandoffs/packet preserved. FreshA/B affirm onlyv2 and independentassessment.",
+  "correctionRecord": "/tmp/spn098-post157-20261114/root-packet-v2-correction.json",
+  "publication": "qualifiedreviews,sourceunchanged;notpushed",
+  "updated": "2026-11-14T18:17:01.720947+00:00"
+}

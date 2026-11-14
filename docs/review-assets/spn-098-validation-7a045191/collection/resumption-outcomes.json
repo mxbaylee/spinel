@@ -1,0 +1,7 @@
+{
+  "resumeSession61956": "write_stdin returned exit_code0; original progress and final summary retained",
+  "terminalSession84816": "write_stdin returned exit_code0; original final summary retained",
+  "originalSession40148": "Unknown process id from original agent; no actual exit cause/code retained",
+  "nodeHeapMiB": 256,
+  "noProductRerun": true
+}

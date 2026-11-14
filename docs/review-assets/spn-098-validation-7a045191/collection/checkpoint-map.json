@@ -1,0 +1,582 @@
+[
+  {
+    "path": "collection-checkpoints/initial/ci-artifacts.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/initial/ci-artifacts.json.gz",
+    "sha256": "8fd070f4f74ae705405512ba6d0311426601d356badeefbd3fea74cf24492c4a"
+  },
+  {
+    "path": "collection-checkpoints/initial/ci-jobs.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/initial/ci-jobs.json.gz",
+    "sha256": "531a357908a8feccda8b91fa32585a491ca147d164c823076f631a0da483877b"
+  },
+  {
+    "path": "collection-checkpoints/initial/ci-run.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/initial/ci-run.json.gz",
+    "sha256": "584f23382392e854db48bbaf793bbc3c9415f498ca86d7b24c6803c8b613c134"
+  },
+  {
+    "path": "collection-checkpoints/initial/desktop-artifacts.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/initial/desktop-artifacts.json.gz",
+    "sha256": "8fd070f4f74ae705405512ba6d0311426601d356badeefbd3fea74cf24492c4a"
+  },
+  {
+    "path": "collection-checkpoints/initial/desktop-jobs.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/initial/desktop-jobs.json.gz",
+    "sha256": "e3b6db4691c8704e1da94adab9a64ef41282516d6372f2e7269f6afbf8310f3a"
+  },
+  {
+    "path": "collection-checkpoints/initial/desktop-run.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/initial/desktop-run.json.gz",
+    "sha256": "446e9684802cc4d04acbe3898918d88f7829227e8bfec59d82e45e789cd3cd0a"
+  },
+  {
+    "path": "collection-checkpoints/initial/files.json",
+    "source": "/tmp/spn098-publication-7a045191/hosted/initial/files.json",
+    "sha256": "4a03090af7595e72651a8aff429934b4eef198861e7436f6f49df334eae9facf"
+  },
+  {
+    "path": "collection-checkpoints/initial/pr.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/initial/pr.json.gz",
+    "sha256": "6aa16056ade39b3a419a875e155c806f725785ec171a0d706789e5e1e4ddd5c1"
+  },
+  {
+    "path": "collection-checkpoints/initial/root-publication.json",
+    "source": "/tmp/spn098-publication-7a045191/hosted/initial/root-publication.json",
+    "sha256": "ceaf7735635b80b0d70caf5212b15738668b869076c7d63c7de442ae89f8b46d"
+  },
+  {
+    "path": "collection-checkpoints/initial/root-staging-audit.json",
+    "source": "/tmp/spn098-publication-7a045191/hosted/initial/root-staging-audit.json",
+    "sha256": "6f3da47fa61550b6a1deb3e09626fce37b9d5e1f780927eb69a70ce6a797d55a"
+  },
+  {
+    "path": "collection-checkpoints/initial/storybook-artifacts.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/initial/storybook-artifacts.json.gz",
+    "sha256": "8fd070f4f74ae705405512ba6d0311426601d356badeefbd3fea74cf24492c4a"
+  },
+  {
+    "path": "collection-checkpoints/initial/storybook-jobs.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/initial/storybook-jobs.json.gz",
+    "sha256": "bb5f7c9e8d027a00fc7a0ab63a1e93733b7608d4c19f5da755a18bcb863c1099"
+  },
+  {
+    "path": "collection-checkpoints/initial/storybook-run.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/initial/storybook-run.json.gz",
+    "sha256": "b9482a18779793b5e1e93cf96485685e1ffaf1f7279a7a9d5ac37d96b27175f8"
+  },
+  {
+    "path": "collection-checkpoints/initial/summary.json",
+    "source": "/tmp/spn098-publication-7a045191/hosted/initial/summary.json",
+    "sha256": "363ee03890fa79314036ced74c6c59f1ebcaf89fe8059c2036c6a26b3f92d429"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/all-source-runs.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/all-source-runs.json.gz",
+    "sha256": "c2a2118f9d4cc71a4bef20fcd38f25d676efab015eb39aae11c5dbe89ca1f54f"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/artifacts-ci.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/artifacts-ci.json.gz",
+    "sha256": "63cc2c531006657f7b158a11973c14c1e0e575ec44e1f8e29b84b5c2109f9398"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/artifacts-desktop.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/artifacts-desktop.json.gz",
+    "sha256": "ff407db19a551d21dbe6c784243867f3badcc8fa7a9e227c67330d1e6c2cdf30"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/artifacts-storybook.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/artifacts-storybook.json.gz",
+    "sha256": "690937f4b6826da7f2fdf5e9b24dd1bcb646c4ca9621076e88e7897fa2735b39"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/base-commit.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/base-commit.json.gz",
+    "sha256": "73a0d2570e35a8ce208003e49dcd96f7d5d31be2f3797df3b7ff296a9fcb9afc"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/collection-summary.json",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/collection-summary.json",
+    "sha256": "0f4e0520a1050b333517eb8ce1f526775c640cd300cc76b9cb91f7d35a5099ed"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/job-132542876942.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/job-132542876942.log.gz",
+    "sha256": "1b4224932fcf46fddd4bc445cc214544cee3f5909afa09f9eec0f5ee485fa129"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/job-132542877044.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/job-132542877044.log.gz",
+    "sha256": "7a62ec3d284da4bc58dc37826bd3d25e408d4d86a0c013d05cb9e3f1b7234c17"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/job-132542877239.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/job-132542877239.log.gz",
+    "sha256": "f7f5dd6711c257c0ef31a6e1e45841877865aac40cc96f9499e9b608580c8489"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/job-132542877432.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/job-132542877432.log.gz",
+    "sha256": "6aba5879ef36994ad2e89cbce2e0c6a3774c40dc1bb805a09570782e732c6d9e"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/job-132542877452.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/job-132542877452.log.gz",
+    "sha256": "b0d17b0efdfc044995b2238f8422521eeca52b9ddda656ab3f046375b75cad0f"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/job-132542877635.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/job-132542877635.log.gz",
+    "sha256": "5fbfd28ea913e8207a8807a96c6b633053ffdec2f13910d4e807c6494ee12968"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/job-132543130777.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/job-132543130777.log.gz",
+    "sha256": "02077d4264244d821218182cda7995743529c23e50462ce879e6ac57083f9146"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/job-132544274014.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/job-132544274014.log.gz",
+    "sha256": "ee311ea0ce15c81991539998ba1619a77ba28a18aca5a5f49e125a330291505f"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/job-132544274042.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/job-132544274042.log.gz",
+    "sha256": "7a4fa48b0de0d5c7860cfe9c3d63642772819e030125bf45f779cb698d52d22c"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/job-132544274066.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/job-132544274066.log.gz",
+    "sha256": "6b3438b6e3b0121e56191acde5290720666853c755c28a3842ad50c214d6b023"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/jobs-ci-attempt-1.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/jobs-ci-attempt-1.json.gz",
+    "sha256": "fe6e9d49ceb13f5312fae5d0b9ca72452ec5f9641bb11885460c5f3e207c4dcc"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/jobs-desktop-attempt-1.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/jobs-desktop-attempt-1.json.gz",
+    "sha256": "ade2e8db73e678152f2a58edffe592a1756a76c555eecb788457fc5670982baa"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/jobs-storybook-attempt-1.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/jobs-storybook-attempt-1.json.gz",
+    "sha256": "a3ef3929a2b5b010e5cabd3b210a211e35bef1e1ddddeda96de39f475a8514b8"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/pr-observed-merge-commit.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/pr-observed-merge-commit.json.gz",
+    "sha256": "be9af1dbb9ffb289460da2a1460e0dccb596b2ce476b381f0e26403fcf3be831"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/pr.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/pr.json.gz",
+    "sha256": "de6e463ca983deeb200a1ef0ab4e7bb50e9c1afe49b3c71e90c63c0194c3412b"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/published-pr-body.md.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/published-pr-body.md.gz",
+    "sha256": "5f0c842455075ec430d54f5b759f8e6cb3e303c683290dc7182095f0d057cf09"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/raw-manifest.json",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/raw-manifest.json",
+    "sha256": "5d343afdc353176d8f73a6a37592b30960538a929334ada476bb4064250d18c7"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/root-snapshot-audit.json",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/root-snapshot-audit.json",
+    "sha256": "a9738cafdc880604ef8ff7e1ccbf1b914f6680b8fb99b4e2fd3a60d5d4edef53"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/run-ci.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/run-ci.json.gz",
+    "sha256": "96242cd4c6a6fe0c3b7338a3cbf7d3da539e097447a3a28c9941d9e7be8b5257"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/run-desktop.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/run-desktop.json.gz",
+    "sha256": "16c46b0093982f60b9f5615c45eca8a1287c43e192fed0603adaa7fc0fd953bc"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/run-storybook.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/run-storybook.json.gz",
+    "sha256": "c62ec8e35dac7989f47755bea54f0f75c7b786d71b6a3ad3ddc8bf0a995bc3a6"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/source-check-runs.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/source-check-runs.json.gz",
+    "sha256": "338e48a154a04b625c035b5b5d10eec341b2dedfaf4862c3997cc09d9d7366c7"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/source-commit.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/source-commit.json.gz",
+    "sha256": "7baad40505545e04c539937f9270dde4beb5b7cd68cbe111e28b61434f21eb77"
+  },
+  {
+    "path": "collection-checkpoints/collection-first/source-plan-native-audit.json",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-first/source-plan-native-audit.json",
+    "sha256": "7fbd66600a5c195b7a2b28706c46413565b765679ed7b346fa58867afb26d196"
+  },
+  {
+    "path": "collection-checkpoints/storybook-terminal-metadata/artifacts.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/storybook-terminal-metadata/artifacts.json.gz",
+    "sha256": "078ddd2f46e958eb79ac0e44395f34ca479eda776eadeee700a97d525e9df02e"
+  },
+  {
+    "path": "collection-checkpoints/storybook-terminal-metadata/files.json",
+    "source": "/tmp/spn098-publication-7a045191/hosted/storybook-terminal-metadata/files.json",
+    "sha256": "cb71639f770c60ae8057ff53fdc9670cec6b76f4b7aa88d4e390438007972deb"
+  },
+  {
+    "path": "collection-checkpoints/storybook-terminal-metadata/jobs.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/storybook-terminal-metadata/jobs.json.gz",
+    "sha256": "ea0968066c2bd1dd4415d1180e8ea3d49c6630a7603032c21f3e9c68aaf32ec8"
+  },
+  {
+    "path": "collection-checkpoints/storybook-terminal-metadata/run.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/storybook-terminal-metadata/run.json.gz",
+    "sha256": "4d564d520ea32d6144aa4b45b0df6a713f7f751a7f92b30f9efb244a3056818b"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/all-source-runs.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/all-source-runs.json.gz",
+    "sha256": "eb3587840ee40099cf8a9c3dd92ce9c74ca043857ad4c5a7931b83971de7ea42"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/artifacts-ci.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/artifacts-ci.json.gz",
+    "sha256": "b8c53f2950a834a919284c980c9f3af33eb6d08b6307a7ccb94bb44be317905e"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/artifacts-storybook.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/artifacts-storybook.json.gz",
+    "sha256": "1a345975816da9b802b112f0457deea72b528a8423f241657f86b6e28f9220b6"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/base-commit.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/base-commit.json.gz",
+    "sha256": "73a0d2570e35a8ce208003e49dcd96f7d5d31be2f3797df3b7ff296a9fcb9afc"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132542876942.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132542876942.log.gz",
+    "sha256": "1b4224932fcf46fddd4bc445cc214544cee3f5909afa09f9eec0f5ee485fa129"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132542877452.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132542877452.log.gz",
+    "sha256": "b0d17b0efdfc044995b2238f8422521eeca52b9ddda656ab3f046375b75cad0f"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132542877635.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132542877635.log.gz",
+    "sha256": "5fbfd28ea913e8207a8807a96c6b633053ffdec2f13910d4e807c6494ee12968"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132543130777.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132543130777.log.gz",
+    "sha256": "02077d4264244d821218182cda7995743529c23e50462ce879e6ac57083f9146"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132543550854.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132543550854.log.gz",
+    "sha256": "f6fc86b16e77915bdde0f63b382825dd2f831b555e5e61a97502702c85f1b811"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132543550894.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132543550894.log.gz",
+    "sha256": "f1993ece61e2ab189e0164871c4f118a39a8ff6a01701dc7db71e226a92c06fe"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132543550910.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132543550910.log.gz",
+    "sha256": "9a17a1dcfc07efe524371cad8378ab9ff9ababbfcc7607177ea08231a8a59a1d"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132543550928.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132543550928.log.gz",
+    "sha256": "cf4cd1181e3c09c7a1e48d3c033fab2f059f76df25163dd45fb5ebf65268aded"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132543550935.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132543550935.log.gz",
+    "sha256": "c5db8b18ce36d7eef054a6f2ccca61fb841c1d5374a215d6fe242fca8c0be04e"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274014.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274014.log.gz",
+    "sha256": "ee311ea0ce15c81991539998ba1619a77ba28a18aca5a5f49e125a330291505f"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274042.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274042.log.gz",
+    "sha256": "7a4fa48b0de0d5c7860cfe9c3d63642772819e030125bf45f779cb698d52d22c"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274062.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274062.log.gz",
+    "sha256": "ac647885a28434ec582f3db822cc10e33551126a76c546d2f05a90dc526df4d3"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274066.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274066.log.gz",
+    "sha256": "6b3438b6e3b0121e56191acde5290720666853c755c28a3842ad50c214d6b023"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274077.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274077.log.gz",
+    "sha256": "8012ff8feb7d0d8f7928124ef558530555402d1f54c429687a4fccbf9b70495e"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274118.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274118.log.gz",
+    "sha256": "b68b17a2153346e239f94ed20242da7f8ff8ef4f56f34327c58b8d469e354bda"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274152.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274152.log.gz",
+    "sha256": "b1dc27a0ba45330e7eaf756f1826647e047456977f0064f2deede6fdbd3c9d62"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274171.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274171.log.gz",
+    "sha256": "d05457bd489a4d7af03b13bf712b7a23966f73ff5578f06856ed7b457c3c28cb"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274213.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274213.log.gz",
+    "sha256": "039fd47d1c63f1c2304d935f9a56d48eae0c0a0ef8269327424a67e3da460fab"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274238.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274238.log.gz",
+    "sha256": "c98289c03b36b5bf3c1c1553230e76b286cad92bc5784f5aefc244336e2b869f"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274241.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274241.log.gz",
+    "sha256": "3ba6273378dd52e60bfd252c90e6cc1cdcc315622c4d059394d92f165f9c229f"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274254.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274254.log.gz",
+    "sha256": "b6152cf9ffd4213c894b208a54b14feaa5aa5adc43472a9f3e968743f0d90e13"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274273.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274273.log.gz",
+    "sha256": "5a63d0b22cc40be969af8508b60d72dfcdff00d41e4ceef815e130bc735d3203"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274274.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274274.log.gz",
+    "sha256": "8a802f6dd6090fe53e063204daa47679a4601121d4c60a4cbaf0e70cc10a023b"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274315.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274315.log.gz",
+    "sha256": "dcf5dd31eaa05bb58c735bc2b72769c7a46aca7305fd43e19603820d824c6866"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274368.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274368.log.gz",
+    "sha256": "75a5d7e5ef39d3ef2f86b1d883cb519fa7435378b1b3826022323a81480078b5"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274385.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274385.log.gz",
+    "sha256": "10fcd8e7f9d15ea04cad7dc4cba31e5bf544baf4cefdd871e9116c74fa598730"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274392.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274392.log.gz",
+    "sha256": "d98d848c6743bc6582053b0480cb9a9daf7c833d889c2f18e49efbdeff324462"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274393.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274393.log.gz",
+    "sha256": "afec0f2241b80bcedf473467c0108061faf4532936fcbaae489ed0b1267b2962"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274407.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274407.log.gz",
+    "sha256": "ffdba4b793b054c1c6f94abdd98aebdfd52aac673cfbc650ae7dfca41c35f9db"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274409.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274409.log.gz",
+    "sha256": "ad4167e72de8c8ffb6b2eabb2adff74f6baf0680cbb38635734f571899d938d6"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274414.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274414.log.gz",
+    "sha256": "c1164f4520d14e0543a4b3e3f7a8b1a8356f9c2958cf2f9d4ca477e02a1c1802"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132544274449.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132544274449.log.gz",
+    "sha256": "2b54b97ed1171c054ac08dc92538617964eb6bea477a1cecd903d117b6793d87"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132547993363.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132547993363.log.gz",
+    "sha256": "d0b77c3f4969f1b1ddebcb499268ae2ed11f374346630ac7b5b6b33924e224cd"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/job-132548599743.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/job-132548599743.log.gz",
+    "sha256": "70f2e212d54afee864dc037452b646315f23da0a4df7bea9effd7d603cb5d2c1"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/jobs-ci-attempt-1.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/jobs-ci-attempt-1.json.gz",
+    "sha256": "b58e63d25c8f298d974b84d654f541dc9566bbbdec0a9f7d0f2efdccb9811b14"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/jobs-storybook-attempt-1.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/jobs-storybook-attempt-1.json.gz",
+    "sha256": "8185be5a267ab39e3282a034cf05a783634f60691a816b961003027ca153924f"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/pr-observed-merge-commit.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/pr-observed-merge-commit.json.gz",
+    "sha256": "be9af1dbb9ffb289460da2a1460e0dccb596b2ce476b381f0e26403fcf3be831"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/pr.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/pr.json.gz",
+    "sha256": "26fc9d57c70cb50c9505458c8e3f9d451bc678f908029f2219db7d69fea92bb5"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/published-pr-body.md.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/published-pr-body.md.gz",
+    "sha256": "5f0c842455075ec430d54f5b759f8e6cb3e303c683290dc7182095f0d057cf09"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/run-ci.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/run-ci.json.gz",
+    "sha256": "64e3cd3a1b0d5a93c4322aae179b88ed34eab47ad7c622943fcb6c9c8f0bfa9e"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/run-storybook.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/run-storybook.json.gz",
+    "sha256": "c32db4c8d0e204be28e1604fac4de1483222784fffb6a22f4b39e27f67afabfa"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/source-check-runs.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/source-check-runs.json.gz",
+    "sha256": "e102a29a011d8060d31fffbbcca73187cda6c2d51e58e852190f07bbb7fff7de"
+  },
+  {
+    "path": "collection-checkpoints/collection-story-terminal/source-commit.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal/source-commit.json.gz",
+    "sha256": "7baad40505545e04c539937f9270dde4beb5b7cd68cbe111e28b61434f21eb77"
+  },
+  {
+    "path": "collection-checkpoints/resume-metadata/artifacts.json",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-metadata/artifacts.json",
+    "sha256": "faf0dee85c792f609d9267e3ab3ec1447b06b1f9cfad651fac8f72c37b4d7953"
+  },
+  {
+    "path": "collection-checkpoints/resume-metadata/ci-artifacts.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-metadata/ci-artifacts.json.gz",
+    "sha256": "88978d3b5168b1fae1f2d78fdf726b7b23781da4d49aca41510c740ae8b8e7e0"
+  },
+  {
+    "path": "collection-checkpoints/resume-metadata/ci-jobs.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-metadata/ci-jobs.json.gz",
+    "sha256": "01c319ec919bed6115864ada7acfcb138dad85b66615d966195af274954708dc"
+  },
+  {
+    "path": "collection-checkpoints/resume-metadata/ci-run.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-metadata/ci-run.json.gz",
+    "sha256": "70bbce7bbc5cdf4b117cf68e0c3d0ea5fb49e0cfb7e431cde9a8f8581d9095cc"
+  },
+  {
+    "path": "collection-checkpoints/resume-metadata/desktop-artifacts.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-metadata/desktop-artifacts.json.gz",
+    "sha256": "d7e68fe5437499bd51bcec7d79e7b48de102595c357f83f2722b699ad2cada85"
+  },
+  {
+    "path": "collection-checkpoints/resume-metadata/desktop-jobs.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-metadata/desktop-jobs.json.gz",
+    "sha256": "8efd729c2e1961858fe56dab430aa6f646b38e20babdd6a45e1b73e98f7592cd"
+  },
+  {
+    "path": "collection-checkpoints/resume-metadata/desktop-run.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-metadata/desktop-run.json.gz",
+    "sha256": "79304a047888db31f427b526e922b7465d550dece1ac5c6d7177c4b313b9b44a"
+  },
+  {
+    "path": "collection-checkpoints/resume-metadata/existing-zip-audit.json",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-metadata/existing-zip-audit.json",
+    "sha256": "fdf75314d3c74953527d7220259661f33b81e8f34969646c7eabc8cd34affc9b"
+  },
+  {
+    "path": "collection-checkpoints/resume-metadata/files.json",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-metadata/files.json",
+    "sha256": "383c53bfec67a3f940961d1219b052abd10931adb71258cee6995ec6b0dc0bcb"
+  },
+  {
+    "path": "collection-checkpoints/resume-metadata/pr.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-metadata/pr.json.gz",
+    "sha256": "9deed40e389b36bc8c008daf6453f28bbabeb5232fe2be21d1bbff1624fa79d0"
+  },
+  {
+    "path": "collection-checkpoints/resume-metadata/runs.json",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-metadata/runs.json",
+    "sha256": "a8cab8a91db1de594230149af265b33439546aace24b9bc782731e4e6b138d94"
+  },
+  {
+    "path": "collection-checkpoints/resume-metadata/storybook-artifacts.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-metadata/storybook-artifacts.json.gz",
+    "sha256": "c2290fedb7ba0e78891757a6b26130ceeab70b11573a5b721de00df98b0497e7"
+  },
+  {
+    "path": "collection-checkpoints/resume-metadata/storybook-jobs.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-metadata/storybook-jobs.json.gz",
+    "sha256": "5e78c56d163f23f9cd2764e6bc3dd3f6271b177113d4caada825d7c218c50923"
+  },
+  {
+    "path": "collection-checkpoints/resume-metadata/storybook-run.json.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-metadata/storybook-run.json.gz",
+    "sha256": "f0fd31a47c647b749e5e154206bba9e93b4f0db43fbd2237bb4bd7279a9310aa"
+  },
+  {
+    "path": "collection-checkpoints/resume-collected/collection-summary.json",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-collected/collection-summary.json",
+    "sha256": "ad7039c0132ee2fd54e6d5deeb5c6b1fcaf078110328bc341cbe863e0ebed405"
+  },
+  {
+    "path": "collection-checkpoints/resume-collected/download-progress.json",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-collected/download-progress.json",
+    "sha256": "77b6f13d391b2a37efddd09623d5c2bc1abe1632f929dc5f403c0a96c9a660a1"
+  },
+  {
+    "path": "collection-checkpoints/resume-collected/job-132544274337.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-collected/job-132544274337.log.gz",
+    "sha256": "d8b97fa96cf5ef483fefdf587590ee0f99934fc6847963178ce7a97bc3074c9b"
+  },
+  {
+    "path": "collection-checkpoints/resume-collected/job-132544274358.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-collected/job-132544274358.log.gz",
+    "sha256": "07aff5f4573f23b982d066fd358a0cd14057d5af398a40b840bb7730856d0665"
+  },
+  {
+    "path": "collection-checkpoints/resume-collected/job-132544274384.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-collected/job-132544274384.log.gz",
+    "sha256": "e901d61dbcca1a7f3fc74fe66e59c2c2f4b57cb1333f15527662d0ca15477288"
+  },
+  {
+    "path": "collection-checkpoints/resume-collected/job-132544274424.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-collected/job-132544274424.log.gz",
+    "sha256": "ed6796be9675b31bfca0ab700f7d99d528a1524dad01b285598fc3893dd27f4f"
+  },
+  {
+    "path": "collection-checkpoints/resume-collected/job-132550427508.log.gz",
+    "source": "/tmp/spn098-publication-7a045191/hosted/resume-collected/job-132550427508.log.gz",
+    "sha256": "7775bb066603bc28494d7f0616300449835f77131fdc95d8f4c9d46834cd769d"
+  }
+]

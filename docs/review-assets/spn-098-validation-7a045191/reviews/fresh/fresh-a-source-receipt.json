@@ -1,0 +1,32 @@
+{
+  "nonDocumentationDelta": [
+    "scripts/screenshots.ts",
+    "src/ui/nativeDrawingResize.test.ts",
+    "web/SyncNative.stories.tsx",
+    "web/nativeDrawingResize.ts"
+  ],
+  "exactListedDelta": true,
+  "incomingEqualMain": {
+    "scripts/screenshots.ts": true,
+    "src/ui/nativeDrawingResize.test.ts": true,
+    "web/SyncNative.stories.tsx": true,
+    "web/nativeDrawingResize.ts": true
+  },
+  "source23eTo5e72NonDocs": [],
+  "implementation-SPN-098.md": {
+    "blob": "3abbd38b4d7830d484ccd4e9be1e4878f22853ff",
+    "originalHashMatches": true
+  },
+  "implementation-SPN-110.md": {
+    "blob": "7702073fa860e4f5eb136c3e06c26776d0635f66",
+    "originalHashMatches": true
+  },
+  "landed-SPN-157-contract-audit.md": {
+    "blob": "b4f208a11a9cbb1567da1c2b133f1be7cccf50cd",
+    "originalHashMatches": true
+  },
+  "complete-ticket-main.md": {
+    "blob": "74cbdfd0376f59ef591b0ae7e43fd01f62154191",
+    "originalHashMatches": true
+  }
+}

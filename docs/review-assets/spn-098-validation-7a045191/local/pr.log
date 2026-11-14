@@ -1,0 +1,6 @@
+
+> backlog:pr
+> node scripts/backlog/cli.ts pr --base c525aa933505d6e78b8fdd7a89940d87506d5cb3 --title 📨 SPN-098 Send user feedback with diagnostic context
+
+pull request ok
+{"name":"spn098-post157-pr","args":["npm","run","backlog:pr","--","--base","c525aa933505d6e78b8fdd7a89940d87506d5cb3","--title","📨 SPN-098 Send user feedback with diagnostic context"],"code":0,"signal":null,"reason":null,"elapsedMs":547,"peakKiB":264128}

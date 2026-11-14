@@ -1,0 +1,97 @@
+{
+  "testedSource": "ec3861f46513bc36e16007c080d2b7f51a2b28de",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "node": "26.13.0",
+  "environment": {
+    "GOMEMLIMIT": "640MiB",
+    "GOGC": "50",
+    "GOMAXPROCS": "2",
+    "npm_config_cache": "/tmp/spn098-post157-20261114/cache/npm",
+    "vitestCache": "/tmp/spn098-post157-20261114/cache/vitest"
+  },
+  "checks": [
+    {
+      "name": "spn098-post157-index",
+      "args": [
+        "npm",
+        "run",
+        "backlog:index"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 435,
+      "peakKiB": 273440
+    },
+    {
+      "name": "spn098-post157-focused",
+      "args": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--config",
+        "test-results/spn098-post157-vitest.config.ts",
+        "src/server/diagnostics",
+        "src/ui/feedbackContext.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 4670,
+      "peakKiB": 557216
+    },
+    {
+      "name": "spn098-post157-quality",
+      "args": [
+        "npm",
+        "run",
+        "lint"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 11355,
+      "peakKiB": 797472
+    },
+    {
+      "name": "spn098-post157-backlog",
+      "args": [
+        "npm",
+        "run",
+        "backlog:check"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 243,
+      "peakKiB": 252016
+    },
+    {
+      "name": "spn098-post157-pr",
+      "args": [
+        "npm",
+        "run",
+        "backlog:pr",
+        "--",
+        "--base",
+        "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+        "--title",
+        "\ud83d\udce8 SPN-098 Send user feedback with diagnostic context"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 547,
+      "peakKiB": 264128
+    }
+  ],
+  "limits": {
+    "pressure": "normal before and throughout each command",
+    "treeRssKiB": 2097152,
+    "elapsedMs": 480000,
+    "sampleMs": 200
+  },
+  "reuse": "No new compiler/build/browser/capture result claimed; unchanged relevant inputs audited against accepted5e72 source. New exact-head reviews/visual/hosted gates required.",
+  "firstFailures": [],
+  "cleanup": "All five workloads exited normally. Post-run process inventory showed no remaining owned watchdog/serial/vitest workload; only the read-only inspection shell matched. Pressure=1. No application or browser launched. Dependencies and shared caches unchanged."
+}

@@ -1,0 +1,72 @@
+[
+  {
+    "path": "pr.json.gz",
+    "bytes": 7202,
+    "sha256": "9deed40e389b36bc8c008daf6453f28bbabeb5232fe2be21d1bbff1624fa79d0",
+    "decodedBytes": 41676,
+    "decodedSha256": "d7cdf3b2191057119bd3612aa7135249c1effb5fb324c7aa360b4e6b03e0c5f7"
+  },
+  {
+    "path": "ci-run.json.gz",
+    "bytes": 1656,
+    "sha256": "70bbce7bbc5cdf4b117cf68e0c3d0ea5fb49e0cfb7e431cde9a8f8581d9095cc",
+    "decodedBytes": 12193,
+    "decodedSha256": "5687aac23ad640e338cb2a588f29efb4cbef5e0c3890c2c9ad8c184b40268636"
+  },
+  {
+    "path": "ci-jobs.json.gz",
+    "bytes": 6596,
+    "sha256": "01c319ec919bed6115864ada7acfcb138dad85b66615d966195af274954708dc",
+    "decodedBytes": 103253,
+    "decodedSha256": "93a4992962e58dc2f72db2b66bf02350ef7f0b90799fc7cb657cb0b95af2f9fd"
+  },
+  {
+    "path": "ci-artifacts.json.gz",
+    "bytes": 2413,
+    "sha256": "88978d3b5168b1fae1f2d78fdf726b7b23781da4d49aca41510c740ae8b8e7e0",
+    "decodedBytes": 15070,
+    "decodedSha256": "f6036c06da292be3e3e4261c12950846908a5d63f16c6704e8296ebf59118a4e"
+  },
+  {
+    "path": "storybook-run.json.gz",
+    "bytes": 1664,
+    "sha256": "f0fd31a47c647b749e5e154206bba9e93b4f0db43fbd2237bb4bd7279a9310aa",
+    "decodedBytes": 12210,
+    "decodedSha256": "2b1ed6de88acbd7efe15c9d4ff218c6e35a81e5ee6d0277d11000cd5d789f1bd"
+  },
+  {
+    "path": "storybook-jobs.json.gz",
+    "bytes": 2205,
+    "sha256": "5e78c56d163f23f9cd2764e6bc3dd3f6271b177113d4caada825d7c218c50923",
+    "decodedBytes": 24567,
+    "decodedSha256": "3b7a1675f43b64caa586db446a5c9b62a200042aa1d0fa23a7d888240008e26c"
+  },
+  {
+    "path": "storybook-artifacts.json.gz",
+    "bytes": 1068,
+    "sha256": "c2290fedb7ba0e78891757a6b26130ceeab70b11573a5b721de00df98b0497e7",
+    "decodedBytes": 5031,
+    "decodedSha256": "c0b774a3e4a5f80b7c0a585c9b18b1b569da58220532380d95a4a4673a37a915"
+  },
+  {
+    "path": "desktop-run.json.gz",
+    "bytes": 1669,
+    "sha256": "79304a047888db31f427b526e922b7465d550dece1ac5c6d7177c4b313b9b44a",
+    "decodedBytes": 12221,
+    "decodedSha256": "9f2c9ce14626707adc3eb83ec2f03c4d12e76cf792da5541c692f6d7dcf8ee97"
+  },
+  {
+    "path": "desktop-jobs.json.gz",
+    "bytes": 1322,
+    "sha256": "8efd729c2e1961858fe56dab430aa6f646b38e20babdd6a45e1b73e98f7592cd",
+    "decodedBytes": 10100,
+    "decodedSha256": "dd9029461e4610bb20a5f5a35e62fd45aa3d83f070659a8c5e309c969c5fed66"
+  },
+  {
+    "path": "desktop-artifacts.json.gz",
+    "bytes": 676,
+    "sha256": "d7e68fe5437499bd51bcec7d79e7b48de102595c357f83f2722b699ad2cada85",
+    "decodedBytes": 2243,
+    "decodedSha256": "48442010dbd7cdfc1213775d76032c4db2b125cc3a5ccfc45a8eb72a3d93a0ba"
+  }
+]

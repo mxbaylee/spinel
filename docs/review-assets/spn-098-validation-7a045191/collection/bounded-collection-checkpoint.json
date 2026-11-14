@@ -1,0 +1,238 @@
+{
+  "at": "2026-11-14T18:52:22.009660+00:00",
+  "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "collectorSession": 40148,
+  "collectorOutput": "/tmp/spn098-publication-7a045191/hosted/collection-story-terminal",
+  "collectorState": "Read-only GET collector streaming original ZIPs; do not treat partial files as verified until collection-summary/raw-manifest exists. No app/test workload.",
+  "storyMetadata": "/tmp/spn098-publication-7a045191/hosted/storybook-terminal-metadata",
+  "ciSnapshot": "26 success,6 active; no failure; supervisor131/recovery619/remaining2166 original logs retained",
+  "pending": [
+    "Collector completion and stored ZIP digest/CRC verification",
+    "All five Storybook full manifest/source/index checked-set binding and useful current feedback PNG extraction",
+    "Current CI terminal results, exact browser pair results and remaining mobile acceptance",
+    "Final archive direct child7a; root independent audit before publication"
+  ],
+  "collectorCommand": "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node --max-old-space-size=256 /tmp/spn098-publication-7a045191/collect-hosted.ts 43626337966 43626337816 43626337825 /tmp/spn098-publication-7a045191/hosted/collection-story-terminal",
+  "workdir": "/Users/mxbaylee/projects/spinel-spn-098-production",
+  "handoffOwner": "Root will poll existing exec session40148, never restart or duplicate downloads.",
+  "currentFiles": [
+    {
+      "path": "all-source-runs.json.gz",
+      "observedBytes": 2157,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "artifacts-ci.json.gz",
+      "observedBytes": 1927,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "base-commit.json.gz",
+      "observedBytes": 27615,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132542877452.log.gz",
+      "observedBytes": 11097,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132542877635.log.gz",
+      "observedBytes": 8704,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274014.log.gz",
+      "observedBytes": 9634,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274042.log.gz",
+      "observedBytes": 4504,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274062.log.gz",
+      "observedBytes": 16750,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274066.log.gz",
+      "observedBytes": 5091,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274077.log.gz",
+      "observedBytes": 15298,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274118.log.gz",
+      "observedBytes": 82967,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274152.log.gz",
+      "observedBytes": 19579,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274171.log.gz",
+      "observedBytes": 19361,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274213.log.gz",
+      "observedBytes": 4993,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274238.log.gz",
+      "observedBytes": 7152,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274241.log.gz",
+      "observedBytes": 6444,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274254.log.gz",
+      "observedBytes": 20564,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274273.log.gz",
+      "observedBytes": 14834,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274274.log.gz",
+      "observedBytes": 5833,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274315.log.gz",
+      "observedBytes": 18192,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274368.log.gz",
+      "observedBytes": 27166,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274385.log.gz",
+      "observedBytes": 14452,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274392.log.gz",
+      "observedBytes": 15402,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274393.log.gz",
+      "observedBytes": 15661,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274407.log.gz",
+      "observedBytes": 12989,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274409.log.gz",
+      "observedBytes": 5702,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274414.log.gz",
+      "observedBytes": 13026,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132544274449.log.gz",
+      "observedBytes": 13464,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "job-132547993363.log.gz",
+      "observedBytes": 7015,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "jobs-ci-attempt-1.json.gz",
+      "observedBytes": 6489,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "original-zips/artifact-14126788383.zip",
+      "observedBytes": 159776768,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "original-zips/artifact-14126977747.zip",
+      "observedBytes": 201394403,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "original-zips/artifact-14127113528.zip",
+      "observedBytes": 35632223,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "original-zips/artifact-14127250694.zip",
+      "observedBytes": 1156,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "original-zips/artifact-14127251391.zip",
+      "observedBytes": 1351878,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "pr-observed-merge-commit.json.gz",
+      "observedBytes": 114789,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "pr.json.gz",
+      "observedBytes": 7209,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "published-pr-body.md.gz",
+      "observedBytes": 5208,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "run-ci.json.gz",
+      "observedBytes": 1658,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "source-check-runs.json.gz",
+      "observedBytes": 5616,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    },
+    {
+      "path": "source-commit.json.gz",
+      "observedBytes": 3153,
+      "verification": "Partial/current file inventory only; final collector manifest owns digest verification."
+    }
+  ],
+  "ownedProcesses": [
+    {
+      "pid": 59129,
+      "ppid": 30971,
+      "command": "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node --max-old-space-size=256 /tmp/spn098-publication-7a045191/collect-hosted.ts 43626337966 43626337816 43626337825 /tmp/spn098-publication-7a045191/hosted/collection-story-terminal"
+    },
+    {
+      "pid": 61858,
+      "ppid": 59129,
+      "command": "gh api --method GET repos/mxbaylee/spinel/actions/artifacts/14126788383/zip"
+    }
+  ]
+}

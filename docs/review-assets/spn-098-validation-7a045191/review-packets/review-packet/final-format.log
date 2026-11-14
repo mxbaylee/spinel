@@ -1,0 +1,7 @@
+
+> format:check
+> prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/sync-transition scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts *.config.ts
+
+Checking formatting...
+All matched files use Prettier code style!
+{"name":"spn098-post157-final-format","args":["npm","run","format:check"],"code":0,"signal":null,"reason":null,"elapsedMs":11215,"peakKiB":621888}

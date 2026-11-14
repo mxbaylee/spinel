@@ -1,0 +1,619 @@
+{
+  "observedAt": "2026-11-14T19:05:34.119465+00:00",
+  "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "tested": "917741f11dc3f0cb733e0fdfea0b04fb20ca69f9",
+  "sourceAndTestedTree": "2be9e82d514b424f49baa8dea5672f8f75472685",
+  "firstAttemptOnly": true,
+  "workflows": [
+    {
+      "kind": "ci",
+      "id": 43626337966,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 132542877452,
+          "name": "Classify changes (43626337966)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:27:24Z",
+          "completedAt": "2026-11-14T18:28:16Z"
+        },
+        {
+          "id": 132542877635,
+          "name": "Pull request",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:29:08Z",
+          "completedAt": "2026-11-14T18:29:46Z"
+        },
+        {
+          "id": 132544274014,
+          "name": "Container smoke",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:29:48Z",
+          "completedAt": "2026-11-14T18:31:19Z"
+        },
+        {
+          "id": 132544274042,
+          "name": "Backlog",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:33:38Z",
+          "completedAt": "2026-11-14T18:33:49Z"
+        },
+        {
+          "id": 132544274062,
+          "name": "Unit tests (supervisor)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:33:14Z",
+          "completedAt": "2026-11-14T18:40:43Z"
+        },
+        {
+          "id": 132544274066,
+          "name": "Lint",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:32:27Z",
+          "completedAt": "2026-11-14T18:33:11Z"
+        },
+        {
+          "id": 132544274077,
+          "name": "Unit tests (recovery)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:33:46Z",
+          "completedAt": "2026-11-14T18:37:54Z"
+        },
+        {
+          "id": 132544274118,
+          "name": "Unit tests (remaining)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:34:09Z",
+          "completedAt": "2026-11-14T18:41:03Z"
+        },
+        {
+          "id": 132544274152,
+          "name": "Doc callback lifetimes (desktop)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:33:57Z",
+          "completedAt": "2026-11-14T18:41:26Z"
+        },
+        {
+          "id": 132544274171,
+          "name": "Doc callback lifetimes (mobile)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:34:25Z",
+          "completedAt": "2026-11-14T18:42:54Z"
+        },
+        {
+          "id": 132544274213,
+          "name": "Typecheck",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:38:36Z",
+          "completedAt": "2026-11-14T18:39:10Z"
+        },
+        {
+          "id": 132544274219,
+          "name": "Doc responsiveness (mobile)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:35:36Z",
+          "completedAt": "2026-11-14T18:59:03Z"
+        },
+        {
+          "id": 132544274238,
+          "name": "Retained sync transition",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:34:29Z",
+          "completedAt": "2026-11-14T18:35:13Z"
+        },
+        {
+          "id": 132544274241,
+          "name": "Lib tests (mixed-fuzz)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:36:15Z",
+          "completedAt": "2026-11-14T18:41:17Z"
+        },
+        {
+          "id": 132544274254,
+          "name": "Doc responsiveness (desktop)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:34:38Z",
+          "completedAt": "2026-11-14T18:47:33Z"
+        },
+        {
+          "id": 132544274273,
+          "name": "Sized restore acceptance",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:37:45Z",
+          "completedAt": "2026-11-14T18:44:52Z"
+        },
+        {
+          "id": 132544274274,
+          "name": "Lib tests (cells)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:37:29Z",
+          "completedAt": "2026-11-14T18:42:22Z"
+        },
+        {
+          "id": 132544274315,
+          "name": "Lib tests (remaining)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:41:05Z",
+          "completedAt": "2026-11-14T18:49:43Z"
+        },
+        {
+          "id": 132544274337,
+          "name": "Playwright smoke (sync-production)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:41:40Z",
+          "completedAt": "2026-11-14T18:54:22Z"
+        },
+        {
+          "id": 132544274358,
+          "name": "Playwright smoke (development 2/2)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:38:17Z",
+          "completedAt": "2026-11-14T18:56:47Z"
+        },
+        {
+          "id": 132544274368,
+          "name": "Playwright smoke (production 1/2)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:39:12Z",
+          "completedAt": "2026-11-14T18:48:38Z"
+        },
+        {
+          "id": 132544274384,
+          "name": "Playwright smoke (production 2/2)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:41:28Z",
+          "completedAt": "2026-11-14T18:56:59Z"
+        },
+        {
+          "id": 132544274385,
+          "name": "Playwright smoke (mobile-https)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:41:24Z",
+          "completedAt": "2026-11-14T18:42:59Z"
+        },
+        {
+          "id": 132544274392,
+          "name": "Playwright smoke (sync-development)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:41:20Z",
+          "completedAt": "2026-11-14T18:45:52Z"
+        },
+        {
+          "id": 132544274393,
+          "name": "Playwright smoke (offline-upgrade)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:41:32Z",
+          "completedAt": "2026-11-14T18:43:24Z"
+        },
+        {
+          "id": 132544274407,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:42:24Z",
+          "completedAt": "2026-11-14T18:43:37Z"
+        },
+        {
+          "id": 132544274409,
+          "name": "Lib tests (dense-cells)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:40:45Z",
+          "completedAt": "2026-11-14T18:48:03Z"
+        },
+        {
+          "id": 132544274414,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:43:00Z",
+          "completedAt": "2026-11-14T18:45:26Z"
+        },
+        {
+          "id": 132544274424,
+          "name": "Playwright smoke (development 1/2)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:43:01Z",
+          "completedAt": "2026-11-14T18:58:17Z"
+        },
+        {
+          "id": 132544274449,
+          "name": "Playwright smoke (supervised-restore)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:42:56Z",
+          "completedAt": "2026-11-14T18:49:47Z"
+        },
+        {
+          "id": 132547993363,
+          "name": "Unit tests",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:43:13Z",
+          "completedAt": "2026-11-14T18:43:26Z"
+        },
+        {
+          "id": 132550427508,
+          "name": "Lib tests",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:49:50Z",
+          "completedAt": "2026-11-14T18:50:02Z"
+        },
+        {
+          "id": 132552982721,
+          "name": "Playwright smoke",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:59:06Z",
+          "completedAt": "2026-11-14T18:59:20Z"
+        }
+      ]
+    },
+    {
+      "kind": "storybook",
+      "id": 43626337816,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 132542876942,
+          "name": "Classify changes",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:23:40Z",
+          "completedAt": "2026-11-14T18:24:23Z"
+        },
+        {
+          "id": 132543130777,
+          "name": "Build Storybook",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:25:00Z",
+          "completedAt": "2026-11-14T18:25:48Z"
+        },
+        {
+          "id": 132543550854,
+          "name": "Review Storybook tablet",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:29:35Z",
+          "completedAt": "2026-11-14T18:38:33Z"
+        },
+        {
+          "id": 132543550894,
+          "name": "Review Storybook desktop (dark)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:33:43Z",
+          "completedAt": "2026-11-14T18:43:11Z"
+        },
+        {
+          "id": 132543550910,
+          "name": "Review Storybook mobile (dark)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:32:19Z",
+          "completedAt": "2026-11-14T18:41:30Z"
+        },
+        {
+          "id": 132543550928,
+          "name": "Review Storybook desktop (light)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:31:33Z",
+          "completedAt": "2026-11-14T18:41:38Z"
+        },
+        {
+          "id": 132543550935,
+          "name": "Review Storybook mobile (light)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:32:16Z",
+          "completedAt": "2026-11-14T18:41:22Z"
+        },
+        {
+          "id": 132543552448,
+          "name": "Publish PR preview to GitHub Pages",
+          "conclusion": "skipped",
+          "startedAt": "2026-11-14T18:25:49Z",
+          "completedAt": "2026-11-14T18:25:48Z"
+        },
+        {
+          "id": 132548599743,
+          "name": "Review Storybook states and interactions",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:43:26Z",
+          "completedAt": "2026-11-14T18:43:40Z"
+        },
+        {
+          "id": 132548738957,
+          "name": "Deploy to GitHub Pages",
+          "conclusion": "skipped",
+          "startedAt": "2026-11-14T18:43:41Z",
+          "completedAt": "2026-11-14T18:43:40Z"
+        }
+      ]
+    },
+    {
+      "kind": "desktop",
+      "id": 43626337825,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 132542877044,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:27:33Z",
+          "completedAt": "2026-11-14T18:31:30Z"
+        },
+        {
+          "id": 132542877239,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:23:53Z",
+          "completedAt": "2026-11-14T18:33:40Z"
+        },
+        {
+          "id": 132542877432,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "conclusion": "success",
+          "startedAt": "2026-11-14T18:27:52Z",
+          "completedAt": "2026-11-14T18:32:17Z"
+        }
+      ]
+    }
+  ],
+  "requiredGates": [
+    {
+      "id": 132542877635,
+      "name": "Pull request",
+      "conclusion": "success"
+    },
+    {
+      "id": 132544274042,
+      "name": "Backlog",
+      "conclusion": "success"
+    },
+    {
+      "id": 132544274066,
+      "name": "Lint",
+      "conclusion": "success"
+    },
+    {
+      "id": 132544274213,
+      "name": "Typecheck",
+      "conclusion": "success"
+    },
+    {
+      "id": 132547993363,
+      "name": "Unit tests",
+      "conclusion": "success"
+    },
+    {
+      "id": 132550427508,
+      "name": "Lib tests",
+      "conclusion": "success"
+    },
+    {
+      "id": 132552982721,
+      "name": "Playwright smoke",
+      "conclusion": "success"
+    }
+  ],
+  "plan": {
+    "artifact": 14126271381,
+    "zipSha256": "53c18bcead69447e789c58372fb01aae7d79dd7c91e51b59f34e73d34cd645f4",
+    "rawFileSha256": "2f8070b2ff61003ea70a884b21cb4f6094c763e54ebbe8af2077cf1ae6e5ffcf",
+    "canonicalCompactJsonSha256": "dfef296feac9170c08a37130f148c7c20ec8a44e1fd9b7eb383a6fa84686cda0",
+    "originalMember": "ci-plan.json",
+    "retainedJson": "original-json/14126271381-0.json.gz"
+  },
+  "aggregates": [
+    {
+      "name": "ci-results-browser",
+      "artifact": 14127975569,
+      "file": "original-json/14127975569-0.json.gz",
+      "passed": true,
+      "planSha256": "dfef296feac9170c08a37130f148c7c20ec8a44e1fd9b7eb383a6fa84686cda0",
+      "gateResults": {
+        "typecheck": "success",
+        "unit-tests": "success",
+        "lib-tests": "success"
+      },
+      "results": [
+        {
+          "suite": "backlog",
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "pull-request",
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "lint",
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "typecheck",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "unit-tests",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "lib-test-run",
+          "selected": true,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "playwright-run",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "container-smoke",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "restore-timing",
+          "selected": true,
+          "dependencies": [
+            "server/**",
+            "src/{server,shared}/**",
+            "lib/**",
+            "web/** and src/ui/** (shared application/authentication bundle)",
+            "e2e restore/shared helpers",
+            "runtime/build/dependency/workflow inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "sync-transition",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "doc-responsiveness",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        },
+        {
+          "suite": "doc-callback-lifetimes",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        }
+      ]
+    },
+    {
+      "name": "ci-results-unit",
+      "artifact": 14127250694,
+      "file": "original-json/14127250694-0.json.gz",
+      "passed": true,
+      "planSha256": "dfef296feac9170c08a37130f148c7c20ec8a44e1fd9b7eb383a6fa84686cda0",
+      "gateResults": {},
+      "results": [
+        {
+          "suite": "unit-tests",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        }
+      ]
+    },
+    {
+      "name": "ci-results-lib",
+      "artifact": 14126914410,
+      "file": "original-json/14126914410-0.json.gz",
+      "passed": true,
+      "planSha256": "dfef296feac9170c08a37130f148c7c20ec8a44e1fd9b7eb383a6fa84686cda0",
+      "gateResults": {},
+      "results": [
+        {
+          "suite": "lib-test-run",
+          "selected": true,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        }
+      ]
+    }
+  ],
+  "retention": {
+    "originalZipsVerified": 22,
+    "fullZipsRetained": 10,
+    "originalJsonMembers": 147,
+    "originalJobLogs": 44,
+    "currentUsefulPngs": 16,
+    "parentMaintainedPngs": 48,
+    "historicalFirstFailureCopies": 18,
+    "partialCollector": "Original interruption cause unknown; partial35MBdarkZIP and large complete ZIPs remain scratch. First metadata/logs, exact partial hash/size and subsequent verified reuse/download provenance retained. Not a product failure.",
+    "largeArtifacts": "Large successful callback traces, full Storybook build/catalog PNGs and ordinary browser trace ZIPs retained in scratch/expiringActions, not fully in this git archive."
+  },
+  "reviews": {
+    "freshA": "reviews/fresh/fresh-reviewer-a.md",
+    "freshB": "reviews/fresh/fresh-reviewer-b.md",
+    "scores": [
+      100,
+      100
+    ],
+    "visual": "Both approve exact source; agent review only; each inspected32 retained proposal/actualimages. Supplemental16 currentCIimages not represented as separately independently reviewed."
+  },
+  "historicalDisposition": "Original131.2msmobile and2204supervisor failures remainfailed; SPN157landed boundednonrecurrence,historicalcauseunknown. Earlier success, laterfailure and intentionalcancellation remain separate.",
+  "publication": "Prepared direct child ofsource; root audit before tagpublication. No source/PR mutation or merge performed."
+}

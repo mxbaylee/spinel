@@ -1,0 +1,29 @@
+{
+  "retainedSourceHashes": {
+    "count": 51,
+    "mismatches": []
+  },
+  "unchangedDependencyBuildInputs": {
+    "count": 26,
+    "mismatches": []
+  },
+  "changedInputs": {
+    "count": 4,
+    "mismatches": []
+  },
+  "images": {
+    "count": 48,
+    "mismatches": []
+  },
+  "packetCopies": {
+    "count": 6,
+    "mismatches": []
+  },
+  "diff": {
+    "packet": "bb1a819021ddad7f828966177ff1e99e4d718606ddcbbf55597b7b6b4ac4fe7a",
+    "git": "bb1a819021ddad7f828966177ff1e99e4d718606ddcbbf55597b7b6b4ac4fe7a",
+    "same": true
+  },
+  "head": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "status": ""
+}
