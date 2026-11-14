@@ -1,0 +1,556 @@
+{
+  "source": "44f9a5365fe290236b882606933e63b8ef317363",
+  "scope": "Historical diagnostic candidate checks; not current integration or Linux acceptance. Original full-L reviews remain with SPN-157 and are not supplied as this outcome grading evidence.",
+  "evidence": {
+    "status": "local diagnostic candidate; complete Linux repair acceptance pending",
+    "base": "ebf0842f51b60d54649cf8a03065914bec0944bf",
+    "registrationSource": "27b87ff8767551fae03c163d2457744b31865ce3",
+    "finalRuntimeSourceSha256": {
+      "src/server/maintenance/ownership.ts": "570ec7ce0a38eec5c78571091b8bda0b570e88b80dae957ceb5e8d5d2b0ca722",
+      "src/server/maintenance/ownership.test.ts": "4b95f9c37b9ee356c5df4a717a1828bb37d576baee460f02cacc6c29522d1414",
+      "src/server/maintenance/ownership-fixture.ts": "30286dd117294a35207bb0d3bab044c96bb423cae63f7e5e0a803fd75fb61205",
+      "src/server/maintenance/supervisor.test.ts": "2e38979fe95356aa73514cde66eb9ba4d844220994eeb0cc702bff51191f2287",
+      "src/server/maintenance/supervisor-test-control.ts": "8d0cebfe643491dd45dae18f1861ffbdf3c2086ad7e538011cd2484ff57ef295",
+      "src/server/maintenance/supervisor-test-control.test.ts": "db03463de0293a3ce8ba9d65815acfdce8b383ca5873e2f96af3d6e4b3231063"
+    },
+    "dependencies": {
+      "node": "v26.13.0",
+      "nodeExecutable": "/private/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+      "root": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules",
+      "lockSha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+      "vitest": "5.1.0",
+      "workspacePaths": [
+        {
+          "name": "diagnostics",
+          "target": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/diagnostics"
+        },
+        {
+          "name": "doc-formulas",
+          "target": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/doc-formulas"
+        },
+        {
+          "name": "presence-ui",
+          "target": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/presence-ui"
+        },
+        {
+          "name": "print",
+          "target": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/print"
+        },
+        {
+          "name": "sync-client",
+          "target": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/sync-client"
+        },
+        {
+          "name": "sync-server",
+          "target": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/sync-server"
+        },
+        {
+          "name": "sync-transform",
+          "target": "/Users/mxbaylee/projects/spinel-spn-098-production/lib/sync-transform"
+        }
+      ],
+      "equivalence": "Clean SPN098 source 2204b8c40ce6feb8ad03c65720c976510535ad00 has no diff from base in package.json, package-lock.json, scripts/dependencies/ or lib/; no shared install/postinstall mutations."
+    },
+    "firstFailures": [
+      {
+        "receipt": "spn157-ownership-first.json",
+        "outcome": "5/5 failed during fixture setup, before any handoff",
+        "error": "Workspace path must not be a symlink.",
+        "site": "src/server/maintenance/journal.ts:348",
+        "disposition": "Resolve the Mac temporary directory through realpath; stale Vitest 5.0.5 made this attempt non-current-runtime evidence."
+      },
+      {
+        "receipt": "spn157-install.json",
+        "outcome": "resource-aborted",
+        "disposition": "Pressure normal before startup; guard stopped at 1.254s, 552784KiB. Not an install pass."
+      },
+      {
+        "receipt": "spn157-install-normal-pressure.json",
+        "outcome": "resource-aborted",
+        "disposition": "Pressure returned to normal before this attempt; guard stopped at 2.095s, 755024KiB. No third install. Reused verified current install read-only."
+      },
+      {
+        "receipt": "spn157-typecheck.json",
+        "outcome": "failed with five TS2339 diagnostics",
+        "disposition": "Explicitly select sender/receiver progress type with Extract, preserving closure typing."
+      }
+    ],
+    "cleanup": {
+      "observedAt": "2026-11-14T03:01:59.382Z",
+      "methods": [
+        "lsof node/npm/esbuild cwd inventory",
+        "ps task path and install/watchdog command inspection"
+      ],
+      "ownedProcessesRemaining": [],
+      "notes": "No owned application/native fixture children launched. Final refused preflight started no workload; audits found no SPN157 cwd or command process beyond the inspection shell/rg. Shared slot released; no unrelated process killed."
+    },
+    "receipts": [
+      {
+        "name": "spn157-backlog.json",
+        "sha256": "80c17d546de479f154f00f094fee182c69ab46571a04af81bbf972a40bb05682",
+        "receipt": {
+          "name": "spn157-backlog",
+          "args": [
+            "npm",
+            "run",
+            "backlog:check"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 239,
+          "peakKiB": 252464
+        }
+      },
+      {
+        "name": "spn157-current-format.json",
+        "sha256": "f7ecbb61e5f73a4854907a0c52af71d6d28f3f30ab9acc7581d06fcf6e4aa02e",
+        "receipt": {
+          "name": "spn157-current-format",
+          "args": [
+            "node",
+            "node_modules/prettier/bin/prettier.cjs",
+            "--write",
+            "src/server/maintenance/ownership.ts",
+            "src/server/maintenance/ownership.test.ts",
+            "src/server/maintenance/ownership-fixture.ts",
+            "src/server/maintenance/supervisor.test.ts"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 404,
+          "peakKiB": 192656
+        }
+      },
+      {
+        "name": "spn157-final-controls.json",
+        "sha256": "7f9c49ad439f92c8d00a9ca0874ca9a25fff414b6bedf9c09032de59bb4e543a",
+        "receipt": {
+          "name": "spn157-final-controls",
+          "args": [
+            "node",
+            "node_modules/vitest/vitest.mjs",
+            "run",
+            "src/server/maintenance/ownership.test.ts"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 428,
+          "peakKiB": 216080
+        }
+      },
+      {
+        "name": "spn157-final-format.json",
+        "sha256": "d7bf8cc3c38e7c021963a4f1639b1689ae093ab3f6aec8e99907d84dc833aad9",
+        "receipt": {
+          "name": "spn157-final-format",
+          "args": [
+            "node",
+            "node_modules/prettier/bin/prettier.cjs",
+            "--write",
+            "src/server/maintenance/ownership.ts",
+            "src/server/maintenance/ownership.test.ts",
+            "src/server/maintenance/ownership-fixture.ts",
+            "src/server/maintenance/supervisor.test.ts"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 418,
+          "peakKiB": 193616
+        }
+      },
+      {
+        "name": "spn157-final-lint.json",
+        "sha256": "1aea209e2cb7dc39630ccd6421cee6265f77c7db50a9795e262910ab2ad1e00b",
+        "receipt": {
+          "name": "spn157-final-lint",
+          "args": [
+            "npm",
+            "run",
+            "lint"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 10895,
+          "peakKiB": 720496
+        }
+      },
+      {
+        "name": "spn157-final-typecheck.json",
+        "sha256": "68073c6465922aea6b3ad75986be410f16badf0675b40baaf149beb2f0a075ce",
+        "receipt": {
+          "name": "spn157-final-typecheck",
+          "args": [
+            "npm",
+            "run",
+            "typecheck"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 2411,
+          "peakKiB": 1858064
+        }
+      },
+      {
+        "name": "spn157-format-1.json",
+        "sha256": "7033c2b3fd46ecc3c4173a725235cf58e3ac6dee5609cdc68275684815c325ad",
+        "receipt": {
+          "name": "spn157-format-1",
+          "args": [
+            "node",
+            "node_modules/prettier/bin/prettier.cjs",
+            "--write",
+            "src/server/maintenance/ownership.ts",
+            "src/server/maintenance/ownership.test.ts",
+            "src/server/maintenance/ownership-fixture.ts",
+            "src/server/maintenance/supervisor.test.ts"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 496,
+          "peakKiB": 320352
+        }
+      },
+      {
+        "name": "spn157-install-normal-pressure.json",
+        "sha256": "fbcfb9300a66005ee9249e954d349fce265e7f816233f47479781154ee7d78ed",
+        "receipt": {
+          "name": "spn157-install-normal-pressure",
+          "args": [
+            "npm",
+            "ci",
+            "--no-audit",
+            "--no-fund"
+          ],
+          "code": 1,
+          "signal": null,
+          "reason": "Resource guard",
+          "elapsedMs": 2095,
+          "peakKiB": 755024
+        }
+      },
+      {
+        "name": "spn157-install.json",
+        "sha256": "30564bcc0ba4781531d75c39b3cc14d609ca23c6af6604b052ec2f91f3d4a06b",
+        "receipt": {
+          "name": "spn157-install",
+          "args": [
+            "npm",
+            "ci",
+            "--no-audit",
+            "--no-fund"
+          ],
+          "code": 1,
+          "signal": null,
+          "reason": "Resource guard",
+          "elapsedMs": 1254,
+          "peakKiB": 552784
+        }
+      },
+      {
+        "name": "spn157-lint.json",
+        "sha256": "c2240c2ba7eed3a907e0b86f54ce29db650a699632bb7c31185c4e53916c342d",
+        "receipt": {
+          "name": "spn157-lint",
+          "args": [
+            "npm",
+            "run",
+            "lint"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 11425,
+          "peakKiB": 738144
+        }
+      },
+      {
+        "name": "spn157-ownership-current.json",
+        "sha256": "994aa74aa1aa9569b155ce72449bb23648f0716a9a0e2fa1862bfe00f6111309",
+        "receipt": {
+          "name": "spn157-ownership-current",
+          "args": [
+            "node",
+            "node_modules/vitest/vitest.mjs",
+            "run",
+            "src/server/maintenance/ownership.test.ts"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 499,
+          "peakKiB": 305728
+        }
+      },
+      {
+        "name": "spn157-ownership-first.json",
+        "sha256": "7e886bc4aa9ec0b8db95b025cbd25a83bca4332551b64e6bbd709cb728f4cf36",
+        "receipt": {
+          "name": "spn157-ownership-first",
+          "args": [
+            "node",
+            "node_modules/vitest/vitest.mjs",
+            "run",
+            "src/server/maintenance/ownership.test.ts"
+          ],
+          "code": 1,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 545,
+          "peakKiB": 286656
+        }
+      },
+      {
+        "name": "spn157-typecheck-narrowed.json",
+        "sha256": "929dd8ea093c149a2f0c7cead8b32fdc5a5ae27c7f6f6a5bdc4962e05d78c5fb",
+        "receipt": {
+          "name": "spn157-typecheck-narrowed",
+          "args": [
+            "npm",
+            "run",
+            "typecheck"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 2474,
+          "peakKiB": 1801184
+        }
+      },
+      {
+        "name": "spn157-typecheck.json",
+        "sha256": "ef054fb4f63bf09c5679369cb78082534900274112bc4002031ac28065e8defc",
+        "receipt": {
+          "name": "spn157-typecheck",
+          "args": [
+            "npm",
+            "run",
+            "typecheck"
+          ],
+          "code": 1,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 2806,
+          "peakKiB": 1947728
+        }
+      },
+      {
+        "name": "spn157-cause-controls.json",
+        "sha256": "0f3a534646ffbf1050d4b076018501468f0267612edbd883a99d5df63ed8dfd0",
+        "receipt": {
+          "name": "spn157-cause-controls",
+          "args": [
+            "node",
+            "node_modules/vitest/vitest.mjs",
+            "run",
+            "src/server/maintenance/ownership.test.ts",
+            "src/server/maintenance/supervisor-test-control.test.ts"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 426,
+          "peakKiB": 289888
+        }
+      },
+      {
+        "name": "spn157-cause-format.json",
+        "sha256": "ef32fd66c062fd50752a526717c2247601c8d362bdcbb83d03fc95bec9c71a7c",
+        "receipt": {
+          "name": "spn157-cause-format",
+          "args": [
+            "node",
+            "node_modules/prettier/bin/prettier.cjs",
+            "--write",
+            "src/server/maintenance/ownership.ts",
+            "src/server/maintenance/ownership.test.ts",
+            "src/server/maintenance/supervisor-test-control.ts",
+            "src/server/maintenance/supervisor-test-control.test.ts",
+            "src/server/maintenance/supervisor.test.ts"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 422,
+          "peakKiB": 317344
+        }
+      },
+      {
+        "name": "spn157-cause-lint.json",
+        "sha256": "11f55a0c4143c3d437c315ae29ca9afe30639ae9dd9ad7726014ea96a65f29cd",
+        "receipt": {
+          "name": "spn157-cause-lint",
+          "args": [
+            "node_modules/.bin/oxlint",
+            "--deny-warnings",
+            "src/server/maintenance/ownership.ts",
+            "src/server/maintenance/ownership.test.ts"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 125,
+          "peakKiB": 0
+        }
+      },
+      {
+        "name": "spn157-cause-typecheck.json",
+        "sha256": "b7e84b5a5d8bda1531de9e2665cd465a2d7e1155216ec5bfedc4f1fe1453963c",
+        "receipt": {
+          "name": "spn157-cause-typecheck",
+          "args": [
+            "npm",
+            "run",
+            "typecheck"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 2156,
+          "peakKiB": 1932592
+        }
+      },
+      {
+        "name": "spn157-repair-controls.json",
+        "sha256": "fb3b91c313df56ba40b5e4700fe16d95d3c8fd390d73d9d6ca94d146854891f9",
+        "receipt": {
+          "name": "spn157-repair-controls",
+          "args": [
+            "node",
+            "node_modules/vitest/vitest.mjs",
+            "run",
+            "src/server/maintenance/ownership.test.ts",
+            "src/server/maintenance/supervisor-test-control.test.ts"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 546,
+          "peakKiB": 289824
+        }
+      },
+      {
+        "name": "spn157-repair-format.json",
+        "sha256": "6a6293792cb82af85b6be7fa9fc41419b07f116d67ad0d7871ab3891cb66d0aa",
+        "receipt": {
+          "name": "spn157-repair-format",
+          "args": [
+            "node",
+            "node_modules/prettier/bin/prettier.cjs",
+            "--write",
+            "src/server/maintenance/supervisor-test-control.ts",
+            "src/server/maintenance/supervisor-test-control.test.ts",
+            "src/server/maintenance/supervisor.test.ts"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 402,
+          "peakKiB": 196848
+        }
+      },
+      {
+        "name": "spn157-repair-lint.json",
+        "sha256": "b14b8117bf2c7fba58f7c2aa08d36d54ecd7d229d222cd1dfa503320c293dd4e",
+        "receipt": {
+          "name": "spn157-repair-lint",
+          "args": [
+            "npm",
+            "run",
+            "lint"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 10929,
+          "peakKiB": 829280
+        }
+      },
+      {
+        "name": "spn157-repair-typecheck.json",
+        "sha256": "18f791f0f585ce15428f0ec19e319384c1a3d396fc487c2312d9d526ed16b8e5",
+        "receipt": {
+          "name": "spn157-repair-typecheck",
+          "args": [
+            "npm",
+            "run",
+            "typecheck"
+          ],
+          "code": 0,
+          "signal": null,
+          "reason": null,
+          "elapsedMs": 2387,
+          "peakKiB": 1905376
+        }
+      }
+    ],
+    "watchdog": {
+      "path": "/tmp/spinel-dependabot-2026-11-11/watch.ts",
+      "sha256": "203c67c3a455f630bd6b79156834cdfc18b4f9c5bb78591fffbe7214057e9dba",
+      "source": "import {spawn,execFileSync} from 'node:child_process';\nimport {writeFileSync} from 'node:fs';\nconst [name,...args]=process.argv.slice(2); const start=Date.now(); let peakKiB=0; let reason:string|null=null;\nconst pressure=()=>Number(execFileSync('sysctl',['-n','kern.memorystatus_vm_pressure_level'],{encoding:'utf8'}).trim());\nif(pressure()!==1) throw new Error('Memory pressure elevated before start');\nconst child=spawn(process.execPath,['scripts/serial.ts',...args],{stdio:'inherit'});\nconst monitor=setInterval(()=>{try {const rows=execFileSync('ps',['-axo','pid=,ppid=,rss='],{encoding:'utf8'}).trim().split('\\n').map(l=>l.trim().split(/\\s+/).map(Number)); const ids=new Set([child.pid]); for(let old=-1;old!==ids.size;){old=ids.size;for(const [pid,ppid] of rows) if(ids.has(ppid)) ids.add(pid);} const rss=rows.filter(r=>ids.has(r[0])).reduce((s,r)=>s+r[2],0);peakKiB=Math.max(peakKiB,rss);if(rss>2097152||pressure()!==1||Date.now()-start>480000){reason??='Resource guard';child.kill('SIGTERM');}}catch(e){reason??=String(e);child.kill('SIGTERM');}},200);\nchild.on('error',e=>{reason=String(e);});\nchild.on('close',(code,signal)=>{clearInterval(monitor);const result={name,args,code,signal,reason,elapsedMs:Date.now()-start,peakKiB};writeFileSync(`/tmp/spinel-dependabot-2026-11-11/${name}.json`,JSON.stringify(result,null,2)+'\\n');console.log(JSON.stringify(result));process.exitCode=reason?1:code??1;});\n"
+    },
+    "previousCandidate": {
+      "sha": "93257f2350bf015002fa0055c8b49c631e212d84",
+      "runtimeSourceSha256": {
+        "src/server/maintenance/ownership.ts": "8092ba8c07b2cad49e997b720afe9900aa9d7c4772e2426ac32a92faf093da41",
+        "src/server/maintenance/ownership.test.ts": "cc57393ce9eb6ab446815cdd3c72fcb373c23938cacf7b616b4fe938f8299799",
+        "src/server/maintenance/ownership-fixture.ts": "30286dd117294a35207bb0d3bab044c96bb423cae63f7e5e0a803fd75fb61205",
+        "src/server/maintenance/supervisor.test.ts": "2ccbc0fbcac7b89f657a890d88729388386473327ccdc6e111e863f0d44075c2"
+      }
+    },
+    "repairLogs": [
+      {
+        "name": "spn157-cause-controls.log",
+        "sha256": "10981247ac043a8a7e17406cecd9bd81ed5e83e3078929997b261624523e49fa",
+        "content": "\n RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-157\n\n\n Test Files  2 passed (2)\n      Tests  10 passed (10)\n   Start at  18:59:41\n   Duration  198ms (transform 39%, import 29%, tests 27%, worker 5%)\n\n{\"name\":\"spn157-cause-controls\",\"args\":[\"node\",\"node_modules/vitest/vitest.mjs\",\"run\",\"src/server/maintenance/ownership.test.ts\",\"src/server/maintenance/supervisor-test-control.test.ts\"],\"code\":0,\"signal\":null,\"reason\":null,\"elapsedMs\":426,\"peakKiB\":289888}\n"
+      },
+      {
+        "name": "spn157-cause-lint.log",
+        "sha256": "56628d1469aa4bd7b002637e2390820fc48b4ba43e5597a74c24535fb88ff4a7",
+        "content": "{\"name\":\"spn157-cause-lint\",\"args\":[\"node_modules/.bin/oxlint\",\"--deny-warnings\",\"src/server/maintenance/ownership.ts\",\"src/server/maintenance/ownership.test.ts\"],\"code\":0,\"signal\":null,\"reason\":null,\"elapsedMs\":125,\"peakKiB\":0}\n"
+      },
+      {
+        "name": "spn157-cause-typecheck.log",
+        "sha256": "6760d42a42ba9bba7fda3e674f672510692356e05b4054114c1bb3609fd5c8aa",
+        "content": "\n> typecheck\n> tsc -p .\n\n{\"name\":\"spn157-cause-typecheck\",\"args\":[\"npm\",\"run\",\"typecheck\"],\"code\":0,\"signal\":null,\"reason\":null,\"elapsedMs\":2156,\"peakKiB\":1932592}\n"
+      },
+      {
+        "name": "spn157-repair-controls.log",
+        "sha256": "4c8395265d5c57c17d5dd5e19364b6ead6d5e4d37b868767ff1307b760912154",
+        "content": "\n RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-157\n\n\n Test Files  2 passed (2)\n      Tests  10 passed (10)\n   Start at  18:57:11\n   Duration  204ms (transform 40%, import 28%, tests 27%, worker 5%)\n\n{\"name\":\"spn157-repair-controls\",\"args\":[\"node\",\"node_modules/vitest/vitest.mjs\",\"run\",\"src/server/maintenance/ownership.test.ts\",\"src/server/maintenance/supervisor-test-control.test.ts\"],\"code\":0,\"signal\":null,\"reason\":null,\"elapsedMs\":546,\"peakKiB\":289824}\n"
+      },
+      {
+        "name": "spn157-repair-lint.log",
+        "sha256": "fe4882c6ae84ae27a75e6617ee27795345c5406d8d103888e3269922a66a38af",
+        "content": "\n> lint\n> npm run dependencies:check && oxlint --deny-warnings . && npm run format:check\n\n\n> dependencies:check\n> node scripts/dependencies/no-univer-pro.ts\n\nNo Univer Pro dependencies in 8 manifests or the resolved lockfile.\n\n> format:check\n> prettier --check web server src lib e2e .storybook scripts/screenshots.ts scripts/social-preview.ts scripts/passkey-check.ts scripts/e2e.ts scripts/e2e-https.ts scripts/deploy scripts/dependencies scripts/sync-transition scripts/ci scripts/pdf-feasibility scripts/serial.ts scripts/serial.test.ts *.config.ts\n\nChecking formatting...\nAll matched files use Prettier code style!\n{\"name\":\"spn157-repair-lint\",\"args\":[\"npm\",\"run\",\"lint\"],\"code\":0,\"signal\":null,\"reason\":null,\"elapsedMs\":10929,\"peakKiB\":829280}\n"
+      },
+      {
+        "name": "spn157-repair-typecheck.log",
+        "sha256": "6ea45d888e548997012b3612e7bca1dadfca3f30b3c1603212fb6d60d76b0e26",
+        "content": "\n> typecheck\n> tsc -p .\n\n{\"name\":\"spn157-repair-typecheck\",\"args\":[\"npm\",\"run\",\"typecheck\"],\"code\":0,\"signal\":null,\"reason\":null,\"elapsedMs\":2387,\"peakKiB\":1905376}\n"
+      }
+    ],
+    "preflightRefusals": [
+      {
+        "attempt": "spn157-cause-format-check",
+        "command": [
+          "node",
+          "node_modules/prettier/bin/prettier.cjs",
+          "--check",
+          "src/server/maintenance/ownership.ts",
+          "src/server/maintenance/ownership.test.ts"
+        ],
+        "reason": "Memory pressure elevated before start",
+        "watchdogReceiptWritten": false,
+        "workloadStarted": false,
+        "countedAsPass": false
+      }
+    ]
+  }
+}
