@@ -1,0 +1,129 @@
+{
+  "source": "141fa3aca4b4fb3a127e4983a21e975fe9e333ec",
+  "tree": "854f5cb5a471871a9e6baea6a5606a5b91ff65c2",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "sourceDescription": "Exact integrated current-main candidate before these evidence-only additions",
+  "environment": "Production test build with VITE_SYNC_EVIDENCE=0, VITE_DOC_SELECTION_EVIDENCE=1, VITE_DOC_RESPONSIVENESS_EVIDENCE=0; synthetic fixtures; Chromium desktop; no physical-device claim",
+  "build": {
+    "name": "spn106-production-build-20261114",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+      "--max-old-space-size=1024",
+      "node_modules/vite/bin/vite.js",
+      "build"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 2057,
+    "peakKiB": 970128
+  },
+  "selection": {
+    "name": "spn106-production-selection-20261114",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--project=production",
+      "e2e/documents.spec.ts",
+      "--grep",
+      "desktop account Doc viewer opens plain and dated documents without a protection warning$",
+      "--list"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 649,
+    "peakKiB": 339344
+  },
+  "browser": {
+    "name": "spn106-production-account-first-20261114",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--project=production",
+      "e2e/documents.spec.ts",
+      "--grep",
+      "desktop account Doc viewer opens plain and dated documents without a protection warning$",
+      "--reporter=line,json"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 10268,
+    "peakKiB": 1732608
+  },
+  "stats": {
+    "startTime": "2026-11-14T20:50:11.708Z",
+    "duration": 9961.266,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "artifacts": [
+    {
+      "file": "build-receipt.json.gz",
+      "encoding": "gzip",
+      "decodedBytes": 22145,
+      "decodedSha256": "2aa2846080be69f95f872d846f225f5e1eb9f649d48da84103b2d9c408528ba4",
+      "storedBytes": 5970,
+      "storedSha256": "b60bed717d2c295f94c3f20d1f4637f3c625a13b079785a7ea76d92e97b72ec0"
+    },
+    {
+      "file": "selection.log.gz",
+      "encoding": "gzip",
+      "decodedBytes": 574,
+      "decodedSha256": "ae8592c6401edeadd68ca50698c5c1af14d0c9eea4fc9c01a1053a252a70691c",
+      "storedBytes": 355,
+      "storedSha256": "52c243c16ab3a62f2e531436b5022b15aa6e19bad11ce38a20d57edfe579d59e"
+    },
+    {
+      "file": "browser.log.gz",
+      "encoding": "gzip",
+      "decodedBytes": 1954,
+      "decodedSha256": "c0274923f4092a7d5a0781896f8ca8fc38bebb3a691acd66cc1eaef9a720862b",
+      "storedBytes": 609,
+      "storedSha256": "380f0a4a045078fedf1fc71ea6e7fd336651e8b80cc7d6eb14635b44413808c3"
+    },
+    {
+      "file": "browser-results.json.gz",
+      "encoding": "gzip",
+      "decodedBytes": 11082,
+      "decodedSha256": "862b3428065ea1d1b0de5b6e98402bc054232e1b790daf17bfe370f61859cc39",
+      "storedBytes": 1730,
+      "storedSha256": "8b28c6bf3e1a00706a293073ef12f9da43eac493867281fd5631f8aeb392c491"
+    }
+  ],
+  "images": [
+    {
+      "path": "docs/review-assets/spn-106-production-20261114/spn-106-account-desktop-light.png",
+      "theme": "light",
+      "width": 1280,
+      "height": 960,
+      "sha256": "74bfc6803ce43ca3e3556f44c7ff8ca9ee1f6f77b11eba3745b8e4bc62fa53d4",
+      "bytes": 29516
+    },
+    {
+      "path": "docs/review-assets/spn-106-production-20261114/spn-106-account-desktop-dark.png",
+      "theme": "dark",
+      "width": 1280,
+      "height": 960,
+      "sha256": "d1e90b9c321f2f5e7ac64e29c824969e363dfd8c2dd380bd076923b5c0fd3f98",
+      "bytes": 28616
+    }
+  ],
+  "cleanup": {
+    "buildCompletedBeforeBrowser": true,
+    "loggedServerPid": 52458,
+    "loggedWorkerPid": 52597,
+    "verified": "Port3101, both logged PIDs and candidate-path process search absent after completion. No corrective signal needed for this attempt."
+  },
+  "limits": [
+    "Only one production desktop account case ran; plain/field-bearing variants both executed within it.",
+    "Older development selection/setup failure and resource abort remain retained separately.",
+    "Phone/guest/browser revocation/native denied-story/selected Safari/other hosted gates and both exact-head reviews remain pending.",
+    "Implementer inspected images; independent visual approval is pending. No performance improvement benchmark claimed."
+  ]
+}
