@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-11-14T17:32:41.449428+00:00",
+  "pr": 292,
+  "source": "6adc637b937cf07856104a247cb834bef08b8a6f",
+  "base": "78fc73bbb05ee5cab9d5a6731ae42227d2c0aaef",
+  "tested": "25017211978047d75281984700865a37569736b1",
+  "squash": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "tree": "8e88d5a503006f5a2afae984d065d9e720d06fda",
+  "mergedAt": "2026-11-14T17:31:57Z",
+  "guardedSquashConfirmed": true,
+  "validationArchive": "9cb10dbf78ac18a88fc14fc25c7973fc04b6d349",
+  "validationTag": "archive/full-groom-validation-6adc637b-20261114",
+  "reviews": "A100/B100 exact source",
+  "requiredGates": "All seven success original43620802890 attempt1; Story43620802895 success with explicit docs-only applicability"
+}

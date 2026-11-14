@@ -1,0 +1,7 @@
+{
+  "observedAt": "2026-11-14T17:34:28.218933+00:00",
+  "scope": "Selected merge/cleanup/API evidence; bounded credential/private-key/token/bearer scan including decoded gzip, plus source review",
+  "findings": [],
+  "retainedLocalProvenancePaths": true,
+  "userDocumentOrDatabaseCollected": false
+}

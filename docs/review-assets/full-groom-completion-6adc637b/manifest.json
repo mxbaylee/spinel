@@ -1,0 +1,55 @@
+{
+  "algorithm": "sha256",
+  "excludes": "manifest.json itself",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3912,
+      "sha256": "7e39940ce93d74d72d8fb2b7401639e180686d6d853f0b03becca98b6d814852"
+    },
+    {
+      "path": "completion-summary.json",
+      "bytes": 2741,
+      "sha256": "1a98873c1def58932900f52b6b9eabebbdbddafe34b66e8fe843233fc020b331"
+    },
+    {
+      "path": "content-audit.json",
+      "bytes": 300,
+      "sha256": "234fac2aa1ae60e7b14f1a960e53f35efeca9cda2b7dd9d0440d19ae1c3f9870"
+    },
+    {
+      "path": "merged-pr.json.gz",
+      "bytes": 5600,
+      "sha256": "8c882647e500b03799a5cea7d2906804807b828d609a696ca06ec00a40c78abe",
+      "decoded": {
+        "bytes": 24819,
+        "sha256": "bc05df3292d0f655fe38e8287ba2b8979aa765314afe4600a15d75bbc7448fb8"
+      }
+    },
+    {
+      "path": "open-pr-ownership.json",
+      "bytes": 1681,
+      "sha256": "bdb9167846a3a32e5ea38fd982f0aab052bf06bc97c37e06cc46895224f0e5cf"
+    },
+    {
+      "path": "remote-refs.txt",
+      "bytes": 156,
+      "sha256": "11e6d2a8aef3d03616cfd7be72aa2f9d2cd0c014685315177cbf9d430c45afab"
+    },
+    {
+      "path": "root-cleanup-6adc637b.json",
+      "bytes": 2974,
+      "sha256": "ee7403a81cd59067d22fa71f6895a55df4abe15a9fdbe00cc3c9231b0870cba5"
+    },
+    {
+      "path": "root-merge-6adc637b.json",
+      "bytes": 724,
+      "sha256": "9313ed0c7369f0218c2f9f106366391569fa2f14ea982a7fe431ee561fbb42a5"
+    },
+    {
+      "path": "root-validation-9cb10dbf.json",
+      "bytes": 769,
+      "sha256": "01fe2c7c645a2ba20a2dd09fa3ed9c859b9c3eff68f22370d015b235994b129a"
+    }
+  ]
+}

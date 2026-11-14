@@ -1,0 +1,74 @@
+{
+  "observedAt": "2026-11-14T17:33:34.065839+00:00",
+  "mergedAt": "2026-11-14T17:31:57Z",
+  "pr": 292,
+  "source": "6adc637b937cf07856104a247cb834bef08b8a6f",
+  "squash": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "remoteRefs": {
+    "refs/heads/main": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+    "refs/tags/archive/full-groom-validation-6adc637b-20261114": "9cb10dbf78ac18a88fc14fc25c7973fc04b6d349"
+  },
+  "publishedValidationArchive": "9cb10dbf78ac18a88fc14fc25c7973fc04b6d349",
+  "sourceTestedSquashTrees": [
+    {
+      "commit": "6adc637b937cf07856104a247cb834bef08b8a6f",
+      "tree": "8e88d5a503006f5a2afae984d065d9e720d06fda"
+    },
+    {
+      "commit": "25017211978047d75281984700865a37569736b1",
+      "tree": "8e88d5a503006f5a2afae984d065d9e720d06fda"
+    },
+    {
+      "commit": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+      "tree": "8e88d5a503006f5a2afae984d065d9e720d06fda"
+    }
+  ],
+  "activePROwnershipCount": 12,
+  "groomBranchHasNoActivePROwnership": true,
+  "currentLocalHead": "6adc637b937cf07856104a247cb834bef08b8a6f",
+  "cleanDetached": true,
+  "localAndTrackingRefsAbsent": true,
+  "branchConfigAbsent": true,
+  "historyPreserved": [
+    {
+      "source": "0e3da0431e4c28e5525e2e968dc5fd78c8d83e57",
+      "reachableFromValidationArchive": true
+    },
+    {
+      "source": "6adc637b937cf07856104a247cb834bef08b8a6f",
+      "reachableFromValidationArchive": true
+    }
+  ],
+  "postMergeMainValidation": "Monitored separately; no completion claim in this record",
+  "rootRecordsByteExact": [
+    {
+      "path": "root-validation-9cb10dbf.json",
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/root-validation-9cb10dbf.json",
+      "bytes": 769,
+      "sha256": "01fe2c7c645a2ba20a2dd09fa3ed9c859b9c3eff68f22370d015b235994b129a",
+      "transformation": "none"
+    },
+    {
+      "path": "root-merge-6adc637b.json",
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/root-merge-6adc637b.json",
+      "bytes": 724,
+      "sha256": "9313ed0c7369f0218c2f9f106366391569fa2f14ea982a7fe431ee561fbb42a5",
+      "transformation": "none"
+    },
+    {
+      "path": "root-cleanup-6adc637b.json",
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/root-cleanup-6adc637b.json",
+      "bytes": 2974,
+      "sha256": "ee7403a81cd59067d22fa71f6895a55df4abe15a9fdbe00cc3c9231b0870cba5",
+      "transformation": "none"
+    }
+  ],
+  "cleanupExecutedBy": "root manager before this collection; this worker performed read-only confirmation only",
+  "landedGrooming": {
+    "last": "2026-11-14",
+    "completed_since": [],
+    "next_id": 161,
+    "openTickets": 27
+  },
+  "branchConfigDisposition": "No branch configuration was present to remove; the manager performed no configuration mutation."
+}

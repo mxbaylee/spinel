@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-11-14T17:31:31.697956+00:00",
+  "archive": "9cb10dbf78ac18a88fc14fc25c7973fc04b6d349",
+  "parent": "6adc637b937cf07856104a247cb834bef08b8a6f",
+  "tree": "5e0211911665af8b62f3568f7e7db2be9ebbbbd1",
+  "manifestSha256": "90a3c185cab5d34328a2b452b8077a6e146563668c2f2b074f339ac7cdca824c",
+  "counts": {
+    "payloads": 110,
+    "gzip": 56,
+    "zipMembers": 4
+  },
+  "payloadBytes": 455744,
+  "allCommittedPayloadsMatchStaging": true,
+  "fourOriginalReportsByteExact": true,
+  "archiveOnlyAddedPaths": 111,
+  "priorRootHostedAudit": "/tmp/spinel-groom-prelaunch-20261114/root-hosted-audit-6adc637b.json",
+  "published": true,
+  "remoteVerified": "9cb10dbf78ac18a88fc14fc25c7973fc04b6d349\trefs/tags/archive/full-groom-validation-6adc637b-20261114"
+}
