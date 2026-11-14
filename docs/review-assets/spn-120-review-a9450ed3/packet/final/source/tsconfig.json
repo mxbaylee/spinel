@@ -1,0 +1,21 @@
+{
+  // Type-check only. Node runs the .ts files directly by stripping types, so
+  // only syntax it can erase is allowed (no enums, namespaces or parameter properties).
+  "compilerOptions": {
+    "target": "es2024",
+    "lib": ["es2024", "dom", "dom.iterable"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "resolveJsonModule": true,
+    "allowUmdGlobalAccess": true,
+    "skipLibCheck": true
+  },
+  "include": ["lib/**/*.ts", "lib/**/*.tsx", "src/**/*.ts", "src/**/*.tsx", "scripts/**/*.ts", "docs/**/*.ts", "docs/**/*.tsx", "server/**/*.ts", "web/**/*.ts", "web/**/*.tsx", "e2e/**/*.ts", ".storybook/*.ts", ".storybook/*.tsx", "*.config.ts"]
+}

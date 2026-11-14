@@ -1,0 +1,78 @@
+import type { ItemAppearance } from './appearance.ts';
+export const ITEM_KINDS = ['folder', 'sheet', 'doc'] as const;
+export type ItemKind = (typeof ITEM_KINDS)[number];
+export type GuestRole = 'viewer' | 'editor';
+export type GrantRole = GuestRole | 'admin';
+export type ItemAccess = GrantRole | 'owner';
+export const canAdminister = (access: ItemAccess | undefined) =>
+  access === 'owner' || access === 'admin';
+export const accessLabel = (access: ItemAccess) =>
+  access === 'owner'
+    ? 'Owner'
+    : access === 'admin'
+      ? 'File admin'
+      : access === 'editor'
+        ? 'Can edit'
+        : 'View only';
+export interface SharePerson {
+  id: string;
+  name: string;
+  disabled: number;
+  directRole: GrantRole | null;
+  effectiveRole: GrantRole | null;
+  /** Access retained without this item's direct grant; contains no ancestor metadata. */
+  inheritedRole?: GrantRole | null;
+}
+export interface WorkspaceItem {
+  access: ItemAccess;
+  id: string;
+  parentId: string | null;
+  kind: ItemKind;
+  name: string;
+  appearance?: ItemAppearance;
+  createdAt: number;
+  updatedAt: number;
+  tags: string[];
+  ownerName?: string;
+  /** Account-only attribution; never projected into guest metadata. */
+  createdByName?: string;
+  sharedAt?: number;
+  placementParentId?: string | null;
+  /** Personal discovery preference; never changes access or prepared device copies. */
+  hidden?: true;
+}
+/** Outer file metadata only; Space members keep the narrower native item union. */
+export type SpaceFile = Omit<WorkspaceItem, 'kind'> & { kind: 'space' };
+export type FileItem = WorkspaceItem | SpaceFile;
+export const FILE_KINDS = [...ITEM_KINDS, 'space'] as const;
+export type FileKind = FileItem['kind'];
+export const kindLabel: Record<ItemKind, string> = {
+  folder: 'Folder',
+  sheet: 'Sheet',
+  doc: 'Doc',
+};
+export const fileKindLabel: Record<FileKind, string> = { ...kindLabel, space: 'Space' };
+
+export type TrashedItem = FileItem & {
+  trashedAt: number;
+  /** Original 30-day deadline; a recovery hold suspends expiry. */
+  expiresAt: number;
+  heldAfterRecovery?: true;
+};
+export interface TrashListing {
+  items: TrashedItem[];
+  version: string;
+  /** The complete exact deletion preview, including retained Space contents. */
+  deletion?: {
+    count: number;
+    items: { id: string; name: string; kind: FileKind }[];
+  };
+}
+
+/** Account-only, current access information. Never part of a guest or offline catalog. */
+export interface ItemAccessDetails {
+  access: ItemAccess;
+  source: { kind: 'owner' | 'direct' } | { kind: 'folder' | 'space'; id: string; name: string };
+  /** The outer sharing boundary, also when a page inherits through an outer folder. */
+  space?: { id: string; name: string };
+}

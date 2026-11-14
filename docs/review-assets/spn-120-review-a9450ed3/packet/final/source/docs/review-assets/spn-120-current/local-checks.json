@@ -1,0 +1,42 @@
+{
+  "recordedAt": "2026-11-14T03:10:29.929615+00:00",
+  "integrationCommit": "7e9c06ca5101ee27c5372b1bbfe1e61fa023e28a",
+  "base": "ebf0842f51b60d54649cf8a03065914bec0944bf",
+  "publishedHead": "597c3182ae34a9bb0734b3e2f599ba5d845cf849",
+  "runtime": "Node26.13.0",
+  "sourceSha256": {
+    ".github/workflows/ci.yml": "a9cb42dd78c47760607fc70caea0f9223300cb4b9c598c69fc7b296b576628f1",
+    ".github/workflows/fixture-audit.yml": "6e87269caf8dfabec6bb43e57ae45b42ef66bf78869897055b12a089d0b7fcfa",
+    ".nvmrc": "6e775beae185bb3f5837d2f6d3fbe910e6f60e18fa507e661e312e84d707a92f",
+    "e2e/app-process.ts": "b54b8359671511cb62a5ee8fc0bb8a639bf4972b842cd14bbe747455175e91c4",
+    "e2e/doc-phone-navigation.spec.ts": "f49cf029e219601d928b8df22ca4754ca70cf315bed5f27878f7a9f95bc75b14",
+    "e2e/fixture-evidence.ts": "707630a3c22f37cc00f0108e39c07b7b388bec072624331329a515bcbfc7f3b4",
+    "e2e/fixture-session.ts": "80db1e2c08afc316f67e91617f4be3e2ee3e034319ecd8115d0240c2718e55af",
+    "e2e/offline-fixture.ts": "8f6bba0491b2621882ef4bb1cc5acf9a22497e975932154613c7234f2396bcf3",
+    "e2e/offline-recovery.spec.ts": "592be4ca5f84f56cbd3c9f33a81dd5530bbc3e3b7b00150ce073f9e5ccc58768",
+    "e2e/offline-sign-out.spec.ts": "10f3c563d6ef38c79b88ed470bbdb81c509f879fc3c2a2e51d285789898c71fd",
+    "e2e/owned-process.ts": "b97a250c2641d32a4d41641ee875a9b9344978c8402883dad8eb0a808299554c",
+    "e2e/passkey-management.spec.ts": "7e4631ba43924a969e53ffca777743265b38629174db480ea3558a956a6c50ab",
+    "e2e/sync-client.spec.ts": "4786246c1b299ec22b8cab94c959f2cc74e06d8d75bc5358ad91ffd41c0d5981",
+    "package-lock.json": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+    "package.json": "6d5889eeacae9a57c06848bcf2938ef5280ec3cd3c5488a7cf22564814baf5fd",
+    "playwright.config.ts": "5ed2d15eb3a547699aca0d594488a7bd1a632c9dc32ba608b17cade9f00e991e",
+    "scripts/ci/app-process.test.ts": "58f91328f919e36fdd6f94c12c2f70033d4930dbdef61236b2f0ea2b19ffb325",
+    "scripts/ci/fixture-audit-reporter.ts": "444bcca8e9817d83ea9f7d5d83de34b3e02a88195b2f0b7c14ded07dbfbcebf3",
+    "scripts/ci/fixture-audit.test.ts": "284ffc41e60d9a919850a1270b39c4e79abdb6f3c705223c4f3cae36f96b8637",
+    "scripts/ci/fixture-audit.ts": "9b7a2be4793c8e9525d150e057e217ed20b38ab15cdd737085ad7b8a21c27d8d",
+    "scripts/ci/fixture-evidence.test.ts": "e144a2c742f736134c8aee775d539147159d665ae87566ca270adf594a6acb2b",
+    "scripts/ci/fixture-session-http.test.ts": "9438ec14637c874bac6a715b6751f7639396517362307f5834365cef22af27f8",
+    "scripts/ci/fixture-session.test.ts": "33968a58e8b629f372948c5c4a01cab9a72fb248ae08a223c370744e6496df07",
+    "scripts/e2e-server.ts": "2d34dc490f83188b97d4d3a37700547dcb4cd66e17cd6ec9482eb4d214802c87",
+    "tsconfig.json": "4a6c2b521b02d7cdd9ff5d91f4fb37cffee3caa847d044f1c08bd12d439c4e28"
+  },
+  "notes": [
+    "62controls passed on integration plus HTTP fixture setup/cleanup repair; the later Prettier repair changes only formatting in that test.",
+    "Initial26collection is retained: broad combined grep additionally collected the development passkey-management repetitions. Exact per-project selectors subsequently collected24 declared attempts without running browsers.",
+    "Both full typechecks were resource-aborted when pressure changed to2. The second used verified Go compiler tool-only GOMEMLIMIT=1GiB/GOMAXPROCS=2; no files/assertions/compiler scope or external budgets were reduced.",
+    "Initial full lint passed dependencies and oxlint, with only HTTP test formatting failing. Prettier repaired it; full formatting recheck resource-aborted, then focused formatting on the sole changed file passed.",
+    "Initial backlog/PR launches were refused before workload startup under pressure2. Backlog validation later passed166ms afterpressure1; exactcommitted-head PR check follows candidatecommit.",
+    "No shared installation mutation, browser execution, hosted dispatch, publication or merge occurred."
+  ]
+}

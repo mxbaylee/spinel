@@ -1,0 +1,61 @@
+import sharp from 'sharp';
+import { Router } from 'express';
+import { iconSvg } from '../ui/appIcon.ts';
+import { faviconSvg } from '../ui/favicon.ts';
+import { fileURLToPath } from 'node:url';
+import { pwaManifest as manifest } from '../shared/pwa.ts';
+export { manifest };
+
+export function pwaRoutes() {
+  const router = Router();
+  router.get('/manifest.webmanifest', (_request, response) => {
+    response.set('Cache-Control', 'no-cache').type('application/manifest+json').send(manifest);
+  });
+  router.get('/favicon.svg', (_request, response) => {
+    response.set('Cache-Control', 'public, max-age=86400').type('image/svg+xml').send(faviconSvg());
+  });
+  router.get('/social-preview.png', (_request, response) => {
+    response
+      .set('Cache-Control', 'public, max-age=86400')
+      .sendFile(fileURLToPath(new URL('../ui/social-preview.png', import.meta.url)), {
+        dotfiles: 'allow',
+      });
+  });
+  // These fixed public buffers are the only retained data. No per-user icon or URL input.
+  const icons = new Map<number, Promise<Buffer>>();
+  for (const size of [32, 180, 192, 512]) {
+    router.get(
+      size === 32 ? ['/favicon-32.png', '/favicon.ico'] : `/app-icon-${size}.png`,
+      async (request, response) => {
+        let icon = icons.get(size);
+        if (!icon) {
+          icon = sharp(Buffer.from(size === 32 ? faviconSvg('light') : iconSvg()))
+            .resize(size, size)
+            .png()
+            .toBuffer();
+          icons.set(size, icon);
+          void icon.catch(() => icons.delete(size));
+        }
+        const png = await icon;
+        if (request.path === '/favicon.ico') {
+          // One 32px PNG entry in the standard ICO container; no extra encoder dependency.
+          const header = Buffer.alloc(22);
+          header.writeUInt16LE(1, 2);
+          header.writeUInt16LE(1, 4);
+          header[6] = header[7] = 32;
+          header.writeUInt16LE(1, 10);
+          header.writeUInt16LE(32, 12);
+          header.writeUInt32LE(png.length, 14);
+          header.writeUInt32LE(22, 18);
+          response
+            .set('Cache-Control', 'public, max-age=86400')
+            .type('image/vnd.microsoft.icon')
+            .send(Buffer.concat([header, png]));
+          return;
+        }
+        response.set('Cache-Control', 'public, max-age=86400').type('png').send(png);
+      },
+    );
+  }
+  return router;
+}

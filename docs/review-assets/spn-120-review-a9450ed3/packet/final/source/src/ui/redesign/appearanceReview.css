@@ -1,0 +1,57 @@
+.rd-gem-cover {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left center;
+}
+.rd-gem-pairs {
+  display: grid;
+  gap: 32px;
+  padding: 24px;
+  background: var(--sp-panel);
+  color: var(--sp-text);
+}
+.rd-gem-pairs section {
+  min-width: 0;
+}
+.rd-gem-pairs h2 {
+  margin: 0 0 16px;
+  font-size: 1.25rem;
+}
+.rd-gem-pair-mode {
+  padding: 16px;
+  color: var(--sp-text);
+  background: var(--sp-panel);
+}
+.rd-gem-pair-mode h3 {
+  margin: 0 0 16px;
+  font-size: 0.875rem;
+}
+.rd-gem-pair-mode figure {
+  margin: 0 0 16px;
+}
+.rd-gem-pair-mode figure:last-child {
+  margin-bottom: 0;
+}
+.rd-gem-pair-mode figcaption {
+  margin-top: 8px;
+  font-size: 0.75rem;
+}
+.rd-gem-pair-wide {
+  height: 144px;
+  overflow: hidden;
+}
+.rd-gem-pair-phone {
+  width: min(390px, 100%);
+  height: 112px;
+  overflow: hidden;
+}
+@media (max-width: 640px) {
+  .rd-gem-pairs {
+    padding: 16px;
+  }
+  .rd-gem-pair-mode {
+    padding: 8px;
+  }
+}

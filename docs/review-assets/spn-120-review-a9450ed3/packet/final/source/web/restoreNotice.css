@@ -1,0 +1,66 @@
+/* Banner (docs/design/README.md#banner): `.banner` supplies the panel, edge and
+ * accent; this adds the icon row and the one dismiss action. */
+.restore-notice {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 0 0 16px;
+  padding-right: 56px;
+  color: var(--sp-text);
+  font-size: 0.875rem;
+}
+.restore-notice > svg {
+  flex: none;
+  margin-top: 1px;
+  color: var(--sp-accent);
+}
+.restore-notice strong {
+  color: var(--sp-accent);
+}
+.restore-notice p {
+  margin: 0;
+  line-height: 1.45;
+}
+.restore-notice .restore-notice-dismiss {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  width: 44px;
+  min-width: 44px;
+  height: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border-color: transparent;
+  color: var(--sp-muted);
+}
+/* The banner tints decorative icons with the accent; the dismiss action stays muted. */
+.restore-notice .restore-notice-dismiss [aria-hidden='true'] {
+  color: inherit;
+}
+.restore-notice .restore-notice-dismiss:hover {
+  background: var(--sp-tint-1);
+  color: var(--sp-text);
+}
+/* These views draw their own edge-to-edge pages, so the band keeps the page inset. */
+.space-main > .restore-notice,
+.workspace.admin-workspace > .workspace-body > .restore-notice,
+.workspace.profile-workspace > .workspace-body > .restore-notice,
+.workspace.history-workspace > .workspace-body > .restore-notice {
+  margin: 16px 24px 0;
+}
+@media (max-width: 640px) {
+  .space-main > .restore-notice,
+  .workspace.admin-workspace > .workspace-body > .restore-notice,
+  .workspace.profile-workspace > .workspace-body > .restore-notice,
+  .workspace.history-workspace > .workspace-body > .restore-notice {
+    margin: 12px 16px 0;
+  }
+}
+.workspace:has(.editor-frame) .restore-notice {
+  display: none;
+}

@@ -1,0 +1,112 @@
+.admin-restore .restore-status {
+  min-height: 44px;
+}
+.restore-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+.restore-actions button {
+  max-width: 100%;
+  white-space: normal;
+}
+.restore-form {
+  display: grid;
+  gap: 16px;
+}
+.restore-form > label {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.restore-form input[type='file'] {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  color: var(--sp-text);
+  background: var(--sp-panel);
+  font: inherit;
+}
+.restore-form input[type='file']::file-selector-button {
+  padding: 8px 12px;
+  margin-right: 8px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  background: var(--sp-panel);
+  color: var(--sp-text);
+  font: inherit;
+  cursor: pointer;
+}
+.restore-source-facts {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 8px 16px;
+  margin: 16px 0;
+}
+.restore-source-facts dt {
+  color: var(--sp-muted);
+}
+.restore-source-facts dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.restore-source-facts code {
+  font-size: 0.75rem;
+}
+.restore-preview {
+  padding-top: 16px;
+  margin-top: 16px;
+  border-top: 1px solid var(--sp-border);
+}
+.restore-preview h4 {
+  font-size: inherit;
+  margin: 0 0 8px;
+}
+.restore-consequences {
+  padding-left: 24px;
+  display: grid;
+  gap: 12px;
+}
+.sp-modal.sp-ui .restore-acknowledgement {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  cursor: pointer;
+}
+.sp-modal.sp-ui .restore-acknowledgement input[type='checkbox'] {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  /* The complete label is the touch target, matching PDF worksheet choices. */
+  min-width: 20px;
+  min-height: 20px;
+  margin-top: 4px;
+  accent-color: var(--sp-accent);
+}
+.workspace .admin-restore button.sp-primary {
+  background: var(--sp-accent);
+  color: var(--sp-on-accent);
+  border-color: var(--sp-accent);
+}
+@media (max-width: 640px), (pointer: coarse) {
+  .admin-restore .sp-control,
+  .restore-form .sp-control,
+  .restore-form input[type='file']::file-selector-button {
+    min-height: 44px;
+  }
+  .restore-source-facts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+  }
+  .restore-source-facts dd {
+    margin-bottom: 12px;
+  }
+  .sp-modal.sp-ui .restore-acknowledgement {
+    min-height: 44px;
+  }
+}

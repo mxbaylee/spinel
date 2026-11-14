@@ -1,0 +1,11 @@
+{
+  "at": "2026-11-14T21:07:56.751Z",
+  "head": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "sourceBindings": 1561,
+  "exactTypeScript": 1238,
+  "maskedDocumentation": 10,
+  "manifestSHA256": "af3f4f0fcb5ff3a1e379ec8ef0e0809c7ba3905f914838a50b628922442082dc",
+  "retainedExecutedInputs": 1396,
+  "rootBriefRead": true
+}

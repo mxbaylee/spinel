@@ -1,0 +1,64 @@
+.admin-backup-policy,
+.admin-backup-downloads {
+  border-top: 1px solid var(--sp-border);
+  margin-top: 24px;
+  padding-top: 24px;
+}
+.admin-backup-downloads h4,
+.admin-backup-policy h4 {
+  font-size: inherit;
+  margin: 0 0 12px;
+}
+.admin-backup-policy dl {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 8px 16px;
+}
+.admin-backup-policy dt {
+  color: var(--sp-muted);
+}
+.admin-backup-policy dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.admin-backup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+.admin-backup-actions > button {
+  max-width: 100%;
+  white-space: normal;
+}
+/* Preserve the shared primary action beneath the legacy workspace button rule. */
+.workspace .admin-backup-downloads button.sp-primary {
+  background: var(--sp-accent);
+  border-color: var(--sp-accent);
+  color: var(--sp-on-accent);
+}
+.admin-backup-job {
+  min-height: 44px;
+}
+.admin-backup-job:empty {
+  min-height: 0;
+}
+.admin-backup-catalog {
+  margin-top: 24px;
+  border-top: 1px solid var(--sp-border);
+  padding-top: 12px;
+}
+.admin-backup-catalog > summary {
+  cursor: pointer;
+  min-height: 44px;
+  padding: 12px 0;
+  font-weight: 600;
+}
+.admin-backup-catalog .sp-choice {
+  max-width: 100%;
+}
+@media (max-width: 640px), (pointer: coarse) {
+  .admin-backup-downloads .sp-control {
+    min-height: 44px;
+  }
+}

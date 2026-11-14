@@ -1,0 +1,152 @@
+import { expect, test } from 'vitest';
+import {
+  needsServer,
+  parseShellManifest,
+  runtimeDescriptor,
+  shellFiles,
+  SHELL_PLACEHOLDER,
+} from './offlineShell.ts';
+import type { ShellManifest } from './offlineShell.ts';
+import { installationAssetDigest, installationAssetName, installationPaths } from './pwa.ts';
+
+const manifest: ShellManifest = {
+  protocol: 1,
+  version: '0123456789abcdef',
+  compatibility: { format: 1, sdkVersion: '1.1.0' },
+  entry: '/assets/application-abc.js',
+  css: ['/assets/theme-def.css'],
+  files: ['/assets/application-abc.js', '/assets/renderer-ghi.js', '/assets/theme-def.css'],
+};
+test('the shell lists public emitted assets only, without maps, pages, worker or traversal', () => {
+  expect(
+    shellFiles([
+      'index.html',
+      'service-worker.js',
+      'assets/main-abc.js',
+      'assets/main-abc.js.map',
+      'assets/index-def.css',
+      'assets/nested/file.js',
+      'other/file.js',
+      'assets/../private.js',
+      'assets/file.js?token=x',
+    ]),
+  ).toEqual(['/assets/index-def.css', '/assets/main-abc.js']);
+});
+test('development has no manifest; a public production descriptor names a complete application entry', () => {
+  expect(parseShellManifest(SHELL_PLACEHOLDER)).toBeNull();
+  expect(parseShellManifest(JSON.stringify(manifest))).toEqual(manifest);
+  expect(
+    runtimeDescriptor(
+      `<html><head><script id="spinel-runtime" type="application/json">${JSON.stringify(manifest)}</script></head></html>`,
+    ),
+  ).toEqual(manifest);
+  expect(runtimeDescriptor('<html><head></head></html>')).toBeNull();
+});
+test('new runtime installation paths bind complete immutable assets while older descriptors remain valid', () => {
+  const installation = Object.fromEntries(
+    installationPaths.map((path) => [path, installationAssetName(path, 'a'.repeat(64))]),
+  ) as NonNullable<ShellManifest['installation']>;
+  const current = {
+    ...manifest,
+    files: [...manifest.files, ...Object.values(installation)],
+    installation,
+  };
+  expect(parseShellManifest(JSON.stringify(current))).toEqual(current);
+  expect(parseShellManifest(JSON.stringify(manifest))).toEqual(manifest);
+  for (const change of [
+    { ...installation, '/manifest.webmanifest': '/api/items?token=secret' },
+    { ...installation, '/app-icon-180.png': installation['/app-icon-512.png'] },
+    { ...installation, '/app-icon-192.png': installation['/app-icon-192.png'] + '?token=secret' },
+    { ...installation, '/extra': '/assets/extra.js' },
+    { '/manifest.webmanifest': installation['/manifest.webmanifest'] },
+  ])
+    expect(() =>
+      parseShellManifest(JSON.stringify({ ...current, installation: change })),
+    ).toThrow();
+  expect(() => parseShellManifest(JSON.stringify({ ...current, files: manifest.files }))).toThrow();
+});
+test.each([1, 2, 3])(
+  'offline-upgrade format %s installation files are isolated and retain full content digests',
+  (format) => {
+    const digest = 'a'.repeat(64);
+    const installation = Object.fromEntries(
+      installationPaths.map((path) => [path, installationAssetName(path, digest, format)]),
+    ) as NonNullable<ShellManifest['installation']>;
+    const current = {
+      ...manifest,
+      compatibility: { ...manifest.compatibility, format },
+      files: [...manifest.files, ...Object.values(installation)],
+      installation,
+    };
+    expect(parseShellManifest(JSON.stringify(current))).toEqual(current);
+    expect(installation['/manifest.webmanifest']).toBe(
+      `/assets/install-manifest-format${format}-${digest}.webmanifest`,
+    );
+    for (const path of installationPaths) {
+      expect(installationAssetDigest(path, installation[path])).toBe(digest);
+      for (const other of [undefined, 1, 2, 3])
+        if (other !== format)
+          expect(installation[path]).not.toBe(installationAssetName(path, digest, other));
+    }
+    expect(installationAssetName('/manifest.webmanifest', digest)).toBe(
+      `/assets/install-manifest-${digest}.webmanifest`,
+    );
+    expect(installationAssetName('/app-icon-192.png', digest)).toBe(
+      `/assets/install-app-icon-192-${digest}.png`,
+    );
+  },
+);
+test.each([
+  'format0',
+  'format4',
+  'format01',
+  'format1.5',
+  'format2-extra',
+  'format2-format1',
+  'preview',
+])('installation descriptors refuse unsupported fixture namespace %s', (namespace) => {
+  const digest = 'a'.repeat(64);
+  const installation = Object.fromEntries(
+    installationPaths.map((path) => [path, installationAssetName(path, digest)]),
+  ) as NonNullable<ShellManifest['installation']>;
+  installation['/manifest.webmanifest'] =
+    `/assets/install-manifest-${namespace}-${digest}.webmanifest`;
+  const current = {
+    ...manifest,
+    files: [...manifest.files, ...Object.values(installation)],
+    installation,
+  };
+  expect(
+    installationAssetDigest('/manifest.webmanifest', installation['/manifest.webmanifest']),
+  ).toBeNull();
+  expect(() => parseShellManifest(JSON.stringify(current))).toThrow();
+});
+test('installation emission refuses unknown fixture formats', () => {
+  for (const format of [0, 4, 1.5, NaN])
+    expect(() => installationAssetName('/manifest.webmanifest', 'a'.repeat(64), format)).toThrow(
+      'Unsupported installation fixture format.',
+    );
+});
+test.each([
+  { protocol: 2 },
+  { version: 'short' },
+  { compatibility: { format: 0, sdkVersion: '1.1.0' } },
+  { compatibility: { format: 1, sdkVersion: 'unknown' } },
+  { files: ['/api/items'] },
+  { files: ['/assets/../api'] },
+  { files: 'nope' },
+  { files: [...manifest.files, manifest.files[0]] },
+  { entry: '/assets/missing.js' },
+  { css: ['/assets/missing.css'] },
+  { css: [123] },
+])('malformed public runtime metadata is refused: %j', (change) => {
+  expect(() => parseShellManifest(JSON.stringify({ ...manifest, ...change }))).toThrow();
+});
+test.each([
+  ['/share/0b7a', true],
+  ['/setup', true],
+  ['/invite', true],
+  ['/', false],
+  ['/settings', false],
+  ['/sign-in', false],
+])('%s needs the server: %s', (path, expected) => expect(needsServer(path)).toBe(expected));

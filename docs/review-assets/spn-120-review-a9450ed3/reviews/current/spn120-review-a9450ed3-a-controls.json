@@ -1,0 +1,20 @@
+{
+  "name": "spn120-review-a9450ed3-a-controls",
+  "args": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "scripts/ci/app-process.test.ts",
+    "scripts/ci/fixture-audit.test.ts",
+    "scripts/ci/fixture-evidence.test.ts",
+    "scripts/ci/fixture-session-http.test.ts",
+    "scripts/ci/fixture-session.test.ts",
+    "scripts/ci/bootstrap-evidence.test.ts",
+    "scripts/ci/plan.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 6694,
+  "peakKiB": 308384
+}

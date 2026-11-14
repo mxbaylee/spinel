@@ -1,0 +1,207 @@
+.workspace > header.file-rail {
+  flex-basis: 224px;
+  width: 224px;
+  padding: 20px 12px;
+  gap: 20px;
+  box-sizing: border-box;
+}
+.workspace > header.file-rail .rail-brand {
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  gap: 8px;
+}
+.file-rail-desktop {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+.workspace > header.file-rail nav {
+  align-items: stretch;
+  width: 100%;
+  gap: 8px;
+}
+.workspace > header.file-rail .rail-button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+}
+.workspace > header.file-rail .rail-brand .brand {
+  width: auto;
+}
+.workspace > header.file-rail:not(.file-rail-collapsed) .rail-label {
+  position: static;
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+  padding: 0;
+  color: inherit;
+  background: transparent;
+  font-size: 0.875rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.workspace > header.file-rail .rail-button[aria-current] {
+  background: color-mix(in srgb, var(--sp-rail-ink) 14%, transparent);
+}
+.workspace > header.file-rail .rail-account {
+  margin-top: auto;
+  align-items: stretch;
+  width: 100%;
+}
+.workspace > header.file-rail .rail-account .sp-segments {
+  flex-direction: row;
+}
+.workspace > header.file-rail .file-rail-toggle {
+  justify-content: flex-start;
+}
+.workspace > header.file-rail .file-rail-browse {
+  display: none;
+}
+.workspace > header.file-rail-collapsed {
+  flex-basis: 64px;
+  width: 64px;
+  padding: 16px 4px;
+}
+.workspace > header.file-rail-collapsed .rail-brand {
+  flex-direction: column;
+}
+.workspace > header.file-rail-collapsed .rail-button {
+  justify-content: center;
+}
+.workspace > header.file-rail-collapsed .rail-account .sp-segments {
+  flex-direction: column;
+}
+.file-rail-drawer {
+  display: grid;
+  gap: 28px;
+}
+.file-rail-drawer .file-rail-places,
+.file-rail-drawer .rail-account {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+.file-rail-drawer .rail-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  min-height: 44px;
+  color: var(--sp-text);
+  text-decoration: none;
+  border-radius: 8px;
+  border: 1px solid var(--sp-border);
+  background: var(--sp-panel);
+  font: inherit;
+  cursor: pointer;
+}
+.file-rail-drawer .rail-button:hover {
+  background: var(--sp-header);
+}
+.file-rail-drawer .rail-button:focus-visible {
+  outline: 2px solid var(--sp-accent);
+  outline-offset: 3px;
+}
+.file-rail-drawer .rail-label {
+  position: static;
+  opacity: 1;
+  padding: 0;
+  transform: none;
+  background: transparent;
+  color: inherit;
+  white-space: normal;
+}
+.file-rail-drawer .rail-button[aria-current] {
+  background: var(--sp-tint-1);
+}
+.file-rail-drawer .rail-account .sp-segments {
+  flex-direction: row;
+}
+@media (min-width: 1024px) {
+  .workspace > header.file-rail:not(.file-rail-collapsed) .rail-account .sp-segments {
+    align-self: center;
+  }
+  .workspace > header.file-rail:not(.file-rail-collapsed) .rail-account a.rail-button {
+    min-width: 0;
+  }
+  .workspace > header.file-rail:not(.file-rail-collapsed) .rail-account .profile-rail-avatar {
+    flex-shrink: 0;
+  }
+  .workspace > header.file-rail:not(.file-rail-collapsed) .rail-account .rail-label {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+@media (max-width: 1023px) {
+  .workspace.files-workspace {
+    flex-direction: column;
+  }
+  .workspace.files-workspace > header.file-rail {
+    flex: none;
+    flex-direction: row;
+    align-items: center;
+    height: 64px;
+    width: 100%;
+    padding: 8px;
+    gap: 4px;
+  }
+  .workspace.files-workspace > header.file-rail .rail-brand {
+    flex-direction: row;
+    width: auto;
+    flex: none;
+    gap: 0;
+    justify-content: flex-start;
+  }
+  .workspace.files-workspace > header.file-rail .rail-brand .rail-label {
+    display: none;
+  }
+  .workspace.files-workspace > header.file-rail .file-rail-desktop,
+  .workspace.files-workspace > header.file-rail .file-rail-toggle {
+    display: none;
+  }
+  .workspace.files-workspace > header.file-rail .file-rail-browse {
+    display: inline-flex;
+    flex: none;
+    width: 44px;
+    justify-content: center;
+    min-height: 44px;
+  }
+  .workspace.files-workspace > header.file-rail .rail-account {
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    width: auto;
+    margin: 0 0 0 auto;
+  }
+  .workspace.files-workspace > header.file-rail .rail-account .sp-segments {
+    flex-direction: row;
+    padding: 0;
+  }
+  .workspace.files-workspace > header.file-rail .rail-account .sp-segments::before {
+    inset: 7px 0;
+  }
+  .workspace.files-workspace > header.file-rail .rail-account .sp-segment {
+    width: 44px;
+    height: 44px;
+  }
+  .workspace.files-workspace > header.file-rail .rail-account > .rail-button {
+    flex: none;
+    width: 44px;
+    justify-content: center;
+  }
+  .workspace.files-workspace > header.file-rail .rail-account .rail-label,
+  .workspace.files-workspace > header.file-rail .rail-account > button.rail-button {
+    display: none;
+  }
+  .workspace.files-workspace > .workspace-body {
+    padding: 20px 16px;
+  }
+}

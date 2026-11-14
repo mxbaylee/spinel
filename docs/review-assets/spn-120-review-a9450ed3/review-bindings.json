@@ -1,0 +1,95 @@
+{
+  "preparedAt": "2026-11-14T21:14:31.503099+00:00",
+  "head": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "reviewers": [
+    {
+      "reviewer": "A",
+      "head": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "score": 100,
+      "rubric": {
+        "scope": 35,
+        "correctness": 25,
+        "regression": 20,
+        "workflow": 10,
+        "maintainability": 10
+      },
+      "noFindings": true,
+      "files": [
+        {
+          "path": "reviews/current/spn120-review-a9450ed3-a.md",
+          "source": "/tmp/spn120-review-a9450ed3-a.md",
+          "bytes": 9942,
+          "sha256": "2d043a23511366029f9998470b7dab825069ed4508974972150bf76f531ffe6f"
+        },
+        {
+          "path": "reviews/current/spn120-review-a9450ed3-a-controls.log",
+          "source": "/tmp/spn120-review-a9450ed3-a-controls.log",
+          "bytes": 7608,
+          "sha256": "a2807ec7f5c71d724134e4e664b49e0d6df6bbcd51bd2ed0e9af8735fe5de5d7"
+        },
+        {
+          "path": "reviews/current/spn120-review-a9450ed3-a-controls.json",
+          "source": "/tmp/spinel-dependabot-2026-11-11/spn120-review-a9450ed3-a-controls.json",
+          "bytes": 497,
+          "sha256": "585de515b57efcf797829da4d42121afcafb95a896c2745afee0200aaa69355a"
+        }
+      ],
+      "controls": {
+        "passed": 77,
+        "elapsedMs": 6694,
+        "peakKiB": 308384,
+        "independent": true
+      }
+    },
+    {
+      "reviewer": "B",
+      "head": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+      "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+      "score": 100,
+      "rubric": {
+        "scope": 35,
+        "correctness": 25,
+        "regression": 20,
+        "workflow": 10,
+        "maintainability": 10
+      },
+      "noFindings": true,
+      "files": [
+        {
+          "path": "reviews/current/spn120-review-a9450ed3-b.md",
+          "source": "/tmp/spn120-review-a9450ed3-b.md",
+          "bytes": 10822,
+          "sha256": "dc875e2f9bc93c2bad4f847ced4f70c95392a871f58230e21464d5b57572b56a"
+        },
+        {
+          "path": "reviews/current/spn120-review-b-a9450ed3-controls.log",
+          "source": "/tmp/spn120-review-b-a9450ed3-controls.log",
+          "bytes": 7597,
+          "sha256": "4b08ec85cb560876e1b23ea2f065ee843daeb709d97e8614ea92ce1a17ee24c1"
+        },
+        {
+          "path": "reviews/current/spn120-review-b-a9450ed3-controls.json",
+          "source": "/tmp/spinel-dependabot-2026-11-11/spn120-review-b-a9450ed3-controls.json",
+          "bytes": 497,
+          "sha256": "0daf9e489c50197ffa4f74ad4263183fbbbe3cc26930eab46252cdd378e9f7fe"
+        }
+      ],
+      "controls": {
+        "passed": 77,
+        "elapsedMs": 6670,
+        "peakKiB": 311680,
+        "independent": true
+      }
+    }
+  ],
+  "coordinatorReadBothFullReports": true,
+  "coordinatorReadProvenance": "Root task instruction preparing this archive after reading both complete exact-a945 reports.",
+  "agentReviewOnly": true,
+  "currentHostedPending": true,
+  "priorAcceptanceDoesNotTransfer": true,
+  "packetManifestSha256": "af3f4f0fcb5ff3a1e379ec8ef0e0809c7ba3905f914838a50b628922442082dc",
+  "executedInputMapSha256": "ea260a66688dd64a95f1c85b010b75dfac0915d98aca9df75a9f6815a93289fd",
+  "published5356Archive": "e9574cb5e19865916b8bf1952c83da131ed91ae7"
+}

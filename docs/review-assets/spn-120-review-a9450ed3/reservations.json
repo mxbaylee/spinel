@@ -1,0 +1,17 @@
+{
+  "review": {
+    "tag": "archive/spn-120-review-a9450ed3-20261114",
+    "path": "docs/review-assets/spn-120-review-a9450ed3",
+    "status": "Reserved; not published by implementer"
+  },
+  "validation": {
+    "tag": "archive/spn-120-validation-a9450ed3-20261114",
+    "path": "docs/review-assets/spn-120-validation-a9450ed3",
+    "status": "Reserved; not published by implementer"
+  },
+  "completion": {
+    "tag": "archive/spn-120-completion-a9450ed3-20261114",
+    "path": "docs/review-assets/spn-120-completion-a9450ed3",
+    "status": "Reserved; not published by implementer"
+  }
+}

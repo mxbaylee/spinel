@@ -1,0 +1,46 @@
+/* The modal portal is outside .workspace. Keep its existing file forms themed
+   without changing ordinary Sharing or borrowing the workspace page layout. */
+.space-root-actions > form,
+.space-root-actions > .item-form,
+.space-root-actions section[aria-label='Guest link'] {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.space-root-actions select,
+.space-root-actions button:not(.sp-control) {
+  min-height: 40px;
+  max-width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  background: var(--sp-panel);
+  color: var(--sp-text);
+  font: inherit;
+}
+.space-root-actions select {
+  display: block;
+  width: 100%;
+}
+.space-root-actions button:not(.sp-control) {
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.space-root-actions button:not(.sp-control):hover {
+  background: var(--sp-header);
+}
+.space-root-actions :is(select, button):disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.space-root-actions :is(select, button):focus-visible {
+  outline: 2px solid var(--sp-accent);
+  outline-offset: 3px;
+}
+@media (pointer: coarse), (max-width: 640px) {
+  .space-root-actions select,
+  .space-root-actions button:not(.sp-control) {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

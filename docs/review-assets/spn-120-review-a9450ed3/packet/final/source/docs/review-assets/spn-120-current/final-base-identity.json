@@ -1,0 +1,16 @@
+{
+  "actualBase": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "priorLocalExecution": "d777c01c655762b112caa4846de07987fe628f49",
+  "priorCandidate": "c03e7d6f669ed503b52c3cf361d33b490745a020",
+  "runtimeAndRetainedTypescriptInputsIdentical": true,
+  "sourceMapCount": 1359,
+  "sourceMapSha256": "3bca258ebe8743bf59e8751c9053fd91843e9769af47482957e54637bfb2527d",
+  "main87ToCurrentNonDocsChanged": [],
+  "renameDetectionDisabled": true,
+  "SPN122Preserved": true,
+  "originalTicketSource": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "completion": "Provisional SPN120 only; required reviews/gates/acceptance still pending.",
+  "nextId": 161,
+  "groomingDate": "2026-11-14",
+  "completedSince": ["SPN-120"]
+}

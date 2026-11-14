@@ -1,0 +1,38 @@
+.rd-sharing-review {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.rd-sharing-review > .rd-person {
+  padding: 8px 0 12px;
+}
+.rd-sharing-review > .rd-person > .rd-badge {
+  flex: none;
+}
+.rd-sharing-review > section[aria-label='People with access'] {
+  display: grid;
+  gap: 8px;
+}
+.rd-sharing-review > section[aria-label='People with access'] > .sp-control {
+  justify-self: start;
+}
+.rd-sharing-review .rd-setting-row {
+  padding: 12px 0;
+  border-bottom: 0;
+}
+.rd-sharing-review > .rd-section {
+  margin-top: 4px;
+  padding-top: 16px;
+}
+.rd-sharing-review .sp-actions {
+  margin-top: 0;
+}
+.rd-sharing-review > .rd-feedback {
+  margin-top: 0 !important;
+}
+@media (max-width: 640px) {
+  .rd-sharing-review > section[aria-label='People with access'] > .rd-setting-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

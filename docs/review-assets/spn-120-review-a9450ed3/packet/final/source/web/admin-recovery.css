@@ -1,0 +1,50 @@
+.admin-account-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.admin-account-heading > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.admin-recovery {
+  display: grid;
+  gap: 16px;
+  overflow-wrap: anywhere;
+}
+.admin-recovery [role='alert'] {
+  display: grid;
+  gap: 12px;
+}
+.admin-transfer-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 32px;
+  margin: 0;
+}
+.admin-transfer-counts dt {
+  color: var(--sp-muted);
+  font-size: 0.75rem;
+}
+.admin-transfer-counts dd {
+  margin: 4px 0 0;
+  font-weight: 650;
+}
+.admin-recovery .sp-choice .sp-control {
+  min-width: 0;
+  white-space: normal;
+  text-align: left;
+}
+.admin-recovery-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+@media (max-width: 640px), (pointer: coarse) {
+  .admin-recovery .sp-control,
+  .admin-account-heading .sp-control {
+    min-height: 44px;
+  }
+}

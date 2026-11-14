@@ -1,0 +1,258 @@
+# Editor chrome
+
+## Native copying (SPN-065)
+
+**Make a copy** is an open-source Univer addon in the native toolbar's existing
+Others group. The desktop toolbar can place it in overflow; the phone toolbar
+places it in **More**. Its native dialog/drawer hosts the same production name and
+folder form as the dashboard. It does not add another outer-header action beside
+Share or collaborators. Signed-in phone Doc viewers retain the native toolbar for
+copying, with the Edit header controls and editing footer hidden. Native mutation
+permissions remain read-only; guests retain the prior toolbar policy and no copy
+addon.
+
+Use existing theme tokens, one primary **Make a copy** action, **Cancel**, labelled
+fields and actionable availability/error text. Shared destinations disclose the
+folder owner's ownership and creator attribution. A dismissed in-flight native
+drawer retains its completion, with **Open copy** on reopening and no second
+submission. Pending edits or connectivity changes prevent automatic navigation.
+The action is independent of edit permission. [Decision and persona effects](../implementation/SPN-065.md#embedded-copy-experience).
+
+## SPN-047 composed redesign proposal
+
+Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.
+See the [review, sources and screenshot inventory](redesign.md).
+Stories: `Redesign/Screens` — Doc, Sheet, ViewOnly, OfflineEditor, FormulaInContext, History.
+
+| Current friction                                                                                                                | Public reference pattern                                                                                          | Adopted proposal                                                                                       |
+| ------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| The Dashboard title and search remain above the document; file actions, versions and export consume most of the first viewport. | Google and Excel group file identity/actions above content; Numbers discloses contextual details in an inspector. | A compact document header plus the existing Univer toolbar. Document content begins immediately below. |
+
+Static screen mockups show chrome placement; the connected walkthrough runs real
+Univer Doc and Sheet editors with local fixture data. Production keeps Univer's
+toolbar and literal document colors, including white paper where authored.
+More groups authorized Share, Versions and Export; Doc formula insertion opens its
+task UI. Fill controls stay in Univer. Named versions, Before restore checkpoints,
+UTC dates and restore confirmation retain docs/history.md semantics. No dashboard
+search or file-navigation column persists in standalone editor views.
+
+The approved proposal above governs placement during implementation. Existing behavioral and
+permission rules below still apply; production migrations remain separate tickets.
+
+SPN-049 implements this default layout and theatre mode. It applies to Sheets and
+Docs.
+
+Its [implementation contract](../implementation/SPN-049.md) keeps the same mounted
+editor and status controllers while changing only its viewport. The compact
+People dialog replaces hidden name tooltips. Space Pages remains the sole
+internal tree and hides only during theatre. The native Doc zoom control changes
+the snapshot's zoom setting; the separate public `fitToWidth`/`DocViewScaleService`
+route computes view scale independently. SPN-049 retained native zoom/pan;
+[SPN-072's public mobile integration](../implementation/SPN-072.md) now supplies
+readable modern Doc reflow and the traditional-page fallback described below.
+Native browser and visual acceptance are recorded separately from these source
+choices.
+
+SPN-085 applies the approved History and HistoryCalendar hierarchy to the isolated
+native history browser: desktop chooser beside preview, phone chooser disclosure,
+always-visible selected UTC checkpoint, and semantic naming/restore dialogs.
+The [implementation record](../implementation/SPN-085.md) preserves the contract
+and decisions; exact-commit CI and visual review are recorded in
+[PR #179](https://github.com/mxbaylee/spinel/pull/179). Capture, retention and restore
+generation semantics remain in [history.md](../history.md).
+
+People shows readable shared positions: Sheet cell addresses and a shared-text
+cursor label for Docs. Internal worksheet IDs and cursor protocol tokens are not
+display copy. Unknown position formats retain a neutral shared-cursor label;
+jump availability still follows the validated native destination.
+
+## How others do it
+
+|             | Google Sheets                                                         | Excel for the web                    | Numbers for iCloud                     | Zoho Sheet                    |
+| ----------- | --------------------------------------------------------------------- | ------------------------------------ | -------------------------------------- | ----------------------------- |
+| Title       | Inline-editable title, top left                                       | Title in the header, click to rename | Title centred in the toolbar           | Inline title, top left        |
+| Save status | Small cloud icon beside the title; detail on hover/click              | "Saved" beside the title             | Implicit; no persistent indicator      | "Saved" text beside the title |
+| Share       | Share button top right, avatars to its left                           | Share top right, avatars beside it   | Collaborate button in the toolbar      | Share top right               |
+| Tools       | Menu bar plus one toolbar row                                         | Ribbon with tabs                     | Sparse toolbar plus a Format inspector | Menu bar plus toolbar         |
+| Focus       | View → Full screen hides menus and toolbar (Ctrl+Shift+F hides menus) | "Focus" / hide ribbon                | Inspector can be hidden                | Hide toolbar                  |
+| View-only   | "View only" chip near Share, with request access                      | "View only" in the header            | Read-only banner                       | "Read only" label             |
+
+The shared pattern: one header row with an inline title and a small, fixed-size
+status beside it; access and presence top right; tools in a single row below;
+detail (version history, export) behind menus.
+
+## Spinel today
+
+The compact editor header places document identity, the shared save and
+connection controls, People and permitted document actions above the native
+canvas. People, versions, export and formula details open bounded dialogs;
+save messages and Retry stay in the shared status popover. Account, guest,
+Space and offline views share the frame while retaining their existing access
+rules. Theatre mode hides surrounding navigation without remounting the editor.
+Univer's own toolbar stays inside its container. Connection behavior is
+maintained in [connection.md](../connection.md).
+
+Remote document labels remain above the native canvas/theatre frame and below
+application backdrops, dialogs and menus. Spinel supplies their layer through the
+public Sheet popup API; opening People or document actions must never leave a
+collaborator badge painted over those controls. Labels remain present when the
+overlay closes. Native peer captures verify this separately from geometry stories.
+
+While an editor is open, background shared-file refresh failures keep their
+alert and Retry action after the editor. They must not insert a new row above
+the active document when the polling request fails (SPN-042). The dashboard's
+file-list view keeps that message in its existing context above the list.
+
+## Adopted layout
+
+```
+┌ header (fixed height) ───────────────────────────────────────────────────┐
+│ ← Budgets / Q3 forecast ✎   ✓ Saved  ● Online      (SR)(AK) [Can edit] ⋯ │
+├ Univer toolbar (Univer's own) ───────────────────────────────────────────┤
+│                                                                          │
+│ canvas                                                                   │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+
+- **Left:** Back to files restores the folder/retrieval context, followed by the document name. The name
+  is the rename control for owners and File admins (a button that turns into a field; Enter
+  saves, Escape cancels). For everyone else it is plain text.
+- **Status:** the save slot (SPN-043) stays by the title; the connection icon
+  (SPN-042) stays by the gem/navigation, each following
+  [status changes never move the layout](README.md#status-changes-never-move-the-layout).
+  SPN-053 adds local-save states to the save slot, keeping connection and durable
+  save meanings distinct.
+- **Right:** a compact people/count control opens a dialog listing collaborators
+  and their available shared cursor positions, followed by the access badge and
+  More menu. It remains available on phones. Guest-linked rooms use generic
+  identities. Share retains existing owner/File admin permission and lives in the More menu.
+- **More menu:** Share (owners and File admins), Versions (SPN-024, SPN-026), Export
+  (Download Univer file and Export as PDF; SPN-031/SPN-075, with optional
+  conversion plugins in post-launch SPN-094), and Insert formula for editable Docs. Version naming lives inside
+  Versions, with a Back button immediately left of its title. Naming the current
+  version waits until current edits are saved; older saved checkpoints can still
+  be named, renamed or have their names removed while current edits are unsaved.
+  All name changes require a connection and edit access. Restore also waits for
+  current edits to save. Applicable Move…/Trash actions retain their existing
+  server permission checks. `VersionNames` and `FileExports` open inside dialogs.
+  The adjacent theatre toggle remains reachable in both modes.
+- **Tools** are Univer's toolbar, untouched. Spinel never adds a second toolbar
+  row. Remove the extra Fill presets entry; Univer owns its fill controls.
+  Any later preset integration must use a supported public API.
+- **Formulas** (SPN-033) render inline values or tables inside the canvas;
+  insertion and editing follow [formulas.md](formulas.md).
+- **Inline errors** that belong to the canvas, such as the Doc image-upload
+  failure ("… Try inserting the file again."), show as an
+  [inline error](states.md#inline-errors) in a fixed slot between the toolbar
+  and the canvas that reserves one line, so the page doesn't move when it
+  appears. The same slot holds the Doc help line ("Click the page to write. Type
+  / for commands."), which the error replaces while shown.
+
+**Export as PDF** (SPN-075) downloads a PDF directly for anyone with current
+read access, including account viewers and guests. There is no separate Print
+action or browser print dialog. Guests use the control
+in [their header](guest.md#adopted-pattern). Owner, chat 2026-10-20, decision
+[#103](../implementation/SPN-075.md#legacy-decision-103-direct-pdf-for-every-current-reader).
+
+### Always visible / behind a menu
+
+| Always visible                               | Behind a menu                                                      |
+| -------------------------------------------- | ------------------------------------------------------------------ |
+| Back to files, document name, theatre toggle | More → versions, export, authorized move/trash actions             |
+| Save slot, connection slot                   | Status popover → message detail, Retry saving                      |
+| People/count control                         | People dialog → names and available shared cursor positions        |
+| Compact access badge                         | More → Share dialog, owners/File admins ([sharing.md](sharing.md)) |
+| Univer's toolbar                             | Versions → Name this version                                       |
+| Help line or inline error slot (Docs)        |                                                                    |
+
+## Theatre mode (SPN-049)
+
+The editor fills the browser window, like YouTube's theatre mode, without the
+browser Fullscreen API. The rail and the header hide; Univer's toolbar stays. A
+slim strip at the top keeps the save and connection slots, in compact icon-only
+form with their labels as accessible names, and an **Exit theatre mode** button.
+**Esc** or that same button exits; Esc only exits when focus isn't in a Univer
+cell editor or dialog, where Esc already means cancel. The selection is kept
+across entering and exiting. The choice is remembered per device. Any keyboard
+shortcut is checked against Univer's before it ships.
+
+## Phone
+
+Under 900 px with a coarse pointer, Sheets use Univer's mobile controls
+(docs/mobile.md). On phones, the title has a full first row and status/More use
+the second row. The compact people/count control stays available and opens the
+same collaborator dialog; authorized Share remains in More.
+
+Docs select the corresponding public mobile UI once when opened with a coarse
+pointer at up to 900 px. Modern Doc text reflows locally; its native Edit control
+enters edit mode, and touching the text opens the keyboard and compact formatting
+controls. Read-only viewers omit edit controls. Traditional page-layout Docs
+retain their layout with the existing
+help-slot instruction, “Edit on a larger screen. This Doc keeps its page layout.”
+No second application toolbar or CSS-scaled canvas is added. Formula dialogs and
+full table readouts retain [the existing pattern](formulas.md). See
+[SPN-072](../implementation/SPN-072.md) for the public API choice and verification
+boundary.
+
+## Stories
+
+Production stories include `Editor/Frame` (including theatre, phone, guest,
+offline formula results and disclosed dialogs), `Editor/Collaborators`,
+`Editor/VersionNames` and `Editor/FileExports`. The redesign's native editor stories
+and connected walkthrough boot Univer against local fixtures; the existing
+Playwright suite checks application editor flows. Use the
+[design review runbook](review-runbook.md) for changed layouts and interactions.
+
+## Persona walkthrough refinements
+
+Ordinary editors have a compact horizontal utility header, not a permanent
+file-navigation column. The phone document header has a full title row and a
+second row for status/actions. Editable collaborators show Can edit without an
+additional routine access explanation; owners and File admins see Share in More. Editable
+collaborators retain version naming and restore. Back to files preserves
+retrieval context. History highlights the selected checkpoint and names its
+date/time in preview and restore confirmation; Return to document stays visible.
+
+At phone/tablet widths History keeps the selected-version summary above the
+preview; its chooser expands on request. Older days show an aligned weekday
+calendar and checkpoints for the selected date, including named/before-restore
+entries, rather than reusing today's list.
+
+Space editors keep the compact utility header across the full width, with their
+internal page/folder tree below. Its collapse/reopen chevrons are separate from
+the icon-only My files destination, which exits the Space. Space page headers
+do not add another Back button; use the Pages tree for internal navigation
+(owner, chat 2026-10-21). Link guests retain scoped Pages navigation
+without account destinations. Routine editable-access/footer text is omitted;
+view-only and actionable error/recovery feedback remain. Owner, chat 2026-10-20.
+
+## Save control implementation (SPN-043)
+
+`web/SaveStatus.tsx` presents the existing editor-owned save state in a fixed
+144 × 44 px title slot. Shells pass the slot element to the editor, which portals
+only the control; save controllers, pending guards and the full polite live
+announcement retain their editor lifetime. No connectivity state is treated as
+a save confirmation. See [decision #148](../implementation/SPN-043.md#legacy-decision-148-stable-title-adjacent-save-confirmation),
+2026-10-22, and the [implementation contract](../implementation/SPN-043.md).
+
+Saved stays visible. Loading, Editing, Saving, Not saved, View only and Check
+status use the same footprint. SPN-053 adds **Saving locally**, **Saved locally**,
+**Synced** and **Needs attention** in that existing slot. Keep these compact labels
+on one line without clipping, ellipsis or reducing the text/touch size. Full
+on-device durability explanations remain in the popover and live announcement;
+they never change editor bounds. The owner requested this single-line treatment
+on 2026-10-26; see [the decision](../implementation/SPN-053.md#single-line-save-labels).
+A click,
+tap or keyboard activation opens full detail. Failed dirty saves retain Retry
+in that popover; clean access/load failures do not acquire a spurious Retry.
+Escape, Close or an outside click dismisses it. Base UI restores keyboard focus
+to the trigger. The full message is announced with `role="status"`,
+`aria-live="polite"` and `aria-atomic="true"`. Phone titles occupy their own row.
+
+Native browser tests compare exact document-relative editor bounds before an
+edit, while unconfirmed, after a rejected write, with Retry open and after
+recovery; viewport-relative SPN-042 connection checks remain intact. Production
+component stories cover long errors, all states, keyboard/touch and Retry.
+The old inline row is removed; a minimum height alone cannot bound wrapped
+errors or inline Retry. Persistent confirmation, retry behavior and accessible
+announcements predate this ticket and remain unchanged.

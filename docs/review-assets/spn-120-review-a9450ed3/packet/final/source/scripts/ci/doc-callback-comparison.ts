@@ -1,0 +1,525 @@
+import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
+import { createReadStream } from 'node:fs';
+import { glob, mkdir, readFile, realpath, stat, writeFile } from 'node:fs/promises';
+import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { isDeepStrictEqual } from 'node:util';
+import { analyzeDocCallbackLifetimes } from './doc-callback-lifetimes.ts';
+import type { DocCallbackCallsite } from './doc-callback-lifetimes.ts';
+import {
+  DOC_CALLBACK_TRACE_SETTINGS,
+  DOC_CALLBACK_TRACE_STORAGE,
+  readDocCallbackTrace,
+} from '../../e2e/doc-responsiveness-callback-trace.ts';
+import type { DocCallbackTraceSummary } from '../../e2e/doc-responsiveness-callback-trace.ts';
+import { readDocCallbackProto } from '../../e2e/doc-responsiveness-callback-proto.ts';
+import {
+  DOC_CALLBACK_CLEAN_STATS,
+  DOC_CALLBACK_STATS_SQL,
+} from '../../e2e/doc-responsiveness-callback-converter.ts';
+import { docTraceProcessorAuthority } from './doc-trace-processor.ts';
+
+type Preset = 'desktop' | 'mobile';
+type Analysis = ReturnType<typeof analyzeDocCallbackLifetimes>;
+export const DOC_CALLBACK_BASELINE = 'b75e3797a11ac2f53e3833b5615f68b6c0091727';
+const sha256 = (value: string) => createHash('sha256').update(value).digest('hex');
+const validHash = (value: unknown): value is string =>
+  typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
+const expectedText =
+  Array.from(
+    { length: 16 },
+    (_, index) =>
+      `Line ${index + 1}: Read the whole paragraph, including the far right edge. ` +
+      'Keep the original page size and all of this text when navigating.',
+  ).join('\r') + '\r\n';
+const harnessPaths = [
+  'e2e/doc-responsiveness-callbacks.spec.ts',
+  'e2e/doc-responsiveness-callback-sources.ts',
+  'e2e/doc-responsiveness-callback-trace.ts',
+  'e2e/doc-responsiveness-callback-proto.ts',
+  'e2e/doc-responsiveness-callback-converter.ts',
+  'scripts/ci/doc-trace-processor.ts',
+  'e2e/doc-responsiveness-callback-progress.ts',
+  'e2e/doc-responsiveness-fixture.ts',
+  'e2e/doc-responsiveness.ts',
+  'scripts/ci/doc-callback-lifetimes.ts',
+  'web/docResponsivenessEvidence.ts',
+  'src/ui/docIdleEpisode.ts',
+  'src/ui/nativeDocFlush.ts',
+  'src/ui/nativeDocFlushDiagnostic.ts',
+  'playwright.config.ts',
+  'package-lock.json',
+];
+
+export interface DocCallbackArtifactFile {
+  file: string;
+  sha256: string;
+  bytes: number;
+  kind?: string;
+}
+
+export interface DocCallbackManifest {
+  schema: number;
+  role: 'baselineObservation' | 'candidate';
+  preset: Preset;
+  attempt: number;
+  source: string;
+  dirtyPaths: string;
+  complete: boolean;
+  passed: boolean;
+  behaviorPassed: boolean;
+  browser: string;
+  runtime: string;
+  playwright: string;
+  runner: { run: string | null; attempt: string | null; name: string };
+  harnessSha256: Record<string, string>;
+  fixture: Record<string, unknown>;
+  instrumentation: Record<string, unknown>;
+  observedKeydowns: number;
+  textSha256: string;
+  frameId: string;
+  trace: DocCallbackArtifactFile & {
+    completion: { dataLossOccurred: boolean; traceFormat?: string; streamCompression?: string };
+    storage: typeof DOC_CALLBACK_TRACE_STORAGE;
+    transport: { bytes: number; sha256: string };
+  };
+  traceRead?: DocCallbackTraceSummary;
+  convertedTrace: DocCallbackArtifactFile & {
+    storage: typeof DOC_CALLBACK_TRACE_STORAGE;
+    decoded: { bytes: number; sha256: string };
+  };
+  conversionReceipt: DocCallbackArtifactFile;
+  attribution: {
+    callsites: DocCallbackCallsite[];
+    unmapped: unknown[];
+    artifacts: DocCallbackArtifactFile[];
+  };
+  analysis: Analysis;
+  errors: unknown[];
+  cleanup: { sessionDetached: boolean; fixtureClosed: boolean };
+  input: { keydownAt: number[]; keyToFrameMs: number[] };
+  nativeAfterTyping: {
+    text: string;
+    selection: { start: number; end: number };
+    pending: { history: number; collaboration: number };
+  };
+}
+
+export interface LoadedDocCallbackEvidence {
+  manifest: DocCallbackManifest;
+  analysis: Analysis | null;
+  failures: string[];
+}
+
+/** Keep retained paths relative to this exact case directory, including symlinks. */
+export async function verifyDocCallbackFile(directory: string, artifact: DocCallbackArtifactFile) {
+  if (
+    !artifact ||
+    typeof artifact.file !== 'string' ||
+    isAbsolute(artifact.file) ||
+    !artifact.file ||
+    !validHash(artifact.sha256) ||
+    !Number.isSafeInteger(artifact.bytes) ||
+    artifact.bytes < 0
+  )
+    throw new Error('Invalid retained artifact path, hash, or byte length.');
+  const root = await realpath(directory);
+  const path = await realpath(resolve(root, artifact.file));
+  const inside = relative(root, path);
+  if (!inside || inside.startsWith(`..${sep}`) || inside === '..' || isAbsolute(inside))
+    throw new Error(`Retained artifact escapes its case directory: ${artifact.file}`);
+  const metadata = await stat(path);
+  if (!metadata.isFile() || metadata.size !== artifact.bytes)
+    throw new Error(`Retained artifact byte length differs: ${artifact.file}`);
+  const hash = createHash('sha256');
+  for await (const chunk of createReadStream(path)) hash.update(chunk);
+  if (hash.digest('hex') !== artifact.sha256)
+    throw new Error(`Retained artifact checksum differs: ${artifact.file}`);
+  return path;
+}
+
+export async function loadDocCallbackEvidence(
+  directory: string,
+): Promise<LoadedDocCallbackEvidence> {
+  const manifests: string[] = [];
+  for await (const path of glob('**/spn113-evidence.json', { cwd: directory }))
+    manifests.push(path);
+  if (manifests.length !== 1)
+    throw new Error(
+      `Expected exactly one first-attempt callback manifest in ${directory}; found ${manifests.length}.`,
+    );
+  const path = resolve(directory, manifests[0]!);
+  const manifest = JSON.parse(await readFile(path, 'utf8')) as DocCallbackManifest;
+  const failures: string[] = [];
+  let analysis: Analysis | null = null;
+  try {
+    const progress = JSON.parse(
+      await readFile(resolve(dirname(path), 'spn134-progress.json'), 'utf8'),
+    );
+    if (
+      progress.schema !== 1 ||
+      progress.terminal !== 'passed' ||
+      progress.firstFailure !== null ||
+      progress.persistenceFailure !== null ||
+      !Array.isArray(progress.events) ||
+      !progress.events.some(
+        (event: { phase?: string }) => event.phase === 'fixture-cleanup-complete',
+      )
+    )
+      failures.push('Terminal callback progress does not confirm successful owned cleanup.');
+    const files = [
+      manifest.trace,
+      manifest.convertedTrace,
+      manifest.conversionReceipt,
+      ...(manifest.attribution?.artifacts ?? []),
+    ];
+    if (!manifest.attribution?.artifacts?.length)
+      throw new Error('Retained source attribution artifacts are missing.');
+    const kinds = new Set(manifest.attribution.artifacts.map((artifact) => artifact.kind));
+    for (const kind of ['runtime', 'source-map', 'docs-ui-source'])
+      if (!kinds.has(kind))
+        throw new Error(`Retained source attribution is missing ${kind} evidence.`);
+    const names = new Set<string>();
+    for (const file of files) {
+      if (!file || typeof file.file !== 'string')
+        throw new Error('Retained artifact metadata is missing.');
+      if (names.has(file.file)) throw new Error(`Duplicate retained artifact path: ${file.file}`);
+      names.add(file.file);
+      await verifyDocCallbackFile(dirname(path), file);
+    }
+    if (!isDeepStrictEqual(manifest.trace.storage, DOC_CALLBACK_TRACE_STORAGE))
+      throw new Error(
+        'Retained trace storage provenance differs from the registered lossless method.',
+      );
+    if (manifest.trace.completion.streamCompression !== 'none')
+      throw new Error('Retained trace transport is not uncompressed.');
+    const framing = await readDocCallbackProto(
+      resolve(dirname(path), manifest.trace.file),
+      manifest.trace.transport,
+    );
+    const conversion = JSON.parse(
+      await readFile(resolve(dirname(path), manifest.conversionReceipt.file), 'utf8'),
+    );
+    const [platform, arch] = String(conversion.authority?.platform).split('-');
+    if (
+      !isDeepStrictEqual(conversion.authority, docTraceProcessorAuthority(platform, arch)) ||
+      !isDeepStrictEqual(conversion.authority, manifest.instrumentation?.converterAuthority) ||
+      conversion.passed !== true ||
+      conversion.temporaryRemoved !== true ||
+      Object.hasOwn(conversion, 'failure') ||
+      Object.hasOwn(conversion, 'cleanupFailure') ||
+      Object.hasOwn(conversion, 'inputCloseFailure') ||
+      !isDeepStrictEqual(conversion.input, manifest.trace.transport) ||
+      !isDeepStrictEqual(conversion.framing, framing) ||
+      !isDeepStrictEqual(conversion.output, manifest.convertedTrace)
+    )
+      throw new Error(
+        'Converter authority, input/output binding, framing or cleanup is incomplete.',
+      );
+    const workingInput = conversion.conversion?.args?.[2];
+    if (typeof workingInput !== 'string' || !workingInput.endsWith('/input.pftrace'))
+      throw new Error('Converter working input identity is missing.');
+    for (const [command, args] of [
+      [conversion.conversion, ['convert', 'json', workingInput]],
+      [conversion.statistics, ['query', '--format', 'csv', workingInput, DOC_CALLBACK_STATS_SQL]],
+    ] as const) {
+      if (
+        !command ||
+        command.code !== 0 ||
+        command.signal !== null ||
+        command.childClosed !== true ||
+        command.outputRemoved !== false ||
+        command.outputCloseFailure !== null ||
+        command.diagnosticsTruncated !== false ||
+        typeof command.stderr !== 'string' ||
+        Buffer.byteLength(command.stderr) > 256 * 1024 ||
+        !Number.isFinite(command.elapsedMs) ||
+        command.elapsedMs < 0 ||
+        !isDeepStrictEqual(command.args, args)
+      )
+        throw new Error('Converter command did not complete with bound arguments and diagnostics.');
+    }
+    if (
+      conversion.statistics.stdout !== DOC_CALLBACK_CLEAN_STATS ||
+      conversion.conversion.stdout !== ''
+    )
+      throw new Error('Retained converter statistics are incomplete or report errors/data loss.');
+    if (!isDeepStrictEqual(manifest.convertedTrace.storage, DOC_CALLBACK_TRACE_STORAGE))
+      throw new Error('Derived trace storage differs from the registered lossless method.');
+    const raw = await readDocCallbackTrace(resolve(dirname(path), manifest.convertedTrace.file), {
+      compression: manifest.convertedTrace.storage.compression,
+    });
+    if (
+      raw.summary.uncompressedBytes !== manifest.convertedTrace.decoded?.bytes ||
+      raw.summary.uncompressedSha256 !== manifest.convertedTrace.decoded?.sha256
+    )
+      failures.push('Retained derived bytes differ from the converter output hash/length.');
+    if (manifest.traceRead && !isDeepStrictEqual(raw.summary, manifest.traceRead))
+      failures.push('Stored trace read summary differs from retained raw evidence.');
+    analysis = analyzeDocCallbackLifetimes({
+      traceEvents: raw.traceEvents,
+      completion: manifest.trace.completion,
+      frameId: manifest.frameId,
+      role: manifest.role,
+      callsites: manifest.attribution.callsites,
+    });
+    if (!isDeepStrictEqual(analysis, manifest.analysis))
+      failures.push(
+        'Stored callback analysis differs from recomputation over retained raw evidence.',
+      );
+  } catch (error) {
+    failures.push(error instanceof Error ? error.message : String(error));
+  }
+  return { manifest, analysis, failures };
+}
+
+/** Numeric budgets are descriptive in traced samples; SPN-108 stays independent. */
+export function compareDocCallbackEvidence(
+  preset: Preset,
+  baseline: LoadedDocCallbackEvidence | null,
+  candidate: LoadedDocCallbackEvidence,
+  candidateSource: string,
+) {
+  const failures: string[] = [];
+  const check = (condition: unknown, message: string) => {
+    if (!condition) failures.push(message);
+  };
+  check(preset === 'desktop' || preset === 'mobile', 'Unknown callback preset.');
+  check(/^[a-f0-9]{40}$/.test(candidateSource), 'Expected candidate commit is invalid.');
+  for (const [label, evidence, role, source] of [
+    ...(baseline
+      ? [['baseline', baseline, 'baselineObservation', DOC_CALLBACK_BASELINE] as const]
+      : []),
+    ['candidate', candidate, 'candidate', candidateSource],
+  ] as const) {
+    failures.push(...evidence.failures.map((failure) => `${label}: ${failure}`));
+    const value = evidence.manifest;
+    check(
+      value.schema === 2 && value.role === role && value.preset === preset && value.attempt === 0,
+      `${label}: wrong schema, role, preset, or first-attempt identity.`,
+    );
+    check(
+      value.source === source,
+      `${label}: source does not match the required immutable commit.`,
+    );
+    check(
+      value.complete === true && value.passed === true && value.behaviorPassed === true,
+      `${label}: callback collection or native behavior did not complete successfully.`,
+    );
+    check(
+      value.cleanup?.sessionDetached === true && value.cleanup.fixtureClosed === true,
+      `${label}: owned session/fixture cleanup is unconfirmed.`,
+    );
+    check(
+      Array.isArray(value.errors) && value.errors.length === 0,
+      `${label}: browser errors remain.`,
+    );
+    check(
+      value.trace?.completion?.dataLossOccurred === false,
+      `${label}: trace completion reports missing/lost data.`,
+    );
+    check(
+      value.trace?.completion?.traceFormat === 'proto' &&
+        value.trace.completion.streamCompression === 'none' &&
+        isDeepStrictEqual(value.trace.storage, DOC_CALLBACK_TRACE_STORAGE) &&
+        Number.isSafeInteger(value.trace.transport?.bytes) &&
+        value.trace.transport.bytes > 0 &&
+        validHash(value.trace.transport?.sha256),
+      `${label}: trace completion/storage/transport provenance is incomplete or changed.`,
+    );
+    check(
+      validHash(value.conversionReceipt?.sha256) &&
+        value.conversionReceipt.bytes > 0 &&
+        validHash(value.convertedTrace?.sha256) &&
+        value.convertedTrace.bytes > 0 &&
+        validHash(value.convertedTrace?.decoded?.sha256) &&
+        value.convertedTrace.decoded.bytes > 0 &&
+        isDeepStrictEqual(value.convertedTrace.storage, DOC_CALLBACK_TRACE_STORAGE),
+      `${label}: derived trace or converter receipt is missing.`,
+    );
+    // The mapper also records arbitrary FunctionCall positions. Only unknown
+    // measured timer ownership blocks completeness in the recomputed analyzer;
+    // unrelated unmapped calls remain disclosed rather than silently discarded.
+    check(
+      Array.isArray(value.attribution?.unmapped),
+      `${label}: unmapped source observations were not retained.`,
+    );
+    check(
+      evidence.analysis?.complete === true && evidence.analysis.accepted === true,
+      `${label}: recomputed callback evidence is incomplete or rejected.`,
+    );
+    if (role === 'candidate')
+      check(
+        evidence.analysis?.bounded === true,
+        'candidate: callback lifetime bounds or cleanup failed.',
+      );
+    for (const key of ['browser', 'runtime', 'playwright'] as const)
+      check(
+        typeof value[key] === 'string' && value[key].length > 0,
+        `${label}: missing ${key} identity.`,
+      );
+    for (const path of harnessPaths)
+      check(validHash(value.harnessSha256?.[path]), `${label}: missing harness hash for ${path}.`);
+    check(
+      value.fixture?.paragraphs === 16 &&
+        value.fixture.typedCharacters === 2071 &&
+        value.fixture.enterKeys === 15 &&
+        value.fixture.nativeKeydowns === 2086 &&
+        value.fixture.nativeTextLength === 2088 &&
+        value.fixture.sha256 === sha256(expectedText),
+      `${label}: the original complete typing fixture changed.`,
+    );
+    check(
+      value.observedKeydowns === 2086 &&
+        value.input?.keydownAt?.length === 2086 &&
+        value.input.keyToFrameMs?.length === 2086,
+      `${label}: observed native key/frame counts are incomplete.`,
+    );
+    check(
+      value.input?.keydownAt?.every(
+        (at, index, all) =>
+          Number.isFinite(at) && at >= 0 && (index === 0 || at >= all[index - 1]!),
+      ) &&
+        value.input?.keyToFrameMs?.every((duration) => Number.isFinite(duration) && duration >= 0),
+      `${label}: native input observations have invalid clocks/durations.`,
+    );
+    check(
+      value.textSha256 === sha256(expectedText) &&
+        value.nativeAfterTyping?.text === expectedText &&
+        value.nativeAfterTyping.selection?.start === 2086 &&
+        value.nativeAfterTyping.selection?.end === 2086 &&
+        value.nativeAfterTyping.pending?.history === 0 &&
+        value.nativeAfterTyping.pending?.collaboration === 0,
+      `${label}: exact native content, selection, or drained state is missing.`,
+    );
+    check(
+      value.instrumentation?.cpuThrottle === (preset === 'mobile' ? 4 : 1) &&
+        value.instrumentation.mountedEditors === 1 &&
+        value.instrumentation.deviceScaleFactor === 1 &&
+        value.instrumentation.touch === (preset === 'mobile') &&
+        isDeepStrictEqual(
+          value.instrumentation.viewport,
+          preset === 'mobile' ? { width: 390, height: 844 } : { width: 1440, height: 1000 },
+        ) &&
+        value.instrumentation.playwrightTrace === false &&
+        value.instrumentation.latencyBudgetsEnforced === false,
+      `${label}: the registered traced browser preset changed.`,
+    );
+    check(
+      isDeepStrictEqual(value.instrumentation?.storage, DOC_CALLBACK_TRACE_STORAGE),
+      `${label}: registered local trace storage changed.`,
+    );
+    check(
+      validHash(
+        (value.instrumentation?.converterAuthority as { sha256?: unknown } | undefined)?.sha256,
+      ),
+      `${label}: converter authority is missing from the paired instrumentation.`,
+    );
+    for (const [key, expected] of Object.entries(DOC_CALLBACK_TRACE_SETTINGS))
+      check(
+        isDeepStrictEqual(value.instrumentation?.[key], expected),
+        `${label}: the registered trace collection ${key} changed.`,
+      );
+    check(
+      isDeepStrictEqual(
+        value.instrumentation?.categories,
+        DOC_CALLBACK_TRACE_SETTINGS.traceConfig.includedCategories,
+      ),
+      `${label}: the registered trace categories changed.`,
+    );
+    if (role === 'candidate')
+      check(
+        value.dirtyPaths === '',
+        'candidate: uncommitted source cannot establish final-commit acceptance.',
+      );
+    else {
+      const dirty =
+        typeof value.dirtyPaths === 'string'
+          ? value.dirtyPaths.split('\n').filter(Boolean)
+          : ['invalid'];
+      // The fixture trims git's output, removing the leading status space from
+      // its first modified-file line. Accept that serialization, not arbitrary paths.
+      check(
+        dirty.every((line) => {
+          const match = /^([ M?]{1,2}) (.+)$/.exec(line);
+          return (
+            match && ['M', '??'].includes(match[1]!.trim()) && harnessPaths.includes(match[2]!)
+          );
+        }),
+        'baseline: changes extend beyond the explicitly matched measurement harness.',
+      );
+    }
+  }
+  if (baseline)
+    for (const key of [
+      'browser',
+      'runtime',
+      'playwright',
+      'runner',
+      'harnessSha256',
+      'fixture',
+      'instrumentation',
+    ] as const)
+      check(
+        isDeepStrictEqual(baseline.manifest[key], candidate.manifest[key]),
+        `Paired ${key} differs.`,
+      );
+  return {
+    schema: 1,
+    mode: baseline === null ? 'candidate-only' : 'paired',
+    preset,
+    accepted: failures.length === 0,
+    failures,
+    baseline: baseline
+      ? {
+          source: baseline.manifest.source,
+          traceSha256: baseline.manifest.trace?.sha256,
+          bounded: baseline.analysis?.bounded,
+          unmappedSourcePositions: baseline.manifest.attribution?.unmapped?.length ?? null,
+          families: baseline.analysis?.families,
+        }
+      : null,
+    candidate: {
+      source: candidate.manifest.source,
+      traceSha256: candidate.manifest.trace?.sha256,
+      bounded: candidate.analysis?.bounded,
+      unmappedSourcePositions: candidate.manifest.attribution?.unmapped?.length ?? null,
+      families: candidate.analysis?.families,
+    },
+    timing:
+      'Traced callback observations are descriptive; unchanged unprofiled SPN-108 gates remain required.',
+  };
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const [preset, baselineDirectory, candidateDirectory, output] = process.argv.slice(2);
+  if (
+    (preset !== 'desktop' && preset !== 'mobile') ||
+    !baselineDirectory ||
+    !candidateDirectory ||
+    !output
+  )
+    throw new Error(
+      'Usage: node scripts/ci/doc-callback-comparison.ts <desktop|mobile> <baseline-root|-> <candidate-root> <output.json>',
+    );
+  let report:
+    ReturnType<typeof compareDocCallbackEvidence> | { accepted: false; failures: string[] };
+  try {
+    // Large raw traces are loaded/analyzed sequentially, not both in parallel.
+    const baseline =
+      baselineDirectory === '-' ? null : await loadDocCallbackEvidence(baselineDirectory);
+    const candidate = await loadDocCallbackEvidence(candidateDirectory);
+    const source = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+    report = compareDocCallbackEvidence(preset, baseline, candidate, source);
+  } catch (error) {
+    report = {
+      accepted: false,
+      failures: [error instanceof Error ? error.message : String(error)],
+    };
+  }
+  await mkdir(dirname(resolve(output)), { recursive: true });
+  await writeFile(output, JSON.stringify(report, null, 2) + '\n');
+  console.log(JSON.stringify({ accepted: report.accepted, failures: report.failures }, null, 2));
+  if (!report.accepted) process.exitCode = 1;
+}

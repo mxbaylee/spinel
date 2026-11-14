@@ -1,0 +1,409 @@
+# backlog-workflow decision record
+
+**Current policy:** [2026-10-26 standing agent decisions and visual review](grooming-2026-10-26.md#agent-decisions-and-visual-review)
+supersedes historical human sign-off and run-specific delegation requirements.
+[2026-11-02 review before push](grooming-2026-11-02.md#review-before-push) requires
+qualifying local independent grades before validation publication. The owner's
+[2026-11-03 clarification](grooming-2026-11-02.md#deliberate-ci-use-and-checkpoint-pushes)
+also permits draft checkpoint pushes with intentional CI cancellation. Hosted
+acceptance, file-based coverage selection and memory safeguards remain.
+[Impact-first, larger-effort-first scoring](grooming-2026-10-26.md#impact-first-larger-effort-first)
+supersedes the earlier effort/impact points. Historical sources below remain provenance.
+
+## Two independent grades on the same commit
+
+**Date/status:** 2026-10-26, accepted. **Authority:** Owner, SPN-057 review chat:
+require two subagents to agree on the same commit, each scoring above 95, for every
+merge after a fresh review found a blocker missed by the earlier passing review.
+
+**Question/context:** Is one passing independent review sufficient after the
+SPN-057 re-review exposed compact edits that could expand into excessive memory
+use? The repair also needed a compatibility check for a large existing cell.
+
+**Options:** retain one reviewer; require a second review only after a failure;
+or require two independent grades for every Spinel PR merge. The owner chose the
+last to reduce the chance of another missed issue.
+
+**Outcome/reason:** Two independent subagents that did not implement the change
+must each inspect the full candidate, apply the existing rubric and score
+**above [historical assessment withheld] on the same current commit**. Exactly 95 does not pass; neither
+an average nor an older commit's grade satisfies the gate. Both reviews must have
+no unresolved blockers. Reviewers may exchange concrete findings and evidence,
+but neither receives the other's score or a desired result. Both revalidate the
+final SHA after repairs or base updates. Record both identities, scores, rubrics,
+shared SHA and every finding's disposition in the PR before a guarded squash merge.
+
+This supersedes the earlier reviewer-count and numerical threshold in the
+historical decisions below. The rubric weights, scope-first repair rules, CI
+requirements, visual approval, memory watchdog and merge authorization remain.
+This is an agent-enforced review gate; the record does not claim that GitHub can
+enforce numerical subagent grades.
+
+**Personas:** Operator accepts additional review time to catch resource and
+operational faults; Owner gains a second independent check of completeness and
+saved documents; Collaborator gains another check of concurrency and durability;
+Link guest gains another check of access, revocation and untrusted-input boundaries.
+
+## CI as the default validation environment
+
+**Current boundary:** The 2026-11-02 [review-before-push decision](grooming-2026-11-02.md#review-before-push)
+supersedes this record's publication ordering. CI remains available for required,
+heavy and platform-specific verification, with unavailable local checks disclosed;
+it does not remove the review gate for validation pushes. The original decision follows.
+
+**Date/status:** 2026-10-23, accepted. **Authority:** Owner, this backlog chat:
+“Yes—run blocked checks in CI” and “of course you can always use ci or even prefer it.”
+
+**Question/context:** Must local typecheck and lint pass before draft publication
+when the memory watchdog repeatedly aborts them? The earlier CI-first exception
+retained those local prerequisites, blocking reviewed source checkpoints.
+
+**Options:** wait for safe local runs; allow only resource-blocked checks in CI;
+or allow CI as the normal validation environment. The owner chose the last.
+
+**Outcome/reason:** Agents may prefer CI for typecheck, lint, backlog, unit,
+browser and other required checks. Local passes are not prerequisites for draft
+pushes. Keep unverified PRs draft and report deferred/aborted checks honestly.
+All required current-head CI, the [current independent-review gate](#two-independent-grades-on-the-same-commit),
+actual visual approval and guarded squash-merge requirements remain. Local workloads
+still obey the memory watchdog. No paid host or deployment authority is added.
+
+**Personas:** Operator retains reproducible checks and avoids host pressure;
+Owner avoids local disruption without unverified merges; Collaborator retains
+save/access regression checks; Link guest retains anonymity and revocation checks.
+This supersedes only the local-before-push prerequisite in historical decision52.
+
+## Migrated decision history
+
+Migrated by [SPN-096](SPN-096.md) on 2026-10-23. “Recorded” is the source issue opening
+date, not an inferred owner approval date. Accepted choices are not evidence that
+implementation or validation was complete. Historical permissions remain limited
+to their recorded scope; current maintained rules and explicit supersession apply.
+
+## Legacy decision 6: Independent review and coherent scope
+
+**Recorded:** 2026-10-17. **Status:** accepted.
+**Authority:** Recorded backlog process decision.
+**Source:** [original decision #6](https://github.com/mxbaylee/spinel/issues/6).
+
+**Question:** How should review findings be split without weakening the current ticket's acceptance
+criteria?
+
+**Options considered in the original source:**
+
+A — use overlap with acceptance criteria first, then existing size limits to assess safe splits; B —
+defer any finding above an arbitrary patch size, even if needed for acceptance; C — include all
+discoveries regardless of overlap, growing unrelated changes into the PR.
+
+**Outcome, rationale and current boundary:**
+
+Require a nonimplementing reviewer, at least [historical assessment withheld] and no blockers: scope [assessment component withheld], correctness [assessment component withheld],
+verification 20, operations [assessment component withheld] and maintainability [assessment component withheld]. Repair acceptance gaps in the current ticket;
+split genuinely separable work with honest dependencies before line-count considerations. A high
+score never waives a blocker. Decision
+[#105](backlog-workflow.md#legacy-decision-105-deduct-unnecessary-complexity) later makes
+unnecessary complexity an explicit maintainability deduction.
+
+**Persona tradeoffs recorded at the time:**
+
+Operator favours a predictable process with small reviews and explicit blockers; Owner favours
+complete features that preserve documents; Collaborator favours fixes that preserve shared edits and
+permissions; Link guest favours access boundaries that cannot be deferred merely to raise a score.
+All four benefit from an independent review of the actual shipped slice.
+
+## Legacy decision 52: Memory-watchdog CI-first exception
+
+**Recorded:** 2026-10-18. **Status:** accepted, conditional procedure.
+**Authority:** Owner, chat 2026-10-18.
+**Source:** [original decision #52](https://github.com/mxbaylee/spinel/issues/52).
+
+**Question:** When the memory watchdog blocks local tests, may a draft branch be pushed after local
+typecheck, lint and backlog checks, with full unit/browser validation required in GitHub CI before
+merge?
+
+**Options considered in the original source:**
+
+A — authorize only this pre-push ordering exception when the guard blocks safe local execution; keep
+local lightweight checks, draft status while unverified, independent review >=95/no blockers, and
+all six CI checks before merge. B — retain the local full-suite gate and wait for sufficient local
+capacity or an independently authorized test host.
+
+**Outcome, rationale and current boundary:**
+
+When the memory watchdog prevents safe local full testing, run local typecheck, lint and backlog
+checks, push a draft and obtain full unit/browser CI. Keep the PR draft until verified and require
+all six gates plus independent review at least 95 with no blockers before merge. This is a
+conditional resource procedure, not permission to skip failed checks, buy a host, spend money or
+invent local test results.
+
+**Persona tradeoffs recorded at the time:**
+
+Operator needs the Mac to remain responsive and predictable checks; Owner needs preserved documents
+and complete regression verification; Collaborator needs concurrency and permissions tested; Link
+guest needs access boundaries tested regardless of runner location.
+
+## Legacy decision 105: Deduct unnecessary complexity
+
+**Recorded:** 2026-10-20. **Status:** accepted.
+**Authority:** Owner, chat 2026-10-20.
+**Source:** [original decision #105](https://github.com/mxbaylee/spinel/issues/105).
+
+**Question:** Should independent review explicitly assess over-complexity?
+
+**Options considered in the original source:**
+
+A — explicitly assess unnecessary abstraction, dependencies and speculative flexibility within the
+existing maintainability category, with concrete deductions. B — leave the implicit maintainability
+wording unchanged.
+
+**Outcome, rationale and current boundary:**
+
+Make over-complexity an explicit part of the existing ten maintainability points: deduct for
+unnecessary abstractions, dependencies and speculative flexibility with actionable reasons. Keep the
+other rubric weights, at least [historical assessment withheld] and no-blocker threshold. Simplicity does not justify missing
+acceptance, privacy, durability or verification. This clarifies decision
+[#6](backlog-workflow.md#legacy-decision-6-independent-review-and-coherent-scope) rather than
+introducing a competing review gate.
+
+**Persona tradeoffs recorded at the time:**
+
+Operator benefits from fewer dependencies and moving parts. Owner gets complete features with lower
+maintenance cost. Collaborator and Link guest benefit from easier-to-audit permission and data
+boundaries.
+
+## Legacy decision 121: Documentation-only CI applicability
+
+**Recorded:** 2026-10-20. **Status:** accepted.
+**Authority:** Owner, chat 2026-10-20.
+**Source:** [original decision #121](https://github.com/mxbaylee/spinel/issues/121).
+
+**Question:** Can documentation-only changes finish CI without running application suites?
+
+**Options considered in the original source:**
+
+A — a narrow allowlist of `docs/**/*.md`, root README.md/AGENTS.md/THIRD-PARTY-NOTICES.md, and
+exactly docs/todo/backlog.json, with backlog/PR/lint checks retained; B — run all application suites
+for every prose edit; C — skip by broad extensions, which would miss configuration changes.
+
+**Outcome, rationale and current boundary:**
+
+Classify the complete change including both sides of renames. Only docs Markdown, root
+README/AGENTS/THIRD-PARTY-NOTICES and exactly backlog.json qualify; executable mocks, unknown paths
+or uncertain diffs run full validation. Keep Backlog/Pull request/Lint; other required application
+gates explicitly report not applicable for docs-only work. Failed/cancelled classification never
+passes the browser gate. Main/manual Storybook still builds/deploys so docs cannot displace a code
+deploy. This is applicability, not permission to ignore failures or weaken protections.
+
+**Persona tradeoffs recorded at the time:**
+
+Owner and Collaborator benefit from faster grooming and unchanged application coverage for code
+changes. Operator avoids unnecessary builds while retaining validation of operational code and
+configuration. Link guest access tests remain required whenever runtime or unknown files change.
+
+## Legacy decision 129: Fixed lifecycle phases
+
+**Recorded:** 2026-10-21. **Status:** accepted.
+**Authority:** Owner launch sequencing; agent scheduling model, 2026-10-21.
+**Source:** [original decision #129](https://github.com/mxbaylee/spinel/issues/129).
+
+**Question:** How should the backlog enforce the owner's before-launch, launch and after-launch
+sequencing without distorting technical dependencies or impact scores?
+
+**Options considered in the original source:**
+
+A — use pre_launch (default), launch and post_launch, sort phase before existing score/tie-breaks,
+complete the current phase before advancing and reject dependencies on later phases; B — rely on
+prose plus scores, allowing inherited priority to move optional work ahead of launch; C — build
+configurable lifecycle states and scheduling rules, adding flexibility that this backlog does not
+need.
+
+**Outcome, rationale and current boundary:**
+
+Use pre_launch default, launch and post_launch ahead of existing score/tie-break ordering, and
+reject dependencies on later phases. Complete the current phase or record its blocker before
+advancing. SPN-038 is the public-launch milestone; optional CSV/plugins follow it. The original grooming
+placed SPN-063 recovery verification in launch, after concrete deployment/database selection
+and before SPN-038 public exposure. That ticket-specific timing is superseded by the
+[2026-10-27 pre-deployment decision](SPN-063.md#accepted-decision-implement-recovery-before-deployment):
+SPN-063 implementation/local acceptance is pre_launch; SPN-038 retains provider/target-host
+acceptance before public exposure. The three-phase policy remains accepted. Keep impact/scoring, dependency inheritance, split/review and
+size rules unchanged. These are timing constraints, not a technical claim that CSV/plugins require
+HTTPS or permission to provision resources.
+
+**Persona tradeoffs recorded at the time:**
+
+- Operator: fixed phases keep launch prerequisites ahead of provisioning and optional extensions, with a small auditable scheduling rule; an arbitrary workflow framework would add maintenance.
+- Owner: production launch stays a visible milestone and optional CSV/plugins cannot consume the launch queue merely because their scores are higher.
+- Collaborator: core save, access and recovery work remains ahead of optional document formats, while ordinary dependency priority is preserved within each phase.
+- Link guest: launch access and privacy acceptance remain prerequisites; future plugin or conversion work does not imply expanded guest access.
+
+## Legacy decision 139: Run-specific delegated visual approval
+
+**Recorded:** 2026-10-22. **Status:** historical run-specific authority, superseded
+by [standing delegation](grooming-2026-10-26.md#agent-decisions-and-visual-review).
+**Authority:** Owner, chat 2026-10-21.
+**Source:** [original decision #139](https://github.com/mxbaylee/spinel/issues/139).
+
+**Question:** How is UI/UX approval handled during the owner's authorized Pages-first backlog run?
+
+Tickets: SPN-064, SPN-092 and subsequent eligible tickets in this run; SPN-056 is excluded because
+another person is implementing it.
+
+**Options considered in the original source:**
+
+A — require owner review before each UI merge, blocking this authorized unattended run; B — require
+an independent subagent to inspect actual light/dark/phone screenshots and UI/UX for every persona,
+record concrete findings, repair blockers and label merges “agent review only.”
+
+**Outcome, rationale and current boundary:**
+
+For the authorized Pages-first run only, an independent nonimplementing subagent could inspect
+actual light/dark/phone UI and all personas, repair blockers and approve with explicit
+agent-review-only disclosure. Preserve exact-head review, all CI, current main, squash, lifecycle
+and external-action gates; SPN-056 was excluded. This is not fabricated human screenshot sign-off or
+permanent delegation. A later run needs its own direct owner authorization; the current conversation
+supplies its separate renewed scope.
+
+**Persona tradeoffs recorded at the time:**
+
+Operator benefits from independent usability/resource/privacy review and fewer unattended stalls;
+Owner retains actual screenshot evidence and a transparent review record; Collaborator receives
+keyboard/touch/access/error-state review; Link guest receives explicit anonymity, scope, revocation
+and unavailable-state review. Human taste feedback may follow later; that tradeoff is explicitly
+accepted by the owner.
+
+## Soft target for open ticket PRs
+
+**Date:** 2026-10-23. **Status:** accepted. **Authority:** Owner, current backlog-run chat.
+
+**Question:** How much parallel ticket work should remain open while CI or review waits?
+
+The owner clarified a soft limit of two PRs, with no hard limit, and explicitly
+said not to close the existing PRs. Prefer completing existing work before opening
+more. Exceptions can permit useful independent progress; neither CI delays nor
+the target waive review, verification or merge requirements. Unlimited parallel
+starts made progress harder to follow; a hard cap or automatic closure would
+contradict the owner's clarification. The current drafts remain open.
+
+Operator gets fewer simultaneous operational changes to track. Owner gets a
+clearer completion order. Collaborator benefits from fewer partially integrated
+UI/access changes. Link guest retains the same privacy and verification gates;
+sequencing changes no permissions. This is workflow guidance, not authorization
+to close PRs or mark incomplete tickets done.
+
+## Review Dependabot PRs at every backlog grooming
+
+**Date:** 2026-10-23. **Status:** accepted. **Authority:** Owner, current backlog-run chat.
+
+**Question:** When should dependency update PRs be reviewed after SPN-100 enabled
+the bot?
+
+Keep the existing bot PRs open and review open Dependabot PRs at every backlog
+grooming. The owner clarified that this is a standing checklist item, expanding
+the initial request for the next grooming. Check compatibility, security
+implications, current CI evidence and whether updates are sensibly grouped;
+record follow-up dispositions for unresolved updates. The owner chose grooming
+rather than starting dependency upgrades now or closing queued PRs. This
+does not approve automatic merges, schedule grooming or force a grooming event;
+the normal dependency review, verification and merge requirements still apply.
+
+Operator gets an explicit point to assess security and maintenance costs. Owner
+keeps the current completion queue clear while retaining visible update proposals.
+Collaborator gets compatibility and editing checks before upgrades land. Link
+guest retains access/privacy validation for dependency changes; this workflow
+decision changes no guest capability. No package or lockfile is updated by this
+record.
+
+## On-demand Storybook captures
+
+**Date:** 2026-10-25. **Status:** accepted. **Authority:** Owner, current
+Dependabot and backlog-grooming chat, followed by explicit approval.
+
+**Question:** Should every PR generate the full screenshot catalogue, and should
+the desktop review keep both themes in its longest job?
+
+The final SPN-084 [Storybook run](https://github.com/mxbaylee/spinel/actions/runs/40255440330)
+spent 18m15s on desktop, 7m43s on tablet and 9m24s on phone light. Desktop's main
+loop produced 2,142 routine captures and took about 17m08s. These timings include
+rendering and interactions as well as PNG generation; they do not establish how
+much time PNG writes alone consume. The existing library partitions and removal
+of duplicate simulator work are already delivered, and SPN-087 owns the separate
+fixture/CSS cleanup.
+
+**Options:** retain unconditional captures; skip the entire review unless
+requested; or retain rendering/assertions and request routine captures when
+visual review needs them. The owner chose to do the improvement in this grooming
+PR, without a new ticket, and suggested a visual PR tag. The approved design
+uses the third option and splits desktop themes in the existing runner.
+
+**Outcome:** `visual-review` enables routine Storybook PNGs on a PR. A manual run
+can request them with `capture_screenshots=true`, including focused story IDs.
+An explicit capture request overrides documentation-only applicability. Ordinary
+code PRs and main pushes still render every story at every existing variant,
+require successful play functions, check runtime errors and retain native,
+keyboard, touch, focus, overflow and shared-control assertions. They omit routine
+PNG writes and galleries; diagnostic screenshots and bounded failure evidence
+remain. `--no-screenshots` exposes that mode while the existing CLI still captures
+by default. This does not disable application browser tests or pixel assertions.
+
+The build is shared by desktop light/dark, tablet and phone light/dark jobs.
+Desktop light owns the once-only native input proofs and icon/integration suite;
+fixed-light auxiliary journeys retain one owner, and tablet retains 613px mouse
+coverage. The stable aggregate still rejects failed, cancelled or missing
+required partitions. The `storybook-preview` label continues to control Pages
+preview publishing independently. Main Pages publishing follows the build and
+interaction gate without generating a second routine screenshot catalogue.
+
+Add `visual-review` for changes to layout, theme, typography, icons and visible
+interaction states, including visually relevant dependency updates. The label
+requests current evidence; approval now comes from an independent nonimplementing
+subagent inspecting PR-visible images against the theme and all personas under
+[standing delegation](grooming-2026-10-26.md#agent-decisions-and-visual-review). Omitting or removing a label does
+not satisfy a changed screen's review requirement. Captures are review evidence,
+not stored pixel baselines or proof that a product flow works.
+
+**Personas:** Operator gets shorter, inspectable jobs and measured runner cost.
+Owner retains actual affected-screen evidence without redundant catalogues for
+unrelated changes. Collaborator retains keyboard, focus, access and recovery
+checks. Link guest retains scoped navigation, privacy and revocation checks.
+No product permission, dependency, deployment target or approval authority changes.
+
+**Verification:** selection/policy and aggregate regressions cover capture
+requests, documentation-only handling, desktop ownership and rejected incomplete
+results. The grooming PR must verify both labelled and unlabelled CI behavior,
+inspect manifests/artifacts for honest capture counts and record comparable
+timings. Source changes alone do not claim those checks passed.
+
+## Review–repair loop before a validation push
+
+Owner, chat 2026-11-06 (SPN-146). Before a validation or repair push intended to run CI,
+the implementing agent runs a loop: commit the complete candidate, obtain two fresh
+independent reviews of that exact SHA, require every reviewer who withholds points to list
+every actionable step to [historical assessment withheld] (points at stake, exact file and line or command, change,
+and whether it is local, hosted-only or an owner decision, including one-point and
+impossible steps), repair every local step, recommit and review again. Push only when both
+reviews exceed 95; if every remaining deduction is hosted-only or an owner decision, stop and
+ask for a recorded one-time push exception.
+
+**Why.** Fixes that each earned a few points did not converge when reviewers listed only enough
+steps to clear 95, and hosted-only deductions looked like unfinished local work. Weighed across
+the personas: the Operator gets a visible path to a perfect score and an explicit stopping
+rule; the Owner can see which gaps need a decision; Collaborators and Guests are unaffected.
+The procedure is in [run-backlog](../run-backlog.md#-reviewrepair-loop-before-a-validation-push).
+
+## Reviewers do not deduct for CI results
+
+Owner, chat 2026-11-06 (SPN-146). Reviewers give no points less for CI that is pending, queued,
+missing, cancelled, failing or not yet run, on the reviewed SHA or another, and are not asked to
+check it. GitHub's required checks already gate every merge, and the numerical gate and the checks
+are separate. The rubric's 10 CI points grade whether the delivered workflows, job selection,
+diagnostics and runbooks are usable, never whether a run passed. Reviewers do still care about the
+specific tests related to the work: they run those locally, and a missing, weak or failing local
+test costs regression-evidence points. A report still lists the hosted acceptance that is pending
+so nobody mistakes the grade for a check result.
+
+**Why.** On SPN-146 reviewers repeatedly withheld a point or two for CI that had not run, which no
+local edit could clear and which duplicated a merge requirement. Weighed across the personas: the
+Operator keeps one clear gate per concern; the Owner sees grades about the work; Collaborators and
+Guests are unaffected. Procedure: [run-backlog](../run-backlog.md#3-get-two-independent-grades).
+

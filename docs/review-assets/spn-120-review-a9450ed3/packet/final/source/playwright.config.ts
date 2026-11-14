@@ -1,0 +1,327 @@
+import { defineConfig, devices } from '@playwright/test';
+
+const project = process.env.SPINEL_E2E_PROJECT;
+// Only an explicit routine CI plan reduces duplicate phone executions. Local,
+// manual/full compatibility and unknown settings keep every combination.
+const syncExclusions =
+  process.env.SPINEL_CI_FULL_COMPATIBILITY === 'false'
+    ? /@sync-soak|@phone-ordinary/
+    : /@sync-soak/;
+const shard = process.env.SHARD?.replaceAll('/', '-of-');
+if (
+  project &&
+  ![
+    'development',
+    'production',
+    'mobile-https',
+    'sync-development',
+    'sync-production',
+    'sync-soak-sheet',
+    'sync-soak-doc',
+    'offline-upgrade',
+    'supervised-restore',
+    'doc-responsiveness',
+    'doc-callback-lifetimes',
+  ].includes(project)
+)
+  throw new Error('SPINEL_E2E_PROJECT must name a configured browser project.');
+
+export default defineConfig({
+  testDir: './e2e',
+  // Keep each build's failure traces and disposable database when the other runs.
+  outputDir: project ? `test-results/${project}` : 'test-results',
+  fullyParallel: true,
+  // Each test can start two real collaboration editors; isolate their latency
+  // assertions from unrelated browser workloads and bound CI memory use.
+  workers: 1,
+  forbidOnly: Boolean(process.env.CI),
+  retries: process.env.CI ? 2 : 0,
+  failOnFlakyTests: Boolean(process.env.CI),
+  // Keep independent native-client and offline lifecycle scenarios observable;
+  // the production fixtures do not depend on earlier cases succeeding.
+  // Other suites still stop repeated downstream failures early.
+  maxFailures:
+    process.env.CI &&
+    project !== 'production' &&
+    project !== 'doc-responsiveness' &&
+    project !== 'doc-callback-lifetimes' &&
+    project !== 'supervised-restore' &&
+    !project?.startsWith('sync-')
+      ? 1
+      : 0,
+  // Keep per-project/shard CI results outside outputDir, which Playwright clears.
+  // The existing artifact upload preserves these alongside failure traces.
+  reporter: process.env.CI
+    ? [
+        ['line'],
+        [
+          'json',
+          { outputFile: `playwright-report/${project ?? 'all'}${shard ? `-${shard}` : ''}.json` },
+        ],
+      ]
+    : 'line',
+  // Recording every action/DOM snapshot distorts the real-time latency checks.
+  // Keep CI failure diagnostics on its first retry; all assertions still run.
+  use: { trace: 'on-first-retry', screenshot: 'only-on-failure' },
+  projects: [
+    {
+      name: 'development',
+      // Offline downloads need the production build's app-shell manifest.
+      testIgnore: [
+        '**/pwa.spec.ts',
+        '**/offline.spec.ts',
+        '**/offline-editing.spec.ts',
+        '**/offline-creation.spec.ts',
+        '**/offline-recovery.spec.ts',
+        '**/offline-device.spec.ts',
+        '**/offline-sign-out.spec.ts',
+        '**/offline-upgrade.spec.ts',
+        '**/supervised-restore.spec.ts',
+        '**/sync-client.spec.ts',
+        '**/doc-responsiveness*.spec.ts',
+      ],
+      use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3100' },
+    },
+    {
+      name: 'production',
+      testIgnore: [
+        '**/pwa.spec.ts',
+        '**/offline-editing.spec.ts',
+        '**/offline-creation.spec.ts',
+        '**/offline-recovery.spec.ts',
+        '**/offline-upgrade.spec.ts',
+        '**/supervised-restore.spec.ts',
+        '**/sync-client.spec.ts',
+        '**/doc-responsiveness*.spec.ts',
+      ],
+      use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3101' },
+    },
+    {
+      name: 'sync-development',
+      testMatch: ['**/sync-client.spec.ts', '**/doc-mobile.spec.ts'],
+      grepInvert: syncExclusions,
+      use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3104' },
+    },
+    {
+      name: 'sync-production',
+      // Offline editing needs both the production shell and the read-only
+      // native snapshot observer already enabled in this browser partition.
+      testMatch: [
+        '**/sync-client.spec.ts',
+        '**/doc-mobile.spec.ts',
+        '**/offline-editing.spec.ts',
+        '**/offline-creation.spec.ts',
+        '**/offline-recovery.spec.ts',
+      ],
+      grepInvert: syncExclusions,
+      use: { ...devices['Desktop Chrome'], baseURL: 'http://localhost:3105' },
+    },
+    ...(['sheet', 'doc'] as const).map((kind) => ({
+      name: `sync-soak-${kind}`,
+      testMatch: '**/sync-client.spec.ts',
+      grep: new RegExp(`seeded two-editor ${kind} sync soak`),
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: kind === 'sheet' ? 'http://localhost:3106' : 'http://localhost:3107',
+      },
+    })),
+    {
+      name: 'doc-responsiveness',
+      testMatch: '**/doc-responsiveness.spec.ts',
+      // Keep every fixed sample, including a failed first attempt, without a
+      // retry taking the place of its measured result.
+      retries: 0,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'http://localhost:3108',
+        trace: 'off',
+        // SPN-146 attribution only: V8 flags for the patch A/B (for example a larger young generation).
+        // Required CI never sets it.
+        ...(process.env.SPN146_AB_V8_FLAGS && {
+          launchOptions: { args: [`--js-flags=${process.env.SPN146_AB_V8_FLAGS}`] },
+        }),
+      },
+    },
+    {
+      name: 'doc-callback-lifetimes',
+      testMatch: '**/doc-responsiveness-callbacks.spec.ts',
+      retries: 0,
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'http://localhost:3109',
+        trace: 'off',
+      },
+    },
+    {
+      name: 'offline-upgrade',
+      // This suite builds the eager legacy client, the last 1.1.0 host and
+      // the current compatibility fixture. Its own server/browser must not race a normal webServer.
+      testMatch: '**/offline-upgrade.spec.ts',
+      fullyParallel: false,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'supervised-restore',
+      // Each case starts its own supervisor on a fixed port and needs no webServer.
+      testMatch: '**/supervised-restore.spec.ts',
+      fullyParallel: false,
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'mobile-https',
+      testMatch: ['**/pwa.spec.ts', '**/doc-mobile.spec.ts'],
+      use: {
+        ...devices['Pixel 7'],
+        baseURL: 'https://localhost:3103',
+        ignoreHTTPSErrors: true,
+        launchOptions: { args: ['--ignore-certificate-errors'] },
+      },
+    },
+  ],
+  webServer: [
+    {
+      // Vite still serves development modules. A second Node file watcher is
+      // unnecessary for fixed-source tests and adds work to cold SDK imports.
+      // Node 26's fast UTF-8 length callback can abort on Vite responses.
+      // The development-only mitigation is recorded in SPN-117.
+      command:
+        'node --max-old-space-size=512 --max-semi-space-size=8 --no-turbo-fast-api-calls server/index.ts --dev --no-open',
+      url: 'http://localhost:3100/sign-in',
+      env: {
+        PORT: '3100',
+        HOST: '127.0.0.1',
+        DATABASE_PATH: 'test-results/development/app.sqlite',
+        VITE_SYNC_EVIDENCE: '0',
+        VITE_DOC_SELECTION_EVIDENCE: process.env.VITE_DOC_SELECTION_EVIDENCE ?? '0',
+        VITE_DOC_RESPONSIVENESS_EVIDENCE: '0',
+      },
+      reuseExistingServer: false,
+    },
+    {
+      command: 'npm start',
+      url: 'http://localhost:3101/sign-in',
+      env: {
+        PORT: '3101',
+        HOST: '127.0.0.1',
+        DATABASE_PATH: 'test-results/production/app.sqlite',
+        VITE_SYNC_EVIDENCE: '0',
+        VITE_DOC_SELECTION_EVIDENCE: process.env.VITE_DOC_SELECTION_EVIDENCE ?? '0',
+        VITE_DOC_RESPONSIVENESS_EVIDENCE: '0',
+      },
+      reuseExistingServer: false,
+    },
+    {
+      command:
+        'node --max-old-space-size=512 --max-semi-space-size=8 --no-turbo-fast-api-calls server/index.ts --dev --no-open',
+      url: 'http://localhost:3104/sign-in',
+      env: {
+        PORT: '3104',
+        HOST: '127.0.0.1',
+        DATABASE_PATH: 'test-results/sync-development/app.sqlite',
+        VITE_SYNC_EVIDENCE: '1',
+        VITE_DOC_SELECTION_EVIDENCE: '0',
+        VITE_DOC_RESPONSIVENESS_EVIDENCE: '0',
+      },
+      reuseExistingServer: false,
+    },
+    {
+      command: 'npm start',
+      url: 'http://localhost:3105/sign-in',
+      env: {
+        PORT: '3105',
+        HOST: '127.0.0.1',
+        DATABASE_PATH: 'test-results/sync-production/app.sqlite',
+        VITE_SYNC_EVIDENCE: '1',
+        VITE_DOC_SELECTION_EVIDENCE: '0',
+        VITE_DOC_RESPONSIVENESS_EVIDENCE: '0',
+      },
+      reuseExistingServer: false,
+    },
+    ...(['sheet', 'doc'] as const).map((kind) => ({
+      command: 'npm start',
+      url: `http://localhost:${kind === 'sheet' ? 3106 : 3107}/sign-in`,
+      env: {
+        PORT: kind === 'sheet' ? '3106' : '3107',
+        HOST: '127.0.0.1',
+        DATABASE_PATH: `test-results/sync-soak-${kind}/app.sqlite`,
+        VITE_SYNC_EVIDENCE: '1',
+        VITE_DOC_SELECTION_EVIDENCE: '0',
+        VITE_DOC_RESPONSIVENESS_EVIDENCE: '0',
+      },
+      reuseExistingServer: false,
+    })),
+    {
+      // Same Node flags as npm start, without an extra persistent npm process.
+      command: 'node --max-old-space-size=256 --max-semi-space-size=8 server/index.ts',
+      url: 'http://localhost:3108/sign-in',
+      env: {
+        PORT: '3108',
+        HOST: '127.0.0.1',
+        DATABASE_PATH: 'test-results/doc-responsiveness/app.sqlite',
+        VITE_SYNC_EVIDENCE: '0',
+        VITE_DOC_SELECTION_EVIDENCE: '0',
+        VITE_DOC_RESPONSIVENESS_EVIDENCE: '1',
+      },
+      reuseExistingServer: false,
+    },
+    {
+      command: 'npm start',
+      url: 'http://localhost:3109/sign-in',
+      env: {
+        PORT: '3109',
+        HOST: '127.0.0.1',
+        DATABASE_PATH: 'test-results/doc-callback-lifetimes/app.sqlite',
+        VITE_SYNC_EVIDENCE: '0',
+        VITE_DOC_SELECTION_EVIDENCE: '1',
+        VITE_DOC_RESPONSIVENESS_EVIDENCE: '1',
+      },
+      reuseExistingServer: false,
+    },
+    {
+      command: 'node --max-old-space-size=256 --max-semi-space-size=8 scripts/e2e-https.ts',
+      url: 'https://localhost:3103/sign-in',
+      ignoreHTTPSErrors: true,
+      reuseExistingServer: false,
+    },
+  ]
+    .filter(
+      (server) =>
+        !project ||
+        (project !== 'offline-upgrade' &&
+          project !== 'supervised-restore' &&
+          server.url.includes(
+            project === 'development'
+              ? ':3100/'
+              : project === 'production'
+                ? ':3101/'
+                : project === 'sync-development'
+                  ? ':3104/'
+                  : project === 'sync-production'
+                    ? ':3105/'
+                    : project === 'sync-soak-sheet'
+                      ? ':3106/'
+                      : project === 'sync-soak-doc'
+                        ? ':3107/'
+                        : project === 'doc-responsiveness'
+                          ? ':3108/'
+                          : project === 'doc-callback-lifetimes'
+                            ? ':3109/'
+                            : ':3103/',
+          )),
+    )
+    .map((server) => {
+      // Primary timing projects retain their plain server and trace-free execution.
+      if (server.url.startsWith('https:') || /:310[89]\//.test(server.url)) return server;
+      const { url: _url, ...owned } = server;
+      return {
+        ...owned,
+        command:
+          'node --max-old-space-size=64 scripts/e2e-server.ts' +
+          (server.command.includes('--dev') ? ' --dev' : ''),
+        // The child listens before the wrapper writes its evidence. Wait for that
+        // exact boundary, not the earlier successful HTTP availability response.
+        wait: { stdout: /Spinel fixture server ready/ },
+        gracefulShutdown: { signal: 'SIGTERM' as const, timeout: 5_500 },
+      };
+    }),
+});

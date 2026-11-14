@@ -1,0 +1,132 @@
+.device-storage {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--sp-border);
+  min-width: 0;
+}
+.device-storage-heading,
+.device-storage-actions,
+.device-storage-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.device-storage-heading {
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.device-storage > p + p,
+.device-storage > [role='status'],
+.device-storage > [role='alert'] {
+  margin-top: 12px;
+}
+.device-storage-usage {
+  display: grid;
+  gap: 12px;
+  margin: 24px 0 8px;
+}
+.device-storage-usage > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  justify-content: space-between;
+}
+.device-storage-usage dt {
+  color: var(--sp-muted);
+}
+.device-storage-usage dd {
+  margin: 0;
+}
+.device-storage-usage dd span,
+.device-storage-caption {
+  font-size: 0.75rem;
+}
+.device-storage-protection {
+  display: grid;
+  gap: 12px;
+  padding: 24px 0;
+}
+.device-storage-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.device-storage-list > li {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--sp-border);
+}
+.device-storage-item {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  gap: 12px;
+}
+.device-storage-item > svg {
+  flex: none;
+  margin-top: 4px;
+}
+.device-storage-item-body {
+  min-width: 0;
+}
+.device-storage-title {
+  display: inline-block;
+  padding-block: 4px;
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}
+.device-storage-meta {
+  color: var(--sp-muted);
+  font-size: 0.75rem;
+  gap: 4px 12px;
+  margin: 4px 0;
+}
+.device-storage-item-body .device-storage-problem {
+  margin-top: 8px;
+  color: var(--sp-text);
+  overflow-wrap: anywhere;
+}
+.device-storage-dialog {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.device-storage-dialog-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.device-storage-dialog-actions {
+  margin-top: 8px;
+}
+.device-storage-actions .sp-control,
+.device-storage-dialog-actions .sp-control {
+  white-space: normal;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+@media (any-pointer: coarse), (max-width: 640px) {
+  .device-storage .sp-control,
+  .device-storage-dialog .sp-control,
+  .device-storage-title {
+    min-height: 44px;
+  }
+  .device-storage-title {
+    display: flex;
+    align-items: center;
+  }
+}
+@media (max-width: 640px) {
+  .device-storage-list > li {
+    flex-wrap: wrap;
+  }
+  .device-storage-list > li > button {
+    margin-left: 32px;
+  }
+  .device-storage-item {
+    flex-basis: 100%;
+  }
+}

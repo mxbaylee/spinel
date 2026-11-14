@@ -1,0 +1,198 @@
+.ej-page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--sp-bg);
+}
+.ej-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 40px;
+}
+.ej-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--sp-text);
+  font:
+    700 1.25rem/1.2 system-ui,
+    sans-serif;
+  cursor: pointer;
+}
+.ej-brand svg {
+  width: 34px;
+  height: 34px;
+}
+.ej-brand:focus-visible {
+  outline: 2px solid var(--sp-accent);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+.ej-main {
+  flex: 1;
+  display: grid;
+  align-items: center;
+  padding: 48px 24px 72px;
+}
+.ej-card {
+  width: min(100%, 440px);
+  min-width: 0;
+  margin: 0 auto;
+  display: grid;
+  justify-items: start;
+  gap: 24px;
+}
+.ej-eyebrow {
+  color: var(--sp-muted);
+  font-size: 0.6875rem;
+  font-weight: 650;
+  letter-spacing: 0.1em;
+}
+.ej-card h1 {
+  font-size: 2.25rem;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+.ej-intro {
+  color: var(--sp-muted);
+  max-width: 38ch;
+}
+.ej-home .ej-card {
+  width: min(100%, 580px);
+  gap: 28px;
+}
+.ej-home .ej-card h1 {
+  font-size: clamp(2.5rem, 7vw, 4rem);
+}
+.ej-home .ej-intro {
+  font-size: 1.125rem;
+}
+.ej-form,
+.ej-field,
+.ej-context,
+.ej-pending,
+.ej-help {
+  display: grid;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+}
+.ej-field {
+  gap: 8px;
+}
+.ej-field label {
+  font-weight: 600;
+}
+.ej-field input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  background: var(--sp-panel);
+  color: var(--sp-text);
+  font: inherit;
+  font-size: 1rem;
+}
+.ej-field small,
+.ej-passkey-help {
+  color: var(--sp-muted);
+  font-size: 0.8125rem;
+}
+.ej-context {
+  box-sizing: border-box;
+  padding: 20px;
+  gap: 8px;
+  background: var(--sp-panel);
+  border: 1px solid var(--sp-border);
+  border-radius: 12px;
+}
+.ej-context p {
+  color: var(--sp-muted);
+}
+.ej-pending {
+  padding-block: 4px;
+}
+.ej-feedback {
+  padding-left: 12px;
+  border-left: 2px solid var(--sp-accent);
+}
+.ej-page .sp-control,
+.ej-help .sp-control {
+  min-height: 44px;
+  white-space: normal;
+}
+.ej-form > .sp-control,
+.ej-pending > .sp-control,
+.ej-help > .sp-control {
+  justify-self: start;
+}
+.ej-footer {
+  padding: 24px;
+  text-align: center;
+  color: var(--sp-muted);
+  font-size: 0.75rem;
+}
+@media (max-width: 640px) {
+  .ej-header {
+    padding: 16px 20px;
+  }
+  .ej-main {
+    padding: 32px 24px 48px;
+  }
+  .ej-card h1 {
+    font-size: 2rem;
+  }
+  .ej-form > .sp-control,
+  .ej-pending > .sp-control {
+    width: 100%;
+  }
+}
+
+.ej-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ej-operator-help {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.ej-operator-help summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+}
+.ej-operator-help h3,
+.ej-operator-help p,
+.ej-operator-help details {
+  margin-top: 12px;
+}
+.ej-operator-help pre {
+  padding: 12px;
+  background: var(--sp-bg);
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 0.75rem;
+}
+
+/* Reuse the original Spinel gem gesture without overriding dark-theme rotation. */
+@media (prefers-reduced-motion: no-preference) {
+  .ej-brand:hover .wiggle,
+  .ej-brand:focus-visible .wiggle {
+    animation: gem-wiggle 0.6s ease-in-out;
+  }
+}

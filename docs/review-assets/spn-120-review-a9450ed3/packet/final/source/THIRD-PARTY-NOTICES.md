@@ -1,0 +1,98 @@
+# Third-party notices
+
+Code copied or adapted from other projects, with its source, license and what
+changed. Dependencies installed from npm are not listed here; their licenses
+ship with them.
+
+`scripts/dependencies/patch-univer-docs.ts`, its `.test.ts` and
+`scripts/dependencies/doc-flush-observation.ts` adapt the
+Apache-2.0 [Univer 1.3.1 native Doc state manager](https://github.com/dream-num/univer/blob/v1.3.1/packages/docs/src/services/doc-state-change-manager.service.ts).
+The version- and hash-checked ES/CJS patch balances qualifying single-character
+leading insert sequences within the existing history/collaboration composition
+folds; the first unsupported state and every following state retain the original
+sequential reducer (SPN-133). SPN-135 also aggregates fully qualified descending
+single-character deletes, retaining the lowest-offset native deleted body; SPN-142
+extends this to qualified leading delete prefixes with the original sequential
+tail, preserving every unsupported action's call order. SPN-142 reuses private
+fixed qualification lists without changing their contents or iteration order.
+🔎 SPN-146 additionally recognizes one native Enter between contiguous plain
+append inserts. The fully qualified plain tail and prefixes of at least four
+inserts use one public native full-body normalization and push per leaf, avoiding
+repeated tree-level copies. Smaller heads keep their original null fold. It keeps
+the prefix/Enter join, its style retain and the final head/tail join in order. Other structural/metadata shapes retain the existing fold. Tests preserve
+the exact earlier build as a work negative and compare raw publications,
+metadata, accumulator ownership and complete applied snapshots.
+The SPN-146 component diagnostic in `scripts/ci/doc-native-runtime/` reuses
+that licensed actual-manager fixture with controlled publication sinks and an
+inspectable browser journal. Generated diagnostic source retains its original
+Apache-2.0 header; archived native/bundle bytes are diagnostic evidence.
+SPN-135 also
+adds opt-in scalar flush observations covering native timer and public entry paths.
+It preserves native operation
+order, metadata, cache lifetimes and publication. Tests retain the verified
+original manager as a semantic and work-count control. SPN-132 admits the exact
+native paragraph-preservation marker on otherwise qualifying inserts, preserving
+the field and the existing algorithm. The original license
+headers and notices remain. SPN-122 tracks eventual removal after a suitable
+upstream release; no upstream submission is claimed by this local repair.
+
+`scripts/dependencies/patch-univer-docs-ui.ts` and its `.test.ts` adapt the
+Apache-2.0 [Univer 1.3.1 cursor selection](https://github.com/dream-num/univer/blob/v1.3.1/packages/docs-ui/src/services/selection/text-range.ts)
+and [Doc zoom controller](https://github.com/dream-num/univer/blob/v1.3.1/packages/docs-ui/src/controllers/render-controllers/zoom.render-controller.ts).
+They backport the source repair `1672ca2ad1debbcdb295e203308fae13bdb299b3` to
+version- and hash-checked ES/CJS builds: retain and cancel both cursor timeout
+stages, replace obsolete zoom callbacks, and keep delayed updates on their live
+renderer. Tests execute the actual bundled classes and retain the verified
+original builds as negative controls. The original license headers and notices
+remain. [Upstream PR #7969](https://github.com/dream-num/univer/pull/7969) proposes
+the source repair; SPN-119 tracks removal after a suitable upstream release.
+
+| Path in Spinel                                                | Source                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | License                                                                   | Changes                                                                                                                                                                                                                                                                                                                                                        |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `scripts/dependencies/patch-univer-drawing.ts` and `.test.ts` | [dream-num/univer drawing refresh controller](https://github.com/dream-num/univer/blob/v1.3.1/packages/sheets-drawing/src/controllers/sheet-drawing-transform-affected.controller.ts) and [drawing placement](https://github.com/dream-num/univer/blob/v1.3.1/packages/sheets-drawing/src/services/sheet-drawing-placement.ts), v1.3.1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Apache-2.0                                                                | Preserve finite collapsed drawing geometry during native structural refresh and resize in pinned ES/CJS builds; retain strict explicit placement validation and license notices                                                                                                                                                                                |
+| `scripts/dependencies/patch-univer-core.ts`                   | [dream-num/univer core paragraph composition](https://github.com/dream-num/univer/blob/v1.3.1/packages/core/src/docs/data-model/text-x/utils.ts) and [operation slicing](https://github.com/dream-num/univer/blob/v1.3.1/packages/core/src/docs/data-model/text-x/action-iterator.ts), [custom range merging](https://github.com/dream-num/univer/blob/v1.3.1/packages/core/src/docs/data-model/text-x/apply-utils/common.ts) and [updates](https://github.com/dream-num/univer/blob/v1.3.1/packages/core/src/docs/data-model/text-x/apply-utils/update-apply.ts), [adding a custom range](https://github.com/dream-num/univer/blob/v1.3.1/packages/core/src/docs/data-model/text-x/build-utils/text-x-utils.ts), and [text style transforms](https://github.com/dream-num/univer/blob/v1.3.1/packages/core/src/docs/data-model/text-x/transform-utils.ts), v1.3.1 | Apache-2.0                                                                | Preserve paragraph REPLACE semantics and explicit empty arrays through operation slicing in pinned ESM/CJS builds; retain stable paragraph IDs and license notices; join and rename custom ranges after every update; never emit a negative retain when adding a custom range; let a winning REPLACE text style's falsy keys override a concurrent COVER style |
+| `scripts/dependencies/patch-univer-ui.ts` and `.test.ts`      | [dream-num/univer virtual-list hook](https://github.com/dream-num/univer/blob/v1.3.1/packages/ui/src/views/hooks/virtual-list.ts), v1.3.1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Apache-2.0                                                                | Ignore queued resize callbacks after the DOM ref detaches in pinned ES/CJS builds; preserve normal measurements and license notices; retain the original measurement as a negative regression control                                                                                                                                                          |
+| `src/server/auth/passkey-provider-names.json`                 | [passkeydeveloper/passkey-authenticator-aaguids](https://github.com/passkeydeveloper/passkey-authenticator-aaguids) at `774b3cf`, via circus-health                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Factual name mappings                                                     | Names only; icons dropped                                                                                                                                                                                                                                                                                                                                      |
+| `src/profile/person-icon-catalog.json`                        | [lucide-icons/lucide 1.69.0 metadata at `91a1359b5ea235f620ba3a9682015ab8d6ada3af`](https://github.com/lucide-icons/lucide/tree/91a1359b5ea235f620ba3a9682015ab8d6ada3af/icons); unmatched legacy rows retain the original [`a79b2d131dab2bf20cb224bd0937b439a9c4fa99` metadata](https://github.com/lucide-icons/lucide/tree/a79b2d131dab2bf20cb224bd0937b439a9c4fa99/icons), via circus-health                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | ISC (Lucide, which also keeps MIT notices for icons derived from Feather) | Tags and categories only; upstream inheritance/groups resolved and canonical metadata refreshed while preserving all saved names and unmatched legacy rows                                                                                                                                                                                                                                              |
+| `lib/print/sheet-filter.ts`                                   | [dream-num/univer saved filter model](https://github.com/dream-num/univer/blob/v1.1.0/packages/sheets-filter/src/models/filter-model.ts) and [custom filter predicates](https://github.com/dream-num/univer/blob/v1.1.0/packages/sheets-filter/src/models/custom-filters.ts), v1.1.0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Apache-2.0                                                                | Extract only saved-cache/criteria evaluation and merged-row iteration into a bounded pure helper shared by PDF source selection and rendering; omit reactive models, editor services and rendering imports; replace wildcard regex backtracking with bounded matching that preserves native semantics                                                          |
+
+The unmodified `src/ui/fonts/AtkinsonHyperlegible-Bold.ttf` comes from
+[Google Fonts at 95f4904](https://github.com/google/fonts/tree/95f4904fc8bcf26d3420fe315560c96417c6dec7/ofl/atkinsonhyperlegible).
+Its SIL Open Font License 1.1 and copyright are retained in `src/ui/fonts/OFL.txt`.
+It supplies server-rendered shared-card text only. The unmodified
+`src/ui/fonts/NotoColorEmoji.ttf` comes from
+[Google Noto Emoji v2.051](https://github.com/googlefonts/noto-emoji/tree/6202fe7c20dd5e1727a4c3c01604edc176c576da/fonts),
+with its SIL Open Font License 1.1 and copyright in `src/ui/fonts/NotoEmoji-OFL.txt`.
+It supplies server-rendered title emoji on hosts without system fonts.
+
+The unmodified PDF test font fixtures in `lib/print/test-fixtures/fonts/` include
+Atkinson Hyperlegible Regular/Bold/Italic/BoldItalic from the same pinned Google
+Fonts revision above, and [Noto Sans Symbols 2 Regular at that revision](https://github.com/google/fonts/tree/95f4904fc8bcf26d3420fe315560c96417c6dec7/ofl/notosanssymbols2).
+Their SIL Open Font License 1.1 texts and copyrights are retained beside the
+files in `Atkinson-OFL.txt` and `NotoSymbols-OFL.txt`. These are explicit test
+inputs for prepared-font validation, not production font substitutions.
+
+Code from [mxbaylee/circus-health](https://github.com/mxbaylee/circus-health) isn't listed:
+Baylee Schmeisser, Spinel's owner, wrote it.
+
+Item identity search imports the English compact dataset from
+[`emojibase-data` 17.0.0](https://github.com/milesj/emojibase/tree/master/packages/data),
+MIT, copyright 2017–2019 Miles Johnson. The dependency retains its license text;
+Spinel projects labels, keywords and Unicode sequences into the existing search
+index. Emoji glyphs are rendered by the device's fonts, with no remote artwork.
+
+When adding an entry:
+
+- Keep the original copyright and license header in each copied file.
+- Add a line in the file saying it was modified for Spinel.
+- List it here as: path in Spinel, source repository and commit, license, and a
+  one-line summary of the changes.
+
+`docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json`
+retains diagnostic excerpts from the Apache-2.0
+[Playwright 1.64.1 frame manager](https://github.com/microsoft/playwright/blob/cfe490d941f992655948eee8fd4fd94e1c4234bf/packages/playwright-core/src/server/frames.ts),
+commit `cfe490d941f992655948eee8fd4fd94e1c4234bf`. The excerpts are unchanged
+source lines extracted into JSON with line numbers and diagnostic provenance;
+the surrounding code is omitted. The file preserves the original Google and
+Microsoft copyright notice and Apache-2.0 license header. This extraction does
+not modify or replace the installed dependency.

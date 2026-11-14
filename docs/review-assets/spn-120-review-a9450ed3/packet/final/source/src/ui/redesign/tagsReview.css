@@ -1,0 +1,72 @@
+.rd-tag-labels {
+  display: block;
+  min-width: 0;
+  margin-top: 4px;
+}
+.rd-tag-visible {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  min-width: 0;
+}
+.rd-tag-label {
+  background: var(--sp-tint-1);
+  color: var(--sp-text);
+  border-radius: 4px;
+  padding: 4px 8px;
+  max-width: 144px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.rd-tag-count {
+  flex-shrink: 0;
+}
+.rd-tags-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.rd-tag-editor-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.rd-tag-editor-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-block: 8px;
+}
+.rd-tag-editor-row > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.rd-tag-editor-row > button {
+  flex-shrink: 0;
+}
+.rd-tag-add {
+  display: grid;
+  gap: 8px;
+  margin-block: 16px;
+}
+.rd-tag-add > button {
+  justify-self: start;
+}
+.rd-tag-suggestions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.rd-tags-review .sp-control {
+  min-height: 44px;
+  min-width: 44px;
+}

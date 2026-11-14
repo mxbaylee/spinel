@@ -1,0 +1,68 @@
+.rd-version-names,
+.rd-version-feedback,
+.rd-version-form {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.rd-version-names-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.rd-version-names h2 {
+  font-size: 1rem;
+}
+.rd-version-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.rd-version-list > li {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid var(--sp-border);
+}
+.rd-version-identity {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.rd-version-identity time,
+.rd-version-marker {
+  color: var(--sp-muted);
+  font-size: 0.75rem;
+}
+.rd-version-list > li > .sp-control {
+  flex-shrink: 0;
+}
+.rd-version-preview {
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+  min-height: 44px;
+  padding: 4px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.rd-version-preview:hover,
+.rd-version-preview[aria-pressed='true'] {
+  background: var(--sp-tint-1);
+}
+.rd-version-preview:focus-visible {
+  outline: 2px solid var(--sp-accent);
+  outline-offset: 2px;
+}
+.rd-version-feedback > .sp-control {
+  justify-self: start;
+}

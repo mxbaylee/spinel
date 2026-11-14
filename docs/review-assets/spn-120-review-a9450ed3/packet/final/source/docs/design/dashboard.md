@@ -1,0 +1,245 @@
+# File list (dashboard)
+
+## SPN-047 composed redesign proposal
+
+Approved by the owner, 2026-10-21, [decision #126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits). Production implementation remains separate.
+See the [review, sources and screenshot inventory](redesign.md).
+Stories: `Redesign/Screens` — Dashboard, Search, SharedFiles, Trash, EmptyFolder, LoadingFiles, FileError.
+
+| Current friction                                                                               | Public reference pattern                                                                              | Adopted proposal                                                                                                 |
+| ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Separate pins, folders and shared panels; a wall of row actions; a large heading above search. | Dropbox separates file navigation from actions; Notion combines favorites and hierarchy in a sidebar. | One file sidebar; search above rows; one New menu and one always-visible row menu. Access labels remain visible. |
+
+The redesigned header keeps the current folder title with its ancestor breadcrumb. Search, Filters and List/Grid share one responsive toolbar directly below it; Type, Ownership, Tag and Last modified sit inside Filters. Active constraints remain visible and clearable. On phones search gets a full row, with Filters and view controls immediately beneath it. At phone width Browse files opens a modal navigation drawer. The selected folder becomes the page title, with ancestors as a compact breadcrumb. No pinned-item list or pin actions.
+
+The approved proposal above governs placement during implementation. Existing behavioral and
+permission rules below still apply; production migrations remain separate tickets.
+
+### Owned workspace archives
+
+At the My files root, **More → Export all my files** opens one focused dialog.
+It explains owned-only scope before starting, then shows progress, cancellation,
+completion or a recoverable error in place. Files shared with the person and
+Trash are excluded; owned files shared with others remain included. Completion
+directs the person to their browser's downloads without claiming the archive was
+saved. The root action is absent from Shared with me, local mode and guest views.
+
+**New → Import file** and the file-pane drop target accept native files and
+Spinel ZIP archives. Archives import at the My files root; selecting one inside
+a folder explains where to return. During upload/validation the dialog offers
+Cancel, and only a confirmed atomic success refreshes the file tree. An
+unconfirmed response asks the person to refresh before retrying. Existing Modal,
+ActionMenu, semantic icon, focus-return and wrapping phone action-row patterns
+apply. Every added state has a Storybook example; see the
+[SPN-067 record](../implementation/SPN-067.md).
+
+SPN-048 implements this layout with the existing file APIs and access rules; its
+[implementation and validation record](../implementation/SPN-048.md) records the
+query, scope and return-state decisions and any pending verification. Design
+changes still go through this playbook before application changes.
+
+## How others do it
+
+|              | Google Sheets / Drive                             | Excel for the web / OneDrive | Numbers for iCloud          | Zoho Sheet / WorkDrive |
+| ------------ | ------------------------------------------------- | ---------------------------- | --------------------------- | ---------------------- |
+| Create       | One "New" button, top left                        | "Create or upload" / "+ New" | "+" (create) at top         | "New" button           |
+| Search       | Wide field across the top, filter chips under it  | Search box in the header     | Search field in the toolbar | Search in the header   |
+| Shared items | "Shared with me" in the left nav                  | "Shared" view                | "Shared" in the sidebar     | "Shared with me"       |
+| Row actions  | `⋮` per row, always tappable; more on right-click | `⋯` per row                  | `⋯` per file                | `⋯` per row            |
+| Views        | List / grid toggle                                | List / tile                  | Grid / list                 | List / grid            |
+| Import       | Inside "New" (File upload), plus drag and drop    | Inside "Create or upload"    | Upload button               | Inside "New"           |
+
+The shared pattern: one New button that also holds import, a wide search with
+filter chips, "Shared with me" as a place in the nav rather than a panel, and
+one menu button per row.
+
+## Pre-redesign friction (historical, 2026-10-19)
+
+Search panel above everything; a "Shared with me" toggle that opens a drawer
+above the list; New, Refresh folder and Import as three separate buttons; and up
+to six text buttons on every row (Pin, Tags, Share, Rename, Move, Trash). A
+shared row adds a `↗` drag button, its access label, "File into folder" and,
+once filed, "Remove from my folder". All four areas are cluttered (owner, chat
+2026-10-19).
+
+## Adopted layout
+
+```
+┌ sidebar ─────────┬ header ───────────────────────────────────────────┐
+│ My files         │ My files / Budgets              [ Search… ] [ New ▾]│
+│ Shared with me   ├───────────────────────────────────────────────────┤
+│                  │ [Search…] [Filters] [List / Grid]                    │
+│                  ├───────────────────────────────────────────────────┤
+│                  │ ▦ Q3 forecast   Shared · View only  #ops  Oct 12  ⋯ │
+│                  │ ▤ Notes                            #ops  Oct 10  ⋯ │
+│ Appearance       │                                                    │
+│ Your profile     │                                                    │
+└──────────────────┴───────────────────────────────────────────────────┘
+```
+
+- **Header:** the breadcrumb is the title. Search on the right, then the single
+  primary **New** button. New opens a menu: Folder, Sheet, Doc, then a divider
+  and Import file…. Dropping files on the list still imports (SPN-031).
+- **Filters:** chips under the header, shown only while searching or when a
+  filter is active, so an unfiltered folder has no chip row. Kind chips, a Tags
+  chip with a menu, and in search "Shared with me" (SPN-022). Clear filters is
+  the last chip when any is on.
+- **Shared with me** is a sidebar place, like My files. It lists shared items
+  with "Shared by" and the share date in the secondary column. Filing a shared
+  reference into a folder (SPN-018) is **File into folder…** in the row menu,
+  and filing into a folder from My files remains available. The `↗` handle goes.
+  **Hide** in the shared-row menu removes personal discovery; the place's title
+  menu offers **Show hidden**. Included hidden rows carry a **Hidden** badge and
+  offer **Show**. A failed request preserves the row and offers retry through the
+  same menu; a successful hide announces the result and returns focus to the
+  place heading when the row disappears. This composes the existing row, menu,
+  badge and status patterns; it does not introduce a new navigation place.
+- **Trash** is a permanent folder in My files. The network icon by the gem
+  explains connectivity on hover/tap and never claims anything is saved.
+- **Rows** follow the [row pattern](README.md#row). The secondary column is the
+  edited date in My files and the shared date in Shared with me.
+- **Folder actions** (Rename, Move, Share, Refresh folder, Trash) are the More
+  menu next to the breadcrumb title, the same items as the folder's row menu.
+- **List / Grid:** a labelled toggle changes density while preserving the
+  folder, filters, access details and actions. List is the initial default.
+
+### Always visible / behind a menu
+
+| Always visible                                                      | Behind a menu                                                                                            |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| New (primary), search, breadcrumb                                   | New → Folder, Sheet, Doc, Import file…                                                                   |
+| Sidebar: My files, Shared with me, theme, profile; network by gem   | Owned row ⋯ → Open, Tags…, Share…, Rename…, Move…, Available offline on this device, Trash               |
+| Row: icon, name, shared/view-only/offline badges, two tags, date, ⋯ | Shared row ⋯ → Open, Access details…, Tags…, File into folder… or Remove from my folder, Available offline on this device, Hide / Show |
+| Shared with me title                                               | Title ⋯ → Show hidden / Hide hidden                                                                      |
+|                                                                     | Folder ⋯ → the owned-row items that apply to folders, plus Refresh folder                                |
+| Filter chips while searching or filtering                           | Tags chip → tag list                                                                                     |
+
+Access ("View only", "Can edit") stays a visible badge because it decides what
+the person can do once they open the item. The shared-row menu offers Share, Rename, Move and Trash only when existing
+File admin access permits them; viewers and editors do not receive these actions
+(see [sharing](../sharing.md)). "Remove from
+my folder" removes the person's filed reference, not the item, so it isn't
+grouped with the destructive items.
+
+**Shared-folder creation (SPN-069).** Inside an editable shared folder, the same
+New menu offers Folder, Sheet, Doc, enabled Space and Import file. The aggregate
+Shared with me place and viewer folders have no New action. The creation dialog
+states that the item belongs to the folder owner and the account will be shown
+as its creator. Account-only file metadata adds **Created by <name>** beside the
+existing access and owner details; the text wraps in both list and grid layouts.
+Creator attribution does not add organization actions for Editors. Offline,
+prepared shared folders offer only Sheet and Doc, and pending rows keep their
+shared role, owner and creator details. Rejected destinations use the existing
+Needs attention and explicit recovery pattern. Production stories cover Editor,
+File admin, Viewer, new item, pending offline and rejected-destination states.
+
+## Slides removal before the redesign (SPN-074)
+
+SPN-074 removed Slides entirely before SPN-047. The existing New type selector
+and search type filter offer only Folder, Sheet and Doc; SPN-048's new menu
+layout is not a prerequisite. Spinel has never been in production, so there is
+no legacy Slides placeholder or compatibility requirement. The owner approved
+this removal and waived screenshots for it; the general UI review rule remains.
+Owner correction and approval, chat 2026-10-20, decision
+[#104](../implementation/SPN-074.md#legacy-decision-104-remove-unsupported-slides).
+
+## Offline (SPN-039, SPN-053, SPN-054, SPN-051, SPN-052)
+
+The words come from [docs/offline.md](../offline.md); this page only places
+them. The row menu's **Available offline on this device** is the toggle; Google
+Drive puts its per-file offline toggle in the same place. Once downloaded, the
+same menu item reads **Remove from device**; with pending changes it opens the
+recovery choices from the contract instead of removing. A downloaded row shows
+an "Available offline" badge (icon plus label); a row with pending local edits
+shows the save state from the contract instead ("Saved on this device — waiting
+to sync", "Needs attention"). Known items that aren't downloaded stay listed and
+say "Needs a connection" when offline. While offline or after a failed refresh,
+the sidebar's connection indicator popover says when the list was last updated
+("Files as of 14:05"), so a stale catalog never looks like an empty one. Items
+created offline (SPN-051) show "Not synced yet" until the server accepts them;
+if their folder was deleted or access was lost meanwhile, the row says "Needs
+attention" and its menu offers **Choose another folder…** (SPN-051). An offline
+copy, `<title> (offline copy, <local date and time>)`, lands in the person's own
+files and its row links to the original. See [states.md](states.md#offline).
+
+**Dashboard migration (SPN-048).** **Available offline on this device** and
+**Remove from device** are in the row menu. Badges remain `OfflineBadge`. SPN-042 adds the shared `ConnectionStatus`
+control beside the gem, with Online, Offline and Reconnecting states. Its
+hover, focus or tap detail contains "Files as of" while the catalog is local,
+offline or a refresh failed; `OfflineBanner` is removed. Connectivity returning
+does not refresh a local catalog or promote its downloaded viewers to live
+editing: the detail continues to explain that this session is read-only.
+The indicator makes no on-device save claim. See [connection behavior](../connection.md)
+and [decision #132](../implementation/SPN-042.md#legacy-decision-132-verified-connection-proof-and-stable-presentation).
+Pending-edit states arrive with SPN-053 and SPN-054.
+
+`OfflineViewer` has no story: like the editors and version previews, it hosts
+Univer. Its states are plain text ("Opening offline copy…", "Read only on this
+device. Reconnect to edit." or the problem) and `e2e/offline.spec.ts` covers them.
+
+## Stories
+
+**Copying (SPN-065).** Doc/Sheet rows offer **Make a copy…** for every authorized
+everyday reader. One existing Modal holds Name and Folder, using the same
+production form as the editor's native dialog. It defaults to the current owned
+folder, otherwise My files. Explicit shared destinations explain their owner and
+creator attribution. Successful copying opens the new document; returning to the
+file list shows the created-name confirmation. Folder/Space rows, guest views and
+offline/pending local creations have no copy action. The outer editor More menu
+does not duplicate the native addon action. `Dashboard/Make a copy` stories cover
+loading, shared destinations, waiting, offline, creation, failure and retained
+completion; the actual dashboard journey is `Dashboard/Dashboard` `MakeCopy`.
+
+`Dashboard/Dashboard`, `Dashboard/SearchPanel`, `Dashboard/SharedBadge`, `Dashboard/TagLabels`,
+`Dashboard/DocumentTags`, `Dashboard/Trash`, `Dashboard/ImportFile`,
+`Dashboard/Hidden shares` for personal hide/show, pending and failed changes,
+`Dashboard/OfflineBadge` (also the "You're offline" page), and
+`Shell/ConnectionStatus` for connection and catalog details. Local
+mode: `Dashboard/Dashboard` `LocalMode`, `LocalNeedsConnection` and
+`LocalFolderNotOpened`.
+
+## Navigation after the persona walkthrough
+
+Use one collapsible 224 px column for gem, places and account
+utilities. Do not retain a separate rail beside it. Tablets/phones start with
+a drawer; Files remains visibly labelled. Remove the repeated workspace eyebrow
+and decorative list caption on phones. Search explicitly names its current
+scope and offers Search all files from a folder/shared view. Returning from
+a document restores folder, filters and scroll position (SPN-048/049).
+
+Current owner direction (chat, 2026-10-21): folders are rows in **My files**.
+Personal pinning and pinned navigation are removed ([decision #128](../implementation/SPN-047.md#legacy-decision-128-remove-personal-pinning)); folders, tags and search
+provide retrieval without another shortcut list. The expanded sidebar uses the original saturated `--sp-rail` pink and
+matching `--sp-rail-ink` foreground (owner correction, 2026-10-20). Profile and Appearance occupy separate rows. Trash is a permanent
+folder entry in My files with no rename/move/delete controls; it is not another
+sidebar destination. A network icon beside the gem shows connection state,
+with an accessible label and hover/tap explanation. Document save warnings
+remain explicit; network state never substitutes for save confirmation.
+
+Owner refinement (chat, 2026-10-20): offer **List and Grid** views over the same
+files, filters and actions. Default to List; remember the preference during the
+screen migration. Folders and permanent Trash appear in both. Desktop collapse
+keeps My files and Shared with me directly accessible, with full accessible
+names and hover/focus labels; phone/tablet navigation stays in the drawer.
+Space trees reopen from Pages rather than flattening a hierarchy into icons.
+
+Use a deterministic normalized-filename hash to choose a default botanical emoji
+for Doc/Sheet/Space identity. The same title has the same cue on every surface;
+a rename may change the default, and collisions are expected. It is decorative,
+never an identifier or substitute for a type/access label. Folders and Trash keep
+their functional icons. Defer the persistent emoji/icon picker to **SPN-086**;
+no picker ships in this proposal. Owner/Collaborator gain recognition and view
+choice; Guests retain scoped identity and access clarity; Operators gain no
+personal file navigation or service dependency. Decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits).
+
+### Unified search follow-up
+
+Owner feedback and persona review (2026-10-20, decision [#126](../implementation/SPN-047.md#legacy-decision-126-approved-redesign-and-its-limits)) move the query
+builder into SPN-048: one search field may show labelled, removable colored
+conditions such as `type:sheet` and `tag:travel`; Search options opens an
+accessible form that builds the same query. Text entry and the form must agree,
+and plain-text fallback, keyboard editing, paste, touch and errors stay usable.
+This reuses existing supported filters and access scope. It does not add a new
+search engine or expose inaccessible folders. The current proposal meanwhile
+keeps folder titles beside their content, shows accessible ancestor breadcrumbs,
+and uses readable names in search hints.

@@ -1,0 +1,128 @@
+.rd-review-banner {
+  display: flex;
+  align-items: start;
+  flex-shrink: 0;
+  max-height: 45dvh;
+  overflow: auto;
+  background: var(--sp-header);
+  border-bottom: 1px solid var(--sp-border);
+}
+.rd-review-tools {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 24px;
+}
+.rd-review-dismiss.sp-control {
+  min-width: 44px;
+  min-height: 44px;
+  margin: 12px 12px 0 0;
+  flex-shrink: 0;
+  font-size: 1.25rem;
+}
+.rd-review-tools summary {
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+.rd-review-controls {
+  display: flex;
+  align-items: end;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 12px;
+}
+.rd-review-controls p {
+  flex: 1 1 260px;
+  color: var(--sp-muted);
+  max-width: 520px;
+}
+.rd-review-controls .sp-choice {
+  min-width: 230px;
+}
+.rd-walkthrough-page [hidden] {
+  display: none !important;
+}
+.rd-walkthrough-page h1:focus {
+  outline: none;
+}
+/* The editor owns the remaining viewport; only its canvas and panels scroll. */
+.rd-walkthrough-editor {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.rd-walkthrough-editor > .rd-walkthrough-page,
+.rd-walkthrough-editor .rd-walkthrough-editor-screen {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+.rd-walkthrough-editor-screen > .rd-shell {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+.rd-walkthrough-editor-screen > .rd-compact-shell:not(.rd-space-shell) {
+  display: flex;
+  flex-direction: column;
+}
+.rd-walkthrough-editor-screen > .rd-space-shell {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+.rd-walkthrough-editor-screen .rd-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.rd-walkthrough-editor-screen .rd-main > :not(.rd-editor-body),
+.rd-walkthrough-editor-screen .rd-shell > .rd-rail {
+  flex-shrink: 0;
+}
+.rd-walkthrough-editor-screen .rd-editor-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.rd-walkthrough-editor-screen .rd-live-editor {
+  display: flex;
+  min-height: 0;
+}
+.rd-walkthrough-editor-screen .rd-native-editor {
+  height: 100%;
+  min-height: 0;
+}
+.rd-walkthrough-editor-screen .rd-inspector,
+.rd-walkthrough-editor-screen .rd-paper-wrap,
+.rd-walkthrough-editor-screen .rd-desktop-nav {
+  overflow: auto;
+  min-height: 0;
+}
+.rd-walkthrough-editor-screen .rd-desktop-nav > .rd-sidebar {
+  position: static;
+  height: 100%;
+}
+@media (max-width: 900px) {
+  .rd-walkthrough-editor-screen .rd-editor-body > .rd-inspector {
+    max-height: 45%;
+  }
+}
+@media (max-width: 640px) {
+  .rd-review-tools {
+    padding: 8px 16px;
+  }
+  .rd-review-dismiss.sp-control {
+    margin-top: 8px;
+  }
+  .rd-review-controls {
+    align-items: stretch;
+  }
+  .rd-review-controls .sp-choice {
+    width: 100%;
+  }
+}

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+data/
+*.sqlite
+*.sqlite-*
+playwright-report/
+fixture-audit/
+test-results/
+storybook-static/
+output/
+# Immutable source checkout used only by the paired callback CI fixture.
+baseline-callback-source/

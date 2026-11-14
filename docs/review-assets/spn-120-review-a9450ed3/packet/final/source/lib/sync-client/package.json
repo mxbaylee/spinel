@@ -1,0 +1,34 @@
+{
+  "name": "@spinel/sync-client",
+  "version": "0.0.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "description": "Optimistic native Univer synchronization with durable acknowledgments.",
+  "exports": {
+    ".": "./index.ts",
+    "./validation": "./validation.ts"
+  },
+  "dependencies": {
+    "@spinel/sync-transform": "0.0.0"
+  },
+  "devDependencies": {
+    "@spinel/doc-formulas": "0.0.0",
+    "@spinel/sync-server": "0.0.0",
+    "@univerjs/docs-drawing-ui": "1.3.1",
+    "@univerjs/docs-ui": "1.3.1"
+  },
+  "peerDependencies": {
+    "@univerjs/core": "1.3.1",
+    "@univerjs/docs": "1.3.1",
+    "@univerjs/docs-drawing": "1.3.1",
+    "@univerjs/docs-hyper-link": "1.3.1",
+    "@univerjs/drawing": "1.3.1",
+    "@univerjs/engine-formula": "1.3.1",
+    "@univerjs/engine-render": "1.3.1",
+    "@univerjs/sheets": "1.3.1",
+    "@univerjs/sheets-drawing": "1.3.1",
+    "@univerjs/sheets-formula": "1.3.1",
+    "@univerjs/sheets-numfmt": "1.3.1"
+  }
+}

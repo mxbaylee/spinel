@@ -1,0 +1,41 @@
+{
+  "head": "a9450ed32a55c1689fe46ebd575e45ff0fb66209",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "priorPublishedHead": "5356f085f84302c85490acf473adab72cc0b7eb9",
+  "pr": 228,
+  "branch": "codex/spn-120-fixture-reliability",
+  "bodySha256": "ed6c7151b97e2f9e53665b19964d8ffcb7fb6bc4f91857b23f6667b9026f6c05",
+  "remoteActionsPerformedByImplementer": false,
+  "sequence": [
+    "Root independently verifies and publishes direct-a945 review archive.",
+    "Root applies exact prepared PR body while old head remains, identifies any superseded old5356 metadata run, deliberately cancels only that superseded run and verifies terminal cancellation; do not infer such a run exists.",
+    "Root rechecks actual main c1/source a945/clean state and performs normal fast-forward5356\u2192a945.",
+    "Root verifies actual remote source/base/body and original attempt1 workflow identities.",
+    "Root dispatches exactly one manual candidate fixture audit on the verified existing branch/ref; no baseline fixture audit or labels.",
+    "Retain every original outcome and fail closed on missing/failed selected work; terminal validation archive precedes qualifying merge."
+  ],
+  "manualAudit": {
+    "workflowId": 403808598,
+    "ref": "codex/spn-120-fixture-reliability",
+    "source": "candidate",
+    "baseline": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+    "baselinePurpose": "eventBase only; no baseline fixture audit execution",
+    "dispatchCountAuthorized": 1
+  },
+  "requiredGates": [
+    "Backlog",
+    "Pull request",
+    "Lint",
+    "Typecheck",
+    "Unit tests",
+    "Lib tests",
+    "Playwright smoke"
+  ],
+  "alsoRequired": [
+    "Selected native Desktop",
+    "Storybook",
+    "Spaces",
+    "Fixed24 actual first attempts"
+  ],
+  "currentHostedStatus": "Pending, no old acceptance transfer"
+}

@@ -1,0 +1,79 @@
+.rd-people {
+  display: flex;
+  align-items: center;
+}
+.sp-ui .rd-presence-trigger.sp-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  min-height: 32px;
+  padding: 2px 6px;
+  font-variant-numeric: tabular-nums;
+}
+.rd-person-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+.rd-presence-trigger .rd-person-icon {
+  width: 24px;
+  height: 24px;
+}
+.rd-people-list {
+  display: grid;
+  gap: 0;
+  padding: 0;
+  margin: 16px 0 0;
+  list-style: none;
+}
+.rd-people-list > li {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--sp-border);
+}
+.rd-people-list > li:last-child {
+  border-bottom: 0;
+}
+.rd-person-details {
+  display: grid;
+  gap: 4px;
+  overflow-wrap: anywhere;
+}
+.rd-person-details .sp-muted {
+  font-size: 0.75rem;
+}
+.rd-presence-stage {
+  padding: 24px;
+}
+.rd-presence-canvas {
+  position: relative;
+  height: 240px;
+  margin-top: 24px;
+  border: 1px solid var(--sp-border);
+  background: var(--sp-panel);
+}
+.rd-presence-canvas > :first-child {
+  position: absolute;
+  top: 16px;
+  left: 8px;
+}
+.rd-presence-canvas > :last-child {
+  position: absolute;
+  right: 8px;
+  bottom: 16px;
+}
+@media (pointer: coarse), (max-width: 640px) {
+  .sp-ui .rd-presence-trigger.sp-control {
+    min-width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
+}
