@@ -1,0 +1,66 @@
+{
+  "status": "Historical preservation snapshot prepared 2026-11-14 UTC. Superseded source only; not active implementation or current acceptance.",
+  "sourceHeads": {
+    "original": "7ffab5330689abc0f79c2285b37f374bbc5483d5",
+    "superseded": "9608f78348ab014295cd7b604da4299e3a1ac230",
+    "current": "67111d9c106c6518b813c6f1cf332068526c254c"
+  },
+  "privacyReview": "Credential-bearing source references are runtime parameters, header construction, or explicit synthetic negative-test strings. No live credential literals, private key headers, recognizable GitHub tokens, real document content or personal absolute paths were found in the curated snapshot. SQLite/session fixture files and private archive path manifest are excluded.",
+  "files": [
+    {
+      "path": "current-67111d9c/artifacts/spn090-capture.ts",
+      "bytes": 3725,
+      "sha256": "c4522a67884b710fb1b904d911878eda3f638f182b156d0a7a3f8df2ecf8f43e"
+    },
+    {
+      "path": "original-7ffab533/docs/implementation/SPN-090-capability-validation.json",
+      "bytes": 7970,
+      "sha256": "54714e75443cfa7e1020d5f88c74aff70812cc59a69c4b397c80dadba3e638ec"
+    },
+    {
+      "path": "original-7ffab533/scripts/ci/browserstack-bounded-http.ts",
+      "bytes": 4726,
+      "sha256": "6b40d1fdf074c6962dcfff79db1fcfdf6a40001560c5bdaf753726a9614edf9d"
+    },
+    {
+      "path": "original-7ffab533/scripts/ci/browserstack-capability.test.ts",
+      "bytes": 14266,
+      "sha256": "0c974096eca66370ea01239fd2407a00c04b57b9c54ead61cea815f59032ba40"
+    },
+    {
+      "path": "original-7ffab533/scripts/ci/browserstack-capability.ts",
+      "bytes": 22198,
+      "sha256": "7d91e850bd9580a4c7c9ab8ddc2ab01c0fd08282729618ac3beada4cd96ef173"
+    },
+    {
+      "path": "original-7ffab533/scripts/ci/browserstack-ledger-store.test.ts",
+      "bytes": 8436,
+      "sha256": "f87b715797d1cb056ccced89a69e902e882519d42f142b16018b3f3f7bee5cd1"
+    },
+    {
+      "path": "original-7ffab533/scripts/ci/browserstack-ledger-store.ts",
+      "bytes": 11214,
+      "sha256": "533050cecb5e9d0904f4adc6119c955827df79eead0cdef43453e7f4e945432a"
+    },
+    {
+      "path": "original-7ffab533/tracked.patch",
+      "bytes": 11363,
+      "sha256": "4f82f66c8a10a26b57529d3c2b11e75c93bd2426f5130cb54408c85544d8b3d3"
+    },
+    {
+      "path": "superseded-9608f783/artifacts/browserstack-build-graph.json",
+      "bytes": 426717,
+      "sha256": "76b369d6abeeaaf9c64e7e0d828aec558a60fcb5fc2799755a80cf54b0f4f31a"
+    },
+    {
+      "path": "superseded-9608f783/artifacts/browserstack-build-identity.json",
+      "bytes": 1503,
+      "sha256": "698fc924e1bd8b5a4a6184d55175d2a0bae6dfe7cce3548eaed99d35af78169b"
+    },
+    {
+      "path": "superseded-9608f783/artifacts/browserstack-build-result.json",
+      "bytes": 1545,
+      "sha256": "19b8c34f79d781b577a46ea0715e644521a90bb6ed74abb4daeb801def74ea9e"
+    }
+  ]
+}

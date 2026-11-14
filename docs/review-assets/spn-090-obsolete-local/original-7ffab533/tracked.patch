@@ -1,0 +1,203 @@
+diff --git a/docs/implementation/SPN-090.md b/docs/implementation/SPN-090.md
+index faeb1424d3dbd89331da5289fbd2ea291834f8f6..abbfb9d1a436a4554ec2a81c4bbb0c398301833d 100644
+--- a/docs/implementation/SPN-090.md
++++ b/docs/implementation/SPN-090.md
+@@ -666,3 +666,94 @@ through the tests/compiler/lint. All workloads used the shared watchdog and
+ released its lock. Each batch completed before the two-second RSS sample, so
+ resource use is unmeasured, not zero. No provider request, device, tunnel, push,
+ scheduler, independent whole-ticket grade or full physical acceptance is claimed.
++
++#### Durable reservation custody
++
++The capability harness uses the fixed permanent data branch
++`codex/browserstack-lifetime-ledger` in `mxbaylee/spinel`, with one file,
++`browserstack-lifetime-ledger.json`. This is operational accounting state and is
++explicitly excluded from obsolete-ticket branch cleanup. Data updates do not
++match the general CI workflow's `push.branches: [main]` trigger. Initialization
++is a separate explicit operation from the owner-attested seed; a missing or
++corrupt file must never be interpreted as unused credit or recreated silently.
++No branch has been created at this source checkpoint.
++
++The source adapter uses the GitHub Contents API's existing blob SHA as a compare
++and swap precondition. It admits at most a 1 MiB ledger and 2 MiB API envelope,
++four requests and 30 seconds per operation, with eight seconds per request.
++Before creating a device session it records the run/attempt, source/tested SHAs,
++a fresh invocation identity, the elapsed-time budget and timestamp. An existing
++reservation prevents reallocation. A lost write response is read back against
++the same proposed blob and invocation identity; a conflict or unproved durable
++write never permits a device POST. Publication is never retried blindly.
++
++Session identity and cleanup uncertainty remain in that same reservation. They
++cannot be cleared because a process exited or a later retained-history page
++omitted the session. The first source adapter deliberately does not implement
++settlement; reconciliation against verified terminal usage is a separate required
++step before any later automatic allocation. The stored elapsed budget is not a
++certified billing ceiling. Repository concurrency coordinates this repository
++only; unknown activity from other projects remains outside that lock.
++
++Only trusted manual/scheduled source may receive a least-privilege token with
++`contents: write` for this operation. PR code does not receive a write token.
++The source adapter cannot select another repository, branch, path or returned
++download URL. All remote errors are reduced to fixed local categories. Source
++and tests are in progress; no provider allocation, publication or dispatch is
++claimed by this custody design.
++
++#### Bounded capability control source and preview boundary
++
++The first control implementation admits one session only after the exact durable
++reservation is read back. It permits 80 action-command attempts, an eight-second
++command bound, a 64 KiB request/response limit, and at most four candidate webview
++contexts. Creation has a 45-second bound. No action starts unless its full bound
++fits before 135 seconds from creation dispatch; independent cleanup lasts only
++until 180 seconds. Seven cleanup requests include two reserved for session
++deletion and terminal measurement. Network restoration additionally requires
++the owned fixture's reachability check before it can be reported as observed.
++Lost creation identity and unconfirmed deletion retain the reservation; there is
++no replacement session. These are local execution limits, not a certified
++provider charging ceiling or proof that a remote session ended.
++
++The core intentionally has no dispatch entry point yet. Trusted production
++preview, genuine authentication and content/offline checks must be supplied by
++owned code; missing authentication stops with `capability-incomplete`. Mock
++transport callbacks in unit tests are not physical-device or passkey evidence.
++The checked source passes [25 deterministic tests, scoped strict compilation and
++lint](SPN-090-capability-validation.json). That record also preserves the earlier
++fixture run-URL failures, Buffer fixture typing failure and cleanup lint failure.
++No provider, tunnel, branch initialization or paid feature was used.
++
++The next launcher will own one disposable child application and one pinned
++`cloudflared` process. It will seed only synthetic users/content before exposure,
++choose one Quick Tunnel hostname, and bind that exact HTTPS origin to the app's
++real WebAuthn verifier. Before reservation, normal certificate verification must
++authenticate the origin; HTML, manifest, icons, worker/assets and an actual
++WebSocket upgrade must match the owned build and child. A process or tunnel
++restart invalidates this preflight rather than silently changing origin. Cleanup
++must observe both owned processes exit before deleting their private directory;
++uncertain closure retains the fixture. The public endpoint is temporary test
++data, not the SPN-038 production domain. Cloudflare's [Quick Tunnel limits](https://developers.cloudflare.com/tunnel/get-started/quick-tunnels/)
++and lack of a reliability guarantee remain explicit; a preflight failure spends
++no device allowance.
++
++SPN-052 on main `416cf214` supplies real desktop profile/native-input evidence
++and reusable Doc/Sheet/image snapshots. Its desktop fixture deliberately seeds
++sessions, so that login helper cannot establish SPN-090's installed-device
++authentication. Reuse its content and comparison helpers; use a one-use
++production invite/recovery ceremony in the installed webview for this probe,
++then check the server-verified account. Do not inject a cookie or override
++`navigator.credentials`. BrowserStack's [documented native permission contexts](https://www.browserstack.com/docs/automate/selenium/handle-permission-pop-ups)
++justify probing native controls, not assuming home-screen automation works.
++Its [documented passkey setup](https://www.browserstack.com/docs/live/device-settings/webauth-device-passcode)
++is an Android Live Pro feature, not evidence of this free Automate iPhone
++capability. Unsupported native/passkey controls remain a concrete capability
++blocker, with no paid upgrade or fabricated authentication fallback.
++
++This preserves the Owner's finite allowance and honest launch expectations,
++the Collaborator's actual account/content boundary, the Link guest's exclusion
++from durable private downloads, and the Operator's visible failures and
++recoverable evidence. Monthly scheduling,
++reservation settlement, complete-matrix cost and all physical acceptance remain
++required; this local control checkpoint does not complete them.
+diff --git a/docs/run-backlog.md b/docs/run-backlog.md
+index 4467e4521e419cceff145cfa28744b5006409ed1..148617e51665d821948e4d0706d01e3a21c6d439 100644
+--- a/docs/run-backlog.md
++++ b/docs/run-backlog.md
+@@ -269,6 +269,11 @@ record blocked deletions with exact refs and their access prerequisite rather
+ than claiming cleanup completed. The [cleanup decision](implementation/grooming-2026-10-29.md#evidence-and-branch-completion)
+ is part of completing a merged ticket.
+ 
++The permanent BrowserStack accounting branch `codex/browserstack-lifetime-ledger`
++is operational state, not an obsolete ticket/evidence branch. Exclude it from
++ticket cleanup; preserve its immutable observations and unsettled reservations.
++See [SPN-090's ledger custody contract](implementation/SPN-090.md#durable-reservation-custody).
++
+ Fetch and fast-forward local main when safe, then start again at step 1.
+ Keep progress updates brief: what landed, review score,
+ verification, what comes next, and any real execution prerequisite. Do not end the run just
+diff --git a/scripts/ci/browserstack-ledger.test.ts b/scripts/ci/browserstack-ledger.test.ts
+index 9691cfe42a2bce7386632c9fe40bc921eb8cf0ca..5bd08c3ba912bebfab7788a804aecf25fdb41c9c 100644
+--- a/scripts/ci/browserstack-ledger.test.ts
++++ b/scripts/ci/browserstack-ledger.test.ts
+@@ -143,9 +143,15 @@ test('partial history and uncertain reservations remain visible even with all kn
+   );
+   const ledger = attested();
+   ledger.reservations.push({
++    reservationId: '12345678-1234-4123-8123-123456789abc',
++    sourceSha: executions[0].sourceSha,
++    testedSha: executions[0].testedSha,
+     run: executions[0].run,
+     attempt: 2,
+     reservedSeconds: 120,
++    quotaReportId: ownerBaselineReportId,
++    assumedPriorChargedSeconds: 900,
++    admissionPolicy: 'owner-attested-one-probe-minute-ceiling-v1',
+     createdAt: '2026-10-29T00:00:00.000Z',
+     state: 'uncertain',
+     sessionIds: [],
+diff --git a/scripts/ci/browserstack-ledger.ts b/scripts/ci/browserstack-ledger.ts
+index 5569028e31936f55be53588bf4c3f73a8d03342a..f2a8df95a634a6bf87b297fc5adb03168293694b 100644
+--- a/scripts/ci/browserstack-ledger.ts
++++ b/scripts/ci/browserstack-ledger.ts
+@@ -72,9 +72,15 @@ export type LifetimeLedger = {
+   // Never expire or release an uncertain reservation merely because a runner
+   // died or a later retained-history page cannot find its sessions.
+   reservations: {
++    reservationId: string;
++    sourceSha: string;
++    testedSha: string;
+     run: string;
+     attempt: number;
+     reservedSeconds: number;
++    quotaReportId: string;
++    assumedPriorChargedSeconds: number;
++    admissionPolicy: 'owner-attested-one-probe-minute-ceiling-v1';
+     createdAt: string;
+     state: 'reserved' | 'uncertain';
+     sessionIds: string[];
+@@ -271,18 +277,46 @@ export function readLedger(bytes: Uint8Array): LifetimeLedger {
+     ledgerLimits.reservations,
+   ).map((value) => {
+     const row = object(value);
+-    keys(row, ['run', 'attempt', 'reservedSeconds', 'createdAt', 'state', 'sessionIds']);
++    keys(row, [
++      'reservationId',
++      'sourceSha',
++      'testedSha',
++      'run',
++      'attempt',
++      'reservedSeconds',
++      'quotaReportId',
++      'assumedPriorChargedSeconds',
++      'admissionPolicy',
++      'createdAt',
++      'state',
++      'sessionIds',
++    ]);
+     if (row.state !== 'reserved' && row.state !== 'uncertain') throw refused();
++    if (
++      row.admissionPolicy !== 'owner-attested-one-probe-minute-ceiling-v1' ||
++      !reportIds.has(digest(row.quotaReportId))
++    )
++      throw refused();
+     return {
++      reservationId: text(
++        row.reservationId,
++        /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/,
++      ),
++      sourceSha: id(row.sourceSha),
++      testedSha: id(row.testedSha),
+       run: run(row.run),
+       attempt: integer(row.attempt, 1),
+       reservedSeconds: integer(row.reservedSeconds, 1),
++      quotaReportId: digest(row.quotaReportId),
++      assumedPriorChargedSeconds: integer(row.assumedPriorChargedSeconds),
++      admissionPolicy: row.admissionPolicy,
+       createdAt: date(row.createdAt),
+       state: row.state,
+       sessionIds: unique(list(row.sessionIds, ledgerLimits.sessions).map(id)),
+     };
+   });
+   unique(reservations.map(({ run, attempt }) => `${run}:${attempt}`));
++  unique(reservations.map(({ reservationId }) => reservationId));
+   let baseline: OwnerBaseline | null = null;
+   if (input.baseline !== null) {
+     const row = object(input.baseline);

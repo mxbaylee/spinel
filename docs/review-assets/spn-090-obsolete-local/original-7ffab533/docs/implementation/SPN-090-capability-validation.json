@@ -1,0 +1,178 @@
+{
+  "scope": "Source-only deterministic ledger and bounded capability transport; no real provider, tunnel, device, browser, or preview",
+  "baseCommit": "7ffab53",
+  "attempts": [
+    {
+      "attempt": "first",
+      "steps": [
+        {
+          "name": "format",
+          "status": 0,
+          "signal": null,
+          "durationMs": 331
+        },
+        {
+          "name": "tests",
+          "status": 1,
+          "signal": null,
+          "durationMs": 152
+        }
+      ],
+      "logSha256": "b9352581b3840d8f497ce0ff88e265482c15f9f4529278eb7f8ce07c3349bcfd",
+      "sourceHashesAfterFormat": {
+        "scripts/ci/browserstack-ledger.ts": "3b98f6942ab01295618211437d6b92383992d433a74fd735c98497347e675616",
+        "scripts/ci/browserstack-ledger.test.ts": "2e66cf33ed985ff9267ef2d448a9bf6bfbcdfa50a08dba2a17d5417bc2fecda5",
+        "scripts/ci/browserstack-bounded-http.ts": "ac3ec52c88e2c83a569c48bc8bda310df49dcaa71547aa9e2c63fcfb6f73a209",
+        "scripts/ci/browserstack-ledger-store.ts": "81b0b83c450d5024b3be730e3654667b02ea0410133d5dfe6880dd99543d8d49",
+        "scripts/ci/browserstack-ledger-store.test.ts": "ea51bb8c7b917273a06f0cff327df8c46dd0f13ce14d9e214543adc394d32795",
+        "scripts/ci/browserstack-capability.ts": "249759804304d1b1b05f8cb8b1e9fabfb1686006d293df174f9ab94198c1878f",
+        "scripts/ci/browserstack-capability.test.ts": "f4ec4968575110a06a74e1cd9f3bb82a7a1d8bf6640a44e285a6f8a0c41a305f",
+        "docs/implementation/SPN-090.md": "920c6f6a09545250ab190bacae2fefac07176de73cc00a44c2f6f110f4bbae33",
+        "docs/run-backlog.md": "dedef12a2952c11ae92529d6b8c0fc1fc62993a063694cfad612acd433f0bd65"
+      }
+    },
+    {
+      "attempt": "second",
+      "steps": [
+        {
+          "name": "format",
+          "status": 0,
+          "signal": null,
+          "durationMs": 310
+        },
+        {
+          "name": "tests",
+          "status": 0,
+          "signal": null,
+          "durationMs": 142
+        },
+        {
+          "name": "typecheck",
+          "status": 1,
+          "signal": null,
+          "durationMs": 135
+        }
+      ],
+      "logSha256": "3b36a3f98ef21120a1b713bd23a0b5d9c2bccaabf6417bdc949f379d098495cc",
+      "sourceHashesAfterFormat": {
+        "scripts/ci/browserstack-ledger.ts": "3b98f6942ab01295618211437d6b92383992d433a74fd735c98497347e675616",
+        "scripts/ci/browserstack-ledger.test.ts": "2e66cf33ed985ff9267ef2d448a9bf6bfbcdfa50a08dba2a17d5417bc2fecda5",
+        "scripts/ci/browserstack-bounded-http.ts": "ac3ec52c88e2c83a569c48bc8bda310df49dcaa71547aa9e2c63fcfb6f73a209",
+        "scripts/ci/browserstack-ledger-store.ts": "81b0b83c450d5024b3be730e3654667b02ea0410133d5dfe6880dd99543d8d49",
+        "scripts/ci/browserstack-ledger-store.test.ts": "914f88fc008f28609f8bdfbaf6ea8e9bb4f1991ab41fab767da2ddfc9aa4afee",
+        "scripts/ci/browserstack-capability.ts": "8e95f4ab023bf047737a6fabb1c8c6b15ba937df3aeb73013c0e0dfaa4785fb2",
+        "scripts/ci/browserstack-capability.test.ts": "d9111c1e299cb5cbde2adccbfde74fc643ab1cffd78d96ef33c222be6bf8caec",
+        "docs/implementation/SPN-090.md": "920c6f6a09545250ab190bacae2fefac07176de73cc00a44c2f6f110f4bbae33",
+        "docs/run-backlog.md": "dedef12a2952c11ae92529d6b8c0fc1fc62993a063694cfad612acd433f0bd65"
+      }
+    },
+    {
+      "attempt": "third",
+      "steps": [
+        {
+          "name": "format",
+          "status": 0,
+          "signal": null,
+          "durationMs": 311
+        },
+        {
+          "name": "tests",
+          "status": 0,
+          "signal": null,
+          "durationMs": 149
+        },
+        {
+          "name": "typecheck",
+          "status": 0,
+          "signal": null,
+          "durationMs": 79
+        },
+        {
+          "name": "lint",
+          "status": 1,
+          "signal": null,
+          "durationMs": 78
+        }
+      ],
+      "logSha256": "3a82ecba85a606a7a654bec199e2a47284b9cf13ae2083bbb6a657473abe5da7",
+      "sourceHashesAfterFormat": {
+        "scripts/ci/browserstack-ledger.ts": "3b98f6942ab01295618211437d6b92383992d433a74fd735c98497347e675616",
+        "scripts/ci/browserstack-ledger.test.ts": "2e66cf33ed985ff9267ef2d448a9bf6bfbcdfa50a08dba2a17d5417bc2fecda5",
+        "scripts/ci/browserstack-bounded-http.ts": "ac3ec52c88e2c83a569c48bc8bda310df49dcaa71547aa9e2c63fcfb6f73a209",
+        "scripts/ci/browserstack-ledger-store.ts": "81b0b83c450d5024b3be730e3654667b02ea0410133d5dfe6880dd99543d8d49",
+        "scripts/ci/browserstack-ledger-store.test.ts": "9e72a28625ebb8e1b1ec8516cf56d2a7b28238537dbad86897400c1c587735ec",
+        "scripts/ci/browserstack-capability.ts": "8e95f4ab023bf047737a6fabb1c8c6b15ba937df3aeb73013c0e0dfaa4785fb2",
+        "scripts/ci/browserstack-capability.test.ts": "d9111c1e299cb5cbde2adccbfde74fc643ab1cffd78d96ef33c222be6bf8caec",
+        "docs/implementation/SPN-090.md": "920c6f6a09545250ab190bacae2fefac07176de73cc00a44c2f6f110f4bbae33",
+        "docs/run-backlog.md": "dedef12a2952c11ae92529d6b8c0fc1fc62993a063694cfad612acd433f0bd65"
+      }
+    },
+    {
+      "attempt": "fourth",
+      "steps": [
+        {
+          "name": "format",
+          "status": 0,
+          "signal": null,
+          "durationMs": 314
+        },
+        {
+          "name": "tests",
+          "status": 0,
+          "signal": null,
+          "durationMs": 141
+        },
+        {
+          "name": "typecheck",
+          "status": 0,
+          "signal": null,
+          "durationMs": 77
+        },
+        {
+          "name": "lint",
+          "status": 0,
+          "signal": null,
+          "durationMs": 39
+        }
+      ],
+      "logSha256": "4d4210ec76b04aa665222f6d9d4a2092dba8f6997a5d6f0ad118bdc20462b45a",
+      "sourceHashesAfterFormat": {
+        "scripts/ci/browserstack-ledger.ts": "3b98f6942ab01295618211437d6b92383992d433a74fd735c98497347e675616",
+        "scripts/ci/browserstack-ledger.test.ts": "2e66cf33ed985ff9267ef2d448a9bf6bfbcdfa50a08dba2a17d5417bc2fecda5",
+        "scripts/ci/browserstack-bounded-http.ts": "ac3ec52c88e2c83a569c48bc8bda310df49dcaa71547aa9e2c63fcfb6f73a209",
+        "scripts/ci/browserstack-ledger-store.ts": "81b0b83c450d5024b3be730e3654667b02ea0410133d5dfe6880dd99543d8d49",
+        "scripts/ci/browserstack-ledger-store.test.ts": "9e72a28625ebb8e1b1ec8516cf56d2a7b28238537dbad86897400c1c587735ec",
+        "scripts/ci/browserstack-capability.ts": "9bdd3b8253d27a35d2732a7de1b9dea9bedd773dd77bce0fd304ba3e5d833126",
+        "scripts/ci/browserstack-capability.test.ts": "d9111c1e299cb5cbde2adccbfde74fc643ab1cffd78d96ef33c222be6bf8caec",
+        "docs/implementation/SPN-090.md": "920c6f6a09545250ab190bacae2fefac07176de73cc00a44c2f6f110f4bbae33",
+        "docs/run-backlog.md": "dedef12a2952c11ae92529d6b8c0fc1fc62993a063694cfad612acd433f0bd65"
+      }
+    }
+  ],
+  "final": {
+    "tests": 25,
+    "passed": 25,
+    "skipped": 0,
+    "durationMs": 111.40975,
+    "strictScopedTypecheck": "passed",
+    "scopedOxlint": "passed",
+    "sourceUnchangedDuringChecks": true,
+    "watchdog": "shared owner watchdog, existing 2GiB process-tree ceiling; critical memory pressure abort",
+    "rssMiB": null,
+    "rssExplanation": "All attempts finished before the two-second sampler; printed zero is unmeasured.",
+    "physicalClosure": "all commands exited; shared lock absent"
+  },
+  "failuresPreserved": [
+    "first:21/25; four CAS fixtures used numeric run ID instead of required canonical run URL",
+    "second:25/25; TypeScript rejected inferred Buffer<ArrayBuffer> assigned a broader fixture Buffer",
+    "third:25/25 and compiler passed; cleanup throws inside guarded finally triggered no-unsafe-finally",
+    "fourth:25/25, compiler, lint and format passed after explicit fixture Buffer annotation and named cleanup function extraction"
+  ],
+  "notEstablished": [
+    "real provider control compatibility",
+    "production HTTPS preflight",
+    "genuine installed-context WebAuthn",
+    "complete physical offline matrix",
+    "billing balance or reservation settlement"
+  ]
+}
