@@ -1,0 +1,13 @@
+{
+  "observedAt": "2026-11-14T05:40:42.526681+00:00",
+  "decodedOrPlainPayloads": 50,
+  "patterns": [
+    "privateKey",
+    "githubToken",
+    "awsKey",
+    "unmaskedBearer",
+    "personalCheckout"
+  ],
+  "findings": [],
+  "scope": "Bounded pattern scan plus source review, not a universal credential detector; local paths normalized, hosted bytes unchanged."
+}

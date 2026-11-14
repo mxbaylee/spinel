@@ -1,0 +1,18 @@
+{
+  "name": "maintenance-registration-review-a-pr-06a1",
+  "args": [
+    "npm",
+    "run",
+    "backlog:pr",
+    "--",
+    "--base",
+    "7c38f7d32e6a55d8000239923113155de6a07c8c",
+    "--title",
+    "🧹 Groom backlog register maintenance failure diagnostics"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 520,
+  "peakKiB": 265984
+}

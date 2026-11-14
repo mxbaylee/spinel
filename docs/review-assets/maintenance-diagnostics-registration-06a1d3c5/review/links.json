@@ -1,0 +1,11 @@
+{
+  "checked": [
+    "docs/todo/SPN-157.md",
+    "docs/todo/SPN-160.md",
+    "docs/implementation/SPN-157.md",
+    "docs/implementation/SPN-160.md",
+    "docs/implementation/grooming-maintenance-diagnostics-2026-11-13.md"
+  ],
+  "missingFileTargets": [],
+  "scope": "file targets, not full anchor verification"
+}

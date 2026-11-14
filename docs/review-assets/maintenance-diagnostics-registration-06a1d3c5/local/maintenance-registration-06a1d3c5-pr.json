@@ -1,0 +1,17 @@
+{
+  "name": "maintenance-registration-06a1d3c5-pr",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "scripts/backlog/cli.ts",
+    "pr",
+    "--base",
+    "7c38f7d32e6a55d8000239923113155de6a07c8c",
+    "--title",
+    "🧹 Groom backlog register maintenance failure diagnostics"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 400,
+  "peakKiB": 186176
+}

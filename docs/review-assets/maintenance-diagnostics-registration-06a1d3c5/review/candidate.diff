@@ -1,0 +1,415 @@
+diff --git a/docs/implementation/SPN-157.md b/docs/implementation/SPN-157.md
+index 94426dd5..805cb7dd 100644
+--- a/docs/implementation/SPN-157.md
++++ b/docs/implementation/SPN-157.md
+@@ -100,3 +100,27 @@ source and fixture dependencies, with selected missing/failed work unable to pas
+ The separate SPN-157 local diagnostic work is not imported here and does not
+ complete the original L outcome. No implementation, fresh reproduction or repair
+ acceptance has been performed by this registration; the exact hosted job links supplement this maintained narrative.
++
++## 🧯 Diagnostic prerequisite with full recovery retained
++
++**Date/status/source:** 2026-11-13, accepted agent delivery-manager sequencing
++under standing four-persona authority. [SPN-160](SPN-160.md) registers the complete
++**M** first-failure diagnostic outcome: immediate pre-barrier rejection, immutable
++bounded handoff receipts, readiness context, privacy/cleanup controls and actual
++Linux diagnostic acceptance. Its source-level swallowed-rejection defect is useful
++to repair independently of reproducing either original incident.
++
++Add SPN-160 as a prerequisite; SPN-157 remains **open, L**, retaining both original
++SIGKILL/original-row/orphan and readiness-first authenticated candidate commit/release
++investigations and demonstrated repairs, with every authority, persistence, process,
++interruption and native requirement above. Remaining effort is **M + L**. SPN-098
++continues to wait on SPN-157. An instrumented pass without recurrence proves no
++historical cause or repair; a failure still blocks the diagnostic PR. No original
++acceptance is removed to change a review result.
++
++Operator receives actionable bounded private evidence; Owner and Collaborator
++retain original/shared data and authenticated fail-closed admission; Link guest
++gains no new access or management visibility. The cost is a distinct complete
++verification step before unresolved recovery work. SPN-123's production emitter
++inventory and SPN-128's preserved-original recovery command remain independent
++full outcomes, as recorded in [the boundary decision](SPN-160.md#-retained-recovery-scope-and-neighboring-work).
+diff --git a/docs/implementation/SPN-160.md b/docs/implementation/SPN-160.md
+new file mode 100644
+index 00000000..9f7175ef
+--- /dev/null
++++ b/docs/implementation/SPN-160.md
+@@ -0,0 +1,125 @@
++# SPN-160 — Actionable maintenance handoff failures
++
++## 🧭 Complete diagnostic outcome
++
++**Date/status/source:** 2026-11-13, accepted registration and sequencing by the
++agent delivery manager under [standing four-persona authority](../todo/process.md#decisions).
++Integration, independent review and native acceptance remain pending. The complete
++outcome is **M, pre-launch**: preserve useful first failures at existing maintenance
++crash/handoff/readiness boundaries without changing recovery semantics. It has
++independent value even if neither original incident recurs; this is not a changed
++grading denominator or a publication exception.
++
++Actual main `7c38f7d32e6a55d8000239923113155de6a07c8c` starts the durable-phase
++transition with `control(action).catch(() => undefined)` at
++[supervisor.test.ts:1097](https://github.com/mxbaylee/spinel/blob/7c38f7d32e6a55d8000239923113155de6a07c8c/src/server/maintenance/supervisor.test.ts#L1097), then separately waits for the
++barrier. A transition rejection before that barrier loses its original failure and
++leaves the wait to report `Fixture message timed out.` This is a source-level
++fixture defect, not evidence of either historical Linux incident's cause.
++
++Options were retaining misleading failures, adding unbounded tracing or relaxed
++retries, or delivering one bounded failure-evidence contract before further recovery
++investigation. Choose the latter. Prepared local diagnostic candidate
++`44f9a5365fe290236b882606933e63b8ef317363` on
++`codex/spn-157-supervisor-handoffs` originated at base
++`ebf0842f51b60d54649cf8a03065914bec0944bf`. Its ten portable controls were reported
++passing in the implementation handoff; that is not native receiver acceptance or
++historical causal proof. This registration imports none of that code. Integrate
++current main and this registration, preserving check receipts and resource-aborted
++attempts, then review the complete candidate. The old local head is not claimed to
++be published or ready to merge.
++
++The complete diagnostic contract includes:
++
++- Report the original action/stage/bounded journal failure immediately when a
++  transition rejects before the observed barrier, preserving its cause. Tolerate
++  intended RPC rejection only after barrier observation. Remove message listener
++  and timer on barrier, early failure and timeout; handle late rejection without an
++  unhandled promise. Retain the original **10-second** deadline and crash assertions.
++- Freeze first-failure sender offer/request/send-callback/held progress and receiver
++  offer/request/accepted-handle/held-send progress. New receipts contain fixed
++  counts, booleans and machine codes only; exclude content, credentials, authority,
++  paths, transfer IDs, nonces and arbitrary IPC payloads. Public RPC errors stay
++  generic; original internal causes remain available.
++- Capture readiness phase, job phase, lastFailure and bounded controller category
++  before cleanup, including polling failure and unavailable job-state files.
++  Preserve receipts through the existing single Error.cause wrapper without getters
++  or cyclic/unbounded traversal. Missing/late observation cannot change handoff.
++- Add no protocol callback, timer or awaited work for observation. Keep authority,
++  persistence, admission, handle ownership, process containment and production
++  deadlines unchanged. No new service, blanket retries, skips, timeout increases or
++  selected-CI narrowing. Preserve first cause and cleanup on every outcome.
++
++**Complete M includes native diagnostic acceptance**, integration and current-head
++gates; local helpers alone cannot complete it. Reassess before broader protocol,
++recovery, authority or production observation work. The remaining combined effort
++is **SPN-160 M + SPN-157 L**, not a smaller total.
++
++**All four personas:** Operator gains useful bounded private evidence instead of
++misleading timeouts (**M**). Owner and Collaborator retain original-row,
++selected-candidate and fail-closed guarantees without new writable access; internal
++evidence offers indirect support benefits (**S** each), not completed recovery.
++Link guest gains no authority or management visibility, with content and identities
++excluded from new receipts (**S**). Additional bounded verification delays further
++investigation; safety is not inferred from improved diagnostics.
++
++## 🧪 Verification and the next bounded experiment
++
++Reuse existing/prepared `ownership.ts`/`.test.ts`, `supervisor-test-control.ts`/`.test.ts`,
++`supervisor.test.ts` and `ownership-fixture.ts`. Portable controls cover request/offer
++ordering; wrong/duplicate acknowledgements; zero/two-handle interruption; missing-held
++deadline; immutable late callbacks; retained parent listeners; direct/wrapped
++receipt extraction; throwing getters and cycle/depth bounds. Real temporary journal
++controls cover synchronous/asynchronous pre-barrier rejection, expected
++reached-then-crash rejection, unchanged timeout and late rejection, with zero
++residual message listeners/timers and exclusion of unrelated data.
++
++Existing CI Unit tests **recovery** owns portable files; **supervisor** owns real
++supervisor/ownership fixtures. Native acceptance retains **Node 26.13.0**,
++Tini/private PID namespace via `scripts/ci/pid-namespace.ts`, actual Linux abstract
++Unix kernel leases, IPC server handles and SQLite. Exercise interruption after
++two accepted handles, no SQLite open, original bytes retained and closed late
++handles, plus actual durable-phase and authenticated restore readiness with
++improved reporting. Preserve ownership, supervisor, journal, fixture and shared CI
++selection dependencies; selected missing, failed or cancelled work must fail its
++aggregate. No new runner or workflow; a Mac control cannot prove Linux behavior.
++
++After integration and qualifying independent exact-head reviews, first normal
++validation of the newly instrumented source is a **new bounded experiment**: same
++scenarios and budgets, improved evidence. Preserve its first outcome and snapshot
++before cleanup. A pass may not reproduce either original incident and proves no
++causal repair. A failure may improve attribution but still blocks that PR's merge.
++Further experiments need a concrete hypothesis/evidence gap; never repeat unchanged
++until green. No Docker, retired private host, paid infrastructure or other exception
++is authorized by this registration.
++
++## 🧾 Retained recovery scope and neighboring work
++
++SPN-157 remains **open, L**, with both complete original investigations and any
++demonstrated product/fixture repairs: durable-running SIGKILL/original-row/orphan
++recovery and readiness-first authenticated selected-candidate commit/release.
++Retain all authority, persistence, interruption, cleanup and actual Linux acceptance.
++SPN-157 now depends on SPN-160; **SPN-098 still depends on SPN-157**. No original
++acceptance is deleted, downsized, hidden or satisfied by instrumentation.
++
++Original failed run **43544143900**, source
++`2204b8c40ce6feb8ad03c65720c976510535ad00`, remains in the
++[immutable first-failure archive](https://github.com/mxbaylee/spinel/tree/5e1b7a9fac17c69ff9174caa9da9f8d13713737d/docs/review-assets/spn-098-failure-43544143900).
++Its successful comparator does not supersede it. Original failure stage and causal
++relationship of the observed child handoff timeout remain unknown. Unchanged
++supervisor files do not establish independence from SPN-098's broader startup/drain
++behavior. Carry original specification and split lineage into review. SPN-158's
++postcommit writable-admission oracle is a separate outcome.
++
++[SPN-123](SPN-123.md) retains its complete **L** fixed production operation/sync/
++maintenance emitter inventory, collectors/store/exports, schema/admission, privacy
++and measured off/on overhead. Internal first-failure receipts and test diagnostics
++do not fulfill that production telemetry contract or add an emitter/export service.
++Reuse privacy principles without transferring its unimplemented requirements.
++
++[SPN-128](../todo/SPN-128.md) retains its complete **L** journaled supervisor command
++to reinstall a preserved original after an interrupted activated trial, frozen
++fingerprint/fresh authority, generation reconciliation, real crash cuts and runbook.
++This ticket changes no recovery command or custody decision and claims none of its
++acceptance. The [focused registration record](grooming-maintenance-diagnostics-2026-11-13.md)
++retains allocation and bookkeeping separately from product completion.
+diff --git a/docs/implementation/grooming-maintenance-diagnostics-2026-11-13.md b/docs/implementation/grooming-maintenance-diagnostics-2026-11-13.md
+new file mode 100644
+index 00000000..e1b03436
+--- /dev/null
++++ b/docs/implementation/grooming-maintenance-diagnostics-2026-11-13.md
+@@ -0,0 +1,58 @@
++# Focused maintenance diagnostics registration — 2026-11-13
++
++## 🧭 Decision and retained work
++
++**Date/status/source:** 2026-11-13, accepted agent delivery-manager judgment under
++standing persona delegation and the owner's continuous backlog instruction.
++Register **🧯 SPN-160 Preserve actionable maintenance handoff failures**, complete
++**M, pre-launch**. The proven swallowed pre-barrier rejection is independently useful
++to repair; bounded handoff/readiness evidence, controls, privacy, cleanup and actual
++Linux diagnostic acceptance form one complete outcome. This is not a publication
++exception, a grading-denominator change or a claim to repair the original incidents.
++
++[SPN-160's canonical decision](SPN-160.md) retains source provenance, portable/native
++ownership, original failed run/archive, causal uncertainty and complete acceptance.
++SPN-157 gains this prerequisite but stays **open, L** with both original recovery
++investigations and requirements; SPN-098 still depends on SPN-157. The aggregate
++remainder is visibly **M + L**. No implementation is imported. SPN-123 retains its
++production diagnostic inventory and SPN-128 its preserved-original recovery command.
++
++All four personas are weighed: Operator gains useful private failure evidence;
++Owner and Collaborator retain data and authenticated fail-closed boundaries with
++indirect support benefits; Link guest gains no authority or content visibility.
++Improved diagnostics cannot establish recovery safety. Extra verification is the
++cost of a useful prerequisite; all original product outcomes remain due.
++
++## 🧾 Allocation, scope and housekeeping
++
++Preparation starts from actual main
++`7c38f7d32e6a55d8000239923113155de6a07c8c`, next ID160. The available complete Git
++history contains no SPN-160 ticket path. Exactly one backlog CLI allocation creates
++the heading above and advances next ID to **161**. The allocation passed in
++**128 ms** under pinned Node26.13.0, shared serial runner and runtime watchdog with
++normal-pressure preflight. It finished before the first memory sample, so recorded
++zero peak is unmeasured. There was no resource abort or duplicate allocation.
++
++Keep actual-main full-groom date **2026-11-12** and completion list
++**[SPN-148, SPN-145, SPN-149]** unchanged. This focused registration completes no
++product ticket, deletes none and resets no counter. Previous registration PR286,
++its clean detached worktree and published evidence remain untouched. The new
++registration has its own branch/worktree. Regenerate the index through the CLI.
++
++Fresh complete open-PR audit returned **12 PRs**, all authored by `mxbaylee`:
++220,223,224,227,228,229,230,246,247,260,281,285. **No Dependabot PR is open**;
++no security, compatibility, current-CI or grouping disposition is outstanding.
++No dependency change or dependency PR merge occurs in this registration.
++
++Documentation checks own ID/history, exact heading, full scope/personas, preserved
++requirements, dependency ordering, links, generated index and title/size rules.
++Application/native tests are not invented for this documentation-only change.
++Both independent complete exact-head reviews precede a validation push; hosted
++applicability and all seven gates remain later requirements, not assumed passes.
++
++Initial index regeneration passed in **144 ms**; backlog validation passed for
++**31 open tickets** in **147 ms**, with ticket-length guidance only. Both used
++the same pinned serial/watchdog control, completed before the first memory sample
++and had no resource abort. Local Markdown file targets and diff whitespace checks
++passed. Exact-commit PR checking, two independent reviews and hosted gates remain
++separate requirements; these documentation checks are not native acceptance.
+diff --git a/docs/todo/SPN-157.md b/docs/todo/SPN-157.md
+index dfbcb6a7..496a648d 100644
+--- a/docs/todo/SPN-157.md
++++ b/docs/todo/SPN-157.md
+@@ -8,7 +8,7 @@ impact_owner: L
+ impact_collaborator: L
+ impact_guest: M
+ score: 32
+-depends_on: []
++depends_on: [SPN-160]
+ decisions: []
+ ---
+ 
+@@ -36,6 +36,8 @@ And failed or interrupted handoffs preserve data, authorization and recoverable
+ 
+ ## Rules
+ 
++- Wait on [SPN-160](SPN-160.md), the complete **M** internal failure-evidence prerequisite. This ticket remains open at **L**, with both original recovery investigations and all acceptance intact; the visible remainder is **M + L**. Diagnostic passage cannot prove historical causal repair. [Diagnostic prerequisite and retained scope](../implementation/SPN-157.md#-diagnostic-prerequisite-with-full-recovery-retained), agent judgment, 2026-11-13.
++
+ - Registration only; no repair or acceptance is claimed. The named supervisor failures on the SPN-098 candidate block its required validation. Unchanged supervisor files do not prove independence from the candidate's broader startup/drain behavior. SPN-090 separately waits on SPN-158; both PRs retain their own current-head gates. [Scope, evidence and four-persona decision](../implementation/SPN-157.md#-registration-and-complete-outcome), agent delivery judgment, 2026-11-13.
+ - Complete outcome **L** covers diagnosis, IPC/kernel/process lifecycle and durable-state reconciliation, restore authority and persistence, bounded cleanup, deterministic ordering/negative controls and actual Linux acceptance. Reassess at the early capability checkpoint before substantial implementation; split only with every remaining requirement and estimate retained.
+ - Diagnose failures in the named scenarios and repair the demonstrated product or fixture cause; the generic SIGKILL-case error may precede the crash or arise in later status, so reconciliation failure is not established. Preserve the original failure and successful comparator. Do not hide uncertainty with blanket retries, raised deadlines, skips or weakened readiness/data/cleanup assertions. The observed child handoff timeout is not an established diagnosis.
+diff --git a/docs/todo/SPN-160.md b/docs/todo/SPN-160.md
+new file mode 100644
+index 00000000..27d32ce0
+--- /dev/null
++++ b/docs/todo/SPN-160.md
+@@ -0,0 +1,54 @@
++---
++id: SPN-160
++emoji: 🧯
++effort: M
++phase: pre_launch
++impact_operator: M
++impact_owner: S
++impact_collaborator: S
++impact_guest: S
++score: 33
++depends_on: []
++decisions: []
++---
++
++# 🧯 SPN-160 Preserve actionable maintenance handoff failures
++
++## Story
++
++As the [Operator](../product/personas.md#operator), I want maintenance checks to retain the first failure and bounded handoff progress, so that I can investigate failed recovery without losing its cause to a later timeout.
++
++## Scenarios
++
++### An action fails before the intended crash point
++
++Given a maintenance transition has started but its durable crash barrier has not been observed,
++When the action rejects,
++Then the check immediately reports its original cause and bounded action, stage and journal context,
++And it removes its pending message listener and timer without an unhandled late rejection.
++
++### A handoff or readiness check fails
++
++Given ownership transfer or authenticated restore readiness is being observed,
++When a failure interrupts it,
++Then the first bounded sender, receiver, phase and controller evidence survives cleanup and the existing error wrapper,
++And missing or late observation cannot alter recovery, authority, persistence or deadlines.
++
++## Rules
++
++- Complete **M**, pre-launch, includes useful failure reporting, immutable bounded handoff receipts, readiness context, privacy, cleanup, portable negatives, integration and actual Linux diagnostic acceptance. [Scope, provenance and four-persona decision](../implementation/SPN-160.md#-complete-diagnostic-outcome), agent judgment, 2026-11-13.
++- The proven source defect swallows pre-barrier transition rejection and later reports a message timeout. This does not establish either original SPN-157 incident's cause. Retain both failures and SPN-157's complete **L** outcome; SPN-098 still waits on SPN-157. Remaining work is **M + L**. [Retained scope and boundaries](../implementation/SPN-160.md#-retained-recovery-scope-and-neighboring-work).
++- Tolerate intended RPC rejection only after observing the crash barrier. Preserve the original 10-second message deadline and crash assertions; remove timers/listeners on barrier, early failure and timeout, and handle late rejection.
++- New handoff receipts contain fixed counts, booleans and machine codes only: no content, credentials, authority, paths, transfer IDs, nonces or arbitrary payloads. Keep public errors generic and original internal causes. No new protocol callback, timer or awaited work; observation must not change behavior.
++- Capture readiness phase, job phase, lastFailure and bounded controller category before cleanup, including polling failure/unavailable job files. Preserve frozen first-failure progress through the existing single Error.cause wrapper without getters or cyclic/unbounded traversal. No retry, skip, raised deadline, CI narrowing or new service.
++- SPN-123 retains production emitters/exports and measured overhead; SPN-128 retains the journaled preserved-original recovery command and crash cuts. Neither is completed, replaced or expanded here. Follow [sustainable testing](../testing.md).
++
++## Out of scope
++
++- Repairing unknown original recovery causes, changing admission/handle ownership/process containment, production observation inventory, new recovery commands, tracing services or infrastructure.
++
++## Verify
++
++- Portable contracts: reuse ownership and supervisor-test-control fixtures for request/offer ordering, wrong/duplicate acknowledgements, zero/two-handle interruption, missing-held deadline, late immutable callbacks, retained parent listeners, direct/wrapped extraction, getters and cycle/depth limits. Test sync/async pre-barrier rejection, observed-barrier crash rejection, unchanged timeout and late rejection with real temporary journal context; require zero leftover timers/listeners and excluded unrelated data.
++- Native acceptance: existing Unit tests recovery and supervisor owners use Node 26.13.0, Tini/private PID namespace, real Linux abstract Unix leases, IPC handles and SQLite. Verify interrupted transfer after two accepted handles, no SQLite open, preserved bytes, closed late handles, plus actual durable-phase and authenticated restore readiness with improved reporting. No Mac substitute or new matrix.
++- Routing/evidence: preserve ownership, supervisor, journal, fixture and shared CI dependencies; selected missing/failed/cancelled work must fail aggregates. Retain exact sources, original failure, first instrumented outcome, diagnostics, controls and cleanup under unchanged budgets. A pass without recurrence proves no historical causal repair; further experiments need a concrete hypothesis.
+diff --git a/docs/todo/backlog.json b/docs/todo/backlog.json
+index fee8fea2..a9eb635d 100644
+--- a/docs/todo/backlog.json
++++ b/docs/todo/backlog.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "Spinel",
+   "prefix": "SPN",
+-  "next_id": 160,
++  "next_id": 161,
+   "personas": "docs/product/personas.md",
+   "grooming": {
+     "every": 7,
+diff --git a/docs/todo/readme.md b/docs/todo/readme.md
+index d2f32b7c..eac3bdd6 100644
+--- a/docs/todo/readme.md
++++ b/docs/todo/readme.md
+@@ -2,11 +2,11 @@
+ 
+ <!-- Generated by `npm run backlog:index` from the SPN-NNN.md tickets and backlog.json. Don't edit it by hand; CI fails if it is stale. -->
+ 
+-How this backlog works: [process.md](process.md). Next ID: **SPN-160**. Grooming: **3** tickets completed since 2026-11-12: SPN-148, SPN-145, SPN-149. Reminder every 7; grooming on request, never a work gate.
++How this backlog works: [process.md](process.md). Next ID: **SPN-161**. Grooming: **3** tickets completed since 2026-11-12: SPN-148, SPN-145, SPN-149. Reminder every 7; grooming on request, never a work gate.
+ 
+ Every ticket and resumed PR follows [sustainable testing](../testing.md). Keep its Verify plan and [progress evidence](../testing.md#carry-the-plan-through-the-work) current; repair test weaknesses introduced by the work before landing.
+ 
+-## Open tickets (30)
++## Open tickets (31)
+ 
+ Complete each phase before the next. Within a phase, take the highest-ranked ticket that has no listed prerequisites.
+ 
+@@ -14,43 +14,44 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
+ 
+ | # | Ticket | Effort | Impact | Score | Waiting on |
+ | --- | --- | --- | --- | --- | --- |
+-| 1 | 🛟 [SPN-157](SPN-157.md) Recover maintenance and restore across process handoffs | 🌳 L | 🩷 L | 32 | — |
+-| 2 | 🔁 [SPN-156](SPN-156.md) Sync saved edits while the file list is open | 🌳 L | 🩷 L | 32 | — |
+-| 3 | 🛂 [SPN-158](SPN-158.md) Wait for writable admission after restore | 🌿 M | 💜 M | 24 (own 21) | — |
+-| 4 | 📐 [SPN-159](SPN-159.md) Observe completed native drawing resizes | 🌿 M | 💜 M | 23 (own 21) | — |
+-| 5 | 🧪 [SPN-090](SPN-090.md) Verify offline launches on real phones | 🏔️ XL | 💜 M | 23 | [SPN-158](SPN-158.md) |
+-| 6 | 📨 [SPN-098](SPN-098.md) Send user feedback with diagnostic context | 🌳 L | 💜 M | 22 | [SPN-157](SPN-157.md) |
+-| 7 | 🔎 [SPN-120](SPN-120.md) Resolve the remaining recorded browser fixture failures | 🌳 L | 💜 M | 22 | [SPN-158](SPN-158.md), [SPN-159](SPN-159.md) |
+-| 8 | 📊 [SPN-123](SPN-123.md) Complete operation and sync diagnostic coverage | 🌳 L | 💜 M | 22 | — |
+-| 9 | 🌷 [SPN-128](SPN-128.md) Reinstall the preserved original after an interrupted restore | 🌳 L | 💜 M | 22 | — |
+-| 10 | 🔕 [SPN-106](SPN-106.md) Avoid a protection warning when opening view-only Docs | 🌿 M | 💜 M | 21 | — |
+-| 11 | ⏳ [SPN-110](SPN-110.md) Expire diagnostic events after seven days | 🌿 M | 💜 M | 21 | — |
+-| 12 | 📋 [SPN-154](SPN-154.md) Pasting an image keeps the page and the edit | 🌿 M | 💜 M | 21 | — |
+-| 13 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌳 L | 🤍 S | 12 | — |
+-| 14 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 11 | — |
+-| 15 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌿 M | 🤍 S | 11 | — |
+-| 16 | 🪩 [SPN-150](SPN-150.md) Show a branded Spinel loading screen | 🌱 S | 🤍 S | 10 | — |
++| 1 | 🧯 [SPN-160](SPN-160.md) Preserve actionable maintenance handoff failures | 🌿 M | 💜 M | 33 (own 21) | — |
++| 2 | 🛟 [SPN-157](SPN-157.md) Recover maintenance and restore across process handoffs | 🌳 L | 🩷 L | 32 | [SPN-160](SPN-160.md) |
++| 3 | 🔁 [SPN-156](SPN-156.md) Sync saved edits while the file list is open | 🌳 L | 🩷 L | 32 | — |
++| 4 | 🛂 [SPN-158](SPN-158.md) Wait for writable admission after restore | 🌿 M | 💜 M | 24 (own 21) | — |
++| 5 | 📐 [SPN-159](SPN-159.md) Observe completed native drawing resizes | 🌿 M | 💜 M | 23 (own 21) | — |
++| 6 | 🧪 [SPN-090](SPN-090.md) Verify offline launches on real phones | 🏔️ XL | 💜 M | 23 | [SPN-158](SPN-158.md) |
++| 7 | 📨 [SPN-098](SPN-098.md) Send user feedback with diagnostic context | 🌳 L | 💜 M | 22 | [SPN-157](SPN-157.md) |
++| 8 | 🔎 [SPN-120](SPN-120.md) Resolve the remaining recorded browser fixture failures | 🌳 L | 💜 M | 22 | [SPN-158](SPN-158.md), [SPN-159](SPN-159.md) |
++| 9 | 📊 [SPN-123](SPN-123.md) Complete operation and sync diagnostic coverage | 🌳 L | 💜 M | 22 | — |
++| 10 | 🌷 [SPN-128](SPN-128.md) Reinstall the preserved original after an interrupted restore | 🌳 L | 💜 M | 22 | — |
++| 11 | 🔕 [SPN-106](SPN-106.md) Avoid a protection warning when opening view-only Docs | 🌿 M | 💜 M | 21 | — |
++| 12 | ⏳ [SPN-110](SPN-110.md) Expire diagnostic events after seven days | 🌿 M | 💜 M | 21 | — |
++| 13 | 📋 [SPN-154](SPN-154.md) Pasting an image keeps the page and the edit | 🌿 M | 💜 M | 21 | — |
++| 14 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌳 L | 🤍 S | 12 | — |
++| 15 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 11 | — |
++| 16 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌿 M | 🤍 S | 11 | — |
++| 17 | 🪩 [SPN-150](SPN-150.md) Show a branded Spinel loading screen | 🌱 S | 🤍 S | 10 | — |
+ 
+ ### Launch
+ 
+ | # | Ticket | Effort | Impact | Score | Waiting on |
+ | --- | --- | --- | --- | --- | --- |
+-| 17 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🏔️ XL | 💜 M | 23 | — |
++| 18 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🏔️ XL | 💜 M | 23 | — |
+ 
+ ### After launch
+ 
+ | # | Ticket | Effort | Impact | Score | Waiting on |
+ | --- | --- | --- | --- | --- | --- |
+-| 18 | 📤 [SPN-147](SPN-147.md) Send the remaining Univer patches upstream | 🌳 L | 🤍 S | 24 (own 12) | — |
+-| 19 | 📌 [SPN-099](SPN-099.md) Run Univer core unpatched once upstream ships the fixes | 🏔️ XL | 💜 M | 23 | [SPN-147](SPN-147.md), [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938) |
+-| 20 | ☁️ [SPN-114](SPN-114.md) Back up the workspace to AWS S3 after production launch | 🌳 L | 💜 M | 22 | [SPN-038](SPN-038.md) |
+-| 21 | 🪡 [SPN-119](SPN-119.md) Run Univer Docs UI unpatched after the callback fixes ship | 🌳 L | 💜 M | 22 | [dream-num/univer#7969](https://github.com/dream-num/univer/pull/7969) |
+-| 22 | 🧵 [SPN-122](SPN-122.md) Run native Doc composition unpatched after the upstream improvement ships | 🌳 L | 💜 M | 22 | [SPN-147](SPN-147.md) |
+-| 23 | 🗄️ [SPN-125](SPN-125.md) Prune supervised restore evidence safely | 🌿 M | 💜 M | 21 | — |
+-| 24 | 🏷️ [SPN-127](SPN-127.md) Show which saved backups this image can restore | 🌿 M | 💜 M | 21 | — |
+-| 25 | 🧰 [SPN-094](SPN-094.md) Add plugins for document types and file conversion | 🏔️ XL | 🤍 S | 13 | [SPN-038](SPN-038.md) |
+-| 26 | 📥 [SPN-093](SPN-093.md) Import a CSV file as a Sheet | 🌿 M | 🤍 S | 11 | [SPN-038](SPN-038.md) |
+-| 27 | 🔑 [SPN-151](SPN-151.md) Remove leftover BrowserStack hosted resources | 🌱 S | 🤍 S | 10 | — |
+-| 28 | 🍏 [SPN-152](SPN-152.md) Verify offline behaviour on an iPhone | 🌱 S | 🤍 S | 10 | — |
+-| 29 | 🗂️ [SPN-153](SPN-153.md) Fix macOS temp-path failures in script tests | 🌱 S | 🤍 S | 10 | — |
+-| 30 | 💨 [SPN-155](SPN-155.md) No false offline message when a Doc opens online | 🌱 S | 🤍 S | 10 | — |
++| 19 | 📤 [SPN-147](SPN-147.md) Send the remaining Univer patches upstream | 🌳 L | 🤍 S | 24 (own 12) | — |
++| 20 | 📌 [SPN-099](SPN-099.md) Run Univer core unpatched once upstream ships the fixes | 🏔️ XL | 💜 M | 23 | [SPN-147](SPN-147.md), [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938) |
++| 21 | ☁️ [SPN-114](SPN-114.md) Back up the workspace to AWS S3 after production launch | 🌳 L | 💜 M | 22 | [SPN-038](SPN-038.md) |
++| 22 | 🪡 [SPN-119](SPN-119.md) Run Univer Docs UI unpatched after the callback fixes ship | 🌳 L | 💜 M | 22 | [dream-num/univer#7969](https://github.com/dream-num/univer/pull/7969) |
++| 23 | 🧵 [SPN-122](SPN-122.md) Run native Doc composition unpatched after the upstream improvement ships | 🌳 L | 💜 M | 22 | [SPN-147](SPN-147.md) |
++| 24 | 🗄️ [SPN-125](SPN-125.md) Prune supervised restore evidence safely | 🌿 M | 💜 M | 21 | — |
++| 25 | 🏷️ [SPN-127](SPN-127.md) Show which saved backups this image can restore | 🌿 M | 💜 M | 21 | — |
++| 26 | 🧰 [SPN-094](SPN-094.md) Add plugins for document types and file conversion | 🏔️ XL | 🤍 S | 13 | [SPN-038](SPN-038.md) |
++| 27 | 📥 [SPN-093](SPN-093.md) Import a CSV file as a Sheet | 🌿 M | 🤍 S | 11 | [SPN-038](SPN-038.md) |
++| 28 | 🔑 [SPN-151](SPN-151.md) Remove leftover BrowserStack hosted resources | 🌱 S | 🤍 S | 10 | — |
++| 29 | 🍏 [SPN-152](SPN-152.md) Verify offline behaviour on an iPhone | 🌱 S | 🤍 S | 10 | — |
++| 30 | 🗂️ [SPN-153](SPN-153.md) Fix macOS temp-path failures in script tests | 🌱 S | 🤍 S | 10 | — |
++| 31 | 💨 [SPN-155](SPN-155.md) No false offline message when a Doc opens online | 🌱 S | 🤍 S | 10 | — |

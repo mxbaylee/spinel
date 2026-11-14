@@ -1,0 +1,98 @@
+[
+  {
+    "path": "local/open-pr-audit.json",
+    "originalSha256": "2a905efd7716d458698a2135951bf038647f8c61ba91a1e07d2f1539356aec5e",
+    "storedSha256": "2a905efd7716d458698a2135951bf038647f8c61ba91a1e07d2f1539356aec5e",
+    "normalization": "none"
+  },
+  {
+    "path": "local/maintenance-registration-review-b-pr-06a1.json",
+    "originalSha256": "bca26ece7dbde44394e852ce1e01ccb97775e7df4c18cb18072e46cbb9668870",
+    "storedSha256": "bca26ece7dbde44394e852ce1e01ccb97775e7df4c18cb18072e46cbb9668870",
+    "normalization": "none"
+  },
+  {
+    "path": "local/maintenance-registration-index-160.json",
+    "originalSha256": "0a7cb63d16c42e9227437df281acd022f009a471774606ff772a1226db8a3879",
+    "storedSha256": "0a7cb63d16c42e9227437df281acd022f009a471774606ff772a1226db8a3879",
+    "normalization": "none"
+  },
+  {
+    "path": "local/maintenance-registration-review-b-links-06a1.json",
+    "originalSha256": "92bfd58a8453214d0b2d46adf6b57f981b580358911a485d6cb2127b60aca51d",
+    "storedSha256": "92bfd58a8453214d0b2d46adf6b57f981b580358911a485d6cb2127b60aca51d",
+    "normalization": "none"
+  },
+  {
+    "path": "local/maintenance-registration-allocate-160.json",
+    "originalSha256": "51d4a348d2fdfc024d251e98f70881625dcf293cde6ece77718522d7756c048f",
+    "storedSha256": "51d4a348d2fdfc024d251e98f70881625dcf293cde6ece77718522d7756c048f",
+    "normalization": "none"
+  },
+  {
+    "path": "local/maintenance-registration-review-b-check-06a1.ts",
+    "originalSha256": "687c523b48effcaa815a26b7b61696f5bd50ebe540021e2500e6e72fcaab6b07",
+    "storedSha256": "687c523b48effcaa815a26b7b61696f5bd50ebe540021e2500e6e72fcaab6b07",
+    "normalization": "none"
+  },
+  {
+    "path": "local/maintenance-registration-review-a-backlog-06a1.json",
+    "originalSha256": "324e1921b954d9c5958f85304613818c6a26520b6ea8a6f6b8a170e45153c05b",
+    "storedSha256": "324e1921b954d9c5958f85304613818c6a26520b6ea8a6f6b8a170e45153c05b",
+    "normalization": "none"
+  },
+  {
+    "path": "local/maintenance-registration-review-a-06a1d3c5.md",
+    "originalSha256": "a03ca8ad25b14f3fba84bbb04f18fdd3ec3c8fdf1a51f6ca7550d63b21b29956",
+    "storedSha256": "57eaad8f4046f72cd8e5975e61779dde6e20d0e41500d4ee5fdaa5dbe8793ee8",
+    "normalization": "personal path prefixes only"
+  },
+  {
+    "path": "local/maintenance-registration-review-b-06a1d3c5.md",
+    "originalSha256": "7c4959f4c3080fff2ee30af52b4c174dd0f7049004487b7d2393ff622b4aa4ff",
+    "storedSha256": "8f4af228c3fe19a59bf63038815078ff24430a487364e5ae5496d0614586ae9c",
+    "normalization": "personal path prefixes only"
+  },
+  {
+    "path": "local/maintenance-registration-backlog-160.json",
+    "originalSha256": "20827da597356bd72dff1fd5e021eacfe77bc65408016907523a93c0d1ad9554",
+    "storedSha256": "20827da597356bd72dff1fd5e021eacfe77bc65408016907523a93c0d1ad9554",
+    "normalization": "none"
+  },
+  {
+    "path": "local/maintenance-registration-review-b-backlog-06a1.json",
+    "originalSha256": "2ee7f7fb3db15b9eb6ef27eeadb76b90aeb30f746ddcea58dc9516780ecae186",
+    "storedSha256": "2ee7f7fb3db15b9eb6ef27eeadb76b90aeb30f746ddcea58dc9516780ecae186",
+    "normalization": "none"
+  },
+  {
+    "path": "local/maintenance-registration-06a1d3c5-pr.json",
+    "originalSha256": "20a86003757cd66373fe7ce7d052792ece553a1abbb85eaf1e96786635950363",
+    "storedSha256": "20a86003757cd66373fe7ce7d052792ece553a1abbb85eaf1e96786635950363",
+    "normalization": "none"
+  },
+  {
+    "path": "local/maintenance-registration-review-a-pr-06a1.json",
+    "originalSha256": "cd585e88b7cb07c2dcadb79c91455f25a36dfd609de2cd0d59553e0a9404557a",
+    "storedSha256": "cd585e88b7cb07c2dcadb79c91455f25a36dfd609de2cd0d59553e0a9404557a",
+    "normalization": "none"
+  },
+  {
+    "path": "review/links.json",
+    "originalSha256": "0cdb153077ded6bdc1673b35fb452583c1af4eb467a149ef625bed21fd741cdf",
+    "storedSha256": "0cdb153077ded6bdc1673b35fb452583c1af4eb467a149ef625bed21fd741cdf",
+    "normalization": "none"
+  },
+  {
+    "path": "review/README.md",
+    "originalSha256": "31b4f7c3d8608ee93d73803a7ffb185c71803ffd91b18d885a23b7974f354565",
+    "storedSha256": "190d15cb9ea07f319091481f2f52213734b22d8dffecd394d34139e80a502498",
+    "normalization": "personal path prefixes only"
+  },
+  {
+    "path": "review/candidate.diff",
+    "originalSha256": "ca7058df69143ef827b208852a47f21219263f03d23764118a9800ac64b91398",
+    "storedSha256": "ca7058df69143ef827b208852a47f21219263f03d23764118a9800ac64b91398",
+    "normalization": "none"
+  }
+]

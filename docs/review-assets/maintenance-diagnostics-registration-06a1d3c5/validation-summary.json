@@ -1,0 +1,117 @@
+{
+  "observedAt": "2026-11-14T05:39:46.602041+00:00",
+  "pr": 287,
+  "source": "06a1d3c5b7d1b10065b96615cd18e5c4199cbdad",
+  "base": "7c38f7d32e6a55d8000239923113155de6a07c8c",
+  "testedMerge": "ba6f23f910e5b3c61b56de887d812ba7566fc75e",
+  "sourceTestedTree": "13cbcabc98bf52ebed15a83e47fd86cc76387e1b",
+  "ciRun": 43562385812,
+  "storybookRun": 43562385786,
+  "attempt": 1,
+  "requiredGates": [
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43562385812/job/132349051151",
+      "name": "Playwright smoke",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43562385812/job/132348866024",
+      "name": "Lint",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43562385812/job/132348866090",
+      "name": "Typecheck",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43562385812/job/132348866579",
+      "name": "Unit tests",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43562385812/job/132348866011",
+      "name": "Backlog",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43562385812/job/132348866650",
+      "name": "Lib tests",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43562385812/job/132348701912",
+      "name": "Pull request",
+      "state": "SUCCESS"
+    }
+  ],
+  "jobCounts": {
+    "ci": {
+      "total": 16,
+      "success": 8,
+      "skipped": 8
+    },
+    "storybook": {
+      "total": 8,
+      "success": 3,
+      "skipped": 5
+    }
+  },
+  "selectedSuites": [
+    "backlog",
+    "pull-request",
+    "lint"
+  ],
+  "inapplicableSuites": [
+    "typecheck",
+    "unit-tests",
+    "lib-test-run",
+    "playwright-run",
+    "container-smoke",
+    "restore-timing",
+    "sync-transition",
+    "doc-responsiveness",
+    "doc-callback-lifetimes",
+    "responsiveness-baseline",
+    "callback-baseline",
+    "phone-compatibility"
+  ],
+  "planRawSha256": "23d892eb88bcab256f24d145c458acde4f42391da11e634ee04ef4b3f47ab298",
+  "planCanonicalSha256": "64109746a5ca2ed20f0925f9ece14a19c386540155330c54f1c103e191e6dd18",
+  "artifacts": [
+    {
+      "id": 14101186095,
+      "name": "ci-results-lib",
+      "zip": "ci-results-14101186095.zip",
+      "bytes": 1456,
+      "sha256": "2c64c18de7aa6eef82026a7afa6a153886966880baefcf3c32b6ea2115fe720c",
+      "githubDigest": "sha256:2c64c18de7aa6eef82026a7afa6a153886966880baefcf3c32b6ea2115fe720c"
+    },
+    {
+      "id": 14100766648,
+      "name": "ci-plan",
+      "zip": "ci-plan-14100766648.zip",
+      "bytes": 1155,
+      "sha256": "5a0237f1226eeca43d371d0bfae7fd82f437aa686cbea0af117f3e637349e0ff",
+      "githubDigest": "sha256:5a0237f1226eeca43d371d0bfae7fd82f437aa686cbea0af117f3e637349e0ff"
+    },
+    {
+      "id": 14100707834,
+      "name": "ci-results-browser",
+      "zip": "ci-results-14100707834.zip",
+      "bytes": 1667,
+      "sha256": "81e781bd003f0f9307c8c8692f3647262cfc2ed9f92130300bcce96d54a876bd",
+      "githubDigest": "sha256:81e781bd003f0f9307c8c8692f3647262cfc2ed9f92130300bcce96d54a876bd"
+    },
+    {
+      "id": 14100486925,
+      "name": "ci-results-unit",
+      "zip": "ci-results-14100486925.zip",
+      "bytes": 1439,
+      "sha256": "8adbf42e15dc6b290c2fdbf53c38307d7f7e62c6cad8bdc299a2145016a7447d",
+      "githubDigest": "sha256:8adbf42e15dc6b290c2fdbf53c38307d7f7e62c6cad8bdc299a2145016a7447d"
+    }
+  ],
+  "runtimeAcceptance": "Not performed or claimed; documentation registration only",
+  "mergeCleanup": "Pending manager guard"
+}
