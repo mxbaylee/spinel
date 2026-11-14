@@ -1,0 +1,19 @@
+{
+  "observedAt": "2026-11-14T17:00:17.725972+00:00",
+  "remainingTicketImplementationRefs": [],
+  "remainingTicketBranchConfig": [],
+  "worktree": "/Users/mxbaylee/projects/spinel-spn-157",
+  "detached": true,
+  "head": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+  "trackedClean": true,
+  "ignored": [
+    "!! node_modules"
+  ],
+  "preservedInstallSymlinkTarget": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules",
+  "targetExists": true,
+  "merged": "78fc73bbb05ee5cab9d5a6731ae42227d2c0aaef",
+  "sameSourceAndMergeTree": "5d8c93740959386dce7d85858f1ce85cdcc9c6fd",
+  "currentHistoryReachableFromValidation": true,
+  "old932HistoryReachableFromOld44": true,
+  "noCollectorDetachOrDeletionPerformed": true
+}

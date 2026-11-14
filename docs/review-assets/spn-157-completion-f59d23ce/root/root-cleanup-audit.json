@@ -1,0 +1,32 @@
+{
+  "completedAt": "2026-11-14T16:58:37.518683+00:00",
+  "pr": 291,
+  "merged": "78fc73bbb05ee5cab9d5a6731ae42227d2c0aaef",
+  "source": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+  "validationArchive": "25c3a8f04c7f374ad3e4d5ef4cca0245ee3ec6ff",
+  "oldHistory": "44f9a5365fe290236b882606933e63b8ef317363",
+  "publishedTagsVerified": {
+    "refs/tags/archive/spn-157-local-44f9a536-20261114": "44f9a5365fe290236b882606933e63b8ef317363",
+    "refs/tags/archive/spn-157-validation-f59d23ce-20261114": "25c3a8f04c7f374ad3e4d5ef4cca0245ee3ec6ff"
+  },
+  "beforeRefs": {
+    "refs/heads/codex/spn-157-current-investigation": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+    "refs/heads/codex/spn-157-supervisor-handoffs": "44f9a5365fe290236b882606933e63b8ef317363",
+    "refs/remotes/origin/codex/spn-157-current-investigation": "f59d23ceae976ee0abdd25eb13f370e18d7d6495"
+  },
+  "activePrHeadOrBaseOwnersBefore": [],
+  "openPRsExamined": 12,
+  "historyReachabilityVerified": true,
+  "branchConfiguration": [],
+  "worktree": "/Users/mxbaylee/projects/spinel-spn-157",
+  "worktreeRetainedDetachedAt": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+  "ignoredSymlinkPreserved": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules",
+  "atomicTransaction": "start\ndelete refs/heads/codex/spn-157-current-investigation f59d23ceae976ee0abdd25eb13f370e18d7d6495\ndelete refs/heads/codex/spn-157-supervisor-handoffs 44f9a5365fe290236b882606933e63b8ef317363\ndelete refs/remotes/origin/codex/spn-157-current-investigation f59d23ceae976ee0abdd25eb13f370e18d7d6495\nprepare\ncommit\n",
+  "transactionOutput": "start: ok\nprepare: ok\ncommit: ok\n",
+  "remainingTicketRefs": [],
+  "activePrHeadOrBaseOwnersAfter": [],
+  "remoteBranchAlreadyAbsent": true,
+  "remoteDeletePerformed": false,
+  "mainClean": true,
+  "testsOrBuildsRun": false
+}

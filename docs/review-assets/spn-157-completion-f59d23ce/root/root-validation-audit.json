@@ -1,0 +1,93 @@
+{
+  "checkedAt": "2026-11-14T16:52:00.236956+00:00",
+  "archive": "25c3a8f04c7f374ad3e4d5ef4cca0245ee3ec6ff",
+  "parent": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+  "base": "87c34e30ed810e6789d876e55b23dcbb349fa506",
+  "tested": "92959827e4dee1c3bf9d186fbe51b8b447c26198",
+  "tree": "5d8c93740959386dce7d85858f1ce85cdcc9c6fd",
+  "reservedTag": "archive/spn-157-validation-f59d23ce-20261114",
+  "manifestSha256": "38406b89db1bf848ef624f8d437b3baf4e21ab076733a74370709f2308cb1cb8",
+  "payloads": 475,
+  "allCommittedAndStagedBytesEqual": true,
+  "originalZipCount": 30,
+  "originalZipBytes": 494851592,
+  "liveApiDigestSizeAndAllOuterCrcVerified": true,
+  "originalJsonMembers": 289,
+  "allOriginalMemberBytesEqual": true,
+  "executedLogs": 41,
+  "historicalCopies": 13,
+  "localReviewAndCheckCopies": 88,
+  "runs": {
+    "ci": {
+      "id": 43579169044,
+      "jobs": 33,
+      "success": 33,
+      "skipped": []
+    },
+    "storybook": {
+      "id": 43579169103,
+      "jobs": 10,
+      "success": 8,
+      "skipped": [
+        "Publish PR preview to GitHub Pages",
+        "Deploy to GitHub Pages"
+      ]
+    }
+  },
+  "planDigest": "d889d71299d918f4cd6fc031b375bdb3c10998c3f4ec8ecf642e20025b3b6621",
+  "all15Selected": true,
+  "aggregates": {
+    "ci-results-browser": {
+      "owners": 12,
+      "sha256": "f30819b4d3ddfaff1133cb903e863ecc8f8a541e55060c19f5821a37c3e4e980"
+    },
+    "ci-results-lib": {
+      "owners": 1,
+      "sha256": "cbc5a1bbe90f6fd907fd27707920b6e4166a979db2beae29959a72a9e3640b4c"
+    },
+    "ci-results-unit": {
+      "owners": 1,
+      "sha256": "625e9fc79081d072f9b5fd0211b540a81c4e15ef7d7280ef1a8f334ed599c017"
+    }
+  },
+  "allSevenExactGates": true,
+  "structuredReports": 19,
+  "rootReadArchiveReadmeAndBothFullReports": true,
+  "historicalCause": "unknown; original failures unchanged",
+  "publicationPerformed": true,
+  "mergePerformed": false,
+  "setupNotes": [
+    "Initial lookup referenced nonexistent aggregate.ts; inspected actual changes.ts ordered JSON.stringify implementation.",
+    "Initial verifier lacked tested merge object; fetched exact92959827 before proceeding. No source/evidence changes or hosted retry."
+  ],
+  "allStructuredReportStatsAndErrorsEqualOriginalZipMembers": true,
+  "pairedNestedOwners": {
+    "doc-callback-lifetimes-desktop": {
+      "originalMember": "test-results/spn113-comparison-desktop.json",
+      "decodedSha256": "0e9a0753372399d9825329daf4ede2a407fdc517a47e43b713709d3d4f27ed7d",
+      "mode": "paired",
+      "passed": true
+    },
+    "doc-callback-lifetimes-mobile": {
+      "originalMember": "test-results/spn113-comparison-mobile.json",
+      "decodedSha256": "78e9f7f820d4448dea702698295ba7925d18a8f92e8d5f63ae620369ed5e8bd7",
+      "mode": "paired",
+      "passed": true
+    },
+    "doc-responsiveness-desktop": {
+      "originalMember": "test-results/spn108-comparison-desktop.json",
+      "decodedSha256": "53eabdbbe2fe26af7246e267970aaedfe3186fb343151bcf434d99340bc52ccc",
+      "mode": "paired",
+      "passed": true
+    },
+    "doc-responsiveness-mobile": {
+      "originalMember": "test-results/spn108-comparison-mobile.json",
+      "decodedSha256": "60b2fd576ce9b2ea96d06d6de09a02554d2aa918899a726fa4355c90875abdce",
+      "mode": "paired",
+      "passed": true
+    }
+  },
+  "pairedMobileIsPhysicalDevice": false,
+  "remotePublishedRef": "25c3a8f04c7f374ad3e4d5ef4cca0245ee3ec6ff\trefs/tags/archive/spn-157-validation-f59d23ce-20261114",
+  "publishedAt": "2026-11-14T16:53:24.582093+00:00"
+}

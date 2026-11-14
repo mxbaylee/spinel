@@ -1,0 +1,161 @@
+{
+  "schema": 1,
+  "assembledAt": "2026-11-14T17:01:54.671762+00:00",
+  "ticket": "SPN-157",
+  "effort": "L",
+  "disposition": "Completed through the explicit full-contract bounded-non-recurrence investigation method; historical cause unknown, original failures remain failures, no causal repair claim.",
+  "pr": {
+    "number": 291,
+    "url": "https://github.com/mxbaylee/spinel/pull/291",
+    "merged": true,
+    "mergedAt": "2026-11-14T16:53:39Z",
+    "squash": "78fc73bbb05ee5cab9d5a6731ae42227d2c0aaef"
+  },
+  "reviewedSource": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+  "base": "87c34e30ed810e6789d876e55b23dcbb349fa506",
+  "tested": "92959827e4dee1c3bf9d186fbe51b8b447c26198",
+  "sourceTestedAndSquashTree": "5d8c93740959386dce7d85858f1ce85cdcc9c6fd",
+  "validationArchive": {
+    "commit": "25c3a8f04c7f374ad3e4d5ef4cca0245ee3ec6ff",
+    "tag": "archive/spn-157-validation-f59d23ce-20261114",
+    "path": "docs/review-assets/spn-157-validation-f59d23ce/",
+    "manifestSha256": "38406b89db1bf848ef624f8d437b3baf4e21ab076733a74370709f2308cb1cb8",
+    "rootIndependentlyVerifiedAndPublished": true
+  },
+  "checks": {
+    "ci": 43579169044,
+    "attempt": 1,
+    "ciJobs": 33,
+    "ciSuccess": 33,
+    "storybook": 43579169103,
+    "storybookSuccess": 8,
+    "storybookDeploymentSkips": 2,
+    "requiredSeven": [
+      {
+        "id": 132399989942,
+        "name": "Pull request",
+        "conclusion": "success",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43579169044/job/132399989942"
+      },
+      {
+        "id": 132400210816,
+        "name": "Lint",
+        "conclusion": "success",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43579169044/job/132400210816"
+      },
+      {
+        "id": 132400210753,
+        "name": "Backlog",
+        "conclusion": "success",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43579169044/job/132400210753"
+      },
+      {
+        "id": 132400210817,
+        "name": "Typecheck",
+        "conclusion": "success",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43579169044/job/132400210817"
+      },
+      {
+        "id": 132402078021,
+        "name": "Lib tests",
+        "conclusion": "success",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43579169044/job/132402078021"
+      },
+      {
+        "id": 132403550355,
+        "name": "Unit tests",
+        "conclusion": "success",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43579169044/job/132403550355"
+      },
+      {
+        "id": 132411397070,
+        "name": "Playwright smoke",
+        "conclusion": "success",
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/43579169044/job/132411397070"
+      }
+    ],
+    "nativeSupervisor": 131,
+    "nativeRecovery": 619,
+    "rerunsRequested": false,
+    "postMergeRuns": "No post-merge run result is claimed here; accepted source/tested/squash trees are identical."
+  },
+  "reviews": {
+    "a": {
+      "path": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-f59d23ce.md",
+      "sha256": "a57b94c9fec27679941ba017efc6072c0d375c21793331374c6dfe6a514366b3",
+      "bytes": 8489,
+      "candidate": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+      "score": "100/100"
+    },
+    "b": {
+      "path": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-f59d23ce.md",
+      "sha256": "e33f2b9cf1bddc39d70eb3da4a541b05e99b9840fb1f17ce6ec605c519723687",
+      "bytes": 12103,
+      "candidate": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+      "score": "100/100"
+    }
+  },
+  "cleanup": {
+    "performedBy": "delivery manager/root",
+    "completedAt": "2026-11-14T16:58:37.518683+00:00",
+    "atomicCompareDelete": true,
+    "remainingTicketImplementationRefs": [],
+    "remainingBranchConfiguration": [],
+    "activePrHeadOrBaseOwners": [],
+    "remoteImplementationBranchAlreadyAbsent": true,
+    "remoteDeletionPerformed": false,
+    "worktreeRetainedDetachedAt": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+    "ignoredSymlinkPreserved": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules",
+    "archiveHelperWorktreeCreated": false,
+    "accessBlockedCleanup": []
+  },
+  "oldUniqueHistory": {
+    "tag": "archive/spn-157-local-44f9a536-20261114",
+    "target": "44f9a5365fe290236b882606933e63b8ef317363",
+    "parent": "93257f2350bf015002fa0055c8b49c631e212d84",
+    "remoteVerified": true
+  },
+  "landing": {
+    "openTicketsAtMerge": 27,
+    "completedSince": [
+      "SPN-148",
+      "SPN-145",
+      "SPN-149",
+      "SPN-158",
+      "SPN-160",
+      "SPN-159",
+      "SPN-157"
+    ],
+    "completedCount": 7,
+    "lastGroomed": "2026-11-12",
+    "meaning": "SPN157 removed,098 dependency released with its own acceptance still separate, generated index updated; full grooming follows as separate work."
+  },
+  "rootOriginalReceipts": [
+    {
+      "path": "root/root-validation-audit.json",
+      "original": "/tmp/spn157-root-validation-25c3a8f0.json",
+      "bytes": 3491,
+      "sha256": "0ea5c43e2f60b6c53ebc93d1701fb4f8a218b80b1c34d077d7b8a7d9569e93a4"
+    },
+    {
+      "path": "root/root-merge-audit.json",
+      "original": "/tmp/spn157-root-merge-f59d23ce.json",
+      "bytes": 781,
+      "sha256": "8f7dbad13dbddc737f72031c999e1aaeb0f93a7253fd1cd3084ba2e764626f1e"
+    },
+    {
+      "path": "root/root-cleanup-audit.json",
+      "original": "/tmp/spn157-root-cleanup-f59d23ce.json",
+      "bytes": 1831,
+      "sha256": "5de48f06d6f7051df50add85b2e8f9ffe0b8a3df59ab1629e147f106740c2a9b"
+    }
+  ],
+  "collectorActions": "Read-only verification and evidence-only commit-tree assembly; no ref deletion, PR edit, test/build/browser workload, publication or merge performed by collector.",
+  "completionPublication": {
+    "reservedTag": "archive/spn-157-completion-f59d23ce-20261114",
+    "reservedPath": "docs/review-assets/spn-157-completion-f59d23ce/",
+    "parent": "78fc73bbb05ee5cab9d5a6731ae42227d2c0aaef",
+    "rootIndependentInspection": "pending",
+    "published": false
+  }
+}

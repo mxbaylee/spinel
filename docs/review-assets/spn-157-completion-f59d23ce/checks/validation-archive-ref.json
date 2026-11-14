@@ -1,0 +1,16 @@
+{
+  "commit": "25c3a8f04c7f374ad3e4d5ef4cca0245ee3ec6ff",
+  "tree": "6356affe9b5bd6e11e41fb4c9c64f5626074737e",
+  "parent": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+  "reservedTag": "archive/spn-157-validation-f59d23ce-20261114",
+  "path": "docs/review-assets/spn-157-validation-f59d23ce/",
+  "files": 476,
+  "payloadFiles": 475,
+  "storedPayloadBytes": 16880228,
+  "manifestSha256": "38406b89db1bf848ef624f8d437b3baf4e21ab076733a74370709f2308cb1cb8",
+  "published": false,
+  "tagCreatedByCollector": false,
+  "candidateMutated": false,
+  "PRMetadataEdited": false,
+  "mergeAuthorized": false
+}

@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "meaning": "Exact stored payload bytes; manifest itself excluded.",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 4005,
+      "sha256": "c79b2f271ec164eb16c03fce9203ff454d2c4117e5370a152353fb276d625cf7"
+    },
+    {
+      "path": "checks/aggregate-bindings.json",
+      "bytes": 866,
+      "sha256": "32bdf3da06e8b1c336d03d6aa619c8caedd219bf889bb514e79377c61ba1ef82"
+    },
+    {
+      "path": "checks/archive-verification.json",
+      "bytes": 1825,
+      "sha256": "d01900a11e84191a1b8bb2a60103dd3f9483836dca7b5baa879076c5c1efa63e"
+    },
+    {
+      "path": "checks/native-results.json",
+      "bytes": 1725,
+      "sha256": "e80bb10237117d0cf1d973806cb0cf52b305053ea10f36e4c24f0e232ed58bc5"
+    },
+    {
+      "path": "checks/validation-archive-ref.json",
+      "bytes": 598,
+      "sha256": "10621a22a2db2371487168b5b8498758a01134c7c96687fe4bf5e77222aa10d0"
+    },
+    {
+      "path": "cleanup/cleanup-commands.md",
+      "bytes": 2164,
+      "sha256": "fd051a294181d470f9ce9fea678ffed995ceedee5ce7b587d2d77247f47c5800"
+    },
+    {
+      "path": "cleanup/cleanup-plan.json",
+      "bytes": 2101,
+      "sha256": "240cf58008452b69e33840f350ee44609411c22090f19a7f3ecc22e82e13dee1"
+    },
+    {
+      "path": "cleanup/collector-postcleanup-check.json",
+      "bytes": 726,
+      "sha256": "19c5bdc18d338c29dd8f5b78e5f08669699817b809f735a4c6d23e7bcceb3bd1"
+    },
+    {
+      "path": "cleanup/live-remote-refs-after.txt",
+      "bytes": 187,
+      "sha256": "f176b3029568f0b1fb9f928a6585db5a224f5a6106b0f1f09f727c988d149379"
+    },
+    {
+      "path": "cleanup/open-pr-pages-after.json",
+      "bytes": 384134,
+      "sha256": "d5531a7a645689abb30c82db40741f1f168f207ae12fba50adb0b17753a40626"
+    },
+    {
+      "path": "merged-pr291.json",
+      "bytes": 25060,
+      "sha256": "3761024addba0ed2231b24337506770e38364974578284704b11b6a9095e9237"
+    },
+    {
+      "path": "receipt.json",
+      "bytes": 5992,
+      "sha256": "efab2e722c64fa357b6d8dfe208581c35b0ca01ecd5d9777507b78920c761317"
+    },
+    {
+      "path": "root/root-cleanup-audit.json",
+      "bytes": 1831,
+      "sha256": "5de48f06d6f7051df50add85b2e8f9ffe0b8a3df59ab1629e147f106740c2a9b"
+    },
+    {
+      "path": "root/root-merge-audit.json",
+      "bytes": 781,
+      "sha256": "8f7dbad13dbddc737f72031c999e1aaeb0f93a7253fd1cd3084ba2e764626f1e"
+    },
+    {
+      "path": "root/root-validation-audit.json",
+      "bytes": 3491,
+      "sha256": "0ea5c43e2f60b6c53ebc93d1701fb4f8a218b80b1c34d077d7b8a7d9569e93a4"
+    }
+  ]
+}

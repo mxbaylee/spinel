@@ -1,0 +1,28 @@
+{
+  "verifiedAt": "2026-11-14T16:54:19.254069+00:00",
+  "pr": 291,
+  "merged": true,
+  "squash": "78fc73bbb05ee5cab9d5a6731ae42227d2c0aaef",
+  "source": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+  "tested": "92959827e4dee1c3bf9d186fbe51b8b447c26198",
+  "base": "87c34e30ed810e6789d876e55b23dcbb349fa506",
+  "equalTree": "5d8c93740959386dce7d85858f1ce85cdcc9c6fd",
+  "validationArchive": "25c3a8f04c7f374ad3e4d5ef4cca0245ee3ec6ff",
+  "validationTag": "archive/spn-157-validation-f59d23ce-20261114",
+  "openTickets": 27,
+  "grooming": {
+    "every": 7,
+    "last": "2026-11-12",
+    "completed_since": [
+      "SPN-148",
+      "SPN-145",
+      "SPN-149",
+      "SPN-158",
+      "SPN-160",
+      "SPN-159",
+      "SPN-157"
+    ]
+  },
+  "mainClean": true,
+  "cleanupPending": true
+}
