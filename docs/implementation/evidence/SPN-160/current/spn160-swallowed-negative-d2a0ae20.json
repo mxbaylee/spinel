@@ -1,0 +1,12 @@
+{
+  "name": "spn160-swallowed-negative-d2a0ae20",
+  "args": [
+    "node",
+    "/tmp/spn160-detect-swallowed-rejection.ts"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 488,
+  "peakKiB": 359648
+}

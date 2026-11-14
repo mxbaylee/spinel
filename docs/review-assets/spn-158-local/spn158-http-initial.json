@@ -1,0 +1,14 @@
+{
+  "name": "spn158-http-initial",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/server/maintenance/http.test.ts"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": "Resource guard",
+  "elapsedMs": 844,
+  "peakKiB": 461728
+}
