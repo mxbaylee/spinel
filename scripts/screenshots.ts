@@ -585,6 +585,9 @@ async function nativeEditorGeometry(page: Page) {
       const canvas = editor?.querySelector<HTMLCanvasElement>('canvas[aria-label]');
       const statistics = editor?.querySelector('[aria-label="View document statistics"]');
       const bounds = (node: Element | null | undefined) => node?.getBoundingClientRect().toJSON();
+      const drawingOutput = document.querySelector('[data-native-drawing-capture]')?.textContent;
+      // Only this synthetic fixture's bounded phase/geometry fields are diagnostic data.
+      const drawing = drawingOutput ? JSON.parse(drawingOutput) : undefined;
       return {
         viewport: { width: innerWidth, height: innerHeight, scale: devicePixelRatio },
         host: bounds(editor),
@@ -597,6 +600,11 @@ async function nativeEditorGeometry(page: Page) {
         mount: bounds(canvas?.parentElement),
         canvas: bounds(canvas),
         bitmap: canvas ? { width: canvas.width, height: canvas.height } : undefined,
+        drawingResize: drawing && {
+          geometry: drawing.geometry,
+          transition: drawing.resizeObservation,
+          events: drawing.transitions,
+        },
       };
     },
     undefined,

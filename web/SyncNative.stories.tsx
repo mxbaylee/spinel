@@ -23,6 +23,11 @@ import { editorTheme, installCanvasColors, bindEditorTheme } from '../src/ui/edi
 import { getTheme } from '../src/ui/theme.ts';
 import { editorReady } from './editorReady.ts';
 import { documentReady } from './documentReady.ts';
+import {
+  nativeDrawingResizeComplete,
+  type DrawingGeometryEvent,
+  type DrawingResizeObservation,
+} from './nativeDrawingResize.ts';
 import '../src/ui/redesign/nativeEditors.css';
 
 /** A local file chooser fixture; image decoding and insertion use the real native UI. */
@@ -120,6 +125,12 @@ function NativeDrawingCapture() {
       let resized = 0;
       let controlsCreated = 0;
       let phase = 'selection';
+      let sequence = 0;
+      let resizeRequest:
+        Omit<DrawingResizeObservation, 'current' | 'resize' | 'controls'> | undefined;
+      let lastResize: DrawingGeometryEvent | undefined;
+      let lastControls: DrawingGeometryEvent | undefined;
+      let originalWidth = 0;
       const transitions: unknown[] = [];
       const measure = () => ({
         phase,
@@ -131,7 +142,9 @@ function NativeDrawingCapture() {
         controlsCreated,
       });
       const trace = (event: string) => {
-        if (transitions.length < 32) transitions.push({ event, ...measure() });
+        const sample = { sequence: ++sequence, ...measure() };
+        if (transitions.length < 32) transitions.push({ event, ...sample });
+        return sample;
       };
       const observe = () => {
         if (disposed || !client) return;
@@ -174,6 +187,12 @@ function NativeDrawingCapture() {
             controlsCreated,
             geometry: measure(),
             transitions,
+            resizeObservation: resizeRequest && {
+              ...resizeRequest,
+              current: measure(),
+              resize: lastResize,
+              controls: lastControls,
+            },
             pending: client.state.pendingMutations,
             pendingIds: [...checkpoint.inflight, ...checkpoint.buffer.flat()].map(
               (mutation) => mutation.id,
@@ -212,12 +231,12 @@ function NativeDrawingCapture() {
       const resize = render.engine.onTransformChange$.subscribeEvent((event) => {
         if (event.type === TRANSFORM_CHANGE_OBSERVABLE_TYPE.resize) {
           resized++;
-          trace('resize');
+          lastResize = trace('resize');
         }
       });
       const controls = render.scene.getTransformerByCreate().createControl$.subscribe(() => {
         controlsCreated++;
-        trace('controls');
+        lastControls = trace('controls');
       });
       cleanups.push(
         () => resize.unsubscribe(),
@@ -246,13 +265,19 @@ function NativeDrawingCapture() {
         // A real host resize exercises DocDrawingTransformUpdateController's native refresh.
         resize: () => {
           phase = 'narrow';
+          const before = measure();
+          originalWidth = before.hostWidth;
+          resizeRequest = { phase: 'narrow', targetWidth: originalWidth - 8, before };
           trace('requested');
           host.current!.style.width = 'calc(100% - 8px)';
+          observe();
         },
         restore: () => {
           phase = 'restore';
+          resizeRequest = { phase: 'restore', targetWidth: originalWidth, before: measure() };
           trace('requested');
           host.current!.style.width = '100%';
+          observe();
         },
       };
       const timer = window.setInterval(observe, 100);
@@ -352,6 +377,7 @@ export const DocDrawingCapture: Story = {
     expect(read().raw).toContain('doc.mutation.rich-text-editing');
     expect(read().pendingIds).toContain('doc.mutation.rich-text-editing');
     const pending = read().pending;
+    const pendingIds = read().pendingIds;
     const nativeCanvas = canvasElement.querySelector<HTMLCanvasElement>(
       'canvas[aria-label="Document canvas"]',
     )!;
@@ -401,16 +427,34 @@ export const DocDrawingCapture: Story = {
       controlsCreated = read().controlsCreated;
     await userEvent.click(canvas.getByRole('button', { name: 'Narrow editor' }));
     await waitFor(() => {
-      expect(read().resized).toBeGreaterThan(resized);
-      expect(read().controlsCreated).toBeGreaterThan(controlsCreated);
+      const state = read();
+      expect(
+        nativeDrawingResizeComplete(state.resizeObservation, 'narrow'),
+        `Native narrow transition: ${JSON.stringify(state.resizeObservation)}`,
+      ).toBe(true);
+      expect(state.resized, 'Narrow editor native resize').toBeGreaterThan(resized);
+      expect(state.controlsCreated, 'Narrow editor drawing controls').toBeGreaterThan(
+        controlsCreated,
+      );
     });
     expect(read().pending).toBe(pending);
+    expect(read().pendingIds).toEqual(pendingIds);
     const narrowed = read().resized;
     await userEvent.click(canvas.getByRole('button', { name: 'Restore editor width' }));
-    await waitFor(() => expect(read().resized).toBeGreaterThan(narrowed));
+    await waitFor(() => {
+      const state = read();
+      expect(
+        nativeDrawingResizeComplete(state.resizeObservation, 'restore'),
+        `Native restore transition: ${JSON.stringify(state.resizeObservation)}`,
+      ).toBe(true);
+      expect(state.resized, 'Restore editor native resize').toBeGreaterThan(narrowed);
+    });
+    expect(read().pending).toBe(pending);
+    expect(read().pendingIds).toEqual(pendingIds);
     await clickRange('textBounds');
     await waitFor(() => expect(read().focused).toBe(0));
     expect(read().pending).toBe(pending);
+    expect(read().pendingIds).toEqual(pendingIds);
     expect(read().pendingIds).not.toContain('doc.operation.clear-drawing-transformer');
     expect(read().failures).toEqual([]);
     await expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
