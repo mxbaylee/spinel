@@ -1,0 +1,82 @@
+{
+  "checkedAt": "2026-11-14T17:21:00.419480+00:00",
+  "source": "6adc637b937cf07856104a247cb834bef08b8a6f",
+  "base": "78fc73bbb05ee5cab9d5a6731ae42227d2c0aaef",
+  "tree": "8e88d5a503006f5a2afae984d065d9e720d06fda",
+  "reports": [
+    {
+      "reviewer": "a",
+      "path": "/tmp/spinel-dependabot-2026-11-11/fullgroom-review-a-6adc637b.md",
+      "sha256": "5d231004f0cd9258d2475c1f79713422644ec10933f0f05ffdeba2f797ced130",
+      "bytes": 9541,
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "checks": [
+        {
+          "path": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-backlog-6adc637b.json",
+          "sha256": "18f20cf2bd88444625ff7a1a936d9d9eb5c7b8dfed9df1d19b12b2ad6302d9f1",
+          "elapsedMs": 157,
+          "peakKiB": 0
+        },
+        {
+          "path": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-pr-6adc637b.json",
+          "sha256": "9502cd579cdbd743bc00e0a1740a174425b2e48d34bf83ea2a2f182ab96204e1",
+          "elapsedMs": 382,
+          "peakKiB": 178848
+        },
+        {
+          "path": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-docs-6adc637b.json",
+          "sha256": "722a5a468268b4d16ef206e2a6219323262cb953d8c0be7ba7ef942b0a7f5e4a",
+          "elapsedMs": 421,
+          "peakKiB": 106288
+        }
+      ]
+    },
+    {
+      "reviewer": "b",
+      "path": "/tmp/spinel-dependabot-2026-11-11/fullgroom-review-b-6adc637b.md",
+      "sha256": "0a5a231ffa3b9f308e4b7522de22f0bcc90c3ae2cf196014c267277dd0810ee8",
+      "bytes": 10555,
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "checks": [
+        {
+          "path": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-backlog-6adc637b.json",
+          "sha256": "5fc4d9f6789d5bbb6c601188f7ed2b14f2d9c936a07da2529336c91ae69331b1",
+          "elapsedMs": 162,
+          "peakKiB": 0
+        },
+        {
+          "path": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-pr-6adc637b.json",
+          "sha256": "1f57cbb3a5435231d4a8933ed7d73cca432eefca4487ddb43e79c89e88bae1f7",
+          "elapsedMs": 388,
+          "peakKiB": 185616
+        },
+        {
+          "path": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-inspect-6adc637b.json",
+          "sha256": "eb327e0401e2472c888f58fd01e11a900ce49cd7ce8ae44b54eddbb3f916a6cd",
+          "elapsedMs": 470,
+          "peakKiB": 111792
+        }
+      ]
+    }
+  ],
+  "rootReadFullReports": true,
+  "bothOriginalFindingsResolved": true,
+  "noUnresolvedFindings": true,
+  "clean": true,
+  "hostedGates": "pending",
+  "validationPushQualified": true
+}

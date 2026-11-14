@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-11-14T17:29:15.639244+00:00",
+  "payloadsScanned": 108,
+  "rules": [
+    "private_key",
+    "github_token",
+    "github_pat",
+    "aws_access_key",
+    "bearer_value"
+  ],
+  "unmaskedCredentialFindings": [],
+  "scope": "Bounded automated token/key/bearer scan plus source-selected evidence review; gzip and ZIP payloads decoded. Not an exhaustive secret detector.",
+  "retainedProvenance": "Raw report/receipt local filesystem paths and public GitHub identities retained intentionally; no path-normalization transformation. GitHub-masked authorization placeholders are not credential values.",
+  "excludedContent": "No user documents, databases, browser profiles, cookie stores or environment dumps were collected.",
+  "supplementalInspection": {
+    "paths": [
+      "local/archive-seal-disposition.json",
+      "README.md",
+      "validation-summary.json"
+    ],
+    "reason": "Local guard disposition and Storybook applicability wording only; no new credentials/content inputs.",
+    "unmaskedCredentialFindings": []
+  }
+}

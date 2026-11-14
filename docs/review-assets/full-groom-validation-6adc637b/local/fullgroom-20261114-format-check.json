@@ -1,0 +1,15 @@
+{
+  "name": "fullgroom-20261114-format-check",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "/Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs",
+    "--check",
+    "docs/implementation/grooming-2026-11-14.md",
+    "docs/todo/backlog.json"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 181,
+  "peakKiB": 0
+}

@@ -1,0 +1,15 @@
+{
+  "head": "6adc637b937cf07856104a247cb834bef08b8a6f",
+  "tree": "8e88d5a503006f5a2afae984d065d9e720d06fda",
+  "changedSincePrior": [
+    "docs/implementation/SPN-151.md",
+    "docs/implementation/SPN-153.md",
+    "docs/implementation/grooming-2026-11-14.md",
+    "docs/todo/SPN-151.md",
+    "docs/todo/SPN-153.md"
+  ],
+  "policiesUnchanged": true,
+  "fullDiffMatchesPacket": true,
+  "repairDiffMatchesPacket": true,
+  "fullNodeCommandMatchesPackage": true
+}

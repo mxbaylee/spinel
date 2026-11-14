@@ -1,0 +1,12 @@
+{
+  "name": "fullgroom-20261114-docs",
+  "args": [
+    "python3",
+    "/tmp/spinel-groom-prelaunch-20261114/inspect-docs.py"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 438,
+  "peakKiB": 112784
+}

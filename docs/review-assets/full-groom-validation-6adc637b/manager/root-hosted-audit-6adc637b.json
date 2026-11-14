@@ -1,0 +1,81 @@
+{
+  "checkedAt": "2026-11-14T17:27:16.658340+00:00",
+  "pr": 292,
+  "source": "6adc637b937cf07856104a247cb834bef08b8a6f",
+  "base": "78fc73bbb05ee5cab9d5a6731ae42227d2c0aaef",
+  "tested": "25017211978047d75281984700865a37569736b1",
+  "tree": "8e88d5a503006f5a2afae984d065d9e720d06fda",
+  "planCanonicalSha256": "15f87d93ac4bfef9b305ed133cee5932e0089935d8312d3a654e0d137ac178f0",
+  "paths": 18,
+  "selectedSuites": [
+    "backlog",
+    "pull-request",
+    "lint"
+  ],
+  "allThreeAggregatesVerified": true,
+  "originalZips": [
+    {
+      "id": 14124345367,
+      "name": "ci-results-lib",
+      "sha256": "58c50958052d4f61554861376700db516b0a9d935638a13bbaad58e25d36875a",
+      "bytes": 1628
+    },
+    {
+      "id": 14124325583,
+      "name": "ci-results-browser",
+      "sha256": "3c91b1e6d5d24ab871b8aa5b300611506744743442a94cd53125b655c0a125ad",
+      "bytes": 1888
+    },
+    {
+      "id": 14123939134,
+      "name": "ci-plan",
+      "sha256": "50b4e61177d44ac6d5c6c4b75e1ef5d2c9140ab1be030e51cb493bbb8537591c",
+      "bytes": 1227
+    },
+    {
+      "id": 14123538406,
+      "name": "ci-results-unit",
+      "sha256": "e13a1fc370eab716a75a77eb241d69d172191d1c1c3173ad676ecc8dd2e20552",
+      "bytes": 1611
+    }
+  ],
+  "sevenRequiredChecks": [
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43620802890/job/132526253149",
+      "name": "Playwright smoke",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43620802890/job/132526027180",
+      "name": "Unit tests",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43620802890/job/132526026777",
+      "name": "Backlog",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43620802890/job/132526027161",
+      "name": "Lib tests",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43620802890/job/132526026842",
+      "name": "Lint",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43620802890/job/132526026750",
+      "name": "Typecheck",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43620802890/job/132525818135",
+      "name": "Pull request",
+      "state": "SUCCESS"
+    }
+  ],
+  "applicationAcceptance": "Explicitly inapplicable for docs-only change, not runtime coverage",
+  "rootAuditSetupCorrection": "Initial reader expected single object; actual gh paginated snapshot is a page array. Corrected reader, no source/results changed."
+}

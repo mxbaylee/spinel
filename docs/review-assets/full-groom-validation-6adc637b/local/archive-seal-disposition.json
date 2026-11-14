@@ -1,0 +1,7 @@
+{
+  "observedAt": "2026-11-14T17:30:42.628968+00:00",
+  "firstAttempt": "Local helper stopped at initial cleanliness assertion because it used the new private index for git status rather than the normal index.",
+  "effect": "No archive commit or ref created; reviewed worktree/source unchanged. No CI or check result changed.",
+  "correction": "Check worktree cleanliness using normal index first, then use a separate index only for read-tree/update-index/write-tree. Preserve normal-index cleanliness after sealing.",
+  "managerPrecisionCorrection": "Corrected Storybook wording: three collapsed review jobs and two deployment jobs skipped, not five executed/expanded viewport jobs."
+}

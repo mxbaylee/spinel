@@ -1,0 +1,575 @@
+{
+  "observedAt": "2026-11-14T17:24:19.611137+00:00",
+  "source": "6adc637b937cf07856104a247cb834bef08b8a6f",
+  "copies": [
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-20261114-backlog.json",
+      "archivePath": "local/fullgroom-20261114-backlog.json",
+      "sourceBytes": 264,
+      "sourceSha256": "c4de30c987c98066d9b3c24db3c58f5b0542376c7a9fc3a6e5ae45636457b2b0",
+      "storedSha256": "c4de30c987c98066d9b3c24db3c58f5b0542376c7a9fc3a6e5ae45636457b2b0",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-20261114-backlog.log",
+      "archivePath": "local/fullgroom-20261114-backlog.log.gz",
+      "sourceBytes": 1974,
+      "sourceSha256": "fdcc6df0749284841662da2a2bdc1e5fe6a49b12771fa53cd717081d3cf8602b",
+      "storedSha256": "8f79a4d425cda33039225c2ba2169c05fa4011b68b24011100d8343895c4d9a6",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-20261114-docs.json",
+      "archivePath": "local/fullgroom-20261114-docs.json",
+      "sourceBytes": 221,
+      "sourceSha256": "864aa09f7e72abc5c873b83cc7033c0d1e1ec08cc0a1f6496a082f02a7690497",
+      "storedSha256": "864aa09f7e72abc5c873b83cc7033c0d1e1ec08cc0a1f6496a082f02a7690497",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-20261114-docs.log",
+      "archivePath": "local/fullgroom-20261114-docs.log.gz",
+      "sourceBytes": 235,
+      "sourceSha256": "df2c301a1f15b01a2dc1b9e0468df86d47e1585918b02beaacf5142c27f3471a",
+      "storedSha256": "9176bd809d29b1718e5e60c671a65f2856a86e1b10b8c082e5de4ce8aad4d637",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-20261114-format-check.json",
+      "archivePath": "local/fullgroom-20261114-format-check.json",
+      "sourceBytes": 399,
+      "sourceSha256": "80d0314478a42070a08661f856387db6db10ebaa1409b7fe6bdb468f4e951015",
+      "storedSha256": "80d0314478a42070a08661f856387db6db10ebaa1409b7fe6bdb468f4e951015",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-20261114-format-check.log",
+      "archivePath": "local/fullgroom-20261114-format-check.log.gz",
+      "sourceBytes": 408,
+      "sourceSha256": "2e46bf3460bba9a74deba36e381c818e753112f396c335d6557a908031402b50",
+      "storedSha256": "672dc183d8dd61a349093d356f804c000480a58f7d8e6fc59c24db05ce956b09",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-20261114-format-write.json",
+      "archivePath": "local/fullgroom-20261114-format-write.json",
+      "sourceBytes": 404,
+      "sourceSha256": "60b717c23ac23e2c4e80ac41bef260bc5c9f74b98399457e6841da1addb8252f",
+      "storedSha256": "60b717c23ac23e2c4e80ac41bef260bc5c9f74b98399457e6841da1addb8252f",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-20261114-format-write.log",
+      "archivePath": "local/fullgroom-20261114-format-write.log.gz",
+      "sourceBytes": 447,
+      "sourceSha256": "e3e20a3ce9d52b4d3323e8318f477480d8f9830a1391e87604fde42d5c81cb6a",
+      "storedSha256": "7eb4f8af68420ead2ef00bf21c4fff9215ed9ed67420aa4154a5d19191342ac6",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-20261114-index.json",
+      "archivePath": "local/fullgroom-20261114-index.json",
+      "sourceBytes": 262,
+      "sourceSha256": "f240971aa069aa893a3990a1501f27c448125103fa5c510598d4f9bfd8359b79",
+      "storedSha256": "f240971aa069aa893a3990a1501f27c448125103fa5c510598d4f9bfd8359b79",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-20261114-index.log",
+      "archivePath": "local/fullgroom-20261114-index.log.gz",
+      "sourceBytes": 1970,
+      "sourceSha256": "30ac6b90a75f1394df661f8460a64272fe879f992f00c051d40ae81a5b0ae1cf",
+      "storedSha256": "b8f13fd5774c7e4e6975f7cf63711fc580c60977446dd83bf1b59b0ee058a692",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-20261114-pr-0e3da043.json",
+      "archivePath": "local/fullgroom-20261114-pr-0e3da043.json",
+      "sourceBytes": 417,
+      "sourceSha256": "54c651164af62f2de83ad2758888a84fbbac45eb67e9f1dcec8d8cf4e52aa426",
+      "storedSha256": "54c651164af62f2de83ad2758888a84fbbac45eb67e9f1dcec8d8cf4e52aa426",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-20261114-pr-0e3da043.log",
+      "archivePath": "local/fullgroom-20261114-pr-0e3da043.log.gz",
+      "sourceBytes": 366,
+      "sourceSha256": "aa47b12ccffd54c86e2ecb3acdba1bb754611f447ee4b442d6c430c884cc296a",
+      "storedSha256": "4bfb2cf0e5716d73d35e4ae5aeb43f769719d8cb38ef4b3129bb451fde910bdd",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-backlog-0e3da043.json",
+      "archivePath": "local/fullgroom-a-backlog-0e3da043.json",
+      "sourceBytes": 266,
+      "sourceSha256": "677e103b9228807d73e6535ca4fd15d6a5cf0b501f918758e7ec39756c5d05f2",
+      "storedSha256": "677e103b9228807d73e6535ca4fd15d6a5cf0b501f918758e7ec39756c5d05f2",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-backlog-0e3da043.log",
+      "archivePath": "local/fullgroom-a-backlog-0e3da043.log.gz",
+      "sourceBytes": 1976,
+      "sourceSha256": "8e00a43017f2b8de4219a0fd8ae35da4f269c1320b98d55c52bd3d65decb0192",
+      "storedSha256": "cbcdbf118f047db5fbee929ae6aaeb1b52edc13874bb0800a508cab7a158db99",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-backlog-6adc637b.json",
+      "archivePath": "local/fullgroom-a-backlog-6adc637b.json",
+      "sourceBytes": 266,
+      "sourceSha256": "18f20cf2bd88444625ff7a1a936d9d9eb5c7b8dfed9df1d19b12b2ad6302d9f1",
+      "storedSha256": "18f20cf2bd88444625ff7a1a936d9d9eb5c7b8dfed9df1d19b12b2ad6302d9f1",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-backlog-6adc637b.log",
+      "archivePath": "local/fullgroom-a-backlog-6adc637b.log.gz",
+      "sourceBytes": 1976,
+      "sourceSha256": "01b1fc46f789499d33a836e284a41b79f0fb2f7cd769c71fee13c11055f93c6f",
+      "storedSha256": "09e14e1d065cc1fb3ed1fbdd74783b44695efd060623b024db891101c82a9b27",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-docs-0e3da043.json",
+      "archivePath": "local/fullgroom-a-docs-0e3da043.json",
+      "sourceBytes": 227,
+      "sourceSha256": "5d2e77228ce792f7d990ac7ef9b236ba283382ccc682ef83d4b0fd0a4cc56c00",
+      "storedSha256": "5d2e77228ce792f7d990ac7ef9b236ba283382ccc682ef83d4b0fd0a4cc56c00",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-docs-0e3da043.log",
+      "archivePath": "local/fullgroom-a-docs-0e3da043.log.gz",
+      "sourceBytes": 241,
+      "sourceSha256": "ca0d13a696da0d0dcab17df97705d9bf264212e0ae0db00211256b3fe62e43e5",
+      "storedSha256": "02825f2b615052c3482aac6e8047c8d0f4e79cb47aa538c989654b463faff398",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-docs-6adc637b.json",
+      "archivePath": "local/fullgroom-a-docs-6adc637b.json",
+      "sourceBytes": 236,
+      "sourceSha256": "722a5a468268b4d16ef206e2a6219323262cb953d8c0be7ba7ef942b0a7f5e4a",
+      "storedSha256": "722a5a468268b4d16ef206e2a6219323262cb953d8c0be7ba7ef942b0a7f5e4a",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-docs-6adc637b.log",
+      "archivePath": "local/fullgroom-a-docs-6adc637b.log.gz",
+      "sourceBytes": 250,
+      "sourceSha256": "8122d066977cc520b08c4fdb95eb8695f69bdc65ab91b7b27bcd14a6cf461d46",
+      "storedSha256": "9667e029028f2de41e94742385a5edb03508a30c0bea65d55a74b05e98de8457",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-docs-inspection-0e3da043.json",
+      "archivePath": "local/fullgroom-a-docs-inspection-0e3da043.json",
+      "sourceBytes": 5310,
+      "sourceSha256": "a94e14413bb63f46bb04e275182213806cead68df7780ad1cba21e47a4e070dc",
+      "storedSha256": "a94e14413bb63f46bb04e275182213806cead68df7780ad1cba21e47a4e070dc",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-pr-0e3da043.json",
+      "archivePath": "local/fullgroom-a-pr-0e3da043.json",
+      "sourceBytes": 410,
+      "sourceSha256": "62f10b93bc541a27f9785ddf63ef070a09264d4622758fa46c13b81ac2c5d0fd",
+      "storedSha256": "62f10b93bc541a27f9785ddf63ef070a09264d4622758fa46c13b81ac2c5d0fd",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-pr-0e3da043.log",
+      "archivePath": "local/fullgroom-a-pr-0e3da043.log.gz",
+      "sourceBytes": 359,
+      "sourceSha256": "672971aacbddb46681019ec7f94048dce4c502adf46fb33095895eb3ac45cad0",
+      "storedSha256": "01432e4d002fc34bedb9aa77663e7c4c61c2747e82cca27404d038829d4d9117",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-pr-6adc637b.json",
+      "archivePath": "local/fullgroom-a-pr-6adc637b.json",
+      "sourceBytes": 410,
+      "sourceSha256": "9502cd579cdbd743bc00e0a1740a174425b2e48d34bf83ea2a2f182ab96204e1",
+      "storedSha256": "9502cd579cdbd743bc00e0a1740a174425b2e48d34bf83ea2a2f182ab96204e1",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-pr-6adc637b.log",
+      "archivePath": "local/fullgroom-a-pr-6adc637b.log.gz",
+      "sourceBytes": 359,
+      "sourceSha256": "2294f67f545c455a777fa61da51ccc3f716573541ac76a09427aa8dd5b876196",
+      "storedSha256": "78ceb6f7cd75a69cadd00d802d466e617373f4e4253cc6d8fd274b7a5d38aac8",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-source-revalidation-6adc637b.json",
+      "archivePath": "local/fullgroom-a-source-revalidation-6adc637b.json",
+      "sourceBytes": 460,
+      "sourceSha256": "39b427f259c142575136b1ce2af162135a86b2b93a1ea17c631925e84f45b2cc",
+      "storedSha256": "39b427f259c142575136b1ce2af162135a86b2b93a1ea17c631925e84f45b2cc",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-backlog-0e3da043.json",
+      "archivePath": "local/fullgroom-b-backlog-0e3da043.json",
+      "sourceBytes": 266,
+      "sourceSha256": "04137a2f1c627ad66880e5e3d7e3b0ee17c9fd15155916cd6a4e6eb5626ef983",
+      "storedSha256": "04137a2f1c627ad66880e5e3d7e3b0ee17c9fd15155916cd6a4e6eb5626ef983",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-backlog-0e3da043.log",
+      "archivePath": "local/fullgroom-b-backlog-0e3da043.log.gz",
+      "sourceBytes": 1976,
+      "sourceSha256": "e029ff89e3d78be32ef59a60b0dd3c35f2b294d0dbfa89e2eced95dd12159b71",
+      "storedSha256": "e1f7a36292ae8836adb6f9a2f55bc7180153d5a58a0966f3d6cb03fadcd80764",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-backlog-6adc637b.json",
+      "archivePath": "local/fullgroom-b-backlog-6adc637b.json",
+      "sourceBytes": 266,
+      "sourceSha256": "5fc4d9f6789d5bbb6c601188f7ed2b14f2d9c936a07da2529336c91ae69331b1",
+      "storedSha256": "5fc4d9f6789d5bbb6c601188f7ed2b14f2d9c936a07da2529336c91ae69331b1",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-backlog-6adc637b.log",
+      "archivePath": "local/fullgroom-b-backlog-6adc637b.log.gz",
+      "sourceBytes": 1976,
+      "sourceSha256": "c8b58b47006995a3b67ae8bbf6ae1a11a09a605b56533349ba33d322e63899de",
+      "storedSha256": "674d211ebde4bb07d2d403d8aabe3643902bea4f303178141dc54dc63a88280e",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-inspect-0e3da043.json",
+      "archivePath": "local/fullgroom-b-inspect-0e3da043.json",
+      "sourceBytes": 230,
+      "sourceSha256": "3f3f441133cad3de1fbb9c3d52497b84dca6ba5b8ea7e7c72edb0c342620c84c",
+      "storedSha256": "3f3f441133cad3de1fbb9c3d52497b84dca6ba5b8ea7e7c72edb0c342620c84c",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-inspect-0e3da043.log",
+      "archivePath": "local/fullgroom-b-inspect-0e3da043.log.gz",
+      "sourceBytes": 244,
+      "sourceSha256": "0d65894f058a5e323c98ea603f2edb3778c6b6d3e5278ba528ceca7bc8354792",
+      "storedSha256": "293213e588761744466a62e793deb30af014a68e7ebf8104e0d0b34182268176",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-inspect-6adc637b.json",
+      "archivePath": "local/fullgroom-b-inspect-6adc637b.json",
+      "sourceBytes": 239,
+      "sourceSha256": "eb327e0401e2472c888f58fd01e11a900ce49cd7ce8ae44b54eddbb3f916a6cd",
+      "storedSha256": "eb327e0401e2472c888f58fd01e11a900ce49cd7ce8ae44b54eddbb3f916a6cd",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-inspect-6adc637b.log",
+      "archivePath": "local/fullgroom-b-inspect-6adc637b.log.gz",
+      "sourceBytes": 253,
+      "sourceSha256": "13de2e71c7eca2dbc55f65a18ab5b4ac14f20adcf910c9e73353bf5baf675ee6",
+      "storedSha256": "aab2be8bfaf9087dad90bad98f985881549e0dcd69674a6cd5422c2a4b4b6da0",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-inspection-0e3da043.json",
+      "archivePath": "local/fullgroom-b-inspection-0e3da043.json",
+      "sourceBytes": 5310,
+      "sourceSha256": "a3ac58d878b011b7c977a4e53400e1525f2b6cb8f876db47def73023bce40532",
+      "storedSha256": "a3ac58d878b011b7c977a4e53400e1525f2b6cb8f876db47def73023bce40532",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-inspection-6adc637b.json",
+      "archivePath": "local/fullgroom-b-inspection-6adc637b.json",
+      "sourceBytes": 5537,
+      "sourceSha256": "06d6c5bd6dce552bbb970e4d7ae1f81235b19704d5258fbfa0aa2dea486701bc",
+      "storedSha256": "06d6c5bd6dce552bbb970e4d7ae1f81235b19704d5258fbfa0aa2dea486701bc",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-pr-0e3da043.json",
+      "archivePath": "local/fullgroom-b-pr-0e3da043.json",
+      "sourceBytes": 410,
+      "sourceSha256": "a92df390c7142e1f3c514f71edf511da9da63ed60893927ee8847b8a3e3217a3",
+      "storedSha256": "a92df390c7142e1f3c514f71edf511da9da63ed60893927ee8847b8a3e3217a3",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-pr-0e3da043.log",
+      "archivePath": "local/fullgroom-b-pr-0e3da043.log.gz",
+      "sourceBytes": 359,
+      "sourceSha256": "9554fb055571d610f801581893157066e5eb92b2dab9c5beace69abed316ff3a",
+      "storedSha256": "9ad5ad9d313966c7aedd0e50b34dcee058265429e54e61fe21e2386f697fed71",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-pr-6adc637b.json",
+      "archivePath": "local/fullgroom-b-pr-6adc637b.json",
+      "sourceBytes": 410,
+      "sourceSha256": "1f57cbb3a5435231d4a8933ed7d73cca432eefca4487ddb43e79c89e88bae1f7",
+      "storedSha256": "1f57cbb3a5435231d4a8933ed7d73cca432eefca4487ddb43e79c89e88bae1f7",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-b-pr-6adc637b.log",
+      "archivePath": "local/fullgroom-b-pr-6adc637b.log.gz",
+      "sourceBytes": 359,
+      "sourceSha256": "e8083df2d01906f3129b8d981fab17eb3d17516816b24b7861b237afa6f58d26",
+      "storedSha256": "7a97d4c86e7b5e62fcb963602f759b45726b26f176a43ed9701cdb1d6b3692be",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-repair-20261114-backlog.json",
+      "archivePath": "local/fullgroom-repair-20261114-backlog.json",
+      "sourceBytes": 271,
+      "sourceSha256": "f424dd54639e49fa23b780ce7add7c0f7cb8168291faaecbf58dae7c694cedf7",
+      "storedSha256": "f424dd54639e49fa23b780ce7add7c0f7cb8168291faaecbf58dae7c694cedf7",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-repair-20261114-backlog.log",
+      "archivePath": "local/fullgroom-repair-20261114-backlog.log.gz",
+      "sourceBytes": 1981,
+      "sourceSha256": "0319016cfc175110134ae1d692cf5638a73ee60b519d6f175572a5cdd3460be6",
+      "storedSha256": "27f2a2b0d8f5547af5b81f13929845d0419c570e41030578d1036348f229b68c",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-repair-20261114-docs.json",
+      "archivePath": "local/fullgroom-repair-20261114-docs.json",
+      "sourceBytes": 235,
+      "sourceSha256": "c6f81d02db6689453d546bbe4c45b057161180aad7c53a1eb3dce05a21c8c328",
+      "storedSha256": "c6f81d02db6689453d546bbe4c45b057161180aad7c53a1eb3dce05a21c8c328",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-repair-20261114-docs.log",
+      "archivePath": "local/fullgroom-repair-20261114-docs.log.gz",
+      "sourceBytes": 249,
+      "sourceSha256": "c291d3cc09fcab7d8a039d8062c03068271b79159d5d46de90e07be8e2636ba8",
+      "storedSha256": "19e3b36068e6f85e069157d619283248c73a662ffd40931cf1204ba487f3178b",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-repair-20261114-format.json",
+      "archivePath": "local/fullgroom-repair-20261114-format.json",
+      "sourceBytes": 537,
+      "sourceSha256": "bf79ae785601f5c85dd7c302390c1512981b721d510eb24e95b1f8abdcc9fa6d",
+      "storedSha256": "bf79ae785601f5c85dd7c302390c1512981b721d510eb24e95b1f8abdcc9fa6d",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-repair-20261114-format.log",
+      "archivePath": "local/fullgroom-repair-20261114-format.log.gz",
+      "sourceBytes": 526,
+      "sourceSha256": "ceb64cab1ced28adaec979f209052af90bf7c496d47d8fca3e98d49d83c586d5",
+      "storedSha256": "3651f840044aee4a8fdac23f5db0479bc5a3d46d410786c62d9dad209b752d0b",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-repair-20261114-index.json",
+      "archivePath": "local/fullgroom-repair-20261114-index.json",
+      "sourceBytes": 269,
+      "sourceSha256": "0422dc04c356e3bf83ca12fdfd508716e162929cd5a81faf72aa090c185da18d",
+      "storedSha256": "0422dc04c356e3bf83ca12fdfd508716e162929cd5a81faf72aa090c185da18d",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-repair-20261114-index.log",
+      "archivePath": "local/fullgroom-repair-20261114-index.log.gz",
+      "sourceBytes": 1977,
+      "sourceSha256": "2f0b8f513bc336bf616b5866cc48b8397aac4e94a64f775dd8ee313a738fdf9c",
+      "storedSha256": "09f2cb25a8dc51e2cf08130aaf6ae3212d9be584302cf13e58065308dfd85a92",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-repair-20261114-pr-6adc637b.json",
+      "archivePath": "local/fullgroom-repair-20261114-pr-6adc637b.json",
+      "sourceBytes": 424,
+      "sourceSha256": "27fa10678ec30581a8c855b88108d46d7d63f109c3355b094837753d0da402fc",
+      "storedSha256": "27fa10678ec30581a8c855b88108d46d7d63f109c3355b094837753d0da402fc",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-repair-20261114-pr-6adc637b.log",
+      "archivePath": "local/fullgroom-repair-20261114-pr-6adc637b.log.gz",
+      "sourceBytes": 373,
+      "sourceSha256": "9b5ed22c8a912b44041a02cbb011d8d39ba7ef9257da4e977c083fe741278a8f",
+      "storedSha256": "7ed096dd2301e99e7f0923c90c4912e2f93c48ede4441d76b9fe806fb579db97",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-review-a-0e3da043.md",
+      "archivePath": "reviews/fullgroom-review-a-0e3da043.md",
+      "sourceBytes": 13511,
+      "sourceSha256": "93105d3f90f7a3f68eca69ae37dc5ab98ccabb5a9421a4c2b55132b928cbfb87",
+      "storedSha256": "93105d3f90f7a3f68eca69ae37dc5ab98ccabb5a9421a4c2b55132b928cbfb87",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-review-a-6adc637b.md",
+      "archivePath": "reviews/fullgroom-review-a-6adc637b.md",
+      "sourceBytes": 9541,
+      "sourceSha256": "5d231004f0cd9258d2475c1f79713422644ec10933f0f05ffdeba2f797ced130",
+      "storedSha256": "5d231004f0cd9258d2475c1f79713422644ec10933f0f05ffdeba2f797ced130",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-review-b-0e3da043.md",
+      "archivePath": "reviews/fullgroom-review-b-0e3da043.md",
+      "sourceBytes": 12927,
+      "sourceSha256": "b1daa4b5ed32c46b06c7c8cb652ded4a0848f388d7cd85f1218ede782ad179cc",
+      "storedSha256": "b1daa4b5ed32c46b06c7c8cb652ded4a0848f388d7cd85f1218ede782ad179cc",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-dependabot-2026-11-11/fullgroom-review-b-6adc637b.md",
+      "archivePath": "reviews/fullgroom-review-b-6adc637b.md",
+      "sourceBytes": 10555,
+      "sourceSha256": "0a5a231ffa3b9f308e4b7522de22f0bcc90c3ae2cf196014c267277dd0810ee8",
+      "storedSha256": "0a5a231ffa3b9f308e4b7522de22f0bcc90c3ae2cf196014c267277dd0810ee8",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/root-first-review-disposition.json",
+      "archivePath": "manager/root-first-review-disposition.json",
+      "sourceBytes": 911,
+      "sourceSha256": "f39ad2f6decc888bcd3018174e98052b8602f1adc2388fc32b92008479c31564",
+      "storedSha256": "f39ad2f6decc888bcd3018174e98052b8602f1adc2388fc32b92008479c31564",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/root-final-review-audit-6adc637b.json",
+      "archivePath": "manager/root-final-review-audit-6adc637b.json",
+      "sourceBytes": 2630,
+      "sourceSha256": "905c21994c6c188d28a9c811cb98883adffa00d2a6881bec33e60dd4afb57f52",
+      "storedSha256": "905c21994c6c188d28a9c811cb98883adffa00d2a6881bec33e60dd4afb57f52",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/root-publication-6adc637b.json",
+      "archivePath": "manager/root-publication-6adc637b.json",
+      "sourceBytes": 449,
+      "sourceSha256": "b98306acae068cfd3c6dd51e47470270a8ef55477552f032af1d6200a81fd810",
+      "storedSha256": "b98306acae068cfd3c6dd51e47470270a8ef55477552f032af1d6200a81fd810",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/final-inventory.json",
+      "archivePath": "local/final-inventory.json",
+      "sourceBytes": 18980,
+      "sourceSha256": "24c18c263580151ba86a0f076aa41d78ccea3ffe56f0e9e91fb5a8c4667177e9",
+      "storedSha256": "24c18c263580151ba86a0f076aa41d78ccea3ffe56f0e9e91fb5a8c4667177e9",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/docs-inspection.json",
+      "archivePath": "local/docs-inspection.json",
+      "sourceBytes": 5310,
+      "sourceSha256": "89a64415e2640a49674be5483fdf287ef66d9d1bf7eb58e83122bb8bf04f88f7",
+      "storedSha256": "89a64415e2640a49674be5483fdf287ef66d9d1bf7eb58e83122bb8bf04f88f7",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/docs-inspection-repair.json",
+      "archivePath": "local/docs-inspection-repair.json",
+      "sourceBytes": 5537,
+      "sourceSha256": "a2612b1428f80a17a1f731621e09c43b88292aaa8b5bd081e7ec5faf758b3324",
+      "storedSha256": "a2612b1428f80a17a1f731621e09c43b88292aaa8b5bd081e7ec5faf758b3324",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/local-completion-0e3da043.json",
+      "archivePath": "local/local-completion-0e3da043.json",
+      "sourceBytes": 957,
+      "sourceSha256": "835317c15bf61ee19fdc9ad90b698a03a89ab5a640126a237e7268543400227f",
+      "storedSha256": "835317c15bf61ee19fdc9ad90b698a03a89ab5a640126a237e7268543400227f",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/local-completion-6adc637b.json",
+      "archivePath": "local/local-completion-6adc637b.json",
+      "sourceBytes": 815,
+      "sourceSha256": "35b5e70534264cd96fe7b28cfe90f9c10370a8678a34c63bb9e087ac2945b7b0",
+      "storedSha256": "35b5e70534264cd96fe7b28cfe90f9c10370a8678a34c63bb9e087ac2945b7b0",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/review-packet-0e3da043/README.md",
+      "archivePath": "review-inputs/0e3da043/README.md",
+      "sourceBytes": 3996,
+      "sourceSha256": "790ee9c7e1c2916b7cac6b6eb2541bedb68a539f7c3e1b5563477b99718814eb",
+      "storedSha256": "790ee9c7e1c2916b7cac6b6eb2541bedb68a539f7c3e1b5563477b99718814eb",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/review-packet-0e3da043/manifest.json",
+      "archivePath": "review-inputs/0e3da043/manifest.json.gz",
+      "sourceBytes": 19548,
+      "sourceSha256": "c29a334c0af88a919d38a67834800c657c9f7af450a6b149c7c5c0d70555d88d",
+      "storedSha256": "2862e014c093d024913a60206994762b039f21ea5b5ff9de412fd870d9a699ca",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/review-packet-0e3da043/full.diff",
+      "archivePath": "review-inputs/0e3da043/full.diff.gz",
+      "sourceBytes": 72877,
+      "sourceSha256": "210681608857f63b72944edf6e7b23ba85754420dde138b88da07726893ff334",
+      "storedSha256": "35ddca9e786daaa1536031e754566afd3a9d3e2b0d68ee8363b3d08266fd76f5",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/review-packet-6adc637b/README.md",
+      "archivePath": "review-inputs/6adc637b/README.md",
+      "sourceBytes": 4516,
+      "sourceSha256": "6ca3a435a52a9b9998c3836e0afa12262027c5db283ac2da868044c82c344553",
+      "storedSha256": "6ca3a435a52a9b9998c3836e0afa12262027c5db283ac2da868044c82c344553",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/review-packet-6adc637b/manifest.json",
+      "archivePath": "review-inputs/6adc637b/manifest.json.gz",
+      "sourceBytes": 22484,
+      "sourceSha256": "53788e82da8e9f1a9cd162e25220d163bf9d7a724f9625544ccf8da7ef46d92d",
+      "storedSha256": "1600737b36c139007869f2b6cefb61f615d9d7e04337d65b48001c98fb1ab466",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/review-packet-6adc637b/full.diff",
+      "archivePath": "review-inputs/6adc637b/full.diff.gz",
+      "sourceBytes": 79754,
+      "sourceSha256": "e932cfab478a89846dfedf24c8a102b9780319bdb08ffe344acdee4b0b00bc28",
+      "storedSha256": "00920023b7ca7cb8dca68372212f4f8886af01d25ddca2575da181b71813c88c",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/review-packet-6adc637b/repair.diff",
+      "archivePath": "review-inputs/6adc637b/repair.diff.gz",
+      "sourceBytes": 11624,
+      "sourceSha256": "76e86eb99e63e571dc846ae28c44a2f867ff427e4f751e657846f6a6de1c5502",
+      "storedSha256": "554bfe0006b8e9d17ba062cb204ba13b006f3e663a87a14516a5d2112b94e988",
+      "transformation": "gzip only, decoded bytes identical"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/review-packet-6adc637b/repair-disposition.json",
+      "archivePath": "review-inputs/6adc637b/repair-disposition.json",
+      "sourceBytes": 1372,
+      "sourceSha256": "932d1e932fb81e4e789ab5939dc18dc5807696cb17076522d8037e75d84872bc",
+      "storedSha256": "932d1e932fb81e4e789ab5939dc18dc5807696cb17076522d8037e75d84872bc",
+      "transformation": "none; byte-for-byte copy"
+    },
+    {
+      "sourcePath": "/tmp/spinel-groom-prelaunch-20261114/review-packet-6adc637b/repair-source-evidence.json",
+      "archivePath": "review-inputs/6adc637b/repair-source-evidence.json",
+      "sourceBytes": 1544,
+      "sourceSha256": "d9f7f0ae7a91ff872db3186537d4d7204dd173c4a75067e56bf3af572b390d31",
+      "storedSha256": "d9f7f0ae7a91ff872db3186537d4d7204dd173c4a75067e56bf3af572b390d31",
+      "transformation": "none; byte-for-byte copy"
+    }
+  ],
+  "note": "All four raw report files remain byte-identical; no grade masking in final evidence. Blinded packet manifests record their separate grade-only masking history. Original source paths are retained provenance, not secrets."
+}

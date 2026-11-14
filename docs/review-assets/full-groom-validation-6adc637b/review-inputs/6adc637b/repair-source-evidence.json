@@ -1,0 +1,35 @@
+{
+  "source": "6adc637b937cf07856104a247cb834bef08b8a6f",
+  "readingOnly": true,
+  "fullScriptCommand": "node --test scripts/serial.test.ts scripts/backlog/tests/*.test.ts scripts/deploy/*.test.ts scripts/dependencies/*.test.ts scripts/ci/*.test.ts",
+  "paths": [
+    {
+      "path": "scripts/ci/offline-upgrade-dependencies.test.ts",
+      "blob": "d154449225d31377e1d5bce171f2bdeca6f1fcad"
+    },
+    {
+      "path": "e2e/offline-upgrade-dependencies.ts",
+      "blob": "2390325c1a5d2b4f6d5f06a3a9d9bf606b57c934"
+    },
+    {
+      "path": "scripts/dependencies/patch-univer-core.test.ts",
+      "blob": "5b347260dfc3acb48f0b566b845972273c9f006e"
+    },
+    {
+      "path": "scripts/dependencies/patch-univer-core.ts",
+      "blob": "97a3da0a77f6d89ec7516f7703d64b2f8babb1c1"
+    },
+    {
+      "path": "package.json",
+      "blob": "d69b9e2fdcd628770dc3045ef535c0a9e86f07be"
+    },
+    {
+      "path": "package-lock.json",
+      "blob": "18ba3bdb40bee0bc3eeca4b680d314f02bb1a8d0"
+    }
+  ],
+  "offlineSourceImport": "../../e2e/offline-upgrade-dependencies.ts",
+  "thirdCase": "the shipped, patched @univerjs/core has one pooled helper and shows the same behaviour",
+  "installedContract": "Temporary copy of node_modules/@univerjs/core; checks both lib/es/index.js and lib/cjs/index.js with patchCore/pooledMacroTask, then actual scheduler behavior; retains copy/child cleanup",
+  "providerEvidence": "No account operation or provider endpoint discovery performed; future authoritative confirmation is a retained acceptance prerequisite."
+}

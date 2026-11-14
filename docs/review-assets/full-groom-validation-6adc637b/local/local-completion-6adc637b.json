@@ -1,0 +1,15 @@
+{
+  "observedAt": "2026-11-14T17:17:17.936443+00:00",
+  "head": "6adc637b937cf07856104a247cb834bef08b8a6f",
+  "base": "78fc73bbb05ee5cab9d5a6731ae42227d2c0aaef",
+  "gitStatus": "",
+  "serialLockExists": false,
+  "workloads": "Only guarded index/format/docs/backlog/PR checks, all completed",
+  "runtimeTestsOrAccountActions": false,
+  "dispositions": [
+    "No guard refusal, resource abort or failing check in this repair.",
+    "A draft source path was corrected from scripts/ci to the actual e2e/offline-upgrade-dependencies.ts import during read-only owner inspection, before any check or commit.",
+    "Original candidate receipts and historical lookup dispositions remain in the prior immutable packet.",
+    "No numerical review assessment is supplied; original reports remain external and unchanged."
+  ]
+}

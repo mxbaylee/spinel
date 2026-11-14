@@ -1,0 +1,16 @@
+{
+  "observedAt": "2026-11-14T16:59:57.977607+00:00",
+  "head": "0e3da0431e4c28e5525e2e968dc5fd78c8d83e57",
+  "base": "78fc73bbb05ee5cab9d5a6731ae42227d2c0aaef",
+  "gitStatus": "",
+  "serialLockExists": false,
+  "workloadsLaunched": "Only index/backlog/format/document inspection/PR checks under shared serial watchdog; all complete",
+  "ownedServerOrBrowser": "None started",
+  "dispositions": [
+    "Read-only lookup d5a0 was ambiguous with a blob; resolved to full commit d5a0bc7cad087ce30f48861b276996fd31d3af94 before use.",
+    "Read-only lookup .prettierrc.json was absent; actual prettier.config.ts was inspected and used.",
+    "A stray shell line / tmp was rejected as a directory; no workload or mutation resulted.",
+    "No application test, guard refusal, resource abort or hosted run occurred for this grooming candidate.",
+    "Receipt peakKiB=0 for runs shorter than the 200 ms sample interval means unsampled, not zero memory usage."
+  ]
+}

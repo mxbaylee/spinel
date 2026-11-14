@@ -1,0 +1,12 @@
+{
+  "name": "fullgroom-a-docs-6adc637b",
+  "args": [
+    "python3",
+    "/tmp/spinel-dependabot-2026-11-11/fullgroom-a-inspect-6adc637b.py"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 421,
+  "peakKiB": 106288
+}

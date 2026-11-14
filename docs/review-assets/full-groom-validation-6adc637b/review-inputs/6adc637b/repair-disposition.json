@@ -1,0 +1,21 @@
+{
+  "priorSource": "0e3da0431e4c28e5525e2e968dc5fd78c8d83e57",
+  "source": "6adc637b937cf07856104a247cb834bef08b8a6f",
+  "base": "78fc73bbb05ee5cab9d5a6731ae42227d2c0aaef",
+  "scope": "Five documentation files, no runtime tests or account actions",
+  "findings": [
+    {
+      "ticket": "SPN-153",
+      "finding": "CI-only test glob omitted the third pooled-helper dependency test",
+      "repair": "Explicit focused offline-upgrade/dependency owners, complete Node script command, source/installed ES+CJS/manifest/lock/postinstall boundaries, bounded unknown-cause assessment, meaningful negatives and unchanged cleanup/resource limits."
+    },
+    {
+      "ticket": "SPN-151",
+      "finding": "GitHub absence could not prove account-side provider-key revocation",
+      "repair": "Authoritative redacted BrowserStack revoked/inactive-key evidence or explicit unavailable account-access prerequisite; preserve live consumers, history, individual deletion authorization and S post-launch scope."
+    }
+  ],
+  "originalPacketPreserved": "/tmp/spinel-groom-prelaunch-20261114/review-packet-0e3da043",
+  "originalPacketManifestSHA256": "c29a334c0af88a919d38a67834800c657c9f7af450a6b149c7c5c0d70555d88d",
+  "reportPolicy": "Original independent reports and root disposition are retained separately, not included in this blinded packet. No historical grades are supplied."
+}

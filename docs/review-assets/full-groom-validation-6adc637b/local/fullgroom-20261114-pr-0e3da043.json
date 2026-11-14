@@ -1,0 +1,17 @@
+{
+  "name": "fullgroom-20261114-pr-0e3da043",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "scripts/backlog/cli.ts",
+    "pr",
+    "--base",
+    "78fc73bbb05ee5cab9d5a6731ae42227d2c0aaef",
+    "--title",
+    "🧹 Groom backlog reconcile pre-launch scope and verification"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 377,
+  "peakKiB": 179280
+}

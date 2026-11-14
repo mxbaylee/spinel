@@ -1,0 +1,19 @@
+{
+  "name": "fullgroom-repair-20261114-format",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "/Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs",
+    "--check",
+    "docs/todo/SPN-151.md",
+    "docs/todo/SPN-153.md",
+    "docs/implementation/SPN-151.md",
+    "docs/implementation/SPN-153.md",
+    "docs/implementation/grooming-2026-11-14.md",
+    "docs/todo/backlog.json"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 282,
+  "peakKiB": 174112
+}

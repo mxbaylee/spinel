@@ -1,0 +1,12 @@
+{
+  "publishedAt": "2026-11-14T17:23:07.387787+00:00",
+  "pr": 292,
+  "url": "https://github.com/mxbaylee/spinel/pull/292",
+  "source": "6adc637b937cf07856104a247cb834bef08b8a6f",
+  "base": "78fc73bbb05ee5cab9d5a6731ae42227d2c0aaef",
+  "branch": "codex/groom-prelaunch-20261114",
+  "bodySha256": "5b4c8b7ba797063c2ff2cfc07e632b72985cbac743c3eabf82b021103e111da2",
+  "reviewsVerifiedBeforePush": true,
+  "requiredGates": "pending",
+  "draft": true
+}
