@@ -1,0 +1,12 @@
+{
+  "pattern": "review/grade/score/rubric proximity to90\u2013100 or explicit denominator100",
+  "hits": [
+    {
+      "file": "full.diff",
+      "line": 3806,
+      "text": "+does not waive that review or the 100,000-line hard limit. The accounting recovery,"
+    }
+  ],
+  "note": "Inspect matches for policy/test facts versus prior numerical assessment; no prior reports/oldscoredPRbody are supplied.",
+  "disposition": "Single full.diff match is existing100,000-line hard-limit policy, not a numerical assessment; no numerical prior assessment found in supplied diffs/body/tickets."
+}

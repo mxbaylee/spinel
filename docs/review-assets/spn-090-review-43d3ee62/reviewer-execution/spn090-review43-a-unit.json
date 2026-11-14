@@ -1,0 +1,22 @@
+{
+  "name": "spn090-review43-a-unit",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/startupDeadlines.test.ts",
+    "src/ui/warmOpen.test.ts",
+    "src/ui/warmCatalog.test.ts",
+    "src/ui/feedbackContext.test.ts",
+    "src/shared/serviceWorker.test.ts",
+    "src/ui/spinelSync.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn090-review43-a-vitest-cache"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 1281,
+  "peakKiB": 458960
+}

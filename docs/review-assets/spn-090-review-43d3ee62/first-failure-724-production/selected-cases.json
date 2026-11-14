@@ -1,0 +1,176 @@
+{
+  "source": "724b577791273e0962ff08a38dea77a5aa632d84",
+  "base": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "tested": "6c28675d5fb1cc2d0a0a695413f95967b568ee40",
+  "run": 43626186157,
+  "runAttempt": 1,
+  "job": 132542712402,
+  "stats": {
+    "startTime": "2026-11-14T18:29:03.371Z",
+    "duration": 831377.102,
+    "expected": 86,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 1
+  },
+  "cases": [
+    {
+      "file": "maintenance.spec.ts",
+      "line": 203,
+      "title": "supervised maintenance keeps pending native work, fences old edits, and recovers through cold controls",
+      "classification": "flaky",
+      "attempts": [
+        {
+          "status": "failed",
+          "retry": 0,
+          "durationMs": 8369
+        },
+        {
+          "status": "passed",
+          "retry": 1,
+          "durationMs": 33379
+        }
+      ]
+    },
+    {
+      "file": "offline.spec.ts",
+      "line": 21,
+      "title": "hiding preserves a prepared share and its offline discovery preference without bypassing revoke or sign-out cleanup",
+      "classification": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "durationMs": 4141
+        }
+      ]
+    },
+    {
+      "file": "offline.spec.ts",
+      "line": 292,
+      "title": "downloaded Sheets and Docs open offline with local images; nothing else does",
+      "classification": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "durationMs": 13008
+        }
+      ]
+    },
+    {
+      "file": "offline.spec.ts",
+      "line": 780,
+      "title": "a prepared Space Doc opens natively offline from its normal link and My files, without substituting an unavailable child",
+      "classification": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "durationMs": 8495
+        }
+      ]
+    },
+    {
+      "file": "offline.spec.ts",
+      "line": 1041,
+      "title": "a warm Dashboard and a failed first-list deep link restore the downloaded Doc content",
+      "classification": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "durationMs": 6094
+        }
+      ]
+    },
+    {
+      "file": "offline.spec.ts",
+      "line": 1099,
+      "title": "a warm offline Sheet keeps unfinished native input through reconnect and delayed failed metadata",
+      "classification": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "durationMs": 4795
+        }
+      ]
+    },
+    {
+      "file": "startup-lifecycle.spec.ts",
+      "line": 81,
+      "title": "guest startup reporting ends when a ready guest mounts after slow app code",
+      "classification": "unexpected",
+      "attempts": [
+        {
+          "status": "timedOut",
+          "retry": 0,
+          "durationMs": 30053
+        },
+        {
+          "status": "timedOut",
+          "retry": 1,
+          "durationMs": 30103
+        },
+        {
+          "status": "timedOut",
+          "retry": 2,
+          "durationMs": 30060
+        }
+      ]
+    },
+    {
+      "file": "startup-lifecycle.spec.ts",
+      "line": 124,
+      "title": "guest startup reporting ends for unavailable entry",
+      "classification": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "durationMs": 576
+        }
+      ]
+    },
+    {
+      "file": "startup-lifecycle.spec.ts",
+      "line": 124,
+      "title": "guest startup reporting ends for revoked entry",
+      "classification": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "durationMs": 472
+        }
+      ]
+    },
+    {
+      "file": "startup-lifecycle.spec.ts",
+      "line": 124,
+      "title": "guest startup reporting ends for unsupported entry",
+      "classification": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "durationMs": 475
+        }
+      ]
+    },
+    {
+      "file": "startup-lifecycle.spec.ts",
+      "line": 150,
+      "title": "account startup reporting remains live while actual admission is pending",
+      "classification": "expected",
+      "attempts": [
+        {
+          "status": "passed",
+          "retry": 0,
+          "durationMs": 414
+        }
+      ]
+    }
+  ]
+}

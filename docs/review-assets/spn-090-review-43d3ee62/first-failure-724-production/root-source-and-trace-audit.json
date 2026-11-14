@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-11-14T18:48:10.449648+00:00",
+  "source": "724b577791273e0962ff08a38dea77a5aa632d84",
+  "run": 43626186157,
+  "job": 132542712402,
+  "traceSha256": "ad0a360c24be2339539e268e58056b78402d009dd5de2f0f720800ebb5ec6712",
+  "applicationRequests": [
+    {
+      "url": "http://localhost:3101/assets/application-ed4b9g2I.js",
+      "status": 200,
+      "frameRef": null,
+      "serviceWorkerRef": "worker@7fa4c26864cd14457f8885e6a1aac75a"
+    },
+    {
+      "url": "http://localhost:3101/assets/application-ed4b9g2I.js",
+      "status": 200,
+      "frameRef": "frame@667bdd31532e56ac5dc3bbde36051006",
+      "serviceWorkerRef": null
+    }
+  ],
+  "errorContextSha256": "b98279aef7498f134cae65acfc43b297c613c62c1bcb1bbf3dc75c1671e8cebb",
+  "rootObserved": "Failure snapshot contains ready empty Space. Requests show service-worker-owned application fetch and subsequent frame fetch, both200. This corroborates interception-gap hypothesis, not successful full test acceptance.",
+  "sourceInspection": "AdminInvites sets result URL then awaits refresh before clearing busy; AdminPage blocks hash navigation while busy. Cause remains bounded fixture-readiness inference pending deterministic regression."
+}

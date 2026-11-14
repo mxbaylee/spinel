@@ -1,0 +1,94 @@
+{
+  "files": [
+    {
+      "path": "e2e/startup-lifecycle.spec.ts",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "bytes": 6286,
+      "sha256": "84cf36c630d692998e193378a65a8c05619965c4d86b72c7c93595e073791d9c"
+    },
+    {
+      "path": "e2e/admin-layout.spec.ts",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "bytes": 13010,
+      "sha256": "9e3494f02231b8196f006aa3cfc3199071db9375cfd211b02f9d20529342eda2"
+    },
+    {
+      "path": "e2e/maintenance.spec.ts",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "bytes": 40191,
+      "sha256": "7e4bcec814b49e8fe2326aa4847050fe77243c7027b57185d3bfef3057700873"
+    },
+    {
+      "path": "web/GuestApp.tsx",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "bytes": 10819,
+      "sha256": "607ee52597344c4fba46e112a6d0a48571890c066718c1c74434e5511ac9168f"
+    },
+    {
+      "path": "web/Dashboard.tsx",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "bytes": 66598,
+      "sha256": "1abd782b8bf9c25a6ee069d66592a2e88a0a95acac8fd9e7c24d4584b4502196"
+    },
+    {
+      "path": "web/AdminInvites.tsx",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "bytes": 10786,
+      "sha256": "25612288cca160772330082b17ce15e82cebe13cef2b518533d059aa5ef70285"
+    },
+    {
+      "path": "web/AdminPage.tsx",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "bytes": 4315,
+      "sha256": "f79dcc7fe3288d4e42461ff0c22396a02bc1637c3f6f933a425c85fc04295cfb"
+    },
+    {
+      "path": "web/main.tsx",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "bytes": 6344,
+      "sha256": "37e2461eb93e2f5e5803ed8b8d0394e36e19a892118ee86e983277f0239de0f3"
+    },
+    {
+      "path": "web/startupStage.ts",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "bytes": 1712,
+      "sha256": "2403310d1e6b2683924c5a0c4b6973bd549896ae60b89414eca452973a8aac49"
+    },
+    {
+      "path": "web/StartupStage.stories.tsx",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "bytes": 993,
+      "sha256": "4f43e676d353b03e9323e4c6a548ccafa12745a4c9569a2ab87aff3e973cc968"
+    },
+    {
+      "path": "web/offline/OfflineAvailability.tsx",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "bytes": 3677,
+      "sha256": "eb9ac406e5dce2713fef20b49388180959d529cad22f047485efaf477f16d1a5"
+    },
+    {
+      "path": "web/offline/OfflineAvailability.stories.tsx",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "bytes": 7645,
+      "sha256": "310adb9c2c44c04aaf5d42ac8e0121a49a3a87bbe9da3e5474d015b99fbece28"
+    },
+    {
+      "path": "src/ui/appIcon.ts",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "bytes": 1072,
+      "sha256": "fcfb1c778d7c4c5e01c8a0af84a337a6d46dbab97a1f1ef34b3cc5b12a862744"
+    },
+    {
+      "path": "docs/implementation/SPN-090.md",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "bytes": 409140,
+      "sha256": "e8fd74633a4374ce089c7a829b7e33ccb3d9886038420e07e361f76f45b80802"
+    },
+    {
+      "path": "docs/todo/backlog.json",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "bytes": 552,
+      "sha256": "db1d002ef5efec804d740b18b8a7ee9f3cd474aa5d5521b4074518e50af963c1"
+    }
+  ]
+}

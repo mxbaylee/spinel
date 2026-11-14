@@ -1,0 +1,19 @@
+{
+  "commit": "6c5e64670f61d0a7095461c94492efc20315abba",
+  "parent": "724b577791273e0962ff08a38dea77a5aa632d84",
+  "storedAndDecodedVerified": 34,
+  "manifestSha256": "bd22dcf17a2697ac9bb44eaff9aa1dbcb441b6430330ef9d3cedcd01caf2465d",
+  "rootReadREADME": true,
+  "scope": "Partial first-failure snapshot, not terminal",
+  "data": "Synthetic localhost fixture traces/reporter; no real deployment profiles/databases",
+  "previousRawTraceAudit": "/tmp/spn090-root-production2-failure-audit.json",
+  "correctedPublished": {
+    "commit": "a9dd1e0f4b70963fb87e149228cc67a2a6b56990",
+    "payloadsVerified": 35,
+    "trackedFiles": 36,
+    "manifestSha256": "1c8f3ede984401ff3b2da2007b4dc0ee970c59408b9a736370565827cb22ee2b",
+    "tag": "archive/spn-090-failure-43626186157-20261114",
+    "remoteVerified": true,
+    "correction": "Nested checkpoint/manifest.json now included; only rootmanifest excluded"
+  }
+}

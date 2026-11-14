@@ -1,0 +1,12 @@
+{
+  "textOrGzipFilesChecked": 270,
+  "hits": [
+    {
+      "path": "docs/implementation/SPN-090.md",
+      "line": 2334,
+      "text": "does not waive that review or the 100,000-line hard limit. The accounting recovery,"
+    }
+  ],
+  "excludes": "unchanged inherited-main history; binary image/ZIP files are original artifacts, not review instructions",
+  "disposition": "The sole match is existing100,000-line hard-limit policy; no prior numerical assessment found in270 decoded text/gzip files changed againstec42."
+}

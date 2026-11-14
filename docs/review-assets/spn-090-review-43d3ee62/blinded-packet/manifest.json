@@ -1,0 +1,62 @@
+{
+  "candidate": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "files": [
+    {
+      "path": "base-ticket.md",
+      "bytes": 6170,
+      "sha256": "963a0901f5d08e50eac18a7ef971e7a13985381dbf1734115b233980f622cf76"
+    },
+    {
+      "path": "candidate-body.md",
+      "bytes": 8499,
+      "sha256": "78cdc7df470a855962b621f778c7e2e91fb7e234e6ef79998cadc3ecc95b52d8"
+    },
+    {
+      "path": "decoded-numerical-assessment-scan.json",
+      "bytes": 520,
+      "sha256": "6139ae340369b65f73821dab1aea94deeddf481ae1f5f48f6b37e613021d8b68"
+    },
+    {
+      "path": "final-pr.log",
+      "bytes": 420,
+      "sha256": "c847df2120e38c629c29ab49ac8c367f0d419254c3d42290cd225218cc15fdce"
+    },
+    {
+      "path": "full.diff",
+      "bytes": 3885286,
+      "sha256": "6558b682296fe628e049066de2b77c03a1cf42f09d44d254940b837049301ce2"
+    },
+    {
+      "path": "integration-runtime.diff",
+      "bytes": 177031,
+      "sha256": "a6642e11b597d13fca94b152b52234cf875fb5790588b014ddc33c442c8ee35a"
+    },
+    {
+      "path": "numerical-assessment-scan.json",
+      "bytes": 588,
+      "sha256": "46fa50d3b924e4b3a9bc1ea60a1e7cd9008d8643b5a4b25206ad3a996ed1293a"
+    },
+    {
+      "path": "original-ticket-ebf0842f.md",
+      "bytes": 12390,
+      "sha256": "4002fc380f196d76d8d9062c5ee19c486a06205795bf9a1bca9ee1e1aca433d8"
+    },
+    {
+      "path": "packet.md",
+      "bytes": 8505,
+      "sha256": "4bd9a82bef424aec5ed8fc00341238536d742ea645b8c6cec517b0a435862896"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 1996,
+      "sha256": "badf1949c68e318f4e10054c430c1efe3bb9b8550f684d7410f8233014ed56ce"
+    },
+    {
+      "path": "repair.diff",
+      "bytes": 94304,
+      "sha256": "6c5f06776b91d3c0f8343dd0a32e4dcf6d26bb97809e5f1c3149183cf17e9214"
+    }
+  ],
+  "reviewInputPolicy": "Grade-free; no original reports or scored old body; inherited-main records excluded from supplied integration runtime delta"
+}

@@ -1,0 +1,31 @@
+{
+  "at": "2026-11-14T19:35:52.951007+00:00",
+  "head": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "packetFiles": 11,
+  "fullDiffByteExact": "git diff --binary actualbase head",
+  "packetManifestSha256": "1e3171f11ddbbb89c7b0dbc68ad263fb83bffe4fcdd2e3a8fb7c6b926712c629",
+  "originalImageHashes": 13,
+  "exactCurrentImages": 10,
+  "independentDecodedTextScan": 270,
+  "patternHits": [],
+  "bookkeeping": [
+    "SPN-098",
+    "SPN-090"
+  ],
+  "rootReadFullBrief": true,
+  "rootReadReports": {
+    "a": {
+      "path": "/tmp/spn090-review-43d3ee62-a.md",
+      "sha256": "23a59c3647f4b6c65b98b9382c52787d1947e5c691e877ed4a1197b279e873a3",
+      "grade": 100,
+      "readFull": true
+    },
+    "b": {
+      "path": "/tmp/spn090-review-43d3ee62-b.md",
+      "sha256": "69752b512b3b58933631f795e98135d6650b029a2113f2509684e746b55cbaa3",
+      "grade": 100,
+      "readFull": true
+    }
+  }
+}

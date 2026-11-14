@@ -1,0 +1,217 @@
+{
+  "id": 14126254707,
+  "zipSha256": "7eff15bc5d95abb5074f1b268450a73fe4229e0b14aa064aeb86658ee9fad00a",
+  "zipBytes": 18753014,
+  "files": [
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production/error-context.md",
+      "bytes": 13515,
+      "sha256": "7095a36ea78a160257cc98f4ad13f18685023100367d7463ad7a1376e8e10ffc"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/backup-paused-light.png",
+      "bytes": 106339,
+      "sha256": "9e748817b4fd57c6e6aa31050a9aacb1b63e06fca3371f45e1d19789b9ff5e49"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/backup-paused-dark.png",
+      "bytes": 104253,
+      "sha256": "584acfc3c3eb85cacb7df10576b77d6003496670d94e9596f4a8890cc233cd30"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/backup-paused-phone.png",
+      "bytes": 75035,
+      "sha256": "8eb56a87daf0d04c8b911e37ebd7262f26c446edcaf998c0f2e4ea5354d236b1"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/cancel-while-paused-dark.png",
+      "bytes": 113382,
+      "sha256": "ec2dc546f27438d9ff5455ea7e4671794dd8f7b11e84826ba52aab9da1809a93"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/cancel-while-paused-light.png",
+      "bytes": 108891,
+      "sha256": "0f1b7b89272cfa61860047bee65b705bd26bc5af0545a356eb3fb63a44f30b22"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/cancel-while-paused-phone.png",
+      "bytes": 67393,
+      "sha256": "767277bedab1daf295d5bd1f31f72867a5e20c2a56f932d4060bf5431e845245"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/cancel-without-proof-dark.png",
+      "bytes": 118766,
+      "sha256": "cc97af6ac12bbee8604bd61be339928497e202266b6057f9cb247728ba720b92"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/cancel-without-proof-light.png",
+      "bytes": 114073,
+      "sha256": "54e2f6936016f4f62a91036b0481829141e1369206593b22ef3ed13dc7704905"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/cancel-without-proof-phone.png",
+      "bytes": 71367,
+      "sha256": "4adf22acabada727543780d77049045a221082798c4ac3aab292e6a02d78d795"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/native-pending-dismissed-dark.png",
+      "bytes": 54426,
+      "sha256": "eef53972ceaf1106c1a2c87340921f051fa30ddf46c9864e1f316694860d50d9"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/native-pending-dismissed-light.png",
+      "bytes": 54208,
+      "sha256": "fee454ff015c7b2229d41c892581f5cb5cb4492ba45240dea759f3e241705ece"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/native-pending-dismissed-phone.png",
+      "bytes": 38036,
+      "sha256": "db2ce51c68ec1174be99c1f9bc96aa0828226763cefabe408daf0a8ca529e2ed"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/native-pending-light.png",
+      "bytes": 57329,
+      "sha256": "74f9896b87449d77ee2349968ba2e4bebb6ddeac1af2161874b6ae7ede33e882"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/native-pending-reopened-dark.png",
+      "bytes": 79291,
+      "sha256": "841e4d7bac4db686b6fa76b02b4757dc188adc1a979a1ffc717da9cae344925e"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/native-pending-reopened-light.png",
+      "bytes": 78731,
+      "sha256": "71ab42d6d152cb9699588fd8fc26731e8fa1f2689e387e70bc882fe39683e2d5"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/native-pending-reopened-phone.png",
+      "bytes": 60097,
+      "sha256": "34620f542cf988655fa276eed68091c0bcd5c86a6726bf9fb397f5c4f71b9271"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/notice-time-choice-dark.png",
+      "bytes": 120317,
+      "sha256": "bfb7f1035a878d12b4393c0b4b266fad9654375c06d55f24a2a981de0499b42b"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/notice-time-choice-light.png",
+      "bytes": 114236,
+      "sha256": "87a2f49fe8a299478d97ab213c65c53b63e6464d131d1f998328e25a47d11b0e"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/notice-time-choice-phone.png",
+      "bytes": 70610,
+      "sha256": "012cec25e59d555c39b642bb421ee1c300820ac4b89f33e3654af9dea68f321d"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/pause-confirmation-light.png",
+      "bytes": 113623,
+      "sha256": "9795a1903accc761c831b16b5ff29077948004b2d0784fce42c6717577d2de7f"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/paused-dark.png",
+      "bytes": 92923,
+      "sha256": "0eac7b3455f9998e94acc8e9fa7101939fdb77f38ccfbe66cf1f8fc6342a7259"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/paused-details-dark.png",
+      "bytes": 101956,
+      "sha256": "22b9017b0dc12e32b8b62c569a7f75487c0a2cdc15dad53147d8bcdb73dfa57b"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/paused-details-light.png",
+      "bytes": 103160,
+      "sha256": "9d9c3ebcd0090493013a062def9beebcb65f73109e69cfee278a5c90d97555e0"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/paused-details-phone.png",
+      "bytes": 70497,
+      "sha256": "cfbd588fde43cbabeca822cace45a5fd9e110bcd868cf9dc9cec1e2e7be66d4f"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/paused-light.png",
+      "bytes": 95014,
+      "sha256": "fc1509785ee11b33a3e5f022967240b7de46c8fcbce84fc2b1eee7e7417e73ed"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/paused-phone.png",
+      "bytes": 64766,
+      "sha256": "190a682e24dec658d575b781536ff274195ef4c96296c20385de81906f50337e"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/resumed-dark.png",
+      "bytes": 89549,
+      "sha256": "f09483b523441a3892003778bae8c90f3706ccf3635a8c7a07270dac2761b542"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/resumed-light.png",
+      "bytes": 91801,
+      "sha256": "ad7282c403f3f398cf0d2c308cc028dfb427ff09b6219baa433bc4507a8187fc"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/resumed-phone.png",
+      "bytes": 61168,
+      "sha256": "b253238b952da568877f0c99765be1f2403c99540ffc0e5ed7777de6b18b6a46"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/scheduled-dark.png",
+      "bytes": 93486,
+      "sha256": "83f69287e229e0cfd73caff328c3c9eb5936fb2d7422266ed3275bb80bedc50f"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/scheduled-phone.png",
+      "bytes": 64694,
+      "sha256": "45f1182340c2d16f5a830dfe8ed56e83d8163e3222cb3de40402d5ca24b36cfa"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/maintenance-views/scheduled-light.png",
+      "bytes": 95309,
+      "sha256": "124b5079c0c994f8a31fed514c81bbc99d0ae666cbf7a9f6d1ac7f05dbd6a025"
+    },
+    {
+      "path": "test-results/production/maintenance-supervised-mai-9399e-overs-through-cold-controls-production-retry1/trace.zip",
+      "bytes": 33410,
+      "sha256": "1d47a8143f94c431c985ffc4a18179178de4f5ec9e5d9c917df65d9360228b94"
+    },
+    {
+      "path": "test-results/production/startup-lifecycle-guest-st-ca8d4--mounts-after-slow-app-code-production/error-context.md",
+      "bytes": 1848,
+      "sha256": "b98279aef7498f134cae65acfc43b297c613c62c1bcb1bbf3dc75c1671e8cebb"
+    },
+    {
+      "path": "test-results/production/startup-lifecycle-guest-st-ca8d4--mounts-after-slow-app-code-production/test-failed-1.png",
+      "bytes": 36576,
+      "sha256": "b68bea4a9ebad2d95c875c65b02d77a635c67c1dfaea6e8d4631a14f44b6c09c"
+    },
+    {
+      "path": "test-results/production/startup-lifecycle-guest-st-ca8d4--mounts-after-slow-app-code-production-retry1/error-context.md",
+      "bytes": 1848,
+      "sha256": "b98279aef7498f134cae65acfc43b297c613c62c1bcb1bbf3dc75c1671e8cebb"
+    },
+    {
+      "path": "test-results/production/startup-lifecycle-guest-st-ca8d4--mounts-after-slow-app-code-production-retry1/test-failed-1.png",
+      "bytes": 36576,
+      "sha256": "b68bea4a9ebad2d95c875c65b02d77a635c67c1dfaea6e8d4631a14f44b6c09c"
+    },
+    {
+      "path": "test-results/production/startup-lifecycle-guest-st-ca8d4--mounts-after-slow-app-code-production-retry1/trace.zip",
+      "bytes": 150313,
+      "sha256": "ad0a360c24be2339539e268e58056b78402d009dd5de2f0f720800ebb5ec6712"
+    },
+    {
+      "path": "test-results/production/startup-lifecycle-guest-st-ca8d4--mounts-after-slow-app-code-production-retry2/error-context.md",
+      "bytes": 1848,
+      "sha256": "b98279aef7498f134cae65acfc43b297c613c62c1bcb1bbf3dc75c1671e8cebb"
+    },
+    {
+      "path": "test-results/production/startup-lifecycle-guest-st-ca8d4--mounts-after-slow-app-code-production-retry2/test-failed-1.png",
+      "bytes": 36576,
+      "sha256": "b68bea4a9ebad2d95c875c65b02d77a635c67c1dfaea6e8d4631a14f44b6c09c"
+    },
+    {
+      "path": "playwright-report/production-2-of-2.json",
+      "bytes": 1690583,
+      "sha256": "4e1e81f3e5b01c086d8039f087128b0e07d5438f8da3d7c7aa1d748a3a7aaa9c"
+    }
+  ]
+}

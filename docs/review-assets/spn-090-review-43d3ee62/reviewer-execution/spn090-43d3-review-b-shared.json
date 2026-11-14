@@ -1,0 +1,20 @@
+{
+  "name": "spn090-43d3-review-b-shared",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/startupDeadlines.test.ts",
+    "src/ui/warmOpen.test.ts",
+    "src/ui/warmCatalog.test.ts",
+    "src/ui/feedbackContext.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn090-review-43d3ee62-b-vitest-cache"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 687,
+  "peakKiB": 289056
+}

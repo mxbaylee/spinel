@@ -1,0 +1,112 @@
+{
+  "head": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+  "packetFiles": {
+    "full.diff": true,
+    "repair.diff": true,
+    "integration-runtime.diff": true,
+    "base-ticket.md": true,
+    "candidate-body.md": true,
+    "packet.md": true,
+    "original-ticket-ebf0842f.md": true,
+    "numerical-assessment-scan.json": true,
+    "final-pr.log": true,
+    "decoded-numerical-assessment-scan.json": true
+  },
+  "fullBinaryDiffExact": true,
+  "fullBinaryDiffSha256": "6558b682296fe628e049066de2b77c03a1cf42f09d44d254940b837049301ce2",
+  "finalInputCount": 48,
+  "finalInputMismatches": [],
+  "images": [
+    {
+      "path": "docs/implementation/evidence/SPN-090-current/story-readiness/local-visual/current-production-startup-status--slow-start-light.png",
+      "originalHashMatches": true,
+      "currentHashMatches": true,
+      "historical": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-090-current/story-readiness/local-visual/current-production-startup-status--slow-start-dark.png",
+      "originalHashMatches": true,
+      "currentHashMatches": true,
+      "historical": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-090-current/story-readiness/local-visual/current-production-startup-status--slow-start-phone.png",
+      "originalHashMatches": true,
+      "currentHashMatches": true,
+      "historical": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-090-current/story-readiness/local-visual/current-production-startup-status--slow-start-phone-dark.png",
+      "originalHashMatches": true,
+      "currentHashMatches": true,
+      "historical": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-090-current/story-readiness/local-visual/current-production-startup-status--slow-start-tablet.png",
+      "originalHashMatches": true,
+      "currentHashMatches": true,
+      "historical": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-090-current/visual/offline-availability--protection-pending-light.png",
+      "originalHashMatches": true,
+      "currentHashMatches": true,
+      "historical": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-090-current/visual/offline-availability--protection-pending-dark.png",
+      "originalHashMatches": true,
+      "currentHashMatches": true,
+      "historical": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-090-current/visual/offline-availability--protection-pending-phone.png",
+      "originalHashMatches": true,
+      "currentHashMatches": true,
+      "historical": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-090-current/visual/installed-icon-192.png",
+      "originalHashMatches": true,
+      "currentHashMatches": true,
+      "historical": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-090-current/visual/installed-icon-512.png",
+      "originalHashMatches": true,
+      "currentHashMatches": true,
+      "historical": false
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-090-storage-deciding-light.png",
+      "originalHashMatches": true,
+      "currentHashMatches": true,
+      "historical": true
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-090-storage-deciding-dark.png",
+      "originalHashMatches": true,
+      "currentHashMatches": true,
+      "historical": true
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-090-storage-deciding-phone.png",
+      "originalHashMatches": true,
+      "currentHashMatches": true,
+      "historical": true
+    }
+  ],
+  "renderInputsMatch": {
+    "web/startupStage.ts": true,
+    "web/StartupStage.stories.tsx": true,
+    "web/offline/OfflineAvailability.tsx": true,
+    "web/offline/OfflineAvailability.stories.tsx": true,
+    "web/offline/protection.ts": true,
+    "src/ui/theme.css": true,
+    ".storybook/preview.tsx": true,
+    "src/ui/redesign/Controls.tsx": true,
+    "src/ui/appIcon.ts": true,
+    "src/ui/favicon.ts": true
+  },
+  "initialAudit": "Adding --full-index differed only from packet formatting; corrected to packet git diff --binary invocation."
+}

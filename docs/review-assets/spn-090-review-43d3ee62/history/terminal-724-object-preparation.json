@@ -1,0 +1,11 @@
+{
+  "commit": "f749fcb29484c25920a6e10dc24871e3d783c016",
+  "parent": "724b577791273e0962ff08a38dea77a5aa632d84",
+  "path": "docs/review-assets/spn-090-validation-724b5777",
+  "proposedTag": "archive/spn-090-validation-724b5777-20261114",
+  "files": 313,
+  "bytes": 5674968,
+  "allOriginalRunsTerminal": true,
+  "acceptance": "failed",
+  "published": false
+}

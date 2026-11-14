@@ -1,0 +1,21 @@
+{
+  "name": "spn090-review43-a-production",
+  "args": [
+    "node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "e2e/startup-lifecycle.spec.ts",
+    "e2e/admin-layout.spec.ts",
+    "--project=production",
+    "--grep",
+    "startup reporting|pending invitations prevent",
+    "--workers=1",
+    "--retries=0",
+    "--output=/tmp/spn090-review-43d3ee62/a-production"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 5543,
+  "peakKiB": 1221312
+}
