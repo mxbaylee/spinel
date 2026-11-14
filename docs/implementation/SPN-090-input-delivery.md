@@ -104,7 +104,7 @@ two exact-commit reviews and physical acceptance remain pending.
 
 ### 🔧 Independent cleanup finding repaired before publication
 
-Review B withheld publication of `30fbfef9` at 94/100: the real diagnosis hook
+Review B withheld publication of `30fbfef9`: the real diagnosis hook
 awaited a screenshot before invoking the removal callback, so a screenshot
 failure could leave the temporary recorder installed. The shared hook now runs
 its work exactly once even after screenshot failure, preserves both failures if
