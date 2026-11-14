@@ -4,9 +4,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import { afterEach, expect, test, vi } from 'vitest';
-import { getDocsEmptySnapshot, LocaleType, JSONX } from '@univerjs/core';
+import { CustomRangeType, getDocsEmptySnapshot, LocaleType, JSONX } from '@univerjs/core';
 import { RichTextEditingMutation } from '@univerjs/docs';
-import type { IDocumentData, IWorkbookData } from '@univerjs/core';
+import type { IDocumentBody, IDocumentData, IWorkbookData } from '@univerjs/core';
 import { UniverType } from '@univerjs/protocol';
 import type { IChangeset } from '@univerjs/protocol';
 import { SetRangeValuesMutation } from '@univerjs/sheets';
@@ -122,6 +122,113 @@ async function fixture() {
     edit,
   };
 }
+
+test.each(
+  [false, true].flatMap((fields) =>
+    (['owner', 'account', 'guest'] as const).map((first) => ({ fields, first })),
+  ),
+)(
+  'Doc preparation preserves saved content and viewer authority: fields=$fields, first=$first',
+  async ({ fields, first }) => {
+    const f = await fixture();
+    const snapshot = getDocsEmptySnapshot(f.doc.id);
+    snapshot.body = { dataStream: 'Preserved notes\r\n' };
+    if (fields) {
+      const dateField = (id: string): IDocumentBody => ({
+        dataStream: '\x1f2000-01-01\x1e\r\n',
+        paragraphs: [{ startIndex: 12, paragraphId: `${id}-paragraph` }],
+        customRanges: [
+          {
+            rangeId: id,
+            rangeType: CustomRangeType.FIELD,
+            startIndex: 0,
+            endIndex: 11,
+            wholeEntity: false,
+            properties: {
+              fieldType: 'DATE',
+              instruction: 'DATE \\@ "yyyy-MM-dd"',
+              cachedResult: '2000-01-01',
+            },
+          },
+        ],
+      });
+      snapshot.headers = { top: { headerId: 'top', body: dateField('header-date') } };
+      snapshot.footers = { bottom: { footerId: 'bottom', body: dateField('footer-date') } };
+      snapshot.documentStyle.defaultHeaderId = 'top';
+      snapshot.documentStyle.defaultFooterId = 'bottom';
+    }
+    f.docs.save(f.owner.id, f.doc.id, { snapshot, revision: 1, writeId: randomUUID() });
+    f.workspace.share(f.owner.id, f.doc.id, f.viewer.id, 'viewer');
+    const link = f.workspace.links.begin(f.doc.id, 'viewer');
+    f.workspace.links.finish(f.doc.id, link.epoch, true);
+    const guest = f.workspace.links.exchange(f.doc.id, link.token);
+    const credential = f.workspace.links.access(guest.userId)!;
+    const actors = {
+      owner: { user: f.owner.id, custom: {} },
+      account: { user: f.viewer.id, custom: {} },
+      guest: {
+        user: guest.userId,
+        custom: { guestHash: credential.tokenHash, guestItem: f.doc.id },
+      },
+    };
+    const legacy = () => f.db.prepare('SELECT * FROM doc_snapshots WHERE item_id=?').get(f.doc.id);
+    const head = () =>
+      f.db.prepare('SELECT * FROM spinel_sync_units WHERE unit_id=?').get(f.doc.id);
+    const grants = () => ({
+      account: f.db
+        .prepare('SELECT * FROM workspace_grants WHERE item_id=? ORDER BY user_id')
+        .all(f.doc.id),
+      link: f.db.prepare('SELECT * FROM workspace_links WHERE item_id=?').get(f.doc.id),
+    });
+    const beforeLegacy = legacy();
+    const beforeGrants = grants();
+    expect(head()).toBeUndefined();
+    expect(
+      f.db.prepare('SELECT * FROM workspace_collaboration WHERE item_id=?').get(f.doc.id),
+    ).toBeUndefined();
+    const initiating = actors[first];
+    // Reading may prepare the native representation, but cannot author an edit or
+    // upgrade a viewer. Establish this boundary before a browser's exact baseline.
+    await f.collab.prepare(initiating.user, f.doc.id, initiating.custom);
+    const prepared = await f.collab.load(f.owner.id, f.doc.id);
+    const native = prepared.snapshot as IDocumentData;
+    const preparedHead = head();
+    expect(prepared.revision).toBe(1);
+    expect(native.rev).toBe(1);
+    expect(preparedHead?.revision).toBe(1);
+    expect(JSON.parse(String(preparedHead?.snapshot))).toEqual(native);
+    expect(native.body).toEqual(snapshot.body);
+    expect(native.headers).toEqual(snapshot.headers);
+    expect(native.footers).toEqual(snapshot.footers);
+    expect(native.documentStyle).toEqual(snapshot.documentStyle);
+    expect(native.resources?.map((resource) => resource.name)).toEqual(
+      expect.arrayContaining([
+        'DOC_OBJECT_PERMISSION_PLUGIN',
+        'DOC_WORD_STYLES_PLUGIN',
+        'DOC_NOTE_PLUGIN',
+        'DOC_HYPER_LINK_PLUGIN',
+        'DOC_DRAWING_PLUGIN',
+      ]),
+    );
+    expect(
+      native.resources?.find((resource) => resource.name === 'DOC_OBJECT_PERMISSION_PLUGIN')?.data,
+    ).toBe('[]');
+    for (const actor of [actors.account, actors.guest, actors.account, actors.guest]) {
+      await f.collab.prepare(actor.user, f.doc.id, actor.custom);
+      const read = await f.collab.load(actor.user, f.doc.id, actor.custom);
+      expect(read.access).toBe('viewer');
+      expect(read.revision).toBe(1);
+      expect(read.snapshot).toEqual(native);
+      expect(head()).toEqual(preparedHead);
+      expect(legacy()).toEqual(beforeLegacy);
+      expect(grants()).toEqual(beforeGrants);
+      expect(
+        f.db.prepare('SELECT * FROM spinel_sync_revisions WHERE unit_id=?').all(f.doc.id),
+      ).toEqual([]);
+      expect(() => f.workspace.get(actor.user, f.doc.id, 'edit')).toThrow();
+    }
+  },
+);
 
 test('raw sheet revision revert cannot bypass the application restore transaction', async () => {
   const f = await fixture();
