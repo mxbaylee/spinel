@@ -43,14 +43,14 @@ const phases = [
   'original-trial-planned',
   'original-trial-opening',
   'original-committed',
-];
+] as const;
 function complete(): RestoreCrashReceipt[] {
   return restoreCrashCases.map((name, index) => {
     const cold = name.startsWith('cold-'),
       recovers = cold || [5, 6, 9, 10].includes(index);
     const snapshot = (
       stage: 'cut' | 'cold-cut' | 'recovered' | 'completed',
-      phase: string,
+      phase: RestoreCrashReceipt['snapshots'][number]['phase'],
     ): RestoreCrashReceipt['snapshots'][number] => ({
       stage,
       phase,
