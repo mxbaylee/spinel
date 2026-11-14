@@ -4,6 +4,9 @@ import { interruptibleNetwork } from './live-network.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
+import type { BrowserContext } from '@playwright/test';
+import { cleanupSessionRevocation, observeSessionRevocation } from './session-revocation.ts';
+import { expectNativeSheetValue } from './native-sheet-value.ts';
 
 test('two authenticated editors receive each other’s sheet edits without reloading', async ({
   page,
@@ -372,48 +375,56 @@ test('revoking one login preserves another login’s queued edit and stops later
       : 'test-results/production/app.sqlite',
   );
   const auth = new AuthStore(db),
-    workspace = new WorkspaceStore(auth),
-    owner = auth.createUser('Two logins');
-  const item = workspace.create(owner.id, {
-    name: 'Private after revoke',
-    kind: 'sheet',
-    parentId: null,
-  });
-  const sessions = [auth.createSession(owner.id), auth.createSession(owner.id)];
-  const second = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
-  const network = await syncNetwork(second);
-  const other = await second.newPage();
+    workspace = new WorkspaceStore(auth);
+  let ownerId: string | undefined, itemId: string | undefined;
+  let second: BrowserContext | undefined;
+  let network: Awaited<ReturnType<typeof syncNetwork>> | undefined;
+  let observation: Awaited<ReturnType<typeof observeSessionRevocation>> | undefined;
+  let primaryFailed = false,
+    contractCompleted = false;
+  let cleanupFailures: string[] = [],
+    attachmentFailures: string[] = [];
   let release!: () => void;
   const pending = new Promise<void>((resolve) => {
     release = resolve;
   });
   let held = false,
-    revokedClosed = 0,
+    forwarded = false,
     otherClosed = 0;
-  const revokedMessages: string[] = [];
-  page.on('websocket', (socket) => {
-    socket.on('framereceived', (frame) => revokedMessages.push(String(frame.payload)));
-    socket.on('close', () => {
-      revokedClosed++;
-    });
-  });
-  other.on('websocket', (socket) =>
-    socket.on('close', () => {
-      otherClosed++;
-    }),
-  );
-  for (const [index, c] of [context, second].entries())
-    await c.addCookies([
-      {
-        name: COOKIE_NAME,
-        value: sessions[index].token,
-        url: baseURL!.replace('http:', 'https:'),
-        secure: true,
-        httpOnly: true,
-        sameSite: 'Strict',
-      },
-    ]);
   try {
+    const owner = auth.createUser('Two logins');
+    ownerId = owner.id;
+    const item = workspace.create(owner.id, {
+      name: 'Private after revoke',
+      kind: 'sheet',
+      parentId: null,
+    });
+    itemId = item.id;
+    const sessions = [auth.createSession(owner.id), auth.createSession(owner.id)];
+    second = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
+    network = await syncNetwork(second);
+    const other = await second.newPage();
+    const socketURL = new URL(`/sync-api/items/${item.id}/socket`, baseURL);
+    socketURL.protocol = socketURL.protocol === 'https:' ? 'wss:' : 'ws:';
+    observation = await observeSessionRevocation(page, socketURL.href);
+    other.on('websocket', (socket) => {
+      if (new URL(socket.url()).pathname !== socketURL.pathname) return;
+      socket.on('close', () => {
+        otherClosed++;
+      });
+    });
+    await second.grantPermissions(['clipboard-read', 'clipboard-write']);
+    for (const [index, c] of [context, second].entries())
+      await c.addCookies([
+        {
+          name: COOKIE_NAME,
+          value: sessions[index].token,
+          url: baseURL!.replace('http:', 'https:'),
+          secure: true,
+          httpOnly: true,
+          sameSite: 'Strict',
+        },
+      ]);
     await page.goto(`/?item=${item.id}`);
     await other.goto(`${baseURL}/?item=${item.id}`);
     for (const target of [page, other]) {
@@ -426,10 +437,11 @@ test('revoking one login preserves another login’s queued edit and stops later
         target.getByRole('status', { name: 'Connection status', exact: true }),
       ).toHaveText('Online');
     }
+    await expect.poll(() => observation!.snapshot().openSockets).toBeGreaterThan(0);
     network.interceptWrites(async (write) => {
       held = true;
       await pending;
-      write.forward();
+      forwarded = write.forward();
     });
     const box = other
       .getByRole('region', { name: 'Sheet document', exact: true })
@@ -440,10 +452,15 @@ test('revoking one login preserves another login’s queued edit and stops later
     await other.keyboard.type('private-after-revoke');
     await other.keyboard.press('Enter');
     await expect.poll(() => held).toBe(true);
-    const revokedClosedBefore = revokedClosed;
+    observation.checkpoint('edit-held');
     const otherClosedBefore = otherClosed;
+    observation.beforeRevoke();
     auth.revokeSession(sessions[0].session.token_hash);
-    await expect.poll(() => revokedClosed).toBeGreaterThan(revokedClosedBefore);
+    observation.checkpoint('revocation-written');
+    // The same five-second deadline still requires a real protocol close for
+    // every socket established before revocation, even if navigation wins.
+    await expect.poll(() => observation!.isClosed(), { timeout: 5000 }).toBe(true);
+    observation.checkpoint('closure-observed');
     expect(otherClosed).toBe(otherClosedBefore);
     // The revoked login has no unfinished work, so SPN-053's clean 401 handoff
     // closes its editor. The other login's independently queued edit must survive.
@@ -452,37 +469,99 @@ test('revoking one login preserves another login’s queued edit and stops later
       page.getByRole('button', { name: 'Sign in with a passkey', exact: true }),
     ).toBeVisible();
     await expect(page.locator('.univer-container canvas')).toHaveCount(0);
-    expect((await context.request.get(`${baseURL}/api/items/${item.id}/sheet`)).status()).toBe(401);
-    const boundary = revokedMessages.length;
+    observation.checkpoint('sign-in');
+    const denied = await context.request.get(`${baseURL}/api/items/${item.id}/sheet`);
+    observation.assertRevoked(denied.status());
+    observation.checkpoint('request-denied');
+    const boundary = observation.frameCount();
     release();
+    observation.checkpoint('edit-released');
     await expect(other.getByRole('status', { name: 'Save status' })).toHaveText(
       'All changes saved.',
       { timeout: 30_000 },
     );
-    const saved = (await (await second.request.get(`${baseURL}/api/items/${item.id}/sheet`)).json())
-      .snapshot;
+    expect(forwarded).toBe(true);
+    expect(otherClosed).toBe(otherClosedBefore);
+    const savedResponse = await second.request.get(`${baseURL}/api/items/${item.id}/sheet`);
+    expect(savedResponse.status()).toBe(200);
+    const saved = (await savedResponse.json()).snapshot;
     expect(saved.sheets[saved.sheetOrder[0]].cellData[0][0].v).toBe('private-after-revoke');
-    expect(
-      revokedMessages.slice(boundary).some((message) => message.includes('private-after-revoke')),
-    ).toBe(false);
+    observation.checkpoint('saved');
+    // No frame may reach the revoked socket after closure. Do not retain private
+    // frame content just to search for one fixture string.
+    expect(observation.frameCount()).toBe(boundary);
     await expect(other.getByRole('button', { name: 'Bold', exact: true })).toBeEnabled();
     await expect(page).toHaveURL(/\/sign-in$/);
     await expect(page.getByRole('heading', { name: 'Your workspace.', exact: true })).toBeVisible();
+    expect(otherClosed).toBe(otherClosedBefore);
     await other.reload();
     await expect(other.getByRole('status', { name: 'Save status' })).toHaveText(
       'All changes saved.',
       { timeout: 30_000 },
     );
+    await expectNativeSheetValue(other, 'A1', 'private-after-revoke');
+    observation.checkpoint('reloaded');
+    expect(observation.frameCount()).toBe(boundary);
+    observation.assertRevoked(
+      (await context.request.get(`${baseURL}/api/items/${item.id}/sheet`)).status(),
+    );
+    expect(observation.frameCount()).toBe(boundary);
+    contractCompleted = true;
+  } catch (error) {
+    primaryFailed = true;
+    throw error;
   } finally {
     release();
-    network.interceptWrites(undefined);
-    try {
-      await network.drainWrites();
-    } finally {
-      await second.close();
-      db.prepare('DELETE FROM workspace_items WHERE id=?').run(item.id);
-      db.prepare('DELETE FROM auth_users WHERE id=?').run(owner.id);
-      db.close();
-    }
+    network?.interceptWrites(undefined);
+    cleanupFailures = await cleanupSessionRevocation([
+      { name: 'writes', run: () => network?.drainWrites() },
+      { name: 'observer', run: () => observation?.stop() },
+      { name: 'context', run: () => second?.close() },
+      {
+        name: 'database',
+        run: () => {
+          try {
+            if (itemId) db.prepare('DELETE FROM workspace_items WHERE id=?').run(itemId);
+          } finally {
+            try {
+              if (ownerId) db.prepare('DELETE FROM auth_users WHERE id=?').run(ownerId);
+            } finally {
+              db.close();
+            }
+          }
+        },
+      },
+    ]);
+    attachmentFailures = await cleanupSessionRevocation([
+      {
+        name: 'diagnostics',
+        run: () =>
+          info.attach('session-revocation-observation', {
+            contentType: 'application/json',
+            body: Buffer.from(
+              JSON.stringify(
+                {
+                  version: 1,
+                  project: info.project.name,
+                  retry: info.retry,
+                  tested: process.env.GITHUB_SHA ?? null,
+                  node: process.version,
+                  browser: browser.version(),
+                  contractCompleted,
+                  primaryFailed,
+                  cleanupFailures,
+                  observation: observation?.snapshot() ?? null,
+                },
+                null,
+                2,
+              ),
+            ),
+          }),
+      },
+    ]);
   }
+  if (cleanupFailures.length || attachmentFailures.length)
+    throw new Error(
+      `Revocation fixture cleanup failed: ${[...cleanupFailures, ...attachmentFailures].join(', ')}.`,
+    );
 });

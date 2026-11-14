@@ -1,0 +1,138 @@
+{
+  "ticket": "SPN-149",
+  "date": "2026-11-14",
+  "priorSource": "64d85c15288017bbfe3434d91fe0647eb2a2d613",
+  "base": "89e4426dfff1c3469b260305e21180ffd79fdb7f",
+  "status": "local integration checks passed; complete candidate reviews and hosted acceptance pending",
+  "node": "v26.13.0",
+  "nodeSHA256": "533bd644c5ae0e0ea3a80e433aad16b817447ccba1e1eea701875eac80cb75d4",
+  "focusedControls": {
+    "passed": 19,
+    "failed": 0,
+    "skipped": 0,
+    "cancelled": 0
+  },
+  "bounds": {
+    "normalMemoryPressure": 1,
+    "processTreeLimitKiB": 2097152,
+    "pollIntervalMs": 200,
+    "deadlineMs": 480000
+  },
+  "unsampledRSS": "Receipt peakKiB=0 means command completed before the first sample; it is not zero memory usage.",
+  "typecheckEnvironment": {
+    "GOMEMLIMIT": "1GiB",
+    "GOMAXPROCS": "2"
+  },
+  "nativeExecution": "Not run locally. Fixed initial diagnostic sample remains closed; current hosted native cases own ordinary integrated-source acceptance.",
+  "sourceIdentity": "source-identity.json verifies all three executable ticket paths against prior reviewed source.",
+  "dependencyReuse": "225 tracked root/workspace/patch paths byte-match SPN098 donor; local dependency symlink only; no dependency source mutation, install, Vitest or browser execution.",
+  "firstFailures": "Historical failed CI43373411759 and current SPN158 old-observer failure43553620429 retained in canonical record; no unchanged-run rerun.",
+  "evidence": [
+    {
+      "path": "index.json",
+      "bytes": 193,
+      "sha256": "8f133830f71567ec699a0d556b03ac683d7fa0965c5fba24382c335e12913db7"
+    },
+    {
+      "path": "index.log",
+      "bytes": 2083,
+      "sha256": "b54e2ffd9e75d5e753513794b718a9d7f1e0a549c00e9900dafbca13a0695686"
+    },
+    {
+      "path": "controls.json",
+      "bytes": 240,
+      "sha256": "018c2271d6cd601d26cc0feb7a024b4eb37c6be5471344be1ee40a88b5fe42f9"
+    },
+    {
+      "path": "controls.log",
+      "bytes": 2082,
+      "sha256": "5e94ca591d72cc26dbf09019eae699a8e196df335dac4dbeea54dbb41a7d8d7f"
+    },
+    {
+      "path": "dependencies.json",
+      "bytes": 202,
+      "sha256": "5d7a2929597f19f780287344d78a4f11cc946631392bcf449ca922beeaf35f27"
+    },
+    {
+      "path": "dependencies.log",
+      "bytes": 228,
+      "sha256": "b31a5417539d05c5d119b896191810927bf03f69384f87867d301261e54ec4da"
+    },
+    {
+      "path": "lint.json",
+      "bytes": 303,
+      "sha256": "e20be87fc65d793be02fc0ab4dc8e2cb240b8af03b3bca1254e50c1fc9f85975"
+    },
+    {
+      "path": "lint.log",
+      "bytes": 246,
+      "sha256": "bae2637fd52ffeecc101eb42045f355effab4c243b65b82661edff089dd58379"
+    },
+    {
+      "path": "format.json",
+      "bytes": 304,
+      "sha256": "9ba05109af46e142570f68a52daeb2b526a5c9366a30e874df2d1ff35e80a032"
+    },
+    {
+      "path": "format.log",
+      "bytes": 313,
+      "sha256": "1c604b7926adb79c5955239bf6dc829f1db90f66b87cb1e5d9714c2cd61f69ca"
+    },
+    {
+      "path": "backlog.json",
+      "bytes": 195,
+      "sha256": "5c55073f6ae3c16eb43665185111c9cbd178f495d83795f296bb53eccde93750"
+    },
+    {
+      "path": "backlog.log",
+      "bytes": 2087,
+      "sha256": "eda076fb5f6fb8ef1058a1d1723189df0275aac6ffe5ec2f9207ed7f1bdfe75f"
+    },
+    {
+      "path": "types.json",
+      "bytes": 193,
+      "sha256": "7c4ddb48af4e1ffa75d1b5a44079181fed769bf6d1fd2514f11a555a5ed62d8b"
+    },
+    {
+      "path": "types.log",
+      "bytes": 146,
+      "sha256": "0a69afdf6e1d4c9ddf49758d33163fd2d8b8343d1ec6137d11fc9a664e282517"
+    },
+    {
+      "path": "dependency-source.json",
+      "bytes": 52556,
+      "sha256": "259dd7b33ba6742a73bf503788e724a88df479cef2996b6e55fb6b04b11d3fc3"
+    },
+    {
+      "path": "source-identity.json",
+      "bytes": 810,
+      "sha256": "6881ef8feff222c2da5d8c234c4ddd3b1c0db48d4e8fbb33759f0e47a55f6b88"
+    },
+    {
+      "path": "pr.json",
+      "bytes": 352,
+      "sha256": "e8d479857d19ed07d1dacfce943a488fb7c7e19ef2c690406b64c1793078de5f"
+    },
+    {
+      "path": "pr.log",
+      "bytes": 301,
+      "sha256": "f44426c9bde3a7d9db4be9e24f96577ed355c82421192f20530d43e6e6d22ee2"
+    }
+  ],
+  "integrationCommit": "8aa0b835",
+  "exactTitlePRCheck": {
+    "source": "8aa0b8353c4569a2af61116ec6128fd295bf2b46",
+    "base": "89e4426dfff1c3469b260305e21180ffd79fdb7f",
+    "result": "passed",
+    "elapsedMs": 417,
+    "peakKiB": 179696
+  },
+  "whitespace": {
+    "againstActualBase": "passed: git diff --check 89e4426d...HEAD",
+    "duringMerge": "The staged merge against old64d85 includes two pre-existing trailing-whitespace lines in main SPN145 retained first-failure contexts; these files are unchanged versus actual base and were preserved byte-for-byte."
+  },
+  "cleanup": {
+    "postChecks": "No remaining TypeScript compiler or task-worktree command in post-check process inventory; no process termination needed.",
+    "rawInventory": "Local /tmp/spn149-current/post-check-processes.txt retained privately; owner application inventory is not published."
+  }
+}
