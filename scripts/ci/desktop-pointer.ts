@@ -10,6 +10,28 @@ type Observation = {
   ready: boolean;
 };
 
+/** Readiness for one ordinary native click; never dismiss an obstruction or post input. */
+export function namedPointerTarget(selector: string, name: string) {
+  return `(() => {
+    const elements = Array.from(document.querySelectorAll(${JSON.stringify(selector)}));
+    return elements.findIndex(element => {
+      if (!(element instanceof HTMLElement) || !element.isConnected ||
+          (element.getAttribute('aria-label') || element.textContent).trim().replace(/\\s+/g, ' ') !== ${JSON.stringify(name)} ||
+          element.matches(':disabled, [aria-disabled="true"]')) return false;
+      const rect = element.getClientRects()[0];
+      if (!rect || ![rect.x, rect.y, rect.width, rect.height].every(Number.isFinite)) return false;
+      // WebDriver uses the center of the first client rect's viewport intersection.
+      const left = Math.max(0, Math.min(rect.x, rect.x + rect.width));
+      const right = Math.min(innerWidth, Math.max(rect.x, rect.x + rect.width));
+      const top = Math.max(0, Math.min(rect.y, rect.y + rect.height));
+      const bottom = Math.min(innerHeight, Math.max(rect.y, rect.y + rect.height));
+      if (right <= left || bottom <= top) return false;
+      const target = document.elementFromPoint(Math.floor((left + right) / 2), Math.floor((top + bottom) / 2));
+      return !!target && element.contains(target);
+    });
+  })()`;
+}
+
 const cursorMethod = 'CGEventGetLocation(CGEventCreate(NULL))';
 const cursorCoordinates = 'Quartz global display';
 type ObservationFailurePhase = 'move-observation-failure' | 'click-observation-failure';

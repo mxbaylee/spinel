@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import { createContext, runInContext, runInNewContext } from 'node:vm';
 import {
   clickSafariPointer,
+  namedPointerTarget,
   safariPointerIdentityScript,
   safariPointerPostScript,
   safariPointerSnapshotScript,
@@ -32,27 +33,43 @@ function fixture() {
   let offset = 0;
   let reads = 0;
   let snapshots = 0;
+  let disabled = false;
+  let hidden = false;
+  let descendantHit = false;
+  let rectangle = { x: 0, y: 0, width: 1000, height: 800 };
+  const descendant = {};
+  const hitPoints: { x: number; y: number }[] = [];
   class Element {
     isConnected = true;
+    textContent = 'Save details: Needs attention';
+    getAttribute(name: string) {
+      return name === 'aria-label' ? this.textContent : null;
+    }
     getClientRects() {
-      return [{}];
+      return hidden ? [] : [this.getBoundingClientRect()];
     }
     getBoundingClientRect() {
-      return { x: offset, y: 0, width: 1000, height: 800 };
+      return { ...rectangle, x: rectangle.x + offset };
     }
     matches() {
-      return false;
+      return disabled;
     }
     contains(target: unknown) {
-      return target === this;
+      return target === this || target === descendant;
     }
   }
   const element = new Element();
   const context = createContext({
     HTMLElement: Element,
+    innerWidth: 1024,
+    innerHeight: 768,
     document: {
       querySelector: () => (missing ? null : replaced ? new Element() : element),
-      elementFromPoint: () => (obscured ? {} : element),
+      querySelectorAll: () => (missing ? [] : [element]),
+      elementFromPoint: (x: number, y: number) => {
+        hitPoints.push({ x, y });
+        return obscured ? {} : descendantHit ? descendant : element;
+      },
       hasFocus: () => focused,
       visibilityState: 'visible',
     },
@@ -120,6 +137,26 @@ function fixture() {
     emit,
     context,
     element,
+    hitPoints,
+    named: () =>
+      runInContext(namedPointerTarget('button', 'Save details: Needs attention'), context, {
+        timeout: 100,
+      }),
+    rectangle: (value: typeof rectangle) => {
+      rectangle = value;
+    },
+    disabled: () => {
+      disabled = true;
+    },
+    hidden: () => {
+      hidden = true;
+    },
+    descendant: () => {
+      descendantHit = true;
+    },
+    unobscured: () => {
+      obscured = false;
+    },
     obscured: () => {
       obscured = true;
     },
@@ -143,6 +180,75 @@ function fixture() {
     click: () => clickSafariPointer(boundary, '.univer-container', { x: 640, y: 200 }),
   };
 }
+
+test('named readiness rejects an otherwise interactable target until its covering overlay leaves', () => {
+  const f = fixture();
+  assert.equal(f.named(), 0);
+  f.obscured();
+  assert.equal(f.named(), -1);
+  assert.equal(f.named(), -1);
+  assert.deepEqual(f.posts, []);
+  f.unobscured();
+  assert.equal(f.named(), 0);
+  assert.deepEqual(f.posts, []);
+});
+
+test('named readiness accepts a hit on the target descendant without posting input', () => {
+  const f = fixture();
+  f.descendant();
+  assert.equal(f.named(), 0);
+  assert.deepEqual(f.posts, []);
+});
+
+for (const condition of [
+  'disabled',
+  'hidden',
+  'missing',
+  'disconnected',
+  'different name',
+] as const)
+  test(`named readiness rejects ${condition} controls before hit-testing`, () => {
+    const f = fixture();
+    if (condition === 'disconnected') f.element.isConnected = false;
+    else if (condition === 'different name') f.element.textContent = 'Another control';
+    else f[condition]();
+    assert.equal(f.named(), -1);
+    assert.deepEqual(f.hitPoints, []);
+    assert.deepEqual(f.posts, []);
+  });
+
+for (const [rect, point] of [
+  [
+    { x: -30, y: -20, width: 101, height: 61 },
+    { x: 35, y: 20 },
+  ],
+  [
+    { x: 1000, y: 750, width: 100, height: 100 },
+    { x: 1012, y: 759 },
+  ],
+] as const)
+  test(`named readiness hit-tests the clipped viewport center ${JSON.stringify(point)}`, () => {
+    const f = fixture();
+    f.rectangle(rect);
+    assert.equal(f.named(), 0);
+    assert.deepEqual(f.hitPoints, [point]);
+  });
+
+for (const rect of [
+  { x: 1024, y: 0, width: 100, height: 100 },
+  { x: -100, y: 0, width: 100, height: 100 },
+  { x: 0, y: 768, width: 100, height: 100 },
+  { x: 0, y: -100, width: 100, height: 100 },
+  { x: 10, y: 10, width: 0, height: 100 },
+  { x: 10, y: 10, width: 100, height: 0 },
+  { x: NaN, y: 0, width: 100, height: 100 },
+])
+  test(`named readiness rejects a non-intersecting or invalid rectangle ${JSON.stringify(rect)}`, () => {
+    const f = fixture();
+    f.rectangle(rect);
+    assert.equal(f.named(), -1);
+    assert.deepEqual(f.hitPoints, []);
+  });
 
 test('posted coordinates, matching trusted delivery, identity and listener cleanup are retained', async () => {
   const f = fixture();
