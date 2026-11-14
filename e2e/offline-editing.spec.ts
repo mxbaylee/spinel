@@ -26,6 +26,7 @@ import {
   usableCanvas,
 } from './offline-fixture.ts';
 import { beginWriting, textPoint } from './doc-touch.ts';
+import { recordNativeSnapshots } from './sync-snapshot.ts';
 
 async function phoneText(page: Page, unitId: string) {
   return page.evaluate((id) => {
@@ -48,6 +49,159 @@ async function phoneText(page: Page, unitId: string) {
 
 test.describe('downloaded native editors', () => {
   test.setTimeout(180_000);
+
+  test('the file list replays queued Doc and Sheet edits without reopening either editor', async ({
+    browser,
+    baseURL,
+  }, info) => {
+    const f = await fixture(browser, baseURL!, info, 'doc');
+    try {
+      const sheet = f.workspace.create(f.owner.id, {
+        name: 'Queued offline Sheet',
+        kind: 'sheet',
+        parentId: null,
+      });
+      const prepare = await f.control.request.post(`/api/items/${sheet.id}/collaboration`, {
+        headers: { Origin: baseURL! },
+        data: {},
+      });
+      expect(prepare.status(), await prepare.text()).toBe(200);
+      const sheetUnit = (await prepare.json()).unitId as string;
+      const readSheet = async () => {
+        const response = await f.control.request.get(
+          `/sync-api/items/${sheet.id}/snapshot?unitId=${sheetUnit}`,
+        );
+        expect(response.status(), await response.text()).toBe(200);
+        return await response.json();
+      };
+      const docBefore = await f.read();
+      const sheetBefore = await readSheet();
+      // Preparing both copies from the real file-list menus avoids constructing
+      // online editors that this offline/reconnect contract does not exercise.
+      await f.page.goto('/');
+      await expect
+        .poll(() => f.page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
+        .toBe(true);
+      for (const item of [f.item, sheet]) {
+        await f.page
+          .getByRole('button', { name: `More actions for ${item.name}`, exact: true })
+          .click();
+        await f.page
+          .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
+          .click();
+        await expect(
+          f.page.getByRole('status').filter({ hasText: `${item.name} is available offline` }),
+        ).toHaveText(`${item.name} is available offline on this device.`, { timeout: 120_000 });
+      }
+      await f.network.setOffline(true);
+      await f.page.reload();
+      const text = `File-list replay ${info.testId}`;
+      for (const [item, kind, label, authored] of [
+        [f.item, 'doc', 'Doc', text],
+        [sheet, 'sheet', 'Sheet', '15642'],
+      ] as const) {
+        await f.page.getByRole('button', { name: `${item.name} ${label}`, exact: true }).click();
+        await expect(
+          f.page.getByRole('region', { name: 'Offline copy', exact: true }),
+        ).toBeVisible();
+        await savedLocally(f.page);
+        await usableCanvas(f.page);
+        await edit(f.page, kind, authored);
+        await expect
+          .poll(async () =>
+            JSON.stringify((await stored(f.page, f.actor.id, item.id))?.outbox?.checkpoint),
+          )
+          .toContain(authored);
+        await savedLocally(f.page);
+        await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
+      }
+      expect(pending((await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint)).toBe(true);
+      expect(pending((await stored(f.page, f.actor.id, sheet.id))?.outbox?.checkpoint)).toBe(true);
+      await expect(f.page.locator('.univer-container')).toHaveCount(0);
+      const sentBefore = f.network.outgoing.length;
+      await f.network.setOffline(false);
+      for (const itemId of [f.item.id, sheet.id]) {
+        await expect
+          .poll(
+            async () => {
+              const copy = await stored(f.page, f.actor.id, itemId);
+              return Boolean(copy?.outbox && !pending(copy.outbox.checkpoint));
+            },
+            { timeout: 30_000 },
+          )
+          .toBe(true);
+      }
+      await expect(f.page.locator('.univer-container')).toHaveCount(0);
+      await expect(f.page.getByRole('button', { name: 'Back to files', exact: true })).toHaveCount(
+        0,
+      );
+      const docSaved = await f.read();
+      const sheetSaved = await readSheet();
+      expect(docSaved.revision).toBe(docBefore.revision + 1);
+      expect(docSaved.snapshot.body!.dataStream.split(text)).toHaveLength(2);
+      expect(sheetSaved.revision).toBe(sheetBefore.revision + 1);
+      expect(sheetSaved.snapshot.sheets[sheetSaved.snapshot.sheetOrder[0]].cellData[0][3].v).toBe(
+        15642,
+      );
+      const submits = f.network.outgoing
+        .slice(sentBefore)
+        .filter((frame) => frame.type === 'submit');
+      expect(new Set(submits.map((frame) => frame.mutationId)).size).toBe(2);
+      await recordNativeSnapshots(f.control);
+      const peer = await f.control.newPage();
+      await peer.goto(f.href);
+      await matchesServer(peer, docSaved);
+      expect(await copy(peer, 'doc')).toContain(text);
+      await peer.close();
+      const sheetPeer = await f.control.newPage();
+      await sheetPeer.goto(`/?item=${sheet.id}`);
+      await matchesServer(sheetPeer, sheetSaved);
+      expect(await copy(sheetPeer, 'sheet')).toBe('15642');
+      await expect(f.page.locator('.univer-container')).toHaveCount(0);
+      expect(f.errors).toEqual([]);
+    } finally {
+      await f.close();
+    }
+  });
+
+  test('file-list replay retains revoked edits without sending them or creating a recovery copy', async ({
+    browser,
+    baseURL,
+  }, info) => {
+    const f = await fixture(browser, baseURL!, info, 'doc', { actor: 'editor' });
+    try {
+      await f.download();
+      const before = await f.read();
+      await f.network.setOffline(true);
+      await edit(f.page, 'doc', 'Retained after file-list revocation');
+      await savedLocally(f.page);
+      await expect
+        .poll(async () =>
+          JSON.stringify((await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint),
+        )
+        .toContain('Retained after file-list revocation');
+      const original = (await stored(f.page, f.actor.id, f.item.id))!.outbox!;
+      await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
+      f.workspace.share(f.owner.id, f.item.id, f.editor.id, null);
+      await f.network.setOffline(false);
+      await expect
+        .poll(
+          async () => (await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint.failure,
+          { timeout: 30_000 },
+        )
+        .toBe('stale');
+      const retained = (await stored(f.page, f.actor.id, f.item.id))!;
+      expect(retained.outbox!.checkpoint.buffer).toEqual(original.checkpoint.buffer);
+      expect(retained.outbox!.checkpoint.revision).toBe(original.checkpoint.revision);
+      expect(retained.recovery).toBeUndefined();
+      expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toEqual([]);
+      expect(await f.read()).toEqual(before);
+      await expect(f.page.locator('.univer-container')).toHaveCount(0);
+      expect(f.errors).toEqual([]);
+    } finally {
+      await f.close();
+    }
+  });
 
   for (const kind of ['doc', 'sheet'] as const)
     test(`a prepared ${kind} viewer upgrades in place and can save new offline work`, async ({

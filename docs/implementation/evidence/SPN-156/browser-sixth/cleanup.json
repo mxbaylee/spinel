@@ -1,0 +1,15 @@
+{
+  "serverPID": 78389,
+  "parentPID": 78361,
+  "processGroup": 78361,
+  "listener": "127.0.0.1:3105",
+  "cwd": "/Users/mxbaylee/projects/spinel-spn-156",
+  "stdoutMatchedPID": true,
+  "action": "SIGTERM to verified owned process group 78361",
+  "after": {
+    "port3105Listeners": [],
+    "exactPIDs": [],
+    "serverBrowserTestCompilerProcesses": []
+  },
+  "testArtifacts": "No Playwright failure screenshot, assertion diagnostic or result was emitted before watchdog termination."
+}

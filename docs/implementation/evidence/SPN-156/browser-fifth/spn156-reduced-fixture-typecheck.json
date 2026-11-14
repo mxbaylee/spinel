@@ -1,0 +1,13 @@
+{
+  "name": "spn156-reduced-fixture-typecheck",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": "Resource guard",
+  "elapsedMs": 453,
+  "peakKiB": 464528
+}

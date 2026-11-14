@@ -333,7 +333,7 @@ export function Dashboard({
           ),
         }
       : null;
-  const offline = useOfflineDownloads(user, local, catalog);
+  const offline = useOfflineDownloads(user, local, catalog, { foregroundItemId: currentId });
   const creationItems = [...offline.downloads.values()].flatMap((copy) => {
     const item = creationFile(copy);
     return item ? [item] : [];

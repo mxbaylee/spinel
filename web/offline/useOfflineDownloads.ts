@@ -25,6 +25,7 @@ import { prepareShell } from './shell.ts';
 import { isRuntimeCompatible } from './runtime.ts';
 import { readDeviceInventory, removeDeviceCopy, requestPersistence } from './deviceStorage.ts';
 import { createOfflineDocument, relocateOfflineCreation } from './creation.ts';
+import { watchOfflineReplay } from './replay.ts';
 
 export type OfflineMessage = {
   text: string;
@@ -43,7 +44,7 @@ export function useOfflineDownloads(
   user: OfflineUser,
   local: LocalStart | null | undefined,
   catalog: () => OfflineCatalog | null,
-  options: { spaceRoot?: SpaceFile } = {},
+  options: { spaceRoot?: SpaceFile; foregroundItemId?: string | null } = {},
 ) {
   const [downloads, setDownloads] = useState(
     () =>
@@ -85,6 +86,18 @@ export function useOfflineDownloads(
   latestCatalog.current = catalog;
   const latestRoot = useRef(options.spaceRoot);
   latestRoot.current = options.spaceRoot;
+  const replay = useRef<ReturnType<typeof watchOfflineReplay> | null>(null);
+  useLayoutEffect(() => {
+    const owner = watchOfflineReplay(user.id, options.foregroundItemId ?? null);
+    replay.current = owner;
+    return () => {
+      owner.dispose();
+      if (replay.current === owner) replay.current = null;
+    };
+  }, [user.id]);
+  useLayoutEffect(() => {
+    replay.current?.foreground(options.foregroundItemId ?? null);
+  }, [user.id, options.foregroundItemId]);
   // The server admits one transfer at a time; run refreshes and toggles in turn.
   const queue = useRef<Promise<unknown>>(Promise.resolve());
   function serially<T>(

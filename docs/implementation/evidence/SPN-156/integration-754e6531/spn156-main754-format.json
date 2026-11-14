@@ -1,0 +1,29 @@
+{
+  "name": "spn156-main754-format",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/prettier/bin/prettier.cjs",
+    "--check",
+    "e2e/offline-editing.spec.ts",
+    "lib/sync-client/tests/headless-checkpoint.test.ts",
+    "src/ui/offlinePersistence.test.ts",
+    "src/ui/offlineReplay.test.ts",
+    "src/ui/offlineTransactionErrors.test.ts",
+    "src/ui/offlineWriterHandoff.test.ts",
+    "src/ui/spinelSync.test.ts",
+    "web/Dashboard.tsx",
+    "web/OfflineSpace.tsx",
+    "web/SpaceOfflineActions.tsx",
+    "web/offline/OfflineSession.ts",
+    "web/offline/offlineStore.ts",
+    "web/offline/replay.ts",
+    "web/offline/replayHost.ts",
+    "web/offline/useOfflineDownloads.ts",
+    "web/spinelSync.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 634,
+  "peakKiB": 312800
+}

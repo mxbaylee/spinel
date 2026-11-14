@@ -1,0 +1,10 @@
+{
+  "observedAt": "2026-11-14T07:29:39.413847+00:00",
+  "donorHead": "5e72d33ac9cb3a86b3496345209493d6c86e469c",
+  "donorWorkingStatus": "",
+  "postCheckDonorHeadRecordedInSourceIdentity": "23e7553ff4f35f5f03dfe51a644840994e52929e",
+  "historicalDependencyBaseline": "2204b8c40ce6feb8ad03c65720c976510535ad00",
+  "inputCount": 117,
+  "mismatchesAgainstPostCheckHashes": [],
+  "meaning": "HEAD changed during separate donor integration/evidence packaging; all relevant dependency inputs remain equal. No validation rerun or new application/runtime equivalence claim."
+}

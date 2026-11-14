@@ -25,7 +25,10 @@ export function SpaceOfflineActions({
   onOpen(id: string): void;
   allowNavigation?: () => boolean;
 }) {
-  const offline = useOfflineDownloads(user, undefined, () => null, { spaceRoot: root });
+  const offline = useOfflineDownloads(user, undefined, () => null, {
+    spaceRoot: root,
+    foregroundItemId: item?.id,
+  });
   const hint = useId();
   const copies = spaceCopies(offline.downloads.values(), root.id);
   const current =

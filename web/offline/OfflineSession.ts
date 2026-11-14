@@ -62,6 +62,7 @@ export class OfflineSession implements IURLImageService {
   readonly itemId: string;
   readonly spaceId?: string;
   private readonly mounted: () => boolean;
+  private readonly background: boolean;
   private readonly preparationCurrent: () => boolean;
   private readCurrent?: () => boolean;
   private access?: OfflineAccess;
@@ -88,11 +89,13 @@ export class OfflineSession implements IURLImageService {
     itemId: string,
     spaceId: string | undefined,
     mounted: () => boolean,
+    background = false,
   ) {
     this.accountId = accountId;
     this.itemId = itemId;
     this.spaceId = spaceId;
     this.mounted = mounted;
+    this.background = background;
     this.preparationCurrent = offlinePreparation(accountId, mounted).isCurrent;
     window.addEventListener('storage', this.accountChanged);
     window.addEventListener('spinel-offline-account-changed', this.accountChanged);
@@ -201,9 +204,13 @@ export class OfflineSession implements IURLImageService {
   private async open() {
     this.verify();
     const current = offlineAccountRead(this.accountId);
-    let release = await withOfflineEditorAdmission(this.accountId, this.itemId, this.verify, () =>
-      writerLock(this.accountId, this.itemId),
-    );
+    // A registered replay owns the handoff reservation already. Waiting on
+    // editor admission here would ask that replay to await its own completion.
+    let release = this.background
+      ? await writerLock(this.accountId, this.itemId)
+      : await withOfflineEditorAdmission(this.accountId, this.itemId, this.verify, () =>
+          writerLock(this.accountId, this.itemId),
+        );
     let store: OfflineStore | null;
     try {
       store = await openExistingOfflineStore(this.accountId);

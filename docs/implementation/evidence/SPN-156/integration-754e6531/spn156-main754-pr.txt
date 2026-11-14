@@ -1,0 +1,2 @@
+pull request ok
+{"name":"spn156-main754-pr","args":["/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node","scripts/backlog/cli.ts","pr","--base","754e65317744e5ce97ede501935c6586e4875f2a","--title","🔁 SPN-156 Sync saved edits while the file list is open"],"code":0,"signal":null,"reason":null,"elapsedMs":425,"peakKiB":190576}

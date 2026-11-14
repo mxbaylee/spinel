@@ -334,6 +334,18 @@ const itemWriterChanges = new Map<string, AccountOfflineChange[]>();
 const itemWriterKey = (accountId: string, itemId: string) => JSON.stringify([accountId, itemId]);
 const temporaryItemWriters = new Map<string, Set<Promise<void>>>();
 const editorAdmissions = new Map<string, number>();
+const replayWriters = new Map<string, () => Promise<void>>();
+
+/** Reserve a same-tab replay lifetime before its asynchronous writer admission. */
+export function reserveOfflineReplay(accountId: string, itemId: string, stop: () => Promise<void>) {
+  const key = itemWriterKey(accountId, itemId);
+  if (editorAdmissions.has(key) || temporaryItemWriters.has(key) || replayWriters.has(key))
+    return undefined;
+  replayWriters.set(key, stop);
+  return () => {
+    if (replayWriters.get(key) === stop) replayWriters.delete(key);
+  };
+}
 
 function publishOfflineChange(detail: AccountOfflineChange) {
   window.dispatchEvent(new CustomEvent('spinel-offline-changed', { detail }));
@@ -766,6 +778,7 @@ export async function withOfflineEditorAdmission<T>(
   const key = itemWriterKey(accountId, itemId);
   editorAdmissions.set(key, (editorAdmissions.get(key) ?? 0) + 1);
   try {
+    await replayWriters.get(key)?.();
     await Promise.all(temporaryItemWriters.get(key) ?? []);
     verifyCurrent();
     return await acquire();
@@ -796,6 +809,7 @@ export async function withOfflineItemWriter<T>(
   temporaryItemWriters.set(key, writers);
   let changes: AccountOfflineChange[] | undefined;
   try {
+    await replayWriters.get(key)?.();
     return await navigator.locks.request(
       `spinel-offline:${accountId}:${itemId}`,
       { ifAvailable: true },

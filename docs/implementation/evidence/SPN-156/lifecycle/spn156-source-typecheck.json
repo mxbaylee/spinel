@@ -1,0 +1,13 @@
+{
+  "name": "spn156-source-typecheck",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/typescript/bin/tsc",
+    "--noEmit"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 2116,
+  "peakKiB": 1679088
+}
