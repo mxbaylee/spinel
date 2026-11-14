@@ -1,3 +1,5 @@
+import { closeFixtureResources, fixturePhase, withFixtureServer } from './fixture-evidence.ts';
+import { withFixtureCleanup } from './owned-process.ts';
 import { mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -9,6 +11,8 @@ import { InvitationService } from '../src/server/auth/invitations.ts';
 import { SetupService } from '../src/server/auth/setup.ts';
 import { copy, edit, fixture, savedLocally, stored, usableCanvas } from './offline-fixture.ts';
 import { startApp } from './app-process.ts';
+
+const recordedTest = test.extend({ trace: 'retain-on-failure' });
 
 // Real shell/download acceptance and CDP passkeys run in the production partition.
 test.beforeEach(({ browserName }, info) => {
@@ -311,86 +315,114 @@ test('locked deletion is explicit, refuses an active writer and clears only this
   }
 });
 
-test('ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie', async ({
-  browser,
-  baseURL,
-}, info) => {
-  const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
-  const auth = new AuthStore(db);
-  const operator = auth.createUser('No-lock enrollment operator ' + info.testId, true);
-  const invite = new InvitationService(auth, baseURL!).create(operator.id);
-  const context = await browser.newContext({ baseURL });
-  await context.addInitScript(() =>
-    Object.defineProperty(navigator, 'locks', { value: undefined, configurable: true }),
-  );
-  const oldPage = await context.newPage();
-  const responseReady = deferred(),
-    release = deferred();
-  let pending: Promise<number> | undefined;
-  try {
-    const first = await virtualPasskey(context, oldPage);
-    // Initial enrollment uses the real invitation ceremony. An unverified
-    // legacy session cannot add a first passkey after SPN-070.
-    await oldPage.goto(invite.url);
-    await oldPage.getByLabel('Your name').fill('No-lock passkey ' + info.testId);
-    await oldPage.getByRole('button', { name: 'Join with a passkey', exact: true }).click();
-    await expect(oldPage.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
-    const token = (await context.cookies()).find((cookie) => cookie.name === COOKIE_NAME)!.value;
-    const user = auth.user(auth.session(token)!.user_id!)!;
-    await oldPage.goto('/profile#passkeys');
-    await expect(oldPage.getByRole('listitem').filter({ hasText: 'Passkey' })).toHaveCount(1);
-    const credentials = await first.cdp.send('WebAuthn.getCredentials', {
-      authenticatorId: first.authenticatorId,
-    });
-    // A static JSON response hosts a legacy client's fetch, without a current App
-    // reacting to another tab's sign-in and navigating this pending request away.
-    await oldPage.goto('/api/auth/session');
-    await oldPage.route('**/api/auth/sign-out', async (route) => {
-      const response = await route.fetch();
-      expect(response.status()).toBe(204);
-      expect(response.headers()['set-cookie']).toBeUndefined();
-      responseReady.resolve();
-      await release.promise;
-      await route.fulfill({ response });
-    });
-    pending = oldPage.evaluate(
-      async () =>
-        (
-          await fetch('/api/auth/sign-out', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: '{}',
-          })
-        ).status,
-    );
-    await responseReady.promise;
-    expect(auth.session(token)).toBeUndefined();
-    const nextPage = await context.newPage();
-    const second = await virtualPasskey(context, nextPage);
-    for (const credential of credentials.credentials)
-      await second.cdp.send('WebAuthn.addCredential', {
-        authenticatorId: second.authenticatorId,
-        credential,
+test.describe('Recorded passkey fixture', () => {
+  recordedTest(
+    'ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie',
+    async ({ browser, baseURL }, info) => {
+      await withFixtureServer(browser, baseURL!, info, async () => {
+        const contexts: BrowserContext[] = [];
+        const responseReady = deferred(),
+          release = deferred();
+        let pending: Promise<number> | undefined;
+        const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
+        await withFixtureCleanup(
+          async () => {
+            const auth = new AuthStore(db);
+            const operator = auth.createUser('No-lock enrollment operator ' + info.testId, true);
+            const invite = new InvitationService(auth, baseURL!).create(operator.id);
+            const context = await browser.newContext({ baseURL });
+            contexts.push(context);
+            await context.addInitScript(() =>
+              Object.defineProperty(navigator, 'locks', { value: undefined, configurable: true }),
+            );
+            const oldPage = await context.newPage();
+            const first = await virtualPasskey(context, oldPage);
+            // Initial enrollment uses the real invitation ceremony. An unverified
+            // legacy session cannot add a first passkey after SPN-070.
+            fixturePhase(info, 'invitation-enrollment');
+            await oldPage.goto(invite.url);
+            await oldPage.getByLabel('Your name').fill('No-lock passkey ' + info.testId);
+            await oldPage.getByRole('button', { name: 'Join with a passkey', exact: true }).click();
+            fixturePhase(info, 'invitation-heading');
+            await expect(
+              oldPage.getByRole('heading', { name: 'My files', exact: true }),
+            ).toBeVisible();
+            const token = (await context.cookies()).find(
+              (cookie) => cookie.name === COOKIE_NAME,
+            )!.value;
+            const user = auth.user(auth.session(token)!.user_id!)!;
+            await oldPage.goto('/profile#passkeys');
+            await expect(oldPage.getByRole('listitem').filter({ hasText: 'Passkey' })).toHaveCount(
+              1,
+            );
+            const credentials = await first.cdp.send('WebAuthn.getCredentials', {
+              authenticatorId: first.authenticatorId,
+            });
+            // A static JSON response hosts a legacy client's fetch, without a current App
+            // reacting to another tab's sign-in and navigating this pending request away.
+            await oldPage.goto('/api/auth/session');
+            await oldPage.route('**/api/auth/sign-out', async (route) => {
+              const response = await route.fetch();
+              expect(response.status()).toBe(204);
+              expect(response.headers()['set-cookie']).toBeUndefined();
+              responseReady.resolve();
+              await release.promise;
+              await route.fulfill({ response });
+            });
+            pending = oldPage.evaluate(
+              async () =>
+                (
+                  await fetch('/api/auth/sign-out', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: '{}',
+                  })
+                ).status,
+            );
+            await responseReady.promise;
+            expect(auth.session(token)).toBeUndefined();
+            const nextPage = await context.newPage();
+            const second = await virtualPasskey(context, nextPage);
+            for (const credential of credentials.credentials)
+              await second.cdp.send('WebAuthn.addCredential', {
+                authenticatorId: second.authenticatorId,
+                credential,
+              });
+            await nextPage.goto('/sign-in');
+            await nextPage
+              .getByRole('button', { name: 'Sign in with a passkey', exact: true })
+              .click();
+            await expect(
+              nextPage.getByRole('heading', { name: 'My files', exact: true }),
+            ).toBeVisible();
+            expect(await nextPage.evaluate(() => navigator.locks)).toBeUndefined();
+            const before = (await context.cookies()).find(
+              (cookie) => cookie.name === COOKIE_NAME,
+            )!.value;
+            expect(before).not.toBe(token);
+            expect(auth.session(before)?.user_id).toBe(user.id);
+            release.resolve();
+            expect(await pending).toBe(204);
+            expect(
+              (await context.cookies()).find((cookie) => cookie.name === COOKIE_NAME)!.value,
+            ).toBe(before);
+            expect((await (await context.request.get('/api/auth/session')).json()).user.id).toBe(
+              user.id,
+            );
+          },
+          () =>
+            closeFixtureResources(info, {
+              capture: async () => {
+                release.resolve();
+                await pending?.catch(() => {});
+              },
+              contexts,
+              dispose: () => db.close(),
+            }),
+        );
       });
-    await nextPage.goto('/sign-in');
-    await nextPage.getByRole('button', { name: 'Sign in with a passkey', exact: true }).click();
-    await expect(nextPage.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
-    expect(await nextPage.evaluate(() => navigator.locks)).toBeUndefined();
-    const before = (await context.cookies()).find((cookie) => cookie.name === COOKIE_NAME)!.value;
-    expect(before).not.toBe(token);
-    expect(auth.session(before)?.user_id).toBe(user.id);
-    release.resolve();
-    expect(await pending).toBe(204);
-    expect((await context.cookies()).find((cookie) => cookie.name === COOKIE_NAME)!.value).toBe(
-      before,
-    );
-    expect((await (await context.request.get('/api/auth/session')).json()).user.id).toBe(user.id);
-  } finally {
-    release.resolve();
-    await pending?.catch(() => {});
-    await context.close();
-    db.close();
-  }
+    },
+  );
 });
 
 test('a crashed local passkey prompt can reopen and complete authentication and logout', async ({

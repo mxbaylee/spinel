@@ -280,6 +280,7 @@ test('overflow and a detached native observer cannot yield valid terminal eviden
     f.arm();
     for (let index = 0; index < 4097; index++)
       f.observer.flushed({
+        outcome: 'success',
         reason: 'idle',
         startedAt: 0,
         durationMs: 0,

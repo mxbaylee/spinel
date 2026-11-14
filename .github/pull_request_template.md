@@ -16,6 +16,18 @@ Use [sustainable testing](../docs/testing.md) when adding or changing coverage:
 - Source/shared dependency paths and CI selection evidence, or why routing is unchanged.
 - Current-head run/attempt and plan/result identities; first-failure/retry disposition.
 
+## Diagnostic upkeep
+
+State which existing observations this change adds, moves, retires or leaves
+unchanged, and why. For affected operation, save, sync, checkpoint, maintenance
+or runtime boundaries, update the emitter inventory in `docs/diagnostics.md`
+and its regression coverage. Preserve explicit timing/units, one logical outcome
+across retries, local durability versus server acknowledgement, fixed content-free
+fields, authorized attribution, collection bounds and visible loss accounting.
+Verify observer failure cannot change the operation. If there is no diagnostic
+impact, name the inspected boundary and explain why; adding metrics to every
+small change is not required.
+
 ## Designs and screenshots
 
 For a UI change, add `visual-review` and embed all proposed designs and actual

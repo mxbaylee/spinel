@@ -1,0 +1,29 @@
+{
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "prior": "99e0a141778ba1552c7ae14b58441e253110978e",
+  "common": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "priorNonDocs": 23,
+  "mainNonDocs": 38,
+  "overlap": [
+    ".github/workflows/ci.yml"
+  ],
+  "resolution": "Exact main workflow plus fixture-evidence artifact; feedback-pair preserved",
+  "allOtherChangedSourceByteExact": true,
+  "SPN110HandoffExactMain": true,
+  "SPN122ExactMain": true,
+  "installInputCount": 240,
+  "installInputDigest": "29e2a07aaabcafc0692f1e0ad66e1801e818edd910178bd71de53b205ec849db",
+  "manifestFields": [
+    "dependencies",
+    "devDependencies",
+    "optionalDependencies",
+    "overrides",
+    "workspaces",
+    "engines",
+    "packageManager"
+  ],
+  "donor": "/Users/mxbaylee/projects/spinel-spn-098-production",
+  "donorHead": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "donorClean": true,
+  "note": "Source checks only. Later checks will name actual integrated commit. All original99 acceptance remains99/c525-only."
+}

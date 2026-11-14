@@ -16,14 +16,27 @@ export type SafariTarget = {
 // Apple Events timed out, and it does not bypass normal automation consent.
 export const safariRequestScript = String.raw`
 function phase(name) { console.log('Safari request phase: ' + JSON.stringify({ at: new Date().toISOString(), phase: name })); }
-// Foundation is available by default. Retain the bundle for this helper's
-// lifetime while using its executable's class, without importing AppKit symbols.
-phase('appkit-bundle-create-begin');
-var appkitBundle = $.NSBundle.bundleWithPath('/System/Library/Frameworks/AppKit.framework');
-if (appkitBundle.isNil()) throw new Error('The system AppKit bundle is unavailable.');
-phase('appkit-bundle-create-end');
+// Foundation is available by default. Load the public system image directly;
+// keep its opaque handle until this short-lived helper exits so its classes
+// remain available. Do not apply Objective-C pointer methods or unload it.
+phase('appkit-loader-bind-begin');
+ObjC.bindFunction('dlopen', ['void*', ['char*', 'int']]);
+ObjC.bindFunction('dlerror', ['void*', []]);
+var openImage = $.dlopen;
+var imageError = $.dlerror;
+var samePointer = Ref.equals;
+phase('appkit-loader-bind-end');
 phase('appkit-executable-load-begin');
-if (!appkitBundle.load) throw new Error('The system AppKit executable could not be loaded.');
+// dlerror's second consecutive read is contractually NULL. JXA wraps even NULL
+// C pointers in truthy Ref objects; string conversion would throw. Compare only
+// opaque pointer identity, without dereferencing or casting an address.
+imageError();
+var noError = imageError();
+var appkitHandle = openImage('/System/Library/Frameworks/AppKit.framework/AppKit', 1);
+var appkitLoadError = imageError();
+if (!samePointer(appkitLoadError, noError))
+  throw new Error('The system AppKit executable could not be loaded.');
+if (samePointer(appkitHandle, noError)) throw new Error('The system AppKit loader returned no handle.');
 phase('appkit-executable-load-end');
 phase('running-application-class-begin');
 var runningApplication = $.NSClassFromString($('NSRunningApplication'));

@@ -1,0 +1,32 @@
+{
+  "name": "spn123-review-b-cae5a586",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "lib/diagnostics/client.test.ts",
+    "lib/diagnostics/server.test.ts",
+    "lib/sync-client/tests/diagnostics.test.ts",
+    "src/server/diagnostics/account.test.ts",
+    "src/server/diagnostics/browser.test.ts",
+    "src/server/diagnostics/runtime.test.ts",
+    "src/server/diagnostics/store.test.ts",
+    "src/server/diagnostics/supervisor.test.ts",
+    "src/server/maintenance/gate.test.ts",
+    "src/server/maintenance/supervisor.test.ts",
+    "src/ui/offlinePersistence.test.ts",
+    "src/ui/operationDiagnostics.test.ts",
+    "src/ui/spinelSync.test.ts",
+    "src/ui/boundedDocHistory.test.ts",
+    "--config",
+    "/tmp/spinel-dependabot-2026-11-11/spn123-vitest.config.ts",
+    "--configLoader",
+    "native",
+    "--cache=false"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 25805,
+  "peakKiB": 508368
+}

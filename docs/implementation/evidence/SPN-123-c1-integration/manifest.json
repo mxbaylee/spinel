@@ -1,0 +1,153 @@
+{
+  "source": "d51f6375411207b52f80f0072d520b725a150219",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "files": [
+    {
+      "path": "spn123-c1-contracts.json.gz",
+      "bytes": 330,
+      "sha256": "81508efa6fb997b1f5399b4af0ab880cca9e0ea217e754ba04d0592c94da53cc",
+      "decodedBytes": 629,
+      "decodedSha256": "99a7c9bb5ced11542d2539e8c3b3e296c1371aa2c5d9353e180041d3e13dece1"
+    },
+    {
+      "path": "spn123-c1-contracts.log.gz",
+      "bytes": 819,
+      "sha256": "9489492274c5ba9f434d727275766874369a85311dac2acc654631744e52126c",
+      "decodedBytes": 1374,
+      "decodedSha256": "5337526e1a0662c993fa9d0f12a11c6b77ccb95aa057a93c0c9278b6f5bab35f"
+    },
+    {
+      "path": "spn123-c1-format.json.gz",
+      "bytes": 281,
+      "sha256": "9c9b664a5f2315c288d16b6863e09e8934111e0a10865e0a9fe2609163bcdc36",
+      "decodedBytes": 422,
+      "decodedSha256": "9695dd55cb4d86daf61fe3c8c35544a7bcd62fb49abba9e64275fa64d46f87b0"
+    },
+    {
+      "path": "spn123-c1-format.log.gz",
+      "bytes": 314,
+      "sha256": "cf91d312ed5c78003ba9caa5b8cc3daa7539a3e31a7e09ab5f626453c2b93672",
+      "decodedBytes": 546,
+      "decodedSha256": "2fcb51dd0207e19d376b4ed028d075a53969bb4e853efe5af5b2196cd5a4ad5e"
+    },
+    {
+      "path": "spn123-c1-index.json.gz",
+      "bytes": 200,
+      "sha256": "a14a3d5b6013b12129f4890256f4dc6d95ad664bc56bcf851ca8965f99c4e959",
+      "decodedBytes": 253,
+      "decodedSha256": "52c9b304a1ca18a0109b9cf4f8e29e55712fb792e73b0e9f2bbd21af5b2e45d6"
+    },
+    {
+      "path": "spn123-c1-index.log.gz",
+      "bytes": 362,
+      "sha256": "b7be1e591a029eca2dc63e80889df72e1896a7ca43f757bf32716da0bd2b19d7",
+      "decodedBytes": 1688,
+      "decodedSha256": "2f594a8012274969e97c0e3083c973e10afdc952ba1d9c313f02b16157baa3bd"
+    },
+    {
+      "path": "spn123-c1-integration-audit.json.gz",
+      "bytes": 27339,
+      "sha256": "8a5c2aaf01127314ce328bf38487baf524bb2daa307dd499e527a222498f3d94",
+      "decodedBytes": 133600,
+      "decodedSha256": "24b6a20f01a20f4848dee705d209ca7778fdd80327f7fd861a7ff333e5588fde"
+    },
+    {
+      "path": "spn123-c1-lint.json.gz",
+      "bytes": 254,
+      "sha256": "3f1eee6b50cf4f24590197da3607b8a48bd03d91cf41e5f194daea6045cebc2b",
+      "decodedBytes": 378,
+      "decodedSha256": "f46d3cfcc2bb98db40d2206d4fcbbe14d564172deb5ad5a869844cc9d3dd5c44"
+    },
+    {
+      "path": "spn123-c1-lint.log.gz",
+      "bytes": 234,
+      "sha256": "b51d3236c38f81c4142db570c7f970f769322ec919ca15544e9061696f59b1e1",
+      "decodedBytes": 311,
+      "decodedSha256": "ecc15c3fe9eacd8c51a753c5a786b28fd382a5e1b0eaf030e553c549b1999364"
+    },
+    {
+      "path": "spn123-c1-overhead-input-audit.json.gz",
+      "bytes": 348,
+      "sha256": "bd61a99016510fa6f0a2ca90f15e442babf3b1a54d26a9caadf1a3088a816865",
+      "decodedBytes": 497,
+      "decodedSha256": "1e14de722697abce85b84c246614fc38a3866bf2a0871ccade0a4dceff3f367a"
+    },
+    {
+      "path": "spn123-c1-overhead-sample.json.gz",
+      "bytes": 5057,
+      "sha256": "abb32463176d1f318543e83c1f2b1488da75a3dfafc94e0c22cf7858a5f5349c",
+      "decodedBytes": 27604,
+      "decodedSha256": "764b517d41347c520a8a37352a107c870efbb6a32ba00ff8c2135b833458407b"
+    },
+    {
+      "path": "spn123-c1-overhead.json.gz",
+      "bytes": 225,
+      "sha256": "c002479b17157fb9517041a865505d4952cd6a46547ac5c5edf597c9d06144fc",
+      "decodedBytes": 333,
+      "decodedSha256": "fd64611e26d9538088e88c688053b9092b225e601f16b027ff0a235c2aff3575"
+    },
+    {
+      "path": "spn123-c1-overhead.log.gz",
+      "bytes": 654,
+      "sha256": "c9b2fa1cdcb13f71b4c1b5be450f8ce8e7f24d267b4a49520ea9f723e9c2ba28",
+      "decodedBytes": 1845,
+      "decodedSha256": "69c5cd298cf9a16dfa6487191179463cd2977267b0c9ae8eff4f016d072dcf2d"
+    },
+    {
+      "path": "spn123-c1-policy-result.json.gz",
+      "bytes": 6334,
+      "sha256": "a744de0c1a3d926246770414c67e9f3aaabe6ff8298f9cfa9f8d5c43829332c6",
+      "decodedBytes": 260345,
+      "decodedSha256": "92522e1abaff54bcae26360d34049b2202522f6d7de74c8f5f08a593af126d4d"
+    },
+    {
+      "path": "spn123-c1-policy.json.gz",
+      "bytes": 225,
+      "sha256": "786b8c519bad220d3948dc7c818f79b0bda33dcb52d49356c6ec67b3426a99f3",
+      "decodedBytes": 325,
+      "decodedSha256": "db6121672fe75b187cc1928294b84095cffdc140fa469e00c8bb75928ec4a09f"
+    },
+    {
+      "path": "spn123-c1-policy.log.gz",
+      "bytes": 496,
+      "sha256": "d979e218652db633a684d7d6faaee9ae6f3f2c745daf216c213ab54be2c07e84",
+      "decodedBytes": 2039,
+      "decodedSha256": "a26d2f2b3f52388c1dbff68ba6b1e747e13bd7cb65a0b5e59636ef5683231d5f"
+    },
+    {
+      "path": "spn123-c1-policy.ts.gz",
+      "bytes": 1536,
+      "sha256": "b414ef05f3f97252d3ceb53c1ad94bdbcfa7ca78e550d9e9c8344f0d129b3b13",
+      "decodedBytes": 3370,
+      "decodedSha256": "360a0662196fff0992fafbc7b3400a94191a0044f7640074c22cd72711d6de1c"
+    },
+    {
+      "path": "spn123-c1-precommit-whitespace.json.gz",
+      "bytes": 505,
+      "sha256": "38a7bf315dfb0c209ad1ddeb7a4d3c60942c08d255b34bfb22eae73fdd456a13",
+      "decodedBytes": 952,
+      "decodedSha256": "07f754b78c7e7296e5639ccf57454c6984f6144bf67e82cca7c3f4f30a6e380f"
+    },
+    {
+      "path": "spn123-c1-types.json.gz",
+      "bytes": 212,
+      "sha256": "88302c0e256f8ed34c319f72a2e1430feb2c210d5f234026f00daae70012721d",
+      "decodedBytes": 275,
+      "decodedSha256": "fa00fd0c691a24346f20e2e6a271c9dc15aa208c853abf907758153de8e0ebea"
+    },
+    {
+      "path": "spn123-c1-types.log.gz",
+      "bytes": 192,
+      "sha256": "6f549ea533decd30d52f7d76aeaa3f8b8264adb8c7fdb0356d7f494d8f048394",
+      "decodedBytes": 223,
+      "decodedSha256": "d37b2fb4c2da050ae508884b31cc59ad734fb9fb6b31286421ff4bacb7bbea81"
+    },
+    {
+      "path": "tested-source.json.gz",
+      "bytes": 58272,
+      "sha256": "1755838e844b299185e8c1a6eab3d0e2aec946dd368560dd32e7ca4d0575114d",
+      "decodedBytes": 183044,
+      "decodedSha256": "d570666103ccbfc4859cd674f51a8cb1bbb2f68d19eb95e2894dd4b54be19d1b"
+    }
+  ]
+}

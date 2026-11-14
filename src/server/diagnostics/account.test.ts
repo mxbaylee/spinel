@@ -1,49 +1,86 @@
 import { randomUUID } from 'node:crypto';
 import { expect, test, vi } from 'vitest';
-import { AccountDiagnostics } from '../../../web/diagnosticsAccount.ts';
+import {
+  AccountDiagnostics,
+  diagnosticsConnectionPolicy,
+} from '../../../web/diagnosticsAccount.ts';
 import { BrowserDiagnostics } from '../../../web/diagnostics.ts';
 import { observedFormulaParse } from '../../../web/formulaDiagnostics.ts';
 import type { DiagnosticContext, DiagnosticEvent, DiagnosticRecord } from '@spinel/diagnostics';
 
-test('guest/local absence creates no collector; account switch and explicit stop cannot revive old clients', () => {
+test.each(['online', 'reconnecting', 'offline'] as const)(
+  'editor %s is only a retry hint, while browser outages make collection unavailable',
+  (state) => {
+    expect(diagnosticsConnectionPolicy(true, state)).toEqual({
+      available: true,
+      onlineHint: state === 'online',
+    });
+    expect(diagnosticsConnectionPolicy(false, state)).toEqual({
+      available: false,
+      onlineHint: state === 'online',
+    });
+  },
+);
+
+test('guest/local absence creates no collector; account switch and explicit stop cannot revive old clients', async () => {
+  vi.useFakeTimers();
   const clients: BrowserDiagnostics[] = [];
+  const starts: Promise<void>[] = [];
   const create = vi.fn((accountId: string) => {
-    const client = new BrowserDiagnostics({ accountId });
-    vi.spyOn(client, 'start').mockResolvedValue();
-    vi.spyOn(client, 'suspend').mockImplementation(() => {});
-    vi.spyOn(client, 'stop').mockImplementation(() => {});
+    const client = new BrowserDiagnostics({
+      accountId,
+      fetch: vi.fn<typeof fetch>(async () =>
+        Response.json({ generation: randomUUID(), binding: 'a'.repeat(64) }),
+      ),
+    });
+    const start = client.start.bind(client);
+    vi.spyOn(client, 'start').mockImplementation(() => {
+      const pending = start();
+      starts.push(pending);
+      return pending;
+    });
+    vi.spyOn(client, 'stop');
     clients.push(client);
     return client;
   });
   const account = new AccountDiagnostics(create);
-  account.connection(true);
-  expect(account.begin()).toBeUndefined();
-  expect(create).not.toHaveBeenCalled();
-  const owner = randomUUID(),
-    collaborator = randomUUID();
-  account.account(owner);
-  account.connection(true);
-  account.connection(true);
-  expect(create).toHaveBeenLastCalledWith(owner);
-  expect(clients[0].start).toHaveBeenCalledTimes(1);
-  // A connected shell alone is insufficient until collection initialization finishes.
-  expect(account.begin()).toBeUndefined();
-  account.connection(false);
-  expect(clients[0].suspend).toHaveBeenCalledTimes(1);
-  expect(account.begin()).toBeUndefined();
-  account.connection(true);
-  expect(clients[0].start).toHaveBeenCalledTimes(2);
-  account.account(collaborator);
-  account.connection(true);
-  expect(clients[0].stop).toHaveBeenCalledTimes(1);
-  expect(create).toHaveBeenLastCalledWith(collaborator);
-  account.stop();
-  account.connection(false);
-  account.connection(true);
-  expect(clients[1].start).toHaveBeenCalledTimes(1);
-  expect(account.begin()).toBeUndefined();
-  account.account(null);
-  expect(create).toHaveBeenCalledTimes(2);
+  try {
+    account.connection(true);
+    expect(account.begin()).toBeUndefined();
+    expect(create).not.toHaveBeenCalled();
+    const owner = randomUUID(),
+      collaborator = randomUUID();
+    account.account(owner);
+    account.connection(true);
+    account.connection(true);
+    expect(create).toHaveBeenLastCalledWith(owner);
+    expect(clients[0].start).toHaveBeenCalledTimes(1);
+    // Repeated hints neither replace an in-flight verification nor a verified binding.
+    expect(account.begin()).toBeUndefined();
+    await starts.at(-1);
+    expect(account.begin()).toBeDefined();
+    account.connection(true);
+    expect(clients[0].start).toHaveBeenCalledTimes(1);
+    account.connection(false);
+    expect(account.begin()).toBeUndefined();
+    account.connection(true);
+    expect(clients[0].start).toHaveBeenCalledTimes(2);
+    account.account(collaborator);
+    account.connection(true);
+    expect(clients[0].stop).toHaveBeenCalledTimes(1);
+    expect(create).toHaveBeenLastCalledWith(collaborator);
+    account.stop();
+    account.connection(false);
+    account.connection(true);
+    await Promise.all(starts);
+    expect(clients[1].start).toHaveBeenCalledTimes(1);
+    expect(account.begin()).toBeUndefined();
+    account.account(null);
+    expect(create).toHaveBeenCalledTimes(2);
+  } finally {
+    account.stop();
+    vi.useRealTimers();
+  }
 });
 
 test.each(['account switch', 'reconnect', 'new login', 'collection reset'] as const)(

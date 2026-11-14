@@ -1,0 +1,20 @@
+{
+  "name": "spn123-ec42-format",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/prettier/bin/prettier.cjs",
+    "--write",
+    "src/server/diagnostics/store.ts",
+    "src/server/diagnostics/routes.ts",
+    "src/server/diagnostics/supervisor.test.ts",
+    "e2e/diagnostics.spec.ts",
+    "docs/diagnostics.md",
+    "docs/implementation/SPN-123.md",
+    "docs/todo/backlog.json"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 465,
+  "peakKiB": 291312
+}

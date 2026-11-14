@@ -1,0 +1,709 @@
+{
+  "schemaVersion": 3,
+  "measuredAt": "2026-10-30T01:32:26.550Z",
+  "runtime": {
+    "node": "v26.12.1",
+    "platform": "linux",
+    "architecture": "x64",
+    "cpuCount": 9
+  },
+  "source": {
+    "baseCommit": "475f656c701f95d296c3df127e763540b0014d29",
+    "note": "Source-file and installed SDK hashes identify the measured working tree; baseCommit alone is not the complete tested source.",
+    "sha256": {
+      "lib/diagnostics/client.ts": "5d2866b8ddbddf1de45e6a91bf71cb21ace9a263f7c1c4d0338fa54ccb66fc0d",
+      "lib/diagnostics/index.ts": "54357f1d66a4516379b39c27f939577c23075b30d2d409b01290ee2b3bb1c906",
+      "lib/diagnostics/server.ts": "e7dea5a2e4014e748570961e7ff66afaf7cfc25d518df43c7beb36b501d83c7e",
+      "lib/diagnostics/sync.ts": "9237e1bf36c106d5d70a3896275fc871ddf07a5ef7d643d5d76988f732c95ea8",
+      "lib/sync-client/index.ts": "a9d7b38129f503aae2d8333cac0c47f751d8b7ebd24894f550f24633f9228171",
+      "lib/sync-client/src/admission.ts": "4ced97b483aa140436ad47fa623ec21a35a3d0b1e03132daea9fa6ef0971d611",
+      "lib/sync-client/src/budget.ts": "a401f4cc2ccbc514a2d9607e1b21f8473502bd5b41c277145c2933e2a6cd7aa2",
+      "lib/sync-client/src/capture.ts": "7a9250aacc14f81c62ee8368cc442b42a1ff645c943e6bb1c7fe7fb68edcc579",
+      "lib/sync-client/src/checkpoint.ts": "a816a56591ed8160d968371e08115fb4320df68b3a2d1b6c9853023f7581b8bc",
+      "lib/sync-client/src/client.ts": "ed5e8c45c4dc5901863c856f724cf41588babe74a352fdb1dae78a9f58f0dc1b",
+      "lib/sync-client/src/hash.ts": "4a6973159a6aa612fb8f0b18b30d5fd216747b2a1dfeb00b49a9011bd088ed0d",
+      "lib/sync-client/src/native.ts": "b2bd700b7ffbcfcf370c504d5d56d4de73e91fffd12e4f74f8a91cc298aa4cc3",
+      "lib/sync-client/src/recovery.ts": "9df848c4bfebbdee5036b978511f67b6945453f8ca7458c56a466bb7c518dfe1",
+      "lib/sync-client/src/types.ts": "fe260270c331122672c61d2f525ac9e0273f8c637b222cb05bd0116c93881064",
+      "lib/sync-client/tests/fixture.ts": "5aab40aaddd9fb2738053dbf87956b647830909768f1706bb5df9a7d8d64e365",
+      "lib/sync-server/index.ts": "327e8440ed3e762bfaccdfe2863b9ffc26d261fd3093339acfb1009f30af1039",
+      "lib/sync-server/src/cells.ts": "744eb4ab0046b452960c9f08c47b216ec8fc0dc29581353076bb99d94cc2ec35",
+      "lib/sync-server/src/geometry.ts": "e97e66936b894d2790a941e8fda3abc77cd1560cc54e9bdcef2bf799d4db90c0",
+      "lib/sync-server/src/native.ts": "641bb082c8603074cef540a1b1ae2943a6e034d66e0caaca8c010577c4635193",
+      "lib/sync-server/src/order.ts": "b7de265dd1f26beefe741b9dfb40dac2e320908667bec94ec45a6e742f2f68c2",
+      "lib/sync-server/src/server.ts": "5be58a9b33110f50f7aa5927eb159335655024e2838eb55ce84bb88f8146ed49",
+      "lib/sync-server/src/types.ts": "7501543ee7b362a40a3922a8ce01c4544e3fa4d27f3d98d50146773e03600923",
+      "lib/sync-transform/index.ts": "0b7a1edaa6e39cc207352fcd6c39766ff42f101e32dab3bbce0145c3d310fc98",
+      "lib/sync-transform/src/axis.ts": "e33b3f00b987e1f2d210201d21139763b30fcbbdd03406f8ed3e8fdf76236f8a",
+      "lib/sync-transform/src/cells.ts": "f536fe4fecc821e2bb4e5ead25d46f7803d57b34c834bf451c44c98dc143ce5f",
+      "lib/sync-transform/src/docs.ts": "2bd888909554a14482d09bd09099215364d7f9c7288672b65c2ca55b854d0679",
+      "lib/sync-transform/src/drawings.ts": "3d7b5da8f7b3297db533e16e9e92cb1cbb5916e91d2b1e3f51705c97e66234d0",
+      "lib/sync-transform/src/family.ts": "5c56e6309fa9d420855ac4b7c5b0c1e694e0c1959a95761cb431e528518d6da8",
+      "lib/sync-transform/src/merges.ts": "fc9a2962672e9851dc946ad98212638588252110a042d0fc73e6a61bbbe1453c",
+      "lib/sync-transform/src/names.ts": "52e741b42d869f227e715d7eed4394f8ffa5add6dd36c8b50d1681f879a7cc20",
+      "lib/sync-transform/src/native-values.ts": "3a96b566b357ae579dce101d33bb9b1821b6860fecc8e420e59d11cfa1ffa96a",
+      "lib/sync-transform/src/properties.ts": "83a11516003326cb68ab737b1e9cdf57ab789e1bc9a74663b662f61d9a5498bb",
+      "lib/sync-transform/src/settings.ts": "768a2992acab5ca7e567a4ccbc2e95957be1fd71ca0fb673d58c599630c6c510",
+      "lib/sync-transform/src/shifts.ts": "256d466a1ff5870dabbed7b6c3c3d0ff33db5d4609b16377ecea1016917e179d",
+      "lib/sync-transform/src/state.ts": "185d39aae14591b42deaf16d3132771cf2b4c573f70e88aab2b72a2a0dfadd0d",
+      "lib/sync-transform/src/structure.ts": "aa5063d899678b57f464dda43c6149e70e9b94dd30a3a963f9ef086218680c6f",
+      "lib/sync-transform/src/transform.ts": "9dbe116e6314d7353242c9c52348fa1b40d5176c3955ff849ff9de28aa68185a",
+      "lib/sync-transform/src/types.ts": "d7d77837735f2c5fc8d21706b6f844972f39d7a03ed4e84be53d80663c8d099e",
+      "lib/sync-transform/src/writes.ts": "841bfd7640ab689e7ed3610e1043ed70cdc0a7fff248018f285aa294ff4bd62d",
+      "node_modules/@univerjs/core/lib/cjs/index.js": "ae2326c195fa7aa89be7199dd2a838d8f267f05c9dfee449a33c5ceae4d4a132",
+      "node_modules/@univerjs/core/lib/es/index.js": "a019e7eb8b2ba235c7cfd54a19c262377a90c25aca13e5c2e0671a43b709e434",
+      "node_modules/@univerjs/docs/lib/cjs/index.js": "1e623423336d7888baefe491ad245ed2b1472470786f8871711bdeeac07c4e4f",
+      "node_modules/@univerjs/docs/lib/es/index.js": "245ae8769e4759cc6da1d62847d7ae7502d0b54503c276e9adf9683e099a52ec",
+      "package-lock.json": "417a0eb4b269a3e0cc6db81e134f3b1962bb0ff8668a6ae5f8c302da6762e520",
+      "scripts/ci/diagnostics-overhead.ts": "c1232f6454e24587b28436aee2c4b6a9ffcbfd5b792ea021979387513c29e6b9",
+      "scripts/dependencies/patch-univer-core.ts": "e3038a7d706acbc0e06c093bc3cda82a3d5ce537f41b04d7c1e8764a43ea8a41",
+      "scripts/dependencies/patch-univer-docs.ts": "a582d06cc9bdec69c83cf611fc141b9853896553f9e50fb29da098464cab179c",
+      "src/server/diagnostics/routes.ts": "e3777b9f9a7af899ecaf975e1991cfe2e7fd7c78f9f23866773f352001f58829",
+      "web/diagnostics.ts": "60c5f96f1b98507385a1f6f351178441a7f4af919f825d7a634663a79550fb51"
+    }
+  },
+  "method": {
+    "warmupPairs": 2,
+    "measuredPairs": 6,
+    "measuredSavesPerRun": 12,
+    "untimedLaterSavesPerRun": 1,
+    "order": "Alternating off/on then on/off pairs",
+    "clock": "performance.now monotonic milliseconds",
+    "policyClock": "Real Date.now/performance.now reads plus an offset advanced only once, outside timing, before the later save; no collector lifecycle transition",
+    "laterWindowAdvanceMs": 60001,
+    "sampleIntervalMs": 30000,
+    "enabledCollector": "Real BrowserDiagnostics complete-bundle sampling, queue, schema validation, UUID/context creation, serialization and batching; in-memory HTTP sink uses actual DiagnosticRateLimit",
+    "included": "Native Sheet mutation admission, real SyncServer materialization/receipts, peer application, two duplicate sends/ACK deliveries, collector enqueue",
+    "excluded": "Account-shell lifecycle/HTTP verification, initial SDK construction, browser rendering, real network/SQLite/IDB, the thirteenth native save and collector HTTP flush (reported separately)",
+    "timingGate": "No ratio-only threshold; bounded workload and resource watchdog plus exact behavioral/capacity assertions",
+    "saturatedValidation": "Two native workloads begin with the real collector full of failure observations that bypass sampling. All 13 native saves and final content/history/access/peer hashes match off/on runs. Queue losses before transport, sampling omissions and the subsequent real 429/queue discard are distinct. No pressure batch is spaced artificially to manufacture admission; stop cancels the retry timer."
+  },
+  "summary": {
+    "offMedianMsPerSave": 1.9885304583333343,
+    "onMedianMsPerSave": 1.7623709166666686,
+    "medianDeltaMsPerSave": -0.22615954166666574,
+    "offRangeMsPerSave": [
+      1.598445750000015,
+      2.422402833333327
+    ],
+    "onRangeMsPerSave": [
+      1.4088399166666552,
+      2.691758583333334
+    ],
+    "warning": "A small in-process sample describes this workload only and does not explain old unprofiled pauses."
+  },
+  "measurements": [
+    {
+      "enabled": false,
+      "mode": "off",
+      "nativeDurationMs": 19.181349000000182,
+      "perSaveMs": 1.598445750000015,
+      "collectorFlushMs": 0.008563999999978478,
+      "records": 0,
+      "dropped": 0,
+      "sampledOut": 0,
+      "otherDropped": 0,
+      "lossBreakdown": {
+        "queueOverflowBeforeNative": 0,
+        "measuredNativeQueueOverflow": 0,
+        "allNativeQueueOverflow": 0,
+        "transportDrops": 0
+      },
+      "firstWindowDiagnosticSaveCounters": 0,
+      "laterWindowDiagnosticSaveCounters": 0,
+      "diagnosticSaveCounters": 0,
+      "batches": [],
+      "collectionVerifications": 1,
+      "nativeStateSha256": "75237803b6f9bbe5f9bc1e4a1452c5dbafe4eb1e051934249fcf39e4ae49b223",
+      "assertions": {
+        "identicalNativeContentAndResources": true,
+        "measuredSaves": 12,
+        "untimedLaterSaves": 1,
+        "acceptedHistoryRows": 13,
+        "successfulAcknowledgments": 13,
+        "duplicateSubmissionsRetainOneHistoryRow": true,
+        "duplicateAcknowledgmentsPreserveSavedState": true,
+        "bothClientsSaved": true,
+        "laterSaveWithoutCollectionTransition": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 67
+      }
+    },
+    {
+      "enabled": true,
+      "mode": "on",
+      "nativeDurationMs": 21.159178999999995,
+      "perSaveMs": 1.7632649166666663,
+      "collectorFlushMs": 0.8564490000001115,
+      "records": 9,
+      "dropped": 45,
+      "sampledOut": 45,
+      "otherDropped": 0,
+      "lossBreakdown": {
+        "queueOverflowBeforeNative": 0,
+        "measuredNativeQueueOverflow": 0,
+        "allNativeQueueOverflow": 0,
+        "transportDrops": 0
+      },
+      "firstWindowDiagnosticSaveCounters": 1,
+      "laterWindowDiagnosticSaveCounters": 1,
+      "diagnosticSaveCounters": 2,
+      "batches": [
+        {
+          "records": 5,
+          "status": 200
+        },
+        {
+          "records": 4,
+          "status": 200
+        }
+      ],
+      "collectionVerifications": 1,
+      "nativeStateSha256": "75237803b6f9bbe5f9bc1e4a1452c5dbafe4eb1e051934249fcf39e4ae49b223",
+      "assertions": {
+        "identicalNativeContentAndResources": true,
+        "measuredSaves": 12,
+        "untimedLaterSaves": 1,
+        "acceptedHistoryRows": 13,
+        "successfulAcknowledgments": 13,
+        "duplicateSubmissionsRetainOneHistoryRow": true,
+        "duplicateAcknowledgmentsPreserveSavedState": true,
+        "bothClientsSaved": true,
+        "laterSaveWithoutCollectionTransition": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 67
+      }
+    },
+    {
+      "enabled": true,
+      "mode": "on",
+      "nativeDurationMs": 32.30110300000001,
+      "perSaveMs": 2.691758583333334,
+      "collectorFlushMs": 0.671668999999838,
+      "records": 9,
+      "dropped": 45,
+      "sampledOut": 45,
+      "otherDropped": 0,
+      "lossBreakdown": {
+        "queueOverflowBeforeNative": 0,
+        "measuredNativeQueueOverflow": 0,
+        "allNativeQueueOverflow": 0,
+        "transportDrops": 0
+      },
+      "firstWindowDiagnosticSaveCounters": 1,
+      "laterWindowDiagnosticSaveCounters": 1,
+      "diagnosticSaveCounters": 2,
+      "batches": [
+        {
+          "records": 5,
+          "status": 200
+        },
+        {
+          "records": 4,
+          "status": 200
+        }
+      ],
+      "collectionVerifications": 1,
+      "nativeStateSha256": "75237803b6f9bbe5f9bc1e4a1452c5dbafe4eb1e051934249fcf39e4ae49b223",
+      "assertions": {
+        "identicalNativeContentAndResources": true,
+        "measuredSaves": 12,
+        "untimedLaterSaves": 1,
+        "acceptedHistoryRows": 13,
+        "successfulAcknowledgments": 13,
+        "duplicateSubmissionsRetainOneHistoryRow": true,
+        "duplicateAcknowledgmentsPreserveSavedState": true,
+        "bothClientsSaved": true,
+        "laterSaveWithoutCollectionTransition": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 67
+      }
+    },
+    {
+      "enabled": false,
+      "mode": "off",
+      "nativeDurationMs": 19.558622000000014,
+      "perSaveMs": 1.6298851666666678,
+      "collectorFlushMs": 0.006319999999959691,
+      "records": 0,
+      "dropped": 0,
+      "sampledOut": 0,
+      "otherDropped": 0,
+      "lossBreakdown": {
+        "queueOverflowBeforeNative": 0,
+        "measuredNativeQueueOverflow": 0,
+        "allNativeQueueOverflow": 0,
+        "transportDrops": 0
+      },
+      "firstWindowDiagnosticSaveCounters": 0,
+      "laterWindowDiagnosticSaveCounters": 0,
+      "diagnosticSaveCounters": 0,
+      "batches": [],
+      "collectionVerifications": 1,
+      "nativeStateSha256": "75237803b6f9bbe5f9bc1e4a1452c5dbafe4eb1e051934249fcf39e4ae49b223",
+      "assertions": {
+        "identicalNativeContentAndResources": true,
+        "measuredSaves": 12,
+        "untimedLaterSaves": 1,
+        "acceptedHistoryRows": 13,
+        "successfulAcknowledgments": 13,
+        "duplicateSubmissionsRetainOneHistoryRow": true,
+        "duplicateAcknowledgmentsPreserveSavedState": true,
+        "bothClientsSaved": true,
+        "laterSaveWithoutCollectionTransition": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 67
+      }
+    },
+    {
+      "enabled": false,
+      "mode": "off",
+      "nativeDurationMs": 29.068833999999924,
+      "perSaveMs": 2.422402833333327,
+      "collectorFlushMs": 0.007340999999769338,
+      "records": 0,
+      "dropped": 0,
+      "sampledOut": 0,
+      "otherDropped": 0,
+      "lossBreakdown": {
+        "queueOverflowBeforeNative": 0,
+        "measuredNativeQueueOverflow": 0,
+        "allNativeQueueOverflow": 0,
+        "transportDrops": 0
+      },
+      "firstWindowDiagnosticSaveCounters": 0,
+      "laterWindowDiagnosticSaveCounters": 0,
+      "diagnosticSaveCounters": 0,
+      "batches": [],
+      "collectionVerifications": 1,
+      "nativeStateSha256": "75237803b6f9bbe5f9bc1e4a1452c5dbafe4eb1e051934249fcf39e4ae49b223",
+      "assertions": {
+        "identicalNativeContentAndResources": true,
+        "measuredSaves": 12,
+        "untimedLaterSaves": 1,
+        "acceptedHistoryRows": 13,
+        "successfulAcknowledgments": 13,
+        "duplicateSubmissionsRetainOneHistoryRow": true,
+        "duplicateAcknowledgmentsPreserveSavedState": true,
+        "bothClientsSaved": true,
+        "laterSaveWithoutCollectionTransition": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 67
+      }
+    },
+    {
+      "enabled": true,
+      "mode": "on",
+      "nativeDurationMs": 21.13772300000005,
+      "perSaveMs": 1.7614769166666708,
+      "collectorFlushMs": 1.7336910000001353,
+      "records": 9,
+      "dropped": 45,
+      "sampledOut": 45,
+      "otherDropped": 0,
+      "lossBreakdown": {
+        "queueOverflowBeforeNative": 0,
+        "measuredNativeQueueOverflow": 0,
+        "allNativeQueueOverflow": 0,
+        "transportDrops": 0
+      },
+      "firstWindowDiagnosticSaveCounters": 1,
+      "laterWindowDiagnosticSaveCounters": 1,
+      "diagnosticSaveCounters": 2,
+      "batches": [
+        {
+          "records": 5,
+          "status": 200
+        },
+        {
+          "records": 4,
+          "status": 200
+        }
+      ],
+      "collectionVerifications": 1,
+      "nativeStateSha256": "75237803b6f9bbe5f9bc1e4a1452c5dbafe4eb1e051934249fcf39e4ae49b223",
+      "assertions": {
+        "identicalNativeContentAndResources": true,
+        "measuredSaves": 12,
+        "untimedLaterSaves": 1,
+        "acceptedHistoryRows": 13,
+        "successfulAcknowledgments": 13,
+        "duplicateSubmissionsRetainOneHistoryRow": true,
+        "duplicateAcknowledgmentsPreserveSavedState": true,
+        "bothClientsSaved": true,
+        "laterSaveWithoutCollectionTransition": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 67
+      }
+    },
+    {
+      "enabled": true,
+      "mode": "on",
+      "nativeDurationMs": 27.45706899999982,
+      "perSaveMs": 2.2880890833333183,
+      "collectorFlushMs": 0.5995199999999841,
+      "records": 9,
+      "dropped": 45,
+      "sampledOut": 45,
+      "otherDropped": 0,
+      "lossBreakdown": {
+        "queueOverflowBeforeNative": 0,
+        "measuredNativeQueueOverflow": 0,
+        "allNativeQueueOverflow": 0,
+        "transportDrops": 0
+      },
+      "firstWindowDiagnosticSaveCounters": 1,
+      "laterWindowDiagnosticSaveCounters": 1,
+      "diagnosticSaveCounters": 2,
+      "batches": [
+        {
+          "records": 5,
+          "status": 200
+        },
+        {
+          "records": 4,
+          "status": 200
+        }
+      ],
+      "collectionVerifications": 1,
+      "nativeStateSha256": "75237803b6f9bbe5f9bc1e4a1452c5dbafe4eb1e051934249fcf39e4ae49b223",
+      "assertions": {
+        "identicalNativeContentAndResources": true,
+        "measuredSaves": 12,
+        "untimedLaterSaves": 1,
+        "acceptedHistoryRows": 13,
+        "successfulAcknowledgments": 13,
+        "duplicateSubmissionsRetainOneHistoryRow": true,
+        "duplicateAcknowledgmentsPreserveSavedState": true,
+        "bothClientsSaved": true,
+        "laterSaveWithoutCollectionTransition": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 67
+      }
+    },
+    {
+      "enabled": false,
+      "mode": "off",
+      "nativeDurationMs": 25.62795899999992,
+      "perSaveMs": 2.1356632499999932,
+      "collectorFlushMs": 0.008732999999892854,
+      "records": 0,
+      "dropped": 0,
+      "sampledOut": 0,
+      "otherDropped": 0,
+      "lossBreakdown": {
+        "queueOverflowBeforeNative": 0,
+        "measuredNativeQueueOverflow": 0,
+        "allNativeQueueOverflow": 0,
+        "transportDrops": 0
+      },
+      "firstWindowDiagnosticSaveCounters": 0,
+      "laterWindowDiagnosticSaveCounters": 0,
+      "diagnosticSaveCounters": 0,
+      "batches": [],
+      "collectionVerifications": 1,
+      "nativeStateSha256": "75237803b6f9bbe5f9bc1e4a1452c5dbafe4eb1e051934249fcf39e4ae49b223",
+      "assertions": {
+        "identicalNativeContentAndResources": true,
+        "measuredSaves": 12,
+        "untimedLaterSaves": 1,
+        "acceptedHistoryRows": 13,
+        "successfulAcknowledgments": 13,
+        "duplicateSubmissionsRetainOneHistoryRow": true,
+        "duplicateAcknowledgmentsPreserveSavedState": true,
+        "bothClientsSaved": true,
+        "laterSaveWithoutCollectionTransition": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 67
+      }
+    },
+    {
+      "enabled": false,
+      "mode": "off",
+      "nativeDurationMs": 27.519897999999785,
+      "perSaveMs": 2.2933248333333154,
+      "collectorFlushMs": 0.007321000000047206,
+      "records": 0,
+      "dropped": 0,
+      "sampledOut": 0,
+      "otherDropped": 0,
+      "lossBreakdown": {
+        "queueOverflowBeforeNative": 0,
+        "measuredNativeQueueOverflow": 0,
+        "allNativeQueueOverflow": 0,
+        "transportDrops": 0
+      },
+      "firstWindowDiagnosticSaveCounters": 0,
+      "laterWindowDiagnosticSaveCounters": 0,
+      "diagnosticSaveCounters": 0,
+      "batches": [],
+      "collectionVerifications": 1,
+      "nativeStateSha256": "75237803b6f9bbe5f9bc1e4a1452c5dbafe4eb1e051934249fcf39e4ae49b223",
+      "assertions": {
+        "identicalNativeContentAndResources": true,
+        "measuredSaves": 12,
+        "untimedLaterSaves": 1,
+        "acceptedHistoryRows": 13,
+        "successfulAcknowledgments": 13,
+        "duplicateSubmissionsRetainOneHistoryRow": true,
+        "duplicateAcknowledgmentsPreserveSavedState": true,
+        "bothClientsSaved": true,
+        "laterSaveWithoutCollectionTransition": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 67
+      }
+    },
+    {
+      "enabled": true,
+      "mode": "on",
+      "nativeDurationMs": 17.16430000000014,
+      "perSaveMs": 1.430358333333345,
+      "collectorFlushMs": 0.7479539999999361,
+      "records": 9,
+      "dropped": 45,
+      "sampledOut": 45,
+      "otherDropped": 0,
+      "lossBreakdown": {
+        "queueOverflowBeforeNative": 0,
+        "measuredNativeQueueOverflow": 0,
+        "allNativeQueueOverflow": 0,
+        "transportDrops": 0
+      },
+      "firstWindowDiagnosticSaveCounters": 1,
+      "laterWindowDiagnosticSaveCounters": 1,
+      "diagnosticSaveCounters": 2,
+      "batches": [
+        {
+          "records": 5,
+          "status": 200
+        },
+        {
+          "records": 4,
+          "status": 200
+        }
+      ],
+      "collectionVerifications": 1,
+      "nativeStateSha256": "75237803b6f9bbe5f9bc1e4a1452c5dbafe4eb1e051934249fcf39e4ae49b223",
+      "assertions": {
+        "identicalNativeContentAndResources": true,
+        "measuredSaves": 12,
+        "untimedLaterSaves": 1,
+        "acceptedHistoryRows": 13,
+        "successfulAcknowledgments": 13,
+        "duplicateSubmissionsRetainOneHistoryRow": true,
+        "duplicateAcknowledgmentsPreserveSavedState": true,
+        "bothClientsSaved": true,
+        "laterSaveWithoutCollectionTransition": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 67
+      }
+    },
+    {
+      "enabled": true,
+      "mode": "on",
+      "nativeDurationMs": 16.906078999999863,
+      "perSaveMs": 1.4088399166666552,
+      "collectorFlushMs": 0.6655580000001464,
+      "records": 9,
+      "dropped": 45,
+      "sampledOut": 45,
+      "otherDropped": 0,
+      "lossBreakdown": {
+        "queueOverflowBeforeNative": 0,
+        "measuredNativeQueueOverflow": 0,
+        "allNativeQueueOverflow": 0,
+        "transportDrops": 0
+      },
+      "firstWindowDiagnosticSaveCounters": 1,
+      "laterWindowDiagnosticSaveCounters": 1,
+      "diagnosticSaveCounters": 2,
+      "batches": [
+        {
+          "records": 5,
+          "status": 200
+        },
+        {
+          "records": 4,
+          "status": 200
+        }
+      ],
+      "collectionVerifications": 1,
+      "nativeStateSha256": "75237803b6f9bbe5f9bc1e4a1452c5dbafe4eb1e051934249fcf39e4ae49b223",
+      "assertions": {
+        "identicalNativeContentAndResources": true,
+        "measuredSaves": 12,
+        "untimedLaterSaves": 1,
+        "acceptedHistoryRows": 13,
+        "successfulAcknowledgments": 13,
+        "duplicateSubmissionsRetainOneHistoryRow": true,
+        "duplicateAcknowledgmentsPreserveSavedState": true,
+        "bothClientsSaved": true,
+        "laterSaveWithoutCollectionTransition": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 67
+      }
+    },
+    {
+      "enabled": false,
+      "mode": "off",
+      "nativeDurationMs": 22.0967720000001,
+      "perSaveMs": 1.8413976666666751,
+      "collectorFlushMs": 0.007772000000159096,
+      "records": 0,
+      "dropped": 0,
+      "sampledOut": 0,
+      "otherDropped": 0,
+      "lossBreakdown": {
+        "queueOverflowBeforeNative": 0,
+        "measuredNativeQueueOverflow": 0,
+        "allNativeQueueOverflow": 0,
+        "transportDrops": 0
+      },
+      "firstWindowDiagnosticSaveCounters": 0,
+      "laterWindowDiagnosticSaveCounters": 0,
+      "diagnosticSaveCounters": 0,
+      "batches": [],
+      "collectionVerifications": 1,
+      "nativeStateSha256": "75237803b6f9bbe5f9bc1e4a1452c5dbafe4eb1e051934249fcf39e4ae49b223",
+      "assertions": {
+        "identicalNativeContentAndResources": true,
+        "measuredSaves": 12,
+        "untimedLaterSaves": 1,
+        "acceptedHistoryRows": 13,
+        "successfulAcknowledgments": 13,
+        "duplicateSubmissionsRetainOneHistoryRow": true,
+        "duplicateAcknowledgmentsPreserveSavedState": true,
+        "bothClientsSaved": true,
+        "laterSaveWithoutCollectionTransition": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 67
+      }
+    }
+  ],
+  "saturatedMeasurements": [
+    {
+      "enabled": true,
+      "mode": "saturated",
+      "nativeDurationMs": 31.49288199999978,
+      "perSaveMs": 2.6244068333333153,
+      "collectorFlushMs": 5.051943999999821,
+      "records": 64,
+      "dropped": 490,
+      "sampledOut": 45,
+      "otherDropped": 445,
+      "lossBreakdown": {
+        "queueOverflowBeforeNative": 244,
+        "measuredNativeQueueOverflow": 5,
+        "allNativeQueueOverflow": 9,
+        "transportDrops": 192
+      },
+      "firstWindowDiagnosticSaveCounters": 0,
+      "laterWindowDiagnosticSaveCounters": 0,
+      "diagnosticSaveCounters": 0,
+      "batches": [
+        {
+          "records": 64,
+          "status": 200
+        },
+        {
+          "records": 64,
+          "status": 429
+        }
+      ],
+      "collectionVerifications": 1,
+      "nativeStateSha256": "75237803b6f9bbe5f9bc1e4a1452c5dbafe4eb1e051934249fcf39e4ae49b223",
+      "assertions": {
+        "identicalNativeContentAndResources": true,
+        "measuredSaves": 12,
+        "untimedLaterSaves": 1,
+        "acceptedHistoryRows": 13,
+        "successfulAcknowledgments": 13,
+        "duplicateSubmissionsRetainOneHistoryRow": true,
+        "duplicateAcknowledgmentsPreserveSavedState": true,
+        "bothClientsSaved": true,
+        "laterSaveWithoutCollectionTransition": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 67
+      }
+    },
+    {
+      "enabled": true,
+      "mode": "saturated",
+      "nativeDurationMs": 19.55282299999999,
+      "perSaveMs": 1.6294019166666658,
+      "collectorFlushMs": 6.21950599999991,
+      "records": 64,
+      "dropped": 490,
+      "sampledOut": 45,
+      "otherDropped": 445,
+      "lossBreakdown": {
+        "queueOverflowBeforeNative": 244,
+        "measuredNativeQueueOverflow": 5,
+        "allNativeQueueOverflow": 9,
+        "transportDrops": 192
+      },
+      "firstWindowDiagnosticSaveCounters": 0,
+      "laterWindowDiagnosticSaveCounters": 0,
+      "diagnosticSaveCounters": 0,
+      "batches": [
+        {
+          "records": 64,
+          "status": 200
+        },
+        {
+          "records": 64,
+          "status": 429
+        }
+      ],
+      "collectionVerifications": 1,
+      "nativeStateSha256": "75237803b6f9bbe5f9bc1e4a1452c5dbafe4eb1e051934249fcf39e4ae49b223",
+      "assertions": {
+        "identicalNativeContentAndResources": true,
+        "measuredSaves": 12,
+        "untimedLaterSaves": 1,
+        "acceptedHistoryRows": 13,
+        "successfulAcknowledgments": 13,
+        "duplicateSubmissionsRetainOneHistoryRow": true,
+        "duplicateAcknowledgmentsPreserveSavedState": true,
+        "bothClientsSaved": true,
+        "laterSaveWithoutCollectionTransition": true,
+        "revokedWritesAndReceiptsDenied": true,
+        "refusalPreservesEveryStoredRow": true,
+        "authorizationChecks": 67
+      }
+    }
+  ],
+  "pressure": {
+    "attempted": 500,
+    "queuedBeforeTransport": 256,
+    "queueOverflow": 244,
+    "sampledOut": 0,
+    "admittedRecords": 64,
+    "transportDrops": 192,
+    "totalDropped": 436,
+    "batches": [
+      {
+        "records": 64,
+        "status": 200
+      },
+      {
+        "records": 64,
+        "status": 429
+      }
+    ],
+    "queueLimitEnforced": true
+  }
+}

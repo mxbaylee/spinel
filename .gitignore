@@ -6,6 +6,7 @@ data/
 *.sqlite
 *.sqlite-*
 playwright-report/
+fixture-audit/
 test-results/
 storybook-static/
 output/

@@ -1,0 +1,184 @@
+{
+  "source": "aaac6083a066c2a9f3f394650834eb33b2a270db",
+  "base": "312e5546386ece21f8e0845d696598cc4d85c731",
+  "at": "2026-11-14T22:13:40.249Z",
+  "scope": "Exact first runtime results and preparation-failure dispositions; original sample is reused by its 50 unchanged hashes, not rerun. Final docs-only source bindings and current-head policy belong to review packet.",
+  "entries": [
+    {
+      "path": "spn123-312-index.log.gz",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-312-index.log",
+      "bytes": 1598,
+      "sha256": "b2d6304ec4bf4f63d0b3b43e3625dc4f2be5e5177e74361f945b2adc1f66e01c",
+      "gzipBytes": 356,
+      "gzipSha256": "9d052a56db6d1b66589fddfbdeab74f8d257fd26f28ea0df0767a057abbfacb9"
+    },
+    {
+      "path": "spn123-312-index.json.gz",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-312-index.json",
+      "bytes": 254,
+      "sha256": "9129654994e93b0457676efbd1c6074949f7ed60efb14e80f87876bda1a02cf3",
+      "gzipBytes": 200,
+      "gzipSha256": "9dea2f97960fa9dca65b29ebd541e63efdfef37f827c68d2527c0bbe3e040824"
+    },
+    {
+      "path": "spn123-312-format.log.gz",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-312-format.log",
+      "bytes": 1093,
+      "sha256": "b3f8e6c1c7577a9bd0a34d6f75e05685e5c5fe35c71960c9b771416204b8c562",
+      "gzipBytes": 559,
+      "gzipSha256": "27fa112daee2c6e18b07e82080a3081b59b7e8ef0a9a5c7d02052ee78cee988a"
+    },
+    {
+      "path": "spn123-312-format.json.gz",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-312-format.json",
+      "bytes": 361,
+      "sha256": "0d8113b3628dbbe9760969d57a86bdff3e7386e28ad822bca4cd7392f9b41712",
+      "gzipBytes": 259,
+      "gzipSha256": "d4f72c2694857c4e538af94383911c0f8a2beb2b313c5d738883868a47583f20"
+    },
+    {
+      "path": "spn123-312-format-corrected.log.gz",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-312-format-corrected.log",
+      "bytes": 431,
+      "sha256": "116fd58160e3dfdb98d2baea253c573567859dbdb3b122dd481f0cc799830047",
+      "gzipBytes": 292,
+      "gzipSha256": "3450dfedf95f6d4d382c53c499dd3b291f809a1f3fbe4e405dd826b5f8ca49b4"
+    },
+    {
+      "path": "spn123-312-format-corrected.json.gz",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-312-format-corrected.json",
+      "bytes": 387,
+      "sha256": "cb6604dafb85de945a7e64cddf4479cf88cf79bd229b0404491f98b4a9231dc0",
+      "gzipBytes": 274,
+      "gzipSha256": "8f78d70cb4b8b05ad0fb1e85dc824b4ab289964357e20276794c4d5eadc1930c"
+    },
+    {
+      "path": "spn123-312-fixture-contracts.log.gz",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-312-fixture-contracts.log",
+      "bytes": 6067,
+      "sha256": "28b9de5a2f8c702f71066945104ccf73e2e8153201a03b42290ae684f98e5503",
+      "gzipBytes": 2256,
+      "gzipSha256": "3fcccc75a82f81360cc40d0c184e235e5a2305063193b7f8eee4922c69ad8ad5"
+    },
+    {
+      "path": "spn123-312-fixture-contracts.json.gz",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-312-fixture-contracts.json",
+      "bytes": 481,
+      "sha256": "d8095ddbe044b4ac87c6ef4779722d439d3bf6dd52da21dc112649058cc2c60d",
+      "gzipBytes": 264,
+      "gzipSha256": "be13c5b99cdbdbe0ad6f6d1523af38d79da46803dd08761ab98651020f56e465"
+    },
+    {
+      "path": "spn123-312-types.log.gz",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-312-types.log",
+      "bytes": 224,
+      "sha256": "f17e1809cc92c197ab5c2982d2ee985d15ce26380b87046e33d6da421ee7f39a",
+      "gzipBytes": 194,
+      "gzipSha256": "58e25ff9fd404b8b81624071e4cafe3b577345b047dfc50e55c8fa5cf0c91461"
+    },
+    {
+      "path": "spn123-312-types.json.gz",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-312-types.json",
+      "bytes": 276,
+      "sha256": "dab4eaec3ff0a67ed42be178de59b2dbf35058ec699f96341889f51d686c4b7a",
+      "gzipBytes": 212,
+      "gzipSha256": "077f4305447a9130662ae74c67b4aaf2cf6a8f8527a8b48708abe7ae16b54fce"
+    },
+    {
+      "path": "spn123-312-lint.log.gz",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-312-lint.log",
+      "bytes": 250,
+      "sha256": "1701cd9246e5475e63402789feb820c670786096876b9b002d5e812dc0ec3335",
+      "gzipBytes": 206,
+      "gzipSha256": "49dc9c34ae9e1a76dbf17ec12b53a3302629cfb83334e89ada8c1dbf5f25f33a"
+    },
+    {
+      "path": "spn123-312-lint.json.gz",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-312-lint.json",
+      "bytes": 302,
+      "sha256": "2cc0f97d431a0d5befbc149da3491c4531d6672a50275d7578ca6cf3a147eab7",
+      "gzipBytes": 224,
+      "gzipSha256": "0d4c7aa74614d269b3c489ad424408c9649eb3a7f78ba3a1108f28a648ef3fa1"
+    },
+    {
+      "path": "spn123-312-policy.log.gz",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-312-policy.log",
+      "bytes": 1951,
+      "sha256": "c08d0ddd9cda8c4937d5c297a5afdd4f730b6e5cf967c7a7ced34fc3af73441f",
+      "gzipBytes": 491,
+      "gzipSha256": "c131e17ed4b28ca710e3352a691b9f137dabacb9585da0645b72eea4e1fb1f4c"
+    },
+    {
+      "path": "spn123-312-policy.json.gz",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-312-policy.json",
+      "bytes": 327,
+      "sha256": "1321683297f147021b5b579b64922fd5cf4462ebba95d803c406406bb5e3cd0f",
+      "gzipBytes": 227,
+      "gzipSha256": "950365852e0e4718002dfbbaba857bc3eb03c80196a2132295bd50ee905f19bf"
+    },
+    {
+      "path": "spn123-312-policy.ts.gz",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-312-policy.ts",
+      "bytes": 3371,
+      "sha256": "f0e3673736c6479a1198944b2bb291923ea42ad33107796c05cb5a9ad0125810",
+      "gzipBytes": 1543,
+      "gzipSha256": "2e82ef47aea0680ae2c02097930010afcaced696843c7be9cc081bdff8787136"
+    },
+    {
+      "path": "spn123-312-policy-result.json.gz",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-312-policy-result.json",
+      "bytes": 289209,
+      "sha256": "2b47a3875d71b8a9347ea3f8ef4d546e6ed94fe2f1ae95019e015dcdc1f4a13d",
+      "gzipBytes": 5936,
+      "gzipSha256": "af83b74768b44cec3f2f1d1d0afe6722d026f60f3374af21ad26256be7765d58"
+    },
+    {
+      "path": "spn123-312-integration-audit.ts.gz",
+      "originalPath": "/tmp/spn123-312-integration-audit.ts",
+      "bytes": 3602,
+      "sha256": "63a7c345a676ed3b31f819ded5fcd43ca286389612e7b018a5f0262c7a6a965a",
+      "gzipBytes": 1646,
+      "gzipSha256": "8087c292f4cc11d630ed3ad05763f28ea9deabe581e506dbaa72b765adff8589"
+    },
+    {
+      "path": "spn123-312-integration-audit.initial.ts.gz",
+      "originalPath": "/tmp/spn123-312-integration-audit.initial.ts",
+      "bytes": 3503,
+      "sha256": "46ebb05d353b0c130b47e3b435fc56a7adbf5e06abf7a78516acc2bd361bf4a7",
+      "gzipBytes": 1585,
+      "gzipSha256": "074aefd40c43536f6d4db219d3c4be5bd2b3320707a155738f5a1a502618213d"
+    },
+    {
+      "path": "spn123-312-integration-audit.json.gz",
+      "originalPath": "/tmp/spn123-312-integration-audit.json",
+      "bytes": 109934,
+      "sha256": "59e92de63fb660476f02d682f401b4a61df8eb08ee268c9818d2ecb8cf3cda2f",
+      "gzipBytes": 22815,
+      "gzipSha256": "3596a9ab48681ff35c3e40dea2a72979fc806c7b6274a7fbf579416abe1ec75b"
+    },
+    {
+      "path": "spn123-312-integration-audit.log.gz",
+      "originalPath": "/tmp/spn123-312-integration-audit.log",
+      "bytes": 127,
+      "sha256": "7c80aeb9f2a784b0bc2743890f11d287df19348cd27b26de3ac9afe6d4b26a4b",
+      "gzipBytes": 128,
+      "gzipSha256": "9d81632030362f49affc90475ef6cb513b8619e7caa1cbd6cf67686daf5ad4a0"
+    },
+    {
+      "path": "spn123-312-audit-correction.json.gz",
+      "originalPath": "/tmp/spn123-312-audit-correction.json",
+      "bytes": 734,
+      "sha256": "a7fe3175b2fa73e2bf4646dbc8906ac058674e877efa0465813228936d228b9b",
+      "gzipBytes": 403,
+      "gzipSha256": "e2c8de6a5b3a00dffeb19ec23fdea39237f7a9e6928dcd781d77ef6977f3141b"
+    },
+    {
+      "path": "spn123-312-tested-source.json.gz",
+      "originalPath": "/tmp/spn123-312-tested-source.json",
+      "bytes": 204314,
+      "sha256": "9716e750372a9bf0df07269c2b11cfe5eab71af185461f8366efc70c6621fbd2",
+      "gzipBytes": 63609,
+      "gzipSha256": "cc40aa22d2285f8b4b71c8ff0c2da7ddc3d4f55b1e1b998c19fa15b18338d91b"
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+scripts/ci/fixture-session-http.test.ts 46ms
+{"name":"spn120-current-format-repair","args":["node","node_modules/prettier/bin/prettier.cjs","--write","scripts/ci/fixture-session-http.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":194,"peakKiB":0}

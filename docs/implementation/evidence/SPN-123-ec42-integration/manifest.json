@@ -1,0 +1,159 @@
+{
+  "repairParent": "a37289b48825535a9036dfe17b4f671f7464bd65",
+  "actualMain": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "status": "final integration source identified by these hashes; commit and independent review follow",
+  "sources": [
+    {
+      "path": "e2e/diagnostics.spec.ts",
+      "sha256": "bc181cbe13e6617315d9466f61d85d2cfb9c7822a69cf3c5964ecce7bafba028"
+    },
+    {
+      "path": "src/server/diagnostics/store.ts",
+      "sha256": "90c6c24fd4fc9c61a7404cf8ea5cff91e680eec0e3f1c9ef3bb2a58c4e037e43"
+    },
+    {
+      "path": "src/server/diagnostics/routes.ts",
+      "sha256": "54d92fb005a15da6ecd166dfb9e5cf372ff3f68a02e8c5f329f7b5010a22d2ae"
+    },
+    {
+      "path": "src/server/diagnostics/supervisor.test.ts",
+      "sha256": "da8b651f6884f8802ea78a80a985ea126eec4094d337e7c7d567b6fcdc06cf5f"
+    },
+    {
+      "path": "lib/sync-client/src/client.ts",
+      "sha256": "bd803a83094b51fbe00630f2f7f437cdea872fccda4f6992dc622ff505966fee"
+    },
+    {
+      "path": "lib/sync-client/tests/diagnostics.test.ts",
+      "sha256": "05c571cb6d9e1a02b081b193115487102196b5d99c4e9fadc3f2cf22fb9f42b0"
+    },
+    {
+      "path": "docs/diagnostics.md",
+      "sha256": "706125e9ae5cb239bb0bd842995d3318e55af09056943069a1305f54e53e4de8"
+    },
+    {
+      "path": "docs/todo/backlog.json",
+      "sha256": "5e219a72f54a9a3aa8fd9f8323a3645721d3c77a57c74db6ce63b229f25617f4"
+    }
+  ],
+  "exactBlocks": [
+    {
+      "source": "a37289b48825535a9036dfe17b4f671f7464bd65",
+      "path": "e2e/diagnostics.spec.ts",
+      "start": "test('production open, search, local persistence",
+      "endExclusive": "test('Operator downloads real correlated diagnostics",
+      "sha256": "0d8e42436a358c880c5fb98d20fe2a755f9aca650d0102b97299fa810610b8ac",
+      "verbatimRetained": true
+    },
+    {
+      "source": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+      "path": "e2e/diagnostics.spec.ts",
+      "start": "async function openFeedbackComposer",
+      "endExclusive": "test('Operator downloads real correlated diagnostics",
+      "sha256": "5279fb08387057ac19677b29f1382ba7d812d37c3d0ba7b21b02952a16bc4bb9",
+      "verbatimRetained": true
+    }
+  ],
+  "exactMainContracts": [
+    {
+      "path": "docs/implementation/SPN-110.md",
+      "sha256": "8cceeb3f85f7c2aa695139369aad907021baef62ec4bcc69f78b5a20e4cfb07b"
+    },
+    {
+      "path": "docs/todo/SPN-110.md",
+      "sha256": "bcf9ca5dbde84e67a2f11e95c394e6ac137676568ffe87d9dded9d86e800a759"
+    },
+    {
+      "path": "docs/implementation/SPN-157.md",
+      "sha256": "286bd52391ae0fff76b8239d7526a9ad229322927cbe622621e8d32d64ab6e93"
+    },
+    {
+      "path": "docs/implementation/SPN-157-contract-audit.md",
+      "sha256": "29664a67ce0b669934fa7553b7c8fda43a4646d3fc572499db81c77ff457d8a7"
+    },
+    {
+      "path": "docs/implementation/grooming-2026-11-14.md",
+      "sha256": "8e0815ac07fb7b2ee8c5419cbf0933b91767b05621075f24e5a26950d5ed464c"
+    }
+  ],
+  "files": [
+    {
+      "path": "spn123-ec42-contracts.json",
+      "sha256": "ec4502548032cd3d6d145b98ae4b91681d963bdb1f8bc960db332c0c649eceb7",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-contracts.json",
+      "originalSHA256": "ec4502548032cd3d6d145b98ae4b91681d963bdb1f8bc960db332c0c649eceb7"
+    },
+    {
+      "path": "spn123-ec42-contracts.log.gz",
+      "sha256": "eecfb1d3f480b98ddcec72541712bb19182c611931fd7e9e532cae14f87291cd",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-contracts.log",
+      "originalSHA256": "6646d397ad0947eeaafb83ef50b2255a5328dcb91426ba1a44bbc1a9ce8b5ac6"
+    },
+    {
+      "path": "spn123-ec42-format.json",
+      "sha256": "dd6167145e5c44f38b88f7dbd8bc7fc9bd574fafab306d14ebabe865be472ca8",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-format.json",
+      "originalSHA256": "dd6167145e5c44f38b88f7dbd8bc7fc9bd574fafab306d14ebabe865be472ca8"
+    },
+    {
+      "path": "spn123-ec42-format.log.gz",
+      "sha256": "0bbbc148f20904dc8e8ecd40120e9b8f05ca8bc8198c6946500c08586ad86654",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-format.log",
+      "originalSHA256": "e495147cf89ed0f966f71c41a937a8bd5a8d908b35c163b3d3a4eec0394ae821"
+    },
+    {
+      "path": "spn123-ec42-index.json",
+      "sha256": "3c50217952924dfd1104d98f8114db3119d53677a69532170d5c7bf3e8956d76",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-index.json",
+      "originalSHA256": "3c50217952924dfd1104d98f8114db3119d53677a69532170d5c7bf3e8956d76"
+    },
+    {
+      "path": "spn123-ec42-index.log.gz",
+      "sha256": "456e0aa6967f8d50321a579c6f0e67b5607ff913adbaaba99be4414de7094784",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-index.log",
+      "originalSHA256": "eafda22d8783e212ea6fb53aa9a891a07f487d41260b08a9fec9f0af4acfa829"
+    },
+    {
+      "path": "spn123-ec42-lint.json",
+      "sha256": "3078fa853e9fc5761af97ff9eb34e73bbd2e52be81a12f34328008a72e369b91",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-lint.json",
+      "originalSHA256": "3078fa853e9fc5761af97ff9eb34e73bbd2e52be81a12f34328008a72e369b91"
+    },
+    {
+      "path": "spn123-ec42-lint.log.gz",
+      "sha256": "c539b117b258ade9358f1a8de61f22eefedea1cac975d7f127f31cbea094e426",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-lint.log",
+      "originalSHA256": "695db7e5213560064a109ce6410df04f714405a3473be84a8144f511709a6e22"
+    },
+    {
+      "path": "spn123-ec42-integration-source-audit.json.gz",
+      "sha256": "4736c7b6a258874858d95167ece30ae34abd622005fed4301cf8388f2371abef",
+      "originalPath": "/tmp/spn123-ec42-integration-source-audit.json",
+      "originalSHA256": "5dd0a8f9367b318d57b1584961b9950d52cc648c166df1d2fa8a4d9c14e885f8"
+    },
+    {
+      "path": "spn123-ec42-quality.log.gz",
+      "sha256": "ffc287cd5c3df2805248115c10837891d42da10131519500b6f2e8b623eb4a7f",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-quality.log",
+      "originalSHA256": "a7a6a7f0e735656f3fda40ff5c345f7217c9d043e1fea640c8c92f9a0050f6cb"
+    },
+    {
+      "path": "spn123-ec42-quality.json",
+      "sha256": "f85ece6c0a8a01b571d2a8bd6b3b588bc42925a82f330abbde27866b75a87c19",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-quality.json",
+      "originalSHA256": "f85ece6c0a8a01b571d2a8bd6b3b588bc42925a82f330abbde27866b75a87c19"
+    },
+    {
+      "path": "spn123-ec42-quality-v2.log.gz",
+      "sha256": "54f93fa07f3be88f17b8e6613d1d239ae1a3cc682433a70323543d9d179b77cf",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-quality-v2.log",
+      "originalSHA256": "158413953389eb8c24f0ec83c5d6071decd33fc35fd1dafe7c45e3035f67f406"
+    },
+    {
+      "path": "spn123-ec42-quality-v2.json",
+      "sha256": "4510c48a122ce50bb4023d0ffa356f7b0dc61764654aa4bd89a266beb751ec1e",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ec42-quality-v2.json",
+      "originalSHA256": "4510c48a122ce50bb4023d0ffa356f7b0dc61764654aa4bd89a266beb751ec1e"
+    }
+  ]
+}

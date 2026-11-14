@@ -1,0 +1,17 @@
+{
+  "name": "spn120-current-controls",
+  "args": [
+    "node",
+    "--test",
+    "scripts/ci/app-process.test.ts",
+    "scripts/ci/fixture-evidence.test.ts",
+    "scripts/ci/fixture-session.test.ts",
+    "scripts/ci/fixture-session-http.test.ts",
+    "scripts/ci/fixture-audit.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 4454,
+  "peakKiB": 568432
+}
