@@ -1,0 +1,21 @@
+node:internal/modules/esm/resolve:241
+    throw new ERR_MODULE_NOT_FOUND(
+          ^
+
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/Users/mxbaylee/projects/spinel-spn159/node_modules/storybook/bin/index.cjs' imported from /Users/mxbaylee/projects/spinel-spn159/
+    at finalizeResolution (node:internal/modules/esm/resolve:241:11)
+    at moduleResolve (node:internal/modules/esm/resolve:846:10)
+    at defaultResolve (node:internal/modules/esm/resolve:973:11)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:708:20)
+    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:728:38)
+    at nextStep (node:internal/modules/customization_hooks:189:26)
+    at resolve (file:///Users/mxbaylee/projects/spinel-spn159/.storybook/typescript-api.ts:18:12)
+    at nextStep (node:internal/modules/customization_hooks:189:26)
+    at resolveWithHooks (node:internal/modules/customization_hooks:417:10)
+    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:754:16) {
+  code: 'ERR_MODULE_NOT_FOUND',
+  url: 'file:///Users/mxbaylee/projects/spinel-spn159/node_modules/storybook/bin/index.cjs'
+}
+
+Node.js v26.13.0
+{"name":"spn159-diagnostic-build","args":["node","node_modules/storybook/bin/index.cjs","build","--config-dir","test-results/spn159/storybook","--output-dir","test-results/spn159/static"],"code":1,"signal":null,"reason":null,"elapsedMs":104,"peakKiB":0}

@@ -8,6 +8,17 @@ import { readFile } from 'node:fs/promises';
 import { COOKIE_NAME } from '../auth/store.ts';
 import type { RestorePreparation } from '../../shared/restore.ts';
 export const origin = 'https://spinel.example';
+const maintenancePhases: readonly string[] = [
+  'running',
+  'draining',
+  'paused',
+  'stopping',
+  'stopped',
+  'starting',
+  'recovery-required',
+];
+const diagnosticPhase = (value: unknown) =>
+  typeof value === 'string' && maintenancePhases.includes(value) ? value : 'unavailable';
 const hash = (bytes: Uint8Array | string) => createHash('sha256').update(bytes).digest();
 /** This speaks the real WebAuthn assertion format, not a replacement verifier.
  * Only the synthetic public credential is seeded; private keys stay in memory. */
@@ -172,7 +183,13 @@ export function restoreHttpClient(
 ) {
   let cookie = '',
     epoch: string | undefined;
-  const request = async (path: string, body?: unknown, binary?: Buffer) => {
+  const request = async (
+    path: string,
+    body?: unknown,
+    binary?: Buffer,
+    requestSignal?: AbortSignal,
+  ) => {
+    const deadline = requestSignal ?? AbortSignal.timeout(60_000);
     const response = await fetch(base + path, {
       method: body === undefined && !binary ? 'GET' : 'POST',
       headers: {
@@ -191,33 +208,80 @@ export function restoreHttpClient(
         : body === undefined
           ? {}
           : { body: JSON.stringify(body) }),
-      signal: signal
-        ? AbortSignal.any([signal, AbortSignal.timeout(60_000)])
-        : AbortSignal.timeout(60_000),
+      signal: signal ? AbortSignal.any([signal, deadline]) : deadline,
     });
     const replacement = response.headers.get('set-cookie');
     if (replacement?.startsWith(`${COOKIE_NAME}=`)) cookie = replacement.split(';')[0];
     return response;
   };
-  const json = async <T>(response: Response, status = 200): Promise<T> => {
-    if (response.status !== status)
-      throw new Error(`Unexpected fixture HTTP status ${response.status}.`);
+  const json = async <T>(
+    response: Response,
+    status = 200,
+    stage?: `${'authentication' | 'reauthentication'}-${'options' | 'verify'}`,
+  ): Promise<T> => {
+    if (response.status !== status) {
+      if (!stage) throw new Error(`Unexpected fixture HTTP status ${response.status}.`);
+      const body = await response.json().catch(() => null);
+      // Deliberately exclude response text, epochs, cookies and credential payloads.
+      const phase = diagnosticPhase(body?.maintenance?.phase);
+      throw new Error(
+        `Restore ${stage} failed: ${JSON.stringify({ status: response.status, phase })}`,
+      );
+    }
     return response.json() as Promise<T>;
   };
   const prove = async (kind: 'authentication' | 'reauthentication') => {
     const options = await json<{ options: { challenge: string }; challengeId: string }>(
       await request(`/api/auth/${kind}/options`, {}),
+      200,
+      `${kind}-options`,
     );
     await json(
       await request(`/api/auth/${kind}/verify`, {
         challengeId: options.challengeId,
         response: credential.assertion(options.options.challenge, actorId),
       }),
+      200,
+      `${kind}-verify`,
     );
   };
   return {
     request,
     json,
+    /** Readiness is admission plus the original signed-out session, not just an HTTP listener. */
+    async restoredAdmission(deadline: AbortSignal) {
+      const observed = {
+        stage: 'session',
+        sessionStatus: 0,
+        maintenanceStatus: 0,
+        available: false,
+        phase: 'unavailable',
+      };
+      try {
+        const session = await request('/api/auth/session', undefined, undefined, deadline);
+        observed.sessionStatus = session.status;
+        await session.body?.cancel();
+        observed.stage = 'maintenance';
+        const maintenance = await request('/api/maintenance', undefined, undefined, deadline);
+        observed.maintenanceStatus = maintenance.status;
+        if (maintenance.status === 200) {
+          const status = await maintenance.json();
+          observed.available = status?.available === true;
+          observed.phase = diagnosticPhase(status?.phase);
+        } else await maintenance.body?.cancel();
+        observed.stage = 'complete';
+        return {
+          ...observed,
+          ready:
+            observed.sessionStatus === 401 &&
+            observed.maintenanceStatus === 200 &&
+            observed.available &&
+            observed.phase === 'running',
+        };
+      } catch {
+        return { ...observed, ready: false, failure: 'request-failed' };
+      }
+    },
     reauthenticate: () => prove('reauthentication'),
     async authenticate() {
       cookie = '';

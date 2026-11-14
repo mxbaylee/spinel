@@ -87,3 +87,12 @@ When adding an entry:
 - Add a line in the file saying it was modified for Spinel.
 - List it here as: path in Spinel, source repository and commit, license, and a
   one-line summary of the changes.
+
+`docs/implementation/evidence/SPN-149/original-13557930894-playwright-source.json`
+retains diagnostic excerpts from the Apache-2.0
+[Playwright 1.64.1 frame manager](https://github.com/microsoft/playwright/blob/cfe490d941f992655948eee8fd4fd94e1c4234bf/packages/playwright-core/src/server/frames.ts),
+commit `cfe490d941f992655948eee8fd4fd94e1c4234bf`. The excerpts are unchanged
+source lines extracted into JSON with line numbers and diagnostic provenance;
+the surrounding code is omitted. The file preserves the original Google and
+Microsoft copyright notice and Apache-2.0 license header. This extraction does
+not modify or replace the installed dependency.
