@@ -1,0 +1,39 @@
+{
+  "observedAt": "2026-11-14T05:42:51.306915+00:00",
+  "pr": 287,
+  "source": "06a1d3c5b7d1b10065b96615cd18e5c4199cbdad",
+  "squash": "ecef3c6d6ea5093bdd9fcf7c0a69c5e5218b4a6f",
+  "mergedAt": "2026-11-14T05:41:57Z",
+  "validation": "366194a7ca2baef75c56abf6d53ddafc8c90b64a",
+  "sourceSquashTrees": {
+    "source": "13cbcabc98bf52ebed15a83e47fd86cc76387e1b",
+    "squash": "13cbcabc98bf52ebed15a83e47fd86cc76387e1b"
+  },
+  "guardedBranch": "codex/maintenance-diagnostics-registration",
+  "cleanBefore": true,
+  "activePrOwners": [],
+  "allocationAncestorPreserved": "06a1d3c5b7d1b10065b96615cd18e5c4199cbdad",
+  "actions": [
+    {
+      "action": "detach clean registration worktree",
+      "exactHead": "06a1d3c5b7d1b10065b96615cd18e5c4199cbdad",
+      "result": "detached"
+    },
+    {
+      "action": "delete local branch with expected-head guard",
+      "expected": "06a1d3c5b7d1b10065b96615cd18e5c4199cbdad",
+      "result": "deleted"
+    },
+    {
+      "action": "remote branch deletion",
+      "result": "already absent after merge; no deletion sent"
+    },
+    {
+      "action": "delete tracking ref with expected-head guard",
+      "expected": "06a1d3c5b7d1b10065b96615cd18e5c4199cbdad",
+      "result": "deleted"
+    }
+  ],
+  "accessFailures": [],
+  "cleanDetachedAfter": true
+}

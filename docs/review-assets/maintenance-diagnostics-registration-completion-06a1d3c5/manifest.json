@@ -1,0 +1,64 @@
+{
+  "algorithm": "sha256",
+  "excludes": "manifest.json itself",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 2798,
+      "sha256": "0a947d7d2d8d4b8e7c5451d9e8633eb59f1de1ed363d539548290ec7a4a9d33a"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 1290,
+      "sha256": "aaac298cc2e6af4ad410a8f45050f46c642dec6612593ed6715b41c523022394"
+    },
+    {
+      "path": "content-audit.json",
+      "bytes": 226,
+      "sha256": "6a8085777d642b5a11e0514dbd761186753908aafa67d3616bf4bef679d24416"
+    },
+    {
+      "path": "merged-backlog.json",
+      "bytes": 549,
+      "sha256": "5696fa9b4523ddfbd2d75f91b11d8cb18d601fbd36e4a38d9e2ebe29a221ae25"
+    },
+    {
+      "path": "open-prs.json.gz",
+      "bytes": 770,
+      "sha256": "e72281179b8ad7b32ad33f66e9b58ff11fdbeaa115db4b78aa5df145387ca092",
+      "decoded": {
+        "bytes": 3134,
+        "sha256": "a2ba904aad488877d49fe13712b79ba3b5e8c96de1ad0369d0c86819c5b0de2a"
+      }
+    },
+    {
+      "path": "pr-merged.json.gz",
+      "bytes": 3725,
+      "sha256": "0972b72854fe71301ff46d8db9347f3db28d29693dd6a3a76f7c2ff6f6e50788",
+      "decoded": {
+        "bytes": 20287,
+        "sha256": "733c564cfd8d7e1c9a92e80878fe69b338651197dfec44f0116b0179665ad85e"
+      }
+    },
+    {
+      "path": "remote-after.txt",
+      "bytes": 182,
+      "sha256": "861d7a2d98b5c85b7f3189c633e74541857f94a0fe83af3289bd5310274e895b"
+    },
+    {
+      "path": "remote-before.txt",
+      "bytes": 182,
+      "sha256": "861d7a2d98b5c85b7f3189c633e74541857f94a0fe83af3289bd5310274e895b"
+    },
+    {
+      "path": "worktrees-after.txt",
+      "bytes": 10767,
+      "sha256": "93dadba2b55fb31a65a9803f66cfe35c2ab117120000f55b91f56faeb19b54ab"
+    },
+    {
+      "path": "worktrees-before.txt",
+      "bytes": 10820,
+      "sha256": "fae0a1413e1729ed0e4dd5917b68966fb8c441577e4fbf27908a384a12a86113"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "observedAt": "2026-11-14T05:43:31.016510+00:00",
+  "payloadsScanned": 9,
+  "scope": "Bounded private-key/GitHub-token/AWS-key/personal-path scan plus source review, not universal credential detection",
+  "findings": []
+}

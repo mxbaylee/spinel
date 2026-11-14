@@ -1,0 +1,26 @@
+{
+  "name": "Spinel",
+  "prefix": "SPN",
+  "next_id": 161,
+  "personas": "docs/product/personas.md",
+  "grooming": {
+    "every": 7,
+    "last": "2026-11-12",
+    "completed_since": ["SPN-148", "SPN-145", "SPN-149"]
+  },
+  "size": {
+    "soft": 10000,
+    "hard": 100000,
+    "exclude": [
+      "package-lock.json",
+      "pnpm-lock.yaml",
+      "yarn.lock",
+      "*.lock",
+      "**/dist/**",
+      "**/*.min.js",
+      "**/__snapshots__/**",
+      "docs/todo/readme.md"
+    ]
+  },
+  "pr_title_exceptions": ["🧹 Groom backlog", "⬆️ Bump"]
+}
