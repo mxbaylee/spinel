@@ -1,0 +1,10 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-157
+
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  00:57:39
+   Duration  251ms (transform 64%, import 17%, tests 16%, worker 3%)
+
+{"name":"spn157-review-b-50dc-controls","args":["node","node_modules/vitest/vitest.mjs","run","src/server/maintenance/ownership.test.ts","src/server/maintenance/supervisor-test-control.test.ts","--cache=false","--fsModuleCachePath=/tmp/spinel-dependabot-2026-11-11/spn157-review-b-50dc-module-cache"],"code":0,"signal":null,"reason":null,"elapsedMs":564,"peakKiB":314608}

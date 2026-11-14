@@ -1,0 +1,14 @@
+{
+  "name": "spn157-review-b-50dc-aggregate",
+  "args": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "scripts/ci/coverage-result.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 1235,
+  "peakKiB": 317136
+}

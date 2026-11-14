@@ -1,0 +1,16 @@
+{
+  "a": {
+    "path": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-f59d23ce.md",
+    "sha256": "a57b94c9fec27679941ba017efc6072c0d375c21793331374c6dfe6a514366b3",
+    "bytes": 8489,
+    "candidate": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+    "score": "100/100"
+  },
+  "b": {
+    "path": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-f59d23ce.md",
+    "sha256": "e33f2b9cf1bddc39d70eb3da4a541b05e99b9840fb1f17ce6ec605c519723687",
+    "bytes": 12103,
+    "candidate": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+    "score": "100/100"
+  }
+}

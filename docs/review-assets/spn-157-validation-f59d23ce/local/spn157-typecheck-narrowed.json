@@ -1,0 +1,13 @@
+{
+  "name": "spn157-typecheck-narrowed",
+  "args": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 2474,
+  "peakKiB": 1801184
+}

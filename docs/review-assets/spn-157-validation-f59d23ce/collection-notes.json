@@ -1,0 +1,13 @@
+[
+  {
+    "kind": "local transport setup",
+    "detail": "The initial parallel Storybook artifact redirection ran before the artifact directory existed and exited without issuing either download. After the directory existed, both read-only downloads were issued. No hosted job or test was retried or changed."
+  },
+  {
+    "kind": "local archive verifier display correction",
+    "firstLocalArchiveCommit": "fb102f7924b37f475229e31ba5af0504b55737ce",
+    "firstTree": "7bf649430c05404cfe9bcafa697e9e2b974d5f91",
+    "detail": "The first assembly verifier used human-readable git diff names; Git quoted the original Unicode apostrophe in an artifact member path, so the prefix assertion stopped. NUL-delimited paths independently showed all476 files under the reserved archive prefix, correct parent f59 and no candidate mutation. The final verifier uses git diff --name-only -z. This is a local evidence-verifier correction, not a test/CI failure or retry.",
+    "originalQuotedMember": "original-json/theme-screenshots-production-2/test-results/production/offline-sign-out-locked-de-0db6e-his-account\u2019s-local-changes-production/sync-diagnostics.json.gz"
+  }
+]

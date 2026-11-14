@@ -1,0 +1,14 @@
+{
+  "name": "spn157-audit-receipt-format",
+  "args": [
+    "node",
+    "node_modules/prettier/bin/prettier.cjs",
+    "--write",
+    "docs/review-assets/spn-157-contract-audit/receipt.json"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 123,
+  "peakKiB": 0
+}

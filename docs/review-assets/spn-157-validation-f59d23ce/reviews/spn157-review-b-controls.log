@@ -1,0 +1,10 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-157
+
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  18:49:12
+   Duration  102ms (import 38%, tests 34%, transform 24%, worker 4%)
+
+{"name":"spn157-review-b-controls","args":["node","node_modules/vitest/vitest.mjs","run","src/server/maintenance/ownership.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":306,"peakKiB":207216}

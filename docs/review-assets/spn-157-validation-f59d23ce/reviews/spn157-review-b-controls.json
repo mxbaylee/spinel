@@ -1,0 +1,14 @@
+{
+  "name": "spn157-review-b-controls",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/server/maintenance/ownership.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 306,
+  "peakKiB": 207216
+}

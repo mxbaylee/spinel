@@ -1,0 +1,172 @@
+{
+  "id": 132400210929,
+  "run_id": 43579169044,
+  "workflow_name": "\ud83d\udc8e CI",
+  "head_branch": "codex/spn-157-current-investigation",
+  "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/43579169044",
+  "run_attempt": 1,
+  "node_id": "CR_kwDOVNik2c8AAAAe06rj8Q",
+  "head_sha": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+  "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/132400210929",
+  "html_url": "https://github.com/mxbaylee/spinel/actions/runs/43579169044/job/132400210929",
+  "status": "completed",
+  "conclusion": "success",
+  "created_at": "2026-11-14T09:10:00Z",
+  "started_at": "2026-11-14T09:17:43Z",
+  "completed_at": "2026-11-14T09:57:22Z",
+  "name": "Doc responsiveness (mobile)",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1,
+      "started_at": "2026-11-14T09:17:44Z",
+      "completed_at": "2026-11-14T09:17:45Z"
+    },
+    {
+      "name": "Require comparison applicability",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2,
+      "started_at": "2026-11-14T09:17:45Z",
+      "completed_at": "2026-11-14T09:17:45Z"
+    },
+    {
+      "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3,
+      "started_at": "2026-11-14T09:17:45Z",
+      "completed_at": "2026-11-14T09:17:49Z"
+    },
+    {
+      "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 4,
+      "started_at": "2026-11-14T09:17:49Z",
+      "completed_at": "2026-11-14T09:17:53Z"
+    },
+    {
+      "name": "Install candidate",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5,
+      "started_at": "2026-11-14T09:17:53Z",
+      "completed_at": "2026-11-14T09:18:06Z"
+    },
+    {
+      "name": "Install Chromium",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 6,
+      "started_at": "2026-11-14T09:18:06Z",
+      "completed_at": "2026-11-14T09:18:26Z"
+    },
+    {
+      "name": "Immutable uncapped source with matched compatibility and native observations",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 7,
+      "started_at": "2026-11-14T09:18:26Z",
+      "completed_at": "2026-11-14T09:18:28Z"
+    },
+    {
+      "name": "Use identical browser workload on both sources",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 8,
+      "started_at": "2026-11-14T09:18:28Z",
+      "completed_at": "2026-11-14T09:18:28Z"
+    },
+    {
+      "name": "Install and build baseline",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 9,
+      "started_at": "2026-11-14T09:18:28Z",
+      "completed_at": "2026-11-14T09:18:42Z"
+    },
+    {
+      "name": "Observe baseline first attempts",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 10,
+      "started_at": "2026-11-14T09:18:42Z",
+      "completed_at": "2026-11-14T09:44:05Z"
+    },
+    {
+      "name": "Build candidate",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 11,
+      "started_at": "2026-11-14T09:44:05Z",
+      "completed_at": "2026-11-14T09:44:07Z"
+    },
+    {
+      "name": "Verify candidate responsiveness and boundaries",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 12,
+      "started_at": "2026-11-14T09:44:07Z",
+      "completed_at": "2026-11-14T09:57:15Z"
+    },
+    {
+      "name": "Verify candidate evidence and selected paired comparison",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 13,
+      "started_at": "2026-11-14T09:57:15Z",
+      "completed_at": "2026-11-14T09:57:17Z"
+    },
+    {
+      "name": "Retain every baseline and candidate attempt",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 14,
+      "started_at": "2026-11-14T09:57:17Z",
+      "completed_at": "2026-11-14T09:57:19Z"
+    },
+    {
+      "name": "Post Immutable uncapped source with matched compatibility and native observations",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 26,
+      "started_at": "2026-11-14T09:57:19Z",
+      "completed_at": "2026-11-14T09:57:19Z"
+    },
+    {
+      "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 27,
+      "started_at": "2026-11-14T09:57:19Z",
+      "completed_at": "2026-11-14T09:57:19Z"
+    },
+    {
+      "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 28,
+      "started_at": "2026-11-14T09:57:19Z",
+      "completed_at": "2026-11-14T09:57:19Z"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 29,
+      "started_at": "2026-11-14T09:57:19Z",
+      "completed_at": "2026-11-14T09:57:20Z"
+    }
+  ],
+  "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/132400210929",
+  "labels": [
+    "ubuntu-latest"
+  ],
+  "runner_id": 1000053602,
+  "runner_name": "GitHub Actions 1000053602",
+  "runner_group_id": 0,
+  "runner_group_name": "GitHub Actions"
+}

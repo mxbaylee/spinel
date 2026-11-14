@@ -1,0 +1,13 @@
+{
+  "name": "spn157-final-typecheck",
+  "args": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 2411,
+  "peakKiB": 1858064
+}

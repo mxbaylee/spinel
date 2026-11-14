@@ -1,0 +1,268 @@
+[
+  {
+    "artifact": "doc-callback-lifetimes-desktop",
+    "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+    "sourceKind": "retained baseline",
+    "stats": {
+      "startTime": "2026-11-14T09:10:51.737Z",
+      "duration": 112610.29599999999,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "doc-callback-lifetimes-desktop",
+    "member": "playwright-report/doc-callback-lifetimes.json",
+    "sourceKind": "candidate",
+    "stats": {
+      "startTime": "2026-11-14T09:12:47.905Z",
+      "duration": 89675.566,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "doc-callback-lifetimes-mobile",
+    "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+    "sourceKind": "retained baseline",
+    "stats": {
+      "startTime": "2026-11-14T09:15:29.549Z",
+      "duration": 358977.225,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "doc-callback-lifetimes-mobile",
+    "member": "playwright-report/doc-callback-lifetimes.json",
+    "sourceKind": "candidate",
+    "stats": {
+      "startTime": "2026-11-14T09:21:34.256Z",
+      "duration": 238585.87,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "doc-responsiveness-desktop",
+    "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+    "sourceKind": "retained baseline",
+    "stats": {
+      "startTime": "2026-11-14T09:11:08.356Z",
+      "duration": 324126.954,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "doc-responsiveness-desktop",
+    "member": "playwright-report/doc-responsiveness.json",
+    "sourceKind": "candidate",
+    "stats": {
+      "startTime": "2026-11-14T09:16:34.670Z",
+      "duration": 220630.229,
+      "expected": 7,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "doc-responsiveness-mobile",
+    "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+    "sourceKind": "retained baseline",
+    "stats": {
+      "startTime": "2026-11-14T09:18:43.227Z",
+      "duration": 1522153.198,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "doc-responsiveness-mobile",
+    "member": "playwright-report/doc-responsiveness.json",
+    "sourceKind": "candidate",
+    "stats": {
+      "startTime": "2026-11-14T09:44:08.849Z",
+      "duration": 786529.621,
+      "expected": 7,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "theme-screenshots-development-1",
+    "member": "playwright-report/development-1-of-2.json",
+    "sourceKind": "candidate",
+    "stats": {
+      "startTime": "2026-11-14T09:16:07.353Z",
+      "duration": 846996.139,
+      "expected": 74,
+      "skipped": 3,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "theme-screenshots-development-2",
+    "member": "playwright-report/development-2-of-2.json",
+    "sourceKind": "candidate",
+    "stats": {
+      "startTime": "2026-11-14T09:17:26.537Z",
+      "duration": 1038553.271,
+      "expected": 75,
+      "skipped": 1,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "theme-screenshots-mobile-https",
+    "member": "playwright-report/mobile-https.json",
+    "sourceKind": "candidate",
+    "stats": {
+      "startTime": "2026-11-14T09:15:40.543Z",
+      "duration": 65137.248,
+      "expected": 10,
+      "skipped": 3,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "theme-screenshots-offline-upgrade",
+    "member": "playwright-report/offline-upgrade.json",
+    "sourceKind": "candidate",
+    "stats": {
+      "startTime": "2026-11-14T09:17:33.342Z",
+      "duration": 44077.815,
+      "expected": 3,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "theme-screenshots-production-1",
+    "member": "playwright-report/production-1-of-2.json",
+    "sourceKind": "candidate",
+    "stats": {
+      "startTime": "2026-11-14T09:14:58.339Z",
+      "duration": 642541.8659999999,
+      "expected": 81,
+      "skipped": 3,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "theme-screenshots-production-2",
+    "member": "playwright-report/production-2-of-2.json",
+    "sourceKind": "candidate",
+    "stats": {
+      "startTime": "2026-11-14T09:17:57.659Z",
+      "duration": 639673.0719999999,
+      "expected": 84,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "theme-screenshots-supervised-restore",
+    "member": "playwright-report/supervised-restore.json",
+    "sourceKind": "candidate",
+    "stats": {
+      "startTime": "2026-11-14T09:12:18.411Z",
+      "duration": 368916.836,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "theme-screenshots-sync-development",
+    "member": "playwright-report/sync-development.json",
+    "sourceKind": "candidate",
+    "stats": {
+      "startTime": "2026-11-14T09:18:09.555Z",
+      "duration": 178294.014,
+      "expected": 21,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "theme-screenshots-sync-production",
+    "member": "playwright-report/sync-production.json",
+    "sourceKind": "candidate",
+    "stats": {
+      "startTime": "2026-11-14T09:17:09.278Z",
+      "duration": 567895.521,
+      "expected": 98,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "theme-screenshots-sync-soak-doc",
+    "member": "playwright-report/sync-soak-doc.json",
+    "sourceKind": "candidate",
+    "stats": {
+      "startTime": "2026-11-14T09:15:59.197Z",
+      "duration": 34428.945,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  },
+  {
+    "artifact": "theme-screenshots-sync-soak-sheet",
+    "member": "playwright-report/sync-soak-sheet.json",
+    "sourceKind": "candidate",
+    "stats": {
+      "startTime": "2026-11-14T09:17:18.547Z",
+      "duration": 81798.95,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "topLevelErrors": 0
+  }
+]

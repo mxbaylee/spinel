@@ -1,0 +1,17 @@
+{
+  "name": "spn157-audit-pr-shape",
+  "args": [
+    "node",
+    "scripts/backlog/cli.ts",
+    "pr",
+    "--base",
+    "754e65317744e5ce97ede501935c6586e4875f2a",
+    "--title",
+    "🛟 SPN-157 Recover maintenance and restore across process handoffs"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 404,
+  "peakKiB": 179264
+}

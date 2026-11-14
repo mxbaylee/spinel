@@ -1,0 +1,14 @@
+{
+  "name": "spn157-ownership-first",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/server/maintenance/ownership.test.ts"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 545,
+  "peakKiB": 286656
+}

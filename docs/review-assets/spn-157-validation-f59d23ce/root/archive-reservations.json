@@ -1,0 +1,34 @@
+{
+  "source": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+  "base": "87c34e30ed810e6789d876e55b23dcbb349fa506",
+  "date": "2026-11-14",
+  "published": false,
+  "validation": {
+    "tag": "archive/spn-157-validation-f59d23ce-20261114",
+    "path": "docs/review-assets/spn-157-validation-f59d23ce/",
+    "contains": [
+      "exact reviewed source/base/tree and frozen spec/investigation",
+      "all review iterations available with exact head, original reports and owned check/cleanup receipts",
+      "root independent verification and published native archive bindings",
+      "full first attempt current-head workflow/job/plan/aggregate identities and relevant original failure bytes, no retry verdict replacement",
+      "pre/post publication source identities and durable payload manifest"
+    ]
+  },
+  "completion": {
+    "tag": "archive/spn-157-completion-f59d23ce-20261114",
+    "path": "docs/review-assets/spn-157-completion-f59d23ce/",
+    "contains": [
+      "accepted PR/current-head checks and squash merge identity",
+      "validation archive commit/tag binding",
+      "all ticket-created refs/worktrees and live active-PR ownership before/after guarded cleanup",
+      "old44 unique code/history archive binding, exact guarded deletions or remaining blocked refs",
+      "actual cleanup results and final main/index/grooming count"
+    ]
+  },
+  "oldImplementation": {
+    "tag": "archive/spn-157-local-44f9a536-20261114",
+    "target": "44f9a5365fe290236b882606933e63b8ef317363",
+    "contains": "Full reachable original44/932 code and commit history, preserving exact Git objects before deleting obsolete implementation branch"
+  },
+  "publicationGate": "No publication until manager confirms both exact f59d reviews and body. These are reservations only, not created refs or existing evidence."
+}

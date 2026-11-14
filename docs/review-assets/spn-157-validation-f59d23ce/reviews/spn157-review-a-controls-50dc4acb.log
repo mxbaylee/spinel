@@ -1,0 +1,10 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-157
+
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  00:51:17
+   Duration  261ms (transform 64%, import 17%, tests 16%, worker 3%)
+
+{"name":"spn157-review-a-controls-50dc4acb","args":["node","node_modules/vitest/vitest.mjs","run","src/server/maintenance/ownership.test.ts","src/server/maintenance/supervisor-test-control.test.ts","--cache=false","--fsModuleCachePath","/tmp/spn157-review-a-cache-50dc4acb"],"code":0,"signal":null,"reason":null,"elapsedMs":579,"peakKiB":314320}

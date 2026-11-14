@@ -1,0 +1,20 @@
+{
+  "name": "spn157-integrated87-format",
+  "args": [
+    "node",
+    "node_modules/prettier/bin/prettier.cjs",
+    "--check",
+    "docs/implementation/SPN-157.md",
+    "docs/implementation/SPN-157-contract-audit.md",
+    "docs/todo/SPN-098.md",
+    "docs/todo/backlog.json",
+    "docs/review-assets/spn-157-contract-audit/source-plan-audit.json",
+    "docs/review-assets/spn-157-contract-audit/receipt.json",
+    "docs/review-assets/spn-157-contract-audit/main87-source-identity.json"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 270,
+  "peakKiB": 181040
+}

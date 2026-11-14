@@ -1,0 +1,12 @@
+{
+  "source": "44f9a5365fe290236b882606933e63b8ef317363",
+  "observedAt": "2026-11-14T03:16:07.714931+00:00",
+  "methods": [
+    "ps command identity audit",
+    "lsof node/npm/esbuild cwd audit"
+  ],
+  "commandMatches": [],
+  "cwdMatches": [],
+  "ownedProcessesRemaining": [],
+  "processesKilled": []
+}

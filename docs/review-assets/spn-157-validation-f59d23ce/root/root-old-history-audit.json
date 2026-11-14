@@ -1,0 +1,14 @@
+{
+  "oldHead": "44f9a5365fe290236b882606933e63b8ef317363",
+  "parent": "93257f2350bf015002fa0055c8b49c631e212d84",
+  "tree": "a8261cca3855d7e800dc63804e1f36116b3263f8",
+  "reservedTag": "archive/spn-157-local-44f9a536-20261114",
+  "remoteTagAbsent": true,
+  "obsoleteBranchStillPresent": true,
+  "notDeleted": true,
+  "commitSubject": "\ud83d\udedf SPN-157 Preserve pre-barrier failures and wrapped handoff receipts",
+  "uniqueVsMain": "2",
+  "remoteVerified": "44f9a5365fe290236b882606933e63b8ef317363\trefs/tags/archive/spn-157-local-44f9a536-20261114",
+  "publishedAt": "2026-11-14T09:36:03.032807+00:00",
+  "published": true
+}

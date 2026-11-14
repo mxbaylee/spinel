@@ -1,0 +1,23 @@
+[
+  {
+    "group": "unit",
+    "passed": true,
+    "originalJsonSha256": "625e9fc79081d072f9b5fd0211b540a81c4e15ef7d7280ef1a8f334ed599c017",
+    "planSha256": "d889d71299d918f4cd6fc031b375bdb3c10998c3f4ec8ecf642e20025b3b6621",
+    "tested": "92959827e4dee1c3bf9d186fbe51b8b447c26198"
+  },
+  {
+    "group": "lib",
+    "passed": true,
+    "originalJsonSha256": "cbc5a1bbe90f6fd907fd27707920b6e4166a979db2beae29959a72a9e3640b4c",
+    "planSha256": "d889d71299d918f4cd6fc031b375bdb3c10998c3f4ec8ecf642e20025b3b6621",
+    "tested": "92959827e4dee1c3bf9d186fbe51b8b447c26198"
+  },
+  {
+    "group": "browser",
+    "passed": true,
+    "originalJsonSha256": "f30819b4d3ddfaff1133cb903e863ecc8f8a541e55060c19f5821a37c3e4e980",
+    "planSha256": "d889d71299d918f4cd6fc031b375bdb3c10998c3f4ec8ecf642e20025b3b6621",
+    "tested": "92959827e4dee1c3bf9d186fbe51b8b447c26198"
+  }
+]

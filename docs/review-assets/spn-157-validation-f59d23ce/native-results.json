@@ -1,0 +1,29 @@
+{
+  "supervisor": {
+    "job": 132400210873,
+    "rawSha256": "152d06144855a5fc47a33c965034320e2fd77ba065e9efe44df776bd2a96077b",
+    "bytes": 137870,
+    "observedLines": [
+      "2026-11-14T09:22:49.5961161Z    \u2713 SIGKILL at durable running reconciles into maintenance with original rows and closed orphan handles 972ms",
+      "2026-11-14T09:22:49.6010121Z    \u2713 complete application and authenticated archive commit and release the selected candidate: ownership-first 11740ms",
+      "2026-11-14T09:22:49.6011420Z    \u2713 complete application and authenticated archive commit and release the selected candidate: readiness-first 11739ms",
+      "2026-11-14T09:22:49.6090743Z  Test Files  1 passed (1)",
+      "2026-11-14T09:22:49.6091270Z       Tests  131 passed (131)",
+      "2026-11-14T09:22:49.6092054Z    Duration  400.38s (tests 100%)"
+    ]
+  },
+  "recovery": {
+    "job": 132400210884,
+    "rawSha256": "fa83076f102ddd36b760c2edb15662d6402e115ebd2413c1ff7e691cd3a1a4d0",
+    "bytes": 106605,
+    "observedLines": [
+      "2026-11-14T09:22:05.1487617Z  \u2713 src/server/maintenance/restore-crash.integration.test.ts (11 tests) 142861ms",
+      "2026-11-14T09:22:41.1643557Z  \u2713 src/server/backup/restore-ownership.test.ts (12 tests) 845ms",
+      "2026-11-14T09:23:37.3122408Z  \u2713 src/server/maintenance/ownership.test.ts (6 tests) 28ms",
+      "2026-11-14T09:23:40.8503725Z  \u2713 src/server/maintenance/supervisor-test-control.test.ts (4 tests) 15ms",
+      "2026-11-14T09:23:46.6420590Z  Test Files  49 passed (49)",
+      "2026-11-14T09:23:46.6426104Z       Tests  619 passed (619)",
+      "2026-11-14T09:23:46.6431659Z    Duration  304.61s (tests 94%, import 4%, transform 1%)"
+    ]
+  }
+}

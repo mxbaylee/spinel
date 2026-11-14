@@ -1,0 +1,9 @@
+{
+  "source": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+  "observedAt": "2026-11-14T09:02:53.442794+00:00",
+  "commandMatches": [],
+  "ownedProcessesRemaining": [],
+  "processesKilled": [],
+  "serialLockPresent": false,
+  "scope": "Synchronous CLI-only checks, exited; no app/server/browser/native workload launched."
+}

@@ -1,0 +1,14 @@
+{
+  "name": "spn157-install",
+  "args": [
+    "npm",
+    "ci",
+    "--no-audit",
+    "--no-fund"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": "Resource guard",
+  "elapsedMs": 1254,
+  "peakKiB": 552784
+}

@@ -1,0 +1,442 @@
+[
+  {
+    "path": "local/spn157-audit-backlog.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-audit-backlog.json",
+    "sha256": "544465c9a6a29bad21b48dd1f8deb439182e8b24175effe0a8664583e6b50b32"
+  },
+  {
+    "path": "local/spn157-audit-format-check.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-audit-format-check.json",
+    "sha256": "29648e1f55c45c0082b942b4faed2850034d86369f42f53c4383e70a7ea22349"
+  },
+  {
+    "path": "local/spn157-audit-format.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-audit-format.json",
+    "sha256": "8ef46879da8368ea3938d8c305421b116502ad5836d5dd5f9db2feab5f22e29a"
+  },
+  {
+    "path": "local/spn157-audit-index.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-audit-index.json",
+    "sha256": "e20e76770a5a7fd188a96eda5595bc85e9de5704a800add53f1dd8f56324faf1"
+  },
+  {
+    "path": "local/spn157-audit-pr-shape.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-audit-pr-shape.json",
+    "sha256": "a3526fc6baf7198e71bfe1f319e4630d7ac0a0d3d3c09d13a16950fb93ee3e35"
+  },
+  {
+    "path": "local/spn157-audit-receipt-format.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-audit-receipt-format.json",
+    "sha256": "7348eb5d9c79dec149a1820925405cabe98090853d0b0b3b5446d6914c0f65d0"
+  },
+  {
+    "path": "local/spn157-backlog.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-backlog.json",
+    "sha256": "80c17d546de479f154f00f094fee182c69ab46571a04af81bbf972a40bb05682"
+  },
+  {
+    "path": "local/spn157-cause-controls.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-cause-controls.json",
+    "sha256": "0f3a534646ffbf1050d4b076018501468f0267612edbd883a99d5df63ed8dfd0"
+  },
+  {
+    "path": "local/spn157-cause-controls.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-cause-controls.log",
+    "sha256": "10981247ac043a8a7e17406cecd9bd81ed5e83e3078929997b261624523e49fa"
+  },
+  {
+    "path": "local/spn157-cause-format.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-cause-format.json",
+    "sha256": "ef32fd66c062fd50752a526717c2247601c8d362bdcbb83d03fc95bec9c71a7c"
+  },
+  {
+    "path": "local/spn157-cause-lint.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-cause-lint.json",
+    "sha256": "11f55a0c4143c3d437c315ae29ca9afe30639ae9dd9ad7726014ea96a65f29cd"
+  },
+  {
+    "path": "local/spn157-cause-lint.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-cause-lint.log",
+    "sha256": "56628d1469aa4bd7b002637e2390820fc48b4ba43e5597a74c24535fb88ff4a7"
+  },
+  {
+    "path": "local/spn157-cause-typecheck.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-cause-typecheck.json",
+    "sha256": "b7e84b5a5d8bda1531de9e2665cd465a2d7e1155216ec5bfedc4f1fe1453963c"
+  },
+  {
+    "path": "local/spn157-cause-typecheck.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-cause-typecheck.log",
+    "sha256": "6760d42a42ba9bba7fda3e674f672510692356e05b4054114c1bb3609fd5c8aa"
+  },
+  {
+    "path": "local/spn157-current-format.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-current-format.json",
+    "sha256": "f7ecbb61e5f73a4854907a0c52af71d6d28f3f30ab9acc7581d06fcf6e4aa02e"
+  },
+  {
+    "path": "local/spn157-final-controls.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-final-controls.json",
+    "sha256": "7f9c49ad439f92c8d00a9ca0874ca9a25fff414b6bedf9c09032de59bb4e543a"
+  },
+  {
+    "path": "local/spn157-final-format.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-final-format.json",
+    "sha256": "d7bf8cc3c38e7c021963a4f1639b1689ae093ab3f6aec8e99907d84dc833aad9"
+  },
+  {
+    "path": "local/spn157-final-lint.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-final-lint.json",
+    "sha256": "1aea209e2cb7dc39630ccd6421cee6265f77c7db50a9795e262910ab2ad1e00b"
+  },
+  {
+    "path": "local/spn157-final-typecheck.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-final-typecheck.json",
+    "sha256": "68073c6465922aea6b3ad75986be410f16badf0675b40baaf149beb2f0a075ce"
+  },
+  {
+    "path": "local/spn157-format-1.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-format-1.json",
+    "sha256": "7033c2b3fd46ecc3c4173a725235cf58e3ac6dee5609cdc68275684815c325ad"
+  },
+  {
+    "path": "local/spn157-install-normal-pressure.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-install-normal-pressure.json",
+    "sha256": "fbcfb9300a66005ee9249e954d349fce265e7f816233f47479781154ee7d78ed"
+  },
+  {
+    "path": "local/spn157-install.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-install.json",
+    "sha256": "30564bcc0ba4781531d75c39b3cc14d609ca23c6af6604b052ec2f91f3d4a06b"
+  },
+  {
+    "path": "local/spn157-integrated87-backlog.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-integrated87-backlog.json",
+    "sha256": "983982132858314dbd54223eaf6d7c0dd04b6c6b29297bf8736eb474e42b1f44"
+  },
+  {
+    "path": "local/spn157-integrated87-format.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-integrated87-format.json",
+    "sha256": "45df647eaaadfcdf5aa2bac5f9c2de8984b55ef082248be2465e9debabb4c42c"
+  },
+  {
+    "path": "local/spn157-integrated87-index.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-integrated87-index.json",
+    "sha256": "0e40a762b06fc199cd54f87e324b7e4d78e0d4dc355a5dacbd9c786f51646bc6"
+  },
+  {
+    "path": "local/spn157-integrated87-pr.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-integrated87-pr.json",
+    "sha256": "8042c3d783583b634a14fab83cfd1036c5f2153f555e4e1b3738be0841abff02"
+  },
+  {
+    "path": "local/spn157-lint.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-lint.json",
+    "sha256": "c2240c2ba7eed3a907e0b86f54ce29db650a699632bb7c31185c4e53916c342d"
+  },
+  {
+    "path": "local/spn157-ownership-current.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-ownership-current.json",
+    "sha256": "994aa74aa1aa9569b155ce72449bb23648f0716a9a0e2fa1862bfe00f6111309"
+  },
+  {
+    "path": "local/spn157-ownership-first.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-ownership-first.json",
+    "sha256": "7e886bc4aa9ec0b8db95b025cbd25a83bca4332551b64e6bbd709cb728f4cf36"
+  },
+  {
+    "path": "local/spn157-repair-controls.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-repair-controls.json",
+    "sha256": "fb3b91c313df56ba40b5e4700fe16d95d3c8fd390d73d9d6ca94d146854891f9"
+  },
+  {
+    "path": "local/spn157-repair-controls.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-repair-controls.log",
+    "sha256": "4c8395265d5c57c17d5dd5e19364b6ead6d5e4d37b868767ff1307b760912154"
+  },
+  {
+    "path": "local/spn157-repair-format.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-repair-format.json",
+    "sha256": "6a6293792cb82af85b6be7fa9fc41419b07f116d67ad0d7871ab3891cb66d0aa"
+  },
+  {
+    "path": "local/spn157-repair-lint.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-repair-lint.json",
+    "sha256": "b14b8117bf2c7fba58f7c2aa08d36d54ecd7d229d222cd1dfa503320c293dd4e"
+  },
+  {
+    "path": "local/spn157-repair-lint.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-repair-lint.log",
+    "sha256": "fe4882c6ae84ae27a75e6617ee27795345c5406d8d103888e3269922a66a38af"
+  },
+  {
+    "path": "local/spn157-repair-typecheck.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-repair-typecheck.json",
+    "sha256": "18f791f0f585ce15428f0ec19e319384c1a3d396fc487c2312d9d526ed16b8e5"
+  },
+  {
+    "path": "local/spn157-repair-typecheck.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-repair-typecheck.log",
+    "sha256": "6ea45d888e548997012b3612e7bca1dadfca3f30b3c1603212fb6d60d76b0e26"
+  },
+  {
+    "path": "reviews/spn157-review-a-44f9a536.md",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-44f9a536.md",
+    "sha256": "c2183772881fdfa7bbb6532680d9c24fe2087a74b3ec9f758bb0bb055fd478f8"
+  },
+  {
+    "path": "reviews/spn157-review-a-50dc4acb.md",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-50dc4acb.md",
+    "sha256": "2c60dcef634a6c1fe4cfb2fc09fd0484e71d622ca6bc3221804e44cf6b86881d"
+  },
+  {
+    "path": "reviews/spn157-review-a-93257f23.md",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-93257f23.md",
+    "sha256": "94f6dcb49e1c5107ae5b03fd3a45e542e302b34cb845a1228cf8a56eddae77cc"
+  },
+  {
+    "path": "reviews/spn157-review-a-backlog-50dc4acb.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-backlog-50dc4acb.json",
+    "sha256": "78493805bf1dd3f0d70e9622bd5738440f68349ee6704d69f86a320d2344cfba"
+  },
+  {
+    "path": "reviews/spn157-review-a-backlog-50dc4acb.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-backlog-50dc4acb.log",
+    "sha256": "ae3783a82306dc27fb006fae28804983238713f20c680a3d4c14ea3794bf566e"
+  },
+  {
+    "path": "reviews/spn157-review-a-backlog-f59d23ce.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-backlog-f59d23ce.json",
+    "sha256": "ec3473a945efd84ac556354a2180171e89296065c1c65e78e83a5acd40e1ca42"
+  },
+  {
+    "path": "reviews/spn157-review-a-backlog-f59d23ce.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-backlog-f59d23ce.log",
+    "sha256": "394c5ec85bb87a9e3f73cbe009924af81e0219409c9d674abbafedff82a66d87"
+  },
+  {
+    "path": "reviews/spn157-review-a-controls-44f9a536.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-controls-44f9a536.json",
+    "sha256": "faadc1acdb7cb9fae72308d473d125cf79107774cd6d9d4282214e5191e22ad8"
+  },
+  {
+    "path": "reviews/spn157-review-a-controls-44f9a536.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-controls-44f9a536.log",
+    "sha256": "bb0e0bbf77167b7442b038e9e6976a25888dc6b8563c560fb768dc875a80d664"
+  },
+  {
+    "path": "reviews/spn157-review-a-controls-50dc4acb.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-controls-50dc4acb.json",
+    "sha256": "04a1cb962bc235a32be9a1939eb10c9ae567b6f8f3d507fc6a1a6a6dc4ed7d99"
+  },
+  {
+    "path": "reviews/spn157-review-a-controls-50dc4acb.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-controls-50dc4acb.log",
+    "sha256": "81ef32c5b042508c1110d05cd46fdf9873713c35b1027aae94e96d80f2f100e1"
+  },
+  {
+    "path": "reviews/spn157-review-a-controls-93257f23.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-controls-93257f23.json",
+    "sha256": "acae8e906229d89ef1adcf7fe2e1040ae620d5b23e2f2fd25dcbd0effac7bad8"
+  },
+  {
+    "path": "reviews/spn157-review-a-controls-93257f23.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-controls-93257f23.log",
+    "sha256": "9ce2afe281a03382e3cdd75befb711628cf4b5952808fdcd9435b00d3b9159c3"
+  },
+  {
+    "path": "reviews/spn157-review-a-f59d23ce.md",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-f59d23ce.md",
+    "sha256": "a57b94c9fec27679941ba017efc6072c0d375c21793331374c6dfe6a514366b3"
+  },
+  {
+    "path": "reviews/spn157-review-a-pr-50dc4acb.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-pr-50dc4acb.json",
+    "sha256": "a85ddf80f5448c69e203f4ee858d8b60612dd46311083390228f11f139775f1c"
+  },
+  {
+    "path": "reviews/spn157-review-a-pr-50dc4acb.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-pr-50dc4acb.log",
+    "sha256": "b730e7b582c52aa4d8f9ea0970a73a1d8482f0fc2f43c26fb01dea43c29f9269"
+  },
+  {
+    "path": "reviews/spn157-review-a-pr-f59d23ce.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-pr-f59d23ce.json",
+    "sha256": "cf63f0802c64f26846d36279932f481efd4071beadb35e55b29091125a169730"
+  },
+  {
+    "path": "reviews/spn157-review-a-pr-f59d23ce.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-pr-f59d23ce.log",
+    "sha256": "cbcad399e7f9ba8272ac4013fad2d81afc4403009e59dba3bab073da62956358"
+  },
+  {
+    "path": "reviews/spn157-review-b-50dc-aggregate.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-50dc-aggregate.json",
+    "sha256": "ab3e39a25c32d8e7d0f6638b31745f95ec807ef8808a4223b69cfc359ba3a82e"
+  },
+  {
+    "path": "reviews/spn157-review-b-50dc-aggregate.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-50dc-aggregate.log",
+    "sha256": "99d5559169d4c5222352f8909e4c37a3c1136ea167b637ecbfb381001549bfa8"
+  },
+  {
+    "path": "reviews/spn157-review-b-50dc-backlog.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-50dc-backlog.json",
+    "sha256": "fde36ce2d533572dcf1e59dbc4c4f61a6ff9b37cbbf54c15d3d0111ba2150fbc"
+  },
+  {
+    "path": "reviews/spn157-review-b-50dc-backlog.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-50dc-backlog.log",
+    "sha256": "b3a0af7a9dbc5d8a08887c7faaeb5898d2988d24fe257962521e48518bf70ff7"
+  },
+  {
+    "path": "reviews/spn157-review-b-50dc-cleanup.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-50dc-cleanup.json",
+    "sha256": "21399878f91b5a755b454f9b82e137612215125295ca92418318fc2fddc15c6f"
+  },
+  {
+    "path": "reviews/spn157-review-b-50dc-controls.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-50dc-controls.json",
+    "sha256": "7afcb15b84cac60fc26f5b8ba4c2ad38691fbba7ea578817424efe516909fccd"
+  },
+  {
+    "path": "reviews/spn157-review-b-50dc-controls.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-50dc-controls.log",
+    "sha256": "41bff74e7c32c74cd823b0fc0599bf428a2a36507be65916da7e71bbc4468990"
+  },
+  {
+    "path": "reviews/spn157-review-b-50dc-pr.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-50dc-pr.json",
+    "sha256": "7b90084edca38c8113aebc70714a6e7c20ec5c0e2be1ef69f28451056c988a19"
+  },
+  {
+    "path": "reviews/spn157-review-b-50dc-pr.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-50dc-pr.log",
+    "sha256": "5bb4c6c688075f47639b93b984f63ceeaa53ad6703eb57a111492ddc30f9d171"
+  },
+  {
+    "path": "reviews/spn157-review-b-50dc4acb.md",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-50dc4acb.md",
+    "sha256": "8d52dfae07e1e3b6bf991cd053f6029b91a084a5276c3c5b7f49a5b8c3c40153"
+  },
+  {
+    "path": "reviews/spn157-review-b-cleanup.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-cleanup.json",
+    "sha256": "d4190adf25025b3f908abfcd37d3d443e7df2b46280ecdf311e3e5e16f7d911d"
+  },
+  {
+    "path": "reviews/spn157-review-b-controls.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-controls.json",
+    "sha256": "b515e215d2f388a6db93852d0b57b4955ff2b7aeafafcc517551155a7ddbabcf"
+  },
+  {
+    "path": "reviews/spn157-review-b-controls.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-controls.log",
+    "sha256": "e75038b61926e2189c72bf158ffe4499bd19ef7722e8b645d87235f9d77317e9"
+  },
+  {
+    "path": "reviews/spn157-review-b-f59d-backlog.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-f59d-backlog.json",
+    "sha256": "8c3c6e4d924306b4e6d3a7364ab3ae3196cf40c4716c25cb266548c172988340"
+  },
+  {
+    "path": "reviews/spn157-review-b-f59d-backlog.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-f59d-backlog.log",
+    "sha256": "7892bb0eb411c05b09c02497bfbca1f9ecb9f13fdb7bafeb88d25e632e74fc7e"
+  },
+  {
+    "path": "reviews/spn157-review-b-f59d-cleanup.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-f59d-cleanup.json",
+    "sha256": "51857e4f4e27faf82612e9225ba40040d542e3a653bb8e87f1c6636fa9c86bb9"
+  },
+  {
+    "path": "reviews/spn157-review-b-f59d-pr.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-f59d-pr.json",
+    "sha256": "b4f478acad31b9d2c6a22a992cfb6718eedf8deb37b93fcb8069341fb5c6e2a0"
+  },
+  {
+    "path": "reviews/spn157-review-b-f59d-pr.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-f59d-pr.log",
+    "sha256": "21f6b3a2ac45a16259560879ece747d660cd4acffa422651ee4724041c6eb425"
+  },
+  {
+    "path": "reviews/spn157-review-b-f59d23ce.md",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-f59d23ce.md",
+    "sha256": "e33f2b9cf1bddc39d70eb3da4a541b05e99b9840fb1f17ce6ec605c519723687"
+  },
+  {
+    "path": "reviews/spn157-review-b-repair-cleanup.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-repair-cleanup.json",
+    "sha256": "c01a5ecc3dfb2721a9dbb53c66bd80bffbd587189d54aeabe9b977c3de6cd43c"
+  },
+  {
+    "path": "reviews/spn157-review-b-repair-controls.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-repair-controls.json",
+    "sha256": "a83d2837f675f1086a32738d436a45e97ebd7c1a84f310c9a5a85b063be458b6"
+  },
+  {
+    "path": "reviews/spn157-review-b-repair-controls.log",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-repair-controls.log",
+    "sha256": "021e5860f7ffbf247891406ea1eafe28b6c4f7438171839001af1f2eb59a55e0"
+  },
+  {
+    "path": "local/spn157-synchronous-6_80n_85.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-synchronous-6_80n_85.json",
+    "sha256": "de8cb6a37eaf03da0ba8ff5b6f52964f6b8412b9f6a3527c8d57474992259ebf"
+  },
+  {
+    "path": "local/spn157-typecheck-narrowed.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-typecheck-narrowed.json",
+    "sha256": "929dd8ea093c149a2f0c7cead8b32fdc5a5ae27c7f6f6a5bdc4962e05d78c5fb"
+  },
+  {
+    "path": "local/spn157-typecheck.json",
+    "source": "/tmp/spinel-dependabot-2026-11-11/spn157-typecheck.json",
+    "sha256": "ef054fb4f63bf09c5679369cb78082534900274112bc4002031ac28065e8defc"
+  },
+  {
+    "path": "local/candidate-checkpoint.json",
+    "source": "/tmp/spn157-contract-audit-20261114/candidate-checkpoint.json",
+    "sha256": "f9dbe9cc52b9ca230f0b64923ee2dbdde5b94d04d2a4fbb785d7fefccc2d59c1"
+  },
+  {
+    "path": "local/historical-archive-audit.json",
+    "source": "/tmp/spn157-contract-audit-20261114/historical-archive-audit.json",
+    "sha256": "1769c3b67cea33071457bd9e129a9e78f3dc7c9aaa1b989b7c03f7fb00c9640a"
+  },
+  {
+    "path": "local/integrated87-checkpoint.json",
+    "source": "/tmp/spn157-contract-audit-20261114/integrated87-checkpoint.json",
+    "sha256": "bc8faef0f2e5eac87365b290afaca2507615b3eb9ea47a28b97e3ec5fb6591ed"
+  },
+  {
+    "path": "local/investigation-9ca.md",
+    "source": "/tmp/spn157-contract-audit-20261114/investigation-9ca.md",
+    "sha256": "44f40806d9902927c91a500ae950010cea17f11feaf351bb2730c9a3fab5d271"
+  },
+  {
+    "path": "local/original-spec.md",
+    "source": "/tmp/spn157-contract-audit-20261114/original-spec.md",
+    "sha256": "13b1803b9ee1154bd6e35eb9b9f58b0942fa7466125e589899fb3a528d5224c6"
+  },
+  {
+    "path": "local/remaining-job.json",
+    "source": "/tmp/spn157-contract-audit-20261114/remaining-job.json",
+    "sha256": "a87d513732891ae08e0af7b9ae05bc70cc8f9f0d068e6493c42e49668a07544f"
+  },
+  {
+    "path": "reviews/review-packet-integrated87.md",
+    "source": "/tmp/spn157-contract-audit-20261114/review-packet-integrated87.md",
+    "sha256": "f487b1eb7bfdb344d5e0bdc6c4772263dff32632026e4afe110b3bea6ff89d2c"
+  },
+  {
+    "path": "reviews/review-packet.md",
+    "source": "/tmp/spn157-contract-audit-20261114/review-packet.md",
+    "sha256": "28e6ed451b075494ad954143e9603c267992200100a2ac838f2f0b5554b8900f"
+  },
+  {
+    "path": "local/source-plan-audit.json",
+    "source": "/tmp/spn157-contract-audit-20261114/source-plan-audit.json",
+    "sha256": "f8c94c654342e80f0717501534ab4f102b921baaf2fdef31dcf03f0b051744fd"
+  }
+]

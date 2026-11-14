@@ -1,0 +1,19 @@
+{
+  "candidate": "50dc4acb6addc6472528a736f6c8b4ea2bf3685f",
+  "branch": "codex/spn-157-current-investigation",
+  "base": "754e65317744e5ce97ede501935c6586e4875f2a",
+  "dirty": false,
+  "oldBranch": "44f9a5365fe290236b882606933e63b8ef317363",
+  "pressure": 1,
+  "serialLockPresent": false,
+  "ownedRelevantProcesses": [],
+  "guardAborts": [],
+  "workloadReceiptNames": [
+    "spn157-audit-index",
+    "spn157-audit-format",
+    "spn157-audit-backlog",
+    "spn157-audit-receipt-format",
+    "spn157-audit-format-check",
+    "spn157-audit-pr-shape"
+  ]
+}

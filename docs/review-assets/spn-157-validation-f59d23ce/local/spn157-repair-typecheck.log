@@ -1,0 +1,5 @@
+
+> typecheck
+> tsc -p .
+
+{"name":"spn157-repair-typecheck","args":["npm","run","typecheck"],"code":0,"signal":null,"reason":null,"elapsedMs":2387,"peakKiB":1905376}

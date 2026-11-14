@@ -1,0 +1,51 @@
+{
+  "observedAt": "2026-11-14T09:05:48.363402+00:00",
+  "candidate": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+  "candidateTree": "5d8c93740959386dce7d85858f1ce85cdcc9c6fd",
+  "base": "87c34e30ed810e6789d876e55b23dcbb349fa506",
+  "clean": true,
+  "diff": {
+    "files": 12,
+    "textAdded": 863,
+    "textDeleted": 88,
+    "textChangedExcludingGeneratedIndex": 892,
+    "binaryFiles": [
+      "docs/review-assets/spn-157-contract-audit/remaining-original.log.gz"
+    ],
+    "binaryGzipBytes": 83272
+  },
+  "refs": {
+    "codex/spn-157-current-investigation": {
+      "head": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+      "uniqueCommitsAgainstActualMain": [
+        "f59d23ceae976ee0abdd25eb13f370e18d7d6495 Merge accepted SPN-159 main into SPN-157 contract audit",
+        "50dc4acb6addc6472528a736f6c8b4ea2bf3685f \ud83d\udedf SPN-157 audit recovery contracts and retain unknown historical cause",
+        "9ca506c558820e5756aaeb518510f40c75c2e6dd docs: retain SPN-157 feedback-source investigation checkpoint"
+      ],
+      "activePRs": [],
+      "allStatePRs": [],
+      "disposition": "Retain active audit branch until reviewed head lands and completion archive is verified"
+    },
+    "codex/spn-157-supervisor-handoffs": {
+      "head": "44f9a5365fe290236b882606933e63b8ef317363",
+      "uniqueCommitsAgainstActualMain": [
+        "44f9a5365fe290236b882606933e63b8ef317363 \ud83d\udedf SPN-157 Preserve pre-barrier failures and wrapped handoff receipts",
+        "93257f2350bf015002fa0055c8b49c631e212d84 \ud83d\udedf SPN-157 Prepare bounded handoff diagnostics and controls"
+      ],
+      "activePRs": [],
+      "allStatePRs": [],
+      "disposition": "Retain unique old implementation history; archive immutable exact44 plus parent932 history before guarded deletion"
+    }
+  },
+  "liveRemoteTicketRefs": [],
+  "localTicketRefs": [
+    "refs/heads/codex/spn-157-current-investigation f59d23ceae976ee0abdd25eb13f370e18d7d6495 Merge accepted SPN-159 main into SPN-157 contract audit",
+    "refs/heads/codex/spn-157-supervisor-handoffs 44f9a5365fe290236b882606933e63b8ef317363 \ud83d\udedf SPN-157 Preserve pre-barrier failures and wrapped handoff receipts"
+  ],
+  "ticketWorktrees": "worktree /Users/mxbaylee/projects/spinel-spn-157\nHEAD f59d23ceae976ee0abdd25eb13f370e18d7d6495\nbranch refs/heads/codex/spn-157-current-investigation\n",
+  "activeOwnership": {
+    "openPRsExamined": 12,
+    "matchingHeads": []
+  },
+  "mutations": "none; inventory only, no branch/tag/worktree deletion"
+}

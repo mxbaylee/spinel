@@ -1,0 +1,53 @@
+{
+  "checkedAt": "2026-11-14T09:08:35.997048+00:00",
+  "head": "f59d23ceae976ee0abdd25eb13f370e18d7d6495",
+  "base": "87c34e30ed810e6789d876e55b23dcbb349fa506",
+  "tree": "5d8c93740959386dce7d85858f1ce85cdcc9c6fd",
+  "reports": {
+    "a": {
+      "path": "/tmp/spinel-dependabot-2026-11-11/spn157-review-a-f59d23ce.md",
+      "sha256": "a57b94c9fec27679941ba017efc6072c0d375c21793331374c6dfe6a514366b3",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ]
+    },
+    "b": {
+      "path": "/tmp/spinel-dependabot-2026-11-11/spn157-review-b-f59d23ce.md",
+      "sha256": "e33f2b9cf1bddc39d70eb3da4a541b05e99b9840fb1f17ce6ec605c519723687",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ]
+    }
+  },
+  "rootReadFullOriginalAndIntegratedReports": true,
+  "rootReadOriginalSpecMethodAndLedger": true,
+  "scope": "Full L, explicit bounded non-recurrence; historical cause unknown; no new runtime; current-head CI remains pending",
+  "worktreeClean": true,
+  "remoteHeadAbsent": true,
+  "changedFiles": [
+    "docs/implementation/SPN-157-contract-audit.md",
+    "docs/implementation/SPN-157.md",
+    "docs/review-assets/spn-157-contract-audit/historical-archive-audit.json",
+    "docs/review-assets/spn-157-contract-audit/main87-source-identity.json",
+    "docs/review-assets/spn-157-contract-audit/receipt.json",
+    "docs/review-assets/spn-157-contract-audit/remaining-job.json",
+    "docs/review-assets/spn-157-contract-audit/remaining-original.log.gz",
+    "docs/review-assets/spn-157-contract-audit/source-plan-audit.json",
+    "docs/todo/SPN-098.md",
+    "docs/todo/SPN-157.md",
+    "docs/todo/backlog.json",
+    "docs/todo/readme.md"
+  ],
+  "bodySha256": "e1552047e9639329bebaa47c637cdd9226e6620679ae063adfd2c57d535abbe9",
+  "validationReservation": "archive/spn-157-validation-f59d23ce-20261114"
+}

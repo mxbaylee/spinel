@@ -1,0 +1,10 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-157
+
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  18:59:41
+   Duration  198ms (transform 39%, import 29%, tests 27%, worker 5%)
+
+{"name":"spn157-cause-controls","args":["node","node_modules/vitest/vitest.mjs","run","src/server/maintenance/ownership.test.ts","src/server/maintenance/supervisor-test-control.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":426,"peakKiB":289888}
