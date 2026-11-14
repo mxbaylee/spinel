@@ -1,0 +1,19 @@
+{
+  "name": "spn158-review-a-http-bfeb0b23",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/server/maintenance/http.test.ts",
+    "-t",
+    "postcommit readiness|shared readiness deadline",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn158-review-a-cache-bfeb0b23"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 3251,
+  "peakKiB": 1015744
+}

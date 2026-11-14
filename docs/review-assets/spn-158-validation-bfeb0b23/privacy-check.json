@@ -1,0 +1,24 @@
+{
+  "checkedAt": "2026-11-14T04:15:29.441709+00:00",
+  "textPayloadsScanned": 115,
+  "patterns": [
+    "github_token",
+    "private_key",
+    "aws_key",
+    "url_credentials",
+    "set_cookie",
+    "auth_bearer"
+  ],
+  "matches": [],
+  "failureScreenshotsInspected": [
+    "failures/production-1/test-failed-1.png",
+    "failures/production-1/test-failed-2.png"
+  ],
+  "exclusions": [
+    "databases",
+    "browser profiles",
+    "cookie jars",
+    "protocol traces"
+  ],
+  "scope": "Pattern scan plus human-visible synthetic screenshot inspection; logs are exact GitHub-masked output. Success-only retry trace retained locally in verified original ZIP, not published."
+}

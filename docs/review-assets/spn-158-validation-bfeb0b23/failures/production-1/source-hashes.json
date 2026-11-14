@@ -1,0 +1,22 @@
+[
+  {
+    "path": "e2e/collaboration.spec.ts",
+    "sha256": "4a0fcef33b6a70b865a61f80b4d30934e7cd0d3762a71cde7a212fd37e6d85c4",
+    "bytes": 21343
+  },
+  {
+    "path": "e2e/sync-network.ts",
+    "sha256": "d7b5260969c65ec880e30d41002e725396edf3fdfa1599a77e15c4143cbb30f6",
+    "bytes": 4653
+  },
+  {
+    "path": "e2e/live-network.ts",
+    "sha256": "9ddb8dc0c53bbbb5fdf3cb1e9e20933f7087ec6f283d0b2951614fa32e2ca1ae",
+    "bytes": 610
+  },
+  {
+    "path": "playwright.config.ts",
+    "sha256": "9c35f858d78b3e70cfc2e826144589160ce9fb5892b8594077574b16d55110aa",
+    "bytes": 10974
+  }
+]
