@@ -1,0 +1,218 @@
+{
+  "observedAt": "2026-11-14T20:35:25.784670+00:00",
+  "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "testedMerge": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+  "draft": true,
+  "mergeable": true,
+  "workflows": [
+    {
+      "kind": "ci",
+      "id": 43634578422,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": 33,
+      "counts": {
+        "success": 33
+      },
+      "pending": []
+    },
+    {
+      "kind": "storybook",
+      "id": 43634578351,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": 10,
+      "counts": {
+        "success": 8,
+        "skipped": 2
+      },
+      "pending": []
+    },
+    {
+      "kind": "desktop",
+      "id": 43634578353,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": 3,
+      "counts": {
+        "success": 3
+      },
+      "pending": []
+    }
+  ],
+  "failures": [],
+  "plan": {
+    "artifactId": 14129099771,
+    "downloadedZipSha256": "da7927edef1f1b6187bfbb5356c5867e1fec469590e997ede9829803651c7275",
+    "value": {
+      "version": 1,
+      "event": "pull_request",
+      "action": "synchronize",
+      "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+      "head": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "tested": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+      "mode": "full",
+      "labels": [
+        "visual-review"
+      ],
+      "paths": null,
+      "suites": {
+        "backlog": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "pull-request": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "lint": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "typecheck": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "unit-tests": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "lib-test-run": {
+          "selected": true,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "playwright-run": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "container-smoke": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "restore-timing": {
+          "selected": true,
+          "dependencies": [
+            "server/**",
+            "src/{server,shared}/**",
+            "lib/**",
+            "web/** and src/ui/** (shared application/authentication bundle)",
+            "e2e restore/shared helpers (doc-touch, doc-touch-raster, native-sheet-value)",
+            "runtime/build/dependency/workflow inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "sync-transition": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "doc-responsiveness": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "doc-callback-lifetimes": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "responsiveness-baseline": {
+          "selected": true,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "callback-baseline": {
+          "selected": true,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "phone-compatibility": {
+          "selected": true,
+          "dependencies": [
+            "full plan backstop; ordinary phone owners remain in routine browser coverage"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        }
+      }
+    }
+  },
+  "archiveReady": false,
+  "testedTree": "d761b4562a11e876cb83a9cd0d951291192c71f6",
+  "testedParents": [
+    "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+    "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07"
+  ]
+}

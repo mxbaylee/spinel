@@ -1,0 +1,2237 @@
+[
+  {
+    "id": 14131051701,
+    "name": "ci-results-browser",
+    "originalZip": "/tmp/spn090-publication-43d3ee62/remaining-terminal-evidence/original-artifact-14131051701.zip",
+    "zipBytes": 1341,
+    "zipSha256": "886b91e3a87f5cea58fb3f26469fd7eeee4631f518e3e48e2351fd1165979e61",
+    "githubDigest": "sha256:886b91e3a87f5cea58fb3f26469fd7eeee4631f518e3e48e2351fd1165979e61",
+    "members": [
+      {
+        "path": "ci-results-browser.json",
+        "bytes": 10384,
+        "compressedBytes": 1181,
+        "crc32": "a8293eaf"
+      }
+    ],
+    "jsonMembers": [
+      {
+        "originalPath": "ci-results-browser.json",
+        "storedPath": "artifact-14131051701-json-0.json.gz",
+        "bytes": 10384,
+        "sha256": "cbf65bb76588f2dd3f41c0be8bedef7e9d1d324cffa1c5b4fe9c4ec63a1549c9"
+      }
+    ],
+    "allMemberCrcVerified": true
+  },
+  {
+    "id": 14130986549,
+    "name": "theme-screenshots-development-2",
+    "originalZip": "/tmp/spn090-publication-43d3ee62/remaining-terminal-evidence/original-artifact-14130986549.zip",
+    "zipBytes": 17042359,
+    "zipSha256": "0dd8e893676fa653b70fc17a2be687f65a66b7a7ce1155b614818ee90fd450fd",
+    "githubDigest": "sha256:0dd8e893676fa653b70fc17a2be687f65a66b7a7ce1155b614818ee90fd450fd",
+    "members": [
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-editor-export.pdf",
+        "bytes": 23280,
+        "compressedBytes": 17535,
+        "crc32": "ac559c26"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-editor-page-1-export-opened.png",
+        "bytes": 103407,
+        "compressedBytes": 90720,
+        "crc32": "3a998a6f"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-editor-page-2-export-opened.png",
+        "bytes": 103988,
+        "compressedBytes": 91650,
+        "crc32": "424952e5"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-editor-page-3-export-opened.png",
+        "bytes": 103933,
+        "compressedBytes": 91187,
+        "crc32": "a7abf048"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-editor-page-4-export-opened.png",
+        "bytes": 26562,
+        "compressedBytes": 21341,
+        "crc32": "13bc8209"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-editor-permission-notices.json",
+        "bytes": 65,
+        "compressedBytes": 64,
+        "crc32": "9063fada"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-guest-editor-export.pdf",
+        "bytes": 23280,
+        "compressedBytes": 17535,
+        "crc32": "ac559c26"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-guest-editor-page-1-export-opened.png",
+        "bytes": 103407,
+        "compressedBytes": 90720,
+        "crc32": "3a998a6f"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-guest-editor-page-2-export-opened.png",
+        "bytes": 103988,
+        "compressedBytes": 91650,
+        "crc32": "424952e5"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-guest-editor-page-3-export-opened.png",
+        "bytes": 103933,
+        "compressedBytes": 91187,
+        "crc32": "a7abf048"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-guest-editor-page-4-export-opened.png",
+        "bytes": 26562,
+        "compressedBytes": 21341,
+        "crc32": "13bc8209"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-guest-editor-permission-notices.json",
+        "bytes": 65,
+        "compressedBytes": 64,
+        "crc32": "9063fada"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-guest-viewer-export.pdf",
+        "bytes": 23280,
+        "compressedBytes": 17535,
+        "crc32": "ac559c26"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-guest-viewer-page-1-export-opened.png",
+        "bytes": 103407,
+        "compressedBytes": 90720,
+        "crc32": "3a998a6f"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-guest-viewer-page-2-export-opened.png",
+        "bytes": 103988,
+        "compressedBytes": 91650,
+        "crc32": "424952e5"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-guest-viewer-page-3-export-opened.png",
+        "bytes": 103933,
+        "compressedBytes": 91187,
+        "crc32": "a7abf048"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-guest-viewer-page-4-export-opened.png",
+        "bytes": 26562,
+        "compressedBytes": 21341,
+        "crc32": "13bc8209"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-guest-viewer-permission-notices.json",
+        "bytes": 64,
+        "compressedBytes": 63,
+        "crc32": "ba293f3f"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-owner-export.pdf",
+        "bytes": 23280,
+        "compressedBytes": 17535,
+        "crc32": "ac559c26"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-owner-page-1-export-opened.png",
+        "bytes": 103407,
+        "compressedBytes": 90720,
+        "crc32": "3a998a6f"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-owner-page-2-export-opened.png",
+        "bytes": 103988,
+        "compressedBytes": 91650,
+        "crc32": "424952e5"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-owner-page-3-export-opened.png",
+        "bytes": 103933,
+        "compressedBytes": 91187,
+        "crc32": "a7abf048"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-owner-page-4-export-opened.png",
+        "bytes": 26562,
+        "compressedBytes": 21341,
+        "crc32": "13bc8209"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-viewer-export.pdf",
+        "bytes": 23280,
+        "compressedBytes": 17535,
+        "crc32": "ac559c26"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-owner-permission-notices.json",
+        "bytes": 65,
+        "compressedBytes": 64,
+        "crc32": "9063fada"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-viewer-page-1-export-opened.png",
+        "bytes": 103407,
+        "compressedBytes": 90720,
+        "crc32": "3a998a6f"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-viewer-page-2-export-opened.png",
+        "bytes": 103988,
+        "compressedBytes": 91650,
+        "crc32": "424952e5"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-viewer-page-3-export-opened.png",
+        "bytes": 103933,
+        "compressedBytes": 91187,
+        "crc32": "a7abf048"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-viewer-page-4-export-opened.png",
+        "bytes": 26562,
+        "compressedBytes": 21341,
+        "crc32": "13bc8209"
+      },
+      {
+        "path": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-viewer-permission-notices.json",
+        "bytes": 64,
+        "compressedBytes": 63,
+        "crc32": "ba293f3f"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-editor-export.pdf",
+        "bytes": 11998,
+        "compressedBytes": 10145,
+        "crc32": "0195845c"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-editor-page-2-export-opened.png",
+        "bytes": 70044,
+        "compressedBytes": 45400,
+        "crc32": "88a28ef9"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-editor-page-3-export-opened.png",
+        "bytes": 14629,
+        "compressedBytes": 8866,
+        "crc32": "a258109f"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-editor-page-1-export-opened.png",
+        "bytes": 69935,
+        "compressedBytes": 44810,
+        "crc32": "2c08cc8d"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-editor-page-4-export-opened.png",
+        "bytes": 5649,
+        "compressedBytes": 2011,
+        "crc32": "91124b64"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-editor-permission-notices.json",
+        "bytes": 65,
+        "compressedBytes": 64,
+        "crc32": "9063fada"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-guest-editor-page-1-export-opened.png",
+        "bytes": 69935,
+        "compressedBytes": 44810,
+        "crc32": "2c08cc8d"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-guest-editor-export.pdf",
+        "bytes": 11998,
+        "compressedBytes": 10145,
+        "crc32": "0195845c"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-guest-editor-page-2-export-opened.png",
+        "bytes": 70044,
+        "compressedBytes": 45400,
+        "crc32": "88a28ef9"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-guest-editor-page-3-export-opened.png",
+        "bytes": 14629,
+        "compressedBytes": 8866,
+        "crc32": "a258109f"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-guest-editor-page-4-export-opened.png",
+        "bytes": 5649,
+        "compressedBytes": 2011,
+        "crc32": "91124b64"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-guest-editor-permission-notices.json",
+        "bytes": 65,
+        "compressedBytes": 64,
+        "crc32": "9063fada"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-guest-viewer-export.pdf",
+        "bytes": 11998,
+        "compressedBytes": 10145,
+        "crc32": "0195845c"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-guest-viewer-page-1-export-opened.png",
+        "bytes": 69935,
+        "compressedBytes": 44810,
+        "crc32": "2c08cc8d"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-guest-viewer-page-2-export-opened.png",
+        "bytes": 70044,
+        "compressedBytes": 45400,
+        "crc32": "88a28ef9"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-guest-viewer-page-3-export-opened.png",
+        "bytes": 14629,
+        "compressedBytes": 8866,
+        "crc32": "a258109f"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-guest-viewer-page-4-export-opened.png",
+        "bytes": 5649,
+        "compressedBytes": 2011,
+        "crc32": "91124b64"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-owner-page-2-export-opened.png",
+        "bytes": 70044,
+        "compressedBytes": 45400,
+        "crc32": "88a28ef9"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-guest-viewer-permission-notices.json",
+        "bytes": 65,
+        "compressedBytes": 64,
+        "crc32": "9063fada"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-owner-export.pdf",
+        "bytes": 11117,
+        "compressedBytes": 9563,
+        "crc32": "e10c6464"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-owner-page-1-export-opened.png",
+        "bytes": 69935,
+        "compressedBytes": 44810,
+        "crc32": "2c08cc8d"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-owner-permission-notices.json",
+        "bytes": 65,
+        "compressedBytes": 64,
+        "crc32": "9063fada"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-owner-page-3-export-opened.png",
+        "bytes": 14629,
+        "compressedBytes": 8866,
+        "crc32": "a258109f"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-viewer-export.pdf",
+        "bytes": 11998,
+        "compressedBytes": 10145,
+        "crc32": "0195845c"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-viewer-page-1-export-opened.png",
+        "bytes": 69935,
+        "compressedBytes": 44810,
+        "crc32": "2c08cc8d"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-viewer-page-2-export-opened.png",
+        "bytes": 70044,
+        "compressedBytes": 45400,
+        "crc32": "88a28ef9"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-viewer-page-3-export-opened.png",
+        "bytes": 14629,
+        "compressedBytes": 8866,
+        "crc32": "a258109f"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-viewer-page-4-export-opened.png",
+        "bytes": 5649,
+        "compressedBytes": 2011,
+        "crc32": "91124b64"
+      },
+      {
+        "path": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-viewer-permission-notices.json",
+        "bytes": 65,
+        "compressedBytes": 64,
+        "crc32": "9063fada"
+      },
+      {
+        "path": "test-results/development/portable-doc-downloads-cur-c8da9-ens-its-direct-PDF-download-development/doc-export.pdf",
+        "bytes": 7920,
+        "compressedBytes": 7078,
+        "crc32": "af67038c"
+      },
+      {
+        "path": "test-results/development/portable-doc-downloads-cur-c8da9-ens-its-direct-PDF-download-development/doc-page-1-export-opened.png",
+        "bytes": 6496,
+        "compressedBytes": 2434,
+        "crc32": "88c08e41"
+      },
+      {
+        "path": "test-results/development/portable-sheet-downloads-c-cc816-ens-its-direct-PDF-download-development/sheet-export.pdf",
+        "bytes": 7452,
+        "compressedBytes": 6732,
+        "crc32": "4883f30f"
+      },
+      {
+        "path": "test-results/development/portable-sheet-downloads-c-cc816-ens-its-direct-PDF-download-development/sheet-page-1-export-opened.png",
+        "bytes": 5931,
+        "compressedBytes": 2296,
+        "crc32": "7b817280"
+      },
+      {
+        "path": "test-results/development/restore-doc-preview-is-rea-2d461--state-seen-by-both-editors-development/doc-restore-preview.png",
+        "bytes": 76917,
+        "compressedBytes": 72784,
+        "crc32": "f5f99bbf"
+      },
+      {
+        "path": "test-results/development/restore-sheet-preview-is-r-a536d--state-seen-by-both-editors-development/sheet-restore-preview.png",
+        "bytes": 83054,
+        "compressedBytes": 78956,
+        "crc32": "c26c033d"
+      },
+      {
+        "path": "test-results/development/shared-creation-collaborat-da7dd-ner-refreshes-the-same-file-development/sync-diagnostics.json",
+        "bytes": 213,
+        "compressedBytes": 153,
+        "crc32": "71e612f1"
+      },
+      {
+        "path": "test-results/development/sheet-images-Sheet-images--0b6ac-oped-revocable-guest-access-development/sheet-images-export.pdf",
+        "bytes": 3320,
+        "compressedBytes": 2425,
+        "crc32": "78a740cd"
+      },
+      {
+        "path": "test-results/development/sheet-images-Sheet-images--0b6ac-oped-revocable-guest-access-development/sheet-images-page-1-export-opened.png",
+        "bytes": 4900,
+        "compressedBytes": 1288,
+        "crc32": "f4c342ab"
+      },
+      {
+        "path": "test-results/development/space-guests-a-View-Space--97fa1-or-private-social-card-data-development/space-guest-doc-export.pdf",
+        "bytes": 725,
+        "compressedBytes": 393,
+        "crc32": "9ebc8432"
+      },
+      {
+        "path": "test-results/development/space-guests-a-View-Space--97fa1-or-private-social-card-data-development/space-guest-doc-page-1-export-opened.png",
+        "bytes": 4223,
+        "compressedBytes": 205,
+        "crc32": "29a95032"
+      },
+      {
+        "path": "test-results/development/spaces-an-owner-creates-an-71b38-heets-and-stable-navigation-development/space-doc-export.pdf",
+        "bytes": 7468,
+        "compressedBytes": 6817,
+        "crc32": "3e8d019d"
+      },
+      {
+        "path": "test-results/development/spaces-an-owner-creates-an-71b38-heets-and-stable-navigation-development/space-doc-page-1-export-opened.png",
+        "bytes": 7007,
+        "compressedBytes": 2904,
+        "crc32": "e934e946"
+      },
+      {
+        "path": "test-results/theme-screenshots/history-calendar-development.png",
+        "bytes": 95903,
+        "compressedBytes": 88203,
+        "crc32": "e1847772"
+      },
+      {
+        "path": "test-results/theme-screenshots/native-fills-dark-development.png",
+        "bytes": 49355,
+        "compressedBytes": 41450,
+        "crc32": "840dabde"
+      },
+      {
+        "path": "test-results/theme-screenshots/native-fills-light-development.png",
+        "bytes": 48936,
+        "compressedBytes": 40983,
+        "crc32": "12290d46"
+      },
+      {
+        "path": "test-results/theme-screenshots/native-fills-phone-development.png",
+        "bytes": 27625,
+        "compressedBytes": 25374,
+        "crc32": "fb715128"
+      },
+      {
+        "path": "test-results/theme-screenshots/presence-sheet-dark-development.png",
+        "bytes": 56877,
+        "compressedBytes": 47586,
+        "crc32": "83972fe5"
+      },
+      {
+        "path": "test-results/theme-screenshots/presence-sheet-light-development.png",
+        "bytes": 56237,
+        "compressedBytes": 46925,
+        "crc32": "b396a87f"
+      },
+      {
+        "path": "test-results/theme-screenshots/presence-sheet-phone-development.png",
+        "bytes": 31019,
+        "compressedBytes": 29124,
+        "crc32": "b09f351f"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-color-picker-dark-development.png",
+        "bytes": 99606,
+        "compressedBytes": 94095,
+        "crc32": "6f00d964"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-color-picker-light-development.png",
+        "bytes": 95180,
+        "compressedBytes": 89713,
+        "crc32": "d0d52d7b"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-color-picker-phone-development.png",
+        "bytes": 77875,
+        "compressedBytes": 75708,
+        "crc32": "e5cfc9d0"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-member-connections-dark-development.png",
+        "bytes": 61091,
+        "compressedBytes": 56026,
+        "crc32": "b2272dd0"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-member-connections-light-development.png",
+        "bytes": 61916,
+        "compressedBytes": 56943,
+        "crc32": "350c63ef"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-member-connections-phone-development.png",
+        "bytes": 56387,
+        "compressedBytes": 53293,
+        "crc32": "511f2a23"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-member-device-dark-development.png",
+        "bytes": 90345,
+        "compressedBytes": 83592,
+        "crc32": "71ff2161"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-member-device-light-development.png",
+        "bytes": 90971,
+        "compressedBytes": 84116,
+        "crc32": "6b2eb484"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-member-device-phone-development.png",
+        "bytes": 86568,
+        "compressedBytes": 82016,
+        "crc32": "8d116dea"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-member-links-light-development.png",
+        "bytes": 40118,
+        "compressedBytes": 34845,
+        "crc32": "930f16cb"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-member-links-phone-development.png",
+        "bytes": 37430,
+        "compressedBytes": 34305,
+        "crc32": "dc2a37c4"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-member-links-dark-development.png",
+        "bytes": 39815,
+        "compressedBytes": 34407,
+        "crc32": "356e2488"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-member-passkeys-dark-development.png",
+        "bytes": 57894,
+        "compressedBytes": 52496,
+        "crc32": "c2b37b81"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-member-passkeys-light-development.png",
+        "bytes": 58643,
+        "compressedBytes": 53200,
+        "crc32": "76d9ac4e"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-member-passkeys-phone-development.png",
+        "bytes": 52256,
+        "compressedBytes": 48908,
+        "crc32": "b4b5758b"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-member-profile-dark-development.png",
+        "bytes": 58121,
+        "compressedBytes": 53054,
+        "crc32": "1e39ab89"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-member-profile-light-development.png",
+        "bytes": 59042,
+        "compressedBytes": 54019,
+        "crc32": "5433abe7"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-member-profile-phone-development.png",
+        "bytes": 53980,
+        "compressedBytes": 50768,
+        "crc32": "43ac4cdc"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-operator-device-light-development.png",
+        "bytes": 48560,
+        "compressedBytes": 42988,
+        "crc32": "025d3523"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-operator-device-dark-development.png",
+        "bytes": 48377,
+        "compressedBytes": 42734,
+        "crc32": "510df31b"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-operator-device-phone-development.png",
+        "bytes": 44340,
+        "compressedBytes": 41058,
+        "crc32": "e70c1236"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-operator-passkeys-dark-development.png",
+        "bytes": 54516,
+        "compressedBytes": 48856,
+        "crc32": "39a5cfbc"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-operator-passkeys-light-development.png",
+        "bytes": 55289,
+        "compressedBytes": 49895,
+        "crc32": "71455125"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-operator-passkeys-phone-development.png",
+        "bytes": 50646,
+        "compressedBytes": 47255,
+        "crc32": "c28e3c0d"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-operator-profile-dark-development.png",
+        "bytes": 58058,
+        "compressedBytes": 52782,
+        "crc32": "4e49b47d"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-operator-profile-light-development.png",
+        "bytes": 58914,
+        "compressedBytes": 53724,
+        "crc32": "cc14bb79"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-operator-profile-phone-development.png",
+        "bytes": 54139,
+        "compressedBytes": 50743,
+        "crc32": "7cc0674b"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-picker-dark-development.png",
+        "bytes": 69969,
+        "compressedBytes": 63640,
+        "crc32": "e6924e3c"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-picker-light-development.png",
+        "bytes": 70574,
+        "compressedBytes": 64445,
+        "crc32": "9646a626"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-picker-phone-development.png",
+        "bytes": 46910,
+        "compressedBytes": 44205,
+        "crc32": "44e4aaef"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-settings-dark-development.png",
+        "bytes": 66277,
+        "compressedBytes": 58660,
+        "crc32": "744ad38e"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-settings-light-development.png",
+        "bytes": 67090,
+        "compressedBytes": 59853,
+        "crc32": "10c6f526"
+      },
+      {
+        "path": "test-results/theme-screenshots/profile-settings-phone-development.png",
+        "bytes": 59395,
+        "compressedBytes": 55518,
+        "crc32": "5d1fe0f7"
+      },
+      {
+        "path": "test-results/theme-screenshots/search-development.png",
+        "bytes": 80001,
+        "compressedBytes": 76408,
+        "crc32": "9ec8c55e"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-editor-dark-caret-end-development.png",
+        "bytes": 58198,
+        "compressedBytes": 48147,
+        "crc32": "fb42d50a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-editor-dark-caret-start-development.png",
+        "bytes": 66806,
+        "compressedBytes": 53722,
+        "crc32": "9916ee7a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-editor-dark-native-100-development.png",
+        "bytes": 67196,
+        "compressedBytes": 53447,
+        "crc32": "190aa8f9"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-editor-dark-native-100-restored-development.png",
+        "bytes": 67164,
+        "compressedBytes": 52715,
+        "crc32": "c2037b28"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-editor-dark-native-50-development.png",
+        "bytes": 37847,
+        "compressedBytes": 31359,
+        "crc32": "8114980c"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-editor-dark-pan-down-development.png",
+        "bytes": 56637,
+        "compressedBytes": 38769,
+        "crc32": "c914ac2d"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-editor-dark-pan-right-development.png",
+        "bytes": 70775,
+        "compressedBytes": 52891,
+        "crc32": "b6478f4a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-editor-light-caret-end-development.png",
+        "bytes": 57961,
+        "compressedBytes": 48519,
+        "crc32": "910d1951"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-editor-light-caret-start-development.png",
+        "bytes": 66502,
+        "compressedBytes": 53653,
+        "crc32": "62aa0cc4"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-editor-light-native-100-development.png",
+        "bytes": 67144,
+        "compressedBytes": 53576,
+        "crc32": "b0f35d7c"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-editor-light-native-100-restored-development.png",
+        "bytes": 67097,
+        "compressedBytes": 52905,
+        "crc32": "8ef4851f"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-editor-light-native-50-development.png",
+        "bytes": 38170,
+        "compressedBytes": 31237,
+        "crc32": "9ea5979c"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-editor-light-pan-down-development.png",
+        "bytes": 56620,
+        "compressedBytes": 46316,
+        "crc32": "393f6a39"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-editor-light-pan-right-development.png",
+        "bytes": 70782,
+        "compressedBytes": 55895,
+        "crc32": "d4326bfb"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-guest-viewer-dark-native-100-development.png",
+        "bytes": 65491,
+        "compressedBytes": 51820,
+        "crc32": "5950b24c"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-guest-viewer-dark-native-100-restored-development.png",
+        "bytes": 63301,
+        "compressedBytes": 50244,
+        "crc32": "ecc5d1ae"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-guest-viewer-dark-native-50-development.png",
+        "bytes": 33758,
+        "compressedBytes": 27107,
+        "crc32": "d5f86fb0"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-guest-viewer-dark-pan-down-development.png",
+        "bytes": 53038,
+        "compressedBytes": 39462,
+        "crc32": "3e52b8ad"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-guest-viewer-dark-pan-right-development.png",
+        "bytes": 67055,
+        "compressedBytes": 35103,
+        "crc32": "1daa0ccd"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-guest-viewer-dark-read-only-development.png",
+        "bytes": 65619,
+        "compressedBytes": 51216,
+        "crc32": "ecf2bbf8"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-guest-viewer-light-native-100-development.png",
+        "bytes": 64713,
+        "compressedBytes": 50706,
+        "crc32": "7225d947"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-guest-viewer-light-native-100-restored-development.png",
+        "bytes": 63008,
+        "compressedBytes": 48762,
+        "crc32": "d1b2885d"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-guest-viewer-light-native-50-development.png",
+        "bytes": 33907,
+        "compressedBytes": 27625,
+        "crc32": "0786cb08"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-guest-viewer-light-pan-down-development.png",
+        "bytes": 52769,
+        "compressedBytes": 40080,
+        "crc32": "52e3e792"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-guest-viewer-light-pan-right-development.png",
+        "bytes": 66859,
+        "compressedBytes": 49734,
+        "crc32": "cf8f6fd4"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-049-doc-phone-guest-viewer-light-read-only-development.png",
+        "bytes": 64713,
+        "compressedBytes": 50427,
+        "crc32": "9622af2d"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-066-expired-dirty-doc-dark-development.png",
+        "bytes": 30297,
+        "compressedBytes": 24617,
+        "crc32": "4685ed72"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-066-expired-dirty-doc-light-development.png",
+        "bytes": 31659,
+        "compressedBytes": 25935,
+        "crc32": "b4f2b05a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-066-expired-dirty-doc-phone-development.png",
+        "bytes": 27550,
+        "compressedBytes": 24315,
+        "crc32": "8f1e4d1d"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-066-expired-dirty-sheet-dark-development.png",
+        "bytes": 30297,
+        "compressedBytes": 24617,
+        "crc32": "4685ed72"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-066-expired-dirty-sheet-light-development.png",
+        "bytes": 31659,
+        "compressedBytes": 25935,
+        "crc32": "b4f2b05a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-066-expired-dirty-sheet-phone-development.png",
+        "bytes": 27550,
+        "compressedBytes": 24315,
+        "crc32": "8f1e4d1d"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-069-shared-folder-dark-1440-development.png",
+        "bytes": 58846,
+        "compressedBytes": 53946,
+        "crc32": "4a26a354"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-069-shared-folder-light-1440-development.png",
+        "bytes": 61536,
+        "compressedBytes": 56731,
+        "crc32": "aef86740"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-069-shared-folder-light-390-development.png",
+        "bytes": 41919,
+        "compressedBytes": 39248,
+        "crc32": "ec3e203b"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-069-shared-new-dark-1440-development.png",
+        "bytes": 95323,
+        "compressedBytes": 91867,
+        "crc32": "1a29c524"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-069-shared-new-light-1440-development.png",
+        "bytes": 91801,
+        "compressedBytes": 88446,
+        "crc32": "b4ad6046"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-069-shared-new-light-390-development.png",
+        "bytes": 46013,
+        "compressedBytes": 44336,
+        "crc32": "18a23617"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-070-last-passkey-light-development.png",
+        "bytes": 89790,
+        "compressedBytes": 85311,
+        "crc32": "a70d3c77"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-070-last-passkey-phone-development.png",
+        "bytes": 68392,
+        "compressedBytes": 66352,
+        "crc32": "791ec3d9"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-070-last-passkey-dark-development.png",
+        "bytes": 94491,
+        "compressedBytes": 89949,
+        "crc32": "096023c5"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-070-passkey-list-dark-development.png",
+        "bytes": 62625,
+        "compressedBytes": 56043,
+        "crc32": "2292eb6d"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-070-passkey-list-light-development.png",
+        "bytes": 63428,
+        "compressedBytes": 57246,
+        "crc32": "ecb6092a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-070-passkey-list-phone-development.png",
+        "bytes": 56662,
+        "compressedBytes": 52866,
+        "crc32": "9424e3ca"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-070-remove-confirmation-dark-development.png",
+        "bytes": 93999,
+        "compressedBytes": 89380,
+        "crc32": "b5f37725"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-070-remove-confirmation-light-development.png",
+        "bytes": 89519,
+        "compressedBytes": 84884,
+        "crc32": "a99e077b"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-070-remove-confirmation-phone-development.png",
+        "bytes": 67871,
+        "compressedBytes": 65778,
+        "crc32": "713efcaf"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-070-sign-out-confirmation-dark-development.png",
+        "bytes": 89754,
+        "compressedBytes": 85024,
+        "crc32": "b1f4966b"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-070-sign-out-confirmation-light-development.png",
+        "bytes": 84971,
+        "compressedBytes": 80151,
+        "crc32": "7b405ec1"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-070-sign-out-confirmation-phone-development.png",
+        "bytes": 66620,
+        "compressedBytes": 64634,
+        "crc32": "9fd26040"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-070-verification-required-dark-development.png",
+        "bytes": 97520,
+        "compressedBytes": 92926,
+        "crc32": "6a4d21e5"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-070-verification-required-light-development.png",
+        "bytes": 92996,
+        "compressedBytes": 88096,
+        "crc32": "e14365e5"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-070-verification-required-phone-development.png",
+        "bytes": 70800,
+        "compressedBytes": 68727,
+        "crc32": "a352fe61"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-071-access-details-desktop-dark-development.png",
+        "bytes": 97865,
+        "compressedBytes": 94186,
+        "crc32": "04a11982"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-071-access-details-desktop-light-development.png",
+        "bytes": 94150,
+        "compressedBytes": 90232,
+        "crc32": "cf069460"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-071-hidden-shares-phone-dark-development.png",
+        "bytes": 55621,
+        "compressedBytes": 52925,
+        "crc32": "a5837d07"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-071-hidden-shares-phone-light-development.png",
+        "bytes": 56655,
+        "compressedBytes": 53928,
+        "crc32": "dbad64c2"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-071-shared-menu-desktop-dark-development.png",
+        "bytes": 105024,
+        "compressedBytes": 98467,
+        "crc32": "fd354902"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-075-doc-guest-viewer-dark-1280-development.png",
+        "bytes": 114215,
+        "compressedBytes": 101894,
+        "crc32": "6e26feb2"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-071-shared-menu-desktop-light-development.png",
+        "bytes": 105626,
+        "compressedBytes": 98940,
+        "crc32": "8a77cf35"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-075-doc-guest-viewer-light-1280-development.png",
+        "bytes": 109143,
+        "compressedBytes": 97257,
+        "crc32": "6a7c69f6"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-075-doc-owner-dark-1280-development.png",
+        "bytes": 121386,
+        "compressedBytes": 108421,
+        "crc32": "20bb1d86"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-075-doc-owner-light-1280-development.png",
+        "bytes": 115687,
+        "compressedBytes": 102043,
+        "crc32": "eb1fa68c"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-075-doc-guest-viewer-light-390-development.png",
+        "bytes": 68412,
+        "compressedBytes": 64603,
+        "crc32": "30b21788"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-075-doc-owner-light-390-development.png",
+        "bytes": 69198,
+        "compressedBytes": 65197,
+        "crc32": "e1ec0c9b"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-075-sheet-guest-viewer-dark-1280-development.png",
+        "bytes": 141499,
+        "compressedBytes": 119362,
+        "crc32": "e911ad31"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-075-sheet-guest-viewer-light-1280-development.png",
+        "bytes": 129569,
+        "compressedBytes": 110345,
+        "crc32": "6070d8da"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-075-sheet-guest-viewer-light-390-development.png",
+        "bytes": 62748,
+        "compressedBytes": 61042,
+        "crc32": "52b55225"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-075-sheet-owner-dark-1280-development.png",
+        "bytes": 149336,
+        "compressedBytes": 126934,
+        "crc32": "9c3c6cc8"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-075-sheet-owner-light-1280-development.png",
+        "bytes": 136368,
+        "compressedBytes": 118606,
+        "crc32": "3df6d967"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-075-sheet-owner-light-390-development.png",
+        "bytes": 61914,
+        "compressedBytes": 60245,
+        "crc32": "bf0c835f"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-076-confirmed-targets-dark-1280-development.png",
+        "bytes": 144311,
+        "compressedBytes": 139508,
+        "crc32": "5da0f792"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-076-confirmed-targets-light-1280-development.png",
+        "bytes": 142850,
+        "compressedBytes": 137192,
+        "crc32": "d4de8928"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-076-confirmed-targets-light-390-development.png",
+        "bytes": 63306,
+        "compressedBytes": 59863,
+        "crc32": "cf5e152b"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-076-external-space-dark-1280-development.png",
+        "bytes": 126108,
+        "compressedBytes": 121852,
+        "crc32": "2caee7e2"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-076-external-space-light-1280-development.png",
+        "bytes": 124397,
+        "compressedBytes": 119861,
+        "crc32": "3e494e7a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-076-external-space-light-390-development.png",
+        "bytes": 50728,
+        "compressedBytes": 47858,
+        "crc32": "5fe5372a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-076-partial-dark-1280-development.png",
+        "bytes": 151896,
+        "compressedBytes": 146072,
+        "crc32": "489b15db"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-076-partial-light-1280-development.png",
+        "bytes": 150717,
+        "compressedBytes": 145598,
+        "crc32": "cd629078"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-076-partial-light-390-development.png",
+        "bytes": 69969,
+        "compressedBytes": 66849,
+        "crc32": "fe013a7d"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-076-unchecked-dark-1280-development.png",
+        "bytes": 133109,
+        "compressedBytes": 127806,
+        "crc32": "80554dc1"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-076-unchecked-light-1280-development.png",
+        "bytes": 131574,
+        "compressedBytes": 126704,
+        "crc32": "898d964b"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-076-unchecked-light-390-development.png",
+        "bytes": 52328,
+        "compressedBytes": 49358,
+        "crc32": "0c5a74b1"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-083-setup-dark-development.png",
+        "bytes": 51122,
+        "compressedBytes": 46106,
+        "crc32": "9fb62f36"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-083-setup-light-development.png",
+        "bytes": 51367,
+        "compressedBytes": 46195,
+        "crc32": "87b76395"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-083-setup-phone-dark-development.png",
+        "bytes": 45161,
+        "compressedBytes": 42192,
+        "crc32": "0c6c3deb"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-083-setup-phone-light-development.png",
+        "bytes": 45249,
+        "compressedBytes": 42237,
+        "crc32": "0750d902"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-084-dirty-doc-dark-development.png",
+        "bytes": 30297,
+        "compressedBytes": 24617,
+        "crc32": "4685ed72"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-084-dirty-doc-light-development.png",
+        "bytes": 31659,
+        "compressedBytes": 25935,
+        "crc32": "b4f2b05a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-084-dirty-doc-phone-development.png",
+        "bytes": 27550,
+        "compressedBytes": 24315,
+        "crc32": "8f1e4d1d"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-084-dirty-sheet-dark-development.png",
+        "bytes": 30297,
+        "compressedBytes": 24617,
+        "crc32": "4685ed72"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-084-dirty-sheet-light-development.png",
+        "bytes": 31659,
+        "compressedBytes": 25935,
+        "crc32": "b4f2b05a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-084-dirty-sheet-phone-development.png",
+        "bytes": 27550,
+        "compressedBytes": 24315,
+        "crc32": "8f1e4d1d"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-084-loading-dark-development.png",
+        "bytes": 22718,
+        "compressedBytes": 17658,
+        "crc32": "8a776b14"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-084-loading-light-development.png",
+        "bytes": 23009,
+        "compressedBytes": 17948,
+        "crc32": "c8be38e6"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-084-loading-phone-dark-development.png",
+        "bytes": 19826,
+        "compressedBytes": 16605,
+        "crc32": "32bdcd3f"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-084-loading-phone-light-development.png",
+        "bytes": 20038,
+        "compressedBytes": 16837,
+        "crc32": "18db1fd7"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-084-unsupported-dark-development.png",
+        "bytes": 26318,
+        "compressedBytes": 21335,
+        "crc32": "81fff77a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-084-unsupported-light-development.png",
+        "bytes": 26562,
+        "compressedBytes": 21558,
+        "crc32": "1432e5e6"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-084-unsupported-phone-dark-development.png",
+        "bytes": 23652,
+        "compressedBytes": 20141,
+        "crc32": "2a849e80"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-084-unsupported-phone-light-development.png",
+        "bytes": 23929,
+        "compressedBytes": 20433,
+        "crc32": "952893b1"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-085-space-doc-preview-dark-development.png",
+        "bytes": 89070,
+        "compressedBytes": 82174,
+        "crc32": "e341f8b7"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-085-space-doc-preview-light-development.png",
+        "bytes": 91188,
+        "compressedBytes": 84444,
+        "crc32": "f3e303d2"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-085-space-doc-preview-phone-dark-development.png",
+        "bytes": 51537,
+        "compressedBytes": 47618,
+        "crc32": "145475d8"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-085-space-doc-preview-phone-light-development.png",
+        "bytes": 52407,
+        "compressedBytes": 48501,
+        "crc32": "6732745d"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-085-space-doc-restore-confirmation-dark-development.png",
+        "bytes": 123504,
+        "compressedBytes": 117220,
+        "crc32": "271ecc46"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-085-space-doc-restore-confirmation-light-development.png",
+        "bytes": 120271,
+        "compressedBytes": 114235,
+        "crc32": "b93ce604"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-085-space-doc-restore-confirmation-phone-dark-development.png",
+        "bytes": 64488,
+        "compressedBytes": 61415,
+        "crc32": "9e45d8cd"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-085-space-doc-restore-confirmation-phone-light-development.png",
+        "bytes": 61555,
+        "compressedBytes": 58651,
+        "crc32": "15124e2b"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-085-space-sheet-preview-light-development.png",
+        "bytes": 98521,
+        "compressedBytes": 91377,
+        "crc32": "8613f55f"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-085-space-sheet-preview-phone-dark-development.png",
+        "bytes": 59472,
+        "compressedBytes": 56440,
+        "crc32": "cebbb484"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-085-space-sheet-preview-dark-development.png",
+        "bytes": 97597,
+        "compressedBytes": 90319,
+        "crc32": "dab40a10"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-085-space-sheet-preview-phone-light-development.png",
+        "bytes": 60047,
+        "compressedBytes": 57130,
+        "crc32": "0d8e41a0"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-085-space-sheet-restore-confirmation-dark-development.png",
+        "bytes": 135219,
+        "compressedBytes": 128656,
+        "crc32": "42117ce0"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-085-space-sheet-restore-confirmation-light-development.png",
+        "bytes": 129607,
+        "compressedBytes": 123627,
+        "crc32": "2687fd72"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-085-space-sheet-restore-confirmation-phone-dark-development.png",
+        "bytes": 72579,
+        "compressedBytes": 70236,
+        "crc32": "0a0e02a3"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-085-space-sheet-restore-confirmation-phone-light-development.png",
+        "bytes": 69436,
+        "compressedBytes": 67290,
+        "crc32": "e8253e37"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-editor-dark-development.png",
+        "bytes": 50939,
+        "compressedBytes": 45497,
+        "crc32": "00c48c54"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-editor-light-development.png",
+        "bytes": 50733,
+        "compressedBytes": 45260,
+        "crc32": "371a221a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-editor-phone-dark-development.png",
+        "bytes": 28693,
+        "compressedBytes": 26187,
+        "crc32": "4d96ad61"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-editor-phone-light-development.png",
+        "bytes": 28670,
+        "compressedBytes": 26204,
+        "crc32": "38a417d3"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-icon-color-doc-dark-development.png",
+        "bytes": 93348,
+        "compressedBytes": 89430,
+        "crc32": "b1f42909"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-icon-color-doc-light-development.png",
+        "bytes": 87743,
+        "compressedBytes": 83805,
+        "crc32": "447c8b54"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-icon-color-doc-phone-dark-development.png",
+        "bytes": 54192,
+        "compressedBytes": 53138,
+        "crc32": "dafe89a0"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-icon-color-doc-phone-light-development.png",
+        "bytes": 50239,
+        "compressedBytes": 48920,
+        "crc32": "d83eae66"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-icon-color-folder-dark-development.png",
+        "bytes": 106579,
+        "compressedBytes": 102024,
+        "crc32": "aad4910b"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-icon-color-folder-light-development.png",
+        "bytes": 102544,
+        "compressedBytes": 98209,
+        "crc32": "86957c54"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-icon-color-folder-phone-dark-development.png",
+        "bytes": 53348,
+        "compressedBytes": 52106,
+        "crc32": "ea8f3803"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-icon-color-folder-phone-light-development.png",
+        "bytes": 50424,
+        "compressedBytes": 48985,
+        "crc32": "47123cc6"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-icon-color-highlight-strong-dark-development.png",
+        "bytes": 93350,
+        "compressedBytes": 89519,
+        "crc32": "c73c4cd1"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-icon-color-highlight-strong-light-development.png",
+        "bytes": 87716,
+        "compressedBytes": 83745,
+        "crc32": "f13bec44"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-icon-color-highlight-strong-phone-dark-development.png",
+        "bytes": 54220,
+        "compressedBytes": 53266,
+        "crc32": "89d92bfe"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-icon-color-highlight-strong-phone-light-development.png",
+        "bytes": 50224,
+        "compressedBytes": 49015,
+        "crc32": "2c046a8f"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-icon-color-primary-soft-dark-development.png",
+        "bytes": 93325,
+        "compressedBytes": 89380,
+        "crc32": "3452af9c"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-icon-color-primary-soft-light-development.png",
+        "bytes": 87717,
+        "compressedBytes": 83622,
+        "crc32": "59e5e43a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-icon-color-primary-soft-phone-dark-development.png",
+        "bytes": 54198,
+        "compressedBytes": 53203,
+        "crc32": "8775f45d"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-icon-color-primary-soft-phone-light-development.png",
+        "bytes": 50268,
+        "compressedBytes": 49019,
+        "crc32": "65c93239"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-identity-picker-dark-development.png",
+        "bytes": 78497,
+        "compressedBytes": 74205,
+        "crc32": "e011f504"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-identity-picker-light-development.png",
+        "bytes": 75051,
+        "compressedBytes": 71382,
+        "crc32": "ca2b92ad"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-identity-picker-phone-dark-development.png",
+        "bytes": 44850,
+        "compressedBytes": 43414,
+        "crc32": "9ff75288"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-identity-picker-phone-light-development.png",
+        "bytes": 42797,
+        "compressedBytes": 41331,
+        "crc32": "6397f768"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-picker-gems-dark-development.png",
+        "bytes": 151682,
+        "compressedBytes": 148438,
+        "crc32": "35495631"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-picker-gems-light-development.png",
+        "bytes": 138162,
+        "compressedBytes": 134400,
+        "crc32": "a3ddab82"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-picker-gems-phone-dark-development.png",
+        "bytes": 79869,
+        "compressedBytes": 79470,
+        "crc32": "58975e5b"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-picker-gems-phone-light-development.png",
+        "bytes": 72387,
+        "compressedBytes": 71840,
+        "crc32": "5f44aff1"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-picker-unsplash-dark-development.png",
+        "bytes": 87794,
+        "compressedBytes": 83114,
+        "crc32": "fac7189b"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-picker-unsplash-light-development.png",
+        "bytes": 81688,
+        "compressedBytes": 76588,
+        "crc32": "31786c55"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-picker-unsplash-phone-dark-development.png",
+        "bytes": 44182,
+        "compressedBytes": 42111,
+        "crc32": "dc632c2a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-picker-unsplash-phone-light-development.png",
+        "bytes": 40965,
+        "compressedBytes": 38957,
+        "crc32": "48fc8548"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-picker-upload-dark-development.png",
+        "bytes": 90287,
+        "compressedBytes": 85890,
+        "crc32": "1a2132a6"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-picker-upload-light-development.png",
+        "bytes": 84225,
+        "compressedBytes": 79354,
+        "crc32": "4a5c4082"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-picker-upload-phone-dark-development.png",
+        "bytes": 46571,
+        "compressedBytes": 44694,
+        "crc32": "4e64288f"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-space-dark-development.png",
+        "bytes": 62381,
+        "compressedBytes": 57236,
+        "crc32": "1c11db32"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-086-picker-upload-phone-light-development.png",
+        "bytes": 43224,
+        "compressedBytes": 41427,
+        "crc32": "a36d8a95"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-613px-mouse-doc-development.png",
+        "bytes": 27923,
+        "compressedBytes": 24709,
+        "crc32": "c6f60782"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-613px-mouse-sheet-development.png",
+        "bytes": 34392,
+        "compressedBytes": 30197,
+        "crc32": "48dd63d7"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-doc-dark-development.png",
+        "bytes": 54163,
+        "compressedBytes": 46987,
+        "crc32": "f54a7173"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-doc-light-development.png",
+        "bytes": 54473,
+        "compressedBytes": 47287,
+        "crc32": "779f46d0"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-file-admin-child-development.png",
+        "bytes": 56740,
+        "compressedBytes": 49812,
+        "crc32": "05057306"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-history-preview-dark-development.png",
+        "bytes": 91624,
+        "compressedBytes": 84949,
+        "crc32": "a57cfb22"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-history-preview-light-development.png",
+        "bytes": 93235,
+        "compressedBytes": 86550,
+        "crc32": "0c0066f6"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-history-preview-phone-development.png",
+        "bytes": 55172,
+        "compressedBytes": 51176,
+        "crc32": "dce33b1d"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-phone-doc-dark-development.png",
+        "bytes": 19707,
+        "compressedBytes": 17175,
+        "crc32": "f2d8bae1"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-phone-doc-light-development.png",
+        "bytes": 22268,
+        "compressedBytes": 19149,
+        "crc32": "3131d449"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-phone-pages-light-development.png",
+        "bytes": 26595,
+        "compressedBytes": 23940,
+        "crc32": "2e4800c6"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-phone-sheet-dark-development.png",
+        "bytes": 26552,
+        "compressedBytes": 24615,
+        "crc32": "2a0f6c00"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-phone-trash-dark-development.png",
+        "bytes": 36767,
+        "compressedBytes": 34023,
+        "crc32": "0b669132"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-revoked-unsaved-recovery-development.png",
+        "bytes": 45194,
+        "compressedBytes": 38267,
+        "crc32": "87bc752a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-sheet-dark-development.png",
+        "bytes": 68791,
+        "compressedBytes": 59146,
+        "crc32": "1fe9feb8"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-sheet-light-development.png",
+        "bytes": 68295,
+        "compressedBytes": 58954,
+        "crc32": "97e427ac"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-trash-dark-development.png",
+        "bytes": 55178,
+        "compressedBytes": 48255,
+        "crc32": "8d181441"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-trash-light-development.png",
+        "bytes": 55062,
+        "compressedBytes": 48105,
+        "crc32": "6db94f20"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-091-viewer-development.png",
+        "bytes": 51816,
+        "compressedBytes": 44663,
+        "crc32": "dbe5d30d"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-092-space-guest-editor-dark-development.png",
+        "bytes": 54134,
+        "compressedBytes": 47327,
+        "crc32": "19f962cc"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-092-space-guest-editor-light-development.png",
+        "bytes": 54249,
+        "compressedBytes": 47394,
+        "crc32": "06aea4a5"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-092-space-guest-editor-phone-development.png",
+        "bytes": 34374,
+        "compressedBytes": 30765,
+        "crc32": "9a2df7bc"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-092-space-guest-editor-phone-pages-development.png",
+        "bytes": 22123,
+        "compressedBytes": 18987,
+        "crc32": "c52ebd82"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-092-space-guest-viewer-dark-development.png",
+        "bytes": 47288,
+        "compressedBytes": 40754,
+        "crc32": "e091ef70"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-092-space-guest-viewer-light-development.png",
+        "bytes": 47517,
+        "compressedBytes": 40982,
+        "crc32": "3670810d"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-092-space-guest-viewer-phone-development.png",
+        "bytes": 25871,
+        "compressedBytes": 22243,
+        "crc32": "a5d2df53"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-092-space-guest-viewer-phone-pages-development.png",
+        "bytes": 23819,
+        "compressedBytes": 20603,
+        "crc32": "520c01cc"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-092-space-social-card-development.png",
+        "bytes": 57104,
+        "compressedBytes": 46191,
+        "crc32": "e47dc333"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-095-internal-editor-phone-light-development.png",
+        "bytes": 51644,
+        "compressedBytes": 48377,
+        "crc32": "17333407"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-095-internal-owner-dark-development.png",
+        "bytes": 71533,
+        "compressedBytes": 64824,
+        "crc32": "5bfa250c"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-095-internal-owner-light-development.png",
+        "bytes": 71460,
+        "compressedBytes": 64670,
+        "crc32": "f794ea0f"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-095-outer-owner-light-development.png",
+        "bytes": 67128,
+        "compressedBytes": 60125,
+        "crc32": "7e12fc6a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-095-outer-owner-dark-development.png",
+        "bytes": 64600,
+        "compressedBytes": 57736,
+        "crc32": "5efbab94"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-095-outer-owner-phone-light-development.png",
+        "bytes": 59704,
+        "compressedBytes": 56641,
+        "crc32": "41340933"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-111-banner-dark-announced-development.png",
+        "bytes": 29819,
+        "compressedBytes": 25135,
+        "crc32": "bd679688"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-111-banner-dark-enter-dismissed-development.png",
+        "bytes": 25525,
+        "compressedBytes": 20763,
+        "crc32": "318afe0c"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-111-banner-dark-reopened-development.png",
+        "bytes": 41047,
+        "compressedBytes": 35576,
+        "crc32": "e589e459"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-111-banner-dark-space-dismissed-development.png",
+        "bytes": 25525,
+        "compressedBytes": 20763,
+        "crc32": "318afe0c"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-111-banner-light-announced-development.png",
+        "bytes": 30028,
+        "compressedBytes": 25321,
+        "crc32": "5364f6fd"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-111-banner-light-enter-dismissed-development.png",
+        "bytes": 25723,
+        "compressedBytes": 20980,
+        "crc32": "eea63c76"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-111-banner-light-space-dismissed-development.png",
+        "bytes": 25723,
+        "compressedBytes": 20980,
+        "crc32": "eea63c76"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-111-banner-phone-dark-announced-development.png",
+        "bytes": 25406,
+        "compressedBytes": 22072,
+        "crc32": "ed64f022"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-111-banner-phone-dark-enter-dismissed-development.png",
+        "bytes": 22464,
+        "compressedBytes": 19130,
+        "crc32": "ea4c7f93"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-111-banner-light-reopened-development.png",
+        "bytes": 40833,
+        "compressedBytes": 35331,
+        "crc32": "2b4b4e4a"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-111-banner-phone-dark-reopened-development.png",
+        "bytes": 36141,
+        "compressedBytes": 33019,
+        "crc32": "8f6ceeaa"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-111-banner-phone-dark-space-dismissed-development.png",
+        "bytes": 22464,
+        "compressedBytes": 19130,
+        "crc32": "ea4c7f93"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-111-banner-phone-light-announced-development.png",
+        "bytes": 25640,
+        "compressedBytes": 22313,
+        "crc32": "57772e3b"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-111-banner-phone-light-enter-dismissed-development.png",
+        "bytes": 22599,
+        "compressedBytes": 19268,
+        "crc32": "97f89741"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-111-banner-phone-light-reopened-development.png",
+        "bytes": 36073,
+        "compressedBytes": 32948,
+        "crc32": "1305cbfd"
+      },
+      {
+        "path": "test-results/theme-screenshots/spn-111-banner-phone-light-space-dismissed-development.png",
+        "bytes": 22599,
+        "compressedBytes": 19268,
+        "crc32": "97f89741"
+      },
+      {
+        "path": "playwright-report/development-2-of-2.json",
+        "bytes": 1564056,
+        "compressedBytes": 470377,
+        "crc32": "ef1de07f"
+      }
+    ],
+    "jsonMembers": [
+      {
+        "originalPath": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-editor-permission-notices.json",
+        "storedPath": "artifact-14130986549-json-5.json.gz",
+        "bytes": 65,
+        "sha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094"
+      },
+      {
+        "originalPath": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-guest-editor-permission-notices.json",
+        "storedPath": "artifact-14130986549-json-11.json.gz",
+        "bytes": 65,
+        "sha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094"
+      },
+      {
+        "originalPath": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-guest-viewer-permission-notices.json",
+        "storedPath": "artifact-14130986549-json-17.json.gz",
+        "bytes": 64,
+        "sha256": "fd52957e53e83373c6545cf1d43d93f1761bfa6d3e39e622a02b00e52d84bd68"
+      },
+      {
+        "originalPath": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-owner-permission-notices.json",
+        "storedPath": "artifact-14130986549-json-24.json.gz",
+        "bytes": 65,
+        "sha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094"
+      },
+      {
+        "originalPath": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-viewer-permission-notices.json",
+        "storedPath": "artifact-14130986549-json-29.json.gz",
+        "bytes": 64,
+        "sha256": "fd52957e53e83373c6545cf1d43d93f1761bfa6d3e39e622a02b00e52d84bd68"
+      },
+      {
+        "originalPath": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-editor-permission-notices.json",
+        "storedPath": "artifact-14130986549-json-35.json.gz",
+        "bytes": 65,
+        "sha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094"
+      },
+      {
+        "originalPath": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-guest-editor-permission-notices.json",
+        "storedPath": "artifact-14130986549-json-41.json.gz",
+        "bytes": 65,
+        "sha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094"
+      },
+      {
+        "originalPath": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-guest-viewer-permission-notices.json",
+        "storedPath": "artifact-14130986549-json-48.json.gz",
+        "bytes": 65,
+        "sha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094"
+      },
+      {
+        "originalPath": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-owner-permission-notices.json",
+        "storedPath": "artifact-14130986549-json-51.json.gz",
+        "bytes": 65,
+        "sha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094"
+      },
+      {
+        "originalPath": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-viewer-permission-notices.json",
+        "storedPath": "artifact-14130986549-json-58.json.gz",
+        "bytes": 65,
+        "sha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094"
+      },
+      {
+        "originalPath": "test-results/development/shared-creation-collaborat-da7dd-ner-refreshes-the-same-file-development/sync-diagnostics.json",
+        "storedPath": "artifact-14130986549-json-65.json.gz",
+        "bytes": 213,
+        "sha256": "258a47d09cefbd51036d4a176836d7d68e95b207696b431c2b123f34e7fbe06f"
+      },
+      {
+        "originalPath": "playwright-report/development-2-of-2.json",
+        "storedPath": "artifact-14130986549-json-317.json.gz",
+        "bytes": 1564056,
+        "sha256": "8b7dc75819eca969e2fb809a489899fe770331c7bce01ebbc2dac35142a94e7d"
+      }
+    ],
+    "allMemberCrcVerified": true
+  },
+  {
+    "id": 14130596590,
+    "name": "doc-responsiveness-mobile",
+    "originalZip": "/tmp/spn090-publication-43d3ee62/remaining-terminal-evidence/original-artifact-14130596590.zip",
+    "zipBytes": 2116980,
+    "zipSha256": "31b26e1b9d6aa9efe3d1a854f43c3bf55ccce3b53ea209b94763ae90d5e5d82e",
+    "githubDigest": "sha256:31b26e1b9d6aa9efe3d1a854f43c3bf55ccce3b53ea209b94763ae90d5e5d82e",
+    "members": [
+      {
+        "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+        "bytes": 237355,
+        "compressedBytes": 30598,
+        "crc32": "a2265e3d"
+      },
+      {
+        "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+        "bytes": 237092,
+        "compressedBytes": 30241,
+        "crc32": "a71a563b"
+      },
+      {
+        "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+        "bytes": 258904,
+        "compressedBytes": 31821,
+        "crc32": "01ccfc50"
+      },
+      {
+        "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+        "bytes": 251828,
+        "compressedBytes": 31660,
+        "crc32": "0489af46"
+      },
+      {
+        "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+        "bytes": 229,
+        "compressedBytes": 163,
+        "crc32": "5c8f8e0d"
+      },
+      {
+        "path": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+        "bytes": 5092351,
+        "compressedBytes": 858723,
+        "crc32": "9eb2461d"
+      },
+      {
+        "path": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+        "bytes": 29144,
+        "compressedBytes": 2400,
+        "crc32": "9cbe0e3c"
+      },
+      {
+        "path": "test-results/doc-responsiveness/doc-responsiveness-mobile--59407--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+        "bytes": 164157,
+        "compressedBytes": 19920,
+        "crc32": "77e773ce"
+      },
+      {
+        "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+        "bytes": 956009,
+        "compressedBytes": 46166,
+        "crc32": "181d6236"
+      },
+      {
+        "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+        "bytes": 953515,
+        "compressedBytes": 45701,
+        "crc32": "57c154f4"
+      },
+      {
+        "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+        "bytes": 965601,
+        "compressedBytes": 44990,
+        "crc32": "ea787fc4"
+      },
+      {
+        "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+        "bytes": 972696,
+        "compressedBytes": 46527,
+        "crc32": "c7303769"
+      },
+      {
+        "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+        "bytes": 242,
+        "compressedBytes": 167,
+        "crc32": "e8398cea"
+      },
+      {
+        "path": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+        "bytes": 3469801,
+        "compressedBytes": 503984,
+        "crc32": "099f3639"
+      },
+      {
+        "path": "test-results/doc-responsiveness/doc-responsiveness-native--032b2-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+        "bytes": 2305,
+        "compressedBytes": 791,
+        "crc32": "6ba02483"
+      },
+      {
+        "path": "test-results/doc-responsiveness/doc-responsiveness-native--bfbca-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+        "bytes": 66188,
+        "compressedBytes": 3629,
+        "crc32": "1c26aa35"
+      },
+      {
+        "path": "test-results/spn108-comparison-mobile.json",
+        "bytes": 12877,
+        "compressedBytes": 2460,
+        "crc32": "0615d7cc"
+      },
+      {
+        "path": "playwright-report/doc-responsiveness.json",
+        "bytes": 1379858,
+        "compressedBytes": 410909,
+        "crc32": "214dd516"
+      }
+    ],
+    "jsonMembers": [
+      {
+        "originalPath": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+        "storedPath": "artifact-14130596590-json-0.json.gz",
+        "bytes": 237355,
+        "sha256": "4d5a0e35c74e10efdeb9d7b2e9ad0afa142118fc5c38942513ca4b59d3a6cc1f"
+      },
+      {
+        "originalPath": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+        "storedPath": "artifact-14130596590-json-1.json.gz",
+        "bytes": 237092,
+        "sha256": "2d5ab3271a265b4dd2c66d8e0c532b920cfd614983882352fe385835fcab31be"
+      },
+      {
+        "originalPath": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+        "storedPath": "artifact-14130596590-json-2.json.gz",
+        "bytes": 258904,
+        "sha256": "728057775a46ddb78c7d6575841853e103b6f540eb0ddd6508a5c8f8b94ff954"
+      },
+      {
+        "originalPath": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+        "storedPath": "artifact-14130596590-json-3.json.gz",
+        "bytes": 251828,
+        "sha256": "3baed0677363f8c1c8adacbfbec54cddef2e814ada528da7742f4187dec61dc6"
+      },
+      {
+        "originalPath": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+        "storedPath": "artifact-14130596590-json-4.json.gz",
+        "bytes": 229,
+        "sha256": "d9c7b171e2a3ccc343550c84b2bf2361f19c306ba396da952c583422e72048ed"
+      },
+      {
+        "originalPath": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+        "storedPath": "artifact-14130596590-json-6.json.gz",
+        "bytes": 29144,
+        "sha256": "edfe7e00a3c828ae6f25252143ef14aa43ef1c7439a0f8c857de3d5430e18c68"
+      },
+      {
+        "originalPath": "test-results/doc-responsiveness/doc-responsiveness-mobile--59407--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+        "storedPath": "artifact-14130596590-json-7.json.gz",
+        "bytes": 164157,
+        "sha256": "014e87506eb554945eb3b40b0085b8dcf03d739d736ccbac4f0ea0a728c044ee"
+      },
+      {
+        "originalPath": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+        "storedPath": "artifact-14130596590-json-8.json.gz",
+        "bytes": 956009,
+        "sha256": "1d27f9d092bde04450eb113ec87f780aef416167ed8aa8f84e9468139bee9f3b"
+      },
+      {
+        "originalPath": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+        "storedPath": "artifact-14130596590-json-9.json.gz",
+        "bytes": 953515,
+        "sha256": "8260f5fb2a488c7a33ec7a4c5f4d3be77057a874cb137b05e8b765eaf7e1edb0"
+      },
+      {
+        "originalPath": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+        "storedPath": "artifact-14130596590-json-10.json.gz",
+        "bytes": 965601,
+        "sha256": "5f7c25b5a5a2844e1d31d0ec4eecf207ff8b5a15bfefe7e4ab8838043403943d"
+      },
+      {
+        "originalPath": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+        "storedPath": "artifact-14130596590-json-11.json.gz",
+        "bytes": 972696,
+        "sha256": "972a49600c4fcfb717c7bf84d4a468870355a7bd48e5ea526a6c96516c2e775b"
+      },
+      {
+        "originalPath": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+        "storedPath": "artifact-14130596590-json-12.json.gz",
+        "bytes": 242,
+        "sha256": "b86131cc608caa8083f3efba8052da9b25cc9ddd5d98cebc53c6d5f4a7acb055"
+      },
+      {
+        "originalPath": "test-results/doc-responsiveness/doc-responsiveness-native--032b2-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+        "storedPath": "artifact-14130596590-json-14.json.gz",
+        "bytes": 2305,
+        "sha256": "86f1d45560021e15444ab2bbaecce76e6e1d19ca26b276cfde92bfc5ee01fc70"
+      },
+      {
+        "originalPath": "test-results/doc-responsiveness/doc-responsiveness-native--bfbca-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+        "storedPath": "artifact-14130596590-json-15.json.gz",
+        "bytes": 66188,
+        "sha256": "20013196a2ef142c3cad415442fda8a66c174007b0dcb2f598597fa3441bef8f"
+      },
+      {
+        "originalPath": "test-results/spn108-comparison-mobile.json",
+        "storedPath": "artifact-14130596590-json-16.json.gz",
+        "bytes": 12877,
+        "sha256": "1c00ad7291b104e29b6d6de406be805cf2eac963a95ed2ef61ece26c0a14d422"
+      },
+      {
+        "originalPath": "playwright-report/doc-responsiveness.json",
+        "storedPath": "artifact-14130596590-json-17.json.gz",
+        "bytes": 1379858,
+        "sha256": "620141b3dd6695607a69b99c54e1706690d7fe4917a1ad31aeb2ab13a5454565"
+      }
+    ],
+    "allMemberCrcVerified": true
+  }
+]

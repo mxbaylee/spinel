@@ -1,0 +1,522 @@
+{
+  "observedAt": "2026-11-14T20:35:25.784670+00:00",
+  "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "tested": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+  "tree": "d761b4562a11e876cb83a9cd0d951291192c71f6",
+  "workflowConclusions": [
+    {
+      "kind": "ci",
+      "id": 43634578422,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": 33,
+      "counts": {
+        "success": 33
+      },
+      "pending": []
+    },
+    {
+      "kind": "storybook",
+      "id": 43634578351,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": 10,
+      "counts": {
+        "success": 8,
+        "skipped": 2
+      },
+      "pending": []
+    },
+    {
+      "kind": "desktop",
+      "id": 43634578353,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": 3,
+      "counts": {
+        "success": 3
+      },
+      "pending": []
+    }
+  ],
+  "sevenRequiredGates": [
+    {
+      "name": "Backlog",
+      "id": 132568672688,
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07"
+    },
+    {
+      "name": "Pull request",
+      "id": 132568458329,
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07"
+    },
+    {
+      "name": "Lint",
+      "id": 132568672697,
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07"
+    },
+    {
+      "name": "Typecheck",
+      "id": 132568672689,
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07"
+    },
+    {
+      "name": "Unit tests",
+      "id": 132573382044,
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07"
+    },
+    {
+      "name": "Lib tests",
+      "id": 132574901116,
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07"
+    },
+    {
+      "name": "Playwright smoke",
+      "id": 132579006689,
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07"
+    }
+  ],
+  "allSelectedSuites": 15,
+  "allCompletedLogBindings": [
+    {
+      "kind": "ci",
+      "id": 132568458094,
+      "name": "Classify changes (43634578422)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568458094.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568458329,
+      "name": "Pull request",
+      "log": "hosted-checkpoint-20261114T2023/job-132568458329.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672688,
+      "name": "Backlog",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672688.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672689,
+      "name": "Typecheck",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672689.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672697,
+      "name": "Lint",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672697.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672698,
+      "name": "Container smoke",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672698.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672712,
+      "name": "Doc callback lifetimes (mobile)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672712.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672723,
+      "name": "Doc callback lifetimes (desktop)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672723.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672759,
+      "name": "Unit tests (remaining)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672759.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672763,
+      "name": "Doc responsiveness (desktop)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672763.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672764,
+      "name": "Unit tests (recovery)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672764.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672771,
+      "name": "Doc responsiveness (mobile)",
+      "log": "terminal-job-logs/job-132568672771.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672775,
+      "name": "Lib tests (mixed-fuzz)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672775.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672778,
+      "name": "Unit tests (supervisor)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672778.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672784,
+      "name": "Lib tests (remaining)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672784.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672785,
+      "name": "Lib tests (cells)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672785.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672790,
+      "name": "Sized restore acceptance",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672790.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672809,
+      "name": "Lib tests (dense-cells)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672809.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672827,
+      "name": "Retained sync transition",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672827.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672872,
+      "name": "Playwright smoke (mobile-https)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672872.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672875,
+      "name": "Playwright smoke (offline-upgrade)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672875.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672881,
+      "name": "Playwright smoke (sync-soak-sheet)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672881.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672892,
+      "name": "Playwright smoke (production 2/2)",
+      "log": "terminal-job-logs/job-132568672892.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672920,
+      "name": "Playwright smoke (sync-development)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672920.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672929,
+      "name": "Playwright smoke (sync-soak-doc)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672929.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672945,
+      "name": "Playwright smoke (sync-production)",
+      "log": "terminal-job-logs/job-132568672945.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672947,
+      "name": "Playwright smoke (development 2/2)",
+      "log": "terminal-job-logs/job-132568672947.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672952,
+      "name": "Playwright smoke (supervised-restore)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568672952.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568672963,
+      "name": "Playwright smoke (production 1/2)",
+      "log": "terminal-job-logs/job-132568672963.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132568673035,
+      "name": "Playwright smoke (development 1/2)",
+      "log": "terminal-job-logs/job-132568673035.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132573382044,
+      "name": "Unit tests",
+      "log": "hosted-checkpoint-20261114T2023/job-132573382044.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132574901116,
+      "name": "Lib tests",
+      "log": "hosted-checkpoint-20261114T2023/job-132574901116.log.gz"
+    },
+    {
+      "kind": "ci",
+      "id": 132579006689,
+      "name": "Playwright smoke",
+      "log": "terminal-job-logs/job-132579006689.log.gz"
+    },
+    {
+      "kind": "storybook",
+      "id": 132568457648,
+      "name": "Classify changes",
+      "log": "hosted-checkpoint-20261114T2023/job-132568457648.log.gz"
+    },
+    {
+      "kind": "storybook",
+      "id": 132568667315,
+      "name": "Build Storybook",
+      "log": "hosted-checkpoint-20261114T2023/job-132568667315.log.gz"
+    },
+    {
+      "kind": "storybook",
+      "id": 132569080735,
+      "name": "Review Storybook tablet",
+      "log": "hosted-checkpoint-20261114T2023/job-132569080735.log.gz"
+    },
+    {
+      "kind": "storybook",
+      "id": 132569080745,
+      "name": "Review Storybook desktop (dark)",
+      "log": "hosted-checkpoint-20261114T2023/job-132569080745.log.gz"
+    },
+    {
+      "kind": "storybook",
+      "id": 132569080780,
+      "name": "Review Storybook mobile (light)",
+      "log": "hosted-checkpoint-20261114T2023/job-132569080780.log.gz"
+    },
+    {
+      "kind": "storybook",
+      "id": 132569080781,
+      "name": "Review Storybook mobile (dark)",
+      "log": "hosted-checkpoint-20261114T2023/job-132569080781.log.gz"
+    },
+    {
+      "kind": "storybook",
+      "id": 132569080999,
+      "name": "Review Storybook desktop (light)",
+      "log": "hosted-checkpoint-20261114T2023/job-132569080999.log.gz"
+    },
+    {
+      "kind": "storybook",
+      "id": 132573402052,
+      "name": "Review Storybook states and interactions",
+      "log": "hosted-checkpoint-20261114T2023/job-132573402052.log.gz"
+    },
+    {
+      "kind": "desktop",
+      "id": 132568457839,
+      "name": "Native desktop offline (chrome, macos-26)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568457839.log.gz"
+    },
+    {
+      "kind": "desktop",
+      "id": 132568458072,
+      "name": "Native desktop offline (firefox, macos-26)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568458072.log.gz"
+    },
+    {
+      "kind": "desktop",
+      "id": 132568458119,
+      "name": "Native desktop offline (safari, macos-15-intel)",
+      "log": "hosted-checkpoint-20261114T2023/job-132568458119.log.gz"
+    }
+  ],
+  "startupCases": [
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "guest startup reporting ends when a ready guest mounts after slow app code",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 81,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 604
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "guest startup reporting ends for unavailable entry",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 132,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 536
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "guest startup reporting ends for revoked entry",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 132,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 519
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "guest startup reporting ends for unsupported entry",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 132,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 526
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "account startup reporting remains live while actual admission is pending",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 158,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 491
+        }
+      ]
+    },
+    {
+      "artifact": 14130986549,
+      "environment": "theme-screenshots-development-2",
+      "title": "guest startup reporting ends when a ready guest mounts after slow app code",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 81,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 1651
+        }
+      ]
+    },
+    {
+      "artifact": 14130986549,
+      "environment": "theme-screenshots-development-2",
+      "title": "guest startup reporting ends for unavailable entry",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 132,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 1616
+        }
+      ]
+    },
+    {
+      "artifact": 14130986549,
+      "environment": "theme-screenshots-development-2",
+      "title": "guest startup reporting ends for revoked entry",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 132,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 1036
+        }
+      ]
+    },
+    {
+      "artifact": 14130986549,
+      "environment": "theme-screenshots-development-2",
+      "title": "guest startup reporting ends for unsupported entry",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 132,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 1007
+        }
+      ]
+    },
+    {
+      "artifact": 14130986549,
+      "environment": "theme-screenshots-development-2",
+      "title": "account startup reporting remains live while actual admission is pending",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 158,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 1050
+        }
+      ]
+    }
+  ],
+  "reviewArchive": "325ffdd2b6778bfc4f9c7a1a69b4248c3b2989ec",
+  "noRerunsCancellationsOrRemoteMutations": true,
+  "mergeAndCleanup": "not performed; manager must audit before guarded merge",
+  "planFileSha256": "af8f43b64c87641f8b7447b066576b07df511a67866e9c9b1cbba266b421dbff",
+  "aggregatePlanDigest": "310db6f552c1e4732c80fdc2eb7a9e7153a79a92e504b7de34c1e799dfd0586b",
+  "aggregateAllSelectedPassed": true
+}

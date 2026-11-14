@@ -1,0 +1,18 @@
+{
+  "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "tested": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+  "testedTree": "d761b4562a11e876cb83a9cd0d951291192c71f6",
+  "run": 43634578422,
+  "attempt": 1,
+  "planArtifact": 14129099771,
+  "zipSha256": "da7927edef1f1b6187bfbb5356c5867e1fec469590e997ede9829803651c7275",
+  "planDigest": "310db6f552c1e4732c80fdc2eb7a9e7153a79a92e504b7de34c1e799dfd0586b",
+  "selectedSuites": 15,
+  "action": "synchronize",
+  "mode": "full",
+  "reason": "Immutable range or event labels unavailable; full coverage.",
+  "allObservedRunsAttemptOne": true,
+  "failuresObserved": [],
+  "observedAt": "2026-11-14T19:56:27.902566+00:00"
+}

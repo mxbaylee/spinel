@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-14T19:54:32.189624+00:00",
+  "head": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+  "oldHead": "724b577791273e0962ff08a38dea77a5aa632d84",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "bodySHA256": "23c391f98e3c35b096aebb53f60253899f716bf8191f0d5bbe24633d66270309",
+  "archivePublished": "325ffdd2b6778bfc4f9c7a1a69b4248c3b2989ec",
+  "metadataUpdated": "2026-11-14T19:52:38Z",
+  "metadataObservationThrough": "2026-11-14T19:53:56Z",
+  "oldHeadEditRunsObserved": [],
+  "cancellationPerformed": false,
+  "observationLimit": "No new run observed during bounded window; old PR conflicting, causal attribution not established.",
+  "fastForwardPush": true,
+  "remoteHeadBaseBodyVerified": true,
+  "draft": true,
+  "initialValidationRuns": [
+    43634578422,
+    43634578353,
+    43634578351
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "observedAt": "2026-11-14T20:03:15.375023+00:00",
+  "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+  "run": 43634578353,
+  "attempt": 1,
+  "snapshot": "/tmp/spn090-publication-43d3ee62/initial-20261114T200237Z",
+  "artifacts": [
+    {
+      "id": 14130125536,
+      "name": "desktop-offline-firefox-macos-26-43634578353-1",
+      "originalZipPath": "/tmp/spn090-publication-43d3ee62/desktop-43634578353/original-14130125536.zip",
+      "zipBytes": 495184,
+      "zipSha256": "f8915e8f55abc302a6f9ecf9b1f8e852533c9983ee1fb11c9f223ba865d08139",
+      "githubDigest": "sha256:f8915e8f55abc302a6f9ecf9b1f8e852533c9983ee1fb11c9f223ba865d08139",
+      "json": [
+        {
+          "originalPath": "firefox/acceptance.json",
+          "path": "artifact-14130125536-json-2.json.gz",
+          "decodedSha256": "74b3fd96e9a0443db0e811bc0c654b3f33334ce072981b70b8156f4698f21968",
+          "decodedBytes": 56440
+        },
+        {
+          "originalPath": "firefox/firefox-storage-prompt-1.json",
+          "path": "artifact-14130125536-json-10.json.gz",
+          "decodedSha256": "b17cc2af5b96c1db62bae8ee0049550ca065a87560e4a8d52d3b034a8d9c5add",
+          "decodedBytes": 21983
+        },
+        {
+          "originalPath": "firefox/versions.json",
+          "path": "artifact-14130125536-json-14.json.gz",
+          "decodedSha256": "3d287b86b240845cf0db2f9649126e2fdac376e7878bed6663b2f3506e0e6460",
+          "decodedBytes": 644
+        }
+      ]
+    },
+    {
+      "id": 14129347138,
+      "name": "desktop-offline-chrome-macos-26-43634578353-1",
+      "originalZipPath": "/tmp/spn090-publication-43d3ee62/desktop-43634578353/original-14129347138.zip",
+      "zipBytes": 226699,
+      "zipSha256": "c790f6af1a6916e512ab93e0cfea4ccdaa2fc3ef7db9f395b07520cad9c725fb",
+      "githubDigest": "sha256:c790f6af1a6916e512ab93e0cfea4ccdaa2fc3ef7db9f395b07520cad9c725fb",
+      "json": [
+        {
+          "originalPath": "chrome/acceptance.json",
+          "path": "artifact-14129347138-json-1.json.gz",
+          "decodedSha256": "68460f415e0532650e1ef476eac0298d186f6ca40d31563b21da8ee98ee3f7a9",
+          "decodedBytes": 55232
+        },
+        {
+          "originalPath": "chrome/versions.json",
+          "path": "artifact-14129347138-json-13.json.gz",
+          "decodedSha256": "1f79ab2ca2c6a46f79476660dde6a6ee3f8a9f84a8ee5b02470e521ff606b234",
+          "decodedBytes": 824
+        }
+      ]
+    },
+    {
+      "id": 14129218280,
+      "name": "desktop-offline-safari-macos-15-intel-43634578353-1",
+      "originalZipPath": "/tmp/spn090-publication-43d3ee62/desktop-43634578353/original-14129218280.zip",
+      "zipBytes": 1057524,
+      "zipSha256": "d526b1083e18dd501e0a24f425168bf6716d734d5f3c6c9b6e9ec6a0ecbab9ab",
+      "githubDigest": "sha256:d526b1083e18dd501e0a24f425168bf6716d734d5f3c6c9b6e9ec6a0ecbab9ab",
+      "json": [
+        {
+          "originalPath": "safari/acceptance.json",
+          "path": "artifact-14129218280-json-1.json.gz",
+          "decodedSha256": "f7142d03bcbd6eed67590e721a3c8e042a36363f559959358c8244e041560840",
+          "decodedBytes": 53121
+        },
+        {
+          "originalPath": "safari/versions.json",
+          "path": "artifact-14129218280-json-13.json.gz",
+          "decodedSha256": "89e3c15ae1547c957157dba91485410bef455f35f703e8bbdb3a6d95292e89b3",
+          "decodedBytes": 1136
+        },
+        {
+          "originalPath": "safari-profile-probe.json",
+          "path": "artifact-14129218280-json-17.json.gz",
+          "decodedSha256": "3ac9bc683da4901c39f707b2c46ae5a9e618abb0655946c0ced8189b8a28674d",
+          "decodedBytes": 162801
+        }
+      ]
+    }
+  ],
+  "logs": []
+}

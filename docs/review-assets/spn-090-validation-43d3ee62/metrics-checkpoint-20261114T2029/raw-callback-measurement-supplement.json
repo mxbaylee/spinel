@@ -1,0 +1,38 @@
+[
+  {
+    "artifact": 14130256951,
+    "originalPath": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+    "storedPath": "artifact-14130256951-raw-callback-evidence-0.json.gz",
+    "bytes": 21511847,
+    "storedBytes": 855073,
+    "sha256": "87d123020607049ebdd828341e287ab0e8788f70073aa7690346a088483d01db",
+    "note": "Raw measurement retained; supersedes initial collector size-based omission description. Original ZIP also preserved."
+  },
+  {
+    "artifact": 14130256951,
+    "originalPath": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+    "storedPath": "artifact-14130256951-raw-callback-evidence-1.json.gz",
+    "bytes": 19509519,
+    "storedBytes": 793844,
+    "sha256": "dbb159fc800642b7477efe780224a20fe5c644d1bd17b16f799d3d6e216f6d7f",
+    "note": "Raw measurement retained; supersedes initial collector size-based omission description. Original ZIP also preserved."
+  },
+  {
+    "artifact": 14130197380,
+    "originalPath": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+    "storedPath": "artifact-14130197380-raw-callback-evidence-0.json.gz",
+    "bytes": 23785252,
+    "storedBytes": 890371,
+    "sha256": "382f6626962d495845aaf7d6d39f635c0fb53e37d7966e9a307c042889ecac74",
+    "note": "Raw measurement retained; supersedes initial collector size-based omission description. Original ZIP also preserved."
+  },
+  {
+    "artifact": 14130197380,
+    "originalPath": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+    "storedPath": "artifact-14130197380-raw-callback-evidence-1.json.gz",
+    "bytes": 21344829,
+    "storedBytes": 802854,
+    "sha256": "66d65e193c810e34187f7f49ead8709d0fe7f21997aeeee76c30b3657a883b6f",
+    "note": "Raw measurement retained; supersedes initial collector size-based omission description. Original ZIP also preserved."
+  }
+]

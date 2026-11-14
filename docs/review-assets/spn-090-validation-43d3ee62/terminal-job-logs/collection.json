@@ -1,0 +1,43 @@
+{
+  "originalAttempt": 1,
+  "apiSnapshot": "/tmp/spn090-publication-43d3ee62/initial-20261114T203521Z",
+  "allTerminalJobs": 46,
+  "newLogs": [
+    {
+      "id": 132568672771,
+      "name": "Doc responsiveness (mobile)",
+      "conclusion": "success"
+    },
+    {
+      "id": 132568672892,
+      "name": "Playwright smoke (production 2/2)",
+      "conclusion": "success"
+    },
+    {
+      "id": 132568672945,
+      "name": "Playwright smoke (sync-production)",
+      "conclusion": "success"
+    },
+    {
+      "id": 132568672947,
+      "name": "Playwright smoke (development 2/2)",
+      "conclusion": "success"
+    },
+    {
+      "id": 132568672963,
+      "name": "Playwright smoke (production 1/2)",
+      "conclusion": "success"
+    },
+    {
+      "id": 132568673035,
+      "name": "Playwright smoke (development 1/2)",
+      "conclusion": "success"
+    },
+    {
+      "id": 132579006689,
+      "name": "Playwright smoke",
+      "conclusion": "success"
+    }
+  ],
+  "priorLogs": "/tmp/spn090-publication-43d3ee62/hosted-checkpoint-20261114T2023"
+}

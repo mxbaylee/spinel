@@ -1,0 +1,66 @@
+{
+  "at": "2026-11-14T19:58:53.714446+00:00",
+  "audits": [
+    {
+      "ticket": "090",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "tested": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+      "tree": "d761b4562a11e876cb83a9cd0d951291192c71f6",
+      "planZip": 14129099771,
+      "zipSHA256": "da7927edef1f1b6187bfbb5356c5867e1fec469590e997ede9829803651c7275",
+      "planKeys": [
+        "version",
+        "event",
+        "action",
+        "base",
+        "head",
+        "tested",
+        "mode",
+        "labels",
+        "paths",
+        "suites"
+      ],
+      "plan": {
+        "mode": "full",
+        "head": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+        "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+        "tested": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+        "paths": null,
+        "labels": [
+          "visual-review"
+        ]
+      },
+      "suiteCount": 15
+    },
+    {
+      "ticket": "120",
+      "source": "5356f085f84302c85490acf473adab72cc0b7eb9",
+      "tested": "af02918a9d3d58b33db8e4be15aeea87c7d5cfa3",
+      "tree": "401aa9565137473347ff1e5340e8d7f3dfb27dd7",
+      "planZip": 14129566222,
+      "zipSHA256": "93f4a0fe8c524259db471f41080b3e471e47a90d8941c5e5669579a8a57a70af",
+      "planKeys": [
+        "version",
+        "event",
+        "action",
+        "base",
+        "head",
+        "tested",
+        "mode",
+        "labels",
+        "paths",
+        "suites"
+      ],
+      "plan": {
+        "mode": "full",
+        "head": "5356f085f84302c85490acf473adab72cc0b7eb9",
+        "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+        "tested": "af02918a9d3d58b33db8e4be15aeea87c7d5cfa3",
+        "paths": null,
+        "labels": []
+      },
+      "suiteCount": 15
+    }
+  ],
+  "readerCorrection": "Initial compact summary requested nonexistent reason/headSha/baseSha/digest fields, producing nulls; actual fields head/base/tested now independently asserted. No source/evidence mutation."
+}

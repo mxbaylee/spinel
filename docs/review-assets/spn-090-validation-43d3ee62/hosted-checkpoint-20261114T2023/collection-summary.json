@@ -1,0 +1,609 @@
+{
+  "observedAt": "2026-11-14T20:24:33.421Z",
+  "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "pr": 224,
+  "workflows": [
+    {
+      "kind": "ci",
+      "id": "43634578422",
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "allJobsTerminal": false,
+      "jobs": [
+        {
+          "id": 132568458094,
+          "name": "Classify changes (43634578422)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568458329,
+          "name": "Pull request",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672688,
+          "name": "Backlog",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672689,
+          "name": "Typecheck",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672697,
+          "name": "Lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672698,
+          "name": "Container smoke",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672712,
+          "name": "Doc callback lifetimes (mobile)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672723,
+          "name": "Doc callback lifetimes (desktop)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672759,
+          "name": "Unit tests (remaining)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672763,
+          "name": "Doc responsiveness (desktop)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672764,
+          "name": "Unit tests (recovery)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672771,
+          "name": "Doc responsiveness (mobile)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132568672775,
+          "name": "Lib tests (mixed-fuzz)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672778,
+          "name": "Unit tests (supervisor)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672784,
+          "name": "Lib tests (remaining)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672785,
+          "name": "Lib tests (cells)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672790,
+          "name": "Sized restore acceptance",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672809,
+          "name": "Lib tests (dense-cells)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672827,
+          "name": "Retained sync transition",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672872,
+          "name": "Playwright smoke (mobile-https)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672875,
+          "name": "Playwright smoke (offline-upgrade)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672881,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672892,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132568672920,
+          "name": "Playwright smoke (sync-development)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672929,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672945,
+          "name": "Playwright smoke (sync-production)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132568672947,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132568672952,
+          "name": "Playwright smoke (supervised-restore)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568672963,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132568673035,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132573382044,
+          "name": "Unit tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132574901116,
+          "name": "Lib tests",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "kind": "storybook",
+      "id": "43634578351",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "allJobsTerminal": true,
+      "jobs": [
+        {
+          "id": 132568457648,
+          "name": "Classify changes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568667315,
+          "name": "Build Storybook",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132569080735,
+          "name": "Review Storybook tablet",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132569080745,
+          "name": "Review Storybook desktop (dark)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132569080780,
+          "name": "Review Storybook mobile (light)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132569080781,
+          "name": "Review Storybook mobile (dark)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132569080999,
+          "name": "Review Storybook desktop (light)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132569082324,
+          "name": "Publish PR preview to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "id": 132573402052,
+          "name": "Review Storybook states and interactions",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132574662957,
+          "name": "Deploy to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        }
+      ]
+    },
+    {
+      "kind": "desktop",
+      "id": "43634578353",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "allJobsTerminal": true,
+      "jobs": [
+        {
+          "id": 132568457839,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568458072,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132568458119,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14130038929,
+      "name": "ci-results-unit",
+      "originalZipPath": "/tmp/spn090-publication-43d3ee62/hosted-checkpoint-20261114T2023/original-artifact-14130038929.zip",
+      "bytes": 1183,
+      "downloadedZipSha256": "376bec565abe2bf02cec2abc2f968be5eac6bc397ad6b38f6dcc39f10e56fb68",
+      "githubDigest": "sha256:376bec565abe2bf02cec2abc2f968be5eac6bc397ad6b38f6dcc39f10e56fb68",
+      "jsonMembers": [
+        {
+          "originalPath": "ci-results-unit.json",
+          "storedPath": "artifact-14130038929-json-0.json.gz",
+          "bytes": 6278,
+          "sha256": "ed4b54974d3647714e7a933c3ff27ad4617fd74966149da46433bf7f681edba6"
+        }
+      ]
+    },
+    {
+      "id": 14129859544,
+      "name": "ci-results-lib",
+      "originalZipPath": "/tmp/spn090-publication-43d3ee62/hosted-checkpoint-20261114T2023/original-artifact-14129859544.zip",
+      "bytes": 1201,
+      "downloadedZipSha256": "871cb154cd5f19acf11dcb8590e97f5705d0807a554f2f9cb3965207438c4335",
+      "githubDigest": "sha256:871cb154cd5f19acf11dcb8590e97f5705d0807a554f2f9cb3965207438c4335",
+      "jsonMembers": [
+        {
+          "originalPath": "ci-results-lib.json",
+          "storedPath": "artifact-14129859544-json-0.json.gz",
+          "bytes": 6385,
+          "sha256": "47b2b6e148fad17f4b5c70f3cab3cfc83abed87fcea5a37c10c8c2035e7c9b14"
+        }
+      ]
+    },
+    {
+      "id": 14129099771,
+      "name": "ci-plan",
+      "originalZipPath": "/tmp/spn090-publication-43d3ee62/hosted-checkpoint-20261114T2023/original-artifact-14129099771.zip",
+      "bytes": 958,
+      "downloadedZipSha256": "da7927edef1f1b6187bfbb5356c5867e1fec469590e997ede9829803651c7275",
+      "githubDigest": "sha256:da7927edef1f1b6187bfbb5356c5867e1fec469590e997ede9829803651c7275",
+      "jsonMembers": [
+        {
+          "originalPath": "ci-plan.json",
+          "storedPath": "artifact-14129099771-json-0.json.gz",
+          "bytes": 3952,
+          "sha256": "af8f43b64c87641f8b7447b066576b07df511a67866e9c9b1cbba266b421dbff"
+        }
+      ]
+    },
+    {
+      "id": 14130202701,
+      "name": "design-review-desktop-light",
+      "originalZipPath": "/tmp/spn090-publication-43d3ee62/hosted-checkpoint-20261114T2023/original-artifact-14130202701.zip",
+      "bytes": 50574715,
+      "downloadedZipSha256": "d334bd790f1464765002144f646d7b33c082c6ffb66812c1033ae2a2f8d0ccfd",
+      "githubDigest": "sha256:d334bd790f1464765002144f646d7b33c082c6ffb66812c1033ae2a2f8d0ccfd",
+      "jsonMembers": [
+        {
+          "originalPath": "bundle-size.json",
+          "storedPath": "artifact-14130202701-json-0.json.gz",
+          "bytes": 193,
+          "sha256": "3db8c29092f5e63a65a395a4cedbe9aa685c2ddc313080cd00037d0ec570d841"
+        },
+        {
+          "originalPath": "manifest.json",
+          "storedPath": "artifact-14130202701-json-1.json.gz",
+          "bytes": 396674,
+          "sha256": "f75e7763f216f4ff099a3432b26067322ac98b7471fde0abccef1308d0a452f1"
+        },
+        {
+          "originalPath": "redesign-native-editors--doc-light-initial-geometry.json",
+          "storedPath": "artifact-14130202701-json-2.json.gz",
+          "bytes": 1226,
+          "sha256": "0b492d18d7c2238eb0b9c288ec31cd9f5d1185c5bee107ad172966f65e3d7379"
+        },
+        {
+          "originalPath": "redesign-native-editors--sheet-light-initial-geometry.json",
+          "storedPath": "artifact-14130202701-json-3.json.gz",
+          "bytes": 888,
+          "sha256": "7c8fb2c6363a42eab744501493befabc52e147109a42ba54295a0d2997627b44"
+        }
+      ]
+    },
+    {
+      "id": 14130137220,
+      "name": "design-review-desktop-dark",
+      "originalZipPath": "/tmp/spn090-publication-43d3ee62/hosted-checkpoint-20261114T2023/original-artifact-14130137220.zip",
+      "bytes": 51282141,
+      "downloadedZipSha256": "ac8ad36aa9f12bf88d139d4d1ffd9a24abcbfad1c368b5b0770a1ccf3bc55dfb",
+      "githubDigest": "sha256:ac8ad36aa9f12bf88d139d4d1ffd9a24abcbfad1c368b5b0770a1ccf3bc55dfb",
+      "jsonMembers": [
+        {
+          "originalPath": "bundle-size.json",
+          "storedPath": "artifact-14130137220-json-0.json.gz",
+          "bytes": 193,
+          "sha256": "3db8c29092f5e63a65a395a4cedbe9aa685c2ddc313080cd00037d0ec570d841"
+        },
+        {
+          "originalPath": "manifest.json",
+          "storedPath": "artifact-14130137220-json-1.json.gz",
+          "bytes": 393213,
+          "sha256": "b4e1944159c29780d48eb602db12f34bfb6e2062da9984c75dbfc8c9530b99a4"
+        },
+        {
+          "originalPath": "redesign-native-editors--doc-dark-initial-geometry.json",
+          "storedPath": "artifact-14130137220-json-2.json.gz",
+          "bytes": 1226,
+          "sha256": "0b492d18d7c2238eb0b9c288ec31cd9f5d1185c5bee107ad172966f65e3d7379"
+        },
+        {
+          "originalPath": "redesign-native-editors--sheet-dark-initial-geometry.json",
+          "storedPath": "artifact-14130137220-json-3.json.gz",
+          "bytes": 888,
+          "sha256": "7c8fb2c6363a42eab744501493befabc52e147109a42ba54295a0d2997627b44"
+        }
+      ]
+    },
+    {
+      "id": 14130091190,
+      "name": "design-review-tablet",
+      "originalZipPath": "/tmp/spn090-publication-43d3ee62/hosted-checkpoint-20261114T2023/original-artifact-14130091190.zip",
+      "bytes": 46845235,
+      "downloadedZipSha256": "35802609e9e6bd0808380c52520f2153db595c38fe10642bbb09b33263621dbd",
+      "githubDigest": "sha256:35802609e9e6bd0808380c52520f2153db595c38fe10642bbb09b33263621dbd",
+      "jsonMembers": [
+        {
+          "originalPath": "bundle-size.json",
+          "storedPath": "artifact-14130091190-json-0.json.gz",
+          "bytes": 193,
+          "sha256": "3db8c29092f5e63a65a395a4cedbe9aa685c2ddc313080cd00037d0ec570d841"
+        },
+        {
+          "originalPath": "manifest.json",
+          "storedPath": "artifact-14130091190-json-1.json.gz",
+          "bytes": 399699,
+          "sha256": "50a70d8fce422b058225b4d54a7b8efa08e429e28fb14111246d80314eb37eb6"
+        },
+        {
+          "originalPath": "redesign-native-editors--doc-tablet-initial-geometry.json",
+          "storedPath": "artifact-14130091190-json-2.json.gz",
+          "bytes": 1214,
+          "sha256": "b27eaf73d36b052b1cf2a6a43724e8ab5d6ed9f0666f6b87a26d206b8cdf2233"
+        },
+        {
+          "originalPath": "redesign-native-editors--sheet-tablet-initial-geometry.json",
+          "storedPath": "artifact-14130091190-json-3.json.gz",
+          "bytes": 719,
+          "sha256": "dc177b69762f8ac5d8674418e7368fccc88fd2e9d4501d54e7c3b0348a09a160"
+        }
+      ]
+    },
+    {
+      "id": 14129887564,
+      "name": "design-review-mobile-light",
+      "originalZipPath": "/tmp/spn090-publication-43d3ee62/hosted-checkpoint-20261114T2023/original-artifact-14129887564.zip",
+      "bytes": 42295478,
+      "downloadedZipSha256": "b7b55926536008e277fc2c2faff555e2074c48e6b727156fe0553e4e05cb5078",
+      "githubDigest": "sha256:b7b55926536008e277fc2c2faff555e2074c48e6b727156fe0553e4e05cb5078",
+      "jsonMembers": [
+        {
+          "originalPath": "bundle-size.json",
+          "storedPath": "artifact-14129887564-json-0.json.gz",
+          "bytes": 193,
+          "sha256": "3db8c29092f5e63a65a395a4cedbe9aa685c2ddc313080cd00037d0ec570d841"
+        },
+        {
+          "originalPath": "manifest.json",
+          "storedPath": "artifact-14129887564-json-1.json.gz",
+          "bytes": 396457,
+          "sha256": "c216342c793b9ef2cb866941fe89eb43da295d9dbb294b974ace662333e022e1"
+        },
+        {
+          "originalPath": "redesign-native-editors--doc-phone-initial-geometry.json",
+          "storedPath": "artifact-14129887564-json-2.json.gz",
+          "bytes": 1214,
+          "sha256": "636f24123ca74786f1c9e9bf7a2363744e1e8726bf4f77dc209098ff1a59b162"
+        },
+        {
+          "originalPath": "redesign-native-editors--sheet-phone-initial-geometry.json",
+          "storedPath": "artifact-14129887564-json-3.json.gz",
+          "bytes": 719,
+          "sha256": "335196a0601155359d0d43121c377d241fdee0c9ce31835b2bc40a1d943fa638"
+        }
+      ]
+    },
+    {
+      "id": 14129722272,
+      "name": "design-review-mobile-dark",
+      "originalZipPath": "/tmp/spn090-publication-43d3ee62/hosted-checkpoint-20261114T2023/original-artifact-14129722272.zip",
+      "bytes": 42781920,
+      "downloadedZipSha256": "0c3cb440f6eccf1335188603820e7ae43b507499b2d433fe8dbd38a546b5f0bd",
+      "githubDigest": "sha256:0c3cb440f6eccf1335188603820e7ae43b507499b2d433fe8dbd38a546b5f0bd",
+      "jsonMembers": [
+        {
+          "originalPath": "bundle-size.json",
+          "storedPath": "artifact-14129722272-json-0.json.gz",
+          "bytes": 193,
+          "sha256": "3db8c29092f5e63a65a395a4cedbe9aa685c2ddc313080cd00037d0ec570d841"
+        },
+        {
+          "originalPath": "manifest.json",
+          "storedPath": "artifact-14129722272-json-1.json.gz",
+          "bytes": 412676,
+          "sha256": "bd0b8d491a034eae11fedda5d6186dfdc295d28161c14a34a7d676b95eafca78"
+        },
+        {
+          "originalPath": "redesign-native-editors--doc-phone-dark-initial-geometry.json",
+          "storedPath": "artifact-14129722272-json-2.json.gz",
+          "bytes": 1214,
+          "sha256": "636f24123ca74786f1c9e9bf7a2363744e1e8726bf4f77dc209098ff1a59b162"
+        },
+        {
+          "originalPath": "redesign-native-editors--sheet-phone-dark-initial-geometry.json",
+          "storedPath": "artifact-14129722272-json-3.json.gz",
+          "bytes": 719,
+          "sha256": "335196a0601155359d0d43121c377d241fdee0c9ce31835b2bc40a1d943fa638"
+        }
+      ]
+    },
+    {
+      "id": 14130125536,
+      "name": "desktop-offline-firefox-macos-26-43634578353-1",
+      "originalZipPath": "/tmp/spn090-publication-43d3ee62/hosted-checkpoint-20261114T2023/original-artifact-14130125536.zip",
+      "bytes": 495184,
+      "downloadedZipSha256": "f8915e8f55abc302a6f9ecf9b1f8e852533c9983ee1fb11c9f223ba865d08139",
+      "githubDigest": "sha256:f8915e8f55abc302a6f9ecf9b1f8e852533c9983ee1fb11c9f223ba865d08139",
+      "jsonMembers": [
+        {
+          "originalPath": "firefox/acceptance.json",
+          "storedPath": "artifact-14130125536-json-0.json.gz",
+          "bytes": 56440,
+          "sha256": "74b3fd96e9a0443db0e811bc0c654b3f33334ce072981b70b8156f4698f21968"
+        },
+        {
+          "originalPath": "firefox/firefox-storage-prompt-1.json",
+          "storedPath": "artifact-14130125536-json-1.json.gz",
+          "bytes": 21983,
+          "sha256": "b17cc2af5b96c1db62bae8ee0049550ca065a87560e4a8d52d3b034a8d9c5add"
+        },
+        {
+          "originalPath": "firefox/versions.json",
+          "storedPath": "artifact-14130125536-json-2.json.gz",
+          "bytes": 644,
+          "sha256": "3d287b86b240845cf0db2f9649126e2fdac376e7878bed6663b2f3506e0e6460"
+        }
+      ]
+    },
+    {
+      "id": 14129347138,
+      "name": "desktop-offline-chrome-macos-26-43634578353-1",
+      "originalZipPath": "/tmp/spn090-publication-43d3ee62/hosted-checkpoint-20261114T2023/original-artifact-14129347138.zip",
+      "bytes": 226699,
+      "downloadedZipSha256": "c790f6af1a6916e512ab93e0cfea4ccdaa2fc3ef7db9f395b07520cad9c725fb",
+      "githubDigest": "sha256:c790f6af1a6916e512ab93e0cfea4ccdaa2fc3ef7db9f395b07520cad9c725fb",
+      "jsonMembers": [
+        {
+          "originalPath": "chrome/acceptance.json",
+          "storedPath": "artifact-14129347138-json-0.json.gz",
+          "bytes": 55232,
+          "sha256": "68460f415e0532650e1ef476eac0298d186f6ca40d31563b21da8ee98ee3f7a9"
+        },
+        {
+          "originalPath": "chrome/versions.json",
+          "storedPath": "artifact-14129347138-json-1.json.gz",
+          "bytes": 824,
+          "sha256": "1f79ab2ca2c6a46f79476660dde6a6ee3f8a9f84a8ee5b02470e521ff606b234"
+        }
+      ]
+    },
+    {
+      "id": 14129218280,
+      "name": "desktop-offline-safari-macos-15-intel-43634578353-1",
+      "originalZipPath": "/tmp/spn090-publication-43d3ee62/hosted-checkpoint-20261114T2023/original-artifact-14129218280.zip",
+      "bytes": 1057524,
+      "downloadedZipSha256": "d526b1083e18dd501e0a24f425168bf6716d734d5f3c6c9b6e9ec6a0ecbab9ab",
+      "githubDigest": "sha256:d526b1083e18dd501e0a24f425168bf6716d734d5f3c6c9b6e9ec6a0ecbab9ab",
+      "jsonMembers": [
+        {
+          "originalPath": "safari/acceptance.json",
+          "storedPath": "artifact-14129218280-json-0.json.gz",
+          "bytes": 53121,
+          "sha256": "f7142d03bcbd6eed67590e721a3c8e042a36363f559959358c8244e041560840"
+        },
+        {
+          "originalPath": "safari/versions.json",
+          "storedPath": "artifact-14129218280-json-1.json.gz",
+          "bytes": 1136,
+          "sha256": "89e3c15ae1547c957157dba91485410bef455f35f703e8bbdb3a6d95292e89b3"
+        },
+        {
+          "originalPath": "safari-profile-probe.json",
+          "storedPath": "artifact-14129218280-json-2.json.gz",
+          "bytes": 162801,
+          "sha256": "3ac9bc683da4901c39f707b2c46ae5a9e618abb0655946c0ced8189b8a28674d"
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "archiveReady": false,
+  "note": "Raw GET-only checkpoint. Exact plan/tested-tree/gate/result identity and first-failure/privacy review still required. No current pass, merge or archive publication inferred."
+}

@@ -1,0 +1,83 @@
+{
+  "at": "2026-11-14T20:05:19.294964+00:00",
+  "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+  "run": 43634578353,
+  "attempt": 1,
+  "originalZipCRCDigestVerified": 3,
+  "decodedJSONByteExactVerified": 8,
+  "reports": [
+    {
+      "browser": "firefox",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "tested": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+      "status": "passed",
+      "launches": 4,
+      "lastLaunch": {
+        "kind": "firefox",
+        "version": "160.0",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:160.0) Gecko/20100101 Firefox/160.0",
+        "profile": {
+          "mode": "explicit-directory",
+          "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+          "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-firefox/profile",
+          "directoryDevice": "16777230",
+          "directoryInode": "3081315"
+        },
+        "browserPid": 4672,
+        "previousBrowserPid": 3431,
+        "driverPid": 4671,
+        "driverVersion": "geckodriver 0.37.1\n\nThe source code of this program is available from\ntesting/geckodriver in https://hg.mozilla.org/mozilla-central.\n\nThis program is subject to the terms of the Mozilla Public License 2.0.\nYou can obtain a copy of the license at https://mozilla.org/MPL/2.0/.",
+        "startedAt": "2026-11-14T19:57:28.051Z"
+      }
+    },
+    {
+      "browser": "chrome",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "tested": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+      "status": "passed",
+      "launches": 4,
+      "lastLaunch": {
+        "kind": "chrome",
+        "version": "157.0.8103.79",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+        "profile": {
+          "mode": "explicit-directory",
+          "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+          "actualPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-chrome/profile",
+          "directoryDevice": "16777231",
+          "directoryInode": "3084779"
+        },
+        "browserPid": 5650,
+        "previousBrowserPid": 4784,
+        "driverPid": 5649,
+        "driverVersion": "ChromeDriver 157.0.8103.78 (4b3d0dabb8250b6f152d2d85d79e7706e309d087-refs/branch-heads/8103@{#1573})",
+        "startedAt": "2026-11-14T19:57:17.020Z"
+      }
+    },
+    {
+      "browser": "safari",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "tested": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+      "status": "passed",
+      "launches": 4,
+      "lastLaunch": {
+        "kind": "safari",
+        "version": "27.2",
+        "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+        "profile": {
+          "mode": "ordinary-hosted-safari-user",
+          "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+          "actualPath": "/Users/runner",
+          "directoryDevice": "16777220",
+          "directoryInode": "12884922560"
+        },
+        "browserPid": 19151,
+        "previousBrowserPid": 16224,
+        "driverPid": null,
+        "driverVersion": null,
+        "startedAt": "2026-11-14T20:02:20.153Z"
+      }
+    }
+  ],
+  "phoneAcceptance": false
+}

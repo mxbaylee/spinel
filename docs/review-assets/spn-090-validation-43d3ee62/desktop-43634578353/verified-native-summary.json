@@ -1,0 +1,304 @@
+{
+  "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+  "run": 43634578353,
+  "attempt": 1,
+  "originalZipCrcAndDigestsVerified": true,
+  "eightDecodedJsonHashesVerified": true,
+  "allThreeAcceptanceIdentitiesVerified": true,
+  "reports": [
+    {
+      "browser": "firefox",
+      "version": "160.0",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "tested": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+      "status": "passed",
+      "platform": "ProductName:\t\tmacOS\nProductVersion:\t\t26.7.2\nBuildVersion:\t\t25G332",
+      "machine": "arm64",
+      "launches": 4,
+      "stages": [
+        "browser-start",
+        "all-four-downloads-complete",
+        "transport-disabled-before-quit",
+        "exact-records-captured-before-quit",
+        "browser-stop",
+        "transport-disabled-before-relaunch",
+        "browser-start",
+        "offline-catalog-and-original-records-retained",
+        "native-doc-input-caret",
+        "native-doc-input-caret",
+        "native-offline-edits-committed",
+        "browser-stop",
+        "transport-still-disabled-before-pending-relaunch",
+        "browser-start",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "transport-restored",
+        "normal-reconnect-exact-content-once",
+        "recovered-original-reconnect-outage",
+        "native-clipboard-content",
+        "conflict-copy-preserves-original",
+        "normal-reconnect-exact-content-once",
+        "recovered-original-reconnect-outage",
+        "native-clipboard-content",
+        "conflict-copy-preserves-original",
+        "storage-loss-tabs-prepared",
+        "storage-loss-unregistration",
+        "storage-loss-tabs-handed-off",
+        "storage-loss-quiescence-before-stop",
+        "browser-stop-before-storage-loss",
+        "browser-start",
+        "storage-loss-tabs-restarted",
+        "storage-deletion",
+        "cleared-storage-is-not-advertised",
+        "post-deletion-outage",
+        "missing-data-cannot-open-offline",
+        "complete",
+        "browser-stop"
+      ],
+      "finalStages": [
+        {
+          "name": "missing-data-cannot-open-offline",
+          "time": "2026-11-14T19:57:29.578Z",
+          "message": "You're offline\n\nConnect to the internet, then try again to open this page.\n\nTry again"
+        },
+        {
+          "name": "complete",
+          "time": "2026-11-14T19:57:29.578Z"
+        },
+        {
+          "name": "browser-stop",
+          "time": "2026-11-14T19:57:30.225Z",
+          "kind": "firefox",
+          "browserPid": 4672,
+          "driverPid": 4671,
+          "browserExited": true,
+          "driverExited": true,
+          "stoppedAt": "2026-11-14T19:57:30.225Z"
+        }
+      ],
+      "persistenceBeforeAfter": [
+        [
+          false,
+          true
+        ],
+        [
+          true,
+          true
+        ],
+        [
+          true,
+          true
+        ],
+        [
+          true,
+          true
+        ]
+      ],
+      "artifactId": 14130125536,
+      "originalZipSha256": "f8915e8f55abc302a6f9ecf9b1f8e852533c9983ee1fb11c9f223ba865d08139"
+    },
+    {
+      "browser": "chrome",
+      "version": "157.0.8103.79",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "tested": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+      "status": "passed",
+      "platform": "ProductName:\t\tmacOS\nProductVersion:\t\t26.7.2\nBuildVersion:\t\t25G332",
+      "machine": "arm64",
+      "launches": 4,
+      "stages": [
+        "browser-start",
+        "all-four-downloads-complete",
+        "transport-disabled-before-quit",
+        "exact-records-captured-before-quit",
+        "browser-stop",
+        "transport-disabled-before-relaunch",
+        "browser-start",
+        "offline-catalog-and-original-records-retained",
+        "native-doc-input-caret",
+        "native-doc-input-caret",
+        "native-offline-edits-committed",
+        "browser-stop",
+        "transport-still-disabled-before-pending-relaunch",
+        "browser-start",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "transport-restored",
+        "normal-reconnect-exact-content-once",
+        "recovered-original-reconnect-outage",
+        "native-clipboard-content",
+        "conflict-copy-preserves-original",
+        "normal-reconnect-exact-content-once",
+        "recovered-original-reconnect-outage",
+        "native-clipboard-content",
+        "conflict-copy-preserves-original",
+        "storage-loss-tabs-prepared",
+        "storage-loss-unregistration",
+        "storage-loss-tabs-handed-off",
+        "storage-loss-quiescence-before-stop",
+        "browser-stop-before-storage-loss",
+        "browser-start",
+        "storage-loss-tabs-restarted",
+        "storage-deletion",
+        "cleared-storage-is-not-advertised",
+        "post-deletion-outage",
+        "missing-data-cannot-open-offline",
+        "complete",
+        "browser-stop"
+      ],
+      "finalStages": [
+        {
+          "name": "missing-data-cannot-open-offline",
+          "time": "2026-11-14T19:57:18.373Z",
+          "message": "You're offline\n\nConnect to the internet, then try again to open this page.\n\nTry again"
+        },
+        {
+          "name": "complete",
+          "time": "2026-11-14T19:57:18.373Z"
+        },
+        {
+          "name": "browser-stop",
+          "time": "2026-11-14T19:57:19.266Z",
+          "kind": "chrome",
+          "browserPid": 5650,
+          "driverPid": 5649,
+          "browserExited": true,
+          "driverExited": true,
+          "stoppedAt": "2026-11-14T19:57:19.266Z"
+        }
+      ],
+      "persistenceBeforeAfter": [
+        [
+          false,
+          false
+        ],
+        [
+          false,
+          false
+        ],
+        [
+          false,
+          false
+        ],
+        [
+          false,
+          false
+        ]
+      ],
+      "artifactId": 14129347138,
+      "originalZipSha256": "c790f6af1a6916e512ab93e0cfea4ccdaa2fc3ef7db9f395b07520cad9c725fb"
+    },
+    {
+      "browser": "safari",
+      "version": "27.2",
+      "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+      "tested": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+      "status": "passed",
+      "platform": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830",
+      "machine": "x86_64",
+      "launches": 4,
+      "stages": [
+        "browser-start",
+        "safari-online-rendering-baseline",
+        "safari-online-rendering-baseline",
+        "all-four-downloads-complete",
+        "transport-disabled-before-quit",
+        "exact-records-captured-before-quit",
+        "browser-stop",
+        "transport-disabled-before-relaunch",
+        "browser-start",
+        "offline-catalog-and-original-records-retained",
+        "native-doc-input-caret",
+        "native-doc-input-caret",
+        "native-offline-edits-committed",
+        "browser-stop",
+        "transport-still-disabled-before-pending-relaunch",
+        "browser-start",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "native-clipboard-content",
+        "pending-restart-retained",
+        "transport-restored",
+        "normal-reconnect-exact-content-once",
+        "recovered-original-reconnect-outage",
+        "native-clipboard-content",
+        "conflict-copy-preserves-original",
+        "normal-reconnect-exact-content-once",
+        "recovered-original-reconnect-outage",
+        "native-clipboard-content",
+        "conflict-copy-preserves-original",
+        "storage-loss-tabs-prepared",
+        "storage-loss-unregistration",
+        "storage-loss-tabs-handed-off",
+        "storage-loss-quiescence-before-stop",
+        "browser-stop-before-storage-loss",
+        "browser-start",
+        "storage-loss-tabs-restarted",
+        "storage-deletion",
+        "cleared-storage-is-not-advertised",
+        "post-deletion-outage",
+        "missing-data-cannot-open-offline",
+        "complete",
+        "browser-stop"
+      ],
+      "finalStages": [
+        {
+          "name": "missing-data-cannot-open-offline",
+          "time": "2026-11-14T20:02:29.307Z",
+          "message": "You're offline\n\nConnect to the internet, then try again to open this page.\n\nTry again"
+        },
+        {
+          "name": "complete",
+          "time": "2026-11-14T20:02:29.308Z"
+        },
+        {
+          "name": "browser-stop",
+          "time": "2026-11-14T20:02:29.672Z",
+          "kind": "safari",
+          "browserPid": 19151,
+          "driverPid": null,
+          "browserExited": true,
+          "driverExited": true,
+          "stoppedAt": "2026-11-14T20:02:29.672Z"
+        }
+      ],
+      "persistenceBeforeAfter": [
+        [
+          false,
+          false
+        ],
+        [
+          false,
+          false
+        ],
+        [
+          false,
+          false
+        ],
+        [
+          false,
+          false
+        ]
+      ],
+      "artifactId": 14129218280,
+      "originalZipSha256": "d526b1083e18dd501e0a24f425168bf6716d734d5f3c6c9b6e9ec6a0ecbab9ab"
+    }
+  ],
+  "phoneAcceptance": false
+}

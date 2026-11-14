@@ -1,0 +1,149 @@
+{
+  "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+  "tested": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+  "artifact": 14130596590,
+  "rawComparison": {
+    "originalPath": "test-results/spn108-comparison-mobile.json",
+    "storedPath": "artifact-14130596590-json-16.json.gz",
+    "bytes": 12877,
+    "sha256": "1c00ad7291b104e29b6d6de406be805cf2eac963a95ed2ef61ece26c0a14d422"
+  },
+  "physicalDevice": false,
+  "passed": true,
+  "candidateSamples": [
+    {
+      "role": "candidate",
+      "sample": "profile",
+      "source": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+      "inputP95Ms": 60.39999999990687,
+      "longestTaskMs": 114,
+      "capacityPairedFlushMs": {
+        "count": 130,
+        "p50": 3.1000000000931323,
+        "p95": 6.899999999906868,
+        "max": 16.300000000046566,
+        "sum": 482.90000000037253
+      },
+      "idlePairedFlushMs": {
+        "count": 1,
+        "p50": 1.8999999999068677,
+        "p95": 1.8999999999068677,
+        "max": 1.8999999999068677,
+        "sum": 1.8999999999068677
+      },
+      "pairedFlushMaximumMs": 16.300000000046566,
+      "nativeDrainUpperBoundMs": 3761.8000000000466,
+      "firstVerifiedBrowserLocalDrainMs": 443.5,
+      "lateReadMinusLocalWitnessMs": 3318.3000000000466,
+      "drainPollCount": 2,
+      "firstEmptyAfterFinalKeyMs": 3410.3000000000466,
+      "typingWallMs": 104570.92685499997,
+      "initialIntegrity": true,
+      "redoOutcome": "passed",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "candidate",
+      "sample": "plain-3",
+      "source": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+      "inputP95Ms": 57.39999999990687,
+      "longestTaskMs": 104,
+      "capacityPairedFlushMs": {
+        "count": 130,
+        "p50": 3.0999999998603016,
+        "p95": 5.7000000001862645,
+        "max": 14.299999999813735,
+        "sum": 445.79999999771826
+      },
+      "idlePairedFlushMs": {
+        "count": 1,
+        "p50": 2.699999999953434,
+        "p95": 2.699999999953434,
+        "max": 2.699999999953434,
+        "sum": 2.699999999953434
+      },
+      "pairedFlushMaximumMs": 14.299999999813735,
+      "nativeDrainUpperBoundMs": 3139.9000000001397,
+      "firstVerifiedBrowserLocalDrainMs": 397,
+      "lateReadMinusLocalWitnessMs": 2742.9000000001397,
+      "drainPollCount": 1,
+      "firstEmptyAfterFinalKeyMs": 676.6999999999534,
+      "typingWallMs": 103183.73619499995,
+      "initialIntegrity": true,
+      "redoOutcome": "passed",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "candidate",
+      "sample": "plain-2",
+      "source": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+      "inputP95Ms": 60.39999999990687,
+      "longestTaskMs": 146,
+      "capacityPairedFlushMs": {
+        "count": 130,
+        "p50": 3.1000000000931323,
+        "p95": 5.599999999860302,
+        "max": 14.700000000186265,
+        "sum": 454.2999999988824
+      },
+      "idlePairedFlushMs": {
+        "count": 1,
+        "p50": 1.8000000000465661,
+        "p95": 1.8000000000465661,
+        "max": 1.8000000000465661,
+        "sum": 1.8000000000465661
+      },
+      "pairedFlushMaximumMs": 14.700000000186265,
+      "nativeDrainUpperBoundMs": 3268.899999999907,
+      "firstVerifiedBrowserLocalDrainMs": 396.89999999990687,
+      "lateReadMinusLocalWitnessMs": 2872,
+      "drainPollCount": 2,
+      "firstEmptyAfterFinalKeyMs": 2891.0999999998603,
+      "typingWallMs": 106859.09519,
+      "initialIntegrity": true,
+      "redoOutcome": "passed",
+      "undoRedoGroups": 1
+    },
+    {
+      "role": "candidate",
+      "sample": "plain-1",
+      "source": "1a35df689da6a19154e0589c4e82c9dcb6cd1a8a",
+      "inputP95Ms": 64.0999999998603,
+      "longestTaskMs": 112,
+      "capacityPairedFlushMs": {
+        "count": 130,
+        "p50": 3.1000000000931323,
+        "p95": 6,
+        "max": 13.899999999906868,
+        "sum": 466.80000000074506
+      },
+      "idlePairedFlushMs": {
+        "count": 1,
+        "p50": 2.1000000000931323,
+        "p95": 2.1000000000931323,
+        "max": 2.1000000000931323,
+        "sum": 2.1000000000931323
+      },
+      "pairedFlushMaximumMs": 13.899999999906868,
+      "nativeDrainUpperBoundMs": 2952.899999999907,
+      "firstVerifiedBrowserLocalDrainMs": 370.5999999998603,
+      "lateReadMinusLocalWitnessMs": 2582.3000000000466,
+      "drainPollCount": 1,
+      "firstEmptyAfterFinalKeyMs": 533.7999999998137,
+      "typingWallMs": 112873.924329,
+      "initialIntegrity": true,
+      "redoOutcome": "passed",
+      "undoRedoGroups": 131
+    }
+  ],
+  "maxInputP95Ms": 64.0999999998603,
+  "maxTaskMs": 146,
+  "maxFirstVerifiedBrowserLocalDrainMs": 443.5,
+  "maxLateReadUpperBoundMs": 3761.8000000000466,
+  "drainAcceptance": {
+    "metric": "first-verified-browser-local-empty",
+    "maximumMs": 1000,
+    "lateReadUpperBound": "descriptive-only"
+  },
+  "attributionQualification": "Full comparison preserves baseline task attribution, variation and sampled reducer uncertainty. Native-drain acceptance uses first verified browser-local empty; late read upper bound is descriptive, not the gate."
+}

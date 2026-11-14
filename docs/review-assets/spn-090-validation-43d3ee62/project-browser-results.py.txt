@@ -1,0 +1,17 @@
+from pathlib import Path
+import json,gzip,hashlib
+r=Path('/tmp/spn090-publication-43d3ee62');summary=[];cases=[]
+for p in sorted(r.glob('*checkpoint-*'))+sorted(r.glob('browser-completion-*'))+[r/'remaining-terminal-evidence']:
+ if not (p/'artifacts.json').exists():continue
+ for a in json.loads((p/'artifacts.json').read_text()):
+  for m in a['jsonMembers']:
+   if not m['originalPath'].startswith('playwright-report/'):continue
+   b=gzip.decompress((p/m['storedPath']).read_bytes());v=json.loads(b);owner={'artifact':a['id'],'artifactName':a['name'],'reporter':m['originalPath'],'decodedSha256':hashlib.sha256(b).hexdigest(),'stats':v.get('stats')};summary.append(owner)
+   def walk(ss):
+    for s in ss:
+     for z in s.get('specs',[]):
+      if z.get('file') not in ['startup-lifecycle.spec.ts','admin-layout.spec.ts','maintenance.spec.ts','pwa.spec.ts'] and not z.get('file','').startswith('offline'):continue
+      for t in z['tests']:cases.append({'artifact':a['id'],'environment':a['name'],'title':z['title'],'file':z['file'],'line':z['line'],'status':t['status'],'results':[{'retry':e['retry'],'status':e['status'],'durationMs':e['duration']} for e in t['results']]})
+     walk(s.get('suites',[]))
+   walk(v['suites'])
+(r/'selected-browser-results.json').write_text(json.dumps({'source':'43d3ee62bab1ed1d1b6d76209308f63f6e6aab07','run':43634578422,'attempt':1,'reporters':summary,'cases':cases,'note':'Projection only; original raw reporters authoritative. Current success does not diagnose or erase earlier failures.'},indent=2)+'\n');print('reporters',len(summary),'selected cases',len(cases))

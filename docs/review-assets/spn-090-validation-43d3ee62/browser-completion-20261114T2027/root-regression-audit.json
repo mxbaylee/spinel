@@ -1,0 +1,133 @@
+{
+  "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+  "run": 43634578422,
+  "attempt": 1,
+  "cases": [
+    {
+      "artifact": 14131115020,
+      "report": "playwright-report/development-1-of-2.json",
+      "project": "development",
+      "file": "admin-layout.spec.ts",
+      "title": "administration sections preserve private metadata and keyboard focus at 1280px",
+      "retry": 0,
+      "durationMs": 3011
+    },
+    {
+      "artifact": 14131115020,
+      "report": "playwright-report/development-1-of-2.json",
+      "project": "development",
+      "file": "admin-layout.spec.ts",
+      "title": "administration sections preserve private metadata and keyboard focus at 390px",
+      "retry": 0,
+      "durationMs": 2862
+    },
+    {
+      "artifact": 14131115020,
+      "report": "playwright-report/development-1-of-2.json",
+      "project": "development",
+      "file": "admin-layout.spec.ts",
+      "title": "pending invitations prevent section changes, manual copying works, and leaving discards the secret",
+      "retry": 0,
+      "durationMs": 2257
+    },
+    {
+      "artifact": 14131115020,
+      "report": "playwright-report/development-1-of-2.json",
+      "project": "development",
+      "file": "admin-layout.spec.ts",
+      "title": "a response from an unmounted section cannot redirect a current administration view",
+      "retry": 0,
+      "durationMs": 888
+    },
+    {
+      "artifact": 14130486137,
+      "report": "playwright-report/production-2-of-2.json",
+      "project": "production",
+      "file": "maintenance.spec.ts",
+      "title": "supervised maintenance keeps pending native work, fences old edits, and recovers through cold controls",
+      "retry": 0,
+      "durationMs": 31940
+    },
+    {
+      "artifact": 14130486137,
+      "report": "playwright-report/production-2-of-2.json",
+      "project": "production",
+      "file": "startup-lifecycle.spec.ts",
+      "title": "guest startup reporting ends when a ready guest mounts after slow app code",
+      "retry": 0,
+      "durationMs": 604
+    },
+    {
+      "artifact": 14130486137,
+      "report": "playwright-report/production-2-of-2.json",
+      "project": "production",
+      "file": "startup-lifecycle.spec.ts",
+      "title": "guest startup reporting ends for unavailable entry",
+      "retry": 0,
+      "durationMs": 536
+    },
+    {
+      "artifact": 14130486137,
+      "report": "playwright-report/production-2-of-2.json",
+      "project": "production",
+      "file": "startup-lifecycle.spec.ts",
+      "title": "guest startup reporting ends for revoked entry",
+      "retry": 0,
+      "durationMs": 519
+    },
+    {
+      "artifact": 14130486137,
+      "report": "playwright-report/production-2-of-2.json",
+      "project": "production",
+      "file": "startup-lifecycle.spec.ts",
+      "title": "guest startup reporting ends for unsupported entry",
+      "retry": 0,
+      "durationMs": 526
+    },
+    {
+      "artifact": 14130486137,
+      "report": "playwright-report/production-2-of-2.json",
+      "project": "production",
+      "file": "startup-lifecycle.spec.ts",
+      "title": "account startup reporting remains live while actual admission is pending",
+      "retry": 0,
+      "durationMs": 491
+    },
+    {
+      "artifact": 14129564824,
+      "report": "playwright-report/production-1-of-2.json",
+      "project": "production",
+      "file": "admin-layout.spec.ts",
+      "title": "administration sections preserve private metadata and keyboard focus at 1280px",
+      "retry": 0,
+      "durationMs": 2945
+    },
+    {
+      "artifact": 14129564824,
+      "report": "playwright-report/production-1-of-2.json",
+      "project": "production",
+      "file": "admin-layout.spec.ts",
+      "title": "administration sections preserve private metadata and keyboard focus at 390px",
+      "retry": 0,
+      "durationMs": 2509
+    },
+    {
+      "artifact": 14129564824,
+      "report": "playwright-report/production-1-of-2.json",
+      "project": "production",
+      "file": "admin-layout.spec.ts",
+      "title": "pending invitations prevent section changes, manual copying works, and leaving discards the secret",
+      "retry": 0,
+      "durationMs": 1318
+    },
+    {
+      "artifact": 14129564824,
+      "report": "playwright-report/production-1-of-2.json",
+      "project": "production",
+      "file": "admin-layout.spec.ts",
+      "title": "a response from an unmounted section cannot redirect a current administration view",
+      "retry": 0,
+      "durationMs": 659
+    }
+  ]
+}

@@ -1,0 +1,1963 @@
+{
+  "source": "43d3ee62bab1ed1d1b6d76209308f63f6e6aab07",
+  "run": 43634578422,
+  "attempt": 1,
+  "reporters": [
+    {
+      "artifact": 14130600042,
+      "artifactName": "theme-screenshots-supervised-restore",
+      "reporter": "playwright-report/supervised-restore.json",
+      "decodedSha256": "52fbe37397ddf4f967df04281cbf41961acb51527c15001ceb502c6edae9d852",
+      "stats": {
+        "startTime": "2026-11-14T20:13:06.743Z",
+        "duration": 361649.395,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "artifact": 14130256951,
+      "artifactName": "doc-callback-lifetimes-mobile",
+      "reporter": "playwright-report/doc-callback-lifetimes.json",
+      "decodedSha256": "80d53d0fb7a5ae055a843eea8f0206bf87e8f3037de535a09e0da28ee951c472",
+      "stats": {
+        "startTime": "2026-11-14T20:04:17.837Z",
+        "duration": 202494.991,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "artifact": 14130197380,
+      "artifactName": "doc-callback-lifetimes-desktop",
+      "reporter": "playwright-report/doc-callback-lifetimes.json",
+      "decodedSha256": "0013efe5d9a14263a67619816c23c234f2bd87d19e596c1322553257c4ba804a",
+      "stats": {
+        "startTime": "2026-11-14T20:07:05.511Z",
+        "duration": 135240.587,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "artifact": 14130188631,
+      "artifactName": "doc-responsiveness-desktop",
+      "reporter": "playwright-report/doc-responsiveness.json",
+      "decodedSha256": "81e890fea572847b2b34473e1beb0fe40ed780d8f230151b4f7e6ed1ed1ada6c",
+      "stats": {
+        "startTime": "2026-11-14T20:11:14.647Z",
+        "duration": 309316.04199999996,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "artifact": 14129603145,
+      "artifactName": "theme-screenshots-mobile-https",
+      "reporter": "playwright-report/mobile-https.json",
+      "decodedSha256": "2d6b0592adb36b0f84c211b77763956b2593f0c5dbc73691df947c7c85b2d837",
+      "stats": {
+        "startTime": "2026-11-14T20:10:33.193Z",
+        "duration": 57373.462,
+        "expected": 10,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "artifact": 14129309147,
+      "artifactName": "theme-screenshots-offline-upgrade",
+      "reporter": "playwright-report/offline-upgrade.json",
+      "decodedSha256": "14d2af8e088fe925a958db63ee7a9b1a84e815ad50274dc7f9b7353a5ea2bbc4",
+      "stats": {
+        "startTime": "2026-11-14T20:11:52.074Z",
+        "duration": 47300.496,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "artifact": 14131115020,
+      "artifactName": "theme-screenshots-development-1",
+      "reporter": "playwright-report/development-1-of-2.json",
+      "decodedSha256": "6885f9eee77e55ca3c7003e76fc701424e3a72678753b88334bd1c32a0d07d4f",
+      "stats": {
+        "startTime": "2026-11-14T20:14:05.534Z",
+        "duration": 674918.243,
+        "expected": 77,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "artifact": 14130486137,
+      "artifactName": "theme-screenshots-production-2",
+      "reporter": "playwright-report/production-2-of-2.json",
+      "decodedSha256": "3d3dd55e83e2b1cf8e257c982f931dca4fe28a66cd2c48df4b3d4b8a5a7828f3",
+      "stats": {
+        "startTime": "2026-11-14T20:12:31.686Z",
+        "duration": 793139.419,
+        "expected": 89,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "artifact": 14130239981,
+      "artifactName": "theme-screenshots-sync-production",
+      "reporter": "playwright-report/sync-production.json",
+      "decodedSha256": "83403809822ff69b9e64b0407e51f2fc64d79547404a305ea8fa011389849ca6",
+      "stats": {
+        "startTime": "2026-11-14T20:13:38.826Z",
+        "duration": 752649.309,
+        "expected": 98,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "artifact": 14129564824,
+      "artifactName": "theme-screenshots-production-1",
+      "reporter": "playwright-report/production-1-of-2.json",
+      "decodedSha256": "f01e5bdb0451beb2c778c54160db86c638917b3fbb9d884b1bf184d2f1843eed",
+      "stats": {
+        "startTime": "2026-11-14T20:14:21.982Z",
+        "duration": 648681.529,
+        "expected": 86,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "artifact": 14130986549,
+      "artifactName": "theme-screenshots-development-2",
+      "reporter": "playwright-report/development-2-of-2.json",
+      "decodedSha256": "8b7dc75819eca969e2fb809a489899fe770331c7bce01ebbc2dac35142a94e7d",
+      "stats": {
+        "startTime": "2026-11-14T20:13:37.239Z",
+        "duration": 1093460.9200000002,
+        "expected": 79,
+        "skipped": 1,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    },
+    {
+      "artifact": 14130596590,
+      "artifactName": "doc-responsiveness-mobile",
+      "reporter": "playwright-report/doc-responsiveness.json",
+      "decodedSha256": "620141b3dd6695607a69b99c54e1706690d7fe4917a1ad31aeb2ab13a5454565",
+      "stats": {
+        "startTime": "2026-11-14T20:21:55.637Z",
+        "duration": 616205.8940000001,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      }
+    }
+  ],
+  "cases": [
+    {
+      "artifact": 14129603145,
+      "environment": "theme-screenshots-mobile-https",
+      "title": "configured HTTPS installs, supports sheet touch editing and opens only a generic offline page",
+      "file": "pwa.spec.ts",
+      "line": 8,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 7876
+        }
+      ]
+    },
+    {
+      "artifact": 14129309147,
+      "environment": "theme-screenshots-offline-upgrade",
+      "title": "an interrupted real legacy preparation releases its worker before replacement activation",
+      "file": "offline-upgrade.spec.ts",
+      "line": 241,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 4604
+        }
+      ]
+    },
+    {
+      "artifact": 14129309147,
+      "environment": "theme-screenshots-offline-upgrade",
+      "title": "the actual SPN-054 eager client keeps its pending Doc and lazy files during new-host adoption",
+      "file": "offline-upgrade.spec.ts",
+      "line": 283,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 10525
+        }
+      ]
+    },
+    {
+      "artifact": 14129309147,
+      "environment": "theme-screenshots-offline-upgrade",
+      "title": "interrupted emitted updates preserve exact native work, a live old client and cold offline startup",
+      "file": "offline-upgrade.spec.ts",
+      "line": 675,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 22976
+        }
+      ]
+    },
+    {
+      "artifact": 14131115020,
+      "environment": "theme-screenshots-development-1",
+      "title": "administration sections preserve private metadata and keyboard focus at 1280px",
+      "file": "admin-layout.spec.ts",
+      "line": 8,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 3011
+        }
+      ]
+    },
+    {
+      "artifact": 14131115020,
+      "environment": "theme-screenshots-development-1",
+      "title": "administration sections preserve private metadata and keyboard focus at 390px",
+      "file": "admin-layout.spec.ts",
+      "line": 8,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 2862
+        }
+      ]
+    },
+    {
+      "artifact": 14131115020,
+      "environment": "theme-screenshots-development-1",
+      "title": "pending invitations prevent section changes, manual copying works, and leaving discards the secret",
+      "file": "admin-layout.spec.ts",
+      "line": 131,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 2257
+        }
+      ]
+    },
+    {
+      "artifact": 14131115020,
+      "environment": "theme-screenshots-development-1",
+      "title": "a response from an unmounted section cannot redirect a current administration view",
+      "file": "admin-layout.spec.ts",
+      "line": 260,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 888
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "supervised maintenance keeps pending native work, fences old edits, and recovers through cold controls",
+      "file": "maintenance.spec.ts",
+      "line": 203,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 31940
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "a denied download offers offline storage guidance without leaving the editor",
+      "file": "offline-device.spec.ts",
+      "line": 264,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 3754
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "an unanswered storage prompt never holds up the download, and its answer updates the result",
+      "file": "offline-device.spec.ts",
+      "line": 330,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 3428
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "device storage reports actual image bytes, pending Space work, persistence and exact links",
+      "file": "offline-device.spec.ts",
+      "line": 383,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 7761
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "real browser quota failure retains pending work and images without a partial new download",
+      "file": "offline-device.spec.ts",
+      "line": 495,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 38589
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "failed required-image reads keep an earlier complete copy and never mark a first download available",
+      "file": "offline-device.spec.ts",
+      "line": 595,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 5411
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "external store, metadata and image deletion are reported honestly; damaged pending data needs explicit discard",
+      "file": "offline-device.spec.ts",
+      "line": 638,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 7561
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "browsers without database enumeration create account stores only through explicit preparation",
+      "file": "offline-device.spec.ts",
+      "line": 769,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 5485
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "writer locks and a newly pending copy prevent clean removal; explicit discard preserves the original",
+      "file": "offline-device.spec.ts",
+      "line": 872,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 7855
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "offline exit locks both tabs, keeps exact Space changes, drains before an invitation and isolates the next account",
+      "file": "offline-sign-out.spec.ts",
+      "line": 98,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8280
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "locked deletion is explicit, refuses an active writer and clears only this account\u2019s local changes",
+      "file": "offline-sign-out.spec.ts",
+      "line": 243,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 4590
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie",
+      "file": "offline-sign-out.spec.ts",
+      "line": 314,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 2213
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "a crashed local passkey prompt can reopen and complete authentication and logout",
+      "file": "offline-sign-out.spec.ts",
+      "line": 396,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 4391
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "a retained pending exit finishes before a real fresh-instance setup task",
+      "file": "offline-sign-out.spec.ts",
+      "line": 485,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 7496
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "hiding preserves a prepared share and its offline discovery preference without bypassing revoke or sign-out cleanup",
+      "file": "offline.spec.ts",
+      "line": 21,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 4602
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "downloaded Sheets and Docs open offline with local images; nothing else does",
+      "file": "offline.spec.ts",
+      "line": 292,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 14492
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "a prepared Space Doc opens natively offline from its normal link and My files, without substituting an unavailable child",
+      "file": "offline.spec.ts",
+      "line": 780,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8943
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "a warm Dashboard and a failed first-list deep link restore the downloaded Doc content",
+      "file": "offline.spec.ts",
+      "line": 1041,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6246
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "a warm offline Sheet keeps unfinished native input through reconnect and delayed failed metadata",
+      "file": "offline.spec.ts",
+      "line": 1099,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 5494
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "guest startup reporting ends when a ready guest mounts after slow app code",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 81,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 604
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "guest startup reporting ends for unavailable entry",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 132,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 536
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "guest startup reporting ends for revoked entry",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 132,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 519
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "guest startup reporting ends for unsupported entry",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 132,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 526
+        }
+      ]
+    },
+    {
+      "artifact": 14130486137,
+      "environment": "theme-screenshots-production-2",
+      "title": "account startup reporting remains live while actual admission is pending",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 158,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 491
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "shared folder preparation waits for held contents before disconnecting",
+      "file": "offline-creation.spec.ts",
+      "line": 199,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 4745
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "shared folder preparation rejects withheld contents within its readiness budget",
+      "file": "offline-creation.spec.ts",
+      "line": 199,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8807
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "shared creation survives same-profile browser-process restarts",
+      "file": "offline-creation.spec.ts",
+      "line": 270,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 21152
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a delayed shared list cannot lose an uploaded file after an owned refresh, device removal and cold reload",
+      "file": "offline-creation.spec.ts",
+      "line": 276,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6659
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "sheet: create in a cached folder, edit, reload twice offline and upload once",
+      "file": "offline-creation.spec.ts",
+      "line": 436,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 15401
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "doc: create in a cached folder, edit, reload twice offline and upload once",
+      "file": "offline-creation.spec.ts",
+      "line": 436,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 12027
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "sheet: create in a cached shared folder, edit, reload twice offline and upload once",
+      "file": "offline-creation.spec.ts",
+      "line": 436,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 17409
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "doc: create in a cached shared folder, edit, reload twice offline and upload once",
+      "file": "offline-creation.spec.ts",
+      "line": 436,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 13998
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a warm upload keeps its renamed title and tags after removing the device copy",
+      "file": "offline-creation.spec.ts",
+      "line": 799,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6799
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a lost creation acknowledgement replays the same request after an offline reload",
+      "file": "offline-creation.spec.ts",
+      "line": 874,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 7222
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a lost shared creation acknowledgement replays the same request after an offline reload",
+      "file": "offline-creation.spec.ts",
+      "line": 874,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 7171
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a phone Doc starts offline, accepts native text and retains it through a cold reload",
+      "file": "offline-creation.spec.ts",
+      "line": 964,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 7828
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a deleted destination retains the draft until another own folder is chosen",
+      "file": "offline-creation.spec.ts",
+      "line": 1007,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8532
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a revoked shared destination retains the draft until another own folder is chosen",
+      "file": "offline-creation.spec.ts",
+      "line": 1007,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8626
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "switching accounts hides a new offline document and retains it only for its original account",
+      "file": "offline-creation.spec.ts",
+      "line": 1132,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6900
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a failed local creation stays in the form without claiming a saved document",
+      "file": "offline-creation.spec.ts",
+      "line": 1176,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 5659
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a prepared doc viewer upgrades in place and can save new offline work",
+      "file": "offline-editing.spec.ts",
+      "line": 53,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 5728
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a prepared sheet viewer upgrades in place and can save new offline work",
+      "file": "offline-editing.spec.ts",
+      "line": 53,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6279
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "last-copy removal waits for its editor to close and preserves another live editor with pending input",
+      "file": "offline-editing.spec.ts",
+      "line": 123,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8726
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "editing IMAGE formulas offline makes no external image request while normal formulas still calculate",
+      "file": "offline-editing.spec.ts",
+      "line": 230,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6118
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a clean downloaded editor refreshes after more than 128 durable revisions and accepts the next edit",
+      "file": "offline-editing.spec.ts",
+      "line": 275,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 5555
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "sheet: durable edits survive two offline reloads and reconnect exactly once",
+      "file": "offline-editing.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 11641
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "doc: durable edits survive two offline reloads and reconnect exactly once",
+      "file": "offline-editing.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8581
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "phone doc: durable edits survive two offline reloads and reconnect exactly once",
+      "file": "offline-editing.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 10419
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a traditional downloaded phone Doc retains its editor grant and queued edits while locally read-only",
+      "file": "offline-editing.spec.ts",
+      "line": 490,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 7067
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "Doc Formula definitions survive offline edits and reloads while reconnect rechecks source access",
+      "file": "offline-editing.spec.ts",
+      "line": 587,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 14401
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a crash after durable acknowledgement but before local cleanup retains attention without duplicate replay",
+      "file": "offline-editing.spec.ts",
+      "line": 707,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6731
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a cold offline editor retains its expired cross-sheet draft through unrelated storage events",
+      "file": "offline-editing.spec.ts",
+      "line": 780,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8298
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a failed local write never claims saved and retry commits it while still offline",
+      "file": "offline-editing.spec.ts",
+      "line": 912,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6321
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a viewer download stays read-only without an outbox",
+      "file": "offline-editing.spec.ts",
+      "line": 958,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 5125
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "another account cookie cannot replay the downloading account outbox or expose it in a new tab",
+      "file": "offline-editing.spec.ts",
+      "line": 985,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 4820
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a native Space child retains exact scope through replay and an explicit unavailable sibling",
+      "file": "offline-editing.spec.ts",
+      "line": 1031,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 7035
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "preparing a Space child during a held metadata access check keeps its native editor and durable edits",
+      "file": "offline-editing.spec.ts",
+      "line": 1085,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6752
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a prepared Space child with revoked live access/generation preserves its outbox without replay",
+      "file": "offline-editing.spec.ts",
+      "line": 1239,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 3218
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a prepared Space child with viewer live access/generation preserves its outbox without replay",
+      "file": "offline-editing.spec.ts",
+      "line": 1239,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 3045
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a prepared Space child with trashed live access/generation preserves its outbox without replay",
+      "file": "offline-editing.spec.ts",
+      "line": 1239,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 3204
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a prepared Space child with restored live access/generation preserves its outbox without replay",
+      "file": "offline-editing.spec.ts",
+      "line": 1239,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 3063
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "ordinary sheet: concurrent live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 11382
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "ordinary sheet: restored live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8121
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "ordinary sheet: trashed live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8045
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "ordinary sheet: revoked live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8293
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "ordinary sheet: viewer live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8121
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "ordinary doc: concurrent live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 9608
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "ordinary doc: restored live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6348
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "ordinary doc: trashed live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6526
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "ordinary doc: revoked live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6269
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "ordinary doc: viewer live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6477
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "Space child sheet: concurrent live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 10964
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "Space child sheet: restored live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8103
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "Space child sheet: trashed live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8039
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "Space child sheet: revoked live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 7644
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "Space child sheet: viewer live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8454
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "Space child doc: concurrent live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8381
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "Space child doc: restored live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6555
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "Space child doc: trashed live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6357
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "Space child doc: revoked live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6383
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "Space child doc: viewer live document yields one owned copy and leaves original untouched",
+      "file": "offline-recovery.spec.ts",
+      "line": 339,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6391
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "an unfinished native Sheet draft remains copyable before recovery freezes the queued edits",
+      "file": "offline-recovery.spec.ts",
+      "line": 394,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 10198
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "native Doc IME final text survives conflict until explicit unfinished-text discard",
+      "file": "offline-recovery.spec.ts",
+      "line": 459,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 9694
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "native Doc IME final text survives expired sign-in until explicit unfinished-text discard",
+      "file": "offline-recovery.spec.ts",
+      "line": 459,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 4393
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "native phone Doc IME final text survives conflict until explicit unfinished-text discard",
+      "file": "offline-recovery.spec.ts",
+      "line": 459,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 11040
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "native phone Doc IME final text survives expired sign-in until explicit unfinished-text discard",
+      "file": "offline-recovery.spec.ts",
+      "line": 459,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 3875
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "native Doc IME capacity refusal retains the exact final text before recovering its applied snapshot",
+      "file": "offline-recovery.spec.ts",
+      "line": 659,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 4872
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "native Doc composition-end account lock retires queued freeze work without leaking held text or deleting edits",
+      "file": "offline-recovery.spec.ts",
+      "line": 756,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 5578
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "native phone Doc composition-end account lock retires queued freeze work without leaking held text or deleting edits",
+      "file": "offline-recovery.spec.ts",
+      "line": 756,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 5560
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "sheet: permission-denied copy exports the complete local version and requires explicit discard",
+      "file": "offline-recovery.spec.ts",
+      "line": 855,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 7103
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "doc: oversized copy exports the complete local version and requires explicit discard",
+      "file": "offline-recovery.spec.ts",
+      "line": 855,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 4900
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "lost recovery response and reload reuse the same stored request and one durable copy",
+      "file": "offline-recovery.spec.ts",
+      "line": 915,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8605
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "ordinary revoked original: My files recovery survives a lost response and online reload",
+      "file": "offline-recovery.spec.ts",
+      "line": 958,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 7096
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "Space child revoked original: My files recovery survives a lost response and online reload",
+      "file": "offline-recovery.spec.ts",
+      "line": 958,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 8530
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a modified stored recovery request cannot publish or clear edits and export reconstructs the honest checkpoint",
+      "file": "offline-recovery.spec.ts",
+      "line": 1024,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 7949
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "failed local recovery cleanup keeps the outbox and retry finishes the same copy",
+      "file": "offline-recovery.spec.ts",
+      "line": 1119,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 9714
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a lost native acknowledgement creates one conservative recovery copy and counts that possible replay crash once",
+      "file": "offline-recovery.spec.ts",
+      "line": 1162,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 7117
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "a disabled account retains local export while remote recovery is unavailable",
+      "file": "offline-recovery.spec.ts",
+      "line": 1203,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 4711
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "Space sheet: recovery keeps every local image in the new account-owned scope after root revocation",
+      "file": "offline-recovery.spec.ts",
+      "line": 1239,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 6563
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "Space doc: recovery keeps every local image in the new account-owned scope after root revocation",
+      "file": "offline-recovery.spec.ts",
+      "line": 1239,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 5147
+        }
+      ]
+    },
+    {
+      "artifact": 14130239981,
+      "environment": "theme-screenshots-sync-production",
+      "title": "Doc recovery and export preserve Formula definitions and recheck source access without cached results",
+      "file": "offline-recovery.spec.ts",
+      "line": 1337,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 17796
+        }
+      ]
+    },
+    {
+      "artifact": 14129564824,
+      "environment": "theme-screenshots-production-1",
+      "title": "administration sections preserve private metadata and keyboard focus at 1280px",
+      "file": "admin-layout.spec.ts",
+      "line": 8,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 2945
+        }
+      ]
+    },
+    {
+      "artifact": 14129564824,
+      "environment": "theme-screenshots-production-1",
+      "title": "administration sections preserve private metadata and keyboard focus at 390px",
+      "file": "admin-layout.spec.ts",
+      "line": 8,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 2509
+        }
+      ]
+    },
+    {
+      "artifact": 14129564824,
+      "environment": "theme-screenshots-production-1",
+      "title": "pending invitations prevent section changes, manual copying works, and leaving discards the secret",
+      "file": "admin-layout.spec.ts",
+      "line": 131,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 1318
+        }
+      ]
+    },
+    {
+      "artifact": 14129564824,
+      "environment": "theme-screenshots-production-1",
+      "title": "a response from an unmounted section cannot redirect a current administration view",
+      "file": "admin-layout.spec.ts",
+      "line": 260,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 659
+        }
+      ]
+    },
+    {
+      "artifact": 14130986549,
+      "environment": "theme-screenshots-development-2",
+      "title": "supervised maintenance keeps pending native work, fences old edits, and recovers through cold controls",
+      "file": "maintenance.spec.ts",
+      "line": 203,
+      "status": "skipped",
+      "results": [
+        {
+          "retry": 0,
+          "status": "skipped",
+          "durationMs": 2
+        }
+      ]
+    },
+    {
+      "artifact": 14130986549,
+      "environment": "theme-screenshots-development-2",
+      "title": "guest startup reporting ends when a ready guest mounts after slow app code",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 81,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 1651
+        }
+      ]
+    },
+    {
+      "artifact": 14130986549,
+      "environment": "theme-screenshots-development-2",
+      "title": "guest startup reporting ends for unavailable entry",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 132,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 1616
+        }
+      ]
+    },
+    {
+      "artifact": 14130986549,
+      "environment": "theme-screenshots-development-2",
+      "title": "guest startup reporting ends for revoked entry",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 132,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 1036
+        }
+      ]
+    },
+    {
+      "artifact": 14130986549,
+      "environment": "theme-screenshots-development-2",
+      "title": "guest startup reporting ends for unsupported entry",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 132,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 1007
+        }
+      ]
+    },
+    {
+      "artifact": 14130986549,
+      "environment": "theme-screenshots-development-2",
+      "title": "account startup reporting remains live while actual admission is pending",
+      "file": "startup-lifecycle.spec.ts",
+      "line": 158,
+      "status": "expected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 1050
+        }
+      ]
+    }
+  ],
+  "note": "Projection only; original raw reporters authoritative. Current success does not diagnose or erase earlier failures."
+}

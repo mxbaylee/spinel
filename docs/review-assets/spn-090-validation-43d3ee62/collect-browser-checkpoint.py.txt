@@ -1,0 +1,22 @@
+from pathlib import Path
+import json,gzip,hashlib,subprocess,zipfile,datetime,sys
+r=Path('/tmp/spn090-publication-43d3ee62');snap=Path((r/'latest-initial-snapshot.txt').read_text().strip());out=r/sys.argv[1];out.mkdir(exist_ok=False)
+names=set(sys.argv[2:]);arts=[a for p in json.loads(gzip.decompress((snap/'artifacts-ci.json.gz').read_bytes())) for a in p['artifacts'] if a['name'] in names];assert len(arts)==len(names)
+records=[]
+for a in arts:
+ z=out/f"original-artifact-{a['id']}.zip"
+ with z.open('wb') as f:subprocess.run(['gh','api','--method','GET',f"repos/mxbaylee/spinel/actions/artifacts/{a['id']}/zip"],stdout=f,check=True)
+ h=hashlib.sha256()
+ with z.open('rb') as f:
+  for b in iter(lambda:f.read(1024*1024),b''):h.update(b)
+ digest=h.hexdigest();assert a['digest']=='sha256:'+digest
+ row={'id':a['id'],'name':a['name'],'originalZip':str(z),'zipBytes':z.stat().st_size,'zipSha256':digest,'githubDigest':a['digest'],'members':[],'jsonMembers':[]}
+ with zipfile.ZipFile(z) as f:
+  assert f.testzip() is None;row['allMemberCrcVerified']=True
+  for i,v in enumerate(f.infolist()):
+   row['members'].append({'path':v.filename,'bytes':v.file_size,'compressedBytes':v.compress_size,'crc32':format(v.CRC,'08x')})
+   if not v.filename.endswith('.json'):continue
+   if v.file_size>16*1024*1024:row.setdefault('omittedLargeJson',[]).append({'path':v.filename,'bytes':v.file_size,'reason':'Bulk trace kept in private original ZIP; compact archive excludes large passing trace payload.'});continue
+   b=f.read(v.filename);json.loads(b);name=f"artifact-{a['id']}-json-{i}.json.gz";(out/name).write_bytes(gzip.compress(b,mtime=0));row['jsonMembers'].append({'originalPath':v.filename,'storedPath':name,'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()})
+ records.append(row);(out/'artifacts.json').write_text(json.dumps(records,indent=2)+'\n');print('collected',a['name'],len(row['jsonMembers']),flush=True)
+(out/'checkpoint.json').write_text(json.dumps({'observedAt':datetime.datetime.now(datetime.timezone.utc).isoformat(),'apiSnapshot':str(snap),'source':'43d3ee62bab1ed1d1b6d76209308f63f6e6aab07','originalAttempt':1,'terminal':False,'GETOnly':True},indent=2)+'\n')
