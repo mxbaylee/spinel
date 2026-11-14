@@ -1,0 +1,182 @@
+[
+  {
+    "path": "native-chrome.zip",
+    "artifactId": 14091966472,
+    "name": "desktop-offline-chrome-macos-26-43540593025-1",
+    "bytes": 223283,
+    "sha256": "449ca30899a8460f2382e6631f6bd91cff2fab4119d8cc5cf7a77213543389c3",
+    "expiresAt": "2026-11-28T01:30:03Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "browser-production-1.zip",
+    "artifactId": 14092426589,
+    "name": "theme-screenshots-production-1",
+    "bytes": 35544451,
+    "sha256": "9651a302e1429c37066ceb9e01935d306e9b626e851dc599a1099f6e74bd7fe6",
+    "expiresAt": "2026-11-21T01:38:38Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "design-review-desktop-light.zip",
+    "artifactId": 14092327440,
+    "name": "design-review-desktop-light",
+    "bytes": 50515698,
+    "sha256": "c42a2b53d87a2b10870a9250ee97856fde50378997d4e0585635c611f06fa030",
+    "expiresAt": "2026-11-28T01:41:02Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "design-review-mobile-dark.zip",
+    "artifactId": 14091482855,
+    "name": "design-review-mobile-dark",
+    "bytes": 42742485,
+    "sha256": "0c0a61a26b822fecf61819c1c6a774bd9ecf4d18798627ec0e15d8f4e6a185cb",
+    "expiresAt": "2026-11-28T01:36:50Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "sized-restore.zip",
+    "artifactId": 14092485586,
+    "name": "sized-restore-acceptance",
+    "bytes": 72608,
+    "sha256": "7aa2937380f35cba19187ba03b854ee2693c5f482ad655ae7171cbae138f3419",
+    "expiresAt": "2026-11-28T01:34:16Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "design-review-mobile-light.zip",
+    "artifactId": 14092377401,
+    "name": "design-review-mobile-light",
+    "bytes": 42251653,
+    "sha256": "a52f476c7f294f523e52ff7767a7e257b1d17af73cc365e33b27edfb7a319809",
+    "expiresAt": "2026-11-28T01:42:14Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "design-review-tablet.zip",
+    "artifactId": 14092317714,
+    "name": "design-review-tablet",
+    "bytes": 46763686,
+    "sha256": "ee5aedf08ba48346d9c3bdde53c66c73695a46edd54900f60e35e41e60ac055c",
+    "expiresAt": "2026-11-28T01:43:01Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "ci-results-lib.zip",
+    "artifactId": 14091951985,
+    "name": "ci-results-lib",
+    "bytes": 1175,
+    "sha256": "65979ebf26a333e8ca33141072efa512ee8dd4d7adae134d5a692687b7d9e575",
+    "expiresAt": "2026-12-14T01:34:54Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "ci-results-unit.zip",
+    "artifactId": 14092087618,
+    "name": "ci-results-unit",
+    "bytes": 1158,
+    "sha256": "9c75a72acb56d3f0d8bfe946aa6b118c7eff806846a40136ffbf082ab580b28a",
+    "expiresAt": "2026-12-14T01:34:49Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "callback-mobile.zip",
+    "artifactId": 14091358686,
+    "name": "doc-callback-lifetimes-mobile",
+    "bytes": 172561286,
+    "sha256": "373b0842373166d221b7b222b8f90d88844ab621cf40aac349490b164bc37262",
+    "expiresAt": "2026-11-21T01:35:08Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "theme-screenshots-development-2.zip",
+    "artifactId": 14091604443,
+    "name": "theme-screenshots-development-2",
+    "bytes": 17326616,
+    "sha256": "68e86622eaaf62b22c7fa7dac7e00d55ef147f1d81454b61c0ddfaa76d8e6ca8",
+    "expiresAt": "2026-11-21T01:42:20Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "theme-screenshots-development-1.zip",
+    "artifactId": 14092313798,
+    "name": "theme-screenshots-development-1",
+    "bytes": 33844768,
+    "sha256": "2ffc7445d4bf8d1249c466fb8e0b5f8e1cb2bf2f24d1ace57fd7aa348ee48ead",
+    "expiresAt": "2026-11-21T01:44:04Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "native-safari.zip",
+    "artifactId": 14091812936,
+    "name": "desktop-offline-safari-macos-15-intel-43540593025-1",
+    "bytes": 1044104,
+    "sha256": "209d9bc9a276b88e984ea9e6ba582bbee62b0bfae6d2ac30abd1c7be32498ef7",
+    "expiresAt": "2026-11-28T01:34:59Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "doc-responsiveness-desktop.zip",
+    "artifactId": 14092313703,
+    "name": "doc-responsiveness-desktop",
+    "bytes": 1398133,
+    "sha256": "ad841e1c917d0dbd2adcf58fa9e6e6e3a00beb6467eb599626782c0bd8692201",
+    "expiresAt": "2026-11-21T01:43:27Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "theme-screenshots-production-2.zip",
+    "artifactId": 14092526122,
+    "name": "theme-screenshots-production-2",
+    "bytes": 19354235,
+    "sha256": "34133f48401ed9f97e9c844d05113e433ba58a432289f10f4558b5492903dbef",
+    "expiresAt": "2026-11-21T01:43:17Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "callback-desktop.zip",
+    "artifactId": 14091812599,
+    "name": "doc-callback-lifetimes-desktop",
+    "bytes": 190346075,
+    "sha256": "93bc784deb9c7d27dead259f581275e9f0c62dddda088f114e50f48377b905e6",
+    "expiresAt": "2026-11-21T01:33:01Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "design-review-desktop-dark.zip",
+    "artifactId": 14092078133,
+    "name": "design-review-desktop-dark",
+    "bytes": 51193247,
+    "sha256": "9d12457821b5ec1e8d1a3287658106581839b724e0872f9eb5a645b9914123de",
+    "expiresAt": "2026-11-28T01:43:26Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "native-firefox.zip",
+    "artifactId": 14092091881,
+    "name": "desktop-offline-firefox-macos-26-43540593025-1",
+    "bytes": 453423,
+    "sha256": "3629659042982262edd7fbb97f9c2ceb74abc1b1a2c6a457863be47510e9eb9e",
+    "expiresAt": "2026-11-28T01:30:01Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "doc-responsiveness-mobile.zip",
+    "artifactId": 14093480182,
+    "name": "doc-responsiveness-mobile",
+    "bytes": 2104094,
+    "sha256": "feba315f5be821d8290d663a6015e7f255e56bbd6df88bb39663bc93f15f86a4",
+    "expiresAt": "2026-11-21T01:57:00Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  },
+  {
+    "path": "ci-results-browser.zip",
+    "artifactId": 14093415652,
+    "name": "ci-results-browser",
+    "bytes": 1315,
+    "sha256": "638cc9f1357b5e355c6457b96651e776c637781a6d09ad27c82a996f6cc5dba7",
+    "expiresAt": "2026-12-14T01:57:20Z",
+    "source": "2204b8c40ce6feb8ad03c65720c976510535ad00"
+  }
+]

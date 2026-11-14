@@ -1,0 +1,898 @@
+[
+  {
+    "archive": "browser-production-1.zip",
+    "originalMember": "test-results/production/access-upgrade-doc-viewer--3be23-en-downgrade-still-locks-it-production/sync-diagnostics.json",
+    "file": "retained/browser-production-1/test-results__production__access-upgrade-doc-viewer--3be23-en-downgrade-still-locks-it-production__sync-diagnostics.json.gz",
+    "sha256": "729e18bc86266a6e9a0051175a25befbdb204a7df28779bc468958309eec9b3e",
+    "decodedSha256": "57abfc57840f3015b8a4dbf3f3406bf46d7ead5780e14fad958bfce7a26bc5e6",
+    "decodedBytes": 8507
+  },
+  {
+    "archive": "browser-production-1.zip",
+    "originalMember": "test-results/production/access-upgrade-sheet-viewe-8bf14-n-revocation-still-locks-it-production/sync-diagnostics.json",
+    "file": "retained/browser-production-1/test-results__production__access-upgrade-sheet-viewe-8bf14-n-revocation-still-locks-it-production__sync-diagnostics.json.gz",
+    "sha256": "62ea21e489caa53f499e33414608d6618d400ec2982e0dd3052302b04d52efc4",
+    "decodedSha256": "975cb3e40a31c405ebaed16e4ba23e12983817664dc4e25abe250e2b1f02f004",
+    "decodedBytes": 5560
+  },
+  {
+    "archive": "browser-production-1.zip",
+    "originalMember": "test-results/production/copy-native-Sheet-copying--979e8-ndependent-same-folder-copy-production/sync-diagnostics.json",
+    "file": "retained/browser-production-1/test-results__production__copy-native-Sheet-copying--979e8-ndependent-same-folder-copy-production__sync-diagnostics.json.gz",
+    "sha256": "eb038d3c93330ef84d580f32488b983ee42e24da68ca4f3c6394f8f5c6fff039",
+    "decodedSha256": "efa0eb270d0f025420612e89f050ee739f3f80d7cd6fbd1f3003f621124375af",
+    "decodedBytes": 7395
+  },
+  {
+    "archive": "browser-production-1.zip",
+    "originalMember": "test-results/production/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production/spn098-feedback-pair.json",
+    "file": "retained/browser-production-1/test-results__production__diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-production__spn098-feedback-pair.json.gz",
+    "sha256": "dbfee53a848f62cccec92b0f5eb843ddf4e7d5489d79dae54550f0725bce2250",
+    "decodedSha256": "f123013f423a4bbe2808c8a9161ad84d27e8c231c5f01f16cf6106980f6f039a",
+    "decodedBytes": 8703
+  },
+  {
+    "archive": "browser-production-1.zip",
+    "originalMember": "test-results/production/doc-mobile-a-modern-phone--cbac6-ative-canvas-phone-ordinary-production/sync-diagnostics.json",
+    "file": "retained/browser-production-1/test-results__production__doc-mobile-a-modern-phone--cbac6-ative-canvas-phone-ordinary-production__sync-diagnostics.json.gz",
+    "sha256": "1ff564329c37675ab248988cdcba806845c2db296a70a094c7ae1d5d24e0ece6",
+    "decodedSha256": "2eb7f30d20e0041a4ed642dcb06c820138277a0d611493c0766230a4b9316871",
+    "decodedBytes": 3203
+  },
+  {
+    "archive": "browser-production-1.zip",
+    "originalMember": "test-results/production/doc-mobile-a-traditional-p-a390a-ative-canvas-phone-ordinary-production/sync-diagnostics.json",
+    "file": "retained/browser-production-1/test-results__production__doc-mobile-a-traditional-p-a390a-ative-canvas-phone-ordinary-production__sync-diagnostics.json.gz",
+    "sha256": "a1cae242b2aeaf097b1ac7ce2899896850ebcf0d34644f9bbc6242140a81229f",
+    "decodedSha256": "64ba3e4e7deb38fba7bd1f34c0b2714c97932dd88d5d84df8c5ece0887205c21",
+    "decodedBytes": 2696
+  },
+  {
+    "archive": "browser-production-1.zip",
+    "originalMember": "test-results/production/doc-mobile-phone-Doc-formu-a9d0b-edit-dialogs-phone-ordinary-production/sync-diagnostics.json",
+    "file": "retained/browser-production-1/test-results__production__doc-mobile-phone-Doc-formu-a9d0b-edit-dialogs-phone-ordinary-production__sync-diagnostics.json.gz",
+    "sha256": "0fd5aa5a6c851dfa9a0a5adca80bd2c4fcb3dc659d2bca428c134385f74382b6",
+    "decodedSha256": "e47159d79af2b6029238f6be8d4051e401bfc1d8d72801416c63fdeceeeb66dc",
+    "decodedBytes": 9225
+  },
+  {
+    "archive": "browser-production-1.zip",
+    "originalMember": "test-results/production/doc-mobile-phone-Docs-at-s-00f26-ved-settings-phone-ordinary-production/sync-diagnostics.json",
+    "file": "retained/browser-production-1/test-results__production__doc-mobile-phone-Docs-at-s-00f26-ved-settings-phone-ordinary-production__sync-diagnostics.json.gz",
+    "sha256": "6922de59f9aeec90d0dc47384382cd65f2b0ba6a728a3969aa80382ed88385f7",
+    "decodedSha256": "6bcf0527527ef80ae754f9df2574ab5572dc704a4533e3684b5eaff84d05a1cf",
+    "decodedBytes": 31421
+  },
+  {
+    "archive": "browser-production-1.zip",
+    "originalMember": "test-results/production/doc-mobile-phone-Docs-at-s-50e0a-ved-settings-phone-ordinary-production/sync-diagnostics.json",
+    "file": "retained/browser-production-1/test-results__production__doc-mobile-phone-Docs-at-s-50e0a-ved-settings-phone-ordinary-production__sync-diagnostics.json.gz",
+    "sha256": "b7bbdba2421732316b588ce9c1996123f683a909cb4cd35767ee55dd3a0e4d2e",
+    "decodedSha256": "cfe16a5dc551308025e3bd874de8216b9b94da941bd76ad50e5231c88a6eb912",
+    "decodedBytes": 31419
+  },
+  {
+    "archive": "browser-production-1.zip",
+    "originalMember": "test-results/production/doc-mobile-phone-Docs-at-s-d16ce-ved-settings-phone-ordinary-production/sync-diagnostics.json",
+    "file": "retained/browser-production-1/test-results__production__doc-mobile-phone-Docs-at-s-d16ce-ved-settings-phone-ordinary-production__sync-diagnostics.json.gz",
+    "sha256": "3e63f002029028fb11eaaf4e351223e830ab7507ace5c21a83fbe77c9ae8ed02",
+    "decodedSha256": "ab4b67953e046de5b40c7659d3780ce18f56b392c459ced327771f150a4deed4",
+    "decodedBytes": 31419
+  },
+  {
+    "archive": "browser-production-1.zip",
+    "originalMember": "test-results/production/doc-mobile-phone-guest-Doc-8407a-nt-when-the-link-is-revoked-production/sync-diagnostics.json",
+    "file": "retained/browser-production-1/test-results__production__doc-mobile-phone-guest-Doc-8407a-nt-when-the-link-is-revoked-production__sync-diagnostics.json.gz",
+    "sha256": "9c4e1798a53f284abdd869ef1b3df71132d4494ae1f11fd697458527ab693800",
+    "decodedSha256": "54ed0cc7c8c712ac8bc65d0a573841e9d4a855642914c6dba41eff3c56eaf1cd",
+    "decodedBytes": 5937
+  },
+  {
+    "archive": "browser-production-1.zip",
+    "originalMember": "test-results/production/doc-mobile-traditional-pho-8213b-editor-grant-phone-ordinary-production/sync-diagnostics.json",
+    "file": "retained/browser-production-1/test-results__production__doc-mobile-traditional-pho-8213b-editor-grant-phone-ordinary-production__sync-diagnostics.json.gz",
+    "sha256": "2d11df749f6167060923b85ef760815f32454c0a49adecfbbe4ecc2c5d22fa0d",
+    "decodedSha256": "c5bcf042d9158565a2587c25ac141997de7a628aaddd86c2f8e7ca340f197aa2",
+    "decodedBytes": 4229
+  },
+  {
+    "archive": "browser-production-1.zip",
+    "originalMember": "test-results/production/doc-mobile-traditional-pho-8f110--owner-grant-phone-ordinary-production/sync-diagnostics.json",
+    "file": "retained/browser-production-1/test-results__production__doc-mobile-traditional-pho-8f110--owner-grant-phone-ordinary-production__sync-diagnostics.json.gz",
+    "sha256": "39143f3c195e6bbf7c3bfcb5719a62f2371e4eca2043dcdbf46d07dcb6bb34cb",
+    "decodedSha256": "a196d86f19c851d05c0f16f1a05fa687d7847f1ceb85c162227f6351af5d13fc",
+    "decodedBytes": 5669
+  },
+  {
+    "archive": "browser-production-1.zip",
+    "originalMember": "playwright-report/production-1-of-2.json",
+    "file": "retained/browser-production-1/playwright-report__production-1-of-2.json.gz",
+    "sha256": "8d6192bdb4fbccb24f6a687a870756b0ce14000310302798f0e36828600db16b",
+    "decodedSha256": "fab8f00949d7bcd4cb3f620be9b2d4c9869c4cd263759cb8eab7f16d59e9c5d9",
+    "decodedBytes": 1484487
+  },
+  {
+    "archive": "callback-desktop.zip",
+    "originalMember": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+    "file": "retained/callback-desktop/baseline-callback-source__test-results__doc-callback-lifetimes__doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes__spn113-evidence.json.gz",
+    "sha256": "f0e7e76995c6e3d24bd5658e9d842b6287cda159e4a3c7c8e5d7c123c95ab2d8",
+    "decodedSha256": "9b29949dec52ca16be8e99d5cdcf4fd32233773c3ed1fadfa68af8824936c71d",
+    "decodedBytes": 23504942
+  },
+  {
+    "archive": "callback-desktop.zip",
+    "originalMember": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+    "file": "retained/callback-desktop/baseline-callback-source__test-results__doc-callback-lifetimes__doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes__spn134-progress.json.gz",
+    "sha256": "87d1bcf9478f0fbbe44d2e458ad3749a57cc6f162de865decd2368d0aa37b7e6",
+    "decodedSha256": "e27ad2f70ca3017abe5eda9b4a8cb6da0f3435eb4c8e38ccdf17984a8062ac4b",
+    "decodedBytes": 6583
+  },
+  {
+    "archive": "callback-desktop.zip",
+    "originalMember": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+    "file": "retained/callback-desktop/baseline-callback-source__test-results__doc-callback-lifetimes__doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes__spn144-conversion.json.gz",
+    "sha256": "895d75bb91d6d490814feda8eac2069ebcc0805dc488d97560ffa5368cc41fd0",
+    "decodedSha256": "a2b14a027db84351bedeb72224e9ad4c879f334e9e0ccb17d85eeba3cfe52261",
+    "decodedBytes": 3111
+  },
+  {
+    "archive": "callback-desktop.zip",
+    "originalMember": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+    "file": "retained/callback-desktop/baseline-callback-source__playwright-report__doc-callback-lifetimes.json.gz",
+    "sha256": "2ac12d5019534095f285426c9551c1a162fa5ac773af3751bd2406ba98f14fae",
+    "decodedSha256": "c8e557c935b631ef064c048fe160592c524999b014fb8fb8317714283b8a069f",
+    "decodedBytes": 26149
+  },
+  {
+    "archive": "callback-desktop.zip",
+    "originalMember": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+    "file": "retained/callback-desktop/test-results__doc-callback-lifetimes__doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes__spn113-evidence.json.gz",
+    "sha256": "547afbf833380235799fa2da0b2b51fa0c120daed0a030de96650180cf8aaaa4",
+    "decodedSha256": "35cad16401ce8e53178119ef7bda6c3c586613bfddaa50974fccc36127dd18bc",
+    "decodedBytes": 21056616
+  },
+  {
+    "archive": "callback-desktop.zip",
+    "originalMember": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+    "file": "retained/callback-desktop/test-results__doc-callback-lifetimes__doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes__spn134-progress.json.gz",
+    "sha256": "a5d33dddcaece82baffd98768e4b108bdacdb48c5b1fccfa388dc5332401aa6f",
+    "decodedSha256": "411a895f53508738484dc752164c41e49e35fc87fbde528f276906f436e0be4d",
+    "decodedBytes": 6592
+  },
+  {
+    "archive": "callback-desktop.zip",
+    "originalMember": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+    "file": "retained/callback-desktop/test-results__doc-callback-lifetimes__doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes__spn144-conversion.json.gz",
+    "sha256": "e799fe1c3864ac249c62ca58c2c1e47c6298bba3d5d9053b8acf253402492822",
+    "decodedSha256": "ff0b05c3888ef5421262519603bdedc75c8c51792d77a315ac8b59eb68bfb49c",
+    "decodedBytes": 3035
+  },
+  {
+    "archive": "callback-desktop.zip",
+    "originalMember": "test-results/spn113-comparison-desktop.json",
+    "file": "retained/callback-desktop/test-results__spn113-comparison-desktop.json.gz",
+    "sha256": "00561809e56141b2592e4ef0e520148f426b3aa0ebc5ea18521e0ab80dab87f0",
+    "decodedSha256": "c4dca12d7fe3a86afd33907ac46cee225d119d5bb7ffc42d194bd6794ff9ed20",
+    "decodedBytes": 957245
+  },
+  {
+    "archive": "callback-desktop.zip",
+    "originalMember": "playwright-report/doc-callback-lifetimes.json",
+    "file": "retained/callback-desktop/playwright-report__doc-callback-lifetimes.json.gz",
+    "sha256": "4a138f771b7a0bb7467fac2ae8d4d0b1d4b5ef52726a9c79c999a0b56212c048",
+    "decodedSha256": "d24bc600c36c047e0072aee4a1093214aa975abeb80fcb200d7dbd3a0dfc127e",
+    "decodedBytes": 1377223
+  },
+  {
+    "archive": "callback-mobile.zip",
+    "originalMember": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+    "file": "retained/callback-mobile/baseline-callback-source__test-results__doc-callback-lifetimes__doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes__spn113-evidence.json.gz",
+    "sha256": "36322b7ce03d03c5eadece74592567d320366d9ccf7be0ef3001d731bd474f45",
+    "decodedSha256": "099bc61500a5f687f01f03ab710050f73bf97e1c77ede30b1eeaa78cf50cb848",
+    "decodedBytes": 21389943
+  },
+  {
+    "archive": "callback-mobile.zip",
+    "originalMember": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+    "file": "retained/callback-mobile/baseline-callback-source__test-results__doc-callback-lifetimes__doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes__spn134-progress.json.gz",
+    "sha256": "f69dde81f4568ea2412362d8f073fa9fe6c8b205beeae7977e0a3fb3b92af3ea",
+    "decodedSha256": "ffde6c0b73ad7c24d8427108e868a6fcfff2ba1581319960e1c01163bcf5ad97",
+    "decodedBytes": 6585
+  },
+  {
+    "archive": "callback-mobile.zip",
+    "originalMember": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+    "file": "retained/callback-mobile/baseline-callback-source__test-results__doc-callback-lifetimes__doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes__spn144-conversion.json.gz",
+    "sha256": "e4f2baa481822d334b12980dce459d12ca0763df6dc7dea01f44e07ac051e89e",
+    "decodedSha256": "bffe09e511ba3a712d377859abe123c8bfd7d2e2dfeb32d79faf3f4e68837836",
+    "decodedBytes": 3111
+  },
+  {
+    "archive": "callback-mobile.zip",
+    "originalMember": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+    "file": "retained/callback-mobile/baseline-callback-source__playwright-report__doc-callback-lifetimes.json.gz",
+    "sha256": "e8c87f62addbbfc7caf5d229ce06fb93c21cf4eb40c90edc46aebfb461dc95ed",
+    "decodedSha256": "a8c143aa0296ecdaf796fcc2772aeed20bcc1614915fc5a6e42a1136f6cb9c6c",
+    "decodedBytes": 26147
+  },
+  {
+    "archive": "callback-mobile.zip",
+    "originalMember": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+    "file": "retained/callback-mobile/test-results__doc-callback-lifetimes__doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes__spn113-evidence.json.gz",
+    "sha256": "6c5987109ee5c837a728e0b435e2632731999bcaacb52e9c68810c5bdd75891f",
+    "decodedSha256": "e426baa574c017f030f0897e921c0ce75c40006d93785f52569bfb76450f6667",
+    "decodedBytes": 19358513
+  },
+  {
+    "archive": "callback-mobile.zip",
+    "originalMember": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+    "file": "retained/callback-mobile/test-results__doc-callback-lifetimes__doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes__spn134-progress.json.gz",
+    "sha256": "c88b7f4e98b3aaa872311b92e9e30ee8bbdf0c587148ae85b51cf0d987a8fa5a",
+    "decodedSha256": "96b6c0eb18bc2395ddafcee97138cef0cb249e43eda43ba1dfa038231919aded",
+    "decodedBytes": 6553
+  },
+  {
+    "archive": "callback-mobile.zip",
+    "originalMember": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+    "file": "retained/callback-mobile/test-results__doc-callback-lifetimes__doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes__spn144-conversion.json.gz",
+    "sha256": "74f951125bb9067ea78dc9f44f815584f3ddd55fbd79549caa581a0bce7f4528",
+    "decodedSha256": "ad75a8c95728e0cc7578386a4227ea86a76bff4dd074a79c8b411fa04be352e3",
+    "decodedBytes": 3035
+  },
+  {
+    "archive": "callback-mobile.zip",
+    "originalMember": "test-results/spn113-comparison-mobile.json",
+    "file": "retained/callback-mobile/test-results__spn113-comparison-mobile.json.gz",
+    "sha256": "44b40cea2ac583ea9120b91d156f279a95589eaaed92cd1e3c110c6bd16d54e1",
+    "decodedSha256": "4c4afa9e92fa59fecbfbe07f85ff9e4aaa7bab695b83c5aad22e014bacf2b602",
+    "decodedBytes": 965601
+  },
+  {
+    "archive": "callback-mobile.zip",
+    "originalMember": "playwright-report/doc-callback-lifetimes.json",
+    "file": "retained/callback-mobile/playwright-report__doc-callback-lifetimes.json.gz",
+    "sha256": "b19ac9d606efde746fb65896ef4f53889b3f434a74c6e3f8078d0a415eb9bcca",
+    "decodedSha256": "dffca99f006844af0e3479429e7f56efc7190e0f7f230689f8869eb6ca6bb75d",
+    "decodedBytes": 1377222
+  },
+  {
+    "archive": "doc-responsiveness-desktop.zip",
+    "originalMember": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+    "file": "retained/doc-responsiveness-desktop/baseline-doc-source__test-results__doc-responsiveness__doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness__spn108-metrics.json.gz",
+    "sha256": "577735a300d4034dffb7407955aa261b0727b81940bf3855f8b87d53d9e8b24c",
+    "decodedSha256": "a4e828c4592660f88cc7d6574343c4ae65e6147b0a0e3692f226be01a79eeaa4",
+    "decodedBytes": 125285
+  },
+  {
+    "archive": "doc-responsiveness-desktop.zip",
+    "originalMember": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+    "file": "retained/doc-responsiveness-desktop/baseline-doc-source__test-results__doc-responsiveness__doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness__spn108-metrics.json.gz",
+    "sha256": "4c7c7280212cd71580cb86255a0297b59bfe05048efe71b66edaaf92c966c69b",
+    "decodedSha256": "13a9cc84a3a56e34096ee03f95adaa61ad0fb04ade46bdcaf1409663f25594fe",
+    "decodedBytes": 129706
+  },
+  {
+    "archive": "doc-responsiveness-desktop.zip",
+    "originalMember": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+    "file": "retained/doc-responsiveness-desktop/baseline-doc-source__test-results__doc-responsiveness__doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness__spn108-metrics.json.gz",
+    "sha256": "61bcff9b3504053a1c500ba0980c7e4ea06a54d318f0018015239df100a0dcd9",
+    "decodedSha256": "8dfbeeb8b173bef0b7af558e53a5eedbb4e21d3c90320be6c6cb9f6d178605ab",
+    "decodedBytes": 128966
+  },
+  {
+    "archive": "doc-responsiveness-desktop.zip",
+    "originalMember": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+    "file": "retained/doc-responsiveness-desktop/baseline-doc-source__test-results__doc-responsiveness__doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness__spn108-metrics.json.gz",
+    "sha256": "fce053d9fdce3f0d404859a7d570278cda9418d6cf0bf8d52eae1ddcd317cae2",
+    "decodedSha256": "586c2fb21999467d6b94bd4d7baf52dca6c29e89d3125d75699be14d342a680c",
+    "decodedBytes": 131886
+  },
+  {
+    "archive": "doc-responsiveness-desktop.zip",
+    "originalMember": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+    "file": "retained/doc-responsiveness-desktop/baseline-doc-source__test-results__doc-responsiveness__doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness__spn108-profile-clock.json.gz",
+    "sha256": "4e29de394cc71757810d7ae7a47136c37b018a87b77e5533fbcb7a3dbfa08575",
+    "decodedSha256": "3f66782ef9c97277dba1f9b66da1282630e45fb11078eb980c61b38bd91a726b",
+    "decodedBytes": 228
+  },
+  {
+    "archive": "doc-responsiveness-desktop.zip",
+    "originalMember": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+    "file": "retained/doc-responsiveness-desktop/baseline-doc-source__playwright-report__doc-responsiveness.json.gz",
+    "sha256": "95c5efa3dc1e6ce7f4e3ec8b8fc382ee83bcdec75992765f804fe9c9ee7fec9b",
+    "decodedSha256": "9ef408d849c5b694ec2a75b7dd1d276bf19c2f02fd35ef81498aee7974c1bed2",
+    "decodedBytes": 29200
+  },
+  {
+    "archive": "doc-responsiveness-desktop.zip",
+    "originalMember": "test-results/doc-responsiveness/doc-responsiveness-desktop-5f9af--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+    "file": "retained/doc-responsiveness-desktop/test-results__doc-responsiveness__doc-responsiveness-desktop-5f9af--typing-after-a-quiet-pause-doc-responsiveness__spn108-post-burst.json.gz",
+    "sha256": "95acb166d8c9bb37eff767492f8c40f3b9d82bc20452344474f8eb50b88b0653",
+    "decodedSha256": "32fbe601a750a41358400f3a728496128d7d5c9803356a884847908a926c1025",
+    "decodedBytes": 154324
+  },
+  {
+    "archive": "doc-responsiveness-desktop.zip",
+    "originalMember": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+    "file": "retained/doc-responsiveness-desktop/test-results__doc-responsiveness__doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness__spn108-metrics.json.gz",
+    "sha256": "a4d8b360fcd712765a312a784b905caf0255086ea0afbf0cee8cfc83276bfc27",
+    "decodedSha256": "d68775703f3f9631a955f7b38653ae6b2b7a16bda6d120f49aa1a740fa829139",
+    "decodedBytes": 941113
+  },
+  {
+    "archive": "doc-responsiveness-desktop.zip",
+    "originalMember": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+    "file": "retained/doc-responsiveness-desktop/test-results__doc-responsiveness__doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness__spn108-metrics.json.gz",
+    "sha256": "40ad34942a83afdda05967293543fd244ccbc345bad476e122b371294ebeede4",
+    "decodedSha256": "546d57427fde5af042be8d68003c5c214fad0d6877145d39792a9ff7bbadc00b",
+    "decodedBytes": 940815
+  },
+  {
+    "archive": "doc-responsiveness-desktop.zip",
+    "originalMember": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+    "file": "retained/doc-responsiveness-desktop/test-results__doc-responsiveness__doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness__spn108-metrics.json.gz",
+    "sha256": "aef359e5b003d132a29da7d98d9a6e3c9b9b10b321d124c01dd090dc89f855c5",
+    "decodedSha256": "8b6140750a88dfc26bfa07c57086695aca416aee78c255211054e4023ee80677",
+    "decodedBytes": 945737
+  },
+  {
+    "archive": "doc-responsiveness-desktop.zip",
+    "originalMember": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+    "file": "retained/doc-responsiveness-desktop/test-results__doc-responsiveness__doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness__spn108-metrics.json.gz",
+    "sha256": "9d33d4cfa59a4e62fcdd1c12a46dd7d29edbecb58298e924b4cfd8db5539a2fe",
+    "decodedSha256": "ae767da808e801ee60ad2c7a5f1baad145b6692363bc81b9a5fb3589fd0a1f3e",
+    "decodedBytes": 943440
+  },
+  {
+    "archive": "doc-responsiveness-desktop.zip",
+    "originalMember": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+    "file": "retained/doc-responsiveness-desktop/test-results__doc-responsiveness__doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness__spn108-profile-clock.json.gz",
+    "sha256": "1489e58e9f315cbb93f446952a188ba488e8156c771f584582d4543d1b20557a",
+    "decodedSha256": "1cb8ce542b792c7f8e2ca05f7ce65ad77c891be3a387d7d7a2e3e1541ffc3a09",
+    "decodedBytes": 225
+  },
+  {
+    "archive": "doc-responsiveness-desktop.zip",
+    "originalMember": "test-results/doc-responsiveness/doc-responsiveness-native--9dfea-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+    "file": "retained/doc-responsiveness-desktop/test-results__doc-responsiveness__doc-responsiveness-native--9dfea-nd-a-late-composition-event-doc-responsiveness__spn108-boundaries.json.gz",
+    "sha256": "2048ed23b3e4671515c9a7d0d45f4b54ee76a1472d822f62a436f1f6b6095e53",
+    "decodedSha256": "9003264df4593e31bb661f0f3c45106636d66c1837fb881ee3c55023c66972c6",
+    "decodedBytes": 2347
+  },
+  {
+    "archive": "doc-responsiveness-desktop.zip",
+    "originalMember": "test-results/doc-responsiveness/doc-responsiveness-native--b2c01-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+    "file": "retained/doc-responsiveness-desktop/test-results__doc-responsiveness__doc-responsiveness-native--b2c01-mit-without-partial-history-doc-responsiveness__spn108-boundaries.json.gz",
+    "sha256": "3088382198ed943ff4828ccd4e6ad40facad05b2cce8fc91d4d297c69ce4f29a",
+    "decodedSha256": "e68224ca6ea5b031fcf7248ab00f840fd6dd5b552b2704a1f16125b3cfa40e2b",
+    "decodedBytes": 67290
+  },
+  {
+    "archive": "doc-responsiveness-desktop.zip",
+    "originalMember": "test-results/spn108-comparison-desktop.json",
+    "file": "retained/doc-responsiveness-desktop/test-results__spn108-comparison-desktop.json.gz",
+    "sha256": "11fa0c11bc0b354278e47edfa0362aa6e3094722da491f8b73bef0aa4458c7f2",
+    "decodedSha256": "dd71f59e517f098bc3f536bdf57d7eff2fa39ada155b367a6546fed9cd36d791",
+    "decodedBytes": 12690
+  },
+  {
+    "archive": "doc-responsiveness-desktop.zip",
+    "originalMember": "playwright-report/doc-responsiveness.json",
+    "file": "retained/doc-responsiveness-desktop/playwright-report__doc-responsiveness.json.gz",
+    "sha256": "9aa6797fb62bc3e1c2e48fc8028e625020105b4451ad8ecf288006e0daf20dd8",
+    "decodedSha256": "88aebb1dc54d7e13f27ecedcab3a8f890c6911dd48000ef6ab66f71f4075ae2b",
+    "decodedBytes": 1384144
+  },
+  {
+    "archive": "theme-screenshots-development-1.zip",
+    "originalMember": "test-results/development/access-upgrade-doc-viewer--3be23-en-downgrade-still-locks-it-development/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-development-1/test-results__development__access-upgrade-doc-viewer--3be23-en-downgrade-still-locks-it-development__sync-diagnostics.json.gz",
+    "sha256": "74fb60251f837151a1328173817828af8e1eb116bf1b72fdefd54bda2d91099a",
+    "decodedSha256": "6a802be1267f70555a7d6c94d796fe2453afab12f81e6f2306e68796ac52a243",
+    "decodedBytes": 9376
+  },
+  {
+    "archive": "theme-screenshots-development-1.zip",
+    "originalMember": "test-results/development/access-upgrade-sheet-viewe-8bf14-n-revocation-still-locks-it-development/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-development-1/test-results__development__access-upgrade-sheet-viewe-8bf14-n-revocation-still-locks-it-development__sync-diagnostics.json.gz",
+    "sha256": "717d07243d8cb29738e3d9155f4cf6f1f9ef1116a7d2cad2b9dd1d7019550a72",
+    "decodedSha256": "8d07065daabb3d7fe0dec10e71231d109b2cd71d4c486e22ec30c79eb9f6ef25",
+    "decodedBytes": 5532
+  },
+  {
+    "archive": "theme-screenshots-development-1.zip",
+    "originalMember": "test-results/development/copy-native-Sheet-copying--979e8-ndependent-same-folder-copy-development/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-development-1/test-results__development__copy-native-Sheet-copying--979e8-ndependent-same-folder-copy-development__sync-diagnostics.json.gz",
+    "sha256": "66abc1c6bf80bc1613605ff2be5f8802022581f42e0fb65a1dd156a33954e07d",
+    "decodedSha256": "6d431f3a2deeef6b331587ec1051a5344c298724437d15ce2f6b518cb6e88a4e",
+    "decodedBytes": 7675
+  },
+  {
+    "archive": "theme-screenshots-development-1.zip",
+    "originalMember": "test-results/development/diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development/spn098-feedback-pair.json",
+    "file": "retained/theme-screenshots-development-1/test-results__development__diagnostics-feedback-survi-8d01d-serve-one-complete-snapshot-development__spn098-feedback-pair.json.gz",
+    "sha256": "0025f9330ed4a664f692d3dcb567ddd9128b6f64650e4f43ba0e174f44db1c0a",
+    "decodedSha256": "f6eba1141770763e0465b159cfc0b0b2515019b226c34bf5c484606658160c89",
+    "decodedBytes": 8704
+  },
+  {
+    "archive": "theme-screenshots-development-1.zip",
+    "originalMember": "test-results/development/doc-mobile-a-modern-phone--cbac6-ative-canvas-phone-ordinary-development/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-development-1/test-results__development__doc-mobile-a-modern-phone--cbac6-ative-canvas-phone-ordinary-development__sync-diagnostics.json.gz",
+    "sha256": "742114d4d4acc025e88643545029c91f4418deee134275f019c59c47b2647913",
+    "decodedSha256": "7bb484636a98f8bbe1439ff8d8fa50e351de2b3a6adfff71c21ef0813971fc9c",
+    "decodedBytes": 3203
+  },
+  {
+    "archive": "theme-screenshots-development-1.zip",
+    "originalMember": "test-results/development/doc-mobile-a-traditional-p-a390a-ative-canvas-phone-ordinary-development/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-development-1/test-results__development__doc-mobile-a-traditional-p-a390a-ative-canvas-phone-ordinary-development__sync-diagnostics.json.gz",
+    "sha256": "3bd0c7315e9e497ec65de27aa07da6e0cc5f6acd24ff69a9019db62affd46905",
+    "decodedSha256": "3538ea97efae686171a082a35cd186f7a4de9a1207229d3a392c61bfb391749a",
+    "decodedBytes": 2696
+  },
+  {
+    "archive": "theme-screenshots-development-1.zip",
+    "originalMember": "test-results/development/doc-mobile-phone-Doc-formu-a9d0b-edit-dialogs-phone-ordinary-development/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-development-1/test-results__development__doc-mobile-phone-Doc-formu-a9d0b-edit-dialogs-phone-ordinary-development__sync-diagnostics.json.gz",
+    "sha256": "b567bb14ed4b76d71d88fe8fb921874b0c773f630b83b672c34a31d78d6da994",
+    "decodedSha256": "12ab33eac94f2bd0ea706d168e23f9b8ddb9432542d220096d1430d5657268a5",
+    "decodedBytes": 10628
+  },
+  {
+    "archive": "theme-screenshots-development-1.zip",
+    "originalMember": "test-results/development/doc-mobile-phone-Docs-at-s-00f26-ved-settings-phone-ordinary-development/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-development-1/test-results__development__doc-mobile-phone-Docs-at-s-00f26-ved-settings-phone-ordinary-development__sync-diagnostics.json.gz",
+    "sha256": "c509878738df27df6c08089a9078ae682219abf2542fc2bf2c0faa52b7eecb23",
+    "decodedSha256": "6d50bbd5c8050a1cf4b6e6b516d467ef1caa2792689cd8ce7443ef96053f1337",
+    "decodedBytes": 33535
+  },
+  {
+    "archive": "theme-screenshots-development-1.zip",
+    "originalMember": "test-results/development/doc-mobile-phone-Docs-at-s-50e0a-ved-settings-phone-ordinary-development/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-development-1/test-results__development__doc-mobile-phone-Docs-at-s-50e0a-ved-settings-phone-ordinary-development__sync-diagnostics.json.gz",
+    "sha256": "9a950f969a9c8ec83a4cf9aeb98976fc22838d8eb2f350ef976cd9306a8a0792",
+    "decodedSha256": "acfe83d8c70bff2ae4ce56a8cea237548ac472c4f28e1d3a59449cf3844b7f10",
+    "decodedBytes": 33533
+  },
+  {
+    "archive": "theme-screenshots-development-1.zip",
+    "originalMember": "test-results/development/doc-mobile-phone-Docs-at-s-d16ce-ved-settings-phone-ordinary-development/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-development-1/test-results__development__doc-mobile-phone-Docs-at-s-d16ce-ved-settings-phone-ordinary-development__sync-diagnostics.json.gz",
+    "sha256": "90bb8817dc59d347c6e8d558e42f58123ffa0a1b941681e2b39b3043b663d434",
+    "decodedSha256": "d9dd996a756f97c6458703ab839a0f846d235afeaf46b2be25e18bfb457028b0",
+    "decodedBytes": 33533
+  },
+  {
+    "archive": "theme-screenshots-development-1.zip",
+    "originalMember": "test-results/development/doc-mobile-phone-guest-Doc-8407a-nt-when-the-link-is-revoked-development/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-development-1/test-results__development__doc-mobile-phone-guest-Doc-8407a-nt-when-the-link-is-revoked-development__sync-diagnostics.json.gz",
+    "sha256": "2034fab9f1afbea06e594700406e1df0b2708a7e15f8aafdbc004699f32bb492",
+    "decodedSha256": "264fdbb5e895eae95c49794563f1da640f856d43cfe329313e616b4e66d84ca5",
+    "decodedBytes": 7079
+  },
+  {
+    "archive": "theme-screenshots-development-1.zip",
+    "originalMember": "test-results/development/doc-mobile-traditional-pho-8213b-editor-grant-phone-ordinary-development/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-development-1/test-results__development__doc-mobile-traditional-pho-8213b-editor-grant-phone-ordinary-development__sync-diagnostics.json.gz",
+    "sha256": "430ab03f0bcc528538811e8d1899a422a296f7b99bc343f8008680e78746ed69",
+    "decodedSha256": "b81761d726d438f14fcc8dc0fabd63248760fa8188ccf2507e2bdf7a2990c83f",
+    "decodedBytes": 4229
+  },
+  {
+    "archive": "theme-screenshots-development-1.zip",
+    "originalMember": "test-results/development/doc-mobile-traditional-pho-8f110--owner-grant-phone-ordinary-development/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-development-1/test-results__development__doc-mobile-traditional-pho-8f110--owner-grant-phone-ordinary-development__sync-diagnostics.json.gz",
+    "sha256": "c326f470c1c0b02928d333be2681c8694e5137a073f4763f2ba847c330bc137e",
+    "decodedSha256": "30eefb35d7cb19d369a26a2e317cbcedce76f28f35c2b32774246428acbe38b1",
+    "decodedBytes": 6679
+  },
+  {
+    "archive": "theme-screenshots-development-1.zip",
+    "originalMember": "playwright-report/development-1-of-2.json",
+    "file": "retained/theme-screenshots-development-1/playwright-report__development-1-of-2.json.gz",
+    "sha256": "adaaee3d670ed6594340d5ea7020f18ef0f4793dff27741ce189ae1254e14d2b",
+    "decodedSha256": "4d6a3482062978a0ff9aa64cb5e02fc5167ca5060c02d7d1bc8f83432c40e07e",
+    "decodedBytes": 1476692
+  },
+  {
+    "archive": "theme-screenshots-development-2.zip",
+    "originalMember": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-editor-permission-notices.json",
+    "file": "retained/theme-screenshots-development-2/test-results__development__pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development__doc-editor-permission-notices.json.gz",
+    "sha256": "114ae8748f08d57bc25e12361f56c7707233fd4957f8ad560d2767ec843afe1e",
+    "decodedSha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094",
+    "decodedBytes": 65
+  },
+  {
+    "archive": "theme-screenshots-development-2.zip",
+    "originalMember": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-guest-editor-permission-notices.json",
+    "file": "retained/theme-screenshots-development-2/test-results__development__pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development__doc-guest-editor-permission-notices.json.gz",
+    "sha256": "114ae8748f08d57bc25e12361f56c7707233fd4957f8ad560d2767ec843afe1e",
+    "decodedSha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094",
+    "decodedBytes": 65
+  },
+  {
+    "archive": "theme-screenshots-development-2.zip",
+    "originalMember": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-guest-viewer-permission-notices.json",
+    "file": "retained/theme-screenshots-development-2/test-results__development__pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development__doc-guest-viewer-permission-notices.json.gz",
+    "sha256": "fdb8cf5ef030ddae35c053a98321878aca47b2a4d4388787ac70659dfebc1139",
+    "decodedSha256": "fd52957e53e83373c6545cf1d43d93f1761bfa6d3e39e622a02b00e52d84bd68",
+    "decodedBytes": 64
+  },
+  {
+    "archive": "theme-screenshots-development-2.zip",
+    "originalMember": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-owner-permission-notices.json",
+    "file": "retained/theme-screenshots-development-2/test-results__development__pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development__doc-owner-permission-notices.json.gz",
+    "sha256": "114ae8748f08d57bc25e12361f56c7707233fd4957f8ad560d2767ec843afe1e",
+    "decodedSha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094",
+    "decodedBytes": 65
+  },
+  {
+    "archive": "theme-screenshots-development-2.zip",
+    "originalMember": "test-results/development/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development/doc-viewer-permission-notices.json",
+    "file": "retained/theme-screenshots-development-2/test-results__development__pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-development__doc-viewer-permission-notices.json.gz",
+    "sha256": "fdb8cf5ef030ddae35c053a98321878aca47b2a4d4388787ac70659dfebc1139",
+    "decodedSha256": "fd52957e53e83373c6545cf1d43d93f1761bfa6d3e39e622a02b00e52d84bd68",
+    "decodedBytes": 64
+  },
+  {
+    "archive": "theme-screenshots-development-2.zip",
+    "originalMember": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-editor-permission-notices.json",
+    "file": "retained/theme-screenshots-development-2/test-results__development__pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development__sheet-editor-permission-notices.json.gz",
+    "sha256": "114ae8748f08d57bc25e12361f56c7707233fd4957f8ad560d2767ec843afe1e",
+    "decodedSha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094",
+    "decodedBytes": 65
+  },
+  {
+    "archive": "theme-screenshots-development-2.zip",
+    "originalMember": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-guest-editor-permission-notices.json",
+    "file": "retained/theme-screenshots-development-2/test-results__development__pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development__sheet-guest-editor-permission-notices.json.gz",
+    "sha256": "114ae8748f08d57bc25e12361f56c7707233fd4957f8ad560d2767ec843afe1e",
+    "decodedSha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094",
+    "decodedBytes": 65
+  },
+  {
+    "archive": "theme-screenshots-development-2.zip",
+    "originalMember": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-guest-viewer-permission-notices.json",
+    "file": "retained/theme-screenshots-development-2/test-results__development__pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development__sheet-guest-viewer-permission-notices.json.gz",
+    "sha256": "114ae8748f08d57bc25e12361f56c7707233fd4957f8ad560d2767ec843afe1e",
+    "decodedSha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094",
+    "decodedBytes": 65
+  },
+  {
+    "archive": "theme-screenshots-development-2.zip",
+    "originalMember": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-owner-permission-notices.json",
+    "file": "retained/theme-screenshots-development-2/test-results__development__pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development__sheet-owner-permission-notices.json.gz",
+    "sha256": "114ae8748f08d57bc25e12361f56c7707233fd4957f8ad560d2767ec843afe1e",
+    "decodedSha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094",
+    "decodedBytes": 65
+  },
+  {
+    "archive": "theme-screenshots-development-2.zip",
+    "originalMember": "test-results/development/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development/sheet-viewer-permission-notices.json",
+    "file": "retained/theme-screenshots-development-2/test-results__development__pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-development__sheet-viewer-permission-notices.json.gz",
+    "sha256": "114ae8748f08d57bc25e12361f56c7707233fd4957f8ad560d2767ec843afe1e",
+    "decodedSha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094",
+    "decodedBytes": 65
+  },
+  {
+    "archive": "theme-screenshots-development-2.zip",
+    "originalMember": "test-results/development/shared-creation-collaborat-da7dd-ner-refreshes-the-same-file-development/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-development-2/test-results__development__shared-creation-collaborat-da7dd-ner-refreshes-the-same-file-development__sync-diagnostics.json.gz",
+    "sha256": "5d6ba7635210f9d2538f772892ae63064508c24313f620149a9a725eccb942eb",
+    "decodedSha256": "066616ad6f017384ee1d7baa7cb7557681b1c24f00cdf3f46f4d1b9c73d8d419",
+    "decodedBytes": 213
+  },
+  {
+    "archive": "theme-screenshots-development-2.zip",
+    "originalMember": "playwright-report/development-2-of-2.json",
+    "file": "retained/theme-screenshots-development-2/playwright-report__development-2-of-2.json.gz",
+    "sha256": "65623226573812758e451635022759f6b48e6b6134260eb9095c9fac3477e949",
+    "decodedSha256": "e26a703c35518ef1a174776a087c6d4d455bb6d4741f51b6986429b1982b28ac",
+    "decodedBytes": 1564664
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/offline-device-a-denied-do-42da9--without-leaving-the-editor-production/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__offline-device-a-denied-do-42da9--without-leaving-the-editor-production__sync-diagnostics.json.gz",
+    "sha256": "b89e5dc412beed7f9a6a135557c83c7f10c7d9537891fb2868277dc298b11ae2",
+    "decodedSha256": "f4f455277db5205a163f75bd82eed0cc4264053523e0299385f393e3199ef406",
+    "decodedBytes": 13313
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/offline-device-external-st-c5b73-data-needs-explicit-discard-production/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__offline-device-external-st-c5b73-data-needs-explicit-discard-production__sync-diagnostics.json.gz",
+    "sha256": "ffc585c20d8de938bac61e7fc923463e0fe583688c523e141a6f8be86eb0eb95",
+    "decodedSha256": "7b1b0155beabcff8d60cec6b58e0e99e781b11cfec42ce219a6ca2b34faf5f2d",
+    "decodedBytes": 8540
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/offline-device-failed-requ-6f001--a-first-download-available-production/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__offline-device-failed-requ-6f001--a-first-download-available-production__sync-diagnostics.json.gz",
+    "sha256": "5931f572e0bf96a6cb436145b9805d8d29a0c39ba9ad9638461a6f104b434233",
+    "decodedSha256": "1d198698fb62228d19d0b472afbdd4a166e5dbb67a633edbd584d1d6817dfa23",
+    "decodedBytes": 12961
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/offline-device-real-browse-0c7bb-hout-a-partial-new-download-production/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__offline-device-real-browse-0c7bb-hout-a-partial-new-download-production__sync-diagnostics.json.gz",
+    "sha256": "c7f94db34e93c6e0478cd16d1c42dad3222e0db9b22fe62933a4a006c8cfce3c",
+    "decodedSha256": "edc3242f39d30b8ff611e9f57cf32c50f19ebe218ad3cc9916c8a9e2b02917d4",
+    "decodedBytes": 21654
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/offline-device-device-stor-62374-persistence-and-exact-links-production/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__offline-device-device-stor-62374-persistence-and-exact-links-production__sync-diagnostics.json.gz",
+    "sha256": "f98b2687516465f3fc62ed2e86e4527cfb27d16349db224a6736f18977b1cc4f",
+    "decodedSha256": "afb2763951e5797a46a9bbbe8300a4c62b22d0c9d66a77771f61193a2e1c3d2e",
+    "decodedBytes": 20348
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/offline-sign-out-a-retaine-c29bd-l-fresh-instance-setup-task-production/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__offline-sign-out-a-retaine-c29bd-l-fresh-instance-setup-task-production__sync-diagnostics.json.gz",
+    "sha256": "4cd7c307c26103b085473f0a623edf08926860c6726947050031f302f1260cf1",
+    "decodedSha256": "e873d86d60363da56bbf3282672f2c4abf0a35c2b08154ae17af6651047cefd2",
+    "decodedBytes": 22499
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/offline-sign-out-locked-de-0db6e-his-account\u2019s-local-changes-production/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__offline-sign-out-locked-de-0db6e-his-account\u2019s-local-changes-production__sync-diagnostics.json.gz",
+    "sha256": "1a92abdcbc3a4008221093f70d8d708cbfa0e7d899a3b011308568280e4a5670",
+    "decodedSha256": "59818bd1a5e98c51c65a6731b4c0ee3f0d5366012a0f803a5eedeb3b56ead21b",
+    "decodedBytes": 11752
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/offline-device-writer-lock-3b6c5-card-preserves-the-original-production/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__offline-device-writer-lock-3b6c5-card-preserves-the-original-production__sync-diagnostics.json.gz",
+    "sha256": "2288613c5ac693925931b5a7b8fabd2cb0a401e1b4977928f6095422b9deda87",
+    "decodedSha256": "c344670e4d6885bcc54aec423d7ba274bb7a7e72ec6e85c3531a012bd57bfb07",
+    "decodedBytes": 8052
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/offline-sign-out-offline-e-47ea3-d-isolates-the-next-account-production/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__offline-sign-out-offline-e-47ea3-d-isolates-the-next-account-production__sync-diagnostics.json.gz",
+    "sha256": "05f4c696752437ad64992d95abe594244c787ecccbb18a5781caacb66b645c40",
+    "decodedSha256": "4e060fefeb5a76259afca51bcdcfe3fd0110ae85ac31e55c70588657a462a60f",
+    "decodedBytes": 23052
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-production/doc-editor-permission-notices.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-production__doc-editor-permission-notices.json.gz",
+    "sha256": "114ae8748f08d57bc25e12361f56c7707233fd4957f8ad560d2767ec843afe1e",
+    "decodedSha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094",
+    "decodedBytes": 65
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-production/doc-guest-editor-permission-notices.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-production__doc-guest-editor-permission-notices.json.gz",
+    "sha256": "114ae8748f08d57bc25e12361f56c7707233fd4957f8ad560d2767ec843afe1e",
+    "decodedSha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094",
+    "decodedBytes": 65
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-production/doc-guest-viewer-permission-notices.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-production__doc-guest-viewer-permission-notices.json.gz",
+    "sha256": "fdb8cf5ef030ddae35c053a98321878aca47b2a4d4388787ac70659dfebc1139",
+    "decodedSha256": "fd52957e53e83373c6545cf1d43d93f1761bfa6d3e39e622a02b00e52d84bd68",
+    "decodedBytes": 64
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-production/doc-owner-permission-notices.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-production__doc-owner-permission-notices.json.gz",
+    "sha256": "114ae8748f08d57bc25e12361f56c7707233fd4957f8ad560d2767ec843afe1e",
+    "decodedSha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094",
+    "decodedBytes": 65
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-production/doc-viewer-permission-notices.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__pdf-export-doc-PDF-downloa-ddb14-selection-and-guest-privacy-production__doc-viewer-permission-notices.json.gz",
+    "sha256": "fdb8cf5ef030ddae35c053a98321878aca47b2a4d4388787ac70659dfebc1139",
+    "decodedSha256": "fd52957e53e83373c6545cf1d43d93f1761bfa6d3e39e622a02b00e52d84bd68",
+    "decodedBytes": 64
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-production/sheet-editor-permission-notices.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-production__sheet-editor-permission-notices.json.gz",
+    "sha256": "114ae8748f08d57bc25e12361f56c7707233fd4957f8ad560d2767ec843afe1e",
+    "decodedSha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094",
+    "decodedBytes": 65
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-production/sheet-guest-editor-permission-notices.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-production__sheet-guest-editor-permission-notices.json.gz",
+    "sha256": "114ae8748f08d57bc25e12361f56c7707233fd4957f8ad560d2767ec843afe1e",
+    "decodedSha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094",
+    "decodedBytes": 65
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-production/sheet-guest-viewer-permission-notices.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-production__sheet-guest-viewer-permission-notices.json.gz",
+    "sha256": "114ae8748f08d57bc25e12361f56c7707233fd4957f8ad560d2767ec843afe1e",
+    "decodedSha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094",
+    "decodedBytes": 65
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-production/sheet-owner-permission-notices.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-production__sheet-owner-permission-notices.json.gz",
+    "sha256": "114ae8748f08d57bc25e12361f56c7707233fd4957f8ad560d2767ec843afe1e",
+    "decodedSha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094",
+    "decodedBytes": 65
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-production/sheet-viewer-permission-notices.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__pdf-export-sheet-PDF-downl-dd8ba-selection-and-guest-privacy-production__sheet-viewer-permission-notices.json.gz",
+    "sha256": "114ae8748f08d57bc25e12361f56c7707233fd4957f8ad560d2767ec843afe1e",
+    "decodedSha256": "699c3c0185cf606e9b4053259604f3d386bd154c2c599a8eb55cc2f340286094",
+    "decodedBytes": 65
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "test-results/production/shared-creation-collaborat-da7dd-ner-refreshes-the-same-file-production/sync-diagnostics.json",
+    "file": "retained/theme-screenshots-production-2/test-results__production__shared-creation-collaborat-da7dd-ner-refreshes-the-same-file-production__sync-diagnostics.json.gz",
+    "sha256": "6bd89bb70c4a6f36abe0d5ed92d7e83873a01f2654c94f52f1ee97cf6b65f296",
+    "decodedSha256": "b8c4fc7a7360479d88c0935f7f334ecf1842b8542842a0a053a0ee4979c9d615",
+    "decodedBytes": 213
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "playwright-report/production-2-of-2.json",
+    "file": "retained/theme-screenshots-production-2/playwright-report__production-2-of-2.json.gz",
+    "sha256": "af83c085df529cb4a4e5c0bdf7f48338c348545128d61ac56a44301422294f32",
+    "decodedSha256": "c7c1a02c83d2d9722eae2e8fed93dbdfdfe7c91a5595f5d2fafdb96d67127775",
+    "decodedBytes": 1575833
+  },
+  {
+    "archive": "doc-responsiveness-mobile.zip",
+    "originalMember": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+    "file": "retained/doc-responsiveness-mobile/baseline-doc-source__test-results__doc-responsiveness__doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness__spn108-metrics.json.gz",
+    "sha256": "35b86f657ec55a2fb1a3ad3a2f4b72150bc54234a689d2b7cc03d61b65da7954",
+    "decodedSha256": "74d47d8f88967efce6eac2937ff1f3fdc6b03d6d56a54cf72b912d95725ee15c",
+    "decodedBytes": 246197
+  },
+  {
+    "archive": "doc-responsiveness-mobile.zip",
+    "originalMember": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+    "file": "retained/doc-responsiveness-mobile/baseline-doc-source__test-results__doc-responsiveness__doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness__spn108-metrics.json.gz",
+    "sha256": "ba51734ff628c526614e3aabae52c873ac0c51dc0614049bb07a9dd9d29e0b0f",
+    "decodedSha256": "2dc3149c3fc93ed47fbcb88bf3c025eec1937fb5ce096101d5659dbbb975038e",
+    "decodedBytes": 234609
+  },
+  {
+    "archive": "doc-responsiveness-mobile.zip",
+    "originalMember": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+    "file": "retained/doc-responsiveness-mobile/baseline-doc-source__test-results__doc-responsiveness__doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness__spn108-metrics.json.gz",
+    "sha256": "d2a72a1eff19ed4120b75c6a921b4812f0862016cfe594c1651889481be56f17",
+    "decodedSha256": "e33220ac57af3141ea311584a9261c87046affbde5dac9057bc86b8f4f7cc48c",
+    "decodedBytes": 243324
+  },
+  {
+    "archive": "doc-responsiveness-mobile.zip",
+    "originalMember": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+    "file": "retained/doc-responsiveness-mobile/baseline-doc-source__test-results__doc-responsiveness__doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness__spn108-metrics.json.gz",
+    "sha256": "6b9645f139e0277be747b12a711185be8459cd222a9b550a2d863db5f2092fbd",
+    "decodedSha256": "cbcb8b7417026f0cb957db3897f0fbf6b190526b3ddab6d4162f0ac5c2c94f97",
+    "decodedBytes": 245308
+  },
+  {
+    "archive": "doc-responsiveness-mobile.zip",
+    "originalMember": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+    "file": "retained/doc-responsiveness-mobile/baseline-doc-source__test-results__doc-responsiveness__doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness__spn108-profile-clock.json.gz",
+    "sha256": "7714010fd3fe1f5e55f7af99166205863335fae26eea9863f4e41929e95016f4",
+    "decodedSha256": "699374d57bc0f3cb4b161a26c21332a40db3769a02f7b10ef3d921cd8113ece6",
+    "decodedBytes": 239
+  },
+  {
+    "archive": "doc-responsiveness-mobile.zip",
+    "originalMember": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+    "file": "retained/doc-responsiveness-mobile/baseline-doc-source__playwright-report__doc-responsiveness.json.gz",
+    "sha256": "ce3cf4932f054cd7d87f9a2c3b09ed37a55535033a30ae0714dd3e94e161ce75",
+    "decodedSha256": "2e8d821b345ac4e44e7fc22d3ed5351d980c71db3fe9e595616afa622b50d656",
+    "decodedBytes": 29196
+  },
+  {
+    "archive": "doc-responsiveness-mobile.zip",
+    "originalMember": "test-results/doc-responsiveness/doc-responsiveness-mobile--59407--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+    "file": "retained/doc-responsiveness-mobile/test-results__doc-responsiveness__doc-responsiveness-mobile--59407--typing-after-a-quiet-pause-doc-responsiveness__spn108-post-burst.json.gz",
+    "sha256": "db1dc1c79d03d7242b28548118b541c1d93d274cf5504f68bca9b80e987efd11",
+    "decodedSha256": "ae0f7960fe62ea4014b7ba4b8cc204c778771e3120e29ad3d2b4c9d701f1cf4e",
+    "decodedBytes": 174633
+  },
+  {
+    "archive": "doc-responsiveness-mobile.zip",
+    "originalMember": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+    "file": "retained/doc-responsiveness-mobile/test-results__doc-responsiveness__doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness__spn108-metrics.json.gz",
+    "sha256": "60ed135b233212ee0a685e46831876995e0f09c22ed86d30c2e1f0f6b63035e1",
+    "decodedSha256": "f6a903cd0204608d4a9d6fc48678f1ca16a6a258f9916f3b28e54bcf2d644fcc",
+    "decodedBytes": 963075
+  },
+  {
+    "archive": "doc-responsiveness-mobile.zip",
+    "originalMember": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+    "file": "retained/doc-responsiveness-mobile/test-results__doc-responsiveness__doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness__spn108-metrics.json.gz",
+    "sha256": "0d242f73868e70886080521fafd549863e19c562870608b67b034216d3a3f20c",
+    "decodedSha256": "7c199999c4b60084606dedaebe37441421d7fcab121700d04a2e0fc3fff4d67d",
+    "decodedBytes": 960087
+  },
+  {
+    "archive": "doc-responsiveness-mobile.zip",
+    "originalMember": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+    "file": "retained/doc-responsiveness-mobile/test-results__doc-responsiveness__doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness__spn108-metrics.json.gz",
+    "sha256": "fa18d1e99c0f3b4db3166a87eb21e883bffad4c862a737f3ad497aa14ebf826a",
+    "decodedSha256": "db037c0ecc243e9fb9ed3bebf7ffd46bfe456bb75a13f0e25dc23383f56c809b",
+    "decodedBytes": 958634
+  },
+  {
+    "archive": "doc-responsiveness-mobile.zip",
+    "originalMember": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+    "file": "retained/doc-responsiveness-mobile/test-results__doc-responsiveness__doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness__spn108-metrics.json.gz",
+    "sha256": "17c55b277e07655add4d006f5aa1fae6b11097ab595b13eef42237b7e633f594",
+    "decodedSha256": "fd4de4199317fb2d9cad5e73648c85d9b70100d24b2db301114c5d392ad8b6d5",
+    "decodedBytes": 967547
+  },
+  {
+    "archive": "doc-responsiveness-mobile.zip",
+    "originalMember": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+    "file": "retained/doc-responsiveness-mobile/test-results__doc-responsiveness__doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness__spn108-profile-clock.json.gz",
+    "sha256": "b13b9e23ae3be5de4c2a7aebbfaf9d055abdaa20ad07dd330bd8d44e41838e82",
+    "decodedSha256": "2db7e3e9f6c119247d6931e4fe49d5440b49394cd28f629e9b6f3270368f9304",
+    "decodedBytes": 229
+  },
+  {
+    "archive": "doc-responsiveness-mobile.zip",
+    "originalMember": "test-results/doc-responsiveness/doc-responsiveness-native--032b2-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+    "file": "retained/doc-responsiveness-mobile/test-results__doc-responsiveness__doc-responsiveness-native--032b2-nd-a-late-composition-event-doc-responsiveness__spn108-boundaries.json.gz",
+    "sha256": "20267f422a4995c5d9bd83b94dd5dbc7f9c5bb3ab4dfca73aa1e5d8ba19cf96e",
+    "decodedSha256": "85a67f4e986d4c1a865f2cab4d4e0087e02b8e9c0f1a2da6a7edd8f2bef3f239",
+    "decodedBytes": 2345
+  },
+  {
+    "archive": "doc-responsiveness-mobile.zip",
+    "originalMember": "test-results/doc-responsiveness/doc-responsiveness-native--bfbca-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+    "file": "retained/doc-responsiveness-mobile/test-results__doc-responsiveness__doc-responsiveness-native--bfbca-mit-without-partial-history-doc-responsiveness__spn108-boundaries.json.gz",
+    "sha256": "53bf2ffdef99cae266e080e6c4ee136ad3b59548cbb943c266ea99cac196473e",
+    "decodedSha256": "3a9033e6a1b0c20e3699f66a9e2efc8fb399284f94ad31ddc254f4e9bb3d24e8",
+    "decodedBytes": 67595
+  },
+  {
+    "archive": "doc-responsiveness-mobile.zip",
+    "originalMember": "test-results/spn108-comparison-mobile.json",
+    "file": "retained/doc-responsiveness-mobile/test-results__spn108-comparison-mobile.json.gz",
+    "sha256": "334515d10ce9e18f60f890a49c775c75a839b96c2b8bbc1f2a82581aac2f8414",
+    "decodedSha256": "dc2a5d4ba48f4b9e12fa583133e5859c4bc76795311821632b8f81c991fe4ad9",
+    "decodedBytes": 12792
+  },
+  {
+    "archive": "doc-responsiveness-mobile.zip",
+    "originalMember": "playwright-report/doc-responsiveness.json",
+    "file": "retained/doc-responsiveness-mobile/playwright-report__doc-responsiveness.json.gz",
+    "sha256": "dfd6fa12e1feee7cfc1039ae03d0766693942d28dae37e797cd2ec16e77ac000",
+    "decodedSha256": "cb8ef8fd4d5b6b73a5fe3220a9bd10b706b8bf6d2712c5b547354615ccee33f7",
+    "decodedBytes": 1384141
+  },
+  {
+    "archive": "ci-results-browser.zip",
+    "originalMember": "ci-results-browser.json",
+    "file": "retained/ci-results-browser/ci-results-browser.json.gz",
+    "sha256": "3e2b43065355576d98806daafad8db60c147f3e3983e2b5aa1885f9dd1ed6c80",
+    "decodedSha256": "7f70f479e588b48826eb979df7ee1dbecf657be785e907bbfe0ace96c68a3d0d",
+    "decodedBytes": 10284
+  }
+]

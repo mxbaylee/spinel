@@ -1,0 +1,105 @@
+{
+  "artifactId": 14091358686,
+  "runId": 43540593013,
+  "attempt": 1,
+  "files": [
+    {
+      "path": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "retained": "baseline-callback-source__test-results__doc-callback-lifetimes__doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes__spn113-evidence.json.gz",
+      "bytes": 21389943,
+      "sha256": "099bc61500a5f687f01f03ab710050f73bf97e1c77ede30b1eeaa78cf50cb848"
+    },
+    {
+      "path": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+      "retained": "baseline-callback-source__test-results__doc-callback-lifetimes__doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes__spn134-progress.json.gz",
+      "bytes": 6585,
+      "sha256": "ffde6c0b73ad7c24d8427108e868a6fcfff2ba1581319960e1c01163bcf5ad97"
+    },
+    {
+      "path": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+      "retained": "baseline-callback-source__test-results__doc-callback-lifetimes__doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes__spn144-conversion.json.gz",
+      "bytes": 3111,
+      "sha256": "bffe09e511ba3a712d377859abe123c8bfd7d2e2dfeb32d79faf3f4e68837836"
+    },
+    {
+      "path": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "retained": "baseline-callback-source__playwright-report__doc-callback-lifetimes.json.gz",
+      "bytes": 26147,
+      "sha256": "a8c143aa0296ecdaf796fcc2772aeed20bcc1614915fc5a6e42a1136f6cb9c6c"
+    },
+    {
+      "path": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "retained": "test-results__doc-callback-lifetimes__doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes__spn113-evidence.json.gz",
+      "bytes": 19358513,
+      "sha256": "e426baa574c017f030f0897e921c0ce75c40006d93785f52569bfb76450f6667"
+    },
+    {
+      "path": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+      "retained": "test-results__doc-callback-lifetimes__doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes__spn134-progress.json.gz",
+      "bytes": 6553,
+      "sha256": "96b6c0eb18bc2395ddafcee97138cef0cb249e43eda43ba1dfa038231919aded"
+    },
+    {
+      "path": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+      "retained": "test-results__doc-callback-lifetimes__doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes__spn144-conversion.json.gz",
+      "bytes": 3035,
+      "sha256": "ad75a8c95728e0cc7578386a4227ea86a76bff4dd074a79c8b411fa04be352e3"
+    },
+    {
+      "path": "test-results/spn113-comparison-mobile.json",
+      "retained": "test-results__spn113-comparison-mobile.json.gz",
+      "bytes": 965601,
+      "sha256": "4c4afa9e92fa59fecbfbe07f85ff9e4aaa7bab695b83c5aad22e014bacf2b602"
+    },
+    {
+      "path": "playwright-report/doc-callback-lifetimes.json",
+      "retained": "playwright-report__doc-callback-lifetimes.json.gz",
+      "bytes": 1377222,
+      "sha256": "dffca99f006844af0e3479429e7f56efc7190e0f7f230689f8869eb6ca6bb75d"
+    }
+  ],
+  "progress": {
+    "baseline": {
+      "phase": "fixture-cleanup-complete",
+      "firstFailure": null,
+      "persistenceFailure": null,
+      "terminal": "passed",
+      "droppedEvents": 0,
+      "terminalMs": 218649.508507
+    },
+    "candidate": {
+      "phase": "fixture-cleanup-complete",
+      "firstFailure": null,
+      "persistenceFailure": null,
+      "terminal": "passed",
+      "droppedEvents": 0,
+      "terminalMs": 143533.66853499998
+    }
+  },
+  "comparisons": {
+    "accepted": true,
+    "failures": [],
+    "baselineSource": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+    "candidateSource": "62bc0229c5675ff519b733cfc8f3c9a7e6e918d8",
+    "families": {
+      "cursor": {
+        "pendingHighWater": 4,
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0
+      },
+      "zoom-init": {
+        "pendingHighWater": 1,
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0
+      },
+      "zoom-update": {
+        "pendingHighWater": 1,
+        "pendingAtTraceEnd": 0,
+        "callbacksAfterDisposal": 0,
+        "installationsAfterDisposal": 0
+      }
+    }
+  }
+}

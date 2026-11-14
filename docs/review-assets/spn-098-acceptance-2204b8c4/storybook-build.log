@@ -1,0 +1,1020 @@
+﻿2026-11-14T01:27:06.4264856Z Current runner version: '2.338.2'
+2026-11-14T01:27:06.4288394Z ##[group]Runner Image Provisioner
+2026-11-14T01:27:06.4289386Z Hosted Compute Agent
+2026-11-14T01:27:06.4290303Z Version: 20261103.629
+2026-11-14T01:27:06.4290901Z Commit: 15dbd9ccb5dbf34fae002b6ed1a2670f52df37bc
+2026-11-14T01:27:06.4291662Z Build Date: 2026-11-03T17:26:59Z
+2026-11-14T01:27:06.4292286Z Worker ID: {7147c582-45f2-40b9-85cb-59c679f0c3f5}
+2026-11-14T01:27:06.4292977Z Region: northcentralus
+2026-11-14T01:27:06.4293523Z Cloud: Azure
+2026-11-14T01:27:06.4294030Z ##[endgroup]
+2026-11-14T01:27:06.4295410Z ##[group]Operating System
+2026-11-14T01:27:06.4295976Z Ubuntu
+2026-11-14T01:27:06.4296466Z 26.04.1
+2026-11-14T01:27:06.4296973Z LTS
+2026-11-14T01:27:06.4297450Z ##[endgroup]
+2026-11-14T01:27:06.4297999Z ##[group]Runner Image
+2026-11-14T01:27:06.4298547Z Image: ubuntu-26.04
+2026-11-14T01:27:06.4299077Z Version: 20261111.196.1
+2026-11-14T01:27:06.4300559Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261111.196/images/ubuntu/Ubuntu2604-Readme.md
+2026-11-14T01:27:06.4302017Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261111.196
+2026-11-14T01:27:06.4302905Z ##[endgroup]
+2026-11-14T01:27:06.4304228Z ##[group]GITHUB_TOKEN Permissions
+2026-11-14T01:27:06.4306747Z Contents: read
+2026-11-14T01:27:06.4307279Z Metadata: read
+2026-11-14T01:27:06.4307847Z ##[endgroup]
+2026-11-14T01:27:06.4310112Z Secret source: Actions
+2026-11-14T01:27:06.4311026Z Cache mode: write
+2026-11-14T01:27:06.4311973Z Prepare workflow directory
+2026-11-14T01:27:06.4683448Z Prepare all required actions
+2026-11-14T01:27:06.4731200Z Getting action download info
+2026-11-14T01:27:06.6927285Z Download action repository 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-11-14T01:27:06.7989922Z Download action repository 'actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-11-14T01:27:06.8531028Z Download action repository 'actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-11-14T01:27:06.9556077Z Download action repository 'actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9' (SHA:fc324d3547104276b827a68afc52ff2a11cc49c9)
+2026-11-14T01:27:07.1825444Z Getting action download info
+2026-11-14T01:27:07.2687906Z Download action repository 'actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f' (SHA:bbbca2ddaa5d8feaa63e36b76fdaad77386f024f)
+2026-11-14T01:27:07.3933696Z Complete job name: Build Storybook
+2026-11-14T01:27:07.4826815Z ##[group]Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+2026-11-14T01:27:07.4828181Z with:
+2026-11-14T01:27:07.4828791Z   persist-credentials: false
+2026-11-14T01:27:07.4829782Z   repository: mxbaylee/spinel
+2026-11-14T01:27:07.4838466Z   token: ***
+2026-11-14T01:27:07.4839080Z   ssh-strict: true
+2026-11-14T01:27:07.4839809Z   ssh-user: git
+2026-11-14T01:27:07.4840407Z   clean: true
+2026-11-14T01:27:07.4841087Z   sparse-checkout-cone-mode: true
+2026-11-14T01:27:07.4841866Z   fetch-depth: 1
+2026-11-14T01:27:07.4842644Z   fetch-tags: false
+2026-11-14T01:27:07.4843469Z   show-progress: true
+2026-11-14T01:27:07.4844263Z   lfs: false
+2026-11-14T01:27:07.4845078Z   submodules: false
+2026-11-14T01:27:07.4845960Z   set-safe-directory: true
+2026-11-14T01:27:07.4846966Z   allow-unsafe-pr-checkout: false
+2026-11-14T01:27:07.4848602Z env:
+2026-11-14T01:27:07.4849404Z   STORYBOOK_DISABLE_TELEMETRY: 1
+2026-11-14T01:27:07.4850509Z ##[endgroup]
+2026-11-14T01:27:07.7468644Z Syncing repository: mxbaylee/spinel
+2026-11-14T01:27:07.7471612Z ##[group]Getting Git version info
+2026-11-14T01:27:07.7472824Z Working directory is '/home/runner/work/spinel/spinel'
+2026-11-14T01:27:07.7474289Z [command]/usr/bin/git version
+2026-11-14T01:27:07.7474974Z git version 2.56.1
+2026-11-14T01:27:07.7477906Z ##[endgroup]
+2026-11-14T01:27:07.7492249Z Temporarily overriding HOME='/home/runner/work/_temp/4b5fde80-13c0-4583-b8c3-d00fa65fbdd7' before making global git config changes
+2026-11-14T01:27:07.7496478Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-14T01:27:07.7499424Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-14T01:27:07.7554855Z Deleting the contents of '/home/runner/work/spinel/spinel'
+2026-11-14T01:27:07.7557404Z ##[group]Determining repository object format
+2026-11-14T01:27:07.7559217Z ##[endgroup]
+2026-11-14T01:27:07.7560519Z ##[group]Initializing the repository
+2026-11-14T01:27:07.7564306Z [command]/usr/bin/git init /home/runner/work/spinel/spinel
+2026-11-14T01:27:07.7675842Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-14T01:27:07.7677419Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-14T01:27:07.7678717Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-14T01:27:07.7680100Z hint: call:
+2026-11-14T01:27:07.7680767Z hint:
+2026-11-14T01:27:07.7681554Z hint: 	git config --global init.defaultBranch <name>
+2026-11-14T01:27:07.7682585Z hint:
+2026-11-14T01:27:07.7683576Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-14T01:27:07.7685264Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-14T01:27:07.7686687Z hint:
+2026-11-14T01:27:07.7687311Z hint: 	git branch -m <name>
+2026-11-14T01:27:07.7688098Z hint:
+2026-11-14T01:27:07.7689234Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-14T01:27:07.7691281Z Initialized empty Git repository in /home/runner/work/spinel/spinel/.git/
+2026-11-14T01:27:07.7698080Z [command]/usr/bin/git remote add origin https://github.com/mxbaylee/spinel
+2026-11-14T01:27:07.7749258Z ##[endgroup]
+2026-11-14T01:27:07.7750865Z ##[group]Disabling automatic garbage collection
+2026-11-14T01:27:07.7752816Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-14T01:27:07.7785410Z ##[endgroup]
+2026-11-14T01:27:07.7786831Z ##[group]Setting up auth
+2026-11-14T01:27:07.7787738Z Removing SSH command configuration
+2026-11-14T01:27:07.7791219Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-14T01:27:07.7823513Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-14T01:27:07.8218745Z Removing HTTP extra header
+2026-11-14T01:27:07.8226322Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-14T01:27:07.8264002Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-14T01:27:07.8481649Z Removing includeIf entries pointing to credentials config files
+2026-11-14T01:27:07.8485685Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-14T01:27:07.8511960Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-14T01:27:07.8722519Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-4c011b91-a01d-42e7-a63f-a40c001e9874.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-14T01:27:07.8753767Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git.path /home/runner/work/_temp/git-credentials-4c011b91-a01d-42e7-a63f-a40c001e9874.config
+2026-11-14T01:27:07.8781112Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-4c011b91-a01d-42e7-a63f-a40c001e9874.config
+2026-11-14T01:27:07.8814992Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-4c011b91-a01d-42e7-a63f-a40c001e9874.config
+2026-11-14T01:27:07.8843770Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-4c011b91-a01d-42e7-a63f-a40c001e9874.config
+2026-11-14T01:27:07.8871602Z ##[endgroup]
+2026-11-14T01:27:07.8872780Z ##[group]Fetching the repository
+2026-11-14T01:27:07.8880552Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +62bc0229c5675ff519b733cfc8f3c9a7e6e918d8:refs/remotes/pull/227/merge
+2026-11-14T01:27:11.6845263Z From https://github.com/mxbaylee/spinel
+2026-11-14T01:27:11.6846098Z  * [new ref]         62bc0229c5675ff519b733cfc8f3c9a7e6e918d8 -> pull/227/merge
+2026-11-14T01:27:11.6849202Z ##[endgroup]
+2026-11-14T01:27:11.6850128Z ##[group]Determining the checkout info
+2026-11-14T01:27:11.6850992Z ##[endgroup]
+2026-11-14T01:27:11.6854954Z [command]/usr/bin/git sparse-checkout disable
+2026-11-14T01:27:11.6907488Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-14T01:27:11.6963035Z ##[group]Checking out the ref
+2026-11-14T01:27:11.6966531Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/227/merge
+2026-11-14T01:27:12.4286396Z Note: switching to 'refs/remotes/pull/227/merge'.
+2026-11-14T01:27:12.4286967Z 
+2026-11-14T01:27:12.4287323Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-11-14T01:27:12.4288298Z changes and commit them, and you can discard any commits you make in this
+2026-11-14T01:27:12.4289156Z state without impacting any branches by switching back to a branch.
+2026-11-14T01:27:12.4289910Z 
+2026-11-14T01:27:12.4290200Z If you want to create a new branch to retain commits you create, you may
+2026-11-14T01:27:12.4291644Z do so (now or later) by using -c with the switch command. Example:
+2026-11-14T01:27:12.4291949Z 
+2026-11-14T01:27:12.4292100Z   git switch -c <new-branch-name>
+2026-11-14T01:27:12.4292365Z 
+2026-11-14T01:27:12.4292978Z Or undo this operation with:
+2026-11-14T01:27:12.4293283Z 
+2026-11-14T01:27:12.4293434Z   git switch -
+2026-11-14T01:27:12.4293620Z 
+2026-11-14T01:27:12.4293888Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-11-14T01:27:12.4294187Z 
+2026-11-14T01:27:12.4294607Z HEAD is now at 62bc022 Merge 2204b8c40ce6feb8ad03c65720c976510535ad00 into ebf0842f51b60d54649cf8a03065914bec0944bf
+2026-11-14T01:27:12.4445227Z ##[endgroup]
+2026-11-14T01:27:12.4497531Z [command]/usr/bin/git log -1 --format=%H
+2026-11-14T01:27:12.4523303Z 62bc0229c5675ff519b733cfc8f3c9a7e6e918d8
+2026-11-14T01:27:12.4531842Z ##[group]Removing auth
+2026-11-14T01:27:12.4532701Z Removing SSH command configuration
+2026-11-14T01:27:12.4535321Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-14T01:27:12.4565055Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-14T01:27:12.4796267Z Removing HTTP extra header
+2026-11-14T01:27:12.4797747Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-14T01:27:12.4826545Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-14T01:27:12.5046826Z Removing includeIf entries pointing to credentials config files
+2026-11-14T01:27:12.5050251Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-14T01:27:12.5070912Z includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-14T01:27:12.5080516Z includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-14T01:27:12.5081010Z includeif.gitdir:/github/workspace/.git.path
+2026-11-14T01:27:12.5081422Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-14T01:27:12.5083152Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git.path
+2026-11-14T01:27:12.5109210Z /home/runner/work/_temp/git-credentials-4c011b91-a01d-42e7-a63f-a40c001e9874.config
+2026-11-14T01:27:12.5123039Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-4c011b91\-a01d\-42e7\-a63f\-a40c001e9874\.config
+2026-11-14T01:27:12.5160799Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path
+2026-11-14T01:27:12.5186815Z /home/runner/work/_temp/git-credentials-4c011b91-a01d-42e7-a63f-a40c001e9874.config
+2026-11-14T01:27:12.5196378Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/spinel/spinel/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-4c011b91\-a01d\-42e7\-a63f\-a40c001e9874\.config
+2026-11-14T01:27:12.5230520Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-11-14T01:27:12.5253223Z /github/runner_temp/git-credentials-4c011b91-a01d-42e7-a63f-a40c001e9874.config
+2026-11-14T01:27:12.5260949Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-4c011b91\-a01d\-42e7\-a63f\-a40c001e9874\.config
+2026-11-14T01:27:12.5296243Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-11-14T01:27:12.5317338Z /github/runner_temp/git-credentials-4c011b91-a01d-42e7-a63f-a40c001e9874.config
+2026-11-14T01:27:12.5323315Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-4c011b91\-a01d\-42e7\-a63f\-a40c001e9874\.config
+2026-11-14T01:27:12.5353377Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-14T01:27:12.5566960Z Removing credentials config '/home/runner/work/_temp/git-credentials-4c011b91-a01d-42e7-a63f-a40c001e9874.config'
+2026-11-14T01:27:12.5576252Z ##[endgroup]
+2026-11-14T01:27:12.5863034Z ##[group]Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+2026-11-14T01:27:12.5863457Z with:
+2026-11-14T01:27:12.5863809Z   node-version-file: .nvmrc
+2026-11-14T01:27:12.5864144Z   package-manager-cache: false
+2026-11-14T01:27:12.5864729Z   check-latest: false
+2026-11-14T01:27:12.5867403Z   token: ***
+2026-11-14T01:27:12.5867733Z env:
+2026-11-14T01:27:12.5868045Z   STORYBOOK_DISABLE_TELEMETRY: 1
+2026-11-14T01:27:12.5868363Z ##[endgroup]
+2026-11-14T01:27:12.7021210Z Node version file is not JSON file
+2026-11-14T01:27:12.7026126Z Node version file is not TOML file
+2026-11-14T01:27:12.7026829Z Resolved .nvmrc as 26.13.0
+2026-11-14T01:27:12.7070108Z Attempting to download 26.13.0...
+2026-11-14T01:27:13.3270639Z Acquiring 26.13.0 - x64 from https://github.com/actions/node-versions/releases/download/26.13.0-41378513395/node-26.13.0-linux-x64.tar.gz
+2026-11-14T01:27:13.8993533Z Extracting ...
+2026-11-14T01:27:13.9110130Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/5eb9b675-b25c-4589-a964-b003117b34b2 -f /home/runner/work/_temp/e6366a34-3575-49b1-85b9-792b49c7b9f7
+2026-11-14T01:27:14.7469250Z Adding to the cache ...
+2026-11-14T01:27:16.9179051Z ##[group]Environment details
+2026-11-14T01:27:17.1181474Z node: v26.13.0
+2026-11-14T01:27:17.1181998Z npm: 11.20.0
+2026-11-14T01:27:17.1182702Z yarn: 1.22.22
+2026-11-14T01:27:17.1183621Z ##[endgroup]
+2026-11-14T01:27:17.1349329Z ##[group]Run npm ci
+2026-11-14T01:27:17.1350090Z [36;1mnpm ci[0m
+2026-11-14T01:27:17.1388248Z shell: /usr/bin/bash -e {0}
+2026-11-14T01:27:17.1388617Z env:
+2026-11-14T01:27:17.1389008Z   STORYBOOK_DISABLE_TELEMETRY: 1
+2026-11-14T01:27:17.1389344Z ##[endgroup]
+2026-11-14T01:27:28.1594761Z 
+2026-11-14T01:27:28.1606199Z > postinstall
+2026-11-14T01:27:28.1608406Z > node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts
+2026-11-14T01:27:28.1610534Z 
+2026-11-14T01:27:28.7437886Z 
+2026-11-14T01:27:28.7439109Z added 505 packages, and audited 513 packages in 12s
+2026-11-14T01:27:28.7449843Z 
+2026-11-14T01:27:28.7450641Z 135 packages are looking for funding
+2026-11-14T01:27:28.7451255Z   run `npm fund` for details
+2026-11-14T01:27:28.7675777Z 
+2026-11-14T01:27:28.7685798Z npm warn install-scripts 2 packages have install scripts not yet covered by allowScripts:
+2026-11-14T01:27:28.7686765Z 6 moderate severity vulnerabilities
+2026-11-14T01:27:28.7687139Z 
+2026-11-14T01:27:28.7687508Z To address issues that do not require attention, run:
+2026-11-14T01:27:28.7688107Z   npm audit fix
+2026-11-14T01:27:28.7688330Z 
+2026-11-14T01:27:28.7688723Z To address all issues (including breaking changes), run:
+2026-11-14T01:27:28.7689385Z   npm audit fix --force
+2026-11-14T01:27:28.7689794Z 
+2026-11-14T01:27:28.7690019Z Run `npm audit` for details.
+2026-11-14T01:27:28.7690951Z npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+2026-11-14T01:27:28.7708986Z npm warn install-scripts   protobufjs@7.6.6 (postinstall: node scripts/postinstall)
+2026-11-14T01:27:28.7710038Z npm warn install-scripts
+2026-11-14T01:27:28.7711260Z npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+2026-11-14T01:27:28.8121362Z ##[group]Run npm run build-storybook 2>&1 | tee storybook-build.log
+2026-11-14T01:27:28.8122292Z [36;1mnpm run build-storybook 2>&1 | tee storybook-build.log[0m
+2026-11-14T01:27:28.8123076Z [36;1mif grep -q 'Failed to load preset' storybook-build.log; then[0m
+2026-11-14T01:27:28.8123898Z [36;1m  echo '::error::A Storybook preset failed to load; see the log above.'[0m
+2026-11-14T01:27:28.8124564Z [36;1m  exit 1[0m
+2026-11-14T01:27:28.8124946Z [36;1mfi[0m
+2026-11-14T01:27:28.8125515Z [36;1mfor file in index.html index.json iframe.html; do[0m
+2026-11-14T01:27:28.8126521Z [36;1m  test -s "storybook-static/$file" || { echo "::error::storybook-static/$file is missing"; exit 1; }[0m
+2026-11-14T01:27:28.8127364Z [36;1mdone[0m
+2026-11-14T01:27:28.8172862Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-11-14T01:27:28.8173495Z env:
+2026-11-14T01:27:28.8173950Z   STORYBOOK_DISABLE_TELEMETRY: 1
+2026-11-14T01:27:28.8174468Z ##[endgroup]
+2026-11-14T01:27:28.9146736Z 
+2026-11-14T01:27:28.9147581Z > build-storybook
+2026-11-14T01:27:28.9148958Z > NODE_OPTIONS='--import ./.storybook/typescript-api.ts' storybook build -o storybook-static && node scripts/ci/storybook-identity.ts
+2026-11-14T01:27:28.9150009Z 
+2026-11-14T01:27:29.4310298Z 
+2026-11-14T01:27:29.4341815Z [90m┌[39m  Building storybook v10.6.5
+2026-11-14T01:27:29.4371018Z [90m│[39m
+2026-11-14T01:27:29.4372305Z [32m◇[39m  Cleaning outputDir: [36mstorybook-static[39m
+2026-11-14T01:27:29.5979391Z [90m│[39m
+2026-11-14T01:27:29.6001457Z [32m◇[39m  Loading presets
+2026-11-14T01:27:30.0108889Z [90m│[39m
+2026-11-14T01:27:30.0109765Z [32m◇[39m  Building manager..
+2026-11-14T01:27:30.0175807Z (node:2647) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+2026-11-14T01:27:30.0177921Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-11-14T01:27:30.1825820Z [90m│[39m
+2026-11-14T01:27:30.1826746Z [34m●[39m  Building open services..
+2026-11-14T01:27:30.1830608Z [90m│[39m
+2026-11-14T01:27:30.1831319Z [34m●[39m  Building preview..
+2026-11-14T01:27:30.2520173Z [90m│[39m
+2026-11-14T01:27:30.2521841Z [33m▲[39m  No story files found for the specified pattern: [34mlib/**/*.stories.tsx[39m
+2026-11-14T01:27:31.7840996Z [90m│[39m  [43mVite[49m [36mvite v8.3.6 [32mbuilding client environment for production...[36m[39m
+2026-11-14T01:27:31.8559587Z transforming...
+2026-11-14T01:27:44.9157163Z ✓ 4629 modules transformed.
+2026-11-14T01:27:45.4074681Z rendering chunks...
+2026-11-14T01:27:46.3493440Z computing gzip size...
+2026-11-14T01:27:46.6022758Z [90m│[39m  [43mVite[49m storybook-static/iframe.html
+2026-11-14T01:27:46.6023693Z [90m│[39m  22.59 kB │ gzip:   6.20 kB
+2026-11-14T01:27:46.6024546Z [90m│[39m  storybook-static/assets/StorageHelp-Kf7OmaC_.css
+2026-11-14T01:27:46.6025280Z [90m│[39m  0.27 kB │ gzip:   0.19 kB
+2026-11-14T01:27:46.6026176Z [90m│[39m  storybook-static/assets/OfflineRecoveryEntry-6HiDdG-5.css
+2026-11-14T01:27:46.6026972Z [90m│[39m  0.43 kB │ gzip:   0.24 kB
+2026-11-14T01:27:46.6027765Z [90m│[39m  storybook-static/assets/ThemeMenu-DuS3AFhY.css
+2026-11-14T01:27:46.6028494Z [90m│[39m  0.49 kB │ gzip:   0.31 kB
+2026-11-14T01:27:46.6029222Z [90m│[39m  storybook-static/assets/CopyFile-BQQaXgft.css
+2026-11-14T01:27:46.6030087Z [90m│[39m  0.51 kB │ gzip:   0.32 kB
+2026-11-14T01:27:46.6030636Z [90m│[39m  storybook-static/assets/AdminUsers-DHtUNavp.css
+2026-11-14T01:27:46.6031140Z [90m│[39m  0.75 kB │ gzip:   0.35 kB
+2026-11-14T01:27:46.6031685Z [90m│[39m  storybook-static/assets/AppearanceReview-CObuc8n4.css
+2026-11-14T01:27:46.6032230Z [90m│[39m  0.76 kB │ gzip:   0.34 kB
+2026-11-14T01:27:46.6032758Z [90m│[39m  storybook-static/assets/EntityIcon-BdkcVhUQ.css
+2026-11-14T01:27:46.6033205Z [90m│[39m  0.86 kB │ gzip:   0.38 kB
+2026-11-14T01:27:46.6033717Z [90m│[39m  storybook-static/assets/EntryFrame-DB9fT3Gz.css
+2026-11-14T01:27:46.6034174Z [90m│[39m  0.89 kB │ gzip:   0.40 kB
+2026-11-14T01:27:46.6035039Z [90m│[39m  storybook-static/assets/SpaceRootActions-CuJND89q.css
+2026-11-14T01:27:46.6035557Z [90m│[39m  0.91 kB │ gzip:   0.40 kB
+2026-11-14T01:27:46.6036025Z [90m│[39m  storybook-static/assets/Dashboard-Bhx56Aht.css
+2026-11-14T01:27:46.6036528Z [90m│[39m  1.02 kB │ gzip:   0.42 kB
+2026-11-14T01:27:46.6037028Z [90m│[39m  storybook-static/assets/BackupDownloads-CKFNrv5F.css
+2026-11-14T01:27:46.6037584Z [90m│[39m  1.07 kB │ gzip:   0.45 kB
+2026-11-14T01:27:46.6038132Z [90m│[39m  storybook-static/assets/GuestLinks-7b9btl2K.css
+2026-11-14T01:27:46.6038578Z [90m│[39m  1.20 kB │ gzip:   0.51 kB
+2026-11-14T01:27:46.6039095Z [90m│[39m  storybook-static/assets/AccessState-DDJakJk4.css
+2026-11-14T01:27:46.6039815Z [90m│[39m  1.25 kB │ gzip:   0.49 kB
+2026-11-14T01:27:46.6040455Z [90m│[39m  storybook-static/assets/ServerHealth-EMdq8Hsl.css
+2026-11-14T01:27:46.6040993Z [90m│[39m  1.25 kB │ gzip:   0.53 kB
+2026-11-14T01:27:46.6041483Z [90m│[39m  storybook-static/assets/RestoreNotice-3ZmiKG4W.css
+2026-11-14T01:27:46.6041991Z [90m│[39m  1.28 kB │ gzip:   0.47 kB
+2026-11-14T01:27:46.6042488Z [90m│[39m  storybook-static/assets/nativeEditors-QEvf-p8_.css
+2026-11-14T01:27:46.6042964Z [90m│[39m  1.40 kB │ gzip:   0.58 kB
+2026-11-14T01:27:46.6043519Z [90m│[39m  storybook-static/assets/SearchPanel-BHfYMFX1.css
+2026-11-14T01:27:46.6043964Z [90m│[39m  1.41 kB │ gzip:   0.50 kB
+2026-11-14T01:27:46.6044465Z [90m│[39m  storybook-static/assets/feedback-C1BtYMOm.css
+2026-11-14T01:27:46.6044929Z [90m│[39m  1.79 kB │ gzip:   0.62 kB
+2026-11-14T01:27:46.6045436Z [90m│[39m  storybook-static/assets/DocFormulas-fBFn_ung.css
+2026-11-14T01:27:46.6045962Z [90m│[39m  1.80 kB │ gzip:   0.70 kB
+2026-11-14T01:27:46.6046447Z [90m│[39m  storybook-static/assets/BackupRestore-D9X4E9ac.css
+2026-11-14T01:27:46.6046959Z [90m│[39m  1.90 kB │ gzip:   0.67 kB
+2026-11-14T01:27:46.6047470Z [90m│[39m  storybook-static/assets/DashboardFiles-ByGYJez6.css
+2026-11-14T01:27:46.6047976Z [90m│[39m  2.06 kB │ gzip:   0.68 kB
+2026-11-14T01:27:46.6048499Z [90m│[39m  storybook-static/assets/DeviceStoragePanel-C2NJxWkV.css
+2026-11-14T01:27:46.6049001Z [90m│[39m  2.07 kB │ gzip:   0.64 kB
+2026-11-14T01:27:46.6049687Z [90m│[39m  storybook-static/assets/fileDialog-BUnPxS8B.css
+2026-11-14T01:27:46.6050172Z [90m│[39m  2.25 kB │ gzip:   0.76 kB
+2026-11-14T01:27:46.6050706Z [90m│[39m  storybook-static/assets/NativeEditors-9tmAv-f-.css
+2026-11-14T01:27:46.6051217Z [90m│[39m  2.29 kB │ gzip:   0.80 kB
+2026-11-14T01:27:46.6051925Z [90m│[39m  storybook-static/assets/SaveStatus-mVcC3r32.css
+2026-11-14T01:27:46.6052449Z [90m│[39m  2.53 kB │ gzip:   0.88 kB
+2026-11-14T01:27:46.6053061Z [90m│[39m  storybook-static/assets/entryJourney-CJkqs_bu.css
+2026-11-14T01:27:46.6053594Z [90m│[39m  2.74 kB │ gzip:   0.99 kB
+2026-11-14T01:27:46.6054119Z [90m│[39m  storybook-static/assets/docPreset-DMXBypQZ.css
+2026-11-14T01:27:46.6054611Z [90m│[39m  3.29 kB │ gzip:   0.99 kB
+2026-11-14T01:27:46.6055203Z [90m│[39m  storybook-static/assets/HistoryBrowser-D9Z9OhM7.css
+2026-11-14T01:27:46.6055790Z [90m│[39m  3.36 kB │ gzip:   0.96 kB
+2026-11-14T01:27:46.6056301Z [90m│[39m  storybook-static/assets/ShareLink-DvalkekD.css
+2026-11-14T01:27:46.6056797Z [90m│[39m  3.59 kB │ gzip:   1.03 kB
+2026-11-14T01:27:46.6057317Z [90m│[39m  storybook-static/assets/administration-WlSsYuOZ.css
+2026-11-14T01:27:46.6057873Z [90m│[39m  3.78 kB │ gzip:   1.11 kB
+2026-11-14T01:27:46.6058403Z [90m│[39m  storybook-static/assets/Maintenance-Dp-3-dvQ.css
+2026-11-14T01:27:46.6058910Z [90m│[39m  3.87 kB │ gzip:   1.09 kB
+2026-11-14T01:27:46.6059414Z [90m│[39m  storybook-static/assets/Rail-BPy1inxF.css
+2026-11-14T01:27:46.6060128Z [90m│[39m  4.25 kB │ gzip:   1.01 kB
+2026-11-14T01:27:46.6060684Z [90m│[39m  storybook-static/assets/Appearance-DXI6v1kJ.css
+2026-11-14T01:27:46.6061166Z [90m│[39m  4.26 kB │ gzip:   1.23 kB
+2026-11-14T01:27:46.6061651Z [90m│[39m  storybook-static/assets/editorFrame-C38zpcVS.css
+2026-11-14T01:27:46.6062250Z [90m│[39m  4.62 kB │ gzip:   1.19 kB
+2026-11-14T01:27:46.6062745Z [90m│[39m  storybook-static/assets/profile-DeEBLEXH.css
+2026-11-14T01:27:46.6063249Z [90m│[39m  5.27 kB │ gzip:   1.49 kB
+2026-11-14T01:27:46.6063720Z [90m│[39m  storybook-static/assets/Controls-6GPmlRwP.css
+2026-11-14T01:27:46.6064189Z [90m│[39m  5.63 kB │ gzip:   1.61 kB
+2026-11-14T01:27:46.6064691Z [90m│[39m  storybook-static/assets/spaceOffline-D0YStd95.css
+2026-11-14T01:27:46.6065165Z [90m│[39m  10.04 kB │ gzip:   2.37 kB
+2026-11-14T01:27:46.6065728Z [90m│[39m  storybook-static/assets/iframe-mgzSPPzi.css
+2026-11-14T01:27:46.6066187Z [90m│[39m  12.30 kB │ gzip:   3.19 kB
+2026-11-14T01:27:46.6066655Z [90m│[39m  storybook-static/assets/lib-Cg2Caa9Z.css
+2026-11-14T01:27:46.6067111Z [90m│[39m  13.15 kB │ gzip:   2.42 kB
+2026-11-14T01:27:46.6067625Z [90m│[39m  storybook-static/assets/presetStyles-DpGlWg2B.css
+2026-11-14T01:27:46.6068166Z [90m│[39m  19.05 kB │ gzip:   3.02 kB
+2026-11-14T01:27:46.6068647Z [90m│[39m  storybook-static/assets/Controls-qH0tBtVy.css
+2026-11-14T01:27:46.6069103Z [90m│[39m  29.42 kB │ gzip:   5.82 kB
+2026-11-14T01:27:46.6069691Z [90m│[39m  storybook-static/assets/documentReady-BmpLaEIP.css
+2026-11-14T01:27:46.6070196Z [90m│[39m  109.37 kB │ gzip:  16.12 kB
+2026-11-14T01:27:46.6070727Z [90m│[39m  storybook-static/assets/sheetPreset-BbLjGXZM.css
+2026-11-14T01:27:46.6071231Z [90m│[39m  121.70 kB │ gzip:  17.84 kB
+2026-11-14T01:27:46.6071701Z [90m│[39m  storybook-static/assets/iframe-D7EKroWS.js
+2026-11-14T01:27:46.6072175Z [90m│[39m  0.04 kB │ gzip:   0.06 kB
+2026-11-14T01:27:46.6072658Z [90m│[39m  storybook-static/assets/administration-C1S_hD-g.js
+2026-11-14T01:27:46.6073156Z [90m│[39m  0.09 kB │ gzip:   0.11 kB
+2026-11-14T01:27:46.6073667Z [90m│[39m  storybook-static/assets/editorFrame-iBNWeN3I.js
+2026-11-14T01:27:46.6074130Z [90m│[39m  0.09 kB │ gzip:   0.11 kB
+2026-11-14T01:27:46.6074625Z [90m│[39m  storybook-static/assets/entryJourney-BWMTHvLU.js
+2026-11-14T01:27:46.6075092Z [90m│[39m  0.09 kB │ gzip:   0.11 kB
+2026-11-14T01:27:46.6075715Z [90m│[39m  storybook-static/assets/feedback-BPt24EjV.js
+2026-11-14T01:27:46.6076199Z [90m│[39m  0.09 kB │ gzip:   0.11 kB
+2026-11-14T01:27:46.6076678Z [90m│[39m  storybook-static/assets/fileDialog-CfmkpWpi.js
+2026-11-14T01:27:46.6077154Z [90m│[39m  0.09 kB │ gzip:   0.11 kB
+2026-11-14T01:27:46.6077644Z [90m│[39m  storybook-static/assets/nativeEditors-CQURLHAQ.js
+2026-11-14T01:27:46.6078149Z [90m│[39m  0.09 kB │ gzip:   0.11 kB
+2026-11-14T01:27:46.6078718Z [90m│[39m  storybook-static/assets/profile-BQR24URV.js
+2026-11-14T01:27:46.6079208Z [90m│[39m  0.09 kB │ gzip:   0.11 kB
+2026-11-14T01:27:46.6079838Z [90m│[39m  storybook-static/assets/portable-kkPWuy9t.js
+2026-11-14T01:27:46.6080407Z [90m│[39m  0.11 kB │ gzip:   0.13 kB
+2026-11-14T01:27:46.6080912Z [90m│[39m  storybook-static/assets/spaceOffline-DQzHufaA.js
+2026-11-14T01:27:46.6081377Z [90m│[39m  0.14 kB │ gzip:   0.12 kB
+2026-11-14T01:27:46.6081939Z [90m│[39m  storybook-static/assets/adminAccountLabel-BSuIiUC6.js
+2026-11-14T01:27:46.6082432Z [90m│[39m  0.19 kB │ gzip:   0.16 kB
+2026-11-14T01:27:46.6082956Z [90m│[39m  storybook-static/assets/guestRevocation-DqJg0TCz.js
+2026-11-14T01:27:46.6083444Z [90m│[39m  0.24 kB │ gzip:   0.20 kB
+2026-11-14T01:27:46.6083970Z [90m│[39m  storybook-static/assets/editorReady-CMid4ivx.js
+2026-11-14T01:27:46.6084491Z [90m│[39m  0.29 kB │ gzip:   0.23 kB
+2026-11-14T01:27:46.6084983Z [90m│[39m  storybook-static/assets/workspace-qGa9Un5K.js
+2026-11-14T01:27:46.6085472Z [90m│[39m  0.38 kB │ gzip:   0.27 kB
+2026-11-14T01:27:46.6086000Z [90m│[39m  storybook-static/assets/IconPicker.stories-CZkIW8tK.js
+2026-11-14T01:27:46.6086485Z [90m│[39m  0.38 kB │ gzip:   0.28 kB
+2026-11-14T01:27:46.6086974Z [90m│[39m  storybook-static/assets/TagLabels.stories-DsM61oYD.js
+2026-11-14T01:27:46.6087515Z [90m│[39m  0.45 kB │ gzip:   0.31 kB
+2026-11-14T01:27:46.6088006Z [90m│[39m  storybook-static/assets/emoji-D4-LI5S6.js
+2026-11-14T01:27:46.6088557Z [90m│[39m  0.46 kB │ gzip:   0.32 kB
+2026-11-14T01:27:46.6089046Z [90m│[39m  storybook-static/assets/documentAccess-dBMpAeSF.js
+2026-11-14T01:27:46.6089641Z [90m│[39m  0.57 kB │ gzip:   0.38 kB
+2026-11-14T01:27:46.6090268Z [90m│[39m  storybook-static/assets/fileNavigation-Cr8p9_av.js
+2026-11-14T01:27:46.6090739Z [90m│[39m  0.58 kB │ gzip:   0.37 kB
+2026-11-14T01:27:46.6091223Z [90m│[39m  storybook-static/assets/itemsApi-D2hEJhTA.js
+2026-11-14T01:27:46.6091670Z [90m│[39m  0.58 kB │ gzip:   0.41 kB
+2026-11-14T01:27:46.6092183Z [90m│[39m  storybook-static/assets/PresenceLabel.stories-B--ju2e1.js
+2026-11-14T01:27:46.6092729Z [90m│[39m  0.59 kB │ gzip:   0.35 kB
+2026-11-14T01:27:46.6093248Z [90m│[39m  storybook-static/assets/pa-C54UG8eN-DhHhBwnb.js
+2026-11-14T01:27:46.6093723Z [90m│[39m  0.62 kB │ gzip:   0.30 kB
+2026-11-14T01:27:46.6094197Z [90m│[39m  storybook-static/assets/or-50rxpoq4-DafyQLRB.js
+2026-11-14T01:27:46.6095257Z [90m│[39m  0.66 kB │ gzip:   0.32 kB
+2026-11-14T01:27:46.6095972Z [90m│[39m  storybook-static/assets/gu-Bjl0l-cf-Nle_6DR6.js
+2026-11-14T01:27:46.6096711Z [90m│[39m  0.66 kB │ gzip:   0.32 kB
+2026-11-14T01:27:46.6097376Z [90m│[39m  storybook-static/assets/hi-DsAaTPCC-C69RNUHF.js
+2026-11-14T01:27:46.6097978Z [90m│[39m  0.70 kB │ gzip:   0.32 kB
+2026-11-14T01:27:46.6098555Z [90m│[39m  storybook-static/assets/mr-CjWJPVmH-BTYR2v30.js
+2026-11-14T01:27:46.6099208Z [90m│[39m  0.70 kB │ gzip:   0.32 kB
+2026-11-14T01:27:46.6100060Z [90m│[39m  storybook-static/assets/SharedBadge.stories-Cz8okPsm.js
+2026-11-14T01:27:46.6100744Z [90m│[39m  0.70 kB │ gzip:   0.43 kB
+2026-11-14T01:27:46.6101453Z [90m│[39m  storybook-static/assets/as-BPtSu6VN-DTmKZT1W.js
+2026-11-14T01:27:46.6102128Z [90m│[39m  0.71 kB │ gzip:   0.34 kB
+2026-11-14T01:27:46.6102898Z [90m│[39m  storybook-static/assets/bn-NCLZcWHi-DuVwjTCb.js
+2026-11-14T01:27:46.6103585Z [90m│[39m  0.71 kB │ gzip:   0.34 kB
+2026-11-14T01:27:46.6104391Z [90m│[39m  storybook-static/assets/te-B5Spl2Jk-BSXPVPct.js
+2026-11-14T01:27:46.6105090Z [90m│[39m  0.71 kB │ gzip:   0.33 kB
+2026-11-14T01:27:46.6105799Z [90m│[39m  storybook-static/assets/kn-C6Lov-DP-C2BcvGb3.js
+2026-11-14T01:27:46.6106568Z [90m│[39m  0.72 kB │ gzip:   0.33 kB
+2026-11-14T01:27:46.6107391Z [90m│[39m  storybook-static/assets/guestLinksStoryData-BlVDntHf.js
+2026-11-14T01:27:46.6108235Z [90m│[39m  0.73 kB │ gzip:   0.34 kB
+2026-11-14T01:27:46.6108991Z [90m│[39m  storybook-static/assets/historyApi-Dr8G6sSA.js
+2026-11-14T01:27:46.6110146Z [90m│[39m  0.73 kB │ gzip:   0.50 kB
+2026-11-14T01:27:46.6110964Z [90m│[39m  storybook-static/assets/dialogBounds-B3z7rgYg.js
+2026-11-14T01:27:46.6111707Z [90m│[39m  0.74 kB │ gzip:   0.45 kB
+2026-11-14T01:27:46.6112477Z [90m│[39m  storybook-static/assets/adminRequest-B7XS_DNE.js
+2026-11-14T01:27:46.6113266Z [90m│[39m  0.75 kB │ gzip:   0.52 kB
+2026-11-14T01:27:46.6114043Z [90m│[39m  storybook-static/assets/ThemeSettings-Ddb_WaoA.js
+2026-11-14T01:27:46.6114851Z [90m│[39m  0.77 kB │ gzip:   0.46 kB
+2026-11-14T01:27:46.6115685Z [90m│[39m  storybook-static/assets/OfflineStatus.stories-C5NRx1Gu.js
+2026-11-14T01:27:46.6116479Z [90m│[39m  0.79 kB │ gzip:   0.43 kB
+2026-11-14T01:27:46.6117288Z [90m│[39m  storybook-static/assets/ta-BcghgTbD-D1qU8J-k.js
+2026-11-14T01:27:46.6118025Z [90m│[39m  0.80 kB │ gzip:   0.33 kB
+2026-11-14T01:27:46.6118792Z [90m│[39m  storybook-static/assets/react-18-BUKDbSSq.js
+2026-11-14T01:27:46.6119609Z [90m│[39m  0.89 kB │ gzip:   0.51 kB
+2026-11-14T01:27:46.6120411Z [90m│[39m  storybook-static/assets/gemGeometry-CCewQaPB.js
+2026-11-14T01:27:46.6121210Z [90m│[39m  0.89 kB │ gzip:   0.55 kB
+2026-11-14T01:27:46.6121987Z [90m│[39m  storybook-static/assets/ml-2xLVYkVY-0nnGHDFm.js
+2026-11-14T01:27:46.6122721Z [90m│[39m  0.89 kB │ gzip:   0.37 kB
+2026-11-14T01:27:46.6123465Z [90m│[39m  storybook-static/assets/pi-B9cgjyG1-CLvqABXC.js
+2026-11-14T01:27:46.6124172Z [90m│[39m  0.94 kB │ gzip:   0.43 kB
+2026-11-14T01:27:46.6125206Z [90m│[39m  storybook-static/assets/AccountAccessChanged.stories-xVG6oq2F.js
+2026-11-14T01:27:46.6126083Z [90m│[39m  0.98 kB │ gzip:   0.60 kB
+2026-11-14T01:27:46.6127160Z [90m│[39m  storybook-static/assets/appearance-BWZQ4ack.js
+2026-11-14T01:27:46.6127859Z [90m│[39m  1.01 kB │ gzip:   0.62 kB
+2026-11-14T01:27:46.6128705Z [90m│[39m  storybook-static/assets/AdminAccessTokens.stories-B0aimPBM.js
+2026-11-14T01:27:46.6129665Z [90m│[39m  1.01 kB │ gzip:   0.52 kB
+2026-11-14T01:27:46.6130453Z [90m│[39m  storybook-static/assets/PresenceLabel-C8qRXm8C.js
+2026-11-14T01:27:46.6131224Z [90m│[39m  1.18 kB │ gzip:   0.61 kB
+2026-11-14T01:27:46.6131982Z [90m│[39m  storybook-static/assets/rolldown-runtime-sJBDdmOt.js
+2026-11-14T01:27:46.6132713Z [90m│[39m  1.20 kB │ gzip:   0.67 kB
+2026-11-14T01:27:46.6133461Z [90m│[39m  storybook-static/assets/GemLogo-HnCN7NGD.js
+2026-11-14T01:27:46.6134148Z [90m│[39m  1.23 kB │ gzip:   0.72 kB
+2026-11-14T01:27:46.6135037Z [90m│[39m  storybook-static/assets/diagnosticsStoryData-DalVM4AX.js
+2026-11-14T01:27:46.6135799Z [90m│[39m  1.29 kB │ gzip:   0.62 kB
+2026-11-14T01:27:46.6136594Z [90m│[39m  storybook-static/assets/FileExports.stories-B8CzCR-7.js
+2026-11-14T01:27:46.6137385Z [90m│[39m  1.32 kB │ gzip:   0.70 kB
+2026-11-14T01:27:46.6138211Z [90m│[39m  storybook-static/assets/ProfileSettings.stories-ByxiMj-h.js
+2026-11-14T01:27:46.6139061Z [90m│[39m  1.35 kB │ gzip:   0.58 kB
+2026-11-14T01:27:46.6139986Z [90m│[39m  storybook-static/assets/zh-latn-pinyin-BdYb-Ey_-BEIPO3U3.js
+2026-11-14T01:27:46.6140783Z [90m│[39m  1.36 kB │ gzip:   0.29 kB
+2026-11-14T01:27:46.6141576Z [90m│[39m  storybook-static/assets/OfflineStatus-DinYHAcJ.js
+2026-11-14T01:27:46.6142359Z [90m│[39m  1.46 kB │ gzip:   0.69 kB
+2026-11-14T01:27:46.6143122Z [90m│[39m  storybook-static/assets/GemLogo.stories-BwFCsRal.js
+2026-11-14T01:27:46.6143852Z [90m│[39m  1.47 kB │ gzip:   0.80 kB
+2026-11-14T01:27:46.6144637Z [90m│[39m  storybook-static/assets/workspaceArchiveApi-BPbi2Vgk.js
+2026-11-14T01:27:46.6145476Z [90m│[39m  1.49 kB │ gzip:   0.76 kB
+2026-11-14T01:27:46.6146160Z [90m│[39m  storybook-static/assets/documentReady-DV1pbEJe.js
+2026-11-14T01:27:46.6146887Z [90m│[39m  1.59 kB │ gzip:   0.87 kB
+2026-11-14T01:27:46.6147612Z [90m│[39m  storybook-static/assets/eu-Ctv_kq9Z-DhZfi4f-.js
+2026-11-14T01:27:46.6148305Z [90m│[39m  1.60 kB │ gzip:   0.29 kB
+2026-11-14T01:27:46.6149164Z [90m│[39m  storybook-static/assets/SpaceTrash.stories-DMwLIvh9.js
+2026-11-14T01:27:46.6150047Z [90m│[39m  1.61 kB │ gzip:   0.80 kB
+2026-11-14T01:27:46.6151077Z [90m│[39m  storybook-static/assets/ThemeSettings.stories-JlI1diA3.js
+2026-11-14T01:27:46.6151844Z [90m│[39m  1.61 kB │ gzip:   0.83 kB
+2026-11-14T01:27:46.6152688Z [90m│[39m  storybook-static/assets/nativeSyncPermissions-lBRnC2rt.js
+2026-11-14T01:27:46.6153508Z [90m│[39m  1.73 kB │ gzip:   0.90 kB
+2026-11-14T01:27:46.6154242Z [90m│[39m  storybook-static/assets/preload-helper-Dt5pTa-y.js
+2026-11-14T01:27:46.6155027Z [90m│[39m  1.74 kB │ gzip:   0.90 kB
+2026-11-14T01:27:46.6155799Z [90m│[39m  storybook-static/assets/snapshotIdentity-DGdHzJK1.js
+2026-11-14T01:27:46.6156568Z [90m│[39m  1.77 kB │ gzip:   0.78 kB
+2026-11-14T01:27:46.6157388Z [90m│[39m  storybook-static/assets/useConnectionStatus-DjsKfF8M.js
+2026-11-14T01:27:46.6158186Z [90m│[39m  1.85 kB │ gzip:   0.85 kB
+2026-11-14T01:27:46.6158986Z [90m│[39m  storybook-static/assets/FileExports-DWXVyGOL.js
+2026-11-14T01:27:46.6159856Z [90m│[39m  1.94 kB │ gzip:   0.95 kB
+2026-11-14T01:27:46.6160743Z [90m│[39m  storybook-static/assets/ConsoleRecovery.stories-DFvYBHmn.js
+2026-11-14T01:27:46.6161574Z [90m│[39m  2.02 kB │ gzip:   0.93 kB
+2026-11-14T01:27:46.6162397Z [90m│[39m  storybook-static/assets/DocumentTags.stories-YoEMEiqf.js
+2026-11-14T01:27:46.6163214Z [90m│[39m  2.11 kB │ gzip:   1.06 kB
+2026-11-14T01:27:46.6163950Z [90m│[39m  storybook-static/assets/ThemeMenu-CbYR2-S7.js
+2026-11-14T01:27:46.6164691Z [90m│[39m  2.13 kB │ gzip:   1.08 kB
+2026-11-14T01:27:46.6165651Z [90m│[39m  storybook-static/assets/RestoreNotice.stories-B0phn_BF.js
+2026-11-14T01:27:46.6166450Z [90m│[39m  2.14 kB │ gzip:   0.93 kB
+2026-11-14T01:27:46.6167278Z [90m│[39m  storybook-static/assets/ThemeMenu.stories-CSEaPrRW.js
+2026-11-14T01:27:46.6168052Z [90m│[39m  2.14 kB │ gzip:   0.98 kB
+2026-11-14T01:27:46.6168825Z [90m│[39m  storybook-static/assets/Favicon.stories-D2LfEwwG.js
+2026-11-14T01:27:46.6169717Z [90m│[39m  2.18 kB │ gzip:   1.16 kB
+2026-11-14T01:27:46.6170547Z [90m│[39m  storybook-static/assets/AppLayout.stories-JyidDEXX.js
+2026-11-14T01:27:46.6171372Z [90m│[39m  2.23 kB │ gzip:   1.08 kB
+2026-11-14T01:27:46.6172216Z [90m│[39m  storybook-static/assets/AccessState.stories-D6hDIiM9.js
+2026-11-14T01:27:46.6172996Z [90m│[39m  2.25 kB │ gzip:   1.05 kB
+2026-11-14T01:27:46.6173773Z [90m│[39m  storybook-static/assets/EntryFrame-B1bheWLm.js
+2026-11-14T01:27:46.6174516Z [90m│[39m  2.30 kB │ gzip:   0.93 kB
+2026-11-14T01:27:46.6175375Z [90m│[39m  storybook-static/assets/EntityIcon.stories-CxxdBmsT.js
+2026-11-14T01:27:46.6176158Z [90m│[39m  2.33 kB │ gzip:   1.00 kB
+2026-11-14T01:27:46.6176869Z [90m│[39m  storybook-static/assets/api-DX-BwyAr.js
+2026-11-14T01:27:46.6177561Z [90m│[39m  2.33 kB │ gzip:   1.18 kB
+2026-11-14T01:27:46.6178293Z [90m│[39m  storybook-static/assets/pt-Cum2_NUC-B02AnEkT.js
+2026-11-14T01:27:46.6179032Z [90m│[39m  2.38 kB │ gzip:   0.37 kB
+2026-11-14T01:27:46.6180051Z [90m│[39m  storybook-static/assets/AssistantConnections.stories-k6puM3Oy.js
+2026-11-14T01:27:46.6180656Z [90m│[39m  2.49 kB │ gzip:   0.90 kB
+2026-11-14T01:27:46.6181364Z [90m│[39m  storybook-static/assets/ProfilePage.stories-DeIGPB5_.js
+2026-11-14T01:27:46.6181967Z [90m│[39m  2.51 kB │ gzip:   1.11 kB
+2026-11-14T01:27:46.6182716Z [90m│[39m  storybook-static/assets/id-DifDyWg9-BCX75Smc.js
+2026-11-14T01:27:46.6183343Z [90m│[39m  2.52 kB │ gzip:   0.71 kB
+2026-11-14T01:27:46.6183944Z [90m│[39m  storybook-static/assets/RestoreNotice-DEANwCEh.js
+2026-11-14T01:27:46.6184597Z [90m│[39m  2.60 kB │ gzip:   1.11 kB
+2026-11-14T01:27:46.6185228Z [90m│[39m  storybook-static/assets/StorageHelp-Bu-daeB7.js
+2026-11-14T01:27:46.6185869Z [90m│[39m  2.63 kB │ gzip:   1.16 kB
+2026-11-14T01:27:46.6186662Z [90m│[39m  storybook-static/assets/oc-P_i3-xLA-Cwl8Ci8G.js
+2026-11-14T01:27:46.6187484Z [90m│[39m  2.64 kB │ gzip:   0.75 kB
+2026-11-14T01:27:46.6188343Z [90m│[39m  storybook-static/assets/EntityIcon-Crmo3uFV.js
+2026-11-14T01:27:46.6188955Z [90m│[39m  2.65 kB │ gzip:   1.33 kB
+2026-11-14T01:27:46.6190110Z [90m│[39m  storybook-static/assets/SharedItems-AbgwHU_U.js
+2026-11-14T01:27:46.6190895Z [90m│[39m  2.71 kB │ gzip:   1.20 kB
+2026-11-14T01:27:46.6191812Z [90m│[39m  storybook-static/assets/OfflineRecoveryList.stories-6_olNOyk.js
+2026-11-14T01:27:46.6192625Z [90m│[39m  2.74 kB │ gzip:   1.35 kB
+2026-11-14T01:27:46.6193286Z [90m│[39m  storybook-static/assets/VersionNames.stories-DK_GQsnC.js
+2026-11-14T01:27:46.6193921Z [90m│[39m  2.77 kB │ gzip:   1.02 kB
+2026-11-14T01:27:46.6194643Z [90m│[39m  storybook-static/assets/AccessState-VEWIB2Js.js
+2026-11-14T01:27:46.6195384Z [90m│[39m  2.81 kB │ gzip:   1.22 kB
+2026-11-14T01:27:46.6196094Z [90m│[39m  storybook-static/assets/kmr-Cfwhwuff-D8-z9dfC.js
+2026-11-14T01:27:46.6196733Z [90m│[39m  2.82 kB │ gzip:   0.89 kB
+2026-11-14T01:27:46.6197624Z [90m│[39m  storybook-static/assets/ProfileIcon.stories-B3mym_Mw.js
+2026-11-14T01:27:46.6198235Z [90m│[39m  2.88 kB │ gzip:   1.45 kB
+2026-11-14T01:27:46.6198982Z [90m│[39m  storybook-static/assets/AccessDetails-K1m1wby6.js
+2026-11-14T01:27:46.6199756Z [90m│[39m  2.93 kB │ gzip:   1.37 kB
+2026-11-14T01:27:46.6200565Z [90m│[39m  storybook-static/assets/AssistantConnections-3qi2T9Qt.js
+2026-11-14T01:27:46.6201305Z [90m│[39m  2.97 kB │ gzip:   1.35 kB
+2026-11-14T01:27:46.6202018Z [90m│[39m  storybook-static/assets/PdfExport.stories-Q7t_TRcd.js
+2026-11-14T01:27:46.6202686Z [90m│[39m  3.06 kB │ gzip:   1.16 kB
+2026-11-14T01:27:46.6203813Z [90m│[39m  storybook-static/assets/AdminPage-3HHGjsrs.js
+2026-11-14T01:27:46.6204600Z [90m│[39m  3.08 kB │ gzip:   1.31 kB
+2026-11-14T01:27:46.6205367Z [90m│[39m  storybook-static/assets/ConnectAssistant.stories-bJ2U0QMO.js
+2026-11-14T01:27:46.6206208Z [90m│[39m  3.14 kB │ gzip:   1.26 kB
+2026-11-14T01:27:46.6207085Z [90m│[39m  storybook-static/assets/maintenanceFetch-C37-syNu.js
+2026-11-14T01:27:46.6208027Z [90m│[39m  3.16 kB │ gzip:   1.43 kB
+2026-11-14T01:27:46.6208894Z [90m│[39m  storybook-static/assets/OfflineViewer-DctlIGLp.js
+2026-11-14T01:27:46.6209842Z [90m│[39m  3.22 kB │ gzip:   1.44 kB
+2026-11-14T01:27:46.6210766Z [90m│[39m  storybook-static/assets/creation-DK08Hokj.js
+2026-11-14T01:27:46.6211631Z [90m│[39m  3.25 kB │ gzip:   1.58 kB
+2026-11-14T01:27:46.6212662Z [90m│[39m  storybook-static/assets/takeUntil-h5NiYrGE.js
+2026-11-14T01:27:46.6213508Z [90m│[39m  3.25 kB │ gzip:   1.41 kB
+2026-11-14T01:27:46.6214325Z [90m│[39m  storybook-static/assets/fi-RW5VB8Yp-BOrI1g-T.js
+2026-11-14T01:27:46.6215107Z [90m│[39m  3.28 kB │ gzip:   0.86 kB
+2026-11-14T01:27:46.6215721Z [90m│[39m  storybook-static/assets/la-DuvHjUWw-BcFnDV3S.js
+2026-11-14T01:27:46.6216513Z [90m│[39m  3.28 kB │ gzip:   0.71 kB
+2026-11-14T01:27:46.6217385Z [90m│[39m  storybook-static/assets/AccessTokens.stories-ByYLEP-i.js
+2026-11-14T01:27:46.6218278Z [90m│[39m  3.30 kB │ gzip:   1.13 kB
+2026-11-14T01:27:46.6219084Z [90m│[39m  storybook-static/assets/SpaceOfflineActions-BDrgsFcY.js
+2026-11-14T01:27:46.6219936Z [90m│[39m  3.36 kB │ gzip:   1.43 kB
+2026-11-14T01:27:46.6220664Z [90m│[39m  storybook-static/assets/Trash-D1mbYSmu.js
+2026-11-14T01:27:46.6221407Z [90m│[39m  3.39 kB │ gzip:   1.47 kB
+2026-11-14T01:27:46.6222254Z [90m│[39m  storybook-static/assets/EditorTools-CCGCi47P.js
+2026-11-14T01:27:46.6222962Z [90m│[39m  3.44 kB │ gzip:   1.35 kB
+2026-11-14T01:27:46.6223793Z [90m│[39m  storybook-static/assets/Controls.stories-C28NZyQE.js
+2026-11-14T01:27:46.6224554Z [90m│[39m  3.45 kB │ gzip:   1.52 kB
+2026-11-14T01:27:46.6225391Z [90m│[39m  storybook-static/assets/ConnectionStatus-BIlpRnhR.js
+2026-11-14T01:27:46.6226087Z [90m│[39m  3.46 kB │ gzip:   1.58 kB
+2026-11-14T01:27:46.6226915Z [90m│[39m  storybook-static/assets/pms-BRGfm5gS-D6iPNnwZ.js
+2026-11-14T01:27:46.6228008Z [90m│[39m  3.46 kB │ gzip:   1.01 kB
+2026-11-14T01:27:46.6228966Z [90m│[39m  storybook-static/assets/OfflineRecoveryEntry.stories-CiQPtdmg.js
+2026-11-14T01:27:46.6229870Z [90m│[39m  3.53 kB │ gzip:   1.69 kB
+2026-11-14T01:27:46.6230700Z [90m│[39m  storybook-static/assets/VersionNames-DkcHrcOJ.js
+2026-11-14T01:27:46.6231652Z [90m│[39m  3.58 kB │ gzip:   1.48 kB
+2026-11-14T01:27:46.6232552Z [90m│[39m  storybook-static/assets/OfflineAvailability-CQokcKkl.js
+2026-11-14T01:27:46.6233232Z [90m│[39m  3.65 kB │ gzip:   1.21 kB
+2026-11-14T01:27:46.6233998Z [90m│[39m  storybook-static/assets/AdminUsers.stories-B5zoysWq.js
+2026-11-14T01:27:46.6234855Z [90m│[39m  3.71 kB │ gzip:   1.29 kB
+2026-11-14T01:27:46.6235495Z [90m│[39m  storybook-static/assets/it-Bt_Meacx-BsjjFy9n.js
+2026-11-14T01:27:46.6236133Z [90m│[39m  3.71 kB │ gzip:   0.97 kB
+2026-11-14T01:27:46.6236923Z [90m│[39m  storybook-static/assets/DocumentTags-DUZ9oiXa.js
+2026-11-14T01:27:46.6237588Z [90m│[39m  3.75 kB │ gzip:   1.44 kB
+2026-11-14T01:27:46.6238279Z [90m│[39m  storybook-static/assets/rm-C0MIK9N4-D0pKNzgE.js
+2026-11-14T01:27:46.6239043Z [90m│[39m  3.76 kB │ gzip:   1.04 kB
+2026-11-14T01:27:46.6240112Z [90m│[39m  storybook-static/assets/mul-ethi-D_CMSMEq-C45ZvRBM.js
+2026-11-14T01:27:46.6240832Z [90m│[39m  3.77 kB │ gzip:   1.18 kB
+2026-11-14T01:27:46.6241659Z [90m│[39m  storybook-static/assets/snapshotViewer-MRECtrZx.js
+2026-11-14T01:27:46.6242336Z [90m│[39m  3.79 kB │ gzip:   1.95 kB
+2026-11-14T01:27:46.6243118Z [90m│[39m  storybook-static/assets/Collaborators.stories-CQxAr5bS.js
+2026-11-14T01:27:46.6243967Z [90m│[39m  3.80 kB │ gzip:   1.38 kB
+2026-11-14T01:27:46.6244743Z [90m│[39m  storybook-static/assets/DashboardFiles.stories-DZC2wcYi.js
+2026-11-14T01:27:46.6245541Z [90m│[39m  3.84 kB │ gzip:   1.56 kB
+2026-11-14T01:27:46.6246278Z [90m│[39m  storybook-static/assets/ServerHealth.stories-BJwZYnGq.js
+2026-11-14T01:27:46.6247232Z [90m│[39m  3.86 kB │ gzip:   1.45 kB
+2026-11-14T01:27:46.6247949Z [90m│[39m  storybook-static/assets/react-dom-DU9uFLfx.js
+2026-11-14T01:27:46.6248597Z [90m│[39m  3.90 kB │ gzip:   1.42 kB
+2026-11-14T01:27:46.6249420Z [90m│[39m  storybook-static/assets/fur-AC12wySk-BxuiKzVh.js
+2026-11-14T01:27:46.6250850Z [90m│[39m  3.99 kB │ gzip:   1.12 kB
+2026-11-14T01:27:46.6251816Z [90m│[39m  storybook-static/assets/spaceNavigation-Bs_dmASv.js
+2026-11-14T01:27:46.6252528Z [90m│[39m  4.03 kB │ gzip:   1.67 kB
+2026-11-14T01:27:46.6253322Z [90m│[39m  storybook-static/assets/tr-CIHIuzqc-C2ydaAK0.js
+2026-11-14T01:27:46.6254053Z [90m│[39m  4.05 kB │ gzip:   0.41 kB
+2026-11-14T01:27:46.6254763Z [90m│[39m  storybook-static/assets/AccessTokens-CFJhx6vf.js
+2026-11-14T01:27:46.6255441Z [90m│[39m  4.19 kB │ gzip:   1.81 kB
+2026-11-14T01:27:46.6256440Z [90m│[39m  storybook-static/assets/ConnectionStatus.stories-DSTYc3-K.js
+2026-11-14T01:27:46.6257224Z [90m│[39m  4.24 kB │ gzip:   1.63 kB
+2026-11-14T01:27:46.6257895Z [90m│[39m  storybook-static/assets/AccessDetails.stories-CZo43IXZ.js
+2026-11-14T01:27:46.6258715Z [90m│[39m  4.25 kB │ gzip:   1.59 kB
+2026-11-14T01:27:46.6259765Z [90m│[39m  storybook-static/assets/DocFormulasNative.stories-B2mvof6-.js
+2026-11-14T01:27:46.6260683Z [90m│[39m  4.35 kB │ gzip:   2.27 kB
+2026-11-14T01:27:46.6261520Z [90m│[39m  storybook-static/assets/Trash.stories-DSgnv9Cn.js
+2026-11-14T01:27:46.6262344Z [90m│[39m  4.39 kB │ gzip:   1.52 kB
+2026-11-14T01:27:46.6263053Z [90m│[39m  storybook-static/assets/dashboardNavigation-ByXR0CuS.js
+2026-11-14T01:27:46.6263775Z [90m│[39m  4.48 kB │ gzip:   1.85 kB
+2026-11-14T01:27:46.6264498Z [90m│[39m  storybook-static/assets/ConsoleRecovery-C1p4PjaP.js
+2026-11-14T01:27:46.6265181Z [90m│[39m  4.54 kB │ gzip:   1.65 kB
+2026-11-14T01:27:46.6265960Z [90m│[39m  storybook-static/assets/OfflineAvailability.stories-C1uwtxCl.js
+2026-11-14T01:27:46.6266803Z [90m│[39m  4.56 kB │ gzip:   1.59 kB
+2026-11-14T01:27:46.6267553Z [90m│[39m  storybook-static/assets/restore-DScb1PwJ.js
+2026-11-14T01:27:46.6268322Z [90m│[39m  4.57 kB │ gzip:   1.72 kB
+2026-11-14T01:27:46.6269251Z [90m│[39m  storybook-static/assets/MaintenanceBanner.stories-BMjR6qe3.js
+2026-11-14T01:27:46.6270137Z [90m│[39m  4.59 kB │ gzip:   1.45 kB
+2026-11-14T01:27:46.6270961Z [90m│[39m  storybook-static/assets/deviceStorage-COqyx_cK.js
+2026-11-14T01:27:46.6271729Z [90m│[39m  4.61 kB │ gzip:   1.98 kB
+2026-11-14T01:27:46.6272505Z [90m│[39m  storybook-static/assets/SpaceTrash-aE_k9Awj.js
+2026-11-14T01:27:46.6273266Z [90m│[39m  4.63 kB │ gzip:   1.67 kB
+2026-11-14T01:27:46.6273942Z [90m│[39m  storybook-static/assets/AuthEntry.stories-wNIQSm18.js
+2026-11-14T01:27:46.6274704Z [90m│[39m  4.67 kB │ gzip:   1.70 kB
+2026-11-14T01:27:46.6275705Z [90m│[39m  storybook-static/assets/AccountExit.stories-8PFrk9rG.js
+2026-11-14T01:27:46.6276399Z [90m│[39m  4.69 kB │ gzip:   1.66 kB
+2026-11-14T01:27:46.6277161Z [90m│[39m  storybook-static/assets/ConnectAssistant-bxA3j6fL.js
+2026-11-14T01:27:46.6277891Z [90m│[39m  4.69 kB │ gzip:   1.78 kB
+2026-11-14T01:27:46.6278775Z [90m│[39m  storybook-static/assets/Rail.stories-C4DyCEtL.js
+2026-11-14T01:27:46.6279426Z [90m│[39m  4.80 kB │ gzip:   1.79 kB
+2026-11-14T01:27:46.6280202Z [90m│[39m  storybook-static/assets/mn-cyrl-x-lmc-3aetruI8-WDMPfk7R.js
+2026-11-14T01:27:46.6280959Z [90m│[39m  4.91 kB │ gzip:   1.30 kB
+2026-11-14T01:27:46.6281676Z [90m│[39m  storybook-static/assets/SaveStatus-y9KFkVsn.js
+2026-11-14T01:27:46.6282505Z [90m│[39m  4.93 kB │ gzip:   1.84 kB
+2026-11-14T01:27:46.6283170Z [90m│[39m  storybook-static/assets/el-monoton-D3aKqTz2-CYOGzOHF.js
+2026-11-14T01:27:46.6283936Z [90m│[39m  4.96 kB │ gzip:   0.97 kB
+2026-11-14T01:27:46.6284585Z [90m│[39m  storybook-static/assets/SpaceShell-CUo5uaFO.js
+2026-11-14T01:27:46.6285391Z [90m│[39m  4.99 kB │ gzip:   1.85 kB
+2026-11-14T01:27:46.6286064Z [90m│[39m  storybook-static/assets/WorkspaceArchive-CwlkSuhu.js
+2026-11-14T01:27:46.6286801Z [90m│[39m  5.00 kB │ gzip:   1.92 kB
+2026-11-14T01:27:46.6287401Z [90m│[39m  storybook-static/assets/facade-D4HEukoz.js
+2026-11-14T01:27:46.6288154Z [90m│[39m  5.65 kB │ gzip:   2.18 kB
+2026-11-14T01:27:46.6288939Z [90m│[39m  storybook-static/assets/checkpoint-DOmrlApW.js
+2026-11-14T01:27:46.6289840Z [90m│[39m  5.69 kB │ gzip:   2.09 kB
+2026-11-14T01:27:46.6290443Z [90m│[39m  storybook-static/assets/runtime-6Zz8G3xS.js
+2026-11-14T01:27:46.6291074Z [90m│[39m  5.73 kB │ gzip:   2.29 kB
+2026-11-14T01:27:46.6291952Z [90m│[39m  storybook-static/assets/AppearanceReview.stories-DOKxUq3Y.js
+2026-11-14T01:27:46.6292695Z [90m│[39m  5.73 kB │ gzip:   2.34 kB
+2026-11-14T01:27:46.6293576Z [90m│[39m  storybook-static/assets/HiddenShares.stories-DVd8EQWy.js
+2026-11-14T01:27:46.6294434Z [90m│[39m  5.83 kB │ gzip:   1.76 kB
+2026-11-14T01:27:46.6295092Z [90m│[39m  storybook-static/assets/useDiagnostics-DsMAtXNN.js
+2026-11-14T01:27:46.6295779Z [90m│[39m  5.86 kB │ gzip:   2.16 kB
+2026-11-14T01:27:46.6296584Z [90m│[39m  storybook-static/assets/PdfExport-Cq6_A1Jm.js
+2026-11-14T01:27:46.6297354Z [90m│[39m  5.92 kB │ gzip:   2.48 kB
+2026-11-14T01:27:46.6298143Z [90m│[39m  storybook-static/assets/Rail-Cc0PZGkF.js
+2026-11-14T01:27:46.6298813Z [90m│[39m  6.12 kB │ gzip:   1.99 kB
+2026-11-14T01:27:46.6299715Z [90m│[39m  storybook-static/assets/CopyFile.stories-DNXaIiMM.js
+2026-11-14T01:27:46.6300790Z [90m│[39m  6.27 kB │ gzip:   1.85 kB
+2026-11-14T01:27:46.6301507Z [90m│[39m  storybook-static/assets/BackupStatus--HnUISH4.js
+2026-11-14T01:27:46.6302117Z [90m│[39m  6.32 kB │ gzip:   2.31 kB
+2026-11-14T01:27:46.6302795Z [90m│[39m  storybook-static/assets/SearchPanel.stories-CEx7k7-i.js
+2026-11-14T01:27:46.6303346Z [90m│[39m  6.36 kB │ gzip:   1.93 kB
+2026-11-14T01:27:46.6303855Z [90m│[39m  storybook-static/assets/ImportFile.stories-CvP4OxQn.js
+2026-11-14T01:27:46.6304353Z [90m│[39m  6.36 kB │ gzip:   1.95 kB
+2026-11-14T01:27:46.6304868Z [90m│[39m  storybook-static/assets/CopyFile-DPaJv1VK.js
+2026-11-14T01:27:46.6305296Z [90m│[39m  6.54 kB │ gzip:   2.48 kB
+2026-11-14T01:27:46.6305829Z [90m│[39m  storybook-static/assets/ia-Cr4TJH0c-CQscbReO.js
+2026-11-14T01:27:46.6306288Z [90m│[39m  6.57 kB │ gzip:   1.93 kB
+2026-11-14T01:27:46.6306766Z [90m│[39m  storybook-static/assets/ImportFile-D50wOaEr.js
+2026-11-14T01:27:46.6307266Z [90m│[39m  6.60 kB │ gzip:   2.62 kB
+2026-11-14T01:27:46.6307920Z [90m│[39m  storybook-static/assets/GuestLinks.stories-COx07aYL.js
+2026-11-14T01:27:46.6308714Z [90m│[39m  6.61 kB │ gzip:   2.19 kB
+2026-11-14T01:27:46.6309209Z [90m│[39m  storybook-static/assets/AdminInvites-p9M77BQ_.js
+2026-11-14T01:27:46.6309885Z [90m│[39m  6.67 kB │ gzip:   2.50 kB
+2026-11-14T01:27:46.6310403Z [90m│[39m  storybook-static/assets/Feedback.stories-B913iJ6p.js
+2026-11-14T01:27:46.6310903Z [90m│[39m  6.69 kB │ gzip:   2.22 kB
+2026-11-14T01:27:46.6311534Z [90m│[39m  storybook-static/assets/GuestLinks-CT1GCe_p.js
+2026-11-14T01:27:46.6311991Z [90m│[39m  6.94 kB │ gzip:   2.76 kB
+2026-11-14T01:27:46.6312531Z [90m│[39m  storybook-static/assets/BackupDownloads.stories-CnuBRsPW.js
+2026-11-14T01:27:46.6313051Z [90m│[39m  6.97 kB │ gzip:   2.11 kB
+2026-11-14T01:27:46.6313554Z [90m│[39m  storybook-static/assets/cop-C3sk0IUo-_mQKguk_.js
+2026-11-14T01:27:46.6314072Z [90m│[39m  6.97 kB │ gzip:   0.78 kB
+2026-11-14T01:27:46.6314580Z [90m│[39m  storybook-static/assets/SpaceGuest.stories-BztFB1Gx.js
+2026-11-14T01:27:46.6315068Z [90m│[39m  7.16 kB │ gzip:   2.69 kB
+2026-11-14T01:27:46.6315543Z [90m│[39m  storybook-static/assets/native-CWolzlUs.js
+2026-11-14T01:27:46.6316029Z [90m│[39m  7.21 kB │ gzip:   3.16 kB
+2026-11-14T01:27:46.6316621Z [90m│[39m  storybook-static/assets/SpaceRootActions-DQSo1UuH.js
+2026-11-14T01:27:46.6317306Z [90m│[39m  7.26 kB │ gzip:   2.64 kB
+2026-11-14T01:27:46.6318094Z [90m│[39m  storybook-static/assets/AdminInvites.stories-DTpm1pgb.js
+2026-11-14T01:27:46.6318869Z [90m│[39m  7.28 kB │ gzip:   2.01 kB
+2026-11-14T01:27:46.6319858Z [90m│[39m  storybook-static/assets/SpaceOfflineActions.stories-BTgAm6vj.js
+2026-11-14T01:27:46.6320770Z [90m│[39m  7.34 kB │ gzip:   2.90 kB
+2026-11-14T01:27:46.6321503Z [90m│[39m  storybook-static/assets/ro-0fmdH0HA-BRuFf5Gn.js
+2026-11-14T01:27:46.6322232Z [90m│[39m  7.35 kB │ gzip:   2.25 kB
+2026-11-14T01:27:46.6323021Z [90m│[39m  storybook-static/assets/DashboardFiles-B5VzfoIg.js
+2026-11-14T01:27:46.6323780Z [90m│[39m  7.57 kB │ gzip:   2.28 kB
+2026-11-14T01:27:46.6324604Z [90m│[39m  storybook-static/assets/diagnostics-bjIj1G26.js
+2026-11-14T01:27:46.6325347Z [90m│[39m  7.89 kB │ gzip:   2.62 kB
+2026-11-14T01:27:46.6326190Z [90m│[39m  storybook-static/assets/OfflineSpace.stories-CzAwdt9_.js
+2026-11-14T01:27:46.6326992Z [90m│[39m  7.89 kB │ gzip:   2.96 kB
+2026-11-14T01:27:46.6327747Z [90m│[39m  storybook-static/assets/ca-SUf6Y2Om-CDkNkVYr.js
+2026-11-14T01:27:46.6328677Z [90m│[39m  7.91 kB │ gzip:   1.22 kB
+2026-11-14T01:27:46.6329303Z [90m│[39m  storybook-static/assets/spaceCopies-DTj87cC7.js
+2026-11-14T01:27:46.6330154Z [90m│[39m  7.97 kB │ gzip:   3.02 kB
+2026-11-14T01:27:46.6330743Z [90m│[39m  storybook-static/assets/AdminDiagnostics.stories-B4M3mdQ9.js
+2026-11-14T01:27:46.6331316Z [90m│[39m  8.01 kB │ gzip:   2.06 kB
+2026-11-14T01:27:46.6331876Z [90m│[39m  storybook-static/assets/SyncNative.stories-DVYJIP2p.js
+2026-11-14T01:27:46.6332424Z [90m│[39m  8.02 kB │ gzip:   3.55 kB
+2026-11-14T01:27:46.6333155Z [90m│[39m  storybook-static/assets/ServerHealth-BOO9PI76.js
+2026-11-14T01:27:46.6333682Z [90m│[39m  8.13 kB │ gzip:   2.69 kB
+2026-11-14T01:27:46.6334181Z [90m│[39m  storybook-static/assets/ProfilePage-BOt3NbcV.js
+2026-11-14T01:27:46.6334665Z [90m│[39m  8.16 kB │ gzip:   3.03 kB
+2026-11-14T01:27:46.6335183Z [90m│[39m  storybook-static/assets/Feedback-Jeicsk6Q.js
+2026-11-14T01:27:46.6335785Z [90m│[39m  8.30 kB │ gzip:   3.25 kB
+2026-11-14T01:27:46.6336336Z [90m│[39m  storybook-static/assets/AdminDiagnostics-DdlP9hhx.js
+2026-11-14T01:27:46.6336808Z [90m│[39m  8.34 kB │ gzip:   2.90 kB
+2026-11-14T01:27:46.6337357Z [90m│[39m  storybook-static/assets/AdminPage.stories-B3QvdvFA.js
+2026-11-14T01:27:46.6337882Z [90m│[39m  8.42 kB │ gzip:   2.58 kB
+2026-11-14T01:27:46.6338518Z [90m│[39m  storybook-static/assets/BackupStatus.stories-BopPL0EO.js
+2026-11-14T01:27:46.6339053Z [90m│[39m  8.45 kB │ gzip:   2.44 kB
+2026-11-14T01:27:46.6339739Z [90m│[39m  storybook-static/assets/SpaceRootActions.stories-CcIJriOV.js
+2026-11-14T01:27:46.6340336Z [90m│[39m  8.45 kB │ gzip:   2.74 kB
+2026-11-14T01:27:46.6340892Z [90m│[39m  storybook-static/assets/WorkspaceArchive.stories-CZetfPcA.js
+2026-11-14T01:27:46.6341459Z [90m│[39m  8.60 kB │ gzip:   1.90 kB
+2026-11-14T01:27:46.6342022Z [90m│[39m  storybook-static/assets/AdminFeedback.stories-BdaUy7F5.js
+2026-11-14T01:27:46.6342513Z [90m│[39m  8.70 kB │ gzip:   2.41 kB
+2026-11-14T01:27:46.6343111Z [90m│[39m  storybook-static/assets/AuthEntry-Cseq-PQl.js
+2026-11-14T01:27:46.6343585Z [90m│[39m  8.72 kB │ gzip:   3.15 kB
+2026-11-14T01:27:46.6344351Z [90m│[39m  storybook-static/assets/ShareLink-EFcSSMdY.js
+2026-11-14T01:27:46.6345052Z [90m│[39m  8.96 kB │ gzip:   3.11 kB
+2026-11-14T01:27:46.6345675Z [90m│[39m  storybook-static/assets/la-x-classic-yTyAOQEt-VG233rrg.js
+2026-11-14T01:27:46.6346209Z [90m│[39m  9.01 kB │ gzip:   2.44 kB
+2026-11-14T01:27:46.6346703Z [90m│[39m  storybook-static/assets/EditorFrame-BPLW4sFK.js
+2026-11-14T01:27:46.6347274Z [90m│[39m  9.05 kB │ gzip:   3.11 kB
+2026-11-14T01:27:46.6347738Z [90m│[39m  storybook-static/assets/esm-BqNeuvTI.js
+2026-11-14T01:27:46.6348179Z [90m│[39m  9.09 kB │ gzip:   2.99 kB
+2026-11-14T01:27:46.6348700Z [90m│[39m  storybook-static/assets/SheetEditor-BQ1C5waj.js
+2026-11-14T01:27:46.6349168Z [90m│[39m  9.23 kB │ gzip:   3.69 kB
+2026-11-14T01:27:46.6349934Z [90m│[39m  storybook-static/assets/AdminFeedback-BmnFHevx.js
+2026-11-14T01:27:46.6350673Z [90m│[39m  9.38 kB │ gzip:   3.47 kB
+2026-11-14T01:27:46.6351412Z [90m│[39m  storybook-static/assets/DeviceStorage.stories-D5ElIz0f.js
+2026-11-14T01:27:46.6351954Z [90m│[39m  9.41 kB │ gzip:   3.18 kB
+2026-11-14T01:27:46.6352642Z [90m│[39m  storybook-static/assets/doc-formulas-1fgPJUnw.js
+2026-11-14T01:27:46.6353151Z [90m│[39m  9.80 kB │ gzip:   4.24 kB
+2026-11-14T01:27:46.6353691Z [90m│[39m  storybook-static/assets/sa-CKY9c_Vq-pFHJa-E6.js
+2026-11-14T01:27:46.6354145Z [90m│[39m  9.80 kB │ gzip:   1.77 kB
+2026-11-14T01:27:46.6354713Z [90m│[39m  storybook-static/assets/PresenceNative.stories-DDX6djKY.js
+2026-11-14T01:27:46.6355254Z [90m│[39m  9.97 kB │ gzip:   4.15 kB
+2026-11-14T01:27:46.6355958Z [90m│[39m  storybook-static/assets/GuestApp.stories-BlzxYz_W.js
+2026-11-14T01:27:46.6356499Z [90m│[39m  10.02 kB │ gzip:   4.31 kB
+2026-11-14T01:27:46.6356986Z [90m│[39m  storybook-static/assets/PasskeySettings-Biu5rC3K.js
+2026-11-14T01:27:46.6357508Z [90m│[39m  10.19 kB │ gzip:   3.54 kB
+2026-11-14T01:27:46.6357985Z [90m│[39m  storybook-static/assets/download-BAfVSHC8.js
+2026-11-14T01:27:46.6358465Z [90m│[39m  10.21 kB │ gzip:   3.97 kB
+2026-11-14T01:27:46.6358997Z [90m│[39m  storybook-static/assets/OfflineRecoveryEntry-C-4dyHg7.js
+2026-11-14T01:27:46.6359665Z [90m│[39m  10.24 kB │ gzip:   3.83 kB
+2026-11-14T01:27:46.6360374Z [90m│[39m  storybook-static/assets/HistoryBrowser.stories-Ige5WAO5.js
+2026-11-14T01:27:46.6360902Z [90m│[39m  11.07 kB │ gzip:   3.04 kB
+2026-11-14T01:27:46.6361543Z [90m│[39m  storybook-static/assets/hr-DT1SBBes-CFUzt-6T.js
+2026-11-14T01:27:46.6362018Z [90m│[39m  11.45 kB │ gzip:   1.05 kB
+2026-11-14T01:27:46.6362525Z [90m│[39m  storybook-static/assets/Collaborators-D8ymrPZu.js
+2026-11-14T01:27:46.6363025Z [90m│[39m  11.63 kB │ gzip:   4.62 kB
+2026-11-14T01:27:46.6363543Z [90m│[39m  storybook-static/assets/BackupDownloads-DecG1rIm.js
+2026-11-14T01:27:46.6364021Z [90m│[39m  11.96 kB │ gzip:   4.34 kB
+2026-11-14T01:27:46.6364524Z [90m│[39m  storybook-static/assets/hy-e995ysyO-CDwqFnV6.js
+2026-11-14T01:27:46.6365096Z [90m│[39m  12.02 kB │ gzip:   0.38 kB
+2026-11-14T01:27:46.6365857Z [90m│[39m  storybook-static/assets/mn-cyrl-lHM4n0oC-KMi7GZ4X.js
+2026-11-14T01:27:46.6366541Z [90m│[39m  12.24 kB │ gzip:   2.25 kB
+2026-11-14T01:27:46.6367079Z [90m│[39m  storybook-static/assets/PasskeySettings.stories-CsZZqxDA.js
+2026-11-14T01:27:46.6367595Z [90m│[39m  12.41 kB │ gzip:   2.78 kB
+2026-11-14T01:27:46.6368106Z [90m│[39m  storybook-static/assets/DeviceStoragePanel-DJ2q2pF7.js
+2026-11-14T01:27:46.6368656Z [90m│[39m  12.41 kB │ gzip:   3.35 kB
+2026-11-14T01:27:46.6369161Z [90m│[39m  storybook-static/assets/sl-DpiklF-D-z-QzOoIe.js
+2026-11-14T01:27:46.6369875Z [90m│[39m  12.69 kB │ gzip:   3.53 kB
+2026-11-14T01:27:46.6370550Z [90m│[39m  storybook-static/assets/da-CCDXfXtG-BCoUUHmf.js
+2026-11-14T01:27:46.6371008Z [90m│[39m  12.81 kB │ gzip:   3.60 kB
+2026-11-14T01:27:46.6371664Z [90m│[39m  storybook-static/assets/Sharing.stories-CztmTy5G.js
+2026-11-14T01:27:46.6372141Z [90m│[39m  13.19 kB │ gzip:   3.39 kB
+2026-11-14T01:27:46.6372652Z [90m│[39m  storybook-static/assets/Maintenance.stories-BNvgDKAf.js
+2026-11-14T01:27:46.6373144Z [90m│[39m  13.36 kB │ gzip:   3.93 kB
+2026-11-14T01:27:46.6373705Z [90m│[39m  storybook-static/assets/AdminAccountRecovery.stories-C70ZukSd.js
+2026-11-14T01:27:46.6374269Z [90m│[39m  13.75 kB │ gzip:   3.46 kB
+2026-11-14T01:27:46.6374794Z [90m│[39m  storybook-static/assets/hsb-DC_ITc1e-CqU-NPOI.js
+2026-11-14T01:27:46.6375266Z [90m│[39m  14.04 kB │ gzip:   2.05 kB
+2026-11-14T01:27:46.6375781Z [90m│[39m  storybook-static/assets/ShareLink.stories-Bh5PWqG2.js
+2026-11-14T01:27:46.6376343Z [90m│[39m  14.34 kB │ gzip:   2.79 kB
+2026-11-14T01:27:46.6377145Z [90m│[39m  storybook-static/assets/HistoryBrowser-B1uPMmXV.js
+2026-11-14T01:27:46.6377786Z [90m│[39m  14.69 kB │ gzip:   5.23 kB
+2026-11-14T01:27:46.6378274Z [90m│[39m  storybook-static/assets/lt-BBe8DlDF-2TXMh6f4.js
+2026-11-14T01:27:46.6378761Z [90m│[39m  14.85 kB │ gzip:   3.73 kB
+2026-11-14T01:27:46.6379265Z [90m│[39m  storybook-static/assets/DocFormulas.stories-GrjJsbl2.js
+2026-11-14T01:27:46.6380104Z [90m│[39m  14.94 kB │ gzip:   3.99 kB
+2026-11-14T01:27:46.6380648Z [90m│[39m  storybook-static/assets/DocMobile.stories-DySG8EdL.js
+2026-11-14T01:27:46.6381318Z [90m│[39m  15.21 kB │ gzip:   5.85 kB
+2026-11-14T01:27:46.6382025Z [90m│[39m  storybook-static/assets/AdminUsers-offDwAJF.js
+2026-11-14T01:27:46.6382710Z [90m│[39m  15.95 kB │ gzip:   5.07 kB
+2026-11-14T01:27:46.6383529Z [90m│[39m  storybook-static/assets/AccountExit-BWxJJ4rx.js
+2026-11-14T01:27:46.6384245Z [90m│[39m  16.58 kB │ gzip:   5.33 kB
+2026-11-14T01:27:46.6385160Z [90m│[39m  storybook-static/assets/NativeEditors.stories-DlCqwLbP.js
+2026-11-14T01:27:46.6385908Z [90m│[39m  16.66 kB │ gzip:   6.38 kB
+2026-11-14T01:27:46.6386795Z [90m│[39m  storybook-static/assets/DocFormulas-DuDHdXgP.js
+2026-11-14T01:27:46.6387567Z [90m│[39m  16.96 kB │ gzip:   5.66 kB
+2026-11-14T01:27:46.6388277Z [90m│[39m  storybook-static/assets/tk-BMbKB10q-CZ6Wg3jn.js
+2026-11-14T01:27:46.6389131Z [90m│[39m  17.05 kB │ gzip:   1.01 kB
+2026-11-14T01:27:46.6390010Z [90m│[39m  storybook-static/assets/DocEditor-CyPAEuIF.js
+2026-11-14T01:27:46.6390678Z [90m│[39m  17.49 kB │ gzip:   6.84 kB
+2026-11-14T01:27:46.6391247Z [90m│[39m  storybook-static/assets/el-polyton-ogVWcTzh-Dp-cv8hL.js
+2026-11-14T01:27:46.6391744Z [90m│[39m  17.71 kB │ gzip:   2.94 kB
+2026-11-14T01:27:46.6392518Z [90m│[39m  storybook-static/assets/SharingSources.stories-B4IeqZlk.js
+2026-11-14T01:27:46.6393250Z [90m│[39m  17.83 kB │ gzip:   4.44 kB
+2026-11-14T01:27:46.6393764Z [90m│[39m  storybook-static/assets/SearchPanel-BtDmRCKe.js
+2026-11-14T01:27:46.6394240Z [90m│[39m  19.36 kB │ gzip:   5.30 kB
+2026-11-14T01:27:46.6394750Z [90m│[39m  storybook-static/assets/SaveStatus.stories-BEtvJtLj.js
+2026-11-14T01:27:46.6395216Z [90m│[39m  19.74 kB │ gzip:   4.28 kB
+2026-11-14T01:27:46.6395810Z [90m│[39m  storybook-static/assets/EditorFrame.stories-CffCeosO.js
+2026-11-14T01:27:46.6396376Z [90m│[39m  20.02 kB │ gzip:   5.23 kB
+2026-11-14T01:27:46.6396875Z [90m│[39m  storybook-static/assets/Maintenance-CaX6p0fO.js
+2026-11-14T01:27:46.6397339Z [90m│[39m  21.42 kB │ gzip:   7.30 kB
+2026-11-14T01:27:46.6397810Z [90m│[39m  storybook-static/assets/BackupRestore-C0ewbZqo.js
+2026-11-14T01:27:46.6398338Z [90m│[39m  21.70 kB │ gzip:   7.05 kB
+2026-11-14T01:27:46.6398829Z [90m│[39m  storybook-static/assets/Sharing-Dp_VhhH5.js
+2026-11-14T01:27:46.6399304Z [90m│[39m  22.07 kB │ gzip:   7.62 kB
+2026-11-14T01:27:46.6400152Z [90m│[39m  storybook-static/assets/BackupRestore.stories-DtXoi7Ak.js
+2026-11-14T01:27:46.6400636Z [90m│[39m  22.09 kB │ gzip:   5.49 kB
+2026-11-14T01:27:46.6401198Z [90m│[39m  storybook-static/assets/floating-ui.react-dom-88WW1ZXJ.js
+2026-11-14T01:27:46.6401751Z [90m│[39m  22.21 kB │ gzip:   8.67 kB
+2026-11-14T01:27:46.6402380Z [90m│[39m  storybook-static/assets/la-x-liturgic-CXeQb4FY-BwUl5yPW.js
+2026-11-14T01:27:46.6402876Z [90m│[39m  22.91 kB │ gzip:   5.90 kB
+2026-11-14T01:27:46.6403335Z [90m│[39m  storybook-static/assets/fr-BC2onEz9-DFzBAXBD.js
+2026-11-14T01:27:46.6403871Z [90m│[39m  24.22 kB │ gzip:   4.34 kB
+2026-11-14T01:27:46.6404417Z [90m│[39m  storybook-static/assets/ka-jyoLzyDE-CIHds7pZ.js
+2026-11-14T01:27:46.6404913Z [90m│[39m  26.27 kB │ gzip:   4.51 kB
+2026-11-14T01:27:46.6405405Z [90m│[39m  storybook-static/assets/Space-DsD0oY7G.js
+2026-11-14T01:27:46.6405855Z [90m│[39m  27.23 kB │ gzip:   9.17 kB
+2026-11-14T01:27:46.6406395Z [90m│[39m  storybook-static/vite-inject-mocker-entry.js
+2026-11-14T01:27:46.6406885Z [90m│[39m  27.75 kB │ gzip:   9.66 kB
+2026-11-14T01:27:46.6407375Z [90m│[39m  storybook-static/assets/be-CrQ0smca-B1VB57Vm.js
+2026-11-14T01:27:46.6407829Z [90m│[39m  27.92 kB │ gzip:   2.33 kB
+2026-11-14T01:27:46.6408320Z [90m│[39m  storybook-static/assets/sh-latn-sRy4Tuaj-Bh9BuFlj.js
+2026-11-14T01:27:46.6408856Z [90m│[39m  29.65 kB │ gzip:   5.45 kB
+2026-11-14T01:27:46.6409363Z [90m│[39m  storybook-static/assets/Dashboard.stories-Bsu0qSd1.js
+2026-11-14T01:27:46.6410000Z [90m│[39m  29.69 kB │ gzip:   6.94 kB
+2026-11-14T01:27:46.6410485Z [90m│[39m  storybook-static/assets/offlineStore-u-0A2rdr.js
+2026-11-14T01:27:46.6410930Z [90m│[39m  31.00 kB │ gzip:   9.17 kB
+2026-11-14T01:27:46.6411476Z [90m│[39m  storybook-static/assets/sr-cyrl-Dpzrbd0W-JXjto4-9.js
+2026-11-14T01:27:46.6411950Z [90m│[39m  31.44 kB │ gzip:   5.70 kB
+2026-11-14T01:27:46.6412492Z [90m│[39m  storybook-static/assets/sk-_iOeDNrQ-B7ub3oKF.js
+2026-11-14T01:27:46.6412940Z [90m│[39m  31.78 kB │ gzip:   6.95 kB
+2026-11-14T01:27:46.6413369Z [90m│[39m  storybook-static/assets/es-fbHojXYS.js
+2026-11-14T01:27:46.6413861Z [90m│[39m  32.24 kB │ gzip:   8.82 kB
+2026-11-14T01:27:46.6414351Z [90m│[39m  storybook-static/assets/sh-cyrl-BpCRFOmq-vAEhzpDk.js
+2026-11-14T01:27:46.6414865Z [90m│[39m  32.36 kB │ gzip:   5.56 kB
+2026-11-14T01:27:46.6415353Z [90m│[39m  storybook-static/assets/gl-DZGc-K_G-CzaOh0zr.js
+2026-11-14T01:27:46.6415796Z [90m│[39m  33.73 kB │ gzip:   4.34 kB
+2026-11-14T01:27:46.6416332Z [90m│[39m  storybook-static/assets/OfflineSpace-Dygm1CsH.js
+2026-11-14T01:27:46.6416790Z [90m│[39m  35.98 kB │ gzip:   5.84 kB
+2026-11-14T01:27:46.6417266Z [90m│[39m  storybook-static/assets/Appearance-LDAuWlWw.js
+2026-11-14T01:27:46.6417767Z [90m│[39m  35.99 kB │ gzip:  11.05 kB
+2026-11-14T01:27:46.6418248Z [90m│[39m  storybook-static/assets/docPreset-b14-_Of0.js
+2026-11-14T01:27:46.6418828Z [90m│[39m  37.31 kB │ gzip:  11.31 kB
+2026-11-14T01:27:46.6419318Z [90m│[39m  storybook-static/assets/cs-CmAteokq-2kYeeSr3.js
+2026-11-14T01:27:46.6419946Z [90m│[39m  39.84 kB │ gzip:  10.14 kB
+2026-11-14T01:27:46.6420495Z [90m│[39m  storybook-static/assets/nativeCopy-nxgq8QEU.js
+2026-11-14T01:27:46.6420978Z [90m│[39m  41.83 kB │ gzip:  13.87 kB
+2026-11-14T01:27:46.6421495Z [90m│[39m  storybook-static/assets/Dashboard-CTcCIr5o.js
+2026-11-14T01:27:46.6421976Z [90m│[39m  43.23 kB │ gzip:  13.05 kB
+2026-11-14T01:27:46.6422472Z [90m│[39m  storybook-static/assets/es-DcaaHPU_-Ds6c0Her.js
+2026-11-14T01:27:46.6422955Z [90m│[39m  44.22 kB │ gzip:   6.36 kB
+2026-11-14T01:27:46.6423494Z [90m│[39m  storybook-static/assets/pl-9fg-ESVt-BuGJUVlO.js
+2026-11-14T01:27:46.6424018Z [90m│[39m  46.18 kB │ gzip:   7.86 kB
+2026-11-14T01:27:46.6424516Z [90m│[39m  storybook-static/assets/Space.stories-Dsl_Rum2.js
+2026-11-14T01:27:46.6425000Z [90m│[39m  46.18 kB │ gzip:  13.55 kB
+2026-11-14T01:27:46.6425507Z [90m│[39m  storybook-static/assets/et-B_spaleu-CBItcpuE.js
+2026-11-14T01:27:46.6426019Z [90m│[39m  47.29 kB │ gzip:  11.67 kB
+2026-11-14T01:27:46.6426541Z [90m│[39m  storybook-static/assets/is-BT8UVRze-DvXO4TsR.js
+2026-11-14T01:27:46.6427008Z [90m│[39m  48.50 kB │ gzip:  13.01 kB
+2026-11-14T01:27:46.6427502Z [90m│[39m  storybook-static/assets/sv-CFm5y56M-JTMsGqdG.js
+2026-11-14T01:27:46.6427983Z [90m│[39m  56.90 kB │ gzip:  14.69 kB
+2026-11-14T01:27:46.6428578Z [90m│[39m  storybook-static/assets/bg-CrQqGwni-B9MQ1h1R.js
+2026-11-14T01:27:46.6429207Z [90m│[39m  57.01 kB │ gzip:   4.80 kB
+2026-11-14T01:27:46.6429786Z [90m│[39m  storybook-static/assets/sync-client-Clpeoo3B.js
+2026-11-14T01:27:46.6430269Z [90m│[39m  60.30 kB │ gzip:  19.81 kB
+2026-11-14T01:27:46.6430809Z [90m│[39m  storybook-static/assets/uk-Dir3oxLs-DFvNjlaW.js
+2026-11-14T01:27:46.6431277Z [90m│[39m  64.08 kB │ gzip:   8.68 kB
+2026-11-14T01:27:46.6431817Z [90m│[39m  storybook-static/assets/th-DWX5iPSo-BnT0u8X8.js
+2026-11-14T01:27:46.6432292Z [90m│[39m  68.71 kB │ gzip:  13.22 kB
+2026-11-14T01:27:46.6432785Z [90m│[39m  storybook-static/assets/grc-DOlGgO8T-C7cr8x6z.js
+2026-11-14T01:27:46.6433296Z [90m│[39m  71.70 kB │ gzip:   8.91 kB
+2026-11-14T01:27:46.6433783Z [90m│[39m  storybook-static/assets/cy-BBPa6z2x-C-KuLVN-.js
+2026-11-14T01:27:46.6434304Z [90m│[39m  80.28 kB │ gzip:  19.31 kB
+2026-11-14T01:27:46.6434774Z [90m│[39m  storybook-static/assets/ga-Cn6LkudM-CiUSmVqI.js
+2026-11-14T01:27:46.6435240Z [90m│[39m  82.15 kB │ gzip:  20.32 kB
+2026-11-14T01:27:46.6435757Z [90m│[39m  storybook-static/assets/ru-v4l-ayaq-zAJw0CEV.js
+2026-11-14T01:27:46.6436216Z [90m│[39m  85.04 kB │ gzip:  17.19 kB
+2026-11-14T01:27:46.6436676Z [90m│[39m  storybook-static/assets/es-z26S6yxj.js
+2026-11-14T01:27:46.6437152Z [90m│[39m  87.68 kB │ gzip:  24.52 kB
+2026-11-14T01:27:46.6437631Z [90m│[39m  storybook-static/assets/PopoverClose-Dhl86Yms.js
+2026-11-14T01:27:46.6438131Z [90m│[39m  95.70 kB │ gzip:  33.10 kB
+2026-11-14T01:27:46.6438614Z [90m│[39m  storybook-static/assets/Controls-al1POmPc.js
+2026-11-14T01:27:46.6439085Z [90m│[39m  101.13 kB │ gzip:  33.39 kB
+2026-11-14T01:27:46.6439685Z [90m│[39m  storybook-static/assets/en-gb-B7Al27b_-D3xLFW8k.js
+2026-11-14T01:27:46.6440211Z [90m│[39m  105.46 kB │ gzip:  26.48 kB
+2026-11-14T01:27:46.6440708Z [90m│[39m  storybook-static/assets/lv-Q2BBHnzp-B6ZoWVCc.js
+2026-11-14T01:27:46.6441170Z [90m│[39m  112.76 kB │ gzip:  16.05 kB
+2026-11-14T01:27:46.6441653Z [90m│[39m  storybook-static/assets/en-US-CeXZpot3.js
+2026-11-14T01:27:46.6442522Z [90m│[39m  122.22 kB │ gzip:  31.66 kB
+2026-11-14T01:27:46.6443042Z [90m│[39m  storybook-static/assets/lib-Ciki8wH7.js
+2026-11-14T01:27:46.6443497Z [90m│[39m  133.41 kB │ gzip:  34.99 kB
+2026-11-14T01:27:46.6443978Z [90m│[39m  storybook-static/assets/nl-BHQJ6Gvn-D590WKHS.js
+2026-11-14T01:27:46.6444456Z [90m│[39m  138.53 kB │ gzip:  36.64 kB
+2026-11-14T01:27:46.6444939Z [90m│[39m  storybook-static/assets/presetStyles-BGO8BzxI.js
+2026-11-14T01:27:46.6445550Z [90m│[39m  158.76 kB │ gzip:  41.86 kB
+2026-11-14T01:27:46.6446043Z [90m│[39m  storybook-static/assets/cu-CBUlrW6Y-BOEwHrgr.js
+2026-11-14T01:27:46.6446503Z [90m│[39m  168.89 kB │ gzip:  26.59 kB
+2026-11-14T01:27:46.6446995Z [90m│[39m  storybook-static/assets/af-DK_CjRn6-CbZMLB4T.js
+2026-11-14T01:27:46.6447455Z [90m│[39m  179.62 kB │ gzip:  38.85 kB
+2026-11-14T01:27:46.6447984Z [90m│[39m  storybook-static/assets/client-DcJ_sb-U.js
+2026-11-14T01:27:46.6448457Z [90m│[39m  206.78 kB │ gzip:  64.82 kB
+2026-11-14T01:27:46.6448943Z [90m│[39m  storybook-static/assets/sheetPreset-D22G4HWT.js
+2026-11-14T01:27:46.6449423Z [90m│[39m  238.90 kB │ gzip:  68.22 kB
+2026-11-14T01:27:46.6450077Z [90m│[39m  storybook-static/assets/de-ch-1901-hVThVHVb-Bha81e5S.js
+2026-11-14T01:27:46.6450580Z [90m│[39m  264.42 kB │ gzip:  71.45 kB
+2026-11-14T01:27:46.6451156Z [90m│[39m  storybook-static/assets/de-1996-BL6awyxG-D4iDvljw.js
+2026-11-14T01:27:46.6451632Z [90m│[39m  267.02 kB │ gzip:  72.06 kB
+2026-11-14T01:27:46.6452157Z [90m│[39m  storybook-static/assets/de-1901-CWoAOigE-XdH2niob.js
+2026-11-14T01:27:46.6452650Z [90m│[39m  270.12 kB │ gzip:  72.80 kB
+2026-11-14T01:27:46.6453117Z [90m│[39m  storybook-static/assets/no-B8ItS0F3-DeDdHxsd.js
+2026-11-14T01:27:46.6453644Z [90m│[39m  341.78 kB │ gzip:  89.13 kB
+2026-11-14T01:27:46.6454120Z [90m│[39m  storybook-static/assets/nb-DI8u59ch-CIhq50cY.js
+2026-11-14T01:27:46.6454670Z [90m│[39m  341.80 kB │ gzip:  89.14 kB
+2026-11-14T01:27:46.6455181Z [90m│[39m  storybook-static/assets/nn-ntZvarUK-BB7Mkg1a.js
+2026-11-14T01:27:46.6455626Z [90m│[39m  341.80 kB │ gzip:  89.14 kB
+2026-11-14T01:27:46.6456173Z [90m│[39m  storybook-static/assets/autofill-double-icon-CnOLkZLu.js
+2026-11-14T01:27:46.6456697Z [90m│[39m  355.24 kB │ gzip:  83.72 kB
+2026-11-14T01:27:46.6457154Z [90m│[39m  storybook-static/assets/es-9nq4Nfo8.js
+2026-11-14T01:27:46.6457626Z [90m│[39m  499.32 kB │ gzip: 159.05 kB
+2026-11-14T01:27:46.6458108Z [90m│[39m  storybook-static/assets/ProfileSettings-Cthop-xH.js
+2026-11-14T01:27:46.6458621Z [90m│[39m  586.39 kB │ gzip:  91.02 kB
+2026-11-14T01:27:46.6459166Z [90m│[39m  storybook-static/assets/SocialCards.stories-fEVNQ9fS.js
+2026-11-14T01:27:46.6460000Z [90m│[39m  590.16 kB │ gzip: 386.80 kB
+2026-11-14T01:27:46.6460530Z [90m│[39m  storybook-static/assets/editorTheme-C_NtoTEq.js
+2026-11-14T01:27:46.6460981Z [90m│[39m  608.47 kB │ gzip: 108.17 kB
+2026-11-14T01:27:46.6461511Z [90m│[39m  storybook-static/assets/hu-DVk7Y_ka-B6OV-py9.js
+2026-11-14T01:27:46.6462022Z [90m│[39m  765.49 kB │ gzip: 172.58 kB
+2026-11-14T01:27:46.6462539Z [90m│[39m  storybook-static/assets/ProfileIcon-MEx5Fgki.js
+2026-11-14T01:27:46.6462999Z [90m│[39m  984.97 kB │ gzip: 203.73 kB
+2026-11-14T01:27:46.6463455Z [90m│[39m  storybook-static/assets/facade-C845OXMC.js
+2026-11-14T01:27:46.6463950Z [90m│[39m  1,146.16 kB │ gzip: 404.66 kB
+2026-11-14T01:27:46.6464423Z [90m│[39m  storybook-static/assets/iframe-C3VG_Ei6.js
+2026-11-14T01:27:46.6465038Z [90m│[39m  1,161.29 kB │ gzip: 330.57 kB
+2026-11-14T01:27:46.6465492Z [90m│[39m  storybook-static/assets/es-DnEgb33y.js
+2026-11-14T01:27:46.6465922Z [90m│[39m  1,170.55 kB │ gzip: 206.81 kB
+2026-11-14T01:27:46.6466403Z [90m│[39m  storybook-static/assets/es-DLHrJQNn.js
+2026-11-14T01:27:46.6466845Z [90m│[39m  2,514.21 kB │ gzip: 698.70 kB
+2026-11-14T01:27:46.6467061Z 
+2026-11-14T01:27:46.6467285Z [90m│[39m
+2026-11-14T01:27:46.6467745Z [33m▲[39m  [43mVite[49m [33m[plugin builtin:vite-reporter]
+2026-11-14T01:27:46.6468360Z [90m│[39m  (!) Some chunks are larger than 500 kB after minification. Consider:
+2026-11-14T01:27:46.6469018Z [90m│[39m  - Using dynamic import() to code-split the application
+2026-11-14T01:27:46.6469763Z [90m│[39m  - Use build.rolldownOptions.output.codeSplitting to improve chunking:
+2026-11-14T01:27:46.6470868Z [90m│[39m  ]8;;https://rolldown.rs/reference/OutputOptions.codeSplittinghttps://rolldown.rs/reference/OutputOptions.codeSplitting]8;;
+2026-11-14T01:27:46.6471665Z [90m│[39m  - Adjust chunk size limit for this warning via
+2026-11-14T01:27:46.6472149Z [90m│[39m  build.chunkSizeWarningLimit.[39m
+2026-11-14T01:27:46.6472738Z [90m│[39m
+2026-11-14T01:27:46.6473314Z [33m▲[39m  [43mVite[49m [33m[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mweb/offline/recovery.ts is
+2026-11-14T01:27:46.6474117Z [90m│[39m  dynamically imported by web/spinelSync.ts but also statically imported
+2026-11-14T01:27:46.6474891Z [90m│[39m  by web/offline/OfflineSession.ts, dynamic import will not move module
+2026-11-14T01:27:46.6475406Z [90m│[39m  into another chunk.
+2026-11-14T01:27:46.6475796Z [90m│[39m  [39m
+2026-11-14T01:27:46.6476241Z [90m│[39m  [43mVite[49m [32m✓ built in 14.85s[39m
+2026-11-14T01:27:46.6476661Z [90m│[39m
+2026-11-14T01:27:46.6477270Z [33m▲[39m  [43mVite[49m [33m[33m[PLUGIN_TIMINGS] [0mJavaScript callbacks ran for 12.9s of this 14.8s
+2026-11-14T01:27:46.6477800Z [90m│[39m  build (87%).
+2026-11-14T01:27:46.6478387Z [90m│[39m  The slowest callbacks, timed inside each callback (the wait before a
+2026-11-14T01:27:46.6479074Z [90m│[39m  callback starts is excluded, the time it awaits is included):
+2026-11-14T01:27:46.6479888Z [90m│[39m  - plugin storybook:react-docgen-plugin transform (78%, 11.5s, 4629
+2026-11-14T01:27:46.6480372Z [90m│[39m  calls)
+2026-11-14T01:27:46.6480850Z [90m│[39m  Additional callback time came from callbacks under 1s.
+2026-11-14T01:27:46.6481917Z [90m│[39m  See ]8;;https://rolldown.rs/reference/InputOptions.checks#bundlertimingshttps://rolldown.rs/reference/InputOptions.checks#bundlertimings]8;;
+2026-11-14T01:27:46.6482717Z [90m│[39m  for more details.
+2026-11-14T01:27:46.6483140Z [90m│[39m  [39m
+2026-11-14T01:27:46.6483457Z [90m│[39m
+2026-11-14T01:27:46.6483980Z [32m◇[39m  Output directory: /home/runner/work/spinel/spinel/storybook-static
+2026-11-14T01:27:46.6484479Z [90m│[39m
+2026-11-14T01:27:46.6484905Z [90m└[39m  Storybook build completed successfully
+2026-11-14T01:27:46.6485173Z 
+2026-11-14T01:27:46.8732559Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+2026-11-14T01:27:46.8733119Z with:
+2026-11-14T01:27:46.8733433Z   name: storybook-review
+2026-11-14T01:27:46.8733760Z   path: storybook-static
+2026-11-14T01:27:46.8734138Z   if-no-files-found: error
+2026-11-14T01:27:46.8734482Z   retention-days: 7
+2026-11-14T01:27:46.8734876Z   compression-level: 6
+2026-11-14T01:27:46.8735206Z   overwrite: false
+2026-11-14T01:27:46.8735503Z   include-hidden-files: false
+2026-11-14T01:27:46.8735862Z   archive: true
+2026-11-14T01:27:46.8736152Z env:
+2026-11-14T01:27:46.8736476Z   STORYBOOK_DISABLE_TELEMETRY: 1
+2026-11-14T01:27:46.8736826Z ##[endgroup]
+2026-11-14T01:27:47.0645247Z With the provided path, there will be 366 files uploaded
+2026-11-14T01:27:47.0660762Z Artifact name is valid!
+2026-11-14T01:27:47.0670548Z Root directory input is valid!
+2026-11-14T01:27:47.3224671Z Uploading artifact: storybook-review.zip
+2026-11-14T01:27:47.3257739Z Beginning upload of artifact content to blob storage
+2026-11-14T01:27:48.5881881Z Uploaded bytes 6258936
+2026-11-14T01:27:48.6248839Z Finished uploading artifact content to blob storage!
+2026-11-14T01:27:48.6250993Z SHA256 digest of uploaded artifact is 3f891cc493f6e77b879517ab373eb9ce5ec2b42e6ebfbf6a2aefb021012e1db6
+2026-11-14T01:27:48.6251978Z Finalizing artifact upload
+2026-11-14T01:27:49.0372004Z Artifact storybook-review successfully finalized. Artifact ID 14091416796
+2026-11-14T01:27:49.0372845Z Artifact storybook-review has been successfully uploaded! Final size is 6258936 bytes. Artifact ID is 14091416796
+2026-11-14T01:27:49.0375589Z Artifact download URL: https://github.com/mxbaylee/spinel/actions/runs/43540593085/artifacts/14091416796
+2026-11-14T01:27:49.0767841Z Post job cleanup.
+2026-11-14T01:27:49.2000004Z Post job cleanup.
+2026-11-14T01:27:49.2854865Z [command]/usr/bin/git version
+2026-11-14T01:27:49.2893733Z git version 2.56.1
+2026-11-14T01:27:49.2926359Z Temporarily overriding HOME='/home/runner/work/_temp/05415923-9c59-4aa7-9bcc-3d37ce0365fd' before making global git config changes
+2026-11-14T01:27:49.2927844Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-14T01:27:49.2930918Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-14T01:27:49.2964418Z Removing SSH command configuration
+2026-11-14T01:27:49.2969622Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-14T01:27:49.3001670Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-14T01:27:49.3254590Z Removing HTTP extra header
+2026-11-14T01:27:49.3258961Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-14T01:27:49.3288945Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-14T01:27:49.3532367Z Removing includeIf entries pointing to credentials config files
+2026-11-14T01:27:49.3538380Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-14T01:27:49.3572202Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-14T01:27:49.3990623Z Cleaning up orphan processes
+

@@ -1,0 +1,200 @@
+[
+  {
+    "archive": "browser-production-1.zip",
+    "originalMember": "playwright-report/production-1-of-2.json",
+    "stats": {
+      "startTime": "2026-11-14T01:28:53.226Z",
+      "duration": 585012.0920000001,
+      "expected": 82,
+      "skipped": 3,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "diagnostics": [
+      {
+        "title": "feedback survives a lost acknowledgment and paired user/system downloads preserve one complete snapshot",
+        "file": "diagnostics.spec.ts",
+        "tests": [
+          {
+            "projectName": "production",
+            "expectedStatus": "passed",
+            "status": "expected",
+            "results": [
+              {
+                "retry": 0,
+                "status": "passed",
+                "duration": 4946
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "truncation clears feedback flags and an unconfirmed old report needs deliberate new submission",
+        "file": "diagnostics.spec.ts",
+        "tests": [
+          {
+            "projectName": "production",
+            "expectedStatus": "passed",
+            "status": "expected",
+            "results": [
+              {
+                "retry": 0,
+                "status": "passed",
+                "duration": 2886
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Operator downloads real correlated diagnostics without document data and clears only a freshly confirmed generation",
+        "file": "diagnostics.spec.ts",
+        "tests": [
+          {
+            "projectName": "production",
+            "expectedStatus": "passed",
+            "status": "expected",
+            "results": [
+              {
+                "retry": 0,
+                "status": "passed",
+                "duration": 8605
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "diagnostics failures, cancelled downloads, pending clear navigation and expired Operator sessions stay honest",
+        "file": "diagnostics.spec.ts",
+        "tests": [
+          {
+            "projectName": "production",
+            "expectedStatus": "passed",
+            "status": "expected",
+            "results": [
+              {
+                "retry": 0,
+                "status": "passed",
+                "duration": 8016
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "archive": "theme-screenshots-production-2.zip",
+    "originalMember": "playwright-report/production-2-of-2.json",
+    "stats": {
+      "startTime": "2026-11-14T01:31:08.690Z",
+      "duration": 728075.95,
+      "expected": 85,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "diagnostics": []
+  },
+  {
+    "archive": "theme-screenshots-development-1.zip",
+    "originalMember": "playwright-report/development-1-of-2.json",
+    "stats": {
+      "startTime": "2026-11-14T01:29:31.348Z",
+      "duration": 872453.8150000001,
+      "expected": 75,
+      "skipped": 3,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "diagnostics": [
+      {
+        "title": "feedback survives a lost acknowledgment and paired user/system downloads preserve one complete snapshot",
+        "file": "diagnostics.spec.ts",
+        "tests": [
+          {
+            "projectName": "development",
+            "expectedStatus": "passed",
+            "status": "expected",
+            "results": [
+              {
+                "retry": 0,
+                "status": "passed",
+                "duration": 11329
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "truncation clears feedback flags and an unconfirmed old report needs deliberate new submission",
+        "file": "diagnostics.spec.ts",
+        "tests": [
+          {
+            "projectName": "development",
+            "expectedStatus": "passed",
+            "status": "expected",
+            "results": [
+              {
+                "retry": 0,
+                "status": "passed",
+                "duration": 6221
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Operator downloads real correlated diagnostics without document data and clears only a freshly confirmed generation",
+        "file": "diagnostics.spec.ts",
+        "tests": [
+          {
+            "projectName": "development",
+            "expectedStatus": "passed",
+            "status": "expected",
+            "results": [
+              {
+                "retry": 0,
+                "status": "passed",
+                "duration": 15478
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "diagnostics failures, cancelled downloads, pending clear navigation and expired Operator sessions stay honest",
+        "file": "diagnostics.spec.ts",
+        "tests": [
+          {
+            "projectName": "development",
+            "expectedStatus": "passed",
+            "status": "expected",
+            "results": [
+              {
+                "retry": 0,
+                "status": "passed",
+                "duration": 10812
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "archive": "theme-screenshots-development-2.zip",
+    "originalMember": "playwright-report/development-2-of-2.json",
+    "stats": {
+      "startTime": "2026-11-14T01:28:59.935Z",
+      "duration": 799986.39,
+      "expected": 76,
+      "skipped": 1,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "diagnostics": []
+  }
+]
