@@ -1,0 +1,87 @@
+{
+  "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+  "tested": "1f17dee5a50529852b85c28e64c632404028c94c",
+  "terminalAcceptanceVerified": true,
+  "files": [
+    {
+      "path": "/tmp/spn123-independent-acceptance-audit.txt",
+      "bytes": 7697,
+      "sha256": "ad7ce5d5f0a6fc1dc3b3d9f9f635c51b18bb610d1ddee331055d6e97e32d6eef"
+    },
+    {
+      "path": "/tmp/spn123-independent-acceptance-partial.json",
+      "bytes": 39296,
+      "sha256": "c047acb31faa8a4832d9627d1d13623dfc0f8daa458578722007bc59bb2c04e2"
+    },
+    {
+      "path": "/tmp/spn123-independent-metrics-audit.json",
+      "bytes": 164256,
+      "sha256": "74dfbf65a19b5d21a643a834e68fe2a217d079c01a8ff7fb8b91900287f718b6"
+    },
+    {
+      "path": "/tmp/spn123-independent-workflow-audit.json",
+      "bytes": 36391,
+      "sha256": "fbb80c550ff612b3d154f5dc0131cf5610e1cf5b988a9437dc3b3eebd0bcf9be"
+    },
+    {
+      "path": "/tmp/spn123-independent-callback-numerics.json",
+      "bytes": 12092,
+      "sha256": "e08170b0ae6aba92151a7f8033345e53b338ddb470a877af6f3af5457e474feb"
+    },
+    {
+      "path": "/tmp/spn123-independent-harness-overlays.json",
+      "bytes": 17973,
+      "sha256": "257e5900112d7ccea29fe45aacd4d1716c08590b120af517094cad4e3238bc3e"
+    },
+    {
+      "path": "/tmp/spn123-independent-skip-owners.json",
+      "bytes": 3070,
+      "sha256": "66275b9c5ed6ae76a8e86c1142a8992086b412d09f90ecee2593ab7f9b46ec8e"
+    },
+    {
+      "path": "/tmp/spn123-independent-responsiveness-budgets.json",
+      "bytes": 7219,
+      "sha256": "a53afbfa834868225622e439fb130ffd1ce8c11b9bb9013e0c48ed5e5bbb2eb7"
+    },
+    {
+      "path": "/tmp/spn123-independent-acceptance-audit.ts",
+      "bytes": 7634,
+      "sha256": "a7efd4ac674a31359efbb79b266a7f039e3bea51a606face50977f058bb1df08"
+    },
+    {
+      "path": "/tmp/spn123-independent-metrics-audit.ts",
+      "bytes": 6793,
+      "sha256": "687688ee487f52c4aac206c08d9b36877e5e0424dd72ed0134d523676fde4d5a"
+    },
+    {
+      "path": "/tmp/spn123-independent-workflow-audit.ts",
+      "bytes": 8492,
+      "sha256": "71ca6c0875fb9268500b867687746f2a0ba2ff7e7f5ddf0ccf4e4ce2a002b1f5"
+    },
+    {
+      "path": "/tmp/spn123-independent-callback-numerics.ts",
+      "bytes": 4067,
+      "sha256": "126ec4c8185f670b850fe2e37b8d616a6ca8fb5bce9464f3f9c66412cba4f4a8"
+    },
+    {
+      "path": "/tmp/spn123-independent-harness-overlays.ts",
+      "bytes": 1647,
+      "sha256": "85720b70441665fa25ce11f17af34d5bc7a32ccff155fb80aa0f365a1a3b7ed4"
+    },
+    {
+      "path": "/tmp/spn123-independent-skip-owners.ts",
+      "bytes": 1650,
+      "sha256": "a65c3d2eb9ece9ef5d52f5eea8d63c7d264a42661f47dc0814bf957ffc5c74bf"
+    },
+    {
+      "path": "/tmp/spn123-independent-responsiveness-budgets.ts",
+      "bytes": 3362,
+      "sha256": "0506bd3da4ae15a7be8203b67c702b4afd3c22612606cbb644664a88403f6ef4"
+    },
+    {
+      "path": "/tmp/spn123-independent-audit-report.ts",
+      "bytes": 8174,
+      "sha256": "99b2cb81281c10239b5d7d97df9cc9dbde20588118d55b4a47756ac2ac67e996"
+    }
+  ]
+}

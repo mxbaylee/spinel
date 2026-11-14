@@ -1,0 +1,270 @@
+{
+  "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+  "base": "312e5546386ece21f8e0845d696598cc4d85c731",
+  "results": [
+    {
+      "artifact": 14134044586,
+      "name": "ci-plan.json",
+      "bytes": 3937,
+      "sha256": "6e8e5a61567ef51dfaaffb314eafa8e4ab44bcf22e9137f70aa6df405415fbc0",
+      "data": {
+        "version": 1,
+        "event": "pull_request",
+        "action": "synchronize",
+        "base": "312e5546386ece21f8e0845d696598cc4d85c731",
+        "head": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+        "tested": "1f17dee5a50529852b85c28e64c632404028c94c",
+        "mode": "full",
+        "labels": [],
+        "paths": null,
+        "suites": {
+          "backlog": {
+            "selected": true,
+            "dependencies": [
+              "complete immutable change range and current event metadata"
+            ],
+            "inputs": [],
+            "reason": "Immutable range or event labels unavailable; full coverage."
+          },
+          "pull-request": {
+            "selected": true,
+            "dependencies": [
+              "complete immutable change range and current event metadata"
+            ],
+            "inputs": [],
+            "reason": "Immutable range or event labels unavailable; full coverage."
+          },
+          "lint": {
+            "selected": true,
+            "dependencies": [
+              "complete immutable change range and current event metadata"
+            ],
+            "inputs": [],
+            "reason": "Immutable range or event labels unavailable; full coverage."
+          },
+          "typecheck": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [],
+            "reason": "Immutable range or event labels unavailable; full coverage."
+          },
+          "unit-tests": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [],
+            "reason": "Immutable range or event labels unavailable; full coverage."
+          },
+          "lib-test-run": {
+            "selected": true,
+            "dependencies": [
+              "lib/**",
+              "scripts/dependencies/**",
+              "package{,-lock}.json",
+              "vitest.config.ts",
+              "tsconfig.json",
+              ".nvmrc",
+              ".github/workflows/ci.yml"
+            ],
+            "inputs": [],
+            "reason": "Immutable range or event labels unavailable; full coverage."
+          },
+          "playwright-run": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [],
+            "reason": "Immutable range or event labels unavailable; full coverage."
+          },
+          "container-smoke": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [],
+            "reason": "Immutable range or event labels unavailable; full coverage."
+          },
+          "restore-timing": {
+            "selected": true,
+            "dependencies": [
+              "server/**",
+              "src/{server,shared}/**",
+              "lib/**",
+              "web/** and src/ui/** (shared application/authentication bundle)",
+              "e2e restore/shared helpers (doc-touch, doc-touch-raster, native-sheet-value)",
+              "runtime/build/dependency/workflow inputs"
+            ],
+            "inputs": [],
+            "reason": "Immutable range or event labels unavailable; full coverage."
+          },
+          "sync-transition": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [],
+            "reason": "Immutable range or event labels unavailable; full coverage."
+          },
+          "doc-responsiveness": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [],
+            "reason": "Immutable range or event labels unavailable; full coverage."
+          },
+          "doc-callback-lifetimes": {
+            "selected": true,
+            "dependencies": [
+              "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+            ],
+            "inputs": [],
+            "reason": "Immutable range or event labels unavailable; full coverage."
+          },
+          "responsiveness-baseline": {
+            "selected": true,
+            "dependencies": [
+              "web/**",
+              "server/**",
+              "lib/**",
+              "e2e/**",
+              "src/shared/**",
+              "src/server/{sync,history,collaboration}/**",
+              "scripts/{ci,dependencies,sync-transition}/**",
+              "build/runtime/dependency/workflow configuration"
+            ],
+            "inputs": [],
+            "reason": "Immutable range or event labels unavailable; full coverage."
+          },
+          "callback-baseline": {
+            "selected": true,
+            "dependencies": [
+              "web/**",
+              "server/**",
+              "lib/**",
+              "e2e/**",
+              "src/shared/**",
+              "src/server/{sync,history,collaboration}/**",
+              "scripts/{ci,dependencies,sync-transition}/**",
+              "build/runtime/dependency/workflow configuration"
+            ],
+            "inputs": [],
+            "reason": "Immutable range or event labels unavailable; full coverage."
+          },
+          "phone-compatibility": {
+            "selected": true,
+            "dependencies": [
+              "full plan backstop; ordinary phone owners remain in routine browser coverage"
+            ],
+            "inputs": [],
+            "reason": "Immutable range or event labels unavailable; full coverage."
+          }
+        }
+      }
+    },
+    {
+      "artifact": 14134911721,
+      "name": "spaces-acceptance.json",
+      "bytes": 1245,
+      "sha256": "e666812652f8e6468ee9ae37ee7dd2f2206751c519348e7c1888443b0bdc164b",
+      "data": {
+        "status": "passed",
+        "sourceCommit": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+        "checks": [
+          "bucket-retention-policy",
+          "private-publication-and-readback",
+          "anonymous-access-denial",
+          "authenticated-download-and-encrypted-restore",
+          "paginated-complete-catalog-and-pending-cleanup",
+          "retention-and-deletion",
+          "complete-app-provider-fixture",
+          "operator-provider-catalog",
+          "catalog-source-preparation",
+          "catalog-confirmation-and-private-release",
+          "provider-restore-session-revocation-and-outcome",
+          "provider-restored-content-and-current-passkey"
+        ],
+        "cleanup": "complete",
+        "archiveBytes": 663,
+        "supervisedRestore": {
+          "status": "passed",
+          "checks": [
+            "complete-app-provider-fixture",
+            "operator-provider-catalog",
+            "catalog-source-preparation",
+            "catalog-confirmation-and-private-release",
+            "provider-restore-session-revocation-and-outcome",
+            "provider-restored-content-and-current-passkey"
+          ],
+          "runtime": "real-app-child-process",
+          "imagePolicy": "synthetic-fixture",
+          "localCleanup": "safe",
+          "archiveBytes": 12327,
+          "sourceSha256": "4b7662a39cd75a805ee92839931c1ec11a5b26fbe26e5811cd50dd5e37551505"
+        },
+        "durationMs": 12584
+      }
+    }
+  ],
+  "witnesses": [
+    {
+      "job": 132610953709,
+      "lines": [
+        "2026-11-14T22:29:05.8985260Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +1f17dee5a50529852b85c28e64c632404028c94c:refs/remotes/pull/220/merge",
+        "2026-11-14T22:29:44.9894177Z  * [new tag]           archive/spn-123-review-f232e21b-20261114 -> archive/spn-123-review-f232e21b-20261114",
+        "2026-11-14T22:29:44.9981417Z  * [new ref]           1f17dee5a50529852b85c28e64c632404028c94c -> pull/220/merge",
+        "2026-11-14T22:29:45.7565335Z HEAD is now at 1f17dee5 Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:29:45.7659468Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:29:45.7689329Z 1f17dee5a50529852b85c28e64c632404028c94c",
+        "2026-11-14T22:29:50.1587892Z   \"base\": \"312e5546386ece21f8e0845d696598cc4d85c731\",",
+        "2026-11-14T22:29:50.1588634Z   \"head\": \"f232e21b4910afe6209a22d8d78516c598eba1a5\",",
+        "2026-11-14T22:29:50.1589407Z   \"tested\": \"1f17dee5a50529852b85c28e64c632404028c94c\","
+      ]
+    },
+    {
+      "job": 132610953568,
+      "lines": [
+        "2026-11-14T22:29:04.7055869Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +1f17dee5a50529852b85c28e64c632404028c94c:refs/remotes/pull/220/merge",
+        "2026-11-14T22:29:40.6815848Z  * [new tag]           archive/spn-123-review-f232e21b-20261114 -> archive/spn-123-review-f232e21b-20261114",
+        "2026-11-14T22:29:40.6934006Z  * [new ref]           1f17dee5a50529852b85c28e64c632404028c94c -> pull/220/merge",
+        "2026-11-14T22:29:41.4364341Z HEAD is now at 1f17dee5 Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:29:41.4453694Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:29:41.4480057Z 1f17dee5a50529852b85c28e64c632404028c94c",
+        "2026-11-14T22:29:45.6182637Z   \"base\": \"312e5546386ece21f8e0845d696598cc4d85c731\",",
+        "2026-11-14T22:29:45.6183224Z   \"head\": \"f232e21b4910afe6209a22d8d78516c598eba1a5\",",
+        "2026-11-14T22:29:45.6184089Z   \"tested\": \"1f17dee5a50529852b85c28e64c632404028c94c\","
+      ]
+    },
+    {
+      "job": 132610953972,
+      "lines": [
+        "2026-11-14T22:29:05.1463764Z   ref: f232e21b4910afe6209a22d8d78516c598eba1a5",
+        "2026-11-14T22:29:05.5493596Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin f232e21b4910afe6209a22d8d78516c598eba1a5",
+        "2026-11-14T22:29:11.1267087Z  * branch            f232e21b4910afe6209a22d8d78516c598eba1a5 -> FETCH_HEAD",
+        "2026-11-14T22:29:11.1275022Z [command]/usr/bin/git rev-parse --verify --quiet f232e21b4910afe6209a22d8d78516c598eba1a5^{object}",
+        "2026-11-14T22:29:11.1302362Z f232e21b4910afe6209a22d8d78516c598eba1a5",
+        "2026-11-14T22:29:11.1390391Z [command]/usr/bin/git checkout --progress --force f232e21b4910afe6209a22d8d78516c598eba1a5",
+        "2026-11-14T22:29:11.7644327Z Note: switching to 'f232e21b4910afe6209a22d8d78516c598eba1a5'.",
+        "2026-11-14T22:29:11.7727773Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:29:11.7751730Z f232e21b4910afe6209a22d8d78516c598eba1a5",
+        "2026-11-14T22:29:16.0526009Z   SPACES_ACCEPTANCE_COMMIT: f232e21b4910afe6209a22d8d78516c598eba1a5",
+        "2026-11-14T22:29:38.6467557Z   SPACES_ACCEPTANCE_COMMIT: f232e21b4910afe6209a22d8d78516c598eba1a5"
+      ]
+    },
+    {
+      "job": 132611187353,
+      "lines": [
+        "2026-11-14T22:29:58.4373804Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +1f17dee5a50529852b85c28e64c632404028c94c:refs/remotes/pull/220/merge",
+        "2026-11-14T22:30:02.1145156Z  * [new ref]         1f17dee5a50529852b85c28e64c632404028c94c -> pull/220/merge",
+        "2026-11-14T22:30:02.7470195Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:02.7546897Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:02.7570137Z 1f17dee5a50529852b85c28e64c632404028c94c",
+        "2026-11-14T22:30:18.5844814Z > tsc -p ."
+      ]
+    }
+  ]
+}

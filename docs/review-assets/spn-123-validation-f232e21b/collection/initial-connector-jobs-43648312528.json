@@ -1,0 +1,260 @@
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "Action completed."
+    }
+  ],
+  "structuredContent": {
+    "jobs": [
+      {
+        "id": 132610953559,
+        "name": "Native desktop offline (firefox, macos-26)",
+        "status": "in_progress",
+        "conclusion": null,
+        "run_id": 43648312528,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Use current vendor stable browsers",
+            "status": "in_progress",
+            "conclusion": null,
+            "number": 4
+          },
+          {
+            "name": "Prove same-profile ordinary Safari restart",
+            "status": "pending",
+            "conclusion": null,
+            "number": 5
+          },
+          {
+            "name": "Install locked application dependencies",
+            "status": "pending",
+            "conclusion": null,
+            "number": 6
+          },
+          {
+            "name": "Build the production offline runtime",
+            "status": "pending",
+            "conclusion": null,
+            "number": 7
+          },
+          {
+            "name": "Trust the disposable loopback fixture certificate",
+            "status": "pending",
+            "conclusion": null,
+            "number": 8
+          },
+          {
+            "name": "Verify retained documents, edits, images and reconnect",
+            "status": "pending",
+            "conclusion": null,
+            "number": 9
+          },
+          {
+            "name": "Retain native profile and application evidence",
+            "status": "pending",
+            "conclusion": null,
+            "number": 10
+          },
+          {
+            "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "status": "pending",
+            "conclusion": null,
+            "number": 19
+          },
+          {
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "status": "pending",
+            "conclusion": null,
+            "number": 20
+          }
+        ]
+      },
+      {
+        "id": 132610953719,
+        "name": "Native desktop offline (safari, macos-15-intel)",
+        "status": "in_progress",
+        "conclusion": null,
+        "run_id": 43648312528,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Use current vendor stable browsers",
+            "status": "in_progress",
+            "conclusion": null,
+            "number": 4
+          },
+          {
+            "name": "Prove same-profile ordinary Safari restart",
+            "status": "pending",
+            "conclusion": null,
+            "number": 5
+          },
+          {
+            "name": "Install locked application dependencies",
+            "status": "pending",
+            "conclusion": null,
+            "number": 6
+          },
+          {
+            "name": "Build the production offline runtime",
+            "status": "pending",
+            "conclusion": null,
+            "number": 7
+          },
+          {
+            "name": "Trust the disposable loopback fixture certificate",
+            "status": "pending",
+            "conclusion": null,
+            "number": 8
+          },
+          {
+            "name": "Verify retained documents, edits, images and reconnect",
+            "status": "pending",
+            "conclusion": null,
+            "number": 9
+          },
+          {
+            "name": "Retain native profile and application evidence",
+            "status": "pending",
+            "conclusion": null,
+            "number": 10
+          },
+          {
+            "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "status": "pending",
+            "conclusion": null,
+            "number": 19
+          },
+          {
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "status": "pending",
+            "conclusion": null,
+            "number": 20
+          }
+        ]
+      },
+      {
+        "id": 132610953865,
+        "name": "Native desktop offline (chrome, macos-26)",
+        "status": "in_progress",
+        "conclusion": null,
+        "run_id": 43648312528,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Use current vendor stable browsers",
+            "status": "in_progress",
+            "conclusion": null,
+            "number": 4
+          },
+          {
+            "name": "Prove same-profile ordinary Safari restart",
+            "status": "pending",
+            "conclusion": null,
+            "number": 5
+          },
+          {
+            "name": "Install locked application dependencies",
+            "status": "pending",
+            "conclusion": null,
+            "number": 6
+          },
+          {
+            "name": "Build the production offline runtime",
+            "status": "pending",
+            "conclusion": null,
+            "number": 7
+          },
+          {
+            "name": "Trust the disposable loopback fixture certificate",
+            "status": "pending",
+            "conclusion": null,
+            "number": 8
+          },
+          {
+            "name": "Verify retained documents, edits, images and reconnect",
+            "status": "pending",
+            "conclusion": null,
+            "number": 9
+          },
+          {
+            "name": "Retain native profile and application evidence",
+            "status": "pending",
+            "conclusion": null,
+            "number": 10
+          },
+          {
+            "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+            "status": "pending",
+            "conclusion": null,
+            "number": 19
+          },
+          {
+            "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+            "status": "pending",
+            "conclusion": null,
+            "number": 20
+          }
+        ]
+      }
+    ]
+  },
+  "isError": false
+}
+

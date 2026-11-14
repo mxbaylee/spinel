@@ -1,0 +1,11 @@
+{
+  "observedAt": "2026-11-14T22:46:03.815Z",
+  "run": 43646326362,
+  "head": "312e5546386ece21f8e0845d696598cc4d85c731",
+  "event": "push",
+  "attempt": 1,
+  "status": "completed",
+  "conclusion": "success",
+  "method": "Read-only GET workflow run; root owns distinct main acceptance. Not substituted for current f232 checks.",
+  "remoteMutation": false
+}

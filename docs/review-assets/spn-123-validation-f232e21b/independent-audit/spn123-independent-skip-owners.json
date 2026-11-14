@@ -1,0 +1,78 @@
+{
+  "at": "2026-11-14T22:58:32.536Z",
+  "uniqueSkippedTitles": 5,
+  "passedDistinctOwners": [
+    {
+      "title": "supervised maintenance keeps pending native work, fences old edits, and recovers through cold controls",
+      "project": "production",
+      "artifact": 14135547236,
+      "member": "playwright-report/production-2-of-2.json",
+      "sha256": "abc33862603c04463536d3f6439c0bab914a7b53284846b1f14d6aa38dbd5503",
+      "status": "passed",
+      "retry": 0
+    },
+    {
+      "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+      "project": "sync-development",
+      "artifact": 14135301464,
+      "member": "playwright-report/sync-development.json",
+      "sha256": "4dfa443101fc50f2a7b61a5516668d2fa959ab124464d1d12210ce1d23d470b1",
+      "status": "passed",
+      "retry": 0
+    },
+    {
+      "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+      "project": "sync-development",
+      "artifact": 14135301464,
+      "member": "playwright-report/sync-development.json",
+      "sha256": "4dfa443101fc50f2a7b61a5516668d2fa959ab124464d1d12210ce1d23d470b1",
+      "status": "passed",
+      "retry": 0
+    },
+    {
+      "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+      "project": "sync-development",
+      "artifact": 14135301464,
+      "member": "playwright-report/sync-development.json",
+      "sha256": "4dfa443101fc50f2a7b61a5516668d2fa959ab124464d1d12210ce1d23d470b1",
+      "status": "passed",
+      "retry": 0
+    },
+    {
+      "title": "production open, search, local persistence and server acknowledgement remain distinct in the diagnostics export",
+      "project": "production",
+      "artifact": 14135453270,
+      "member": "playwright-report/production-1-of-2.json",
+      "sha256": "77f966347d31f30dab8591d3ea73a00652c062399bdff7be9f96c153546a63d0",
+      "status": "passed",
+      "retry": 0
+    },
+    {
+      "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+      "project": "sync-production",
+      "artifact": 14135358823,
+      "member": "playwright-report/sync-production.json",
+      "sha256": "c921f69871d720692b3300ff05a0b1970b220f592dd65b3693ecf73caa59fbb0",
+      "status": "passed",
+      "retry": 0
+    },
+    {
+      "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+      "project": "sync-production",
+      "artifact": 14135358823,
+      "member": "playwright-report/sync-production.json",
+      "sha256": "c921f69871d720692b3300ff05a0b1970b220f592dd65b3693ecf73caa59fbb0",
+      "status": "passed",
+      "retry": 0
+    },
+    {
+      "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+      "project": "sync-production",
+      "artifact": 14135358823,
+      "member": "playwright-report/sync-production.json",
+      "sha256": "c921f69871d720692b3300ff05a0b1970b220f592dd65b3693ecf73caa59fbb0",
+      "status": "passed",
+      "retry": 0
+    }
+  ]
+}

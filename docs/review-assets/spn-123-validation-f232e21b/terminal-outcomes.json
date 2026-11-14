@@ -1,0 +1,1132 @@
+{
+  "at": "2026-11-14T23:13:47.805Z",
+  "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+  "base": "312e5546386ece21f8e0845d696598cc4d85c731",
+  "testedMerge": "1f17dee5a50529852b85c28e64c632404028c94c",
+  "testedTree": "e793569c4a93d2d81cd00dee7922441abc11b9b4",
+  "snapshot": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z",
+  "workflows": [
+    {
+      "kind": "ci",
+      "id": 43648312553,
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+      "jobs": [
+        {
+          "id": 132610953709,
+          "name": "Classify changes (43648312553)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132610953953,
+          "name": "Pull request",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187337,
+          "name": "Backlog",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187353,
+          "name": "Typecheck",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187356,
+          "name": "Container smoke",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187379,
+          "name": "Sized restore acceptance",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187383,
+          "name": "Lib tests (dense-cells)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187386,
+          "name": "Unit tests (recovery)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187387,
+          "name": "Unit tests (supervisor)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187389,
+          "name": "Doc responsiveness (mobile)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187392,
+          "name": "Lib tests (cells)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187398,
+          "name": "Lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187403,
+          "name": "Doc responsiveness (desktop)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187405,
+          "name": "Retained sync transition",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187431,
+          "name": "Unit tests (remaining)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187512,
+          "name": "Doc callback lifetimes (desktop)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187519,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187524,
+          "name": "Doc callback lifetimes (mobile)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187531,
+          "name": "Lib tests (mixed-fuzz)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187544,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187547,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187549,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187562,
+          "name": "Playwright smoke (offline-upgrade)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187565,
+          "name": "Playwright smoke (mobile-https)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187580,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187584,
+          "name": "Lib tests (remaining)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187586,
+          "name": "Playwright smoke (sync-production)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187590,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187597,
+          "name": "Playwright smoke (supervised-restore)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187628,
+          "name": "Playwright smoke (sync-development)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132613497179,
+          "name": "Unit tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132614098385,
+          "name": "Lib tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132620908814,
+          "name": "Playwright smoke",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "kind": "storybook",
+      "id": 43648312505,
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+      "jobs": [
+        {
+          "id": 132610953568,
+          "name": "Classify changes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611160145,
+          "name": "Build Storybook",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611325201,
+          "name": "Review Storybook tablet",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611325213,
+          "name": "Review Storybook mobile (light)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611325260,
+          "name": "Review Storybook desktop (light)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611325263,
+          "name": "Review Storybook mobile (dark)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611325516,
+          "name": "Review Storybook desktop (dark)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611327171,
+          "name": "Publish PR preview to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "id": 132615381112,
+          "name": "Review Storybook states and interactions",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132615485068,
+          "name": "Deploy to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        }
+      ]
+    },
+    {
+      "kind": "desktop",
+      "id": 43648312528,
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+      "jobs": [
+        {
+          "id": 132610953559,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132610953719,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132610953865,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "kind": "spaces",
+      "id": 43648312604,
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+      "jobs": [
+        {
+          "id": 132610953972,
+          "name": "🦈 DigitalOcean Spaces",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "jobCounts": {
+    "total": 47,
+    "success": 45,
+    "failure": 0,
+    "skipped": 2
+  },
+  "executedJobLogs": [
+    {
+      "id": 132610953709,
+      "name": "Classify changes (43648312553)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 60212,
+      "rawSha256": "b8fa54dad6f47ccc2c957304491535a89a0c38e012e5460272e3b3380f669fb0",
+      "retainedPath": "collection/logs/job-132610953709.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:29:45.7565335Z HEAD is now at 1f17dee5 Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:29:45.7659468Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:29:45.7689329Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132610953953,
+      "name": "Pull request",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 48142,
+      "rawSha256": "8e4dc5bbfbb688d2467c47d741cb879224947305bbf3f72999450b4f260a7330",
+      "retainedPath": "collection/logs/job-132610953953.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:29:40.9896964Z HEAD is now at 1f17dee5 Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:29:40.9944031Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:29:40.9971212Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187337,
+      "name": "Backlog",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 19300,
+      "rawSha256": "a9d80e07721a80875414a8a8a2fbf121be9ed66a346cef73eb7f79498b9677e5",
+      "retainedPath": "collection/logs/job-132611187337.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:02.9640047Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:02.9728850Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:02.9758551Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187353,
+      "name": "Typecheck",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 19989,
+      "rawSha256": "a1700ec97d95c1ea00b88ee13cf74f8909e9fe6b9cd4354669823e9843667107",
+      "retainedPath": "collection/logs/job-132611187353.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:02.7470195Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:02.7546897Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:02.7570137Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187356,
+      "name": "Container smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 41924,
+      "rawSha256": "cb28f382bff2eacb4d822d746cf1531dc38be774da34e5ef9ae4dbe88d72966f",
+      "retainedPath": "collection/logs/job-132611187356.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:03.8358358Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:03.8447258Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:03.8476322Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187379,
+      "name": "Sized restore acceptance",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 68142,
+      "rawSha256": "fca980bc61149538b582bd31ee82c388ad9ebb63ecdb1fe1357d1b61bba09e3f",
+      "retainedPath": "collection/logs/job-132611187379.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:03.4938581Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:03.4941081Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:03.4953640Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187383,
+      "name": "Lib tests (dense-cells)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 23841,
+      "rawSha256": "ca4dea2222d21af58d80a4345bc4a27114d2a255d73f2cba9fd339ebf09dd815",
+      "retainedPath": "collection/logs/job-132611187383.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:03.8964154Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:03.9047579Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:03.9074553Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187386,
+      "name": "Unit tests (recovery)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 105999,
+      "rawSha256": "915103dc9e46c3c9dafdbc48dc3b2436bb5eb89d168ec5fb120af43e6fdc9893",
+      "retainedPath": "collection/logs/job-132611187386.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:03.7187604Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:03.7794347Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:03.7822207Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187387,
+      "name": "Unit tests (supervisor)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 137018,
+      "rawSha256": "ba4464fd68df3f1c18877c165f2fbdda78a8a421c0ff64837e0d424e0a6a3bc6",
+      "retainedPath": "collection/logs/job-132611187387.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:04.9973108Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:05.0049582Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:05.0070736Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187389,
+      "name": "Doc responsiveness (mobile)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 99063,
+      "rawSha256": "a37a8663b6b31b5b596c1f619b2ba8c7b5c104ab3bcfe6eb741d51ed95e5d4c0",
+      "retainedPath": "collection/logs/job-132611187389.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:04.4786645Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:04.4852306Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:04.4879092Z 1f17dee5a50529852b85c28e64c632404028c94c",
+        "2026-11-14T22:30:47.7351933Z HEAD is now at 96ae9e0 Match responsive baseline dependencies to follow-up aggregate",
+        "2026-11-14T22:30:47.7397284Z [command]/usr/bin/git log -1 --format=%H"
+      ]
+    },
+    {
+      "id": 132611187392,
+      "name": "Lib tests (cells)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 24126,
+      "rawSha256": "2f23ae20ecdf7e45c9c8fc4df23d2c52edece9b796fc3e8acbde52cd29578e3e",
+      "retainedPath": "collection/logs/job-132611187392.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:03.8531570Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:03.8600243Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:03.8624028Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187398,
+      "name": "Lint",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 20344,
+      "rawSha256": "e045abd9bebc9125890f5b4058fb22b1ffd28e4dbc9b8e5ac6ec6a74dc254e66",
+      "retainedPath": "collection/logs/job-132611187398.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:03.3038737Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:03.3041571Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:03.3098638Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187403,
+      "name": "Doc responsiveness (desktop)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 98852,
+      "rawSha256": "ac4b6598a7cdba2b3264def00bb79e89fa97e440d29d2bc59947f844779637e4",
+      "retainedPath": "collection/logs/job-132611187403.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:04.7508244Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:04.7581144Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:04.7605638Z 1f17dee5a50529852b85c28e64c632404028c94c",
+        "2026-11-14T22:30:45.6340273Z HEAD is now at 96ae9e0 Match responsive baseline dependencies to follow-up aggregate",
+        "2026-11-14T22:30:45.6387310Z [command]/usr/bin/git log -1 --format=%H"
+      ]
+    },
+    {
+      "id": 132611187405,
+      "name": "Retained sync transition",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 37371,
+      "rawSha256": "00d535a6e1b13ff83137994b1cef5299a4678bea658042997bc4305ed6440bc6",
+      "retainedPath": "collection/logs/job-132611187405.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:06.9922049Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:06.9998278Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:07.0017303Z 1f17dee5a50529852b85c28e64c632404028c94c",
+        "2026-11-14T22:30:19.2975043Z HEAD is now at 81cc077 🧬 SPN-056 Independently verify integrated Sheet and Doc sync before activation",
+        "2026-11-14T22:30:19.3001546Z [command]/usr/bin/git log -1 --format=%H"
+      ]
+    },
+    {
+      "id": 132611187431,
+      "name": "Unit tests (remaining)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 757371,
+      "rawSha256": "78e7dc7395b074cf8d1794a61e5e4cd8e21744578e2d86f2d71154762a3cad6b",
+      "retainedPath": "collection/logs/job-132611187431.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:31:47.0873923Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:31:47.0888424Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:31:47.0916632Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187512,
+      "name": "Doc callback lifetimes (desktop)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 94178,
+      "rawSha256": "3fbc8be4b0c55ab4155afcd9d0986cee0254d42212be34e045dc3456a7638d44",
+      "retainedPath": "collection/logs/job-132611187512.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:04.9022056Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:04.9113199Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:04.9147858Z 1f17dee5a50529852b85c28e64c632404028c94c",
+        "2026-11-14T22:30:53.1425150Z HEAD is now at b75e379 Match callback baseline dependencies to follow-up aggregate",
+        "2026-11-14T22:30:53.1486549Z [command]/usr/bin/git log -1 --format=%H"
+      ]
+    },
+    {
+      "id": 132611187519,
+      "name": "Playwright smoke (development 1/2)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 78811,
+      "rawSha256": "041f9a369a811031c6f126dcc81fd784e3d59538f25d6db8ed69530af2d2dd1f",
+      "retainedPath": "collection/logs/job-132611187519.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:35:18.4298804Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:35:18.4370906Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:35:18.4395849Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187524,
+      "name": "Doc callback lifetimes (mobile)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 94310,
+      "rawSha256": "6b59deb757d341505f7ad3c5736b40e34cd25e2168b130c13a1dfc4390da5bfa",
+      "retainedPath": "collection/logs/job-132611187524.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:03.1245581Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:03.1324345Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:03.1351331Z 1f17dee5a50529852b85c28e64c632404028c94c",
+        "2026-11-14T22:30:45.1278378Z HEAD is now at b75e379 Match callback baseline dependencies to follow-up aggregate",
+        "2026-11-14T22:30:45.1332642Z [command]/usr/bin/git log -1 --format=%H"
+      ]
+    },
+    {
+      "id": 132611187531,
+      "name": "Lib tests (mixed-fuzz)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 25946,
+      "rawSha256": "94369007ba4a367c48a2f9e5f1a9f280b640864c9e621cfa09c9476afc97006b",
+      "retainedPath": "collection/logs/job-132611187531.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:31:51.7925128Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:31:51.8002869Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:31:51.8023371Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187544,
+      "name": "Playwright smoke (production 2/2)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 78261,
+      "rawSha256": "dd218b6276bb2c2de557e76d05cfd5ce66b789dc2b43591323671e5cc55d2dce",
+      "retainedPath": "collection/logs/job-132611187544.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:30.9790214Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:30.9870497Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:30.9895648Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187547,
+      "name": "Playwright smoke (production 1/2)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 83714,
+      "rawSha256": "d11ff0d5c23fbc14241ae67817c9fcd26201a3f922be3edfa6572d7a91c45e9a",
+      "retainedPath": "collection/logs/job-132611187547.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:34:26.0562090Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:34:26.0670963Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:34:26.0701260Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187549,
+      "name": "Playwright smoke (development 2/2)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 71641,
+      "rawSha256": "52bcc5265559f1eb74d28d21b08d75207a746a35cd4b3f0de10bc56fd456df80",
+      "retainedPath": "collection/logs/job-132611187549.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:33:44.7041148Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:33:44.7113270Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:33:44.7132382Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187562,
+      "name": "Playwright smoke (offline-upgrade)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 80658,
+      "rawSha256": "8f5fd0e6b49197221d89f4b876cd310129ee8fca94d4e1aeebf7c92985496e72",
+      "retainedPath": "collection/logs/job-132611187562.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:38.6122293Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:38.6187741Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:38.6212174Z 1f17dee5a50529852b85c28e64c632404028c94c",
+        "2026-11-14T22:31:13.8027962Z HEAD is now at c2e8cac 🔀 SPN-054 Keep offline edits as a copy when the live document changed (#196)",
+        "2026-11-14T22:31:13.8074697Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:31:24.7218816Z HEAD is now at 3a0e223 ⬆️ Bump compatible Storybook, Node types, S3 and Node image updates",
+        "2026-11-14T22:31:24.7288643Z [command]/usr/bin/git log -1 --format=%H"
+      ]
+    },
+    {
+      "id": 132611187565,
+      "name": "Playwright smoke (mobile-https)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 76239,
+      "rawSha256": "45a888f69d380ce239d5ae6b5323c03f2ded82574aa65cfc65911a831247e222",
+      "retainedPath": "collection/logs/job-132611187565.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:03.2150796Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:03.2221069Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:03.2246103Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187580,
+      "name": "Playwright smoke (sync-soak-sheet)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 58137,
+      "rawSha256": "63f878c942c92a7ddd329e2e5bcc7ddb8e124902556e7f423e6a628a1a8d64cd",
+      "retainedPath": "collection/logs/job-132611187580.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:32:45.0854209Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:32:45.0931640Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:32:45.0959162Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187584,
+      "name": "Lib tests (remaining)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 112474,
+      "rawSha256": "8a770e4d7e31a1658e8571fd365f8dc1c14d767c3381d28bf9bd72b938819c36",
+      "retainedPath": "collection/logs/job-132611187584.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:32:23.9838479Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:32:23.9918110Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:32:23.9942281Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187586,
+      "name": "Playwright smoke (sync-production)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 80837,
+      "rawSha256": "7abcfe7e226d2a42c1608ca482130317e462124fbdb4674dbdc62affd1e23a19",
+      "retainedPath": "collection/logs/job-132611187586.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:35:06.2877627Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:35:06.2960136Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:35:06.2988765Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187590,
+      "name": "Playwright smoke (sync-soak-doc)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 58121,
+      "rawSha256": "bd75f38fa827aaff23461d61a2a3ee9bada3ae241cc654cf9fc693935f71aeaa",
+      "retainedPath": "collection/logs/job-132611187590.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:36:26.2974674Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:36:26.3068074Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:36:26.3090766Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187597,
+      "name": "Playwright smoke (supervised-restore)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 61197,
+      "rawSha256": "d4a89510140f49b725555b818f0009225d79c7d78c43bafedb7ddecddc6cdbb5",
+      "retainedPath": "collection/logs/job-132611187597.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:16.0891556Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:16.0963792Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:16.0990414Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187628,
+      "name": "Playwright smoke (sync-development)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 62951,
+      "rawSha256": "2dba83de2a3dc008d3a79857259e85ec534315573a32f11121a1fe0c67458d2f",
+      "retainedPath": "collection/logs/job-132611187628.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:36:49.5943535Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:36:49.6012575Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:36:49.6035664Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132613497179,
+      "name": "Unit tests",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 34849,
+      "rawSha256": "d878c55f55e703f71cbdcc698d2443a48e997a5d1b81de3d194f98fb4cd568dc",
+      "retainedPath": "collection/logs/job-132613497179.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:38:38.8219039Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:38:38.8310804Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:38:38.8338656Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132614098385,
+      "name": "Lib tests",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 35022,
+      "rawSha256": "7c5693db33a5dec7624936e3ff0aead15f25404f1349b186060aa30b4cbd091a",
+      "retainedPath": "collection/logs/job-132614098385.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:40:55.2430542Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:40:55.2521366Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:40:55.2551264Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132620908814,
+      "name": "Playwright smoke",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "ci",
+      "run": 43648312553,
+      "attempt": 1,
+      "rawBytes": 42906,
+      "rawSha256": "dfe1bc8bc62a2a0109ce993519d03b0d25eba48fff2e6062da604f219bcefcae",
+      "retainedPath": "collection/logs/job-132620908814.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T23:06:47.1735729Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T23:06:47.1817077Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T23:06:47.1845230Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132610953568,
+      "name": "Classify changes",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "storybook",
+      "run": 43648312505,
+      "attempt": 1,
+      "rawBytes": 58332,
+      "rawSha256": "8c58af0109045387e7a551cdea5a3787eb34644bc633802a9d0954bb0a57ee15",
+      "retainedPath": "collection/logs/job-132610953568.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:29:41.4364341Z HEAD is now at 1f17dee5 Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:29:41.4453694Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:29:41.4480057Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611160145,
+      "name": "Build Storybook",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "storybook",
+      "run": 43648312505,
+      "attempt": 1,
+      "rawBytes": 85304,
+      "rawSha256": "5d55c3dd8de3b76b218d43efa7864a71dc3434cd201ffa5e04391759e9ecb8a7",
+      "retainedPath": "collection/logs/job-132611160145.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:29:56.4080859Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:29:56.4153840Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:29:56.4175954Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611325201,
+      "name": "Review Storybook tablet",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "storybook",
+      "run": 43648312505,
+      "attempt": 1,
+      "rawBytes": 135340,
+      "rawSha256": "7a6c35ed5dd017f75561b8fc7a35286222a3f78d8392a1b72da633b0f78fb34c",
+      "retainedPath": "collection/logs/job-132611325201.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:55.5769786Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:55.5824122Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:55.5846958Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611325213,
+      "name": "Review Storybook mobile (light)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "storybook",
+      "run": 43648312505,
+      "attempt": 1,
+      "rawBytes": 134380,
+      "rawSha256": "533a355ffa96a5f0fb828b45f7336349a6443c87578cc668dbac923e4e82eedf",
+      "retainedPath": "collection/logs/job-132611325213.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:30:32.7619208Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:30:32.7692162Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:30:32.7716521Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611325260,
+      "name": "Review Storybook desktop (light)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "storybook",
+      "run": 43648312505,
+      "attempt": 1,
+      "rawBytes": 136761,
+      "rawSha256": "adef7519e306e1f433038f1f86d752088552813675584714ea6a643c272c1078",
+      "retainedPath": "collection/logs/job-132611325260.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:31:52.8799657Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:31:52.8890421Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:31:52.8918512Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611325263,
+      "name": "Review Storybook mobile (dark)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "storybook",
+      "run": 43648312505,
+      "attempt": 1,
+      "rawBytes": 139763,
+      "rawSha256": "98948d2369ffad5e35e800d7539bed634ec9c4f9bccb4b47668abf725a5c13a3",
+      "retainedPath": "collection/logs/job-132611325263.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:37:07.3984211Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:37:07.4075851Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:37:07.4103781Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611325516,
+      "name": "Review Storybook desktop (dark)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "storybook",
+      "run": 43648312505,
+      "attempt": 1,
+      "rawBytes": 133302,
+      "rawSha256": "37ff4d943d0bd0f6538f5786f8ac114f3bb5d8154130c472c02f3cc3d88cb833",
+      "retainedPath": "collection/logs/job-132611325516.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:37:06.9200962Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:37:06.9244816Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:37:06.9271020Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132615381112,
+      "name": "Review Storybook states and interactions",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "storybook",
+      "run": 43648312505,
+      "attempt": 1,
+      "rawBytes": 17857,
+      "rawSha256": "e8e91fbb985de7137ca066e64d540da184d3a5d50c50a50e969f2b6ef79d0205",
+      "retainedPath": "collection/logs/job-132615381112.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:45:54.6134756Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:45:54.6223780Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:45:54.6250969Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132610953559,
+      "name": "Native desktop offline (firefox, macos-26)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "desktop",
+      "run": 43648312528,
+      "attempt": 1,
+      "rawBytes": 145827,
+      "rawSha256": "52fecf6c52c00e40a27e96049342163361965ed0647013bf321c89021f58ea6b",
+      "retainedPath": "collection/logs/job-132610953559.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:29:17.3269790Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:29:17.3405360Z [command]/opt/homebrew/bin/git log -1 --format=%H",
+        "2026-11-14T22:29:17.3482460Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132610953719,
+      "name": "Native desktop offline (safari, macos-15-intel)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "desktop",
+      "run": 43648312528,
+      "attempt": 1,
+      "rawBytes": 335644,
+      "rawSha256": "43479c0c566690a859d857fa63edcea2f336112ab7f8c94be0ee9483ac532cb0",
+      "retainedPath": "collection/logs/job-132610953719.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:29:22.5457530Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:29:22.6023370Z [command]/usr/local/bin/git log -1 --format=%H",
+        "2026-11-14T22:29:22.6085280Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132610953865,
+      "name": "Native desktop offline (chrome, macos-26)",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "desktop",
+      "run": 43648312528,
+      "attempt": 1,
+      "rawBytes": 143382,
+      "rawSha256": "a305fe681e009aaffeac7f1292315672e4d8833af0b891879a606eae0391f939",
+      "retainedPath": "collection/logs/job-132610953865.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:29:10.8018870Z HEAD is now at 1f17dee Merge f232e21b4910afe6209a22d8d78516c598eba1a5 into 312e5546386ece21f8e0845d696598cc4d85c731",
+        "2026-11-14T22:29:10.8217890Z [command]/opt/homebrew/bin/git log -1 --format=%H",
+        "2026-11-14T22:29:10.8292500Z 1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132610953972,
+      "name": "🦈 DigitalOcean Spaces",
+      "status": "completed",
+      "conclusion": "success",
+      "kind": "spaces",
+      "run": 43648312604,
+      "attempt": 1,
+      "rawBytes": 29365,
+      "rawSha256": "e2bcfe1324c4b18de734fe4ac3aad5f00879cd5f2bf372c8d717823f63153b2f",
+      "retainedPath": "collection/logs/job-132610953972.log.gz",
+      "checkoutWitnesses": [
+        "2026-11-14T22:29:11.1302362Z f232e21b4910afe6209a22d8d78516c598eba1a5",
+        "2026-11-14T22:29:11.7650176Z HEAD is now at f232e21 Preserve actual-main fixture integration checks and scope",
+        "2026-11-14T22:29:11.7727773Z [command]/usr/bin/git log -1 --format=%H",
+        "2026-11-14T22:29:11.7751730Z f232e21b4910afe6209a22d8d78516c598eba1a5"
+      ]
+    }
+  ],
+  "artifactCount": 34,
+  "memberCount": 3588,
+  "readOnly": true,
+  "reruns": 0,
+  "sourceMutations": 0,
+  "notes": [
+    "All first workflow attempts preserved; result reporters retain configured retries/skips separately.",
+    "Original6ef failure remains in its separately published archive.",
+    "Collection-only premature staging was refused before incomplete download bytes were consumed; original GET finished with matching API SHA/size.",
+    "Original ZIPs remain private. Complete useful numeric/text/error members and native/provider/plan/result/restore ZIPs retained. Passing bulk derived traceEvents/Perfetto/source packs/redundant visuals are supplementary and not claimed as durable full traces.",
+    "Root independent acceptance and final Git/payload audit remain required before merge."
+  ]
+}

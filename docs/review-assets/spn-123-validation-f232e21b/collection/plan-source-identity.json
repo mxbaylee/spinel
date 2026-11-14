@@ -1,0 +1,30 @@
+{
+  "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+  "base": "312e5546386ece21f8e0845d696598cc4d85c731",
+  "testedMerge": "1f17dee5a50529852b85c28e64c632404028c94c",
+  "actualMode": "full",
+  "actualPaths": null,
+  "actualSelected": [
+    "backlog",
+    "pull-request",
+    "lint",
+    "typecheck",
+    "unit-tests",
+    "lib-test-run",
+    "playwright-run",
+    "container-smoke",
+    "restore-timing",
+    "sync-transition",
+    "doc-responsiveness",
+    "doc-callback-lifetimes",
+    "responsiveness-baseline",
+    "callback-baseline",
+    "phone-compatibility"
+  ],
+  "rawPlanSha256": "6e8e5a61567ef51dfaaffb314eafa8e4ab44bcf22e9137f70aa6df405415fbc0",
+  "canonicalPlanSha256": "c6bc3724a69ee832e9fdda738efc8fb5abdee5ae84975e53d0446df30ae4d818",
+  "localTargetedPlanBytes": 271525,
+  "existingOutputBound": 65536,
+  "classificationCatchMessagePresent": false,
+  "inference": "The existing oversized-output fallback is consistent with the complete targeted local plan exceeding64KiB and no range-catch message. The actual hosted artifact is full/paths:null; do not claim an actual targeted hosted plan or reduce selected work."
+}

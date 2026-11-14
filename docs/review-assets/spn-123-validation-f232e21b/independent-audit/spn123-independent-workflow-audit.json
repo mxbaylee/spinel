@@ -1,0 +1,1163 @@
+{
+  "at": "2026-11-14T23:10:03.033Z",
+  "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+  "tested": "1f17dee5a50529852b85c28e64c632404028c94c",
+  "snapshot": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z",
+  "allTerminal": true,
+  "workflowStatuses": [
+    {
+      "kind": "ci",
+      "id": 43648312553,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 33,
+      "total": 33
+    },
+    {
+      "kind": "storybook",
+      "id": 43648312505,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 10,
+      "total": 10
+    },
+    {
+      "kind": "desktop",
+      "id": 43648312528,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 3,
+      "total": 3
+    },
+    {
+      "kind": "spaces",
+      "id": 43648312604,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 1,
+      "total": 1
+    }
+  ],
+  "bindings": [
+    {
+      "artifact": 14134986525,
+      "member": "evidence.json",
+      "sha256": "3cb2eb6a93f8aa754fc41bb1867c3e5ca0cc6c65ba5d63a951e37f3240281aee",
+      "bytes": 179870
+    },
+    {
+      "artifact": 14135453270,
+      "member": "playwright-report/production-1-of-2.json",
+      "sha256": "77f966347d31f30dab8591d3ea73a00652c062399bdff7be9f96c153546a63d0",
+      "bytes": 1457488
+    },
+    {
+      "artifact": 14135192910,
+      "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "sha256": "e7ca21ac1ebb2f99b45f505e5714bb30d13c13d2d8fb853bfaf362e0b3d15248",
+      "bytes": 29271
+    },
+    {
+      "artifact": 14135192910,
+      "member": "playwright-report/doc-responsiveness.json",
+      "sha256": "fbaf4566acd402b8a24de9881e2e663e3e89a247922c977b2358f696d10e3e2b",
+      "bytes": 1348121
+    },
+    {
+      "artifact": 14135752792,
+      "member": "playwright-report/development-2-of-2.json",
+      "sha256": "54d9d6098e1d0aa70d10be1e6e7109006fae2011348645d4c79019444dc07c6a",
+      "bytes": 1532575
+    },
+    {
+      "artifact": 14135358823,
+      "member": "playwright-report/sync-production.json",
+      "sha256": "c921f69871d720692b3300ff05a0b1970b220f592dd65b3693ecf73caa59fbb0",
+      "bytes": 1462471
+    },
+    {
+      "artifact": 14134869919,
+      "member": "playwright-report/development-1-of-2.json",
+      "sha256": "a0dba1bfb787ec4caaee05054dfb3f52503da1795d040a645817b23e2da62dfd",
+      "bytes": 1447057
+    },
+    {
+      "artifact": 14135823669,
+      "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "sha256": "abb54d855e1b730e899b397090ea719418a77cc1f07cb191f8ba2319f1a38875",
+      "bytes": 29268
+    },
+    {
+      "artifact": 14135823669,
+      "member": "playwright-report/doc-responsiveness.json",
+      "sha256": "e360dcdebe7c9a6e90f82b5b02dda7281849138ceba7472ee6292ea09cc2d681",
+      "bytes": 1348118
+    }
+  ],
+  "reports": [
+    {
+      "artifact": 14135075847,
+      "member": "playwright-report/mobile-https.json",
+      "stats": {
+        "startTime": "2026-11-14T22:30:38.140Z",
+        "duration": 56322.256,
+        "expected": 10,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 13,
+      "skips": [
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14134931248,
+      "member": "playwright-report/offline-upgrade.json",
+      "stats": {
+        "startTime": "2026-11-14T22:31:32.211Z",
+        "duration": 36772.84299999999,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 3,
+      "skips": []
+    },
+    {
+      "artifact": 14135750686,
+      "member": "playwright-report/sync-soak-sheet.json",
+      "stats": {
+        "startTime": "2026-11-14T22:33:31.036Z",
+        "duration": 79328.779,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "skips": []
+    },
+    {
+      "artifact": 14135401594,
+      "member": "playwright-report/supervised-restore.json",
+      "stats": {
+        "startTime": "2026-11-14T22:30:52.359Z",
+        "duration": 347012.988,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 2,
+      "skips": []
+    },
+    {
+      "artifact": 14135480953,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-14T22:31:10.862Z",
+        "duration": 202445.42799999999,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "skips": []
+    },
+    {
+      "artifact": 14135480953,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-14T22:34:39.275Z",
+        "duration": 174150.519,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "skips": []
+    },
+    {
+      "artifact": 14135237157,
+      "member": "playwright-report/sync-soak-doc.json",
+      "stats": {
+        "startTime": "2026-11-14T22:37:04.492Z",
+        "duration": 35570.322,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "skips": []
+    },
+    {
+      "artifact": 14135547236,
+      "member": "playwright-report/production-2-of-2.json",
+      "stats": {
+        "startTime": "2026-11-14T22:31:06.037Z",
+        "duration": 626191.4870000001,
+        "expected": 89,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 89,
+      "skips": []
+    },
+    {
+      "artifact": 14135301464,
+      "member": "playwright-report/sync-development.json",
+      "stats": {
+        "startTime": "2026-11-14T22:37:26.635Z",
+        "duration": 151834.975,
+        "expected": 21,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 21,
+      "skips": []
+    },
+    {
+      "artifact": 14135182838,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-14T22:31:01.678Z",
+        "duration": 353040.002,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "skips": []
+    },
+    {
+      "artifact": 14135182838,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-14T22:37:00.410Z",
+        "duration": 236860.767,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "skips": []
+    },
+    {
+      "artifact": 14135453270,
+      "member": "playwright-report/production-1-of-2.json",
+      "stats": {
+        "startTime": "2026-11-14T22:35:19.696Z",
+        "duration": 704689.4010000001,
+        "expected": 87,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 90,
+      "skips": [
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "project": "production",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "project": "production",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "project": "production",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ],
+      "diagnostics": [
+        {
+          "title": "feedback survives a lost acknowledgment and paired user/system downloads preserve one complete snapshot",
+          "project": "production",
+          "status": "expected",
+          "retry": 0
+        },
+        {
+          "title": "truncation clears feedback flags and an unconfirmed old report needs deliberate new submission",
+          "project": "production",
+          "status": "expected",
+          "retry": 0
+        },
+        {
+          "title": "production open, search, local persistence and server acknowledgement remain distinct in the diagnostics export",
+          "project": "production",
+          "status": "expected",
+          "retry": 0
+        },
+        {
+          "title": "Operator downloads real correlated diagnostics without document data and clears only a freshly confirmed generation",
+          "project": "production",
+          "status": "expected",
+          "retry": 0
+        },
+        {
+          "title": "diagnostics failures, cancelled downloads, pending clear navigation and expired Operator sessions stay honest",
+          "project": "production",
+          "status": "expected",
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "artifact": 14135192910,
+      "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-14T22:30:56.926Z",
+        "duration": 405091.26999999996,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 4,
+      "skips": [],
+      "diagnostics": []
+    },
+    {
+      "artifact": 14135192910,
+      "member": "playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-14T22:37:44.846Z",
+        "duration": 303516.435,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 7,
+      "skips": [],
+      "diagnostics": []
+    },
+    {
+      "artifact": 14135752792,
+      "member": "playwright-report/development-2-of-2.json",
+      "stats": {
+        "startTime": "2026-11-14T22:34:26.152Z",
+        "duration": 835206.488,
+        "expected": 79,
+        "skipped": 1,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 80,
+      "skips": [
+        {
+          "title": "supervised maintenance keeps pending native work, fences old edits, and recovers through cold controls",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Closed-process verification uses the Linux production supervisor.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/maintenance.spec.ts",
+                "line": 206,
+                "column": 8
+              }
+            }
+          ]
+        }
+      ],
+      "diagnostics": []
+    },
+    {
+      "artifact": 14135358823,
+      "member": "playwright-report/sync-production.json",
+      "stats": {
+        "startTime": "2026-11-14T22:35:59.839Z",
+        "duration": 790154.454,
+        "expected": 98,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 98,
+      "skips": [],
+      "diagnostics": []
+    },
+    {
+      "artifact": 14134869919,
+      "member": "playwright-report/development-1-of-2.json",
+      "stats": {
+        "startTime": "2026-11-14T22:35:54.055Z",
+        "duration": 709209.115,
+        "expected": 77,
+        "skipped": 4,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 81,
+      "skips": [
+        {
+          "title": "production open, search, local persistence and server acknowledgement remain distinct in the diagnostics export",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Prepared offline copies require the production runtime manifest.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts",
+                "line": 511,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ],
+      "diagnostics": [
+        {
+          "title": "feedback survives a lost acknowledgment and paired user/system downloads preserve one complete snapshot",
+          "project": "development",
+          "status": "expected",
+          "retry": 0
+        },
+        {
+          "title": "truncation clears feedback flags and an unconfirmed old report needs deliberate new submission",
+          "project": "development",
+          "status": "expected",
+          "retry": 0
+        },
+        {
+          "title": "production open, search, local persistence and server acknowledgement remain distinct in the diagnostics export",
+          "project": "development",
+          "status": "skipped",
+          "retry": 0
+        },
+        {
+          "title": "Operator downloads real correlated diagnostics without document data and clears only a freshly confirmed generation",
+          "project": "development",
+          "status": "expected",
+          "retry": 0
+        },
+        {
+          "title": "diagnostics failures, cancelled downloads, pending clear navigation and expired Operator sessions stay honest",
+          "project": "development",
+          "status": "expected",
+          "retry": 0
+        }
+      ]
+    },
+    {
+      "artifact": 14135823669,
+      "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-14T22:31:00.467Z",
+        "duration": 1328538.7110000001,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 4,
+      "skips": [],
+      "diagnostics": []
+    },
+    {
+      "artifact": 14135823669,
+      "member": "playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-14T22:53:12.428Z",
+        "duration": 796259.031,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 7,
+      "skips": [],
+      "diagnostics": []
+    }
+  ],
+  "aggregates": [
+    {
+      "artifact": 14135147397,
+      "member": "ci-results-unit.json",
+      "sha256": "15a10b28ae43cb2b6872779980c88921ddf074af17da381c38c558228ea2d9a6",
+      "planSha256": "c6bc3724a69ee832e9fdda738efc8fb5abdee5ae84975e53d0446df30ae4d818",
+      "selectedResults": 1,
+      "gateResults": {}
+    },
+    {
+      "artifact": 14135960310,
+      "member": "ci-results-lib.json",
+      "sha256": "6701054f8d914220d771b0d6658eb2a695670a5acab341e1fd375ea263b40ef2",
+      "planSha256": "c6bc3724a69ee832e9fdda738efc8fb5abdee5ae84975e53d0446df30ae4d818",
+      "selectedResults": 1,
+      "gateResults": {}
+    },
+    {
+      "artifact": 14135778774,
+      "member": "ci-results-browser.json",
+      "sha256": "ee1c27e8c3c2c871fcf7c2af022950bb5b4fef233231fc487c48f2188ddbaa60",
+      "planSha256": "c6bc3724a69ee832e9fdda738efc8fb5abdee5ae84975e53d0446df30ae4d818",
+      "selectedResults": 12,
+      "gateResults": {
+        "typecheck": "success",
+        "unit-tests": "success",
+        "lib-tests": "success"
+      }
+    }
+  ],
+  "restores": [
+    {
+      "artifact": 14134986525,
+      "member": "evidence.json",
+      "sha256": "3cb2eb6a93f8aa754fc41bb1867c3e5ca0cc6c65ba5d63a951e37f3240281aee",
+      "source": "1f17dee5a50529852b85c28e64c632404028c94c",
+      "image": "sha256:72f1cfe8ef931664784f83c44f41ab61481d37295c54a4e6d6c727ca8183cf03",
+      "sourceBindings": {
+        "source": 1344,
+        "installedLibraries": 170,
+        "shippedImage": 13
+      },
+      "profile": "images-256m",
+      "sourceSizes": {
+        "databaseBytes": 269901824,
+        "archiveBytes": 269366536,
+        "workload": {
+          "documents": 8,
+          "images": 64,
+          "imageBytes": 268981824,
+          "contentSha256": "3dbf8a1494f357a0cb26de6ca5258b241ce0606a4bd8c158bc783a6f180e80b8"
+        }
+      },
+      "restoreTimings": {
+        "clock": "host-monotonic-performance.now",
+        "createPasskeyUploadAndPreparationMs": 49750.397368,
+        "reviewAndLayoutChecksMs": 360.50321399999666,
+        "confirmPasskeyThroughCommittedRunningMs": 103593.15333900001,
+        "prepareClickThroughCommittedRunningMs": 153704.053921,
+        "start": "click Verify and prepare",
+        "finish": "canonical candidate-committed, selected, supervisor running"
+      },
+      "nativeRendering": {
+        "ownerDoc": true,
+        "ownerSheet": true,
+        "readerDoc": true,
+        "visibleDocumentInkPixels": 462,
+        "archivedImageRendered": true,
+        "documentNativeCopy": true,
+        "sheetA1NativeCopy": "Archived budget value",
+        "originalOwnerSessionExcluded": true
+      },
+      "richWorkspace": {
+        "sheetContent": true,
+        "docContent": true,
+        "imageSha256": "49e0f79025c2f68f9e0b1a2d6caf30ea62643c2d4be76a3f43f25125825fef91",
+        "historyCheckpoint": true,
+        "retainedViewer": true,
+        "revokedGrantDenied": true,
+        "viewerWriteDenied": true,
+        "revokedGuestDenied": true,
+        "acknowledgedOldCreationRetryDenied": true,
+        "nativeGenerationRenewed": true,
+        "restoredContentUnchanged": true,
+        "documentSnapshotSha256": "5719c2c0a5100c20c954b9d0454e67f9530bf4740dad6c3f776189d06c59fc7a",
+        "sheetSnapshotSha256": "ae4eacec9d7bc1e0d82648c177dc66d461070eb299f6288e8aabf71e87fd6ee3"
+      },
+      "servingResources": {
+        "memoryPeakBytes": 1073741824,
+        "memoryCurrentBytes": 961859584,
+        "scope": "Serving cgroup through pre-shutdown observation; excludes separate observer and later cold helper"
+      },
+      "scope": "Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance",
+      "closedProof": true,
+      "allOwnedContainersAbsent": true,
+      "privateVolumeRemoved": true,
+      "elapsedMs": 272984
+    }
+  ],
+  "checkouts": [
+    {
+      "id": 132610953709,
+      "name": "Classify changes (43648312553)",
+      "workflow": 43648312553,
+      "sha256": "b8fa54dad6f47ccc2c957304491535a89a0c38e012e5460272e3b3380f669fb0",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132610953953,
+      "name": "Pull request",
+      "workflow": 43648312553,
+      "sha256": "8e4dc5bbfbb688d2467c47d741cb879224947305bbf3f72999450b4f260a7330",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187337,
+      "name": "Backlog",
+      "workflow": 43648312553,
+      "sha256": "a9d80e07721a80875414a8a8a2fbf121be9ed66a346cef73eb7f79498b9677e5",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187353,
+      "name": "Typecheck",
+      "workflow": 43648312553,
+      "sha256": "a1700ec97d95c1ea00b88ee13cf74f8909e9fe6b9cd4354669823e9843667107",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187356,
+      "name": "Container smoke",
+      "workflow": 43648312553,
+      "sha256": "cb28f382bff2eacb4d822d746cf1531dc38be774da34e5ef9ae4dbe88d72966f",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187379,
+      "name": "Sized restore acceptance",
+      "workflow": 43648312553,
+      "sha256": "fca980bc61149538b582bd31ee82c388ad9ebb63ecdb1fe1357d1b61bba09e3f",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187383,
+      "name": "Lib tests (dense-cells)",
+      "workflow": 43648312553,
+      "sha256": "ca4dea2222d21af58d80a4345bc4a27114d2a255d73f2cba9fd339ebf09dd815",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187386,
+      "name": "Unit tests (recovery)",
+      "workflow": 43648312553,
+      "sha256": "915103dc9e46c3c9dafdbc48dc3b2436bb5eb89d168ec5fb120af43e6fdc9893",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187387,
+      "name": "Unit tests (supervisor)",
+      "workflow": 43648312553,
+      "sha256": "ba4464fd68df3f1c18877c165f2fbdda78a8a421c0ff64837e0d424e0a6a3bc6",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187389,
+      "name": "Doc responsiveness (mobile)",
+      "workflow": 43648312553,
+      "sha256": "a37a8663b6b31b5b596c1f619b2ba8c7b5c104ab3bcfe6eb741d51ed95e5d4c0",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c",
+        "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d"
+      ]
+    },
+    {
+      "id": 132611187392,
+      "name": "Lib tests (cells)",
+      "workflow": 43648312553,
+      "sha256": "2f23ae20ecdf7e45c9c8fc4df23d2c52edece9b796fc3e8acbde52cd29578e3e",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187398,
+      "name": "Lint",
+      "workflow": 43648312553,
+      "sha256": "e045abd9bebc9125890f5b4058fb22b1ffd28e4dbc9b8e5ac6ec6a74dc254e66",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187403,
+      "name": "Doc responsiveness (desktop)",
+      "workflow": 43648312553,
+      "sha256": "ac4b6598a7cdba2b3264def00bb79e89fa97e440d29d2bc59947f844779637e4",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c",
+        "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d"
+      ]
+    },
+    {
+      "id": 132611187405,
+      "name": "Retained sync transition",
+      "workflow": 43648312553,
+      "sha256": "00d535a6e1b13ff83137994b1cef5299a4678bea658042997bc4305ed6440bc6",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c",
+        "81cc0774bda11f9bf65942ef84cf7d847bd08029"
+      ]
+    },
+    {
+      "id": 132611187431,
+      "name": "Unit tests (remaining)",
+      "workflow": 43648312553,
+      "sha256": "78e7dc7395b074cf8d1794a61e5e4cd8e21744578e2d86f2d71154762a3cad6b",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187512,
+      "name": "Doc callback lifetimes (desktop)",
+      "workflow": 43648312553,
+      "sha256": "3fbc8be4b0c55ab4155afcd9d0986cee0254d42212be34e045dc3456a7638d44",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c",
+        "b75e3797a11ac2f53e3833b5615f68b6c0091727"
+      ]
+    },
+    {
+      "id": 132611187519,
+      "name": "Playwright smoke (development 1/2)",
+      "workflow": 43648312553,
+      "sha256": "041f9a369a811031c6f126dcc81fd784e3d59538f25d6db8ed69530af2d2dd1f",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187524,
+      "name": "Doc callback lifetimes (mobile)",
+      "workflow": 43648312553,
+      "sha256": "6b59deb757d341505f7ad3c5736b40e34cd25e2168b130c13a1dfc4390da5bfa",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c",
+        "b75e3797a11ac2f53e3833b5615f68b6c0091727"
+      ]
+    },
+    {
+      "id": 132611187531,
+      "name": "Lib tests (mixed-fuzz)",
+      "workflow": 43648312553,
+      "sha256": "94369007ba4a367c48a2f9e5f1a9f280b640864c9e621cfa09c9476afc97006b",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187544,
+      "name": "Playwright smoke (production 2/2)",
+      "workflow": 43648312553,
+      "sha256": "dd218b6276bb2c2de557e76d05cfd5ce66b789dc2b43591323671e5cc55d2dce",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187547,
+      "name": "Playwright smoke (production 1/2)",
+      "workflow": 43648312553,
+      "sha256": "d11ff0d5c23fbc14241ae67817c9fcd26201a3f922be3edfa6572d7a91c45e9a",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187549,
+      "name": "Playwright smoke (development 2/2)",
+      "workflow": 43648312553,
+      "sha256": "52bcc5265559f1eb74d28d21b08d75207a746a35cd4b3f0de10bc56fd456df80",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187562,
+      "name": "Playwright smoke (offline-upgrade)",
+      "workflow": 43648312553,
+      "sha256": "8f5fd0e6b49197221d89f4b876cd310129ee8fca94d4e1aeebf7c92985496e72",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c",
+        "c2e8cac0fcdec36d992d6ebf3f377c9b579a8002",
+        "3a0e2238fb5be3907d04120eabda2aafd6565d63"
+      ]
+    },
+    {
+      "id": 132611187565,
+      "name": "Playwright smoke (mobile-https)",
+      "workflow": 43648312553,
+      "sha256": "45a888f69d380ce239d5ae6b5323c03f2ded82574aa65cfc65911a831247e222",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187580,
+      "name": "Playwright smoke (sync-soak-sheet)",
+      "workflow": 43648312553,
+      "sha256": "63f878c942c92a7ddd329e2e5bcc7ddb8e124902556e7f423e6a628a1a8d64cd",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187584,
+      "name": "Lib tests (remaining)",
+      "workflow": 43648312553,
+      "sha256": "8a770e4d7e31a1658e8571fd365f8dc1c14d767c3381d28bf9bd72b938819c36",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187586,
+      "name": "Playwright smoke (sync-production)",
+      "workflow": 43648312553,
+      "sha256": "7abcfe7e226d2a42c1608ca482130317e462124fbdb4674dbdc62affd1e23a19",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187590,
+      "name": "Playwright smoke (sync-soak-doc)",
+      "workflow": 43648312553,
+      "sha256": "bd75f38fa827aaff23461d61a2a3ee9bada3ae241cc654cf9fc693935f71aeaa",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187597,
+      "name": "Playwright smoke (supervised-restore)",
+      "workflow": 43648312553,
+      "sha256": "d4a89510140f49b725555b818f0009225d79c7d78c43bafedb7ddecddc6cdbb5",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611187628,
+      "name": "Playwright smoke (sync-development)",
+      "workflow": 43648312553,
+      "sha256": "2dba83de2a3dc008d3a79857259e85ec534315573a32f11121a1fe0c67458d2f",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132613497179,
+      "name": "Unit tests",
+      "workflow": 43648312553,
+      "sha256": "d878c55f55e703f71cbdcc698d2443a48e997a5d1b81de3d194f98fb4cd568dc",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132614098385,
+      "name": "Lib tests",
+      "workflow": 43648312553,
+      "sha256": "7c5693db33a5dec7624936e3ff0aead15f25404f1349b186060aa30b4cbd091a",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132620908814,
+      "name": "Playwright smoke",
+      "workflow": 43648312553,
+      "sha256": "dfe1bc8bc62a2a0109ce993519d03b0d25eba48fff2e6062da604f219bcefcae",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132610953568,
+      "name": "Classify changes",
+      "workflow": 43648312505,
+      "sha256": "8c58af0109045387e7a551cdea5a3787eb34644bc633802a9d0954bb0a57ee15",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611160145,
+      "name": "Build Storybook",
+      "workflow": 43648312505,
+      "sha256": "5d55c3dd8de3b76b218d43efa7864a71dc3434cd201ffa5e04391759e9ecb8a7",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611325201,
+      "name": "Review Storybook tablet",
+      "workflow": 43648312505,
+      "sha256": "7a6c35ed5dd017f75561b8fc7a35286222a3f78d8392a1b72da633b0f78fb34c",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611325213,
+      "name": "Review Storybook mobile (light)",
+      "workflow": 43648312505,
+      "sha256": "533a355ffa96a5f0fb828b45f7336349a6443c87578cc668dbac923e4e82eedf",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611325260,
+      "name": "Review Storybook desktop (light)",
+      "workflow": 43648312505,
+      "sha256": "adef7519e306e1f433038f1f86d752088552813675584714ea6a643c272c1078",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611325263,
+      "name": "Review Storybook mobile (dark)",
+      "workflow": 43648312505,
+      "sha256": "98948d2369ffad5e35e800d7539bed634ec9c4f9bccb4b47668abf725a5c13a3",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132611325516,
+      "name": "Review Storybook desktop (dark)",
+      "workflow": 43648312505,
+      "sha256": "37ff4d943d0bd0f6538f5786f8ac114f3bb5d8154130c472c02f3cc3d88cb833",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132615381112,
+      "name": "Review Storybook states and interactions",
+      "workflow": 43648312505,
+      "sha256": "e8e91fbb985de7137ca066e64d540da184d3a5d50c50a50e969f2b6ef79d0205",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132610953559,
+      "name": "Native desktop offline (firefox, macos-26)",
+      "workflow": 43648312528,
+      "sha256": "52fecf6c52c00e40a27e96049342163361965ed0647013bf321c89021f58ea6b",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132610953719,
+      "name": "Native desktop offline (safari, macos-15-intel)",
+      "workflow": 43648312528,
+      "sha256": "43479c0c566690a859d857fa63edcea2f336112ab7f8c94be0ee9483ac532cb0",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132610953865,
+      "name": "Native desktop offline (chrome, macos-26)",
+      "workflow": 43648312528,
+      "sha256": "a305fe681e009aaffeac7f1292315672e4d8833af0b891879a606eae0391f939",
+      "checkoutWitnesses": [
+        "1f17dee5a50529852b85c28e64c632404028c94c"
+      ]
+    },
+    {
+      "id": 132610953972,
+      "name": "🦈 DigitalOcean Spaces",
+      "workflow": 43648312604,
+      "sha256": "e2bcfe1324c4b18de734fe4ac3aad5f00879cd5f2bf372c8d717823f63153b2f",
+      "checkoutWitnesses": [
+        "f232e21b4910afe6209a22d8d78516c598eba1a5"
+      ]
+    }
+  ],
+  "gateStates": [
+    {
+      "name": "Backlog",
+      "id": 132611187337,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Pull request",
+      "id": 132610953953,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Lint",
+      "id": 132611187398,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Typecheck",
+      "id": 132611187353,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Unit tests",
+      "id": 132613497179,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Lib tests",
+      "id": 132614098385,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Playwright smoke",
+      "id": 132620908814,
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "planHash": "c6bc3724a69ee832e9fdda738efc8fb5abdee5ae84975e53d0446df30ae4d818",
+  "pending": "Root independently audits final archive and merge requirements."
+}

@@ -1,0 +1,289 @@
+[
+  {
+    "artifactId": 14135075847,
+    "name": "playwright-report/mobile-https.json",
+    "stats": {
+      "startTime": "2026-11-14T22:30:38.140Z",
+      "duration": 56322.256,
+      "expected": 10,
+      "skipped": 3,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14134931248,
+    "name": "playwright-report/offline-upgrade.json",
+    "stats": {
+      "startTime": "2026-11-14T22:31:32.211Z",
+      "duration": 36772.84299999999,
+      "expected": 3,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14135735322,
+    "name": "firefox/acceptance.json",
+    "status": "passed",
+    "scope": "Actual macOS ordinary-profile application restart, retained images/edits, reconnect and storage loss"
+  },
+  {
+    "artifactId": 14135575468,
+    "name": "chrome/acceptance.json",
+    "status": "passed",
+    "scope": "Actual macOS ordinary-profile application restart, retained images/edits, reconnect and storage loss"
+  },
+  {
+    "artifactId": 14134911721,
+    "name": "spaces-acceptance.json",
+    "status": "passed",
+    "sourceCommit": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+    "checks": [
+      "bucket-retention-policy",
+      "private-publication-and-readback",
+      "anonymous-access-denial",
+      "authenticated-download-and-encrypted-restore",
+      "paginated-complete-catalog-and-pending-cleanup",
+      "retention-and-deletion",
+      "complete-app-provider-fixture",
+      "operator-provider-catalog",
+      "catalog-source-preparation",
+      "catalog-confirmation-and-private-release",
+      "provider-restore-session-revocation-and-outcome",
+      "provider-restored-content-and-current-passkey"
+    ],
+    "cleanup": "complete"
+  },
+  {
+    "artifactId": 14135750686,
+    "name": "playwright-report/server-3106.json"
+  },
+  {
+    "artifactId": 14135750686,
+    "name": "playwright-report/sync-soak-sheet.json",
+    "stats": {
+      "startTime": "2026-11-14T22:33:31.036Z",
+      "duration": 79328.779,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14135401594,
+    "name": "playwright-report/supervised-restore.json",
+    "stats": {
+      "startTime": "2026-11-14T22:30:52.359Z",
+      "duration": 347012.988,
+      "expected": 2,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14134986525,
+    "name": "evidence.json",
+    "passed": true,
+    "scope": "Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance"
+  },
+  {
+    "artifactId": 14135480953,
+    "name": "test-results/spn113-comparison-desktop.json",
+    "accepted": true,
+    "failures": []
+  },
+  {
+    "artifactId": 14135480953,
+    "name": "playwright-report/doc-callback-lifetimes.json",
+    "stats": {
+      "startTime": "2026-11-14T22:34:39.275Z",
+      "duration": 174150.519,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14135237157,
+    "name": "playwright-report/server-3107.json"
+  },
+  {
+    "artifactId": 14135237157,
+    "name": "playwright-report/sync-soak-doc.json",
+    "stats": {
+      "startTime": "2026-11-14T22:37:04.492Z",
+      "duration": 35570.322,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14135112435,
+    "name": "safari/acceptance.json",
+    "status": "passed",
+    "scope": "Actual macOS ordinary-profile application restart, retained images/edits, reconnect and storage loss"
+  },
+  {
+    "artifactId": 14135547236,
+    "name": "playwright-report/production-2-of-2.json",
+    "stats": {
+      "startTime": "2026-11-14T22:31:06.037Z",
+      "duration": 626191.4870000001,
+      "expected": 89,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14135547236,
+    "name": "playwright-report/server-3101.json"
+  },
+  {
+    "artifactId": 14135301464,
+    "name": "playwright-report/server-3104.json"
+  },
+  {
+    "artifactId": 14135301464,
+    "name": "playwright-report/sync-development.json",
+    "stats": {
+      "startTime": "2026-11-14T22:37:26.635Z",
+      "duration": 151834.975,
+      "expected": 21,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14135182838,
+    "name": "test-results/spn113-comparison-mobile.json",
+    "accepted": true,
+    "failures": []
+  },
+  {
+    "artifactId": 14135182838,
+    "name": "playwright-report/doc-callback-lifetimes.json",
+    "stats": {
+      "startTime": "2026-11-14T22:37:00.410Z",
+      "duration": 236860.767,
+      "expected": 1,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14135453270,
+    "name": "playwright-report/production-1-of-2.json",
+    "stats": {
+      "startTime": "2026-11-14T22:35:19.696Z",
+      "duration": 704689.4010000001,
+      "expected": 87,
+      "skipped": 3,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14135453270,
+    "name": "playwright-report/server-3101.json"
+  },
+  {
+    "artifactId": 14135192910,
+    "name": "test-results/spn108-comparison-desktop.json",
+    "status": "passed",
+    "passed": true,
+    "timingValid": true,
+    "candidateIntegrity": true,
+    "failures": []
+  },
+  {
+    "artifactId": 14135192910,
+    "name": "playwright-report/doc-responsiveness.json",
+    "stats": {
+      "startTime": "2026-11-14T22:37:44.846Z",
+      "duration": 303516.435,
+      "expected": 7,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14135752792,
+    "name": "playwright-report/development-2-of-2.json",
+    "stats": {
+      "startTime": "2026-11-14T22:34:26.152Z",
+      "duration": 835206.488,
+      "expected": 79,
+      "skipped": 1,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14135752792,
+    "name": "playwright-report/server-3100.json"
+  },
+  {
+    "artifactId": 14135358823,
+    "name": "playwright-report/server-3105.json"
+  },
+  {
+    "artifactId": 14135358823,
+    "name": "playwright-report/sync-production.json",
+    "stats": {
+      "startTime": "2026-11-14T22:35:59.839Z",
+      "duration": 790154.454,
+      "expected": 98,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14134869919,
+    "name": "playwright-report/development-1-of-2.json",
+    "stats": {
+      "startTime": "2026-11-14T22:35:54.055Z",
+      "duration": 709209.115,
+      "expected": 77,
+      "skipped": 4,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  {
+    "artifactId": 14134869919,
+    "name": "playwright-report/server-3100.json"
+  },
+  {
+    "artifactId": 14135823669,
+    "name": "test-results/spn108-comparison-mobile.json",
+    "status": "passed",
+    "passed": true,
+    "timingValid": true,
+    "candidateIntegrity": true,
+    "failures": []
+  },
+  {
+    "artifactId": 14135823669,
+    "name": "playwright-report/doc-responsiveness.json",
+    "stats": {
+      "startTime": "2026-11-14T22:53:12.428Z",
+      "duration": 796259.031,
+      "expected": 7,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  }
+]

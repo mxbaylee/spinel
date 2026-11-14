@@ -1,0 +1,1151 @@
+{
+  "at": "2026-11-14T22:49:09.690Z",
+  "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+  "base": "312e5546386ece21f8e0845d696598cc4d85c731",
+  "tested": "1f17dee5a50529852b85c28e64c632404028c94c",
+  "latestSnapshot": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T224719616Z",
+  "workflowStatuses": [
+    {
+      "kind": "ci",
+      "id": 43648312553,
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null,
+      "completed": 28,
+      "total": 32
+    },
+    {
+      "kind": "storybook",
+      "id": 43648312505,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 10,
+      "total": 10
+    },
+    {
+      "kind": "desktop",
+      "id": 43648312528,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 3,
+      "total": 3
+    },
+    {
+      "kind": "spaces",
+      "id": 43648312604,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 1,
+      "total": 1
+    }
+  ],
+  "allTerminal": false,
+  "bindings": [
+    {
+      "artifact": 14135075847,
+      "member": "playwright-report/mobile-https.json",
+      "bytes": 1357470,
+      "sha256": "d9622ecb51680eeb3d3c34c61a807c3474e12f4a12b158032b85fc8f932bf1c6"
+    },
+    {
+      "artifact": 14134931248,
+      "member": "playwright-report/offline-upgrade.json",
+      "bytes": 1356821,
+      "sha256": "43950558e1532ce4cceeccd5cb52af79186e66320b0c76c7ed832000eaeba159"
+    },
+    {
+      "artifact": 14134044586,
+      "member": "ci-plan.json",
+      "bytes": 3937,
+      "sha256": "6e8e5a61567ef51dfaaffb314eafa8e4ab44bcf22e9137f70aa6df405415fbc0"
+    },
+    {
+      "artifact": 14135735322,
+      "member": "firefox/acceptance.json",
+      "bytes": 56470,
+      "sha256": "b41309a0e241f1e77b193811fa058bcd9cfb54b78e2814c6344f22d94d56331b"
+    },
+    {
+      "artifact": 14135575468,
+      "member": "chrome/acceptance.json",
+      "bytes": 55257,
+      "sha256": "83c95aceda3559be4dff4ccdb150f6e60e43d8c8953b41e4682e7d1854b44b51"
+    },
+    {
+      "artifact": 14134911721,
+      "member": "spaces-acceptance.json",
+      "bytes": 1245,
+      "sha256": "e666812652f8e6468ee9ae37ee7dd2f2206751c519348e7c1888443b0bdc164b"
+    },
+    {
+      "artifact": 14135750686,
+      "member": "playwright-report/sync-soak-sheet.json",
+      "bytes": 1341056,
+      "sha256": "67a81a714cd8ff133fb4c747def721543c04771e94c1c5401d2f8f3c705854de"
+    },
+    {
+      "artifact": 14135401594,
+      "member": "playwright-report/supervised-restore.json",
+      "bytes": 1342182,
+      "sha256": "d0811b471930c61e9345128f58168aa7b71aefdfe6c39c280b30734004fd347c"
+    },
+    {
+      "artifact": 14135480953,
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 24046870,
+      "sha256": "f1c88ee5b16dea9a50c2c00f610f316d9ce9dde6ac0517c5bd438a382b3fbad1"
+    },
+    {
+      "artifact": 14135480953,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "bytes": 26222,
+      "sha256": "b7fd3f0792f3a829c7b3673306764a370fc3681c580786aedce69e0b0d144226"
+    },
+    {
+      "artifact": 14135480953,
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 21983538,
+      "sha256": "71d66ba1f52ce04a3193b7822cec2def2def4cc1e153bcb989f7647e42370278"
+    },
+    {
+      "artifact": 14135480953,
+      "member": "test-results/spn113-comparison-desktop.json",
+      "bytes": 969497,
+      "sha256": "d7f760c887154ed3c169c9fec0ea8cac9d7288a174939ef65c55c211a5f4336f"
+    },
+    {
+      "artifact": 14135480953,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "bytes": 1341201,
+      "sha256": "c250cd0693ed8f448b49ef181f6038087d7eb3696fe6a5d4fcb9d4ad8a7ddba1"
+    },
+    {
+      "artifact": 14135237157,
+      "member": "playwright-report/sync-soak-doc.json",
+      "bytes": 1341018,
+      "sha256": "0595310799feac82132dd229b524fbc22e86685d2edc5c521560205b3bf0ce46"
+    },
+    {
+      "artifact": 14135147397,
+      "member": "ci-results-unit.json",
+      "bytes": 6247,
+      "sha256": "15a10b28ae43cb2b6872779980c88921ddf074af17da381c38c558228ea2d9a6"
+    },
+    {
+      "artifact": 14135112435,
+      "member": "safari/acceptance.json",
+      "bytes": 52828,
+      "sha256": "f87652eafcde051cc1d45b50e7817703c3d245012f2fee8007792c7b2ab5d4b6"
+    },
+    {
+      "artifact": 14135960310,
+      "member": "ci-results-lib.json",
+      "bytes": 6354,
+      "sha256": "6701054f8d914220d771b0d6658eb2a695670a5acab341e1fd375ea263b40ef2"
+    },
+    {
+      "artifact": 14135547236,
+      "member": "playwright-report/production-2-of-2.json",
+      "bytes": 1544978,
+      "sha256": "abc33862603c04463536d3f6439c0bab914a7b53284846b1f14d6aa38dbd5503"
+    },
+    {
+      "artifact": 14135301464,
+      "member": "playwright-report/sync-development.json",
+      "bytes": 1364683,
+      "sha256": "4dfa443101fc50f2a7b61a5516668d2fa959ab124464d1d12210ce1d23d470b1"
+    },
+    {
+      "artifact": 14135182838,
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 21554131,
+      "sha256": "da95411abb47102038a641e57bfd10e78be53f5513a4a2a89d7a4a06b2939dd9"
+    },
+    {
+      "artifact": 14135182838,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "bytes": 26212,
+      "sha256": "40efbf2b68d82e6379cfbfacb3e84663a574925cf37aa2177b46cbd8ff1c7ff6"
+    },
+    {
+      "artifact": 14135182838,
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 19640716,
+      "sha256": "18d6eb7e1931fd2e0f30db3e70d36ffce48b60c3dec2ddd83ab68c9f12a00fc4"
+    },
+    {
+      "artifact": 14135182838,
+      "member": "test-results/spn113-comparison-mobile.json",
+      "bytes": 971282,
+      "sha256": "57336d3cfc6086a74837b9d18b99e22f50f19fc19f149928dfae796a79c8afdd"
+    },
+    {
+      "artifact": 14135182838,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "bytes": 1341199,
+      "sha256": "b20774267d164d3b29a61ccb98e9d49365a4f392394a5ba35a75d4f5c49bff39"
+    }
+  ],
+  "plans": [
+    {
+      "artifact": 14134044586,
+      "sha256": "6e8e5a61567ef51dfaaffb314eafa8e4ab44bcf22e9137f70aa6df405415fbc0",
+      "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+      "base": "312e5546386ece21f8e0845d696598cc4d85c731",
+      "tested": "1f17dee5a50529852b85c28e64c632404028c94c",
+      "mode": "full",
+      "suites": [
+        "backlog",
+        "pull-request",
+        "lint",
+        "typecheck",
+        "unit-tests",
+        "lib-test-run",
+        "playwright-run",
+        "container-smoke",
+        "restore-timing",
+        "sync-transition",
+        "doc-responsiveness",
+        "doc-callback-lifetimes",
+        "responsiveness-baseline",
+        "callback-baseline",
+        "phone-compatibility"
+      ]
+    }
+  ],
+  "reports": [
+    {
+      "artifact": 14135075847,
+      "member": "playwright-report/mobile-https.json",
+      "stats": {
+        "startTime": "2026-11-14T22:30:38.140Z",
+        "duration": 56322.256,
+        "expected": 10,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 13,
+      "skips": [
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14134931248,
+      "member": "playwright-report/offline-upgrade.json",
+      "stats": {
+        "startTime": "2026-11-14T22:31:32.211Z",
+        "duration": 36772.84299999999,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 3,
+      "skips": []
+    },
+    {
+      "artifact": 14135750686,
+      "member": "playwright-report/sync-soak-sheet.json",
+      "stats": {
+        "startTime": "2026-11-14T22:33:31.036Z",
+        "duration": 79328.779,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "skips": []
+    },
+    {
+      "artifact": 14135401594,
+      "member": "playwright-report/supervised-restore.json",
+      "stats": {
+        "startTime": "2026-11-14T22:30:52.359Z",
+        "duration": 347012.988,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 2,
+      "skips": []
+    },
+    {
+      "artifact": 14135480953,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-14T22:31:10.862Z",
+        "duration": 202445.42799999999,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "skips": []
+    },
+    {
+      "artifact": 14135480953,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-14T22:34:39.275Z",
+        "duration": 174150.519,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "skips": []
+    },
+    {
+      "artifact": 14135237157,
+      "member": "playwright-report/sync-soak-doc.json",
+      "stats": {
+        "startTime": "2026-11-14T22:37:04.492Z",
+        "duration": 35570.322,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "skips": []
+    },
+    {
+      "artifact": 14135547236,
+      "member": "playwright-report/production-2-of-2.json",
+      "stats": {
+        "startTime": "2026-11-14T22:31:06.037Z",
+        "duration": 626191.4870000001,
+        "expected": 89,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 89,
+      "skips": []
+    },
+    {
+      "artifact": 14135301464,
+      "member": "playwright-report/sync-development.json",
+      "stats": {
+        "startTime": "2026-11-14T22:37:26.635Z",
+        "duration": 151834.975,
+        "expected": 21,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 21,
+      "skips": []
+    },
+    {
+      "artifact": 14135182838,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-14T22:31:01.678Z",
+        "duration": 353040.002,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "skips": []
+    },
+    {
+      "artifact": 14135182838,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-14T22:37:00.410Z",
+        "duration": 236860.767,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "skips": []
+    }
+  ],
+  "native": [
+    {
+      "artifact": 14135735322,
+      "browser": "firefox",
+      "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+      "tested": "1f17dee5a50529852b85c28e64c632404028c94c",
+      "stages": 44,
+      "cleanup": {
+        "name": "browser-stop",
+        "time": "2026-11-14T22:32:26.519Z",
+        "kind": "firefox",
+        "browserPid": 14960,
+        "driverPid": 14959,
+        "browserExited": true,
+        "driverExited": true,
+        "stoppedAt": "2026-11-14T22:32:26.518Z"
+      },
+      "transportSnapshot": {
+        "forwardedRequests": 607,
+        "blockedRequests": 1377,
+        "forwardedUpgrades": 16,
+        "blockedUpgrades": 6,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 0
+      }
+    },
+    {
+      "artifact": 14135575468,
+      "browser": "chrome",
+      "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+      "tested": "1f17dee5a50529852b85c28e64c632404028c94c",
+      "stages": 44,
+      "cleanup": {
+        "name": "browser-stop",
+        "time": "2026-11-14T22:31:29.268Z",
+        "kind": "chrome",
+        "browserPid": 5054,
+        "driverPid": 5053,
+        "browserExited": true,
+        "driverExited": true,
+        "stoppedAt": "2026-11-14T22:31:29.268Z"
+      },
+      "transportSnapshot": {
+        "forwardedRequests": 557,
+        "blockedRequests": 115,
+        "forwardedUpgrades": 16,
+        "blockedUpgrades": 6,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 2
+      }
+    },
+    {
+      "artifact": 14135112435,
+      "browser": "safari",
+      "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+      "tested": "1f17dee5a50529852b85c28e64c632404028c94c",
+      "stages": 46,
+      "cleanup": {
+        "name": "browser-stop",
+        "time": "2026-11-14T22:37:28.778Z",
+        "kind": "safari",
+        "browserPid": 11513,
+        "driverPid": null,
+        "browserExited": true,
+        "driverExited": true,
+        "stoppedAt": "2026-11-14T22:37:28.778Z"
+      },
+      "transportSnapshot": {
+        "forwardedRequests": 819,
+        "blockedRequests": 651,
+        "forwardedUpgrades": 18,
+        "blockedUpgrades": 6,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 1
+      }
+    }
+  ],
+  "providers": [
+    {
+      "artifact": 14134911721,
+      "status": "passed",
+      "sourceCommit": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+      "checks": [
+        "bucket-retention-policy",
+        "private-publication-and-readback",
+        "anonymous-access-denial",
+        "authenticated-download-and-encrypted-restore",
+        "paginated-complete-catalog-and-pending-cleanup",
+        "retention-and-deletion",
+        "complete-app-provider-fixture",
+        "operator-provider-catalog",
+        "catalog-source-preparation",
+        "catalog-confirmation-and-private-release",
+        "provider-restore-session-revocation-and-outcome",
+        "provider-restored-content-and-current-passkey"
+      ],
+      "cleanup": "complete",
+      "archiveBytes": 663,
+      "supervisedRestore": {
+        "status": "passed",
+        "checks": [
+          "complete-app-provider-fixture",
+          "operator-provider-catalog",
+          "catalog-source-preparation",
+          "catalog-confirmation-and-private-release",
+          "provider-restore-session-revocation-and-outcome",
+          "provider-restored-content-and-current-passkey"
+        ],
+        "runtime": "real-app-child-process",
+        "imagePolicy": "synthetic-fixture",
+        "localCleanup": "safe",
+        "archiveBytes": 12327,
+        "sourceSha256": "4b7662a39cd75a805ee92839931c1ec11a5b26fbe26e5811cd50dd5e37551505"
+      },
+      "durationMs": 12584
+    }
+  ],
+  "callbacks": [
+    {
+      "artifact": 14135480953,
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "role": "baselineObservation",
+      "preset": "desktop",
+      "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "attempt": 0,
+      "complete": true,
+      "passed": true,
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      },
+      "evidenceFailures": [],
+      "candidateViolations": [
+        "cursor pending high-water 7851 exceeds 4.",
+        "cursor retains callbacks at/after editor disposal.",
+        "cursor fires or installs callbacks after editor disposal.",
+        "zoom-update pending high-water 1912 exceeds 1."
+      ],
+      "caps": {
+        "cursor": 4,
+        "zoom-init": 1,
+        "zoom-update": 1
+      },
+      "ledger": 37897,
+      "phaseAtUs": {
+        "beforeMount": 162178182,
+        "inputStart": 163903870,
+        "finalKey": 260471641,
+        "disposed": 266468459,
+        "end": 267671815
+      },
+      "mainThreadTaskKeys": [
+        "count",
+        "sumMs",
+        "unionMs",
+        "maxMs",
+        "instantaneousEvents",
+        "boundaryEvents",
+        "postInput",
+        "postDisposal",
+        "spans"
+      ],
+      "rawKeydown": 2086,
+      "rawKeyToFrame": 2086,
+      "harnessBindings": 0,
+      "traceRead": {
+        "sourceEvents": 1075128,
+        "retainedEvents": 1075128,
+        "callbackEvents": 221839,
+        "uncompressedBytes": 671188643,
+        "uncompressedSha256": "3b26bbd4f915b53b05b806c796cd21a3fc05ad9f4ba0e233f943ef8d13bbe8ab",
+        "maxEventBytes": 18371
+      }
+    },
+    {
+      "artifact": 14135480953,
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "role": "candidate",
+      "preset": "desktop",
+      "source": "1f17dee5a50529852b85c28e64c632404028c94c",
+      "attempt": 0,
+      "complete": true,
+      "passed": true,
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      },
+      "evidenceFailures": [],
+      "candidateViolations": [],
+      "caps": {
+        "cursor": 4,
+        "zoom-init": 1,
+        "zoom-update": 1
+      },
+      "ledger": 31652,
+      "phaseAtUs": {
+        "beforeMount": 368257671,
+        "inputStart": 370053383,
+        "finalKey": 434105666,
+        "disposed": 440491117,
+        "end": 441696399
+      },
+      "mainThreadTaskKeys": [
+        "count",
+        "sumMs",
+        "unionMs",
+        "maxMs",
+        "instantaneousEvents",
+        "boundaryEvents",
+        "postInput",
+        "postDisposal",
+        "spans"
+      ],
+      "rawKeydown": 2086,
+      "rawKeyToFrame": 2086,
+      "harnessBindings": 16,
+      "traceRead": {
+        "sourceEvents": 1133309,
+        "retainedEvents": 1133309,
+        "callbackEvents": 244870,
+        "uncompressedBytes": 708265278,
+        "uncompressedSha256": "4dd4836ad1f7f5bd9b748129dce353cea9a7f07c3667643d9e9a7c9b19efd87f",
+        "maxEventBytes": 18372
+      }
+    },
+    {
+      "artifact": 14135182838,
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "role": "baselineObservation",
+      "preset": "mobile",
+      "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "attempt": 0,
+      "complete": true,
+      "passed": true,
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      },
+      "evidenceFailures": [],
+      "candidateViolations": [
+        "cursor pending high-water 8346 exceeds 4.",
+        "cursor retains callbacks at/after editor disposal.",
+        "cursor fires or installs callbacks after editor disposal.",
+        "zoom-update pending high-water 2085 exceeds 1."
+      ],
+      "caps": {
+        "cursor": 4,
+        "zoom-init": 1,
+        "zoom-update": 1
+      },
+      "ledger": 35773,
+      "phaseAtUs": {
+        "beforeMount": 102077131,
+        "inputStart": 105091074,
+        "finalKey": 354702390,
+        "disposed": 367654940,
+        "end": 368859790
+      },
+      "mainThreadTaskKeys": [
+        "count",
+        "sumMs",
+        "unionMs",
+        "maxMs",
+        "instantaneousEvents",
+        "boundaryEvents",
+        "postInput",
+        "postDisposal",
+        "spans"
+      ],
+      "rawKeydown": 2086,
+      "rawKeyToFrame": 2086,
+      "harnessBindings": 0,
+      "traceRead": {
+        "sourceEvents": 970238,
+        "retainedEvents": 970238,
+        "callbackEvents": 167687,
+        "uncompressedBytes": 599252528,
+        "uncompressedSha256": "95185f5db86b02b620d65feed2f3ceb8de60ca024f6819527348b00a24663f5c",
+        "maxEventBytes": 17411
+      }
+    },
+    {
+      "artifact": 14135182838,
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "role": "candidate",
+      "preset": "mobile",
+      "source": "1f17dee5a50529852b85c28e64c632404028c94c",
+      "attempt": 0,
+      "complete": true,
+      "passed": true,
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      },
+      "evidenceFailures": [],
+      "candidateViolations": [],
+      "caps": {
+        "cursor": 4,
+        "zoom-init": 1,
+        "zoom-update": 1
+      },
+      "ledger": 29535,
+      "phaseAtUs": {
+        "beforeMount": 457512812,
+        "inputStart": 460873922,
+        "finalKey": 594523312,
+        "disposed": 608512502,
+        "end": 609715671
+      },
+      "mainThreadTaskKeys": [
+        "count",
+        "sumMs",
+        "unionMs",
+        "maxMs",
+        "instantaneousEvents",
+        "boundaryEvents",
+        "postInput",
+        "postDisposal",
+        "spans"
+      ],
+      "rawKeydown": 2086,
+      "rawKeyToFrame": 2086,
+      "harnessBindings": 16,
+      "traceRead": {
+        "sourceEvents": 973238,
+        "retainedEvents": 973238,
+        "callbackEvents": 186672,
+        "uncompressedBytes": 608866929,
+        "uncompressedSha256": "bc258358049d380d90e70034de187029fb9f4b8edcf4b482239e73513aa21bd0",
+        "maxEventBytes": 16126
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "artifact": 14135480953,
+      "member": "test-results/spn113-comparison-desktop.json",
+      "preset": "desktop",
+      "accepted": true,
+      "mode": "paired",
+      "timing": "Traced callback observations are descriptive; unchanged unprofiled SPN-108 gates remain required.",
+      "baselineSource": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "candidateSource": "1f17dee5a50529852b85c28e64c632404028c94c"
+    },
+    {
+      "artifact": 14135182838,
+      "member": "test-results/spn113-comparison-mobile.json",
+      "preset": "mobile",
+      "accepted": true,
+      "mode": "paired",
+      "timing": "Traced callback observations are descriptive; unchanged unprofiled SPN-108 gates remain required.",
+      "baselineSource": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "candidateSource": "1f17dee5a50529852b85c28e64c632404028c94c"
+    }
+  ],
+  "aggregates": [
+    {
+      "artifact": 14135147397,
+      "member": "ci-results-unit.json",
+      "data": {
+        "passed": true,
+        "evidence": {
+          "planSha256": "c6bc3724a69ee832e9fdda738efc8fb5abdee5ae84975e53d0446df30ae4d818",
+          "plan": {
+            "version": 1,
+            "event": "pull_request",
+            "action": "synchronize",
+            "base": "312e5546386ece21f8e0845d696598cc4d85c731",
+            "head": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+            "tested": "1f17dee5a50529852b85c28e64c632404028c94c",
+            "mode": "full",
+            "labels": [],
+            "paths": null,
+            "suites": {
+              "backlog": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "pull-request": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "lint": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "typecheck": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "unit-tests": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "lib-test-run": {
+                "selected": true,
+                "dependencies": [
+                  "lib/**",
+                  "scripts/dependencies/**",
+                  "package{,-lock}.json",
+                  "vitest.config.ts",
+                  "tsconfig.json",
+                  ".nvmrc",
+                  ".github/workflows/ci.yml"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "playwright-run": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "container-smoke": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "restore-timing": {
+                "selected": true,
+                "dependencies": [
+                  "server/**",
+                  "src/{server,shared}/**",
+                  "lib/**",
+                  "web/** and src/ui/** (shared application/authentication bundle)",
+                  "e2e restore/shared helpers (doc-touch, doc-touch-raster, native-sheet-value)",
+                  "runtime/build/dependency/workflow inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "sync-transition": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "doc-responsiveness": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "doc-callback-lifetimes": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "responsiveness-baseline": {
+                "selected": true,
+                "dependencies": [
+                  "web/**",
+                  "server/**",
+                  "lib/**",
+                  "e2e/**",
+                  "src/shared/**",
+                  "src/server/{sync,history,collaboration}/**",
+                  "scripts/{ci,dependencies,sync-transition}/**",
+                  "build/runtime/dependency/workflow configuration"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "callback-baseline": {
+                "selected": true,
+                "dependencies": [
+                  "web/**",
+                  "server/**",
+                  "lib/**",
+                  "e2e/**",
+                  "src/shared/**",
+                  "src/server/{sync,history,collaboration}/**",
+                  "scripts/{ci,dependencies,sync-transition}/**",
+                  "build/runtime/dependency/workflow configuration"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "phone-compatibility": {
+                "selected": true,
+                "dependencies": [
+                  "full plan backstop; ordinary phone owners remain in routine browser coverage"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              }
+            }
+          },
+          "gateResults": {},
+          "results": [
+            {
+              "suite": "unit-tests",
+              "selected": true,
+              "dependencies": [
+                "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+              ],
+              "inputs": [],
+              "reason": "Immutable range or event labels unavailable; full coverage.",
+              "result": "success"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "artifact": 14135960310,
+      "member": "ci-results-lib.json",
+      "data": {
+        "passed": true,
+        "evidence": {
+          "planSha256": "c6bc3724a69ee832e9fdda738efc8fb5abdee5ae84975e53d0446df30ae4d818",
+          "plan": {
+            "version": 1,
+            "event": "pull_request",
+            "action": "synchronize",
+            "base": "312e5546386ece21f8e0845d696598cc4d85c731",
+            "head": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+            "tested": "1f17dee5a50529852b85c28e64c632404028c94c",
+            "mode": "full",
+            "labels": [],
+            "paths": null,
+            "suites": {
+              "backlog": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "pull-request": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "lint": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "typecheck": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "unit-tests": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "lib-test-run": {
+                "selected": true,
+                "dependencies": [
+                  "lib/**",
+                  "scripts/dependencies/**",
+                  "package{,-lock}.json",
+                  "vitest.config.ts",
+                  "tsconfig.json",
+                  ".nvmrc",
+                  ".github/workflows/ci.yml"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "playwright-run": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "container-smoke": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "restore-timing": {
+                "selected": true,
+                "dependencies": [
+                  "server/**",
+                  "src/{server,shared}/**",
+                  "lib/**",
+                  "web/** and src/ui/** (shared application/authentication bundle)",
+                  "e2e restore/shared helpers (doc-touch, doc-touch-raster, native-sheet-value)",
+                  "runtime/build/dependency/workflow inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "sync-transition": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "doc-responsiveness": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "doc-callback-lifetimes": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "responsiveness-baseline": {
+                "selected": true,
+                "dependencies": [
+                  "web/**",
+                  "server/**",
+                  "lib/**",
+                  "e2e/**",
+                  "src/shared/**",
+                  "src/server/{sync,history,collaboration}/**",
+                  "scripts/{ci,dependencies,sync-transition}/**",
+                  "build/runtime/dependency/workflow configuration"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "callback-baseline": {
+                "selected": true,
+                "dependencies": [
+                  "web/**",
+                  "server/**",
+                  "lib/**",
+                  "e2e/**",
+                  "src/shared/**",
+                  "src/server/{sync,history,collaboration}/**",
+                  "scripts/{ci,dependencies,sync-transition}/**",
+                  "build/runtime/dependency/workflow configuration"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "phone-compatibility": {
+                "selected": true,
+                "dependencies": [
+                  "full plan backstop; ordinary phone owners remain in routine browser coverage"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              }
+            }
+          },
+          "gateResults": {},
+          "results": [
+            {
+              "suite": "lib-test-run",
+              "selected": true,
+              "dependencies": [
+                "lib/**",
+                "scripts/dependencies/**",
+                "package{,-lock}.json",
+                "vitest.config.ts",
+                "tsconfig.json",
+                ".nvmrc",
+                ".github/workflows/ci.yml"
+              ],
+              "inputs": [],
+              "reason": "Immutable range or event labels unavailable; full coverage.",
+              "result": "success"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "readerPreparationCorrection": "First schema probe treated whole-ZIP retained path as JSON; corrected to extract named native member. Server process receipts in playwright-report are not test reporters; corrected explicit filename exclusion. Raw callback keys are keydownAt/keyToFrameMs (summary uses shorter labels); reader corrected against original schema. No artifact/source/runtime mutation.",
+  "pending": "Full terminal jobs, remaining Storybook catalog sets and responsiveness artifacts are independently checked when stable; no merge approval in this partial audit."
+}

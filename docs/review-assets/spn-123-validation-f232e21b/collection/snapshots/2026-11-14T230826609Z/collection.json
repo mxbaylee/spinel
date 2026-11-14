@@ -1,0 +1,1189 @@
+{
+  "at": "2026-11-14T23:08:33.967Z",
+  "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+  "base": "312e5546386ece21f8e0845d696598cc4d85c731",
+  "snapshot": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z",
+  "readOnly": true,
+  "workflows": [
+    {
+      "kind": "ci",
+      "id": 43648312553,
+      "attempt": 1,
+      "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 132610953709,
+          "name": "Classify changes (43648312553)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132610953953,
+          "name": "Pull request",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187337,
+          "name": "Backlog",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187353,
+          "name": "Typecheck",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187356,
+          "name": "Container smoke",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187379,
+          "name": "Sized restore acceptance",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187383,
+          "name": "Lib tests (dense-cells)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187386,
+          "name": "Unit tests (recovery)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187387,
+          "name": "Unit tests (supervisor)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187389,
+          "name": "Doc responsiveness (mobile)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187392,
+          "name": "Lib tests (cells)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187398,
+          "name": "Lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187403,
+          "name": "Doc responsiveness (desktop)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187405,
+          "name": "Retained sync transition",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187431,
+          "name": "Unit tests (remaining)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187512,
+          "name": "Doc callback lifetimes (desktop)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187519,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187524,
+          "name": "Doc callback lifetimes (mobile)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187531,
+          "name": "Lib tests (mixed-fuzz)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187544,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187547,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187549,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187562,
+          "name": "Playwright smoke (offline-upgrade)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187565,
+          "name": "Playwright smoke (mobile-https)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187580,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187584,
+          "name": "Lib tests (remaining)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187586,
+          "name": "Playwright smoke (sync-production)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187590,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187597,
+          "name": "Playwright smoke (supervised-restore)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611187628,
+          "name": "Playwright smoke (sync-development)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132613497179,
+          "name": "Unit tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132614098385,
+          "name": "Lib tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132620908814,
+          "name": "Playwright smoke",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14135960310,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTk2MDMxMA==",
+          "name": "ci-results-lib",
+          "size_in_bytes": 1188,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135960310",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135960310/zip",
+          "expired": false,
+          "digest": "sha256:fdc60e1a3a67ad9117ce4c0f9d688b57766c804b0f24eb5f98d8c88940897ead",
+          "created_at": "2026-11-14T22:41:01Z",
+          "updated_at": "2026-11-14T22:41:01Z",
+          "expires_at": "2026-12-14T22:41:00Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135823669,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTgyMzY2OQ==",
+          "name": "doc-responsiveness-mobile",
+          "size_in_bytes": 2472845,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135823669",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135823669/zip",
+          "expired": false,
+          "digest": "sha256:57d981868ccb95f7bb7c9a2cd7fe85ab4e5925d6b2fb4157b783e95370402d94",
+          "created_at": "2026-11-14T23:06:32Z",
+          "updated_at": "2026-11-14T23:06:32Z",
+          "expires_at": "2026-11-21T23:06:31Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135778774,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTc3ODc3NA==",
+          "name": "ci-results-browser",
+          "size_in_bytes": 1328,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135778774",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135778774/zip",
+          "expired": false,
+          "digest": "sha256:33b0edb4c5a2af3e81cfbdc69920f54ade5d786b317b66f34273a38ea7ac36e8",
+          "created_at": "2026-11-14T23:06:52Z",
+          "updated_at": "2026-11-14T23:06:52Z",
+          "expires_at": "2026-12-14T23:06:51Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135752792,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTc1Mjc5Mg==",
+          "name": "theme-screenshots-development-2",
+          "size_in_bytes": 16534775,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135752792",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135752792/zip",
+          "expired": false,
+          "digest": "sha256:5829a6137106986651acfc45923db4b7183eaf26475118ad69218a1f8fe452c0",
+          "created_at": "2026-11-14T22:48:22Z",
+          "updated_at": "2026-11-14T22:48:22Z",
+          "expires_at": "2026-11-21T22:48:21Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135750686,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTc1MDY4Ng==",
+          "name": "theme-screenshots-sync-soak-sheet",
+          "size_in_bytes": 479274,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135750686",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135750686/zip",
+          "expired": false,
+          "digest": "sha256:dfff8cf106a0d67ef8f6002d68b6d8cf6fb03375c9779f58505dd466a50dd3f5",
+          "created_at": "2026-11-14T22:34:52Z",
+          "updated_at": "2026-11-14T22:34:52Z",
+          "expires_at": "2026-11-21T22:34:50Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135706694,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTcwNjY5NA==",
+          "name": "sheet-pdf-evidence",
+          "size_in_bytes": 735474,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135706694",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135706694/zip",
+          "expired": false,
+          "digest": "sha256:5f3abaa79555180ccabe14b9335b8f2b95ecd323dbd1d6ab97fe836963af1a6f",
+          "created_at": "2026-11-14T22:40:42Z",
+          "updated_at": "2026-11-14T22:40:42Z",
+          "expires_at": "2026-11-21T22:40:41Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135636844,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTYzNjg0NA==",
+          "name": "doc-pdf-evidence",
+          "size_in_bytes": 8558396,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135636844",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135636844/zip",
+          "expired": false,
+          "digest": "sha256:8beee2b8be7c3d0e00258b8460e1cfca1224f6d9852b5ff47c936963528d28f2",
+          "created_at": "2026-11-14T22:40:43Z",
+          "updated_at": "2026-11-14T22:40:43Z",
+          "expires_at": "2026-11-21T22:40:42Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135547236,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTU0NzIzNg==",
+          "name": "theme-screenshots-production-2",
+          "size_in_bytes": 18512216,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135547236",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135547236/zip",
+          "expired": false,
+          "digest": "sha256:793b0712db4aaff222d351f263f0e63016a4d1396092a52d1a29d0dc472ca2b4",
+          "created_at": "2026-11-14T22:41:34Z",
+          "updated_at": "2026-11-14T22:41:34Z",
+          "expires_at": "2026-11-21T22:41:32Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135480953,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTQ4MDk1Mw==",
+          "name": "doc-callback-lifetimes-desktop",
+          "size_in_bytes": 203727185,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135480953",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135480953/zip",
+          "expired": false,
+          "digest": "sha256:9f274bb0970f3d423665a1319ef1f4791b6bf089465487a7085d28d43982ff11",
+          "created_at": "2026-11-14T22:38:10Z",
+          "updated_at": "2026-11-14T22:38:10Z",
+          "expires_at": "2026-11-21T22:37:59Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135453270,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTQ1MzI3MA==",
+          "name": "theme-screenshots-production-1",
+          "size_in_bytes": 35481457,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135453270",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135453270/zip",
+          "expired": false,
+          "digest": "sha256:7c936c3eaad72efb0400fb7d2679ce50dd7a641e3a017f9d82ec4fef66122bee",
+          "created_at": "2026-11-14T22:47:07Z",
+          "updated_at": "2026-11-14T22:47:07Z",
+          "expires_at": "2026-11-21T22:47:04Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135401594,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTQwMTU5NA==",
+          "name": "theme-screenshots-supervised-restore",
+          "size_in_bytes": 383876,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135401594",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135401594/zip",
+          "expired": false,
+          "digest": "sha256:bb97c69a8b19e039d7bbc61ecd85ca39ba42343a474ff5cfed62076bb96404e4",
+          "created_at": "2026-11-14T22:36:40Z",
+          "updated_at": "2026-11-14T22:36:40Z",
+          "expires_at": "2026-11-21T22:36:39Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135358823,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTM1ODgyMw==",
+          "name": "theme-screenshots-sync-production",
+          "size_in_bytes": 5025377,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135358823",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135358823/zip",
+          "expired": false,
+          "digest": "sha256:1768dce9d856500c5886d1d73dd5d59520b25a4239e97a0c32580af29a928bd0",
+          "created_at": "2026-11-14T22:49:12Z",
+          "updated_at": "2026-11-14T22:49:12Z",
+          "expires_at": "2026-11-21T22:49:10Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135301464,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTMwMTQ2NA==",
+          "name": "theme-screenshots-sync-development",
+          "size_in_bytes": 2195674,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135301464",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135301464/zip",
+          "expired": false,
+          "digest": "sha256:267ad748bedf895d95ed754684748fbba25fcc51d6f8ea4a07e25dcc06a82573",
+          "created_at": "2026-11-14T22:39:59Z",
+          "updated_at": "2026-11-14T22:39:59Z",
+          "expires_at": "2026-11-21T22:39:58Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135237157,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTIzNzE1Nw==",
+          "name": "theme-screenshots-sync-soak-doc",
+          "size_in_bytes": 491209,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135237157",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135237157/zip",
+          "expired": false,
+          "digest": "sha256:6bc960c5f6fe0d86896c0c989d12662c1f2917d219a98fbd48642ef42810006c",
+          "created_at": "2026-11-14T22:37:40Z",
+          "updated_at": "2026-11-14T22:37:40Z",
+          "expires_at": "2026-11-21T22:37:40Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135192910,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTE5MjkxMA==",
+          "name": "doc-responsiveness-desktop",
+          "size_in_bytes": 1284116,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135192910",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135192910/zip",
+          "expired": false,
+          "digest": "sha256:eedf1ce68b22a377b8610adb0ff13930670fa9a51f84be5a3e59cde33c9ff928",
+          "created_at": "2026-11-14T22:42:50Z",
+          "updated_at": "2026-11-14T22:42:50Z",
+          "expires_at": "2026-11-21T22:42:48Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135182838,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTE4MjgzOA==",
+          "name": "doc-callback-lifetimes-mobile",
+          "size_in_bytes": 181869967,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135182838",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135182838/zip",
+          "expired": false,
+          "digest": "sha256:6c9cbbca3ce5a66cdd8fa859a137654c3a69566ee4a3bf6fe9ef32e5c9f45341",
+          "created_at": "2026-11-14T22:41:28Z",
+          "updated_at": "2026-11-14T22:41:28Z",
+          "expires_at": "2026-11-21T22:41:19Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135147397,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTE0NzM5Nw==",
+          "name": "ci-results-unit",
+          "size_in_bytes": 1171,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135147397",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135147397/zip",
+          "expired": false,
+          "digest": "sha256:b8823a9cafeb9ca202c6e07ebb2d1f0e2cbdcd86565147ab546eae02db4c2c5f",
+          "created_at": "2026-11-14T22:38:44Z",
+          "updated_at": "2026-11-14T22:38:44Z",
+          "expires_at": "2026-12-14T22:38:43Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135075847,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTA3NTg0Nw==",
+          "name": "theme-screenshots-mobile-https",
+          "size_in_bytes": 1560587,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135075847",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135075847/zip",
+          "expired": false,
+          "digest": "sha256:9791ee08fb69b834db7834a8d89b5275587e3e0ffdf86718bdb15fb8569d6ece",
+          "created_at": "2026-11-14T22:31:35Z",
+          "updated_at": "2026-11-14T22:31:35Z",
+          "expires_at": "2026-11-21T22:31:34Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14134986525,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNDk4NjUyNQ==",
+          "name": "sized-restore-acceptance",
+          "size_in_bytes": 75132,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134986525",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134986525/zip",
+          "expired": false,
+          "digest": "sha256:a0db11cde065a46832bb78a3f55a385d1771ea97f0262abf1df1ceb3343d743f",
+          "created_at": "2026-11-14T22:36:16Z",
+          "updated_at": "2026-11-14T22:36:16Z",
+          "expires_at": "2026-11-28T22:36:15Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14134931248,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNDkzMTI0OA==",
+          "name": "theme-screenshots-offline-upgrade",
+          "size_in_bytes": 433659,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134931248",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134931248/zip",
+          "expired": false,
+          "digest": "sha256:c39965874b68b7699769f1b71b53a96215875b64b79352cba43e77affe4904e2",
+          "created_at": "2026-11-14T22:32:10Z",
+          "updated_at": "2026-11-14T22:32:10Z",
+          "expires_at": "2026-11-21T22:32:09Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14134869919,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNDg2OTkxOQ==",
+          "name": "theme-screenshots-development-1",
+          "size_in_bytes": 33728399,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134869919",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134869919/zip",
+          "expired": false,
+          "digest": "sha256:2350781d581b22c1d8b37effc569f345390c45819c7b543559221938e6557c07",
+          "created_at": "2026-11-14T22:47:45Z",
+          "updated_at": "2026-11-14T22:47:45Z",
+          "expires_at": "2026-11-21T22:47:43Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14134714109,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNDcxNDEwOQ==",
+          "name": "pdf-collaboration-overlap",
+          "size_in_bytes": 179618,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134714109",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134714109/zip",
+          "expired": false,
+          "digest": "sha256:1c4c0ae8c2e8a815f2657c0223cf83d405285991dd58e093fe4b1cfb1929a546",
+          "created_at": "2026-11-14T22:38:26Z",
+          "updated_at": "2026-11-14T22:38:26Z",
+          "expires_at": "2026-11-21T22:38:25Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14134044586,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNDA0NDU4Ng==",
+          "name": "ci-plan",
+          "size_in_bytes": 951,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134044586",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134044586/zip",
+          "expired": false,
+          "digest": "sha256:abe8e9e9bdc1e6549aaf767bbd626eb853ab9bced36dfb09962acac03f2c4504",
+          "created_at": "2026-11-14T22:29:51Z",
+          "updated_at": "2026-11-14T22:29:51Z",
+          "expires_at": "2026-12-14T22:29:50Z",
+          "workflow_run": {
+            "id": 43648312553,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "storybook",
+      "id": 43648312505,
+      "attempt": 1,
+      "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 132610953568,
+          "name": "Classify changes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611160145,
+          "name": "Build Storybook",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611325201,
+          "name": "Review Storybook tablet",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611325213,
+          "name": "Review Storybook mobile (light)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611325260,
+          "name": "Review Storybook desktop (light)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611325263,
+          "name": "Review Storybook mobile (dark)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611325516,
+          "name": "Review Storybook desktop (dark)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132611327171,
+          "name": "Publish PR preview to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "id": 132615381112,
+          "name": "Review Storybook states and interactions",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132615485068,
+          "name": "Deploy to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14135905165,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTkwNTE2NQ==",
+          "name": "storybook-check-tablet",
+          "size_in_bytes": 17695,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135905165",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135905165/zip",
+          "expired": false,
+          "digest": "sha256:7be97e902415be56709aa9768eaea820d5705f9b1fcd3b4752d05502de213dc5",
+          "created_at": "2026-11-14T22:39:27Z",
+          "updated_at": "2026-11-14T22:39:27Z",
+          "expires_at": "2026-11-28T22:39:26Z",
+          "workflow_run": {
+            "id": 43648312505,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135716464,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTcxNjQ2NA==",
+          "name": "storybook-check-mobile-dark",
+          "size_in_bytes": 17769,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135716464",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135716464/zip",
+          "expired": false,
+          "digest": "sha256:8204d296da6459c01b8539a7657a8f8349fad05d0c3415d77733ff51653dbf79",
+          "created_at": "2026-11-14T22:45:37Z",
+          "updated_at": "2026-11-14T22:45:37Z",
+          "expires_at": "2026-11-28T22:45:36Z",
+          "workflow_run": {
+            "id": 43648312505,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135686354,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTY4NjM1NA==",
+          "name": "storybook-check-desktop-dark",
+          "size_in_bytes": 17688,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135686354",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135686354/zip",
+          "expired": false,
+          "digest": "sha256:343fd4b1148d8aa370d7fd5d4aae3b77fdf96a20f28ca71ae1dfdeb3e7b25ef2",
+          "created_at": "2026-11-14T22:44:14Z",
+          "updated_at": "2026-11-14T22:44:14Z",
+          "expires_at": "2026-11-28T22:44:14Z",
+          "workflow_run": {
+            "id": 43648312505,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135301575,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTMwMTU3NQ==",
+          "name": "storybook-check-desktop-light",
+          "size_in_bytes": 17756,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135301575",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135301575/zip",
+          "expired": false,
+          "digest": "sha256:02cc98be5286ed6bbec7cb496d91a43cc91cc4165d0e6b53cff414aab1e0421c",
+          "created_at": "2026-11-14T22:40:53Z",
+          "updated_at": "2026-11-14T22:40:53Z",
+          "expires_at": "2026-11-28T22:40:52Z",
+          "workflow_run": {
+            "id": 43648312505,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135116583,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTExNjU4Mw==",
+          "name": "entity-icon-checks",
+          "size_in_bytes": 509,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135116583",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135116583/zip",
+          "expired": false,
+          "digest": "sha256:2ca87edad279f1a05a2ee5a412a300713849693926a531e4616a91b607b39fe8",
+          "created_at": "2026-11-14T22:32:49Z",
+          "updated_at": "2026-11-14T22:32:49Z",
+          "expires_at": "2027-02-12T22:28:59Z",
+          "workflow_run": {
+            "id": 43648312505,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14134872064,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNDg3MjA2NA==",
+          "name": "storybook-review",
+          "size_in_bytes": 6267315,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134872064",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134872064/zip",
+          "expired": false,
+          "digest": "sha256:880b21f04005ea27766f12877b67167c327f3e980c8d1095b4dab381cabc0499",
+          "created_at": "2026-11-14T22:30:21Z",
+          "updated_at": "2026-11-14T22:30:21Z",
+          "expires_at": "2026-11-21T22:30:20Z",
+          "workflow_run": {
+            "id": 43648312505,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14134858635,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNDg1ODYzNQ==",
+          "name": "storybook-check-mobile-light",
+          "size_in_bytes": 17677,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134858635",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134858635/zip",
+          "expired": false,
+          "digest": "sha256:ad2ef4785b106e15086da35caf5bf961ab6df9d67d0195375eeaecb3d3b328bc",
+          "created_at": "2026-11-14T22:38:31Z",
+          "updated_at": "2026-11-14T22:38:31Z",
+          "expires_at": "2026-11-28T22:38:31Z",
+          "workflow_run": {
+            "id": 43648312505,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "desktop",
+      "id": 43648312528,
+      "attempt": 1,
+      "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 132610953559,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132610953719,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132610953865,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14135735322,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTczNTMyMg==",
+          "name": "desktop-offline-firefox-macos-26-43648312528-1",
+          "size_in_bytes": 496121,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135735322",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135735322/zip",
+          "expired": false,
+          "digest": "sha256:baf11c827972e6e234dcd100fbdbc2aec894b19ca437d0b6642028c73c77d705",
+          "created_at": "2026-11-14T22:32:28Z",
+          "updated_at": "2026-11-14T22:32:28Z",
+          "expires_at": "2026-11-28T22:32:27Z",
+          "workflow_run": {
+            "id": 43648312528,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135575468,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTU3NTQ2OA==",
+          "name": "desktop-offline-chrome-macos-26-43648312528-1",
+          "size_in_bytes": 225993,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135575468",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135575468/zip",
+          "expired": false,
+          "digest": "sha256:0b1c8fc0148d4ead80bb9645ca6f3345dac2ca45c0ade65b89c52afba86b1e04",
+          "created_at": "2026-11-14T22:31:30Z",
+          "updated_at": "2026-11-14T22:31:30Z",
+          "expires_at": "2026-11-28T22:31:29Z",
+          "workflow_run": {
+            "id": 43648312528,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        },
+        {
+          "id": 14135112435,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNTExMjQzNQ==",
+          "name": "desktop-offline-safari-macos-15-intel-43648312528-1",
+          "size_in_bytes": 1055710,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135112435",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135112435/zip",
+          "expired": false,
+          "digest": "sha256:156ff00a678ab14bcddd764769c84fab907b65c66269ffc0897a676688a6e5d6",
+          "created_at": "2026-11-14T22:37:31Z",
+          "updated_at": "2026-11-14T22:37:31Z",
+          "expires_at": "2026-11-28T22:37:29Z",
+          "workflow_run": {
+            "id": 43648312528,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "spaces",
+      "id": 43648312604,
+      "attempt": 1,
+      "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 132610953972,
+          "name": "🦈 DigitalOcean Spaces",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14134911721,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzNDkxMTcyMQ==",
+          "name": "spaces-acceptance",
+          "size_in_bytes": 668,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134911721",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14134911721/zip",
+          "expired": false,
+          "digest": "sha256:2c0f15c8df358b72a482e362a4879a1a108c87e94cd73e49e94210a2a3e124b8",
+          "created_at": "2026-11-14T22:29:52Z",
+          "updated_at": "2026-11-14T22:29:52Z",
+          "expires_at": "2026-11-28T22:29:51Z",
+          "workflow_run": {
+            "id": 43648312604,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-123-operation-diagnostics",
+            "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+          }
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "files": [
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/source-commit.json.gz",
+      "bytes": 6653,
+      "sha256": "a6a1615740c92d46b0b6fc3531bce719f293ab6146e068e60de23fe4742c7727",
+      "rawBytes": 34835,
+      "rawSha256": "f9c35d3a99a838d7e6444b9d29145001870368c22af7b8511cb6b3ac365ae811"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/all-source-runs.json.gz",
+      "bytes": 2364,
+      "sha256": "64a5405985b50c10c265c3b445d3e768a8808f473898ca43caa375a5f4c76712",
+      "rawBytes": 48879,
+      "rawSha256": "02e77f8e79dc3401bb964cb9854e1d8c8e43b332776feacbdd928b33ac5d800e"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/check-runs.json.gz",
+      "bytes": 5740,
+      "sha256": "25d3b62478d46daaba93369d4a2f6dafc1178c9f1eac3c8c2f129229c8dc5a56",
+      "rawBytes": 165057,
+      "rawSha256": "58a13aa067aad667852fccbaf528daaecde52eee225a0a71b12613c4a9ceeba3"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/pr.json.gz",
+      "bytes": 12349,
+      "sha256": "b72fc356a8bbbb518d080c8e1c5f455d4045c1b6b638275537a1d43f887fb779",
+      "rawBytes": 40644,
+      "rawSha256": "7053df8010d3484179d7a26013cbdfc648a82e8886fa59fd297cd2f6d52436fa"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/observed-pr-body.md.gz",
+      "bytes": 10435,
+      "sha256": "39fb3d22dc348149a9f376ecf515e5e12b791b6946d7a7765d192251e61360ae",
+      "rawBytes": 25173,
+      "rawSha256": "7fb14827b4329e98d036a79b4ddfb07e9ab3550f01d196bba6ac06d3d2e9c479"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/observed-merge-commit.json.gz",
+      "bytes": 208545,
+      "sha256": "1ef896fa3557b034f2e1963c54f1ad958dde62b9b38bf250e222cbf0ff4f56c3",
+      "rawBytes": 1238912,
+      "rawSha256": "cc046c6f83e10d5eaa3b74219d081c4400b361b79f669dda0a97ffd9ae651627"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/run-ci.json.gz",
+      "bytes": 1660,
+      "sha256": "c9f9216d0d2f10e913f6ebd07c1b6340ec65adbcf304c2c968e79a9d6141401d",
+      "rawBytes": 12192,
+      "rawSha256": "1cc8150cb550860bc646d0183c74ebd272710773b149a84302efcb3b76151019"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/artifacts-ci.json.gz",
+      "bytes": 2590,
+      "sha256": "abacde83e1b833bac02344066a50581a41f68558fbb29648ef4dfcb4f033b565",
+      "rawBytes": 16513,
+      "rawSha256": "5d17511df37801e9258e276a46282a0a3df8bcc23f63d8a4c095a3b4f59156a2"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/jobs-ci-attempt-1.json.gz",
+      "bytes": 6435,
+      "sha256": "2e05c79161299cbc3b328e7c74ba5f9b377bc46e4e66c006f10ce227987ac01c",
+      "rawBytes": 106075,
+      "rawSha256": "3ac4e4eed05287a0835bb0fe09be1573071411710b1d5c7cc271da7f044e3eb5"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/logs/job-132611187389.log.gz",
+      "bytes": 21338,
+      "sha256": "8361177d30b46202f669f85a12ba74a697231c8740805c5b388821ae98e66ccb",
+      "rawBytes": 99063,
+      "rawSha256": "a37a8663b6b31b5b596c1f619b2ba8c7b5c104ab3bcfe6eb741d51ed95e5d4c0"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/logs/job-132620908814.log.gz",
+      "bytes": 8103,
+      "sha256": "23a6a7949846451600e95c484eeca91432621156924e5e1c5b2e57e8a74efcd3",
+      "rawBytes": 42906,
+      "rawSha256": "dfe1bc8bc62a2a0109ce993519d03b0d25eba48fff2e6062da604f219bcefcae"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/original-zips/artifact-14135778774.zip",
+      "bytes": 1328,
+      "sha256": "33b0edb4c5a2af3e81cfbdc69920f54ade5d786b317b66f34273a38ea7ac36e8",
+      "artifact": {
+        "id": 14135778774,
+        "node_id": "MDg6QXJ0aWZhY3QxNDEzNTc3ODc3NA==",
+        "name": "ci-results-browser",
+        "size_in_bytes": 1328,
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135778774",
+        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14135778774/zip",
+        "expired": false,
+        "digest": "sha256:33b0edb4c5a2af3e81cfbdc69920f54ade5d786b317b66f34273a38ea7ac36e8",
+        "created_at": "2026-11-14T23:06:52Z",
+        "updated_at": "2026-11-14T23:06:52Z",
+        "expires_at": "2026-12-14T23:06:51Z",
+        "workflow_run": {
+          "id": 43648312553,
+          "repository_id": 1423484121,
+          "head_repository_id": 1423484121,
+          "head_branch": "codex/spn-123-operation-diagnostics",
+          "head_sha": "f232e21b4910afe6209a22d8d78516c598eba1a5"
+        }
+      }
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/artifacts-storybook.json.gz",
+      "bytes": 1036,
+      "sha256": "b720a7ae0cb16b9487aabe759b40ffd26b477cc1ca8728784eac099e55ca26be",
+      "rawBytes": 5024,
+      "rawSha256": "737e25aa7f93ef1e3239db597c03b55b521582d1d3e56006b55f99db8a76b5d7"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/run-storybook.json.gz",
+      "bytes": 1664,
+      "sha256": "fe3391e3a731b19e8806adee1ded236a6393fe20005ef0b145551347c51a198c",
+      "rawBytes": 12206,
+      "rawSha256": "5ecea1a153eccf4d8c654944f8dcc80467bddbb1101ebd52c101a09e80e6fcc8"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/jobs-storybook-attempt-1.json.gz",
+      "bytes": 2155,
+      "sha256": "7b639e1511ec9315765f7e81d0d629e4a210245ed72d93f01deb3072ca1400ee",
+      "rawBytes": 24577,
+      "rawSha256": "2049a700856524b87d7fac43d2e23dae8382c2ee458f38f89423acdb8baf422c"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/artifacts-desktop.json.gz",
+      "bytes": 674,
+      "sha256": "e9f57102ef87174a247ca7bcf3bdf6c327b549d67ecaa0bae21b59ef8821c29e",
+      "rawBytes": 2246,
+      "rawSha256": "8d727fcc2b4e33f29be7320d5923278461b7f829d38922009a647364c8723f98"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/run-desktop.json.gz",
+      "bytes": 1669,
+      "sha256": "2ee867ea6c5e18176a6080a1b98d415ca9e20bde339be7f42707728961e383a8",
+      "rawBytes": 12217,
+      "rawSha256": "8699c5f05bfd7773a6ae6e64b3f9777b72deba31e08e38dfdb752ebc538249aa"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/jobs-desktop-attempt-1.json.gz",
+      "bytes": 1284,
+      "sha256": "38cf8ed2ffb7c4be02f97d07bf369842a97d5f21ebc1f7997d7e124078ab3c62",
+      "rawBytes": 10103,
+      "rawSha256": "86d85f354dc0454d1d32174904483b16cb1b657495aa7e481545cef7f04098b3"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/artifacts-spaces.json.gz",
+      "bytes": 444,
+      "sha256": "ea873eae662f956d68407e7ebf45003e361f84695a38d0fdf38dbaab1fe60cbd",
+      "rawBytes": 737,
+      "rawSha256": "339dd16f2aae937c30d0259e2cedd1de0560ac9f673d046c5083baa0c595578b"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/run-spaces.json.gz",
+      "bytes": 1673,
+      "sha256": "370d6afc1a50d3be877a569de6e98f7e9936acc8c12b0830d6f28e9f6fb2d225",
+      "rawBytes": 12223,
+      "rawSha256": "f420eefe3bc82c7bc3689ae93462a28132c752d83b251a3585879a31721d607b"
+    },
+    {
+      "path": "/tmp/spn123-publication-f232e21b/validation/snapshots/2026-11-14T230826609Z/jobs-spaces-attempt-1.json.gz",
+      "bytes": 814,
+      "sha256": "9bc5d11aa625ef067e7b9c5dfbbcbda382649d525537cca260b7fead8ef57ca9",
+      "rawBytes": 2848,
+      "rawSha256": "5a01a3fbf03308b0df45bdb8c36d98f9bb2aad7fb06247ca2a1b1766e0a6dc76"
+    }
+  ],
+  "allTerminal": true,
+  "note": "First attempt only. No rerun/cancel/dispatch/metadata/source mutation. Original6ef remains historical failed validation. Do not infer no configured retry from job success."
+}

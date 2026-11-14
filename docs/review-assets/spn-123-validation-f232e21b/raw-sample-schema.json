@@ -1,0 +1,466 @@
+[
+  {
+    "id": 14135480953,
+    "name": "doc-callback-lifetimes-desktop",
+    "retained": [
+      {
+        "name": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+        "bytes": 24046870
+      },
+      {
+        "name": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+        "bytes": 6557
+      },
+      {
+        "name": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+        "bytes": 3109
+      },
+      {
+        "name": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+        "bytes": 26222
+      },
+      {
+        "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+        "bytes": 21983538
+      },
+      {
+        "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+        "bytes": 6615
+      },
+      {
+        "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+        "bytes": 3034
+      },
+      {
+        "name": "test-results/spn113-comparison-desktop.json",
+        "bytes": 969497
+      },
+      {
+        "name": "playwright-report/doc-callback-lifetimes.json",
+        "bytes": 1341201
+      }
+    ],
+    "samples": [
+      {
+        "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+        "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+        "role": "baselineObservation",
+        "complete": true,
+        "passed": true,
+        "traceRead": {
+          "sourceEvents": 1075128,
+          "retainedEvents": 1075128,
+          "callbackEvents": 221839,
+          "uncompressedBytes": 671188643,
+          "uncompressedSha256": "3b26bbd4f915b53b05b806c796cd21a3fc05ad9f4ba0e233f943ef8d13bbe8ab",
+          "maxEventBytes": 18371
+        },
+        "analysis": {
+          "accepted": true,
+          "evidenceFailures": [],
+          "candidateViolations": [
+            "cursor pending high-water 7851 exceeds 4.",
+            "cursor retains callbacks at/after editor disposal.",
+            "cursor fires or installs callbacks after editor disposal.",
+            "zoom-update pending high-water 1912 exceeds 1."
+          ],
+          "keys": [
+            "schema",
+            "role",
+            "complete",
+            "bounded",
+            "accepted",
+            "evidenceFailures",
+            "candidateViolations",
+            "frameId",
+            "renderer",
+            "phaseAtUs",
+            "caps",
+            "families",
+            "ledger",
+            "orphans",
+            "noOpRemovals",
+            "ignoredOtherFrames",
+            "unrelatedTimers",
+            "mainThreadTasks"
+          ],
+          "arrays": {
+            "evidenceFailures": 0,
+            "candidateViolations": 4,
+            "ledger": 37897,
+            "orphans": 0,
+            "noOpRemovals": 4220
+          }
+        },
+        "input": {
+          "keydown": 2086,
+          "keyToFrame": 2086,
+          "longTasks": 202
+        }
+      },
+      {
+        "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+        "source": "1f17dee5a50529852b85c28e64c632404028c94c",
+        "role": "candidate",
+        "complete": true,
+        "passed": true,
+        "traceRead": {
+          "sourceEvents": 1133309,
+          "retainedEvents": 1133309,
+          "callbackEvents": 244870,
+          "uncompressedBytes": 708265278,
+          "uncompressedSha256": "4dd4836ad1f7f5bd9b748129dce353cea9a7f07c3667643d9e9a7c9b19efd87f",
+          "maxEventBytes": 18372
+        },
+        "analysis": {
+          "accepted": true,
+          "evidenceFailures": [],
+          "candidateViolations": [],
+          "keys": [
+            "schema",
+            "role",
+            "complete",
+            "bounded",
+            "accepted",
+            "evidenceFailures",
+            "candidateViolations",
+            "frameId",
+            "renderer",
+            "phaseAtUs",
+            "caps",
+            "families",
+            "ledger",
+            "orphans",
+            "noOpRemovals",
+            "ignoredOtherFrames",
+            "unrelatedTimers",
+            "mainThreadTasks"
+          ],
+          "arrays": {
+            "evidenceFailures": 0,
+            "candidateViolations": 0,
+            "ledger": 31652,
+            "orphans": 0,
+            "noOpRemovals": 4225
+          }
+        },
+        "input": {
+          "keydown": 2086,
+          "keyToFrame": 2086,
+          "longTasks": 3
+        }
+      }
+    ]
+  },
+  {
+    "id": 14135182838,
+    "name": "doc-callback-lifetimes-mobile",
+    "retained": [
+      {
+        "name": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+        "bytes": 21554131
+      },
+      {
+        "name": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+        "bytes": 6574
+      },
+      {
+        "name": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+        "bytes": 3109
+      },
+      {
+        "name": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+        "bytes": 26212
+      },
+      {
+        "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+        "bytes": 19640716
+      },
+      {
+        "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+        "bytes": 6594
+      },
+      {
+        "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+        "bytes": 3029
+      },
+      {
+        "name": "test-results/spn113-comparison-mobile.json",
+        "bytes": 971282
+      },
+      {
+        "name": "playwright-report/doc-callback-lifetimes.json",
+        "bytes": 1341199
+      }
+    ],
+    "samples": [
+      {
+        "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+        "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+        "role": "baselineObservation",
+        "complete": true,
+        "passed": true,
+        "traceRead": {
+          "sourceEvents": 970238,
+          "retainedEvents": 970238,
+          "callbackEvents": 167687,
+          "uncompressedBytes": 599252528,
+          "uncompressedSha256": "95185f5db86b02b620d65feed2f3ceb8de60ca024f6819527348b00a24663f5c",
+          "maxEventBytes": 17411
+        },
+        "analysis": {
+          "accepted": true,
+          "evidenceFailures": [],
+          "candidateViolations": [
+            "cursor pending high-water 8346 exceeds 4.",
+            "cursor retains callbacks at/after editor disposal.",
+            "cursor fires or installs callbacks after editor disposal.",
+            "zoom-update pending high-water 2085 exceeds 1."
+          ],
+          "keys": [
+            "schema",
+            "role",
+            "complete",
+            "bounded",
+            "accepted",
+            "evidenceFailures",
+            "candidateViolations",
+            "frameId",
+            "renderer",
+            "phaseAtUs",
+            "caps",
+            "families",
+            "ledger",
+            "orphans",
+            "noOpRemovals",
+            "ignoredOtherFrames",
+            "unrelatedTimers",
+            "mainThreadTasks"
+          ],
+          "arrays": {
+            "evidenceFailures": 0,
+            "candidateViolations": 4,
+            "ledger": 35773,
+            "orphans": 0,
+            "noOpRemovals": 34
+          }
+        },
+        "input": {
+          "keydown": 2086,
+          "keyToFrame": 2086,
+          "longTasks": 1822
+        }
+      },
+      {
+        "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+        "source": "1f17dee5a50529852b85c28e64c632404028c94c",
+        "role": "candidate",
+        "complete": true,
+        "passed": true,
+        "traceRead": {
+          "sourceEvents": 973238,
+          "retainedEvents": 973238,
+          "callbackEvents": 186672,
+          "uncompressedBytes": 608866929,
+          "uncompressedSha256": "bc258358049d380d90e70034de187029fb9f4b8edcf4b482239e73513aa21bd0",
+          "maxEventBytes": 16126
+        },
+        "analysis": {
+          "accepted": true,
+          "evidenceFailures": [],
+          "candidateViolations": [],
+          "keys": [
+            "schema",
+            "role",
+            "complete",
+            "bounded",
+            "accepted",
+            "evidenceFailures",
+            "candidateViolations",
+            "frameId",
+            "renderer",
+            "phaseAtUs",
+            "caps",
+            "families",
+            "ledger",
+            "orphans",
+            "noOpRemovals",
+            "ignoredOtherFrames",
+            "unrelatedTimers",
+            "mainThreadTasks"
+          ],
+          "arrays": {
+            "evidenceFailures": 0,
+            "candidateViolations": 0,
+            "ledger": 29535,
+            "orphans": 0,
+            "noOpRemovals": 39
+          }
+        },
+        "input": {
+          "keydown": 2086,
+          "keyToFrame": 2086,
+          "longTasks": 896
+        }
+      }
+    ]
+  },
+  {
+    "id": 14135192910,
+    "name": "doc-responsiveness-desktop",
+    "retained": [
+      {
+        "name": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+        "bytes": 121718
+      },
+      {
+        "name": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+        "bytes": 124553
+      },
+      {
+        "name": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+        "bytes": 123614
+      },
+      {
+        "name": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+        "bytes": 125988
+      },
+      {
+        "name": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+        "bytes": 240
+      },
+      {
+        "name": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+        "bytes": 3434378
+      },
+      {
+        "name": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+        "bytes": 29271
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-desktop-5f9af--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+        "bytes": 164444
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+        "bytes": 938845
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+        "bytes": 951469
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+        "bytes": 953673
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+        "bytes": 952807
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+        "bytes": 226
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+        "bytes": 2606804
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-native--9dfea-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+        "bytes": 2363
+      },
+      {
+        "name": "test-results/spn108-comparison-desktop.json",
+        "bytes": 12776
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-native--b2c01-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+        "bytes": 67902
+      },
+      {
+        "name": "playwright-report/doc-responsiveness.json",
+        "bytes": 1348121
+      }
+    ],
+    "samples": []
+  },
+  {
+    "id": 14135823669,
+    "name": "doc-responsiveness-mobile",
+    "retained": [
+      {
+        "name": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+        "bytes": 256032
+      },
+      {
+        "name": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+        "bytes": 265865
+      },
+      {
+        "name": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+        "bytes": 264366
+      },
+      {
+        "name": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+        "bytes": 259220
+      },
+      {
+        "name": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+        "bytes": 242
+      },
+      {
+        "name": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+        "bytes": 6036099
+      },
+      {
+        "name": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+        "bytes": 29268
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-mobile--59407--typing-after-a-quiet-pause-doc-responsiveness/spn108-post-burst.json",
+        "bytes": 205654
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+        "bytes": 995436
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+        "bytes": 992730
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+        "bytes": 990196
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+        "bytes": 992110
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile-clock.json",
+        "bytes": 241
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-profile.cpuprofile",
+        "bytes": 4734593
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-native--032b2-nd-a-late-composition-event-doc-responsiveness/spn108-boundaries.json",
+        "bytes": 2346
+      },
+      {
+        "name": "test-results/doc-responsiveness/doc-responsiveness-native--bfbca-mit-without-partial-history-doc-responsiveness/spn108-boundaries.json",
+        "bytes": 66260
+      },
+      {
+        "name": "test-results/spn108-comparison-mobile.json",
+        "bytes": 12796
+      },
+      {
+        "name": "playwright-report/doc-responsiveness.json",
+        "bytes": 1348118
+      }
+    ],
+    "samples": []
+  }
+]

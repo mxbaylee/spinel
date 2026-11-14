@@ -1,0 +1,10 @@
+{
+  "kind": "collection sequencing error",
+  "artifact": 14135480953,
+  "message": "Incomplete download 14135480953",
+  "reason": "Streaming staging was invoked before the original asynchronous 203727185-byte callback artifact GET completed. Its live manifest entry had no complete=true yet.",
+  "disposition": "Stage stopped before reading incomplete bytes. Wait for the original GET terminal result before processing; do not retry or relabel any workflow/test.",
+  "candidateUnchanged": true,
+  "runtimeFailure": false,
+  "remoteMutation": false
+}
