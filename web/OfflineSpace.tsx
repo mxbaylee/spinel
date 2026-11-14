@@ -34,7 +34,10 @@ export function OfflineSpace({
   const [route, setRoute] = useState(() => readSpaceLocation(location));
   const [connection, setConnection] = useState<ConnectionState | null>(null);
   const [dirty, setDirty] = useState(false);
-  const offline = useOfflineDownloads(user, local, () => null);
+  const offline = useOfflineDownloads(user, local, () => null, {
+    foregroundItemId:
+      route.kind === 'space' && route.selection.kind === 'page' ? route.selection.id : null,
+  });
   useEffect(() => {
     if (!dirty) return;
     const warn = (event: BeforeUnloadEvent) => {

@@ -373,6 +373,45 @@ async function fixture({
 }
 
 test.each([false, true])(
+  'quiet stop joins persistence before disposal (disk failure=%s)',
+  async (fails) => {
+    const f = await fixture({ downloaded: true, canRefresh: () => false });
+    const entered = Promise.withResolvers<void>();
+    const commit = Promise.withResolvers<void>();
+    f.offline.persist.mockImplementation(async (capture) => {
+      capture();
+      entered.resolve();
+      await commit.promise;
+      if (fails) throw new Error('Disk unavailable');
+    });
+    const binding = getSpinelSync(f.univer)!;
+    const stopping = binding.stop();
+    const outcome = stopping.then(
+      () => 'saved',
+      () => 'failed',
+    );
+    try {
+      await entered.promise;
+      expect(binding.stop()).toBe(stopping);
+      expect(f.socket().readyState).toBe(3);
+      expect(f.client.disposed).toBe(false);
+      expect(f.offline.dispose).not.toHaveBeenCalled();
+      const requests = f.requests.mock.calls.length;
+      window.dispatchEvent(new Event('online'));
+      await vi.advanceTimersByTimeAsync(2000);
+      expect(f.requests).toHaveBeenCalledTimes(requests);
+      commit.resolve();
+      expect(await outcome).toBe(fails ? 'failed' : 'saved');
+      expect(f.client.disposed).toBe(true);
+      expect(f.offline.dispose).toHaveBeenCalledOnce();
+    } finally {
+      commit.resolve();
+      await outcome;
+    }
+  },
+);
+
+test.each([false, true])(
   'a %s downloaded viewer upgrades the existing native binding and retains downgrade fences',
   async (downloaded) => {
     const f = await fixture({ access: 'viewer', downloaded, space: downloaded });

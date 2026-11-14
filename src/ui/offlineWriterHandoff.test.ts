@@ -6,9 +6,11 @@ import { OfflineSession } from '../../web/offline/OfflineSession.ts';
 import * as offlineStorage from '../../web/offline/offlineStore.ts';
 import {
   offlineChanged,
+  reserveOfflineReplay,
   setPreparedAccount,
   watchOfflineChanges,
   withOfflineItemWriter,
+  withOfflineEditorAdmission,
 } from '../../web/offline/offlineStore.ts';
 import type { OfflineStore } from '../../web/offline/offlineStore.ts';
 
@@ -72,6 +74,53 @@ const checkpoint: ClientCheckpoint = {
   inflight: [],
   buffer: [],
 };
+
+test.each(['editor', 'maintenance'] as const)(
+  '%s admission joins replay persistence and reserves the handoff against another replay',
+  async (next) => {
+    const writing = deferred();
+    const committed = deferred();
+    const stopping = deferred();
+    let acquired = false;
+    const writer = locks.request(lockName, async () => {
+      writing.resolve();
+      await committed.promise;
+    });
+    const unregister = reserveOfflineReplay(accountId, itemId, async () => {
+      stopping.resolve();
+      await writer;
+      unregister!();
+    });
+    expect(unregister).toBeTypeOf('function');
+    await writing.promise;
+    const acquire = () =>
+      locks.request(lockName, { ifAvailable: true }, (lock) => {
+        acquired = Boolean(lock);
+      });
+    const opening =
+      next === 'editor'
+        ? withOfflineEditorAdmission(accountId, itemId, () => {}, acquire)
+        : withOfflineItemWriter(accountId, itemId, async () => {
+            acquired = true;
+          });
+    try {
+      await stopping.promise;
+      expect(acquired).toBe(false);
+      expect(reserveOfflineReplay(accountId, itemId, async () => {})).toBeUndefined();
+      committed.resolve();
+      await opening;
+      expect(acquired).toBe(true);
+      const available = reserveOfflineReplay(accountId, itemId, async () => {});
+      expect(available).toBeTypeOf('function');
+      available!();
+    } finally {
+      committed.resolve();
+      await writer;
+      await opening;
+      unregister!();
+    }
+  },
+);
 
 test('a prepared-account download hands its released writer to the mounted native storage adapter', async () => {
   // Use the runtime's real Web Locks. Only the IndexedDB boundary is replaced;
