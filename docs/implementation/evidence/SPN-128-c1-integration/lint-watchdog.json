@@ -1,0 +1,13 @@
+{
+  "name": "spn128-c1-lint",
+  "args": [
+    "npm",
+    "run",
+    "lint"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 11117,
+  "peakKiB": 756384
+}

@@ -1,0 +1,85 @@
+{
+  "source": "e7ed2646046e88fccae97e5afa19cf49c40384ce",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "parents": [
+    "0ea89fa0c8bdef894ec6c6a9c73486cd880364bc",
+    "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423"
+  ],
+  "node": "26.13.0",
+  "compilerEnvironment": {
+    "GOMEMLIMIT": "640MiB",
+    "GOGC": "50",
+    "GOMAXPROCS": "2"
+  },
+  "watchdogSha256": "203c67c3a455f630bd6b79156834cdfc18b4f9c5bb78591fffbe7214057e9dba",
+  "indexPreparation": "Index guard precedes the frozen merge; original pending-source identities retained in source-only-audit.json",
+  "firstAttemptFailures": [],
+  "resourceAborts": [],
+  "limits": "No Linux process/native/browser acceptance. All hosted gates and same-reviewer exact-head revalidation remain pending. Unsampled RSS is not zero memory.",
+  "files": [
+    {
+      "path": "backlog-watchdog.json",
+      "sha256": "a20400a1ff4e557cad256bd7a2cac3b1a10cd296ee57abb308580b17f69f34d0"
+    },
+    {
+      "path": "backlog.log.gz",
+      "sha256": "ca24cdfbb2251cae45b527a0017677ea62b8ff393e79971b2e10aea097033de3"
+    },
+    {
+      "path": "completed-source-audit.json",
+      "sha256": "08a3b0b7e65b6c5f2f7cdc4441bf851b966188cb668ecb6229dd1c4b9a0a4476"
+    },
+    {
+      "path": "contracts-watchdog.json",
+      "sha256": "5661dce6596cbbde21966e92d9d8b9e61f78775cfe8c7fbb6754b2dcc67161ed"
+    },
+    {
+      "path": "contracts.log.gz",
+      "sha256": "adbea9680c43bae767834b1c1db8d919025ba86170751ff66084138527e1beaa"
+    },
+    {
+      "path": "index-watchdog.json",
+      "sha256": "985d050e72ce8f0da469bb38e27cd220d091449a4c4f1a8495ae56c2735e1f69"
+    },
+    {
+      "path": "index.log.gz",
+      "sha256": "c562e7da50aa0e0d7dd1e28c68716af7e1d84134c86a8e87a9ab2b5f29969ffe"
+    },
+    {
+      "path": "lint-watchdog.json",
+      "sha256": "fb43f02ffc9cc7c9facc7f53908477c7e0812459595a5ed932a6ec41d6f4ebf8"
+    },
+    {
+      "path": "lint.log.gz",
+      "sha256": "d7284b138aeb2597c498b8062878bad13da9057c6d32c56ce6e9f4093c9cb926"
+    },
+    {
+      "path": "pr-watchdog.json",
+      "sha256": "0c19126a67a95712452fef86ef30029c285182ad70f1e4afe049b23652dfcf16"
+    },
+    {
+      "path": "pr.log.gz",
+      "sha256": "04f2a7f7183a0b7dd9205314450b2495a0e12f4cd0ae0bcdd42bae43789a02da"
+    },
+    {
+      "path": "scripts-watchdog.json",
+      "sha256": "0462e3fc5bd73615f0aebd07d590f902db4aa01bae4aac9336695bdb72f23acd"
+    },
+    {
+      "path": "scripts.log.gz",
+      "sha256": "2ffda9913babf949c23025cc3a1b5f5768a04bd5411e952ef5a853f85403fdbe"
+    },
+    {
+      "path": "source-only-audit.json",
+      "sha256": "d885f17cf092732e3152c50b821141ab6133eaa7dc05b182b31e082e6c7610d2"
+    },
+    {
+      "path": "types-watchdog.json",
+      "sha256": "41af97267c43ad7458f8f757abbf7481fdcbc480178ef935aeb1e75ff558441a"
+    },
+    {
+      "path": "types.log.gz",
+      "sha256": "8236b0002c9f4d07bf30e8b90e5ca52d1fa54c1754b98239741427b8ed2bfb83"
+    }
+  ]
+}
