@@ -1,6 +1,7 @@
 /**
  * A slow start names the step it is waiting on, so a phone with no inspector can still
- * report where startup stalled. Silent for the first seconds; gone once the app is up.
+ * report where startup stalled. Silent for the first 8 s, counted from when this module loads;
+ * the check timer starts at the first named step. Gone once the app is up.
  */
 const SHOW_AFTER_MS = 8000;
 let stage = 'starting';

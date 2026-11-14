@@ -355,7 +355,8 @@ lives in `web/offline/warmOpen.ts`.
 page loads skip the wait and take the offline path at once; `onLine === true` proves
 nothing and never short-circuits. A page load slower than 8 s to first byte falls back to
 the saved app (server-only pages such as sign-in and invites have no saved copy, so they
-wait for the server), and an item request slower than 15 s opens the device copy. On a slow but
+wait for the server), and an item request (the single `/api/items/<id>` fetch, not other Dashboard requests) slower than 15 s
+opens the device copy. On a slow but
 live network this chooses the saved copy over waiting; the app refetches once the
 connection answers. A start that is still waiting after 8 s names the step it is on
 (`web/startupStage.ts`), so a phone with no inspector can report where it stalled.
