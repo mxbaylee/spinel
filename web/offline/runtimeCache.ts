@@ -7,6 +7,13 @@ import {
 } from '../../src/shared/offlineShell.ts';
 import type { RuntimeCompatibility, ShellManifest } from '../../src/shared/offlineShell.ts';
 import type { RuntimeState } from './runtimeStore.ts';
+import {
+  installationAssetDigest,
+  installationPaths,
+  isInstallationPath,
+  validPwaManifest,
+} from '../../src/shared/pwa.ts';
+import type { InstallationPath } from '../../src/shared/pwa.ts';
 
 export const runtimeCacheName = (manifest: Pick<ShellManifest, 'version'>) =>
   SHELL_CACHE_PREFIX + manifest.version;
@@ -20,6 +27,75 @@ function contentType(response: Response, path: string) {
 function validAsset(response: Response | undefined, path: string) {
   return Boolean(response?.ok && !response.redirected && contentType(response, path));
 }
+async function validInstallationAsset(
+  response: Response | undefined,
+  path: InstallationPath,
+  file: string,
+) {
+  const expected = installationAssetDigest(path, file);
+  const manifest = path === '/manifest.webmanifest';
+  if (
+    !expected ||
+    !response?.ok ||
+    response.redirected ||
+    response.headers.get('Content-Type')?.split(';')[0].trim() !==
+      (manifest ? 'application/manifest+json' : 'image/png')
+  )
+    return false;
+  const reader = response.clone().body?.getReader();
+  if (!reader) return false;
+  const chunks: Uint8Array[] = [];
+  let length = 0;
+  try {
+    while (true) {
+      const result = await reader.read();
+      if (result.done) break;
+      length += result.value.byteLength;
+      if (length > (manifest ? 16_384 : 100_000)) {
+        // Cache responses can already be cloned tees. Rejection must not wait
+        // for an unused parent branch to consume or cancel its own response.
+        void reader.cancel().catch(() => {});
+        void response.body?.cancel().catch(() => {});
+        return false;
+      }
+      chunks.push(result.value);
+    }
+    const bytes = new Uint8Array(length);
+    let offset = 0;
+    for (const chunk of chunks) {
+      bytes.set(chunk, offset);
+      offset += chunk.length;
+    }
+    const digest = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))]
+      .map((byte) => byte.toString(16).padStart(2, '0'))
+      .join('');
+    if (digest !== expected) return false;
+    if (manifest) return validPwaManifest(JSON.parse(new TextDecoder().decode(bytes)));
+    const size = Number(path.match(/\d+/)![0]);
+    return (
+      bytes.length >= 33 &&
+      [137, 80, 78, 71, 13, 10, 26, 10].every((byte, index) => bytes[index] === byte) &&
+      new DataView(bytes.buffer).getUint32(8) === 13 &&
+      new TextDecoder().decode(bytes.slice(12, 16)) === 'IHDR' &&
+      new DataView(bytes.buffer).getUint32(16) === size &&
+      new DataView(bytes.buffer).getUint32(20) === size
+    );
+  } catch {
+    return false;
+  } finally {
+    reader.releaseLock();
+  }
+}
+async function validRuntimeAsset(
+  response: Response | undefined,
+  file: string,
+  manifest: ShellManifest,
+) {
+  const installation = installationPaths.find((path) => manifest.installation?.[path] === file);
+  return installation
+    ? validInstallationAsset(response, installation, file)
+    : validAsset(response, file);
+}
 const identical = (left: ShellManifest | null, right: ShellManifest) =>
   left !== null && JSON.stringify(left) === JSON.stringify(right);
 
@@ -28,7 +104,8 @@ export async function completeRuntime(manifest: ShellManifest, verify: () => voi
   const cacheName = runtimeCacheName(manifest);
   for (const file of manifest.files) {
     verify();
-    if (!validAsset(await caches.match(file, { cacheName }), file)) return false;
+    if (!(await validRuntimeAsset(await caches.match(file, { cacheName }), file, manifest)))
+      return false;
     verify();
   }
   const page = await caches.match(SHELL_PAGE, { cacheName });
@@ -55,7 +132,7 @@ export async function fillRuntime(
   for (const file of manifest.files) {
     signal.throwIfAborted();
     verify();
-    if (validAsset(await cache.match(file), file)) continue;
+    if (await validRuntimeAsset(await cache.match(file), file, manifest)) continue;
     const response = await fetch(file, {
       credentials: 'omit',
       cache: 'reload',
@@ -63,7 +140,10 @@ export async function fillRuntime(
       signal,
     });
     verify();
-    if (!validAsset(response, file) || new URL(response.url).pathname !== file)
+    if (
+      !(await validRuntimeAsset(response, file, manifest)) ||
+      new URL(response.url).pathname !== file
+    )
       throw new Error('A Spinel app file is missing or incomplete. Try again.');
     if (file.endsWith('.js') || file.endsWith('.css')) {
       // A misconfigured fallback can return HTML with a JavaScript MIME type.
@@ -170,6 +250,41 @@ export async function cachedAsset(
   for (const cacheName of new Set(names)) {
     const response = await caches.match(path, { cacheName });
     if (validAsset(response, path)) return response;
+  }
+  return undefined;
+}
+
+/** Public fixed URLs use one published build; reads never create or repair caches. */
+export async function cachedInstallationAsset(
+  path: string,
+  preferred: string | undefined,
+  state: RuntimeState | null,
+) {
+  if (!isInstallationPath(path)) return undefined;
+  const selected = state?.builds.find((manifest) => manifest.version === preferred);
+  const manifests = selected ? [selected] : [...(state?.builds ?? [])].reverse();
+  for (const manifest of manifests) {
+    const file = manifest.installation?.[path];
+    if (!file) continue; // Earlier complete runtimes retain their original contract.
+    const cacheName = runtimeCacheName(manifest);
+    const page = await caches.match(SHELL_PAGE, { cacheName });
+    if (!page?.ok || !page.headers.get('Content-Type')?.startsWith('text/html')) continue;
+    try {
+      if (!identical(runtimeDescriptor(await page.text()), manifest)) continue;
+    } catch {
+      continue;
+    }
+    const response = await caches.match(file, { cacheName });
+    if (!(await validInstallationAsset(response, path, file))) return undefined;
+    // A synthetic response keeps the fixed request URL, rather than exposing
+    // its hash-addressed cache URL as a redirect. No second HTTP cache is needed.
+    return new Response(response!.body, {
+      headers: {
+        'Content-Type': response!.headers.get('Content-Type')!,
+        'Cache-Control': 'no-store',
+        'X-Content-Type-Options': 'nosniff',
+      },
+    });
   }
   return undefined;
 }

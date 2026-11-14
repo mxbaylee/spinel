@@ -1,7 +1,10 @@
 import { afterEach, expect, test, vi } from 'vitest';
+import { createHash } from 'node:crypto';
+import sharp from 'sharp';
 import { openExistingDatabase } from '../../web/offline/existingDatabase.ts';
 import {
   completeRuntime,
+  cachedInstallationAsset,
   fillRuntime,
   publishedBuilds,
   runtimeCacheName,
@@ -14,6 +17,8 @@ import {
 } from '../../web/offline/runtime.ts';
 import { CURRENT_SDK_VERSION, LEGACY_COMPATIBILITY } from '../shared/offlineShell.ts';
 import type { ShellManifest } from '../shared/offlineShell.ts';
+import { installationAssetName, installationPaths, pwaManifest } from '../shared/pwa.ts';
+import type { InstallationPath } from '../shared/pwa.ts';
 import { initializeTheme } from './theme.ts';
 
 afterEach(() => {
@@ -196,8 +201,10 @@ test('releasing one account cannot release the independent unknown-legacy compat
   );
 });
 
-function response(body: string, path: string, mime: string) {
-  const value = new Response(body, { headers: { 'Content-Type': mime } });
+function response(body: string | Uint8Array, path: string, mime: string) {
+  const value = new Response(typeof body === 'string' ? body : new Uint8Array(body).buffer, {
+    headers: { 'Content-Type': mime },
+  });
   Object.defineProperty(value, 'url', { value: 'https://spinel.test' + path });
   return value;
 }
@@ -281,6 +288,174 @@ test.each(['wrong-build', 'redirect', 'html-asset'] as const)(
     expect(f.open).toHaveBeenCalledWith(runtimeCacheName(a));
   },
 );
+
+async function installationFixture() {
+  const assets = new Map<InstallationPath, Uint8Array>();
+  assets.set('/manifest.webmanifest', Buffer.from(JSON.stringify(pwaManifest)));
+  for (const size of [180, 192, 512] as const)
+    assets.set(
+      `/app-icon-${size}.png`,
+      await sharp({ create: { width: size, height: size, channels: 4, background: '#c42c58' } })
+        .png()
+        .toBuffer(),
+    );
+  const installation = Object.fromEntries(
+    installationPaths.map((path) => [
+      path,
+      installationAssetName(path, createHash('sha256').update(assets.get(path)!).digest('hex')),
+    ]),
+  ) as NonNullable<ShellManifest['installation']>;
+  const current = {
+    ...b,
+    files: [...b.files, ...Object.values(installation)],
+    installation,
+  };
+  const cached = cacheFixture(current);
+  for (const path of installationPaths) {
+    const file = installation[path];
+    cached.data.set(
+      file,
+      response(
+        assets.get(path)!,
+        file,
+        path === '/manifest.webmanifest' ? 'application/manifest+json' : 'image/png',
+      ),
+    );
+  }
+  const state = { ...emptyRuntimeState(), builds: [current] };
+  return { ...cached, assets, current, state };
+}
+
+test('prepared installation resources resolve offline from one published runtime without creating a cache', async () => {
+  const f = await installationFixture();
+  const fetch = vi.fn(async () => {
+    throw new Error('The network is offline');
+  });
+  vi.stubGlobal('fetch', fetch);
+  expect(await completeRuntime(f.current)).toBe(true);
+  for (const path of installationPaths) {
+    const result = await cachedInstallationAsset(path, f.current.version, f.state);
+    expect(result?.ok).toBe(true);
+    expect(result!.url).toBe(''); // The worker's synthetic response retains the caller's fixed URL.
+    expect(result!.redirected).toBe(false);
+    expect(new Uint8Array(await result!.arrayBuffer())).toEqual(
+      new Uint8Array(f.assets.get(path)!),
+    );
+  }
+  expect(fetch).not.toHaveBeenCalled();
+  expect(f.open).not.toHaveBeenCalled();
+});
+
+test('installation reads cannot create caches, publish a candidate, or replace an older pinned runtime', async () => {
+  const f = await installationFixture();
+  for (const path of ['/api/items', '/app-icon-8192.png', '/manifest.webmanifest?token=secret'])
+    expect(await cachedInstallationAsset(path, undefined, f.state)).toBeUndefined();
+  expect(await cachedInstallationAsset('/manifest.webmanifest', undefined, null)).toBeUndefined();
+  expect(
+    await cachedInstallationAsset('/manifest.webmanifest', undefined, {
+      ...emptyRuntimeState(),
+      candidate: f.current,
+    }),
+  ).toBeUndefined();
+  expect(
+    await cachedInstallationAsset('/manifest.webmanifest', a.version, {
+      ...f.state,
+      builds: [a, f.current],
+    }),
+  ).toBeUndefined();
+  f.data.delete('/');
+  expect(
+    await cachedInstallationAsset('/manifest.webmanifest', f.current.version, f.state),
+  ).toBeUndefined();
+  expect(f.open).not.toHaveBeenCalled();
+  const legacy = cacheFixture(a);
+  expect(await completeRuntime(a)).toBe(true);
+  expect(legacy.read.mock.calls.map(([path]) => path)).toEqual([...a.files, '/']);
+});
+
+test.each([
+  'missing',
+  'mime',
+  'different-bytes',
+  'unsafe-manifest',
+  'wrong-size',
+  'oversized',
+] as const)(
+  'installation %s cannot claim readiness or publish a completed shell',
+  async (failure) => {
+    const f = await installationFixture();
+    const path = failure === 'unsafe-manifest' ? '/manifest.webmanifest' : '/app-icon-192.png';
+    let file = f.current.installation[path];
+    let bytes = f.assets.get(path)!;
+    if (failure === 'unsafe-manifest' || failure === 'wrong-size' || failure === 'oversized') {
+      bytes =
+        failure === 'unsafe-manifest'
+          ? Buffer.from(JSON.stringify({ ...pwaManifest, start_url: '/?token=private' }))
+          : failure === 'wrong-size'
+            ? f.assets.get('/app-icon-180.png')!
+            : new Uint8Array(100_001);
+      const replaced = installationAssetName(
+        path,
+        createHash('sha256').update(bytes).digest('hex'),
+      );
+      f.current.files = f.current.files.map((entry) => (entry === file ? replaced : entry));
+      f.data.delete(file);
+      file = replaced;
+      f.current.installation[path] = file;
+      f.data.set('/', response(html(f.current), '/sign-in', 'text/html'));
+    }
+    const bad =
+      failure === 'missing'
+        ? new Response('missing', { status: 404 })
+        : response(
+            failure === 'different-bytes' ? f.assets.get('/app-icon-180.png')! : bytes,
+            file,
+            failure === 'mime'
+              ? 'text/html'
+              : path === '/manifest.webmanifest'
+                ? 'application/manifest+json'
+                : 'image/png',
+          );
+    f.data.set(file, bad);
+    expect(await completeRuntime(f.current)).toBe(false);
+    expect(await cachedInstallationAsset(path, f.current.version, f.state)).toBeUndefined();
+    f.data.delete('/');
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => bad.clone()),
+    );
+    await expect(fillRuntime(f.current, () => {}, new AbortController().signal)).rejects.toThrow(
+      'missing or incomplete',
+    );
+    expect(f.data.has('/')).toBe(false);
+  },
+);
+
+test('installation preparation fetches hash-addressed public bytes without credentials and publishes HTML last', async () => {
+  const f = await installationFixture();
+  const source = new Map(f.data);
+  f.data.clear();
+  const fetched: { path: string; init: RequestInit }[] = [];
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (path: string, init: RequestInit) => {
+      fetched.push({ path, init });
+      const value = source.get(path === '/sign-in' ? '/' : path)!.clone();
+      Object.defineProperty(value, 'url', { value: 'https://spinel.test' + path });
+      return value;
+    }),
+  );
+  await fillRuntime(f.current, () => {}, new AbortController().signal);
+  expect(await completeRuntime(f.current)).toBe(true);
+  expect(f.put.mock.calls.at(-1)?.[0]).toBe('/');
+  expect(fetched.map(({ path }) => path)).toEqual([...f.current.files, '/sign-in']);
+  expect(
+    fetched.every(
+      ({ init }) =>
+        init.credentials === 'omit' && init.cache === 'reload' && init.redirect === 'error',
+    ),
+  ).toBe(true);
+});
 
 test('compatible online recovery is independent of cached-public-shell readiness', async () => {
   vi.stubGlobal('window', {});

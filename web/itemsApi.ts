@@ -6,10 +6,12 @@ export async function itemsRequest<T>(
   method = 'GET',
   body?: unknown,
   verifyCurrent: () => void = () => {},
+  signal?: AbortSignal,
 ): Promise<T> {
   const response = await fetch(`/api/items${path}`, {
     method,
     credentials: 'same-origin',
+    ...(signal ? { signal } : {}),
     ...(body === undefined
       ? {}
       : { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }),
