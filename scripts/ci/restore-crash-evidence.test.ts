@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import { verifyCrashReceipts } from './restore-crash-evidence.ts';
 import {
   crashSnapshot,
+  captureCrashCut,
   finishCrashReceipt,
   restoreCrashCases,
   writeCrashReceipt,
@@ -360,5 +361,116 @@ test('each initial and cold crash controller needs its own actual SIGKILL witnes
       termination.signal = null;
       assert.throws(() => verifyCrashReceipts(receipts, source), /Only the postcommit/);
     }
+  }
+});
+
+test('available initial and cold observations survive an assertion failure without raw marker material', async () => {
+  for (const stage of ['cut', 'cold-cut', 'recovered'] as const) {
+    const receipt = complete().find((r) => r.case === 'cold-prepared')!;
+    receipt.snapshots = [];
+    receipt.cuts = [];
+    const record = {
+      intent: {
+        id,
+        target: { generationId: id },
+        confirmedAt: 1,
+        authority: { expiresAt: 2, secret: 'private' },
+      },
+      intentHash: 'd'.repeat(64),
+      phase: 'original-replacing',
+      execution: { stop: { fingerprint: original }, frozen: { fingerprint: original } },
+      recovery: {
+        attempts: [
+          {
+            phase: 'original-prepared',
+            grantedAt: 3,
+            deadline: 90003,
+            priorGenerationId: id,
+            attempt: { generationId: next },
+            bootEpoch: id,
+            image: { fingerprint: prepared },
+          },
+        ],
+      },
+    } as unknown as RestoreJobRecord;
+    const main = {
+      generationId: next,
+      operation: { id, actorId: 'cold-host', expiresAt: 90003, secret: 'private' },
+    } as unknown as RecoveryJournalState;
+    const originalError = new assert.AssertionError({
+      message: 'injected private assertion detail',
+    });
+    let observed: unknown;
+    try {
+      if (stage === 'recovered') {
+        receipt.snapshots.push(crashSnapshot(stage, record, main));
+        throw originalError;
+      }
+      captureCrashCut(
+        receipt,
+        stage,
+        { cut: 'cold-prepared', pid: 42, bytesWritten: 17 },
+        record,
+        main,
+        () => {
+          throw originalError;
+        },
+      );
+    } catch (error) {
+      observed = error;
+    }
+    assert.equal(observed, originalError);
+    let closed = false,
+      removed = false;
+    const directory = await mkdtemp(join(tmpdir(), 'spinel-failed-cut-'));
+    try {
+      await finishCrashReceipt(
+        receipt,
+        async () => {
+          closed = true;
+        },
+        async () => {
+          removed = true;
+        },
+        () => writeCrashReceipt(directory, receipt),
+        { error: observed },
+      );
+      const saved = JSON.parse(await readFile(join(directory, 'cold-prepared.json'), 'utf8'));
+      assert.equal(closed, true);
+      assert.equal(removed, false);
+      assert.equal(saved.result, 'failed');
+      assert.equal(saved.primaryFailure.name, 'AssertionError');
+      assert.deepEqual(
+        saved.cuts,
+        stage === 'recovered' ? [] : [{ name: 'cold-prepared', pid: 42, bytesWritten: 17 }],
+      );
+      assert.equal(saved.snapshots[0].fingerprints.live, null);
+      assert.equal(saved.snapshots[0].fingerprints.liveBoundary, 'not-opened-at-this-boundary');
+      assert.equal(saved.snapshots[0].stage, stage);
+      assert.deepEqual(saved.snapshots[0].generation, {
+        original: id,
+        current: next,
+        selected: next,
+      });
+      assert.equal(saved.snapshots[0].fingerprints.frozen, original);
+      assert.equal(saved.snapshots[0].fingerprints.preparedOriginal, prepared);
+      assert.equal(saved.snapshots[0].authority.cold[0].grantedAt, 3);
+      assert.doesNotMatch(JSON.stringify(saved), /private|secret/);
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+    captureCrashCut(
+      receipt,
+      'cut',
+      { cut: 'private-arbitrary-text', pid: 'secret', bytesWritten: -1 },
+      record,
+      main,
+      () => {},
+    );
+    assert.deepEqual(receipt.cuts.at(-1), {
+      name: 'unrecognized-cut',
+      pid: null,
+      bytesWritten: null,
+    });
   }
 });

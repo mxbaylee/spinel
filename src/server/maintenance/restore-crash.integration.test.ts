@@ -32,6 +32,7 @@ import type { RestoreJobRecord } from './restore-jobs.ts';
 import { finishRestoreCrashCleanup } from './restore-crash-cleanup-fixture.ts';
 import {
   crashSource,
+  captureCrashCut,
   crashSnapshot,
   crashFailure,
   finishCrashReceipt,
@@ -423,15 +424,11 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
           pid: number;
           bytesWritten?: number;
         };
-        expect(reached.cut).toBe(cut);
         const before = record();
         const main = JSON.parse(await readFile(join(root, 'journal.json'), 'utf8'));
-        receipt.cuts.push({
-          name: cut,
-          pid: reached.pid,
-          bytesWritten: reached.bytesWritten ?? null,
+        captureCrashCut(receipt, 'cut', reached, before, main, () => {
+          expect(reached.cut).toBe(cut);
         });
-        receipt.snapshots.push(crashSnapshot('cut', before, main));
         if (cut === 'private-open') {
           expect(reached.pid).toBe(before.execution!.trial!.child.pid);
           expect(before.phase).toBe('trial-opening');
@@ -840,9 +837,12 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
                 new Error('Cold recovery completed without reaching its crash cut.')
               );
             const coldReached = JSON.parse(await readFile(coldMarker, 'utf8'));
-            expect(coldReached.cut).toBe(cold);
-            const attempted = record(),
-              attempt = currentRestoreRecovery(attempted)!;
+            const attempted = record();
+            const coldMain = JSON.parse(await readFile(join(root, 'journal.json'), 'utf8'));
+            captureCrashCut(receipt, 'cold-cut', coldReached, attempted, coldMain, () => {
+              expect(coldReached.cut).toBe(cold);
+            });
+            const attempt = currentRestoreRecovery(attempted)!;
             expect(attempt.phase).toBe(coldPhases[cold]);
             expect(attempted.intent).toEqual(before.intent);
             expect(attempted.execution).toEqual(before.execution);
@@ -871,13 +871,6 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
                   ).toBe('Current folder');
                 });
             }
-            const coldMain = JSON.parse(await readFile(join(root, 'journal.json'), 'utf8'));
-            receipt.cuts.push({
-              name: cold!,
-              pid: coldReached.pid,
-              bytesWritten: coldReached.bytesWritten ?? null,
-            });
-            receipt.snapshots.push(crashSnapshot('cold-cut', attempted, coldMain));
             if (cold === 'cold-admission') {
               expect(coldMain.operation.actorId).toBe(before.intent.authority.actorId);
               expect(coldMain.generationId).toBe(attempt.priorGenerationId);
@@ -958,6 +951,12 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
           } else expect((await recover()).status.phase).toBe('running');
 
           committed = record();
+          const recoveredSnapshot = crashSnapshot(
+            'recovered',
+            committed,
+            JSON.parse(await readFile(join(root, 'journal.json'), 'utf8')),
+          );
+          receipt.snapshots.push(recoveredSnapshot);
           expect(restoreJobPhase(committed)).toBe('original-committed');
           expect(committed.intent).toEqual(before.intent);
           expect(committed.execution).toEqual(before.execution);
@@ -983,14 +982,8 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
           assertWorkspaceHandlesClosed(databasePath);
           await inspectCopy(directory, databasePath, true, (database) => {
             const liveFingerprint = restoreSnapshotFingerprint(database);
-            receipt.snapshots.push(
-              crashSnapshot(
-                'recovered',
-                record(),
-                JSON.parse(readFileSync(join(root, 'journal.json'), 'utf8')),
-                liveFingerprint,
-              ),
-            );
+            recoveredSnapshot.fingerprints.live = liveFingerprint;
+            recoveredSnapshot.fingerprints.liveBoundary = 'closed-read-only-probe';
             expect(liveFingerprint).toBe(recoveredImage.fingerprint);
             expect(
               database.prepare('SELECT name FROM workspace_items WHERE id=?').get(source.folderId)

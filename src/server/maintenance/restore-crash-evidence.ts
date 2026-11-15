@@ -148,7 +148,7 @@ export interface RestoreCrashReceipt {
     signal: string | null;
   }>;
   resources: Array<{ pid: number; boundary: 'cold-restart' | 'cold-recovered'; released: boolean }>;
-  cuts: Array<{ name: string; pid: number; bytesWritten: number | null }>;
+  cuts: Array<{ name: string; pid: number | null; bytesWritten: number | null }>;
   terminations: Array<{
     pid: number;
     action: 'sigkill' | 'already-exited';
@@ -158,6 +158,33 @@ export interface RestoreCrashReceipt {
   primaryFailure: ReturnType<typeof crashFailure> | null;
   secondaryFailures: ReturnType<typeof crashFailure>[];
   cleanup: { closure: 'not-reached' | 'passed' | 'failed'; temporaryData: 'retained' | 'removed' };
+}
+/** Retain only observed allowlisted marker/state fields before any cut assertions. */
+export function captureCrashCut(
+  receipt: RestoreCrashReceipt,
+  stage: 'cut' | 'cold-cut',
+  marker: unknown,
+  record: RestoreJobRecord,
+  main: RecoveryJournalState,
+  verify: () => void,
+) {
+  const observed =
+    marker && typeof marker === 'object'
+      ? (marker as { cut?: unknown; pid?: unknown; bytesWritten?: unknown })
+      : {};
+  receipt.cuts.push({
+    name: restoreCrashCases.includes(observed.cut as RestoreCrashCase)
+      ? String(observed.cut)
+      : 'unrecognized-cut',
+    pid:
+      Number.isSafeInteger(observed.pid) && Number(observed.pid) > 0 ? Number(observed.pid) : null,
+    bytesWritten:
+      Number.isSafeInteger(observed.bytesWritten) && Number(observed.bytesWritten) >= 0
+        ? Number(observed.bytesWritten)
+        : null,
+  });
+  receipt.snapshots.push(crashSnapshot(stage, record, main));
+  verify();
 }
 export async function writeCrashReceipt(directory: string, receipt: RestoreCrashReceipt) {
   assert.ok(restoreCrashCases.includes(receipt.case));

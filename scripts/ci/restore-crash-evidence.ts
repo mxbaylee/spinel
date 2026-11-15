@@ -89,7 +89,7 @@ export function verifyCrashReceipts(values: unknown[], source: CrashSource) {
     );
     for (const c of r.cuts) {
       keys(c, 'name pid bytesWritten');
-      assert.ok(number(c.pid) && c.pid > 0);
+      assert.ok(number(c.pid) && Number(c.pid) > 0);
       assert.ok(c.bytesWritten === null || number(c.bytesWritten));
     }
     assert.ok(
