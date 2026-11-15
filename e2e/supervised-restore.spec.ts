@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { copyFile, chmod, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { expect } from '@playwright/test';
-import { test, startRestoreTrace, retainRestoreTrace } from './supervised-restore-tracing.ts';
+import { test, startRestoreTrace, retainRestoreFailure } from './supervised-restore-tracing.ts';
 import { finishRestoreCrashCleanup } from '../src/server/maintenance/restore-crash-cleanup-fixture.ts';
 import type {
   APIResponse,
@@ -249,59 +249,6 @@ async function chooseSavedBackup(page: Page) {
   await expect(options.first()).toHaveText(/Choose a recovery point/);
   await options.nth(1).click();
   return dialog;
-}
-
-async function attachFailure(browser: Browser | undefined, info: TestInfo) {
-  const collectionFailures: string[] = [];
-  const errors: unknown[] = [];
-  const capture = async (name: string, collect: () => Promise<void>) => {
-    try {
-      await collect();
-    } catch (error) {
-      errors.push(error);
-      // A broken context/trace or attachment must not replace the test's
-      // original rejection or prevent evidence from other contexts/pages.
-      collectionFailures.push(name);
-    }
-  };
-  let contextIndex = 0;
-  for (const context of browser?.contexts() ?? []) {
-    const index = contextIndex++;
-    await capture(`startup-${index}`, () =>
-      info.attach(`restore-startup-${index}`, {
-        body: JSON.stringify(startupEvidence.get(context) ?? [], null, 2),
-        contentType: 'application/json',
-      }),
-    );
-    await capture(`trace-${index}`, async () => {
-      await retainRestoreTrace(context, info, index);
-    });
-    let pageIndex = 0;
-    for (const page of context.pages()) {
-      const id = `${index}-${pageIndex++}`;
-      if (page.isClosed()) continue;
-      await capture(`screenshot-${id}`, async () =>
-        info.attach(`restore-failure-${id}`, {
-          body: await page.screenshot({ animations: 'disabled' }),
-          contentType: 'image/png',
-        }),
-      );
-      await capture(`state-${id}`, async () =>
-        info.attach(`restore-state-${id}`, {
-          body: await page.locator('body').ariaSnapshot(),
-          contentType: 'text/plain',
-        }),
-      );
-    }
-  }
-  if (collectionFailures.length)
-    await capture('collection-failure-attachment', () =>
-      info.attach('restore-diagnostic-collection-failures', {
-        body: JSON.stringify(collectionFailures),
-        contentType: 'application/json',
-      }),
-    );
-  return errors;
 }
 
 const skipUnsupported = (info: TestInfo) =>
@@ -565,16 +512,7 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
     expect(count('confirm')).toBe(2);
     expect(failures).toEqual([]);
   } catch (error) {
-    const evidenceFailures = await attachFailure(browser, info);
-    primaryFailure = {
-      error: evidenceFailures.length
-        ? new AggregateError(
-            [error, ...evidenceFailures],
-            'Restore failed and evidence capture also failed.',
-            { cause: error },
-          )
-        : error,
-    };
+    primaryFailure = { error: await retainRestoreFailure(browser, info, startupEvidence, error) };
     throw primaryFailure.error;
   } finally {
     await finishRestoreCrashCleanup(
@@ -682,16 +620,7 @@ test('an admitted upload outlasts its passkey check and can still be cancelled',
     const status = await publicStatus(app.publicOrigin);
     expect([status.phase, status.epoch]).toEqual(['running', app.running.epoch]);
   } catch (error) {
-    const evidenceFailures = await attachFailure(browser, info);
-    primaryFailure = {
-      error: evidenceFailures.length
-        ? new AggregateError(
-            [error, ...evidenceFailures],
-            'Restore failed and evidence capture also failed.',
-            { cause: error },
-          )
-        : error,
-    };
+    primaryFailure = { error: await retainRestoreFailure(browser, info, startupEvidence, error) };
     throw primaryFailure.error;
   } finally {
     // A failure before release aborts every intercepted request; never leave a
