@@ -105,8 +105,11 @@ export function verifyCrashReceipts(values: unknown[], source: CrashSource) {
         assert.equal(k.action, 'already-exited');
         assert.equal(k.signal, null);
         assert.ok(
-          r.controllers.some((c) => c.pid === k.pid && (c.exitCode !== null || c.signal !== null)),
-          'No-op termination requires an observed terminal controller.',
+          r.case === 'postcommit' &&
+            r.controllers.some(
+              (c) => c.initial && c.pid === k.pid && (c.exitCode !== null || c.signal !== null),
+            ),
+          'Only the postcommit initial controller may already have exited.',
         );
       }
     }
@@ -124,12 +127,17 @@ export function verifyCrashReceipts(values: unknown[], source: CrashSource) {
       );
     const initial = r.controllers.find((c) => c.initial);
     assert.ok(
-      initial && r.terminations.some((k) => k.pid === initial.pid),
+      initial &&
+        r.terminations.some(
+          (k) => k.pid === initial.pid && (r.case === 'postcommit' || k.action === 'sigkill'),
+        ),
       'Initial controller kill unproved.',
     );
     if (cold)
       assert.ok(
-        r.controllers.some((c) => c.cold && r.terminations.some((k) => k.pid === c.pid)),
+        r.controllers.some(
+          (c) => c.cold && r.terminations.some((k) => k.pid === c.pid && k.action === 'sigkill'),
+        ),
         'Cold controller kill unproved.',
       );
     const recovers =

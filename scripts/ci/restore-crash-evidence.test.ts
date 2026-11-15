@@ -346,3 +346,19 @@ test('postcommit retains actual writer SIGKILL while an already-exited controlle
   post.terminations[1].signal = null;
   assert.throws(() => verifyCrashReceipts(r, source));
 });
+
+test('each initial and cold crash controller needs its own actual SIGKILL witness', () => {
+  for (const name of restoreCrashCases.filter((c) => c.startsWith('cold-'))) {
+    for (const role of ['initial', 'cold'] as const) {
+      const receipts = complete();
+      const receipt = receipts.find((r) => r.case === name)!;
+      const controller = receipt.controllers.find((c) => c[role])!;
+      controller.exitCode = 0;
+      controller.signal = null;
+      const termination = receipt.terminations.find((k) => k.pid === controller.pid)!;
+      termination.action = 'already-exited';
+      termination.signal = null;
+      assert.throws(() => verifyCrashReceipts(receipts, source), /Only the postcommit/);
+    }
+  }
+});
