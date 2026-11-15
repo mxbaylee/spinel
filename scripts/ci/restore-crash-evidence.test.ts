@@ -456,7 +456,10 @@ test('available initial and cold observations survive an assertion failure witho
       assert.equal(saved.snapshots[0].fingerprints.frozen, original);
       assert.equal(saved.snapshots[0].fingerprints.preparedOriginal, prepared);
       assert.equal(saved.snapshots[0].authority.cold[0].grantedAt, 3);
-      assert.doesNotMatch(JSON.stringify(saved), /"secret"|"private"|injected private assertion detail/);
+      assert.doesNotMatch(
+        JSON.stringify(saved),
+        /"secret"|"private"|injected private assertion detail/,
+      );
       assert.equal(saved.cleanup.temporaryData, 'retained');
     } finally {
       await rm(directory, { recursive: true, force: true });
