@@ -1,0 +1,94 @@
+{
+  "observedAt": "2026-11-15 00:54:10 UTC",
+  "open": [
+    {
+      "number": 289,
+      "title": "🔁 SPN-156 Sync saved edits while the file list is open",
+      "author": "mxbaylee",
+      "state": "open",
+      "head": "codex/spn-156-file-list-replay",
+      "head_sha": "5c764793f03f7f885873d08d6eca0660cd401bf0",
+      "base": "main",
+      "base_sha": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+      "url": "https://github.com/mxbaylee/spinel/pull/289"
+    },
+    {
+      "number": 281,
+      "title": "🧩 SPN-087 Remove obsolete layout CSS from Storybook examples",
+      "author": "mxbaylee",
+      "state": "open",
+      "head": "codex/spn-087-storybook-layout-cleanup",
+      "head_sha": "0ed9ef8b23bccbae4f24f4b608a6b55b54c47526",
+      "base": "main",
+      "base_sha": "04baabd6a68abe7c0b225f8699681532e2205b60",
+      "url": "https://github.com/mxbaylee/spinel/pull/281"
+    },
+    {
+      "number": 260,
+      "title": "💬 SPN-089 Check remaining dialogs for consistent title icons",
+      "author": "mxbaylee",
+      "state": "open",
+      "head": "codex/spn-089-dialog-title-icons",
+      "head_sha": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+      "base": "main",
+      "base_sha": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+      "url": "https://github.com/mxbaylee/spinel/pull/260"
+    },
+    {
+      "number": 247,
+      "title": "⏳ SPN-110 Expire diagnostic events after seven days",
+      "author": "mxbaylee",
+      "state": "open",
+      "head": "codex/spn-110-diagnostic-retention",
+      "head_sha": "09093eb64c08cd262acc8390c64581a7f82c5fc2",
+      "base": "main",
+      "base_sha": "18a8759c498574a1d9cc24a969a558cd97a798ed",
+      "url": "https://github.com/mxbaylee/spinel/pull/247"
+    },
+    {
+      "number": 246,
+      "title": "🔕 SPN-106 Avoid a protection warning when opening view-only Docs",
+      "author": "mxbaylee",
+      "state": "open",
+      "head": "codex/spn-106-viewer-startup",
+      "head_sha": "b9e57e465727870542177170b9acdc56656584ab",
+      "base": "main",
+      "base_sha": "18a8759c498574a1d9cc24a969a558cd97a798ed",
+      "url": "https://github.com/mxbaylee/spinel/pull/246"
+    },
+    {
+      "number": 230,
+      "title": "🖼️ SPN-068 Insert images into a Sheet",
+      "author": "mxbaylee",
+      "state": "open",
+      "head": "codex/spn-068-sheet-images",
+      "head_sha": "6f2d902e236a4070cf89b3c6cb16a6897b22f701",
+      "base": "main",
+      "base_sha": "18a8759c498574a1d9cc24a969a558cd97a798ed",
+      "url": "https://github.com/mxbaylee/spinel/pull/230"
+    },
+    {
+      "number": 229,
+      "title": "🌷 SPN-128 Reinstall the preserved original after an interrupted restore",
+      "author": "mxbaylee",
+      "state": "open",
+      "head": "codex/spn-128-original-recovery",
+      "head_sha": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "base": "main",
+      "base_sha": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+      "url": "https://github.com/mxbaylee/spinel/pull/229"
+    },
+    {
+      "number": 223,
+      "title": "📌 SPN-099 Run Univer core unpatched once upstream ships the fixes",
+      "author": "mxbaylee",
+      "state": "open",
+      "head": "codex/spn-099-stock-core",
+      "head_sha": "f4e7db978a553a0dcc286937503de87b79ee9d06",
+      "base": "main",
+      "base_sha": "e63956c7ec214af03c825104a81f63517eb87d0b",
+      "url": "https://github.com/mxbaylee/spinel/pull/223"
+    }
+  ],
+  "dependabot": []
+}

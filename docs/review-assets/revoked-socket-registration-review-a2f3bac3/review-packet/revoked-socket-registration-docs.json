@@ -1,0 +1,12 @@
+{
+  "name": "revoked-socket-registration-docs",
+  "args": [
+    "node",
+    "/tmp/spinel-socket-closure-registration/inspect-docs.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 155,
+  "peakKiB": 0
+}

@@ -1,0 +1,12 @@
+{
+  "name": "spn161-review-a-docs-a2f3bac3",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "/tmp/spn161-review-a-inspect.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 154,
+  "peakKiB": 0
+}

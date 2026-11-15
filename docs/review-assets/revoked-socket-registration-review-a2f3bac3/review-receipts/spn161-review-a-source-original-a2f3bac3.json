@@ -1,0 +1,217 @@
+{
+  "head": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef",
+  "sourceBindingsVerified": [
+    "e2e/collaboration.spec.ts",
+    "e2e/session-revocation.ts",
+    "scripts/ci/session-revocation.test.ts",
+    "e2e/sync-network.ts",
+    "e2e/native-sheet-value.ts",
+    "playwright.config.ts",
+    "scripts/e2e.ts",
+    "scripts/e2e-server.ts",
+    "src/server/sync/transport.ts",
+    "src/server/auth/store.ts",
+    "src/server/collaboration/identity.ts",
+    "web/spinelSync.ts",
+    "lib/sync-client/index.ts",
+    "lib/sync-server/index.ts",
+    "package.json",
+    "package-lock.json"
+  ],
+  "originalZipHash": "2dfe9b8331b971d4e0ca92ded19d53918ea845a569b8829fcd310ee8fa5c335d",
+  "originalReportHash": "edd0beae9188fff2171eb0d6dcd1455669bcf2f7cdf5d659b08d0a7d15acf29d",
+  "stats": {
+    "startTime": "2026-11-15T00:29:06.859Z",
+    "duration": 876781.326,
+    "expected": 76,
+    "skipped": 4,
+    "unexpected": 0,
+    "flaky": 1
+  },
+  "attempts": [
+    {
+      "retry": 0,
+      "status": "failed",
+      "duration": 11480,
+      "attachments": [
+        {
+          "name": "session-revocation-observation",
+          "inline": true,
+          "path": null,
+          "sha256": "d5b15562aeba0e85a9292cc61f6f73952a37ea1a303022d2d66fbf28935b2749",
+          "receipt": {
+            "version": 1,
+            "project": "development",
+            "retry": 0,
+            "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+            "node": "v26.13.0",
+            "browser": "156.0.8078.4",
+            "contractCompleted": false,
+            "primaryFailed": true,
+            "cleanupFailures": [],
+            "observation": {
+              "targetCount": 1,
+              "closedTargets": 0,
+              "openSockets": 1,
+              "receivedFrames": 6,
+              "overflow": false,
+              "observerLost": false,
+              "reopened": false,
+              "events": [
+                {
+                  "kind": "navigation",
+                  "ms": 15
+                },
+                {
+                  "kind": "socket-created",
+                  "ms": 5143,
+                  "socket": 1
+                },
+                {
+                  "kind": "socket-opened",
+                  "ms": 5161,
+                  "socket": 1
+                },
+                {
+                  "kind": "edit-held",
+                  "ms": 6383
+                },
+                {
+                  "kind": "revocation-requested",
+                  "ms": 6383
+                },
+                {
+                  "kind": "revocation-written",
+                  "ms": 6383
+                },
+                {
+                  "kind": "navigation",
+                  "ms": 6438
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "screenshot",
+          "inline": false,
+          "path": "/home/runner/work/spinel/spinel/test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development/test-failed-1.png"
+        },
+        {
+          "name": "screenshot",
+          "inline": false,
+          "path": "/home/runner/work/spinel/spinel/test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development/test-failed-2.png"
+        },
+        {
+          "name": "error-context",
+          "inline": false,
+          "path": "/home/runner/work/spinel/spinel/test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development/error-context.md"
+        }
+      ]
+    },
+    {
+      "retry": 1,
+      "status": "passed",
+      "duration": 18432,
+      "attachments": [
+        {
+          "name": "session-revocation-observation",
+          "inline": true,
+          "path": null,
+          "sha256": "ec18330211b12bffb89b9826c3dfa1f56080d51c83ef3ac28b710403abcdb593",
+          "receipt": {
+            "version": 1,
+            "project": "development",
+            "retry": 1,
+            "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+            "node": "v26.13.0",
+            "browser": "156.0.8078.4",
+            "contractCompleted": true,
+            "primaryFailed": false,
+            "cleanupFailures": [],
+            "observation": {
+              "targetCount": 1,
+              "closedTargets": 1,
+              "openSockets": 0,
+              "receivedFrames": 5,
+              "overflow": false,
+              "observerLost": false,
+              "reopened": false,
+              "events": [
+                {
+                  "kind": "navigation",
+                  "ms": 30
+                },
+                {
+                  "kind": "socket-created",
+                  "ms": 8539,
+                  "socket": 1
+                },
+                {
+                  "kind": "socket-opened",
+                  "ms": 8557,
+                  "socket": 1
+                },
+                {
+                  "kind": "edit-held",
+                  "ms": 10275
+                },
+                {
+                  "kind": "revocation-requested",
+                  "ms": 10275
+                },
+                {
+                  "kind": "revocation-written",
+                  "ms": 10279
+                },
+                {
+                  "kind": "socket-closed",
+                  "ms": 10347,
+                  "socket": 1
+                },
+                {
+                  "kind": "page-close",
+                  "ms": 10348
+                },
+                {
+                  "kind": "closure-observed",
+                  "ms": 10388
+                },
+                {
+                  "kind": "navigation",
+                  "ms": 10395
+                },
+                {
+                  "kind": "sign-in",
+                  "ms": 12220
+                },
+                {
+                  "kind": "request-denied",
+                  "ms": 12239
+                },
+                {
+                  "kind": "edit-released",
+                  "ms": 12240
+                },
+                {
+                  "kind": "saved",
+                  "ms": 12298
+                },
+                {
+                  "kind": "reloaded",
+                  "ms": 17875
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "trace",
+          "inline": false,
+          "path": "/home/runner/work/spinel/spinel/test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development-retry1/trace.zip"
+        }
+      ]
+    }
+  ],
+  "noPriorMain161": true
+}

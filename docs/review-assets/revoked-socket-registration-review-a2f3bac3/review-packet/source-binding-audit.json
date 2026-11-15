@@ -1,0 +1,134 @@
+{
+  "at": "2026-11-15T00:53:11.789809+00:00",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+  "bindings": [
+    {
+      "path": "e2e/collaboration.spec.ts",
+      "blob": "4288b469f77dc552bd92698fc33d1b13f3608491",
+      "sha256": "6c03692085cd5949656d123c6a530e9d3aadd3a2bab6a17cdd41b702fef4001c",
+      "bytes": 24881,
+      "independentlyRecheckedIdentical": true
+    },
+    {
+      "path": "e2e/session-revocation.ts",
+      "blob": "e37dc3f24b0cb5cc573fdb41ca46fa75b575f17c",
+      "sha256": "f2d2994721d85e2b8ea8d71c565628953570054599c90f95ebc9d4f201ce173a",
+      "bytes": 6622,
+      "independentlyRecheckedIdentical": true
+    },
+    {
+      "path": "scripts/ci/session-revocation.test.ts",
+      "blob": "71c9a32209f6f0a2da124a3353766f626b4d0203",
+      "sha256": "b331718d8cd145b6d4986f3a1323c5b881e01892505d0b33d7d0ae43299bf462",
+      "bytes": 13967,
+      "independentlyRecheckedIdentical": true
+    },
+    {
+      "path": "e2e/sync-network.ts",
+      "blob": "c6b012e771c4014ca835b3c1652e77146da942f8",
+      "sha256": "d7b5260969c65ec880e30d41002e725396edf3fdfa1599a77e15c4143cbb30f6",
+      "bytes": 4653,
+      "independentlyRecheckedIdentical": true
+    },
+    {
+      "path": "e2e/native-sheet-value.ts",
+      "blob": "f7e8cbc8548e0b83453fac26cf8abd7f96c58e8b",
+      "sha256": "138fbdee2bf57d16464fc07873424afe193e01796f363d6fcdfafa8c2673f7f2",
+      "bytes": 1278,
+      "independentlyRecheckedIdentical": true
+    },
+    {
+      "path": "playwright.config.ts",
+      "blob": "2827bada47fea07f431ce1274b4502a4ef7c3962",
+      "sha256": "5ed2d15eb3a547699aca0d594488a7bd1a632c9dc32ba608b17cade9f00e991e",
+      "bytes": 11761,
+      "independentlyRecheckedIdentical": true
+    },
+    {
+      "path": "scripts/e2e.ts",
+      "blob": "a0df0d0066df8cef376bfe307d5a86aa4b043c78",
+      "sha256": "bfedc50055769ffd25f72a7a1226264b654c5053946008e25e662b1a664ca02e",
+      "bytes": 1178,
+      "independentlyRecheckedIdentical": true
+    },
+    {
+      "path": "scripts/e2e-server.ts",
+      "blob": "807ebdbf0b573592ce366fc81d39d6328bfc4acd",
+      "sha256": "2d34dc490f83188b97d4d3a37700547dcb4cd66e17cd6ec9482eb4d214802c87",
+      "bytes": 5000,
+      "independentlyRecheckedIdentical": true
+    },
+    {
+      "path": "src/server/sync/transport.ts",
+      "blob": "c5ed3287525d8ff77453e8c9150f11386e98f9cb",
+      "sha256": "4e20587e388d8917d469a03d8b8815ba189e1132541572adcb54f7711969034f",
+      "bytes": 25379,
+      "independentlyRecheckedIdentical": true
+    },
+    {
+      "path": "src/server/auth/store.ts",
+      "blob": "38d6f2c7584bd86e51e31f56633cda5becf1fc11",
+      "sha256": "685ce48e89ec1dc8377846d43fc8f5c35c70b3a56ca1420405fd857fc358fedf",
+      "bytes": 12282,
+      "independentlyRecheckedIdentical": true
+    },
+    {
+      "path": "src/server/collaboration/identity.ts",
+      "blob": "dd3f48d1a45c9781f0ec30603727ece6b95bc661",
+      "sha256": "04178ff41ec48241bd230060f11b1d11e479befb2115665c4e8ae3e9e4dd3f79",
+      "bytes": 2186,
+      "independentlyRecheckedIdentical": true
+    },
+    {
+      "path": "web/spinelSync.ts",
+      "blob": "72c3091f5e1b728aadb291ded8d072cbf75335cb",
+      "sha256": "fab3500a1cfb37588c1ce2bb8819ad622af157af7b25079baced7ef16fd2a6ee",
+      "bytes": 48874,
+      "independentlyRecheckedIdentical": true
+    },
+    {
+      "path": "lib/sync-client/index.ts",
+      "blob": "b269b0b7d1cee6fa5b9b7ca0f89df7962ffebde1",
+      "sha256": "a9d7b38129f503aae2d8333cac0c47f751d8b7ebd24894f550f24633f9228171",
+      "bytes": 928,
+      "independentlyRecheckedIdentical": true
+    },
+    {
+      "path": "lib/sync-server/index.ts",
+      "blob": "dea4e7f08d1c7a1753d6eb7158e28df1fc90c22f",
+      "sha256": "327e8440ed3e762bfaccdfe2863b9ffc26d261fd3093339acfb1009f30af1039",
+      "bytes": 628,
+      "independentlyRecheckedIdentical": true
+    },
+    {
+      "path": "package.json",
+      "blob": "0ba4acdbceb3c2d49577732721df19d6b46326f9",
+      "sha256": "6d5889eeacae9a57c06848bcf2938ef5280ec3cd3c5488a7cf22564814baf5fd",
+      "bytes": 4392,
+      "independentlyRecheckedIdentical": true
+    },
+    {
+      "path": "package-lock.json",
+      "blob": "01b11150af11d2f3eddb04b00e03ba6decad74c7",
+      "sha256": "5c247ce8ca878599d97d5cc4f9dd6794dbbebc707d0d6d98355c789fce3d6be2",
+      "bytes": 366686,
+      "independentlyRecheckedIdentical": true
+    }
+  ],
+  "limits": "Unchanged direct/shared source establishes ownership/provenance, not historical physical socket state or exclusion of every timing contribution.",
+  "independentFailureAudit": {
+    "path": "/tmp/spn128-terminal-d22baa69/audit-output/development-first-failure.json",
+    "sha256": "9b2e4bba33fb7bdc8dfe32363a396c36b131656eb40c030dd0e6f7e1a69daf29",
+    "bytes": 10352,
+    "role": "Copied independent derived failure audit, not original Playwright reporter"
+  },
+  "originalArtifactIdentityFromAudit": {
+    "id": 14139456753,
+    "sha256": "2dfe9b8331b971d4e0ca92ded19d53918ea845a569b8829fcd310ee8fa5c335d",
+    "reportMember": "playwright-report/development-1-of-2.json",
+    "reportSha256": "edd0beae9188fff2171eb0d6dcd1455669bcf2f7cdf5d659b08d0a7d15acf29d",
+    "reportBytes": 1483603
+  }
+}

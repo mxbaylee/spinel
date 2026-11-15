@@ -1,0 +1,2 @@
+pull request ok
+{"name":"spn161-b-pr-a2f3bac3","args":["/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node","scripts/backlog/cli.ts","pr","--base","8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d","--title","🧹 Groom backlog register revoked socket closure verification"],"code":0,"signal":null,"reason":null,"elapsedMs":386,"peakKiB":182080}

@@ -1,0 +1,7 @@
+docs/todo/backlog.json 15ms
+docs/todo/SPN-128.md 30ms (unchanged)
+docs/todo/SPN-161.md 8ms (unchanged)
+docs/implementation/SPN-128.md 4ms (unchanged)
+docs/implementation/SPN-161.md 13ms (unchanged)
+docs/implementation/grooming-revoked-socket-closure-2026-11-14.md 5ms (unchanged)
+{"name":"revoked-socket-registration-format","args":["node","/Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs","--write","docs/todo/backlog.json","docs/todo/SPN-128.md","docs/todo/SPN-161.md","docs/implementation/SPN-128.md","docs/implementation/SPN-161.md","docs/implementation/grooming-revoked-socket-closure-2026-11-14.md"],"code":0,"signal":null,"reason":null,"elapsedMs":225,"peakKiB":205456}

@@ -1,0 +1,265 @@
+{
+  "source": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "tree": "8e9d817e847e5d99ce93efef0018bff2654a52d5",
+  "changedPaths": [
+    "docs/implementation/SPN-128.md",
+    "docs/implementation/SPN-161.md",
+    "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+    "docs/todo/SPN-128.md",
+    "docs/todo/SPN-161.md",
+    "docs/todo/backlog.json",
+    "docs/todo/readme.md"
+  ],
+  "gradeOnlyRedactions": [
+    {
+      "copy": "base/docs/implementation/grooming-2026-10-26.md",
+      "masked": "historical numerical assessment only"
+    },
+    {
+      "copy": "base/docs/implementation/grooming-2026-10-26.md",
+      "masked": "historical numerical assessment only"
+    },
+    {
+      "copy": "candidate/docs/implementation/grooming-2026-10-26.md",
+      "masked": "historical numerical assessment only"
+    },
+    {
+      "copy": "candidate/docs/implementation/grooming-2026-10-26.md",
+      "masked": "historical numerical assessment only"
+    }
+  ],
+  "standingPolicyThresholds": "preserved exactly",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3645,
+      "sha256": "726229205f1fe1c5caec7bf40a83397e53d5b4fe1e748308b36c8d2b3894d001"
+    },
+    {
+      "path": "allocation.log",
+      "bytes": 370,
+      "sha256": "6ffd083b0999011d97ae34141e02e3414295830625d7cdf0575326e8a9c684f7"
+    },
+    {
+      "path": "backlog.log",
+      "bytes": 1692,
+      "sha256": "0b0682b77b719d6c02cef4f9e05f7962fc149d26a04927530abcc4cc6633ca8c"
+    },
+    {
+      "path": "base/AGENTS.md",
+      "bytes": 9410,
+      "sha256": "ddf8eeb2e26531135aed1b3bc5f5f6eac41c066d79fdad57c694d9a0aa2aa471"
+    },
+    {
+      "path": "base/docs/implementation/README.md",
+      "bytes": 2787,
+      "sha256": "3c88b2aba9b941f730f822f4f3da34d2a29a21f5d36002c706362a9006b21cc3"
+    },
+    {
+      "path": "base/docs/implementation/grooming-2026-10-26.md",
+      "bytes": 18208,
+      "sha256": "7ca8c0eaf6c95b21b034b58183cff9b2d5bc919c246315c01f4d0b6362d9e134"
+    },
+    {
+      "path": "base/docs/product/personas.md",
+      "bytes": 2976,
+      "sha256": "aaf8fda6ee5eae10f8bea30d83caa0fba759e8d74632f7ddd92a3436fe53573d"
+    },
+    {
+      "path": "base/docs/run-backlog.md",
+      "bytes": 27503,
+      "sha256": "4a4365f7cc25c0daa83b4ef2af82819352640bb22c83c72f518a327643cf6a27"
+    },
+    {
+      "path": "base/docs/testing.md",
+      "bytes": 15433,
+      "sha256": "0f4c06be8ca96405f2885abbce2d502c9f3c290a8225f3a938bcf25ba9af34d3"
+    },
+    {
+      "path": "base/docs/todo/SPN-128.md",
+      "bytes": 3265,
+      "sha256": "d3a5089f3a021ddef8446776047fb364e88af4c4a4ea7923f9f277a5198ada2d"
+    },
+    {
+      "path": "base/docs/todo/backlog.json",
+      "bytes": 560,
+      "sha256": "177f55023c7930fc775978cb0cf0c1fa122467c38b2cf185cd8e5ea7cad703d3"
+    },
+    {
+      "path": "base/docs/todo/process.md",
+      "bytes": 29875,
+      "sha256": "d820f9c8309ece29d78c6fd12993ffe581ebda1869d4725c0319dcf17ee9943e"
+    },
+    {
+      "path": "base/docs/todo/readme.md",
+      "bytes": 3933,
+      "sha256": "1ecf6a2d58c834194b6a5740a9f47657ce9794c488c531134b005094e878ecf7"
+    },
+    {
+      "path": "candidate/AGENTS.md",
+      "bytes": 9410,
+      "sha256": "ddf8eeb2e26531135aed1b3bc5f5f6eac41c066d79fdad57c694d9a0aa2aa471"
+    },
+    {
+      "path": "candidate/docs/implementation/README.md",
+      "bytes": 2787,
+      "sha256": "3c88b2aba9b941f730f822f4f3da34d2a29a21f5d36002c706362a9006b21cc3"
+    },
+    {
+      "path": "candidate/docs/implementation/SPN-128.md",
+      "bytes": 2648,
+      "sha256": "96b6f1e1b490d94d2191f93b8f371f3aad3a9fe1758b424a640ffb03c66de671"
+    },
+    {
+      "path": "candidate/docs/implementation/SPN-161.md",
+      "bytes": 11398,
+      "sha256": "b0a75a16bc61ec4d4b6ad1f70e917af5c526f3ecb00f42b633477cb946a55ad1"
+    },
+    {
+      "path": "candidate/docs/implementation/grooming-2026-10-26.md",
+      "bytes": 18208,
+      "sha256": "7ca8c0eaf6c95b21b034b58183cff9b2d5bc919c246315c01f4d0b6362d9e134"
+    },
+    {
+      "path": "candidate/docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+      "bytes": 4303,
+      "sha256": "45a8cb1e80bc3dbb46bf536e5570793baa75a85723b1667af65fbd9bb02b2950"
+    },
+    {
+      "path": "candidate/docs/product/personas.md",
+      "bytes": 2976,
+      "sha256": "aaf8fda6ee5eae10f8bea30d83caa0fba759e8d74632f7ddd92a3436fe53573d"
+    },
+    {
+      "path": "candidate/docs/run-backlog.md",
+      "bytes": 27503,
+      "sha256": "4a4365f7cc25c0daa83b4ef2af82819352640bb22c83c72f518a327643cf6a27"
+    },
+    {
+      "path": "candidate/docs/testing.md",
+      "bytes": 15433,
+      "sha256": "0f4c06be8ca96405f2885abbce2d502c9f3c290a8225f3a938bcf25ba9af34d3"
+    },
+    {
+      "path": "candidate/docs/todo/SPN-128.md",
+      "bytes": 3820,
+      "sha256": "6ee7ad72c721d725b46cef6fde9d45002de30ef58d3d21f7f0eeeeca7618003f"
+    },
+    {
+      "path": "candidate/docs/todo/SPN-161.md",
+      "bytes": 5297,
+      "sha256": "1bb1239b5b573431f29ce14547f2d62e2329f385eb74fdc7c23603a10574defa"
+    },
+    {
+      "path": "candidate/docs/todo/backlog.json",
+      "bytes": 560,
+      "sha256": "f0b88fd6ad4cb2ea3f01615b4f48249c644d38e34c69bbcdf6c7d14e1b4c63e9"
+    },
+    {
+      "path": "candidate/docs/todo/process.md",
+      "bytes": 29875,
+      "sha256": "d820f9c8309ece29d78c6fd12993ffe581ebda1869d4725c0319dcf17ee9943e"
+    },
+    {
+      "path": "candidate/docs/todo/readme.md",
+      "bytes": 4073,
+      "sha256": "00690dae663c2808befc4b6a57f2f77da45cc59cfd3d3a09d72683aa70c6ab2b"
+    },
+    {
+      "path": "docs-inspection.json",
+      "bytes": 3677,
+      "sha256": "545366710ed75138c52fc944a6767bc0bf8209e798df5ff37e79f9276ff9b84b"
+    },
+    {
+      "path": "docs.log",
+      "bytes": 3099,
+      "sha256": "ab36a72309e04c97b3524cf270c171e4312d4ca0dfd86b72463a650ac5775e54"
+    },
+    {
+      "path": "draft-finding-dispositions.json",
+      "bytes": 973,
+      "sha256": "942db74a73dcb0858ce33664ef59e9072d646af11570ed06558c7fc69f755c15"
+    },
+    {
+      "path": "format.log",
+      "bytes": 700,
+      "sha256": "d8a261a5d1a9849e85e989b38026633d3163e820c4d76d8c19ee68845e2b8fb9"
+    },
+    {
+      "path": "full.diff",
+      "bytes": 34438,
+      "sha256": "09265fed3c61cd02f73103eede3d9b28fc91f20348cede5dc80a245afb9ba34f"
+    },
+    {
+      "path": "independent-derived-failure-audit.json",
+      "bytes": 10352,
+      "sha256": "9b2e4bba33fb7bdc8dfe32363a396c36b131656eb40c030dd0e6f7e1a69daf29"
+    },
+    {
+      "path": "index.log",
+      "bytes": 1713,
+      "sha256": "46038f4f4ee21dc838fc568326ec2a5f504d00c094ee9864e9e41d5a4e027162"
+    },
+    {
+      "path": "inspect-docs.ts",
+      "bytes": 2300,
+      "sha256": "003360f1c9d17240cfaf0493632d280727ad0cebeed10aa8766ddb1735cf8ca0"
+    },
+    {
+      "path": "open-pr-audit.json",
+      "bytes": 3428,
+      "sha256": "3425741f1fe5601967bbc1de4beb37f3612e2122481dd628865bac4a339b8e9d"
+    },
+    {
+      "path": "original-handoff-diagnosis-and-ticket-plan.md",
+      "bytes": 11115,
+      "sha256": "6b1fe55376ed85e5d1bac2575ad113887c7866f0c409e9196da5372e30b2fc44"
+    },
+    {
+      "path": "original-handoff-source-provenance.json",
+      "bytes": 8174,
+      "sha256": "b1d6d8bc617cdd26156cda8342b0d646274106da4530f0af5d54f04ab4980b4f"
+    },
+    {
+      "path": "pr.log",
+      "bytes": 463,
+      "sha256": "ea54b81d13e1fd99d13144e483963cf7d513d56de311001a0698642301ed03a1"
+    },
+    {
+      "path": "revoked-socket-registration-allocate161.json",
+      "bytes": 280,
+      "sha256": "5e9b5911d6f26916cfbbd57a6b7cfb64456b7f7586202a42a9e79daa8ba919a2"
+    },
+    {
+      "path": "revoked-socket-registration-backlog.json",
+      "bytes": 201,
+      "sha256": "023fa9dcfbdd53ecf29cc4d364ed3229619381dc36c0393942cd00465fd3c19a"
+    },
+    {
+      "path": "revoked-socket-registration-docs.json",
+      "bytes": 225,
+      "sha256": "2b07a27f73e36a5bbfebb86325c50b869f020f9204d9461e683bf037a5ee5d22"
+    },
+    {
+      "path": "revoked-socket-registration-format.json",
+      "bytes": 497,
+      "sha256": "588093ee89197d6a2dd0dd03993a4808d3267a683fcea7747e12384a38c878e8"
+    },
+    {
+      "path": "revoked-socket-registration-index.json",
+      "bytes": 199,
+      "sha256": "b691b787189eaeeb6ca0432fdd4f51a2e9b0f4b223bb2aa84507cfc9578acf0f"
+    },
+    {
+      "path": "revoked-socket-registration-pr.json",
+      "bytes": 351,
+      "sha256": "fe215b294072c1ffb03cd120c03cf6ce171454cc65f2a505b44612640c58d295"
+    },
+    {
+      "path": "source-binding-audit.json",
+      "bytes": 5254,
+      "sha256": "04708da52ab22175356584accd0135de1bcf360a1b58bf41f612237db33c34bb"
+    }
+  ]
+}

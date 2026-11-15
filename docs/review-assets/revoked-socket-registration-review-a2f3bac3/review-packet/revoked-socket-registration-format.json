@@ -1,0 +1,19 @@
+{
+  "name": "revoked-socket-registration-format",
+  "args": [
+    "node",
+    "/Users/mxbaylee/projects/spinel/node_modules/prettier/bin/prettier.cjs",
+    "--write",
+    "docs/todo/backlog.json",
+    "docs/todo/SPN-128.md",
+    "docs/todo/SPN-161.md",
+    "docs/implementation/SPN-128.md",
+    "docs/implementation/SPN-161.md",
+    "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 225,
+  "peakKiB": 205456
+}

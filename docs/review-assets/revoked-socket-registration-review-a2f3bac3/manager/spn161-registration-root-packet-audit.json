@@ -1,0 +1,34 @@
+{
+  "at": "2026-11-15T01:04:46.349Z",
+  "source": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "manifestSHA": "5c869bab94ef3eb57c99eaf69ecd8ae74478ec22fbdeb638a45bb4a75a3cd997",
+  "payloads": 46,
+  "exactGitFiles": 22,
+  "maskedSupplementaryPolicies": [
+    {
+      "path": "base/docs/implementation/grooming-2026-10-26.md",
+      "changes": [
+        {
+          "line": 214,
+          "before": "after independent **99/100** and **98/100** reviews of the same head",
+          "after": "after independent **[historical assessment masked]** and **[historical assessment masked]** reviews of the same head"
+        }
+      ]
+    },
+    {
+      "path": "candidate/docs/implementation/grooming-2026-10-26.md",
+      "changes": [
+        {
+          "line": 214,
+          "before": "after independent **99/100** and **98/100** reviews of the same head",
+          "after": "after independent **[historical assessment masked]** and **[historical assessment masked]** reviews of the same head"
+        }
+      ]
+    }
+  ],
+  "fullDiffSHA": "09265fed3c61cd02f73103eede3d9b28fc91f20348cede5dc80a245afb9ba34f",
+  "counterOnlyChanged": true,
+  "readerCorrection": "Initial helper expected two changed lines; both masked historical assessments occur on one line. Original helper preserved as -first.ts; exact two replacement spans now verified. No packet or source changed.",
+  "scope": "Root read complete candidate records/spec and final scoped diff; corrected derived-report wording, ordinal size wording and allocation provenance before freeze. This packet audit is not a hosted or independent grading result."
+}

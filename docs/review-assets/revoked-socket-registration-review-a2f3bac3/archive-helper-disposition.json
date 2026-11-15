@@ -1,0 +1,7 @@
+{
+  "finding": "Python archive preparation helper conflicts with the TypeScript-only instruction for authored evidence orchestration.",
+  "disposition": "Rejected before execution. File retained locally unchanged; replaced with prepare-review-archive.ts. No stage, archive commit, tag or publication occurred using the rejected helper.",
+  "rejectedLocalPath": "/tmp/spinel-socket-closure-registration/prepare-review-archive.py",
+  "sha256": "7f6d0b843827ceb53f0a20429469b710ba9b228114a9f904e30b554a91689142",
+  "scope": "This disposition concerns the new review-archive helper. Earlier local packet preparation history remains retained separately; no history was deleted."
+}

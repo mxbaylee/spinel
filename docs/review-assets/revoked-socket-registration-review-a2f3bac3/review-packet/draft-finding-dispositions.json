@@ -1,0 +1,17 @@
+{
+  "sourceStage": "Uncommitted draft, before independent reviews",
+  "findings": [
+    {
+      "finding": "The 10,352-byte copied independent failure audit was mislabeled as original Playwright reporter",
+      "disposition": "Canonical record distinguishes the derived audit and path/hash from actual ZIP 14139456753 and its reporter member/hash; external source-binding audit role corrected. Original source handoff and audit bytes remain untouched."
+    },
+    {
+      "finding": "Ordinal M and L estimates were described arithmetically as an aggregate",
+      "disposition": "Canonical SPN-128 and focused record now retain two separately estimated complete outcomes without arithmetic."
+    },
+    {
+      "finding": "Allocation history wording could imply a separate allocation-only commit",
+      "disposition": "Focused record explicitly records one CLI allocation receipt and first complete registration commit; no allocation-only commit is claimed."
+    }
+  ]
+}

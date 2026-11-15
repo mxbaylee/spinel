@@ -1,0 +1,18 @@
+{
+  "name": "revoked-socket-registration-pr",
+  "args": [
+    "npm",
+    "run",
+    "backlog:pr",
+    "--",
+    "--base",
+    "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+    "--title",
+    "🧹 Groom backlog register revoked socket closure verification"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 552,
+  "peakKiB": 265168
+}

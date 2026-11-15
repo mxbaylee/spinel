@@ -1,0 +1,16 @@
+{
+  "name": "revoked-socket-registration-allocate161",
+  "args": [
+    "npm",
+    "run",
+    "backlog:new",
+    "--",
+    "🔌",
+    "Verify revoked socket closure across navigation"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 267,
+  "peakKiB": 186656
+}
