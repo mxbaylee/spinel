@@ -1,0 +1,51 @@
+{
+  "run": 43658181655,
+  "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "created": "2026-11-15T00:26:34Z",
+  "role": "Root-identified superseded body-edit validation; normal cancellation requested by root. Preserve raw outcomes separately; no current acceptance claim.",
+  "originals": [
+    {
+      "original": "/tmp/spn128-publication-d22baa69/body-edit-cancel.log",
+      "path": "trigger-originals/body-edit-cancel.log",
+      "bytes": 54,
+      "sha256": "f25783a22b1c9d90356e2cc1b132b167bb1bf92c6377141b1cef258783aee53e"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/body-edit-run-before-cancel.json",
+      "path": "trigger-originals/body-edit-run-before-cancel.json",
+      "bytes": 45977,
+      "sha256": "0dd62f40f2cf3cf5792f64b71bfcca5dbf153ea1e720cd96d43d83ff06dd0373"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/old-head-runs-before-publication.json",
+      "path": "trigger-originals/old-head-runs-before-publication.json",
+      "bytes": 48901,
+      "sha256": "70563ac39c034529995874b7c15f2bb79dddda8c4d8ec2e50ee6ef2abbd90a00"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/old-head-runs-after-push.json",
+      "path": "trigger-originals/old-head-runs-after-push.json",
+      "bytes": 61097,
+      "sha256": "1659d99ff19a4af81639505b9472ec9011ace91c5a7b1631a423f1efda67b7ca"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/body-publication-response.json",
+      "path": "trigger-originals/body-publication-response.json",
+      "bytes": 19368,
+      "sha256": "aea31b57c52285d9ac66350e2fdb0e24f838bad77a060dc0f13d78a58be00c3a"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/pr-body-publication.md",
+      "path": "trigger-originals/pr-body-publication.md",
+      "bytes": 17709,
+      "sha256": "29196bbb79765cb80271a8a05247b54fc4de543a2fd02f3d896586cfbccea9f7"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/validation-push.json",
+      "path": "trigger-originals/validation-push.json",
+      "bytes": 530,
+      "sha256": "e110d278f6a93e237b97a7add8be800a51ef60e54a1f342209dc9be394ee2a9b"
+    }
+  ],
+  "collectorReadOnly": true
+}

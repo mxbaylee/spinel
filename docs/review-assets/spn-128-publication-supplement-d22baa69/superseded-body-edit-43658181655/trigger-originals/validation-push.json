@@ -1,0 +1,14 @@
+{
+  "started": "2026-11-15T00:26:50.470Z",
+  "finished": "2026-11-15T00:26:53.597Z",
+  "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "prior": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "ref": "refs/heads/codex/spn-128-original-recovery",
+  "push": "",
+  "normalFastForward": true,
+  "forced": false,
+  "reviewArchive": "616dc7d11f71c3cfabe92f832b760b889b3755c7",
+  "originalFailedArchive": "5d186e11fba730d346e9e963d99b50ce2f1e96f8",
+  "bothExactHeadGrades": 100
+}

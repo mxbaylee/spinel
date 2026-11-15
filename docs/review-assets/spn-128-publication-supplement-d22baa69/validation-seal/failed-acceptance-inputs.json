@@ -1,0 +1,129 @@
+{
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "pr": 229,
+  "runs": [
+    {
+      "kind": "ci",
+      "id": 43658210882,
+      "attempt": 1
+    },
+    {
+      "kind": "storybook",
+      "id": 43658210918,
+      "attempt": 1
+    },
+    {
+      "kind": "desktop",
+      "id": 43658210825,
+      "attempt": 1
+    },
+    {
+      "kind": "spaces",
+      "id": 43658210985,
+      "attempt": 1
+    }
+  ],
+  "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+  "planSha256": "52aa34a8c5998789df5a7ec3dd42dea894c9d901ee9cbc5e2f5e76f605d5a4d3",
+  "terminalSnapshot": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T011128057Z/collection.json",
+  "terminalAudit": "/tmp/spn128-terminal-d22baa69/independent-terminal-audit.json",
+  "terminalVerdict": "NOT_ACCEPTED",
+  "rootReadAndApproved": true,
+  "rootArchiveAudit": "/tmp/spn128-root-final-stage-audit.json",
+  "allSevenGates": [
+    {
+      "name": "Backlog",
+      "id": 132641633574,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Pull request",
+      "id": 132641431814,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Lint",
+      "id": 132641633557,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Typecheck",
+      "id": 132641633632,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Unit tests",
+      "id": 132643735991,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Lib tests",
+      "id": 132644266574,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Playwright smoke",
+      "id": 132652690078,
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "selectedOwnerOutcomes": null,
+  "initialArtifactInventorySnapshot": "/tmp/spn128-terminal-d22baa69/original-audit-artifact-inventory.json",
+  "retentionInventory": "/tmp/spn128-terminal-d22baa69/archive/artifact-inventory.json",
+  "validationArchiveCommit": null,
+  "validationArchiveTag": null,
+  "mergeSha": null,
+  "completionRecord": null,
+  "cleanupDisposition": "No cleanup: current draft NOT_ACCEPTED; source and prior evidence retained.",
+  "collectorOwner": "/root/spn128_acceptance_audit",
+  "collectionRoot": "/tmp/spn128-publication-d22baa69/validation",
+  "auditorRoot": "/tmp/spn128-terminal-d22baa69",
+  "archiveRoot": "/tmp/spn128-terminal-d22baa69/archive",
+  "archivePrefix": "docs/review-assets/spn-128-validation-d22baa69",
+  "priorFailureArchive": "5d186e11fba730d346e9e963d99b50ce2f1e96f8",
+  "reviewArchive": "616dc7d11f71c3cfabe92f832b760b889b3755c7",
+  "supersededBodyEdit": {
+    "path": "/tmp/spn128-body-edit-43658181655",
+    "prefix": "superseded-body-edit-43658181655",
+    "manifestSha256": "f5174339866ca6e776e8557f8e20e4f6ff859356aa803ea874511d5e0f73fe2f",
+    "rootAudit": "/tmp/spn128-root-body-edit-audit.json",
+    "rootAuditHelper": "/tmp/spn128-root-body-edit-audit.ts",
+    "acceptance": "NOT_ACCEPTED"
+  },
+  "planFile": "/tmp/spn128-publication-d22baa69/validation/actual-ci-plan.json",
+  "terminalAuditSha256": "2b26776ccb1cb925c949540753c4145083089d31658a626ac60570e2e7bc4238",
+  "initialArtifactInventorySha256": "de4e2b4065d470ffdd323024b49c6b9a5bf3374dd28a067ee46190b1e75f6c11",
+  "retentionInventorySha256": "08e47bff9292feab2bc3cef909736957a34a042cc997829f24130f024ad907fd",
+  "archiveReady": "/tmp/spn128-terminal-d22baa69/archive-ready.json",
+  "archiveReadySha256": "b53b7f51ff2042285abd8d9664541b314a4cb1bb05b2b8b3a37ec06bc647a46e",
+  "manifestSha256": "b366ec8d7ea3985016d1a836199409e5de5edcecec57b9e881e11530f8b58b22",
+  "expectedFileCount": 1210,
+  "expectedPayloadFileCount": 1209,
+  "expectedPayloadBytes": 32980102,
+  "expectedJobCounts": {
+    "total": 47,
+    "success": 43,
+    "failure": 2,
+    "skipped": 2
+  },
+  "publication": false,
+  "prerequisite": {
+    "ticket": "SPN-161",
+    "registrationPr": null,
+    "registrationCommit": null,
+    "implementationPr": null,
+    "disposition": "Separate pre-existing session-revocation investigation; registration/implementation acceptance remain pending. No source or gate waiver."
+  },
+  "corrections": [
+    "Original prepared helper pointed to nonexistent final-acceptance/archive and asserted absent manifest.base. This handoff uses the immutable actual terminal archive and binds base through plan, terminal audit, provenance and exact tested parents.",
+    "No seal helper, private index, commit-tree, branch/ref/tag/push or metadata action executed by this preparation."
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-15T01:12:16.745Z",
+  "archive": "/tmp/spn128-terminal-d22baa69/archive",
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "parent": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "prefix": "docs/review-assets/spn-128-validation-d22baa69",
+  "acceptance": "NOT_ACCEPTED",
+  "files": 1210,
+  "payloadBytes": 32980102,
+  "largestBlob": {
+    "path": "members/14139456753/test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development-retry1/trace.zip",
+    "bytes": 2272292,
+    "sha256": "6107b72f2a53661c6907db24f11e1e79602e91a6fdd30b4edc4ee4ef9098b76b"
+  },
+  "manifestSha256": "b366ec8d7ea3985016d1a836199409e5de5edcecec57b9e881e11530f8b58b22",
+  "sealExecuted": false
+}

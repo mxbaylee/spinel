@@ -1,0 +1,11 @@
+{
+  "at": "2026-11-15T01:19:46.257Z",
+  "commit": "de541ad442a73c7391af81f06592c1c1d9daae22",
+  "parent": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "prefix": "docs/review-assets/spn-128-validation-d22baa69",
+  "gitBlobs": 1210,
+  "allGitPayloadBytesVerified": true,
+  "exclusiveAddedPaths": true,
+  "acceptance": "NOT_ACCEPTED",
+  "readerCorrection": "First reader compared Git quoted non-ASCII paths to literal paths and stopped before blob audit. Preserved first helper; corrected reader consumes NUL-delimited paths. Evidence unchanged."
+}

@@ -1,0 +1,13 @@
+{
+  "at": "2026-11-15T01:18:23.809Z",
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "manifestSha256": "b366ec8d7ea3985016d1a836199409e5de5edcecec57b9e881e11530f8b58b22",
+  "payloads": 1209,
+  "originalBindings": 763,
+  "originalZipHashes": 35,
+  "memberIdentities": 3612,
+  "retainedMemberHashes": 504,
+  "decodedJobLogs": 45,
+  "acceptance": "NOT_ACCEPTED",
+  "gitBlobsVerified": false
+}

@@ -1,0 +1,3 @@
+Archive:  /tmp/spn128-body-edit-43658181655/artifacts/artifact-14138298192.zip
+    testing: test-results/spn113-comparison-mobile.json   OK
+No errors detected in compressed data of /tmp/spn128-body-edit-43658181655/artifacts/artifact-14138298192.zip.

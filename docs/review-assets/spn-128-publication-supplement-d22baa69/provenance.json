@@ -1,0 +1,33 @@
+{
+  "at": "2026-11-15T01:22:11.927Z",
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "parent": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "prefix": "docs/review-assets/spn-128-publication-supplement-d22baa69",
+  "acceptance": "NOT_ACCEPTED",
+  "bodyEdit": {
+    "run": 43658181655,
+    "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+    "originalPayloads": 133,
+    "manifestSha256": "f5174339866ca6e776e8557f8e20e4f6ff859356aa803ea874511d5e0f73fe2f",
+    "rootAuditOriginalBindings": 9
+  },
+  "validation": {
+    "commit": "de541ad442a73c7391af81f06592c1c1d9daae22",
+    "rootReportedPublishedTag": "archive/spn-128-validation-d22baa69-20261114",
+    "gitBlobsVerified": 1210,
+    "manifestSha256": "b366ec8d7ea3985016d1a836199409e5de5edcecec57b9e881e11530f8b58b22",
+    "rootAuditCorrection": "First reader compared Git quoted non-ASCII paths to literal paths and stopped before blob audit. Preserved first helper; corrected reader consumes NUL-delimited paths. Evidence unchanged."
+  },
+  "rootAuditFiles": [
+    "spn128-root-body-edit-audit.ts",
+    "spn128-root-body-edit-audit.json",
+    "spn128-root-final-stage-audit.ts",
+    "spn128-root-final-stage-audit.json",
+    "spn128-root-sealed-audit.ts",
+    "spn128-root-sealed-audit.json",
+    "spn128-root-sealed-audit-quoted-path-first.ts"
+  ],
+  "originalBindings": 147,
+  "scope": "Separate publication supplement. Frozen d22 terminal archive, current implementation, branch/ref/remote and original body-edit bytes unchanged.",
+  "sealExecuted": false
+}

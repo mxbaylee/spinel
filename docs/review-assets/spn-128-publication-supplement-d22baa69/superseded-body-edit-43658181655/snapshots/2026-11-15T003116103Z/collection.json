@@ -1,0 +1,2401 @@
+{
+  "at": "2026-11-15T00:31:35.104Z",
+  "runId": 43658181655,
+  "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "created": "2026-11-15T00:26:34Z",
+  "attempt": 1,
+  "status": "completed",
+  "conclusion": "cancelled",
+  "event": "pull_request",
+  "updated": "2026-11-15T00:30:46Z",
+  "terminal": true,
+  "snapshot": "/tmp/spn128-body-edit-43658181655/snapshots/2026-11-15T003116103Z",
+  "readOnly": true,
+  "role": "Superseded body-edit old-head cancellation preservation; NOT_ACCEPTED; not a repaired-head acceptance pass.",
+  "jobs": [
+    {
+      "id": 132641338878,
+      "name": "Classify changes (43658181655)",
+      "status": "completed",
+      "conclusion": "success",
+      "started": "2026-11-15T00:26:38Z",
+      "completed": "2026-11-15T00:27:15Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:26:38Z",
+          "completed_at": "2026-11-15T00:26:39Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:26:39Z",
+          "completed_at": "2026-11-15T00:27:08Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:08Z",
+          "completed_at": "2026-11-15T00:27:12Z"
+        },
+        {
+          "name": "Run node scripts/ci/changes.ts",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:12Z",
+          "completed_at": "2026-11-15T00:27:12Z"
+        },
+        {
+          "name": "Retain immutable coverage plan",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-15T00:27:12Z",
+          "completed_at": "2026-11-15T00:27:13Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-15T00:27:13Z",
+          "completed_at": "2026-11-15T00:27:13Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-15T00:27:13Z",
+          "completed_at": "2026-11-15T00:27:13Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-15T00:27:13Z",
+          "completed_at": "2026-11-15T00:27:13Z"
+        }
+      ]
+    },
+    {
+      "id": 132641339074,
+      "name": "Pull request",
+      "status": "completed",
+      "conclusion": "success",
+      "started": "2026-11-15T00:26:37Z",
+      "completed": "2026-11-15T00:27:13Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:26:38Z",
+          "completed_at": "2026-11-15T00:26:38Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:26:38Z",
+          "completed_at": "2026-11-15T00:27:07Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:07Z",
+          "completed_at": "2026-11-15T00:27:10Z"
+        },
+        {
+          "name": "Title, ticket, IDs and size",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:10Z",
+          "completed_at": "2026-11-15T00:27:11Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-15T00:27:11Z",
+          "completed_at": "2026-11-15T00:27:11Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-15T00:27:11Z",
+          "completed_at": "2026-11-15T00:27:11Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-15T00:27:11Z",
+          "completed_at": "2026-11-15T00:27:11Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511657,
+      "name": "Typecheck",
+      "status": "completed",
+      "conclusion": "success",
+      "started": "2026-11-15T00:27:18Z",
+      "completed": "2026-11-15T00:27:44Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:19Z",
+          "completed_at": "2026-11-15T00:27:20Z"
+        },
+        {
+          "name": "Require complete applicability",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:20Z",
+          "completed_at": "2026-11-15T00:27:20Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:20Z",
+          "completed_at": "2026-11-15T00:27:27Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:27Z",
+          "completed_at": "2026-11-15T00:27:30Z"
+        },
+        {
+          "name": "Install",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-15T00:27:30Z",
+          "completed_at": "2026-11-15T00:27:37Z"
+        },
+        {
+          "name": "Typecheck",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-15T00:27:37Z",
+          "completed_at": "2026-11-15T00:27:43Z"
+        },
+        {
+          "name": "Documentation-only change",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-15T00:27:43Z",
+          "completed_at": "2026-11-15T00:27:43Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-15T00:27:43Z",
+          "completed_at": "2026-11-15T00:27:43Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-15T00:27:43Z",
+          "completed_at": "2026-11-15T00:27:43Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-15T00:27:43Z",
+          "completed_at": "2026-11-15T00:27:43Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511660,
+      "name": "Backlog",
+      "status": "completed",
+      "conclusion": "success",
+      "started": "2026-11-15T00:27:18Z",
+      "completed": "2026-11-15T00:27:29Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:19Z",
+          "completed_at": "2026-11-15T00:27:19Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:19Z",
+          "completed_at": "2026-11-15T00:27:23Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:23Z",
+          "completed_at": "2026-11-15T00:27:27Z"
+        },
+        {
+          "name": "Tickets and index",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:27Z",
+          "completed_at": "2026-11-15T00:27:27Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-15T00:27:27Z",
+          "completed_at": "2026-11-15T00:27:27Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-11-15T00:27:27Z",
+          "completed_at": "2026-11-15T00:27:27Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-15T00:27:27Z",
+          "completed_at": "2026-11-15T00:27:27Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511672,
+      "name": "Lint",
+      "status": "completed",
+      "conclusion": "success",
+      "started": "2026-11-15T00:27:19Z",
+      "completed": "2026-11-15T00:28:08Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:20Z",
+          "completed_at": "2026-11-15T00:27:21Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:21Z",
+          "completed_at": "2026-11-15T00:27:24Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:24Z",
+          "completed_at": "2026-11-15T00:27:28Z"
+        },
+        {
+          "name": "Install",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:28Z",
+          "completed_at": "2026-11-15T00:27:40Z"
+        },
+        {
+          "name": "Lint",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-15T00:27:40Z",
+          "completed_at": "2026-11-15T00:28:05Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-11-15T00:28:05Z",
+          "completed_at": "2026-11-15T00:28:05Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-15T00:28:05Z",
+          "completed_at": "2026-11-15T00:28:05Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-15T00:28:05Z",
+          "completed_at": "2026-11-15T00:28:05Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511677,
+      "name": "Container smoke",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:18Z",
+      "completed": "2026-11-15T00:28:17Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:20Z",
+          "completed_at": "2026-11-15T00:27:20Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:20Z",
+          "completed_at": "2026-11-15T00:27:24Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:24Z",
+          "completed_at": "2026-11-15T00:27:28Z"
+        },
+        {
+          "name": "Install PDF verification tools",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:28Z",
+          "completed_at": "2026-11-15T00:27:41Z"
+        },
+        {
+          "name": "Build and exercise the final image",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 5,
+          "started_at": "2026-11-15T00:27:41Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511695,
+      "name": "Unit tests (supervisor)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:18Z",
+      "completed": "2026-11-15T00:28:16Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:19Z",
+          "completed_at": "2026-11-15T00:27:20Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:20Z",
+          "completed_at": "2026-11-15T00:27:24Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:24Z",
+          "completed_at": "2026-11-15T00:27:29Z"
+        },
+        {
+          "name": "Install",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:29Z",
+          "completed_at": "2026-11-15T00:27:39Z"
+        },
+        {
+          "name": "Install fixture init",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-15T00:27:39Z",
+          "completed_at": "2026-11-15T00:27:49Z"
+        },
+        {
+          "name": "Unit tests",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 6,
+          "started_at": "2026-11-15T00:27:49Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "PDF collaboration overlap evidence",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511708,
+      "name": "Sized restore acceptance",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:19Z",
+      "completed": "2026-11-15T00:28:09Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:20Z",
+          "completed_at": "2026-11-15T00:27:21Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:21Z",
+          "completed_at": "2026-11-15T00:27:25Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:25Z",
+          "completed_at": "2026-11-15T00:27:30Z"
+        },
+        {
+          "name": "Install acceptance driver and Chromium",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:30Z",
+          "completed_at": "2026-11-15T00:28:06Z"
+        },
+        {
+          "name": "Build the exact production image",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-11-15T00:28:06Z",
+          "completed_at": "2026-11-15T00:28:06Z"
+        },
+        {
+          "name": "Measure and verify the real 256 MiB restore",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-11-15T00:28:06Z",
+          "completed_at": "2026-11-15T00:28:06Z"
+        },
+        {
+          "name": "Preserve safe timing and integrity evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-15T00:28:06Z",
+          "completed_at": "2026-11-15T00:28:06Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-15T00:28:06Z",
+          "completed_at": "2026-11-15T00:28:06Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-15T00:28:06Z",
+          "completed_at": "2026-11-15T00:28:06Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-15T00:28:06Z",
+          "completed_at": "2026-11-15T00:28:06Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511716,
+      "name": "Retained sync transition",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:19Z",
+      "completed": "2026-11-15T00:28:03Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:20Z",
+          "completed_at": "2026-11-15T00:27:21Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:21Z",
+          "completed_at": "2026-11-15T00:27:25Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:25Z",
+          "completed_at": "2026-11-15T00:27:30Z"
+        },
+        {
+          "name": "Install current application",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:30Z",
+          "completed_at": "2026-11-15T00:27:42Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-15T00:27:42Z",
+          "completed_at": "2026-11-15T00:27:44Z"
+        },
+        {
+          "name": "Install pinned legacy export environment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-15T00:27:44Z",
+          "completed_at": "2026-11-15T00:27:56Z"
+        },
+        {
+          "name": "Retain, interrupt, resume and verify real legacy data",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-15T00:27:56Z",
+          "completed_at": "2026-11-15T00:28:00Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-11-15T00:28:00Z",
+          "completed_at": "2026-11-15T00:28:00Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-15T00:28:00Z",
+          "completed_at": "2026-11-15T00:28:01Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-15T00:28:01Z",
+          "completed_at": "2026-11-15T00:28:01Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-15T00:28:01Z",
+          "completed_at": "2026-11-15T00:28:01Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511721,
+      "name": "Lib tests (mixed-fuzz)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:18Z",
+      "completed": "2026-11-15T00:28:16Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:19Z",
+          "completed_at": "2026-11-15T00:27:20Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:20Z",
+          "completed_at": "2026-11-15T00:27:24Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:24Z",
+          "completed_at": "2026-11-15T00:27:29Z"
+        },
+        {
+          "name": "Install",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:29Z",
+          "completed_at": "2026-11-15T00:27:39Z"
+        },
+        {
+          "name": "Lib tests",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 5,
+          "started_at": "2026-11-15T00:27:39Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Synthetic Sheet PDF evidence",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Synthetic Doc PDF evidence",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511723,
+      "name": "Doc responsiveness (desktop)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:18Z",
+      "completed": "2026-11-15T00:28:07Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:19Z",
+          "completed_at": "2026-11-15T00:27:20Z"
+        },
+        {
+          "name": "Require comparison applicability",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:20Z",
+          "completed_at": "2026-11-15T00:27:20Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:20Z",
+          "completed_at": "2026-11-15T00:27:24Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:24Z",
+          "completed_at": "2026-11-15T00:27:29Z"
+        },
+        {
+          "name": "Install candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-15T00:27:29Z",
+          "completed_at": "2026-11-15T00:27:40Z"
+        },
+        {
+          "name": "Install Chromium",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 6,
+          "started_at": "2026-11-15T00:27:40Z",
+          "completed_at": "2026-11-15T00:28:04Z"
+        },
+        {
+          "name": "Immutable uncapped source with matched compatibility and native observations",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-15T00:28:04Z",
+          "completed_at": "2026-11-15T00:28:04Z"
+        },
+        {
+          "name": "Use identical browser workload on both sources",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8,
+          "started_at": "2026-11-15T00:28:04Z",
+          "completed_at": "2026-11-15T00:28:04Z"
+        },
+        {
+          "name": "Install and build baseline",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-15T00:28:04Z",
+          "completed_at": "2026-11-15T00:28:04Z"
+        },
+        {
+          "name": "Observe baseline first attempts",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-11-15T00:28:04Z",
+          "completed_at": "2026-11-15T00:28:04Z"
+        },
+        {
+          "name": "Build candidate",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-11-15T00:28:04Z",
+          "completed_at": "2026-11-15T00:28:04Z"
+        },
+        {
+          "name": "Verify candidate responsiveness and boundaries",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12,
+          "started_at": "2026-11-15T00:28:04Z",
+          "completed_at": "2026-11-15T00:28:04Z"
+        },
+        {
+          "name": "Verify candidate evidence and selected paired comparison",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-15T00:28:04Z",
+          "completed_at": "2026-11-15T00:28:04Z"
+        },
+        {
+          "name": "Retain every baseline and candidate attempt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-15T00:28:04Z",
+          "completed_at": "2026-11-15T00:28:04Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 27,
+          "started_at": "2026-11-15T00:28:04Z",
+          "completed_at": "2026-11-15T00:28:04Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-15T00:28:04Z",
+          "completed_at": "2026-11-15T00:28:04Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-11-15T00:28:04Z",
+          "completed_at": "2026-11-15T00:28:04Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511734,
+      "name": "Lib tests (cells)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:18Z",
+      "completed": "2026-11-15T00:28:17Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:19Z",
+          "completed_at": "2026-11-15T00:27:20Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:20Z",
+          "completed_at": "2026-11-15T00:27:24Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:24Z",
+          "completed_at": "2026-11-15T00:27:29Z"
+        },
+        {
+          "name": "Install",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:29Z",
+          "completed_at": "2026-11-15T00:27:38Z"
+        },
+        {
+          "name": "Lib tests",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 5,
+          "started_at": "2026-11-15T00:27:38Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Synthetic Sheet PDF evidence",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Synthetic Doc PDF evidence",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511744,
+      "name": "Unit tests (remaining)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:18Z",
+      "completed": "2026-11-15T00:28:17Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:19Z",
+          "completed_at": "2026-11-15T00:27:19Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:19Z",
+          "completed_at": "2026-11-15T00:27:23Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:23Z",
+          "completed_at": "2026-11-15T00:27:27Z"
+        },
+        {
+          "name": "Install",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:27Z",
+          "completed_at": "2026-11-15T00:27:35Z"
+        },
+        {
+          "name": "Install fixture init",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-15T00:27:35Z",
+          "completed_at": "2026-11-15T00:27:46Z"
+        },
+        {
+          "name": "Unit tests",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 6,
+          "started_at": "2026-11-15T00:27:46Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "PDF collaboration overlap evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511752,
+      "name": "Doc callback lifetimes (mobile)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:18Z",
+      "completed": "2026-11-15T00:28:06Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:19Z",
+          "completed_at": "2026-11-15T00:27:20Z"
+        },
+        {
+          "name": "Require comparison applicability",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:20Z",
+          "completed_at": "2026-11-15T00:27:20Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:20Z",
+          "completed_at": "2026-11-15T00:27:24Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:24Z",
+          "completed_at": "2026-11-15T00:27:28Z"
+        },
+        {
+          "name": "Install candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-15T00:27:28Z",
+          "completed_at": "2026-11-15T00:27:41Z"
+        },
+        {
+          "name": "Prepare pinned callback trace converter",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-15T00:27:41Z",
+          "completed_at": "2026-11-15T00:27:42Z"
+        },
+        {
+          "name": "Install Chromium",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 7,
+          "started_at": "2026-11-15T00:27:42Z",
+          "completed_at": "2026-11-15T00:28:03Z"
+        },
+        {
+          "name": "Immutable merged SPN-108 baseline",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8,
+          "started_at": "2026-11-15T00:28:03Z",
+          "completed_at": "2026-11-15T00:28:03Z"
+        },
+        {
+          "name": "Match callback workload and read-only observations",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-15T00:28:03Z",
+          "completed_at": "2026-11-15T00:28:03Z"
+        },
+        {
+          "name": "Install and build baseline with source maps",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-11-15T00:28:03Z",
+          "completed_at": "2026-11-15T00:28:03Z"
+        },
+        {
+          "name": "Retain baseline first attempt",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-11-15T00:28:03Z",
+          "completed_at": "2026-11-15T00:28:03Z"
+        },
+        {
+          "name": "Build candidate with identical source-map settings",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12,
+          "started_at": "2026-11-15T00:28:03Z",
+          "completed_at": "2026-11-15T00:28:03Z"
+        },
+        {
+          "name": "Verify candidate first attempt",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-15T00:28:03Z",
+          "completed_at": "2026-11-15T00:28:03Z"
+        },
+        {
+          "name": "Verify complete paired callback evidence",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 14,
+          "started_at": "2026-11-15T00:28:03Z",
+          "completed_at": "2026-11-15T00:28:03Z"
+        },
+        {
+          "name": "Retain raw traces, source maps and every first attempt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-15T00:28:03Z",
+          "completed_at": "2026-11-15T00:28:04Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 29,
+          "started_at": "2026-11-15T00:28:04Z",
+          "completed_at": "2026-11-15T00:28:04Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 30,
+          "started_at": "2026-11-15T00:28:04Z",
+          "completed_at": "2026-11-15T00:28:04Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 31,
+          "started_at": "2026-11-15T00:28:04Z",
+          "completed_at": "2026-11-15T00:28:04Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511770,
+      "name": "Unit tests (recovery)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:47Z",
+      "completed": "2026-11-15T00:28:11Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:47Z",
+          "completed_at": "2026-11-15T00:27:48Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:48Z",
+          "completed_at": "2026-11-15T00:27:51Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:51Z",
+          "completed_at": "2026-11-15T00:27:55Z"
+        },
+        {
+          "name": "Install",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:55Z",
+          "completed_at": "2026-11-15T00:28:09Z"
+        },
+        {
+          "name": "Install fixture init",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-11-15T00:28:09Z",
+          "completed_at": "2026-11-15T00:28:09Z"
+        },
+        {
+          "name": "Unit tests",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-11-15T00:28:09Z",
+          "completed_at": "2026-11-15T00:28:09Z"
+        },
+        {
+          "name": "PDF collaboration overlap evidence",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-15T00:28:09Z",
+          "completed_at": "2026-11-15T00:28:09Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-15T00:28:09Z",
+          "completed_at": "2026-11-15T00:28:09Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-15T00:28:09Z",
+          "completed_at": "2026-11-15T00:28:10Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-15T00:28:10Z",
+          "completed_at": "2026-11-15T00:28:10Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511788,
+      "name": "Doc callback lifetimes (desktop)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:31Z",
+      "completed": "2026-11-15T00:28:18Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:32Z",
+          "completed_at": "2026-11-15T00:27:33Z"
+        },
+        {
+          "name": "Require comparison applicability",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:33Z",
+          "completed_at": "2026-11-15T00:27:33Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:33Z",
+          "completed_at": "2026-11-15T00:27:37Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:37Z",
+          "completed_at": "2026-11-15T00:27:41Z"
+        },
+        {
+          "name": "Install candidate",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-15T00:27:41Z",
+          "completed_at": "2026-11-15T00:27:54Z"
+        },
+        {
+          "name": "Prepare pinned callback trace converter",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-11-15T00:27:54Z",
+          "completed_at": "2026-11-15T00:27:56Z"
+        },
+        {
+          "name": "Install Chromium",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 7,
+          "started_at": "2026-11-15T00:27:56Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Immutable merged SPN-108 baseline",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Match callback workload and read-only observations",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Install and build baseline with source maps",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Retain baseline first attempt",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Build candidate with identical source-map settings",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Verify candidate first attempt",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Verify complete paired callback evidence",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 14,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:14Z"
+        },
+        {
+          "name": "Retain raw traces, source maps and every first attempt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-15T00:28:14Z",
+          "completed_at": "2026-11-15T00:28:15Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 29,
+          "started_at": "2026-11-15T00:28:15Z",
+          "completed_at": "2026-11-15T00:28:15Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 30,
+          "started_at": "2026-11-15T00:28:15Z",
+          "completed_at": "2026-11-15T00:28:16Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 31,
+          "started_at": "2026-11-15T00:28:16Z",
+          "completed_at": "2026-11-15T00:28:16Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511816,
+      "name": "Lib tests (dense-cells)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:46Z",
+      "completed": "2026-11-15T00:28:04Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:47Z",
+          "completed_at": "2026-11-15T00:27:48Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:48Z",
+          "completed_at": "2026-11-15T00:27:51Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:51Z",
+          "completed_at": "2026-11-15T00:27:56Z"
+        },
+        {
+          "name": "Install",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:56Z",
+          "completed_at": "2026-11-15T00:28:03Z"
+        },
+        {
+          "name": "Lib tests",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-11-15T00:28:03Z",
+          "completed_at": "2026-11-15T00:28:03Z"
+        },
+        {
+          "name": "Synthetic Sheet PDF evidence",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-11-15T00:28:03Z",
+          "completed_at": "2026-11-15T00:28:03Z"
+        },
+        {
+          "name": "Synthetic Doc PDF evidence",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-15T00:28:03Z",
+          "completed_at": "2026-11-15T00:28:03Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-15T00:28:03Z",
+          "completed_at": "2026-11-15T00:28:03Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-15T00:28:03Z",
+          "completed_at": "2026-11-15T00:28:03Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-15T00:28:03Z",
+          "completed_at": "2026-11-15T00:28:03Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511847,
+      "name": "Doc responsiveness (mobile)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:46Z",
+      "completed": "2026-11-15T00:28:08Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:47Z",
+          "completed_at": "2026-11-15T00:27:50Z"
+        },
+        {
+          "name": "Require comparison applicability",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:50Z",
+          "completed_at": "2026-11-15T00:27:50Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:50Z",
+          "completed_at": "2026-11-15T00:27:55Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:55Z",
+          "completed_at": "2026-11-15T00:27:59Z"
+        },
+        {
+          "name": "Install candidate",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 5,
+          "started_at": "2026-11-15T00:27:59Z",
+          "completed_at": "2026-11-15T00:28:06Z"
+        },
+        {
+          "name": "Install Chromium",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-11-15T00:28:06Z",
+          "completed_at": "2026-11-15T00:28:06Z"
+        },
+        {
+          "name": "Immutable uncapped source with matched compatibility and native observations",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-15T00:28:06Z",
+          "completed_at": "2026-11-15T00:28:06Z"
+        },
+        {
+          "name": "Use identical browser workload on both sources",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8,
+          "started_at": "2026-11-15T00:28:06Z",
+          "completed_at": "2026-11-15T00:28:06Z"
+        },
+        {
+          "name": "Install and build baseline",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-15T00:28:06Z",
+          "completed_at": "2026-11-15T00:28:06Z"
+        },
+        {
+          "name": "Observe baseline first attempts",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-11-15T00:28:06Z",
+          "completed_at": "2026-11-15T00:28:06Z"
+        },
+        {
+          "name": "Build candidate",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-11-15T00:28:06Z",
+          "completed_at": "2026-11-15T00:28:06Z"
+        },
+        {
+          "name": "Verify candidate responsiveness and boundaries",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12,
+          "started_at": "2026-11-15T00:28:06Z",
+          "completed_at": "2026-11-15T00:28:06Z"
+        },
+        {
+          "name": "Verify candidate evidence and selected paired comparison",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-15T00:28:06Z",
+          "completed_at": "2026-11-15T00:28:06Z"
+        },
+        {
+          "name": "Retain every baseline and candidate attempt",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-15T00:28:06Z",
+          "completed_at": "2026-11-15T00:28:07Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 27,
+          "started_at": "2026-11-15T00:28:07Z",
+          "completed_at": "2026-11-15T00:28:07Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-15T00:28:07Z",
+          "completed_at": "2026-11-15T00:28:07Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-11-15T00:28:07Z",
+          "completed_at": "2026-11-15T00:28:07Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511850,
+      "name": "Playwright smoke (development 2/2)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:54Z",
+      "completed": "2026-11-15T00:28:03Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:55Z",
+          "completed_at": "2026-11-15T00:27:56Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:56Z",
+          "completed_at": "2026-11-15T00:28:00Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 3,
+          "started_at": "2026-11-15T00:28:00Z",
+          "completed_at": "2026-11-15T00:28:01Z"
+        },
+        {
+          "name": "Install",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 4,
+          "started_at": "2026-11-15T00:28:01Z",
+          "completed_at": "2026-11-15T00:28:01Z"
+        },
+        {
+          "name": "Install Chromium",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-11-15T00:28:01Z",
+          "completed_at": "2026-11-15T00:28:01Z"
+        },
+        {
+          "name": "Install maintenance fixture init",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-11-15T00:28:01Z",
+          "completed_at": "2026-11-15T00:28:01Z"
+        },
+        {
+          "name": "Immutable offline source for adoption evidence",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-15T00:28:01Z",
+          "completed_at": "2026-11-15T00:28:01Z"
+        },
+        {
+          "name": "Install immutable offline build dependencies",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8,
+          "started_at": "2026-11-15T00:28:01Z",
+          "completed_at": "2026-11-15T00:28:01Z"
+        },
+        {
+          "name": "Immutable last 1.1.0 offline host and backend",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-15T00:28:01Z",
+          "completed_at": "2026-11-15T00:28:01Z"
+        },
+        {
+          "name": "Install previous offline host dependencies",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-11-15T00:28:01Z",
+          "completed_at": "2026-11-15T00:28:01Z"
+        },
+        {
+          "name": "Build",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-11-15T00:28:01Z",
+          "completed_at": "2026-11-15T00:28:01Z"
+        },
+        {
+          "name": "Playwright smoke",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12,
+          "started_at": "2026-11-15T00:28:01Z",
+          "completed_at": "2026-11-15T00:28:01Z"
+        },
+        {
+          "name": "Artifact name",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-15T00:28:01Z",
+          "completed_at": "2026-11-15T00:28:01Z"
+        },
+        {
+          "name": "Theme screenshots",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-15T00:28:01Z",
+          "completed_at": "2026-11-15T00:28:01Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 27,
+          "started_at": "2026-11-15T00:28:01Z",
+          "completed_at": "2026-11-15T00:28:01Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-15T00:28:01Z",
+          "completed_at": "2026-11-15T00:28:02Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-11-15T00:28:02Z",
+          "completed_at": "2026-11-15T00:28:02Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511864,
+      "name": "Playwright smoke (development 1/2)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:16Z",
+      "completed": "2026-11-15T00:28:01Z",
+      "steps": []
+    },
+    {
+      "id": 132641511868,
+      "name": "Playwright smoke (mobile-https)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:19Z",
+      "completed": "2026-11-15T00:28:14Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-15T00:27:19Z",
+          "completed_at": "2026-11-15T00:27:22Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-15T00:27:22Z",
+          "completed_at": "2026-11-15T00:27:27Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-15T00:27:27Z",
+          "completed_at": "2026-11-15T00:27:31Z"
+        },
+        {
+          "name": "Install",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-15T00:27:31Z",
+          "completed_at": "2026-11-15T00:27:39Z"
+        },
+        {
+          "name": "Install Chromium",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 5,
+          "started_at": "2026-11-15T00:27:39Z",
+          "completed_at": "2026-11-15T00:28:12Z"
+        },
+        {
+          "name": "Install maintenance fixture init",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-11-15T00:28:12Z",
+          "completed_at": "2026-11-15T00:28:12Z"
+        },
+        {
+          "name": "Immutable offline source for adoption evidence",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-15T00:28:12Z",
+          "completed_at": "2026-11-15T00:28:12Z"
+        },
+        {
+          "name": "Install immutable offline build dependencies",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8,
+          "started_at": "2026-11-15T00:28:12Z",
+          "completed_at": "2026-11-15T00:28:12Z"
+        },
+        {
+          "name": "Immutable last 1.1.0 offline host and backend",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-15T00:28:12Z",
+          "completed_at": "2026-11-15T00:28:12Z"
+        },
+        {
+          "name": "Install previous offline host dependencies",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-11-15T00:28:12Z",
+          "completed_at": "2026-11-15T00:28:12Z"
+        },
+        {
+          "name": "Build",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-11-15T00:28:12Z",
+          "completed_at": "2026-11-15T00:28:12Z"
+        },
+        {
+          "name": "Playwright smoke",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12,
+          "started_at": "2026-11-15T00:28:12Z",
+          "completed_at": "2026-11-15T00:28:12Z"
+        },
+        {
+          "name": "Artifact name",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-11-15T00:28:12Z",
+          "completed_at": "2026-11-15T00:28:12Z"
+        },
+        {
+          "name": "Theme screenshots",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-15T00:28:12Z",
+          "completed_at": "2026-11-15T00:28:12Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 27,
+          "started_at": "2026-11-15T00:28:12Z",
+          "completed_at": "2026-11-15T00:28:12Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 28,
+          "started_at": "2026-11-15T00:28:12Z",
+          "completed_at": "2026-11-15T00:28:13Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 29,
+          "started_at": "2026-11-15T00:28:13Z",
+          "completed_at": "2026-11-15T00:28:13Z"
+        }
+      ]
+    },
+    {
+      "id": 132641511869,
+      "name": "Playwright smoke (production 2/2)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:16Z",
+      "completed": "2026-11-15T00:28:01Z",
+      "steps": []
+    },
+    {
+      "id": 132641511870,
+      "name": "Playwright smoke (sync-production)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:16Z",
+      "completed": "2026-11-15T00:28:01Z",
+      "steps": []
+    },
+    {
+      "id": 132641511874,
+      "name": "Playwright smoke (sync-soak-sheet)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:16Z",
+      "completed": "2026-11-15T00:28:01Z",
+      "steps": []
+    },
+    {
+      "id": 132641511880,
+      "name": "Playwright smoke (offline-upgrade)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:16Z",
+      "completed": "2026-11-15T00:28:01Z",
+      "steps": []
+    },
+    {
+      "id": 132641511904,
+      "name": "Playwright smoke (sync-development)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:16Z",
+      "completed": "2026-11-15T00:28:01Z",
+      "steps": []
+    },
+    {
+      "id": 132641511928,
+      "name": "Playwright smoke (supervised-restore)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:16Z",
+      "completed": "2026-11-15T00:28:01Z",
+      "steps": []
+    },
+    {
+      "id": 132641511930,
+      "name": "Playwright smoke (production 1/2)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:16Z",
+      "completed": "2026-11-15T00:28:01Z",
+      "steps": []
+    },
+    {
+      "id": 132641511931,
+      "name": "Playwright smoke (sync-soak-doc)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:16Z",
+      "completed": "2026-11-15T00:28:01Z",
+      "steps": []
+    },
+    {
+      "id": 132641512020,
+      "name": "Lib tests (remaining)",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:27:16Z",
+      "completed": "2026-11-15T00:28:01Z",
+      "steps": []
+    },
+    {
+      "id": 132641764805,
+      "name": "Unit tests",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:28:17Z",
+      "completed": "2026-11-15T00:30:45Z",
+      "steps": []
+    },
+    {
+      "id": 132641765666,
+      "name": "Lib tests",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "started": "2026-11-15T00:28:17Z",
+      "completed": "2026-11-15T00:30:45Z",
+      "steps": []
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14139230563,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEzOTIzMDU2Mw==",
+      "name": "ci-plan",
+      "size_in_bytes": 947,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14139230563",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14139230563/zip",
+      "expired": false,
+      "digest": "sha256:42073933edb07ffdbf0470f389865742a36bedb18df08d51ee861824b0403874",
+      "created_at": "2026-11-15T00:27:13Z",
+      "updated_at": "2026-11-15T00:27:13Z",
+      "expires_at": "2026-12-15T00:27:12Z",
+      "workflow_run": {
+        "id": 43658181655,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-128-original-recovery",
+        "head_sha": "628d77987e7d9a08863465a7553a2ed82579728b"
+      }
+    },
+    {
+      "id": 14139201141,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEzOTIwMTE0MQ==",
+      "name": "doc-callback-lifetimes-desktop",
+      "size_in_bytes": 333,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14139201141",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14139201141/zip",
+      "expired": false,
+      "digest": "sha256:7a3752584cbe7c56562f76bce6f6deae46b3fa2fd04114bd5388255887337b61",
+      "created_at": "2026-11-15T00:28:15Z",
+      "updated_at": "2026-11-15T00:28:15Z",
+      "expires_at": "2026-11-22T00:28:14Z",
+      "workflow_run": {
+        "id": 43658181655,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-128-original-recovery",
+        "head_sha": "628d77987e7d9a08863465a7553a2ed82579728b"
+      }
+    },
+    {
+      "id": 14138298192,
+      "node_id": "MDg6QXJ0aWZhY3QxNDEzODI5ODE5Mg==",
+      "name": "doc-callback-lifetimes-mobile",
+      "size_in_bytes": 331,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14138298192",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14138298192/zip",
+      "expired": false,
+      "digest": "sha256:e0195cbfdc52261decd71b9cd9fe1756e3505e5fabf02f8c0de78b9c9ab2004d",
+      "created_at": "2026-11-15T00:28:04Z",
+      "updated_at": "2026-11-15T00:28:04Z",
+      "expires_at": "2026-11-22T00:28:03Z",
+      "workflow_run": {
+        "id": 43658181655,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-128-original-recovery",
+        "head_sha": "628d77987e7d9a08863465a7553a2ed82579728b"
+      }
+    }
+  ],
+  "requests": [
+    {
+      "endpoint": "repos/mxbaylee/spinel/actions/runs/43658181655/artifacts?per_page=100",
+      "file": "artifacts-pages.json.gz",
+      "bytes": 2148,
+      "sha256": "2cbc719a8edc0149d4c85ee17d2b3c356cf8dc018083985aa1fa5a3992b14855",
+      "status": "downloaded"
+    },
+    {
+      "endpoint": "repos/mxbaylee/spinel/actions/runs/43658181655",
+      "file": "run.json.gz",
+      "bytes": 12200,
+      "sha256": "c88c6696cb14f33f4e3b612497ddb7591c1515c34c4601ddd6ce7228ae7465b5",
+      "status": "downloaded"
+    },
+    {
+      "endpoint": "repos/mxbaylee/spinel/actions/runs/43658181655/attempts/1/jobs?per_page=100",
+      "file": "jobs-pages.json.gz",
+      "bytes": 70470,
+      "sha256": "63632edb744cd7ade8ec6b7d9914bc71a1adf36634dd5af825ab6d4307091da9",
+      "status": "downloaded"
+    },
+    {
+      "endpoint": "repos/mxbaylee/spinel/actions/jobs/132641511864/logs",
+      "file": "job-132641511864.log.unavailable-body.gz",
+      "stderr": "job-132641511864.log.unavailable-stderr",
+      "code": 1,
+      "signal": null,
+      "status": "HTTP-or-request-unavailable",
+      "bodySha256": "c91b363525ee2d467a7be192d6bd562a8cde9ad2f99e6ecfa361814bfaf3588b",
+      "stderrSha256": "6c5ec582d3b25e97273d17fd4088d0e13837c8384ee94aba555afc35856ec3ae"
+    },
+    {
+      "endpoint": "repos/mxbaylee/spinel/actions/jobs/132641511869/logs",
+      "file": "job-132641511869.log.unavailable-body.gz",
+      "stderr": "job-132641511869.log.unavailable-stderr",
+      "code": 1,
+      "signal": null,
+      "status": "HTTP-or-request-unavailable",
+      "bodySha256": "285fd20f69e05c8917b6cfeb626038bd5e1359275ca80fd585b5b6980165a4fb",
+      "stderrSha256": "6c5ec582d3b25e97273d17fd4088d0e13837c8384ee94aba555afc35856ec3ae"
+    },
+    {
+      "endpoint": "repos/mxbaylee/spinel/actions/jobs/132641511870/logs",
+      "file": "job-132641511870.log.unavailable-body.gz",
+      "stderr": "job-132641511870.log.unavailable-stderr",
+      "code": 1,
+      "signal": null,
+      "status": "HTTP-or-request-unavailable",
+      "bodySha256": "ddb890903df74efe3a982f65b5a24334f5e258f2dc6a3758945f076fcabbcef4",
+      "stderrSha256": "6c5ec582d3b25e97273d17fd4088d0e13837c8384ee94aba555afc35856ec3ae"
+    },
+    {
+      "endpoint": "repos/mxbaylee/spinel/actions/jobs/132641511874/logs",
+      "file": "job-132641511874.log.unavailable-body.gz",
+      "stderr": "job-132641511874.log.unavailable-stderr",
+      "code": 1,
+      "signal": null,
+      "status": "HTTP-or-request-unavailable",
+      "bodySha256": "9a6669269814ab79c47dc32b9ca2b6d47a7235ceab5e8f6e7efc49f9aee922fa",
+      "stderrSha256": "6c5ec582d3b25e97273d17fd4088d0e13837c8384ee94aba555afc35856ec3ae"
+    },
+    {
+      "endpoint": "repos/mxbaylee/spinel/actions/jobs/132641511880/logs",
+      "file": "job-132641511880.log.unavailable-body.gz",
+      "stderr": "job-132641511880.log.unavailable-stderr",
+      "code": 1,
+      "signal": null,
+      "status": "HTTP-or-request-unavailable",
+      "bodySha256": "9f677654fe6ad393320f393f65aaa4e6f6911fe3de31e027e648a67f227505b3",
+      "stderrSha256": "6c5ec582d3b25e97273d17fd4088d0e13837c8384ee94aba555afc35856ec3ae"
+    },
+    {
+      "endpoint": "repos/mxbaylee/spinel/actions/jobs/132641511904/logs",
+      "file": "job-132641511904.log.unavailable-body.gz",
+      "stderr": "job-132641511904.log.unavailable-stderr",
+      "code": 1,
+      "signal": null,
+      "status": "HTTP-or-request-unavailable",
+      "bodySha256": "824834c9a7ac67ae8516e9f127635a47140de5b32d1ae86b4439c86fcbe904d2",
+      "stderrSha256": "6c5ec582d3b25e97273d17fd4088d0e13837c8384ee94aba555afc35856ec3ae"
+    },
+    {
+      "endpoint": "repos/mxbaylee/spinel/actions/jobs/132641511928/logs",
+      "file": "job-132641511928.log.unavailable-body.gz",
+      "stderr": "job-132641511928.log.unavailable-stderr",
+      "code": 1,
+      "signal": null,
+      "status": "HTTP-or-request-unavailable",
+      "bodySha256": "d9177e512d4e3317617f245390defc24adf4a65962b33e38a394d76a7d4f3e0b",
+      "stderrSha256": "6c5ec582d3b25e97273d17fd4088d0e13837c8384ee94aba555afc35856ec3ae"
+    },
+    {
+      "endpoint": "repos/mxbaylee/spinel/actions/jobs/132641511930/logs",
+      "file": "job-132641511930.log.unavailable-body.gz",
+      "stderr": "job-132641511930.log.unavailable-stderr",
+      "code": 1,
+      "signal": null,
+      "status": "HTTP-or-request-unavailable",
+      "bodySha256": "f464767da5aab54d126d5d5d9f6a28875896794ebf12edad3e5b0d095ae4b7c8",
+      "stderrSha256": "6c5ec582d3b25e97273d17fd4088d0e13837c8384ee94aba555afc35856ec3ae"
+    },
+    {
+      "endpoint": "repos/mxbaylee/spinel/actions/jobs/132641511931/logs",
+      "file": "job-132641511931.log.unavailable-body.gz",
+      "stderr": "job-132641511931.log.unavailable-stderr",
+      "code": 1,
+      "signal": null,
+      "status": "HTTP-or-request-unavailable",
+      "bodySha256": "ca5b8b0c7ef91eae40f5f043725406d333cb42c409bc6fa4ebac3a5df17eb703",
+      "stderrSha256": "6c5ec582d3b25e97273d17fd4088d0e13837c8384ee94aba555afc35856ec3ae"
+    },
+    {
+      "endpoint": "repos/mxbaylee/spinel/actions/jobs/132641512020/logs",
+      "file": "job-132641512020.log.unavailable-body.gz",
+      "stderr": "job-132641512020.log.unavailable-stderr",
+      "code": 1,
+      "signal": null,
+      "status": "HTTP-or-request-unavailable",
+      "bodySha256": "186b5002c845985b80d70c0e96b9f58e962ff1cd8b7876d7b62eb0b55fd4f666",
+      "stderrSha256": "6c5ec582d3b25e97273d17fd4088d0e13837c8384ee94aba555afc35856ec3ae"
+    },
+    {
+      "endpoint": "repos/mxbaylee/spinel/actions/jobs/132641764805/logs",
+      "file": "job-132641764805.log.unavailable-body.gz",
+      "stderr": "job-132641764805.log.unavailable-stderr",
+      "code": 1,
+      "signal": null,
+      "status": "HTTP-or-request-unavailable",
+      "bodySha256": "441a5bd77857c9f2fd26051beb53761b740b2a9ce12f4757334e46855b917fd3",
+      "stderrSha256": "6c5ec582d3b25e97273d17fd4088d0e13837c8384ee94aba555afc35856ec3ae"
+    },
+    {
+      "endpoint": "repos/mxbaylee/spinel/actions/jobs/132641765666/logs",
+      "file": "job-132641765666.log.unavailable-body.gz",
+      "stderr": "job-132641765666.log.unavailable-stderr",
+      "code": 1,
+      "signal": null,
+      "status": "HTTP-or-request-unavailable",
+      "bodySha256": "208f42a5c93153bed469e75cc6beee6fbda5907a71371c3d66e076c8abf37ed5",
+      "stderrSha256": "6c5ec582d3b25e97273d17fd4088d0e13837c8384ee94aba555afc35856ec3ae"
+    },
+    {
+      "endpoint": "repos/mxbaylee/spinel/actions/runs/43658181655/logs",
+      "file": "run-logs.zip.gz",
+      "bytes": 448482,
+      "sha256": "5f9d86738c434b6560fff003299515fb90d0b1e31576dbb4b891f32fa574b347",
+      "status": "downloaded"
+    }
+  ]
+}

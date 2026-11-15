@@ -1,0 +1,21 @@
+{
+  "actor": "root coordinator",
+  "collectorPerformedCancellation": false,
+  "run": 43658181655,
+  "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "reason": "Only Unit tests and Lib tests aggregate jobs remained queued after the normal cancellation; this exact superseded body-edit run contains no useful repaired-head work.",
+  "records": [
+    {
+      "original": "/tmp/spn128-publication-d22baa69/body-edit-before-force-cancel.json",
+      "path": "trigger-originals/body-edit-before-force-cancel.json",
+      "bytes": 12190,
+      "sha256": "666728a8c5d0e0ea34f4c9056bea06a5edfd290336961623bc63b6e622962510"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/body-edit-force-cancel-response.txt",
+      "path": "trigger-originals/body-edit-force-cancel-response.txt",
+      "bytes": 1476,
+      "sha256": "620f6e5708baee84927d67997faf3bf7dd6f32eaacd5ca25b6a6d966431686e9"
+    }
+  ]
+}
