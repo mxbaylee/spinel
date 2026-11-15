@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {execFileSync} from 'node:child_process';
+const input='/tmp/spn128-independent-callback-123-comparison.json';
+const bytes=readFileSync(input); const j=JSON.parse(bytes.toString());
+const hash=(b:Buffer)=>createHash('sha256').update(b).digest('hex');
+const git=(rev:string,path:string)=>execFileSync('git',['show',rev+':'+path],{cwd:'/Users/mxbaylee/projects/spinel',maxBuffer:2*1024*1024});
+for(const b of j.sourceBindings){const prior=git(j.sources.prior,b.path),current=git(j.sources.current,b.path);assert(prior.equals(current));assert.equal(hash(current),b.sha256);assert.equal(current.length,b.bytes);}
+const p=j.rows.prior,c=j.rows.current;
+for(const k of ['baselineSource','runtime','playwright','browser','environment','instrumentation','fixture','harnessSha256','runnerImage','jsAssetListing'])assert.deepEqual(p[k],c[k],k);
+assert.notEqual(p.runner.name,c.runner.name);
+assert.equal(p.jsAssetListing.length,68);
+assert.equal(Object.keys(p.harnessSha256).length,16);
+for(const [path,sha]of Object.entries(p.harnessSha256))assert.equal(hash(git(j.sources.current,path)),sha);
+const elapsed=c.traceConvertMs-p.traceConvertMs;
+const deltaTyping=c.typingWallMs-p.typingWallMs;
+const deltaWait=c.traceCompletionWaitMs-p.traceCompletionWaitMs;
+assert.equal(elapsed,j.delta.traceConvertMs);assert.equal(deltaTyping,j.delta.typingWallMs);assert.equal(deltaWait,j.delta.traceCompletionWaitMs);
+const report={at:new Date().toISOString(),input,inputSHA256:hash(bytes),sources:j.sources,sourceBindingsVerified:j.sourceBindings.length,harnessBindingsVerified:16,reportedAssetRowsEqual:68,fullBundleHashEqualityClaim:false,differentHostedRunnerInstances:true,extraPreconversionMs:elapsed,typingAndCompletionWaitShare:(deltaTyping+deltaWait)/elapsed,priorConversionElapsedMs:p.converter.elapsedMs,currentConversionElapsedMs:c.converter.elapsedMs,priorTerminal:p.terminal,currentTerminal:c.terminal,limit:'Read-only Git/hash/retained JSON comparison, no new runtime or trace-converter execution. Slower execution cause remains unproven; original failed acceptance is not waived.'};
+writeFileSync('/tmp/spn128-root-callback-comparison-audit.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));

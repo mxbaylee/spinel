@@ -1,0 +1,25 @@
+✔ optional process evidence failure is reported once without failing fixture setup (0.899459ms)
+✔ fixture log evidence retains fixed failure signals without cookies or content (0.26125ms)
+✔ log tails and memory counters have fixed bounds and content-free fields (0.197625ms)
+✔ journal evidence excludes authority and treats process identity as historical selection (0.21175ms)
+✔ status observation retains only the HTTP status and recognized phase (13.210125ms)
+✔ complete distinct cuts bind head, tested checkout and actual recovered versus later live content (2.96275ms)
+✔ missing, duplicate, failed and stale receipts cannot satisfy recovery coverage (2.019042ms)
+✔ unproved terminations, cleanup, fingerprints, phases and cold authority cannot pass (6.0135ms)
+✔ unknown private fields are rejected at nested source/authority/process boundaries (0.586166ms)
+✔ projection omits raw authority, permit and path material (0.287875ms)
+✔ receipt write is bounded and keeps only explicit JSON files (7.898ms)
+✔ original failure survives recorder and cleanup failure; private data is not removed (0.307041ms)
+✔ successful receipt precedes private deletion and final cleanup state; deletion failure stays failed (0.224541ms)
+✔ postcommit retains actual writer SIGKILL while an already-exited controller is an explicit no-op (0.989833ms)
+✔ each initial and cold crash controller needs its own actual SIGKILL witness (5.480834ms)
+✔ available initial and cold observations survive an assertion failure without raw marker material (3.438375ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 190.081125
+{"name":"spn128-review-b-controls-d22baa69","args":["/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node","--test","--test-concurrency=1","scripts/ci/restore-crash-evidence.test.ts","scripts/ci/maintenance-evidence.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":280,"peakKiB":194752}

@@ -1,0 +1,302 @@
+HEAD d22baa6997e27c123ef351a8f5321089cc9e345b
+BASE 8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d
+TREE 42f35a8883008629716913929a8c21bcaa150589
+All executable source copies are byte-exact git blobs. Documentation masks do not alter originals.
+Parent graph:
+d22baa6997e27c123ef351a8f5321089cc9e345b 524dca9ed0679716a3db6a16b4d78c58f07b58a7 Preserve crash receipt repair qualification and original failures
+524dca9ed0679716a3db6a16b4d78c58f07b58a7 3e5b929ca14d0a58bfa1b70db2543d6c62145e28 Format precise failed receipt sentinel assertion
+3e5b929ca14d0a58bfa1b70db2543d6c62145e28 b6cab439ac48aaf22148cdfffc3ff0e0f6081fdc Use exact secret sentinels in failed observation receipt control
+b6cab439ac48aaf22148cdfffc3ff0e0f6081fdc 32da9295310f76de046a20797dc9065c9e96b414 Retain observed crash state before asserting its authority contract
+32da9295310f76de046a20797dc9065c9e96b414 4f9502fa59407fec8b8c7c2850c467dddce71902 Preserve original callback postprocessing failure and comparison limits
+
+Full changed-file accounting:
+24	0	.github/workflows/ci.yml
+7	2	docs/backups.md
+10	0	docs/diagnostics.md
+1	1	docs/implementation/SPN-112.md
+873	0	docs/implementation/SPN-128.md
+13	0	docs/implementation/evidence/SPN-128-8e9-integration/backlog.json
+-	-	docs/implementation/evidence/SPN-128-8e9-integration/backlog.log.gz
+6	0	docs/implementation/evidence/SPN-128-8e9-integration/cleanup.json
+21	0	docs/implementation/evidence/SPN-128-8e9-integration/contracts.json
+-	-	docs/implementation/evidence/SPN-128-8e9-integration/contracts.log.gz
+22	0	docs/implementation/evidence/SPN-128-8e9-integration/diagnostics.json
+-	-	docs/implementation/evidence/SPN-128-8e9-integration/diagnostics.log.gz
+13	0	docs/implementation/evidence/SPN-128-8e9-integration/index.json
+-	-	docs/implementation/evidence/SPN-128-8e9-integration/index.log.gz
+13	0	docs/implementation/evidence/SPN-128-8e9-integration/lint.json
+-	-	docs/implementation/evidence/SPN-128-8e9-integration/lint.log.gz
+2467	0	docs/implementation/evidence/SPN-128-8e9-integration/pending-index-source-audit.json
+17	0	docs/implementation/evidence/SPN-128-8e9-integration/pr.json
+-	-	docs/implementation/evidence/SPN-128-8e9-integration/pr.log.gz
+204	0	docs/implementation/evidence/SPN-128-8e9-integration/provenance.json
+18	0	docs/implementation/evidence/SPN-128-8e9-integration/scripts.json
+-	-	docs/implementation/evidence/SPN-128-8e9-integration/scripts.log.gz
+14	0	docs/implementation/evidence/SPN-128-8e9-integration/types.json
+-	-	docs/implementation/evidence/SPN-128-8e9-integration/types.log.gz
+13	0	docs/implementation/evidence/SPN-128-c1-integration/backlog-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-c1-integration/backlog.log.gz
+13	0	docs/implementation/evidence/SPN-128-c1-integration/completed-source-audit.json
+21	0	docs/implementation/evidence/SPN-128-c1-integration/contracts-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-c1-integration/contracts.log.gz
+13	0	docs/implementation/evidence/SPN-128-c1-integration/index-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-c1-integration/index.log.gz
+13	0	docs/implementation/evidence/SPN-128-c1-integration/lint-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-c1-integration/lint.log.gz
+17	0	docs/implementation/evidence/SPN-128-c1-integration/pr-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-c1-integration/pr.log.gz
+85	0	docs/implementation/evidence/SPN-128-c1-integration/provenance.json
+17	0	docs/implementation/evidence/SPN-128-c1-integration/scripts-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-c1-integration/scripts.log.gz
+1258	0	docs/implementation/evidence/SPN-128-c1-integration/source-only-audit.json
+14	0	docs/implementation/evidence/SPN-128-c1-integration/types-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-c1-integration/types.log.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/attachments.spec.ts.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/playwright.config.ts.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results.json.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/.last-run.json.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-diagnostic-collection-failures-87661d931f13849cc70bb8eeeceef2338b6d5510.json.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-failure-0-0-9ced79724ef0b4d54ccbae85422e9c7d427ae95b.png
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-failure-1-0-bfb0006b1320ad0f4c406fc870105c0cb59e46be.png
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-first-failure-0-8894ec23aee879059d9dba7426d6d98828941b4d.zip
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-startup-0-6510fb9028f02b72581a475122ed6382a5f9095a.json.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-startup-1-98bc473eca98ffef83f1d26cc2d27de0dc7e6724.json.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-state-0-0-26db07f0dba3ffffde947f0a0c3b0505bfe41c9a.txt.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-state-1-0-3f0867bf8423a0345394839eea106bd0b271c68e.txt.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-diagnostic-collection-failures.json.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-failure-0-0.png
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-failure-1-0.png
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-first-failure-0/trace.zip
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-startup-0.json.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-startup-1.json.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-state-0-0.txt.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-state-1-0.txt.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/attachment-control/results/attachments-all-named-fail-4749b-preserves-the-primary-error/upload-coverage.json.gz
+15	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/attachments-final-format.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/attachments-final-format.log.gz
+15	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/attachments-format.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/attachments-format.log.gz
+13	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/attachments-lint.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/attachments-lint.log.gz
+15	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/attachments-probe.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/attachments-probe.log.gz
+13	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/attachments-types.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/attachments-types.log.gz
+14	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/controls.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/controls.log.gz
+17	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/format.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/format.log.gz
+13	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/lint.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/lint.log.gz
+14	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/observation-controls-fixed.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/observation-controls-fixed.log.gz
+14	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/observation-controls.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/observation-controls.log.gz
+14	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/observation-format-fixed.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/observation-format-fixed.log.gz
+17	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/observation-format.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/observation-format.log.gz
+13	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/observation-lint.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/observation-lint.log.gz
+13	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/observation-types.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/observation-types.log.gz
+21	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/regressions.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/regressions.log.gz
+13	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/review-backlog.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/review-backlog.log.gz
+14	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/review-controls.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/review-controls.log.gz
+15	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/review-format.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/review-format.log.gz
+13	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/review-lint.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/review-lint.log.gz
+13	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/review-types.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/review-types.log.gz
+15	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/routing.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/routing.log.gz
+14	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/trace-controls.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/trace-controls.log.gz
+19	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/trace-format.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/trace-format.log.gz
+15	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/trace-probe.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/trace-probe.log.gz
+14	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/types-fixed.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/types-fixed.log.gz
+14	0	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/types.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/checks/types.log.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/original-findings/spn128-crash-retention-gap.json.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/original-findings/spn128-independent-callback-123-comparison.json.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/preservation-helper.ts.gz
+1123	0	docs/implementation/evidence/SPN-128-crash-retention-repair/provenance.json
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/source-bindings.json.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/trace-control/playwright.config.ts.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/trace-control/results.json.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/trace-control/results/.last-run.json.gz
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/trace-control/results/trace-ownership-sole-manua-5836f-ey-for-both-manual-contexts/attachments/restore-first-failure-0-a2305b510d59e27e9f50e877c3eefe6974fdb654.zip
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/trace-control/results/trace-ownership-sole-manua-5836f-ey-for-both-manual-contexts/attachments/restore-first-failure-1-6df0af41f9a9ab9ac9bbfcc2d39b12492422684d.zip
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/trace-control/results/trace-ownership-sole-manua-5836f-ey-for-both-manual-contexts/restore-first-failure-0/trace.zip
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/trace-control/results/trace-ownership-sole-manua-5836f-ey-for-both-manual-contexts/restore-first-failure-1/trace.zip
+-	-	docs/implementation/evidence/SPN-128-crash-retention-repair/trace-control/trace-ownership.spec.ts.gz
+92	0	docs/implementation/evidence/SPN-128-held-folder-probe.patch
+52	0	docs/implementation/evidence/SPN-128-mirror-setup-failure.json
+35	0	docs/implementation/evidence/SPN-128-mirror-validation.json
+15	0	docs/implementation/evidence/SPN-128-readiness-fix.patch
+722	0	docs/implementation/evidence/SPN-128-readiness.json
+13	0	docs/implementation/evidence/SPN-128-resume/backlog-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-resume/backlog.log.gz
+21	0	docs/implementation/evidence/SPN-128-resume/contracts-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-resume/contracts.log.gz
+13	0	docs/implementation/evidence/SPN-128-resume/evidence-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-resume/evidence.log.gz
+13	0	docs/implementation/evidence/SPN-128-resume/lint-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-resume/lint.log.gz
+17	0	docs/implementation/evidence/SPN-128-resume/pr-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-resume/pr.log.gz
+68	0	docs/implementation/evidence/SPN-128-resume/provenance.json
+48	0	docs/implementation/evidence/SPN-128-resume/recovery-first-failures.log
+14	0	docs/implementation/evidence/SPN-128-resume/types-watchdog.json
+-	-	docs/implementation/evidence/SPN-128-resume/types.log.gz
+117	0	docs/implementation/evidence/SPN-128-sync-production-first-attempt.json
+60	0	docs/implementation/evidence/SPN-128-withheld-readiness.patch
+53	21	docs/maintenance.md
+0	48	docs/todo/SPN-128.md
+1	1	docs/todo/backlog.json
+23	24	docs/todo/readme.md
+132	0	e2e/maintenance-evidence.ts
+116	2	e2e/maintenance-fixture.ts
+106	0	e2e/supervised-restore-tracing.ts
+126	70	e2e/supervised-restore.spec.ts
+103	0	scripts/ci/maintenance-evidence.test.ts
+481	0	scripts/ci/restore-crash-evidence.test.ts
+284	0	scripts/ci/restore-crash-evidence.ts
+5	3	scripts/deploy/maintenance.ts
+9	6	src/server/backup/restore-registry.ts
+294	0	src/server/maintenance/restore-cold-custody.test.ts
+670	0	src/server/maintenance/restore-cold-state.test.ts
+341	0	src/server/maintenance/restore-cold-state.ts
+334	0	src/server/maintenance/restore-cold.ts
+24	4	src/server/maintenance/restore-crash-app-fixture.ts
+82	0	src/server/maintenance/restore-crash-cleanup-fixture.ts
+5	0	src/server/maintenance/restore-crash-clock-fixture.ts
+36	0	src/server/maintenance/restore-crash-clock.test.ts
+246	0	src/server/maintenance/restore-crash-evidence.ts
+60	5	src/server/maintenance/restore-crash-fixture.ts
+32	0	src/server/maintenance/restore-crash-security-fixture.ts
+35	0	src/server/maintenance/restore-crash-tamper-fixture.ts
+1057	404	src/server/maintenance/restore-crash.integration.test.ts
+271	27	src/server/maintenance/restore-files.ts
+298	12	src/server/maintenance/restore-jobs.ts
+258	27	src/server/maintenance/supervisor.ts
+
+Main-only integration delta in crash harness (SPN-158 preserved):
+diff --git a/src/server/maintenance/restore-crash.integration.test.ts b/src/server/maintenance/restore-crash.integration.test.ts
+index 17b36507..e84b2036 100644
+--- a/src/server/maintenance/restore-crash.integration.test.ts
++++ b/src/server/maintenance/restore-crash.integration.test.ts
+@@ -30,6 +30,7 @@ import { processResourcesReleased } from './process-exit.ts';
+ import { currentRestoreRecovery, restoreJobPhase } from './restore-jobs.ts';
+ import type { RestoreJobRecord } from './restore-jobs.ts';
+ import { finishRestoreCrashCleanup } from './restore-crash-cleanup-fixture.ts';
++import { expiredRestoreClockOffset } from './restore-crash-clock-fixture.ts';
+ import { authenticator, restoreHttpClient, seed, seedOwner } from './restore-http-test-client.ts';
+ 
+ const cuts = [
+@@ -345,18 +346,30 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
+       let acknowledgedId: string | undefined;
+       if (cut === 'postcommit') {
+         await expect.poll(() => record().phase, { timeout: 100_000 }).toBe('candidate-committed');
+-        await expect
+-          .poll(
+-            async () => {
+-              try {
+-                return (await client.request('/api/auth/session')).status;
+-              } catch {
+-                return 0;
+-              }
+-            },
+-            { timeout: 20_000 },
+-          )
+-          .toBe(401);
++        // Session reads deliberately bypass pause. Wait for the application's
++        // writable admission before making the one authentication attempt.
++        const admission = new AbortController();
++        const deadline = setTimeout(() => admission.abort(), 20_000);
++        let observed: Awaited<ReturnType<typeof client.restoredAdmission>> | undefined;
++        try {
++          await expect
++            .poll(
++              async () => {
++                observed = await client.restoredAdmission(admission.signal);
++                return observed.ready;
++              },
++              { timeout: 20_000 },
++            )
++            .toBe(true);
++        } catch (cause) {
++          throw new Error(
++            `Postcommit admission failed: ${JSON.stringify(observed ?? { stage: 'not-started' })}`,
++            { cause },
++          );
++        } finally {
++          clearTimeout(deadline);
++          admission.abort();
++        }
+         await ownerClient!.authenticate();
+         const acknowledged = await ownerClient!.json<{ item: { id: string; name: string } }>(
+           await ownerClient!.request('/api/items', {
+@@ -588,9 +601,14 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
+       }
+       await kill(first);
+       await confirmation;
+-      // This is clock-controlled expiry, not five minutes of elapsed runtime.
+-      // The historical WebAuthn proof stays byte-for-byte unchanged.
+-      if (recoversOriginal) clockOffset = 6 * 60_000;
++      // Expire the persisted operation authority, independent of its configured
++      // lifetime. This is virtual expiry, not a wall-clock soak; keep the proof unchanged.
++      if (recoversOriginal)
++        clockOffset = expiredRestoreClockOffset(
++          before.intent.authority.expiresAt,
++          Date.now(),
++          clockOffset,
++        );
+       await launch(false, Boolean(cold));
+       assertWorkspaceHandlesClosed(databasePath);
+       expect(statSync(databasePath).ino).toBe(identity.ino);
+@@ -825,7 +843,7 @@ test.skipIf(process.platform !== 'linux').each(scenarios)(
+           const coldEvidence = await retains(root, retained);
+           await kill(controller!);
+           await interrupted;
+-          clockOffset += 6 * 60_000;
++          clockOffset = expiredRestoreClockOffset(attempt.deadline, Date.now(), clockOffset);
+           await launch(false);
+           assertWorkspaceHandlesClosed(databasePath);
+           expect(record()).toEqual(attempted);
+
+SPN-090 incoming integration source proof: see source/docs/implementation/evidence/SPN-128-c1-integration/source-only-audit.json and completed-source-audit.json. All61 incoming non-document files match c1; all180 audited recovery paths match prior reviewed3812.
+SPN-120/123 actual-main original integration audit remains source-qualified: source/docs/implementation/evidence/SPN-128-8e9-integration/. It is an earlier stage, not final repair equality. Repair source-tested524dca9e; finald22baa69 adds documentation/evidence only. Current repair provenance and complete input bindings: source/docs/implementation/evidence/SPN-128-crash-retention-repair/provenance.json and decoded-evidence/SPN-128-crash-retention-repair/source-bindings.json.
+Final executable equivalence proof:
+
+Separate browser probe source-equivalence:
+
+Original authority and cold restart clock bindings:
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash-app-fixture.ts:9:const offset = Number(process.env.SPINEL_TEST_CLOCK_OFFSET ?? 0);
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash-app-fixture.ts:12:Date.now = () => realNow() + offset;
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash-clock-fixture.ts:3:export function expiredRestoreClockOffset(deadline: number, wallNow: number, previousOffset = 0) {
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash-clock.test.ts:3:import { expiredRestoreClockOffset } from './restore-crash-clock-fixture.ts';
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash-clock.test.ts:10:    const offset = expiredRestoreClockOffset(authority.expiresAt, wallNow);
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash-clock.test.ts:21:  expect(() => requireExpired(expiredRestoreClockOffset(expiresAt, wallNow))).not.toThrow();
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash-clock.test.ts:26:  const first = expiredRestoreClockOffset(originalExpiry, wallNow);
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash-clock.test.ts:28:  const second = expiredRestoreClockOffset(coldDeadline, wallNow, first);
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash-clock.test.ts:31:  expect(expiredRestoreClockOffset(originalExpiry, wallNow, second)).toBe(second);
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash-clock.test.ts:35:  expect(expiredRestoreClockOffset(wallNow - 1, wallNow)).toBe(0);
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash-fixture.ts:24:const offset = Number(process.env.SPINEL_TEST_CLOCK_OFFSET ?? 0);
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash-fixture.ts:27:Date.now = () => realNow() + offset;
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash-fixture.ts:180:          SPINEL_TEST_CLOCK_OFFSET: String(offset),
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash.integration.test.ts:42:import { expiredRestoreClockOffset } from './restore-crash-clock-fixture.ts';
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash.integration.test.ts:331:              SPINEL_TEST_CLOCK_OFFSET: String(clockOffset),
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash.integration.test.ts:663:          clockOffset = expiredRestoreClockOffset(
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash.integration.test.ts:850:            expect(attempt.grantedAt).toBeGreaterThan(before.intent.authority.expiresAt);
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash.integration.test.ts:914:            clockOffset = expiredRestoreClockOffset(attempt.deadline, Date.now(), clockOffset);
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash.integration.test.ts:947:              expect(currentRestoreRecovery(record())!.grantedAt).toBeGreaterThan(attempt.deadline);
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/server/maintenance/restore-crash.integration.test.ts:969:            expect(current!.grantedAt).toBeGreaterThan(before.intent.authority.expiresAt);
+d22baa6997e27c123ef351a8f5321089cc9e345b:src/shared/restore.ts:2:export const RESTORE_OPERATION_MS = 30 * 60_000;

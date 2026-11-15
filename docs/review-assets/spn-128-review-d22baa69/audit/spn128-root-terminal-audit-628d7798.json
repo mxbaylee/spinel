@@ -1,0 +1,18 @@
+{
+  "at": "2026-11-15T00:18:50.559Z",
+  "commit": "5d186e11fba730d346e9e963d99b50ce2f1e96f8",
+  "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "prefix": "docs/review-assets/spn-128-validation-628d7798",
+  "acceptance": "NOT_ACCEPTED",
+  "manifestSHA256": "ec245a2b9fb53f21f1bd5616a3e37edab6cd9a32b86801f80a626659b3c30ef5",
+  "exclusiveAddedFiles": 879,
+  "payloads": 878,
+  "allGitBlobsStoredHashesVerified": true,
+  "originalCollectionBindings": 433,
+  "originalZipHashesVerified": 34,
+  "inventoriedMembers": 3564,
+  "retainedOriginalMemberBindings": 491,
+  "failedBaselineProtoDecodedStreamVerified": 1,
+  "crcSource": "Collector independently streamed every original member CRC/size/SHA; root verifies whole ZIP SHA and retained original member bytes.",
+  "provenanceCorrection": "Historical initial inventory original was superseded by final canonical inventory; preserved original path and explicit point-in-time binding now verified. Initial read-only filename probe ENOENT caused no mutation."
+}

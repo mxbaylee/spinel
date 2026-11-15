@@ -1,0 +1,124 @@
+{
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "exclusivePrefix": "docs/review-assets/spn-128-review-d22baa69",
+  "reviews": [
+    {
+      "agent": "a",
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "report": "/tmp/spn128-review-d22baa69-a.md",
+      "originals": [
+        "/tmp/spn128-review-a-d22b-receipts.log",
+        "/tmp/spn128-review-a-d22b-probes.log",
+        "/tmp/spinel-dependabot-2026-11-11/spn128-review-a-d22b-receipts.json",
+        "/tmp/spinel-dependabot-2026-11-11/spn128-review-a-d22b-probes.json",
+        "/tmp/spn128-review-a-d22b-probes/attachments.spec.ts",
+        "/tmp/spn128-review-a-d22b-probes/playwright.config.ts",
+        "/tmp/spn128-review-a-d22b-probes/results/.last-run.json",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-diagnostic-collection-failures-ce53a55dc98b82b70f186a996793cc2d23e8b700.json",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-failure-0-0-5deb058231a708ee46f24f716523c4ebaf008d25.png",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-failure-1-0-3dfca8a30975b71fc7b0c7057c2407767aef12b7.png",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-first-failure-0-43f736a9744d7f0b50c8a5dcfdd8e9f452b6f785.zip",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-startup-0-c14735fc98e26fcdcb0f418fde790bc129d9dcd2.json",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-startup-1-40068b1d9cea80e5a60bf15992381af44b81ada7.json",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-state-0-0-64ba2580dd19d4158f99ad0d62d789eb943fa92f.txt",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-state-1-0-d5e7333b3da04f15ae74944c1d4bb699f65bd5dc.txt",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-diagnostic-collection-failures.json",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-failure-0-0.png",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-failure-1-0.png",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-first-failure-0/trace.zip",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-startup-0.json",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-startup-1.json",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-state-0-0.txt",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-state-1-0.txt",
+        "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/upload-coverage.json",
+        "/tmp/spn128-review-a-d22b-probes/results/trace-ownership-sole-manua-5836f-ey-for-both-manual-contexts/attachments/restore-first-failure-0-bd59dbb0d9154f34c43dba4a3878ef6524fdcf24.zip",
+        "/tmp/spn128-review-a-d22b-probes/results/trace-ownership-sole-manua-5836f-ey-for-both-manual-contexts/attachments/restore-first-failure-1-63b58ae3326441c90a3b99c28fcacd5c0e1b5e4e.zip",
+        "/tmp/spn128-review-a-d22b-probes/results/trace-ownership-sole-manua-5836f-ey-for-both-manual-contexts/restore-first-failure-0/trace.zip",
+        "/tmp/spn128-review-a-d22b-probes/results/trace-ownership-sole-manua-5836f-ey-for-both-manual-contexts/restore-first-failure-1/trace.zip",
+        "/tmp/spn128-review-a-d22b-probes/results.json",
+        "/tmp/spn128-review-a-d22b-probes/trace-ownership.spec.ts"
+      ],
+      "assessment": {
+        "score": 100,
+        "rubric": [
+          35,
+          25,
+          20,
+          10,
+          10
+        ],
+        "findings": [],
+        "passed": 14,
+        "skipped": 0
+      }
+    },
+    {
+      "agent": "b",
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "report": "/tmp/spn128-review-d22baa69-b.md",
+      "originals": [
+        "/tmp/spn128-review-b-controls-d22baa69.log",
+        "/tmp/spn128-review-b-portable-d22baa69.log",
+        "/tmp/spinel-dependabot-2026-11-11/spn128-review-b-controls-d22baa69.json",
+        "/tmp/spinel-dependabot-2026-11-11/spn128-review-b-portable-d22baa69.json",
+        "/tmp/spn128-review-b-provenance-d22baa69.json",
+        "/tmp/spn128-review-b-cleanup-d22baa69.json",
+        "/tmp/spn128-review-b-audit-d22baa69.json",
+        "/tmp/spn128-vitest.config.ts"
+      ],
+      "assessment": {
+        "score": 100,
+        "rubric": [
+          35,
+          25,
+          20,
+          10,
+          10
+        ],
+        "findings": [],
+        "passed": 46,
+        "skipped": 21,
+        "skipReason": "Existing Linux-only cases on Mac"
+      }
+    }
+  ],
+  "rootReadBothReports": true,
+  "rootPacketAudit": "/tmp/spn128-root-packet-audit-d22baa69.json",
+  "rootSourceAudit": "/tmp/spn128-root-repair-source-audit.json",
+  "supplements": [
+    "/tmp/spn128-build-d22baa69-packet.ts",
+    "/tmp/spn128-audit-d22baa69-packet.ts",
+    "/tmp/spn128-audit-d22baa69-packet.json",
+    "/tmp/spn128-root-callback-comparison-audit.ts",
+    "/tmp/spn128-root-callback-comparison-audit.json",
+    "/tmp/spinel-dependabot-2026-11-11/watch.ts",
+    "/tmp/spn128-root-packet-d22baa69-audit.ts",
+    "/tmp/spn128-root-packet-d22baa69-audit-first.ts",
+    "/tmp/spn128-root-terminal-audit-628d7798.json",
+    "/tmp/spn128-root-terminal-628d-audit.ts",
+    "/tmp/spn128-root-repair-source-audit.ts",
+    "/tmp/spn128-preservation-d22baa69/preparation-history.json",
+    "/tmp/spn128-preservation-d22baa69/revise-review-stage-first.ts"
+  ],
+  "original628dTerminalArchive": {
+    "commit": "5d186e11fba730d346e9e963d99b50ce2f1e96f8",
+    "tag": "archive/spn-128-validation-628d7798-20261114",
+    "published": true,
+    "url": "https://github.com/mxbaylee/spinel/tree/5d186e11fba730d346e9e963d99b50ce2f1e96f8/docs/review-assets/spn-128-validation-628d7798",
+    "manifestSHA256": "ec245a2b9fb53f21f1bd5616a3e37edab6cd9a32b86801f80a626659b3c30ef5"
+  },
+  "historicalArchiveLinks": [
+    "https://github.com/mxbaylee/spinel/tree/5d186e11fba730d346e9e963d99b50ce2f1e96f8/docs/review-assets/spn-128-validation-628d7798",
+    "https://github.com/mxbaylee/spinel/tree/2fd164eefdf0302b9d3e3a3cfab4c25bb6905507/docs/review-assets/spn-128-review-628d7798",
+    "https://github.com/mxbaylee/spinel/tree/568c42e30022e9dadb3f6c9f84d7fa979b76fe7e/docs/review-assets/spn-128-review-81841c50",
+    "https://github.com/mxbaylee/spinel/tree/ba660d31d96949680e48ba44f33e2a46caac0dd8/docs/implementation/evidence/SPN-128-review-3812ed9b"
+  ],
+  "limits": [
+    "Current reports and all raw first-attempt outcomes must be supplied before staging.",
+    "No source-head changes, Git object/ref mutation or remote actions are performed by this helper.",
+    "No prior packet or review archive is recursively copied.",
+    "Original628d terminal failure evidence is published and independently audited; it remains NOT_ACCEPTED and is not repaired-head acceptance.",
+    "Fresh all-seven gates and selected Linux/native/browser/performance acceptance remain pending."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "at": "2026-11-15T00:18:17.201Z",
+  "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "manifestSha256": "3f105b060350c736406c9b69ffc8cb998d96319c47de2ef4368f2041fc3221d2",
+  "payloads": 1713,
+  "actualGitSourceBindings": 1707,
+  "exactSourceCopies": 1702,
+  "exactTypeScriptCopies": 1267,
+  "decodedGzipSources": 70,
+  "decodedZipMembers": 18,
+  "maskedMarkdown": [
+    "source/docs/design/component-review.md",
+    "source/docs/implementation/SPN-112.md",
+    "source/docs/implementation/SPN-115.md",
+    "source/docs/implementation/SPN-120.md",
+    "source/docs/implementation/grooming-2026-10-26.md"
+  ],
+  "maskedLines": 17,
+  "inventoriedOmissionsVerified": 112,
+  "fullBinaryDiffExact": true,
+  "postTest524dChangesOnlyDocs": true,
+  "readerCorrection": "Initial reader assumed prior packet README/packet-manifest filenames; ENOENT before mutation. This packet uses review-input.md and source-manifest.json. Second reader correctly distinguishes omitted ZIP members from whole Git blobs. Original first script retained. No packet/source change."
+}

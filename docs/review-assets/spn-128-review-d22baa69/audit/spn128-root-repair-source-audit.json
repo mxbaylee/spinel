@@ -1,0 +1,32 @@
+{
+  "at": "2026-11-15T00:21:06.228Z",
+  "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "prior": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "tested": "524dca9ed0679716a3db6a16b4d78c58f07b58a7",
+  "unchangedNonDocPathsFromPrior": 1413,
+  "exactNonDocRepairPaths": [
+    ".github/workflows/ci.yml",
+    "e2e/supervised-restore-tracing.ts",
+    "e2e/supervised-restore.spec.ts",
+    "scripts/ci/restore-crash-evidence.test.ts",
+    "scripts/ci/restore-crash-evidence.ts",
+    "src/server/maintenance/restore-crash-evidence.ts",
+    "src/server/maintenance/restore-crash.integration.test.ts"
+  ],
+  "noNonDocChangeAfterTested524d": true,
+  "traceAndUploadSourceIdenticalToActualProbe8eca": true,
+  "bookkeeping": {
+    "completed": [
+      "SPN-098",
+      "SPN-090",
+      "SPN-120",
+      "SPN-123",
+      "SPN-128"
+    ],
+    "nextId": 161,
+    "lastGroom": "2026-11-14"
+  },
+  "rootSourceInspection": "Read full new receipt projection/validator/negative controls, whitespace-insensitive integration delta, tracing/attachment helper/spec/upload change, all known review repairs and final canonicaldispositions. Original production recovery unchanged; no further rootsourcefinding.",
+  "limits": "No numerical review grade and no hosted acceptance claim; original failed628d outcomes retained separately. Current independent checks and fresh hosted owners remain separate gates."
+}

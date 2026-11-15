@@ -1,0 +1,277 @@
+{
+  "config": {
+    "argv": [
+      "/private/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+      "/Users/mxbaylee/projects/spinel-spn-128-production/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "/tmp/spn128-review-a-d22b-probes/playwright.config.ts"
+    ],
+    "configFile": "/tmp/spn128-review-a-d22b-probes/playwright.config.ts",
+    "rootDir": "/tmp/spn128-review-a-d22b-probes",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/tmp/spn128-review-a-d22b-probes/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "/tmp/spn128-review-a-d22b-probes",
+        "testIgnore": [],
+        "testMatch": [
+          "trace-ownership.spec.ts",
+          "attachments.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/tmp/spn128-review-a-d22b-probes/results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "/tmp/spn128-review-a-d22b-probes",
+        "snapshotDir": "/tmp/spn128-review-a-d22b-probes",
+        "testIgnore": [],
+        "testMatch": [
+          "trace-ownership.spec.ts",
+          "attachments.spec.ts"
+        ],
+        "timeout": 30000,
+        "use": {
+          "headless": true
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/tmp/spn128-review-a-d22b-probes/results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "attachments.spec.ts",
+      "file": "attachments.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "all named failure evidence survives upload selection and capture failure preserves the primary error",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 644,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-15T00:15:50.434Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "restore-startup-0",
+                      "contentType": "application/json",
+                      "path": "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-startup-0-c14735fc98e26fcdcb0f418fde790bc129d9dcd2.json"
+                    },
+                    {
+                      "name": "restore-first-failure-0",
+                      "contentType": "application/zip",
+                      "path": "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-first-failure-0-43f736a9744d7f0b50c8a5dcfdd8e9f452b6f785.zip"
+                    },
+                    {
+                      "name": "restore-failure-0-0",
+                      "contentType": "image/png",
+                      "path": "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-failure-0-0-5deb058231a708ee46f24f716523c4ebaf008d25.png"
+                    },
+                    {
+                      "name": "restore-state-0-0",
+                      "contentType": "text/plain",
+                      "path": "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-state-0-0-64ba2580dd19d4158f99ad0d62d789eb943fa92f.txt"
+                    },
+                    {
+                      "name": "restore-startup-1",
+                      "contentType": "application/json",
+                      "path": "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-startup-1-40068b1d9cea80e5a60bf15992381af44b81ada7.json"
+                    },
+                    {
+                      "name": "restore-failure-1-0",
+                      "contentType": "image/png",
+                      "path": "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-failure-1-0-3dfca8a30975b71fc7b0c7057c2407767aef12b7.png"
+                    },
+                    {
+                      "name": "restore-state-1-0",
+                      "contentType": "text/plain",
+                      "path": "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-state-1-0-d5e7333b3da04f15ae74944c1d4bb699f65bd5dc.txt"
+                    },
+                    {
+                      "name": "restore-diagnostic-collection-failures",
+                      "contentType": "application/json",
+                      "path": "/tmp/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-diagnostic-collection-failures-ce53a55dc98b82b70f186a996793cc2d23e8b700.json"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "0bca597356bd05b88a9c-7373a59c182c2f501266",
+          "file": "../../private/tmp/spn128-review-a-d22b-probes/attachments.spec.ts",
+          "line": 8,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "trace-ownership.spec.ts",
+      "file": "trace-ownership.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "sole manual owner retains complete original journey for both manual contexts",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 266,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-15T00:15:51.093Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "restore-first-failure-0",
+                      "contentType": "application/zip",
+                      "path": "/tmp/spn128-review-a-d22b-probes/results/trace-ownership-sole-manua-5836f-ey-for-both-manual-contexts/attachments/restore-first-failure-0-bd59dbb0d9154f34c43dba4a3878ef6524fdcf24.zip"
+                    },
+                    {
+                      "name": "restore-first-failure-1",
+                      "contentType": "application/zip",
+                      "path": "/tmp/spn128-review-a-d22b-probes/results/trace-ownership-sole-manua-5836f-ey-for-both-manual-contexts/attachments/restore-first-failure-1-63b58ae3326441c90a3b99c28fcacd5c0e1b5e4e.zip"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6d6b6cc75aeaf3b14105-e8681b929b06cafa353c",
+          "file": "../../private/tmp/spn128-review-a-d22b-probes/trace-ownership.spec.ts",
+          "line": 5,
+          "column": 5
+        },
+        {
+          "title": "withheld old dual-owner setting is rejected before navigation",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "",
+              "projectName": "",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 99,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-15T00:15:51.553Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6d6b6cc75aeaf3b14105-32d29d0e2985be39233e",
+          "file": "../../private/tmp/spn128-review-a-d22b-probes/trace-ownership.spec.ts",
+          "line": 29,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-15T00:15:49.922Z",
+    "duration": 1755.293,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

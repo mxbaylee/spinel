@@ -1,0 +1,19 @@
+{
+  "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "manifestSha256": "3f105b060350c736406c9b69ffc8cb998d96319c47de2ef4368f2041fc3221d2",
+  "filesChecked": 1713,
+  "copyHashMismatches": [],
+  "fullDiffExact": true,
+  "sourceBindingsChecked": 1628,
+  "gitBindingMismatches": [],
+  "gitBlobSha256Mismatches": [],
+  "auditHelperAttempts": [
+    "KeyError source on generated manifest entry",
+    "KeyError sourcePath on non-Git source entry",
+    "Corrected helper selects full Git binding entries; no source/test mutation",
+    "Archive entries compared after their declared gzip decoding; raw archive hashes also verified"
+  ],
+  "archiveSha256Mismatches": [],
+  "decodedGzipChecked": 70
+}

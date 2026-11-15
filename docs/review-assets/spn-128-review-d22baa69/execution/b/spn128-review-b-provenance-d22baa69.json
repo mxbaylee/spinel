@@ -1,0 +1,64 @@
+{
+  "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "reviewer": "independent nonimplementing B",
+  "node": "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+  "guard": "normal pressure 1, 2097152 KiB process tree, 480000ms; sole slot",
+  "checks": [
+    {
+      "log": "/tmp/spn128-review-b-controls-d22baa69.log",
+      "logSha256": "383b5e90930147da2f58cfa13cdf5cf1df914c22fd0e4b6497dbc15711b247bf",
+      "receipt": "/tmp/spinel-dependabot-2026-11-11/spn128-review-b-controls-d22baa69.json",
+      "result": {
+        "name": "spn128-review-b-controls-d22baa69",
+        "args": [
+          "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+          "--test",
+          "--test-concurrency=1",
+          "scripts/ci/restore-crash-evidence.test.ts",
+          "scripts/ci/maintenance-evidence.test.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 280,
+        "peakKiB": 194752
+      }
+    },
+    {
+      "log": "/tmp/spn128-review-b-portable-d22baa69.log",
+      "logSha256": "7a26f680417a9e38814f320bda9ad7eb7368ea079e738d1c8e0251d0221e4aba",
+      "receipt": "/tmp/spinel-dependabot-2026-11-11/spn128-review-b-portable-d22baa69.json",
+      "result": {
+        "name": "spn128-review-b-portable-d22baa69",
+        "args": [
+          "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+          "node_modules/vitest/vitest.mjs",
+          "run",
+          "--config",
+          "/tmp/spn128-vitest.config.ts",
+          "--configLoader",
+          "native",
+          "--cache=false",
+          "src/server/maintenance/restore-cold-state.test.ts",
+          "src/server/maintenance/restore-cold-custody.test.ts",
+          "src/server/maintenance/restore-crash-clock.test.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 1186,
+        "peakKiB": 391744
+      }
+    }
+  ],
+  "cleanup": {
+    "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+    "worktreeClean": true,
+    "serialLockAbsent": true,
+    "matchingOwnedWorkloads": [],
+    "slotReleased": true,
+    "sourceDependenciesRefsRemoteUnchanged": true
+  },
+  "packetAudit": "/tmp/spn128-review-b-audit-d22baa69.json"
+}

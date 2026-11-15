@@ -1,0 +1,16 @@
+{
+  "candidate": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "originalHelper": "stage-review-archive-first.ts",
+  "originalHelperExecuted": false,
+  "corrections": [
+    "Replace embedded Python TAR verifier with TypeScript plus standard tar CLI, list/type/path checks and owned extraction with exact lstat/member/byte comparison.",
+    "Use complete original relative paths for reviewer artifacts so distinct trace.zip files cannot overwrite one another; duplicate destinations fail closed.",
+    "README describes durable payload and source identities rather than treating final archive as an unexecuted staging helper."
+  ],
+  "editingAttempt": {
+    "file": "revise-review-stage-first.ts",
+    "failure": "TypeError s.index is not a function before any source/stage mutation",
+    "repair": "Use string.indexOf; original editor retained."
+  },
+  "sourcePacketRefsAndRemoteUnchanged": true
+}

@@ -1,0 +1,13 @@
+
+Running 3 tests using 1 worker
+
+(node:98881) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  1 ../../../../private/tmp/spn128-review-a-d22b-probes/attachments.spec.ts:8:5 › all named failure evidence survives upload selection and capture failure preserves the primary error (644ms)
+  ✓  2 ../../../../private/tmp/spn128-review-a-d22b-probes/trace-ownership.spec.ts:5:5 › sole manual owner retains complete original journey for both manual contexts (266ms)
+(node:98984) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  3 ../../../../private/tmp/spn128-review-a-d22b-probes/trace-ownership.spec.ts:29:1 › withheld old dual-owner setting is rejected before navigation (99ms)
+
+  3 passed (1.8s)
+{"name":"spn128-review-a-d22b-probes","args":["node","node_modules/@playwright/test/cli.js","test","--config","/tmp/spn128-review-a-d22b-probes/playwright.config.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":2116,"peakKiB":909520}

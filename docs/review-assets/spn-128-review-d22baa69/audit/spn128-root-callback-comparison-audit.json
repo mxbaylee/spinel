@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-15T00:14:35.530Z",
+  "input": "/tmp/spn128-independent-callback-123-comparison.json",
+  "inputSHA256": "39909352c4880b543704c96090c3635001b8eabbd5d78a286f0427a6392ee7b1",
+  "sources": {
+    "prior": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+    "current": "628d77987e7d9a08863465a7553a2ed82579728b"
+  },
+  "sourceBindingsVerified": 17,
+  "harnessBindingsVerified": 16,
+  "reportedAssetRowsEqual": 68,
+  "fullBundleHashEqualityClaim": false,
+  "differentHostedRunnerInstances": true,
+  "extraPreconversionMs": 105914.83037400007,
+  "typingAndCompletionWaitShare": 0.9557083775951395,
+  "priorConversionElapsedMs": 37615.69075399998,
+  "currentConversionElapsedMs": 25775.397186000017,
+  "priorTerminal": "passed",
+  "currentTerminal": "timedOut",
+  "limit": "Read-only Git/hash/retained JSON comparison, no new runtime or trace-converter execution. Slower execution cause remains unproven; original failed acceptance is not waived."
+}

@@ -1,0 +1,20 @@
+✔ complete distinct cuts bind head, tested checkout and actual recovered versus later live content (3.130541ms)
+✔ missing, duplicate, failed and stale receipts cannot satisfy recovery coverage (1.911084ms)
+✔ unproved terminations, cleanup, fingerprints, phases and cold authority cannot pass (5.23375ms)
+✔ unknown private fields are rejected at nested source/authority/process boundaries (0.510125ms)
+✔ projection omits raw authority, permit and path material (0.298042ms)
+✔ receipt write is bounded and keeps only explicit JSON files (6.307709ms)
+✔ original failure survives recorder and cleanup failure; private data is not removed (0.487ms)
+✔ successful receipt precedes private deletion and final cleanup state; deletion failure stays failed (0.327208ms)
+✔ postcommit retains actual writer SIGKILL while an already-exited controller is an explicit no-op (1.207417ms)
+✔ each initial and cold crash controller needs its own actual SIGKILL witness (7.694375ms)
+✔ available initial and cold observations survive an assertion failure without raw marker material (6.075375ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 106.171916
+{"name":"spn128-review-a-d22b-receipts","args":["node","--test","--test-concurrency=1","scripts/ci/restore-crash-evidence.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":198,"peakKiB":0}

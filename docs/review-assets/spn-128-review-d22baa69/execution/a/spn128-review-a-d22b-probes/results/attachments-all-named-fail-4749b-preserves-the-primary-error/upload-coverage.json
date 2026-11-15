@@ -1,0 +1,96 @@
+{
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "names": [
+    "restore-startup-0.json",
+    "restore-startup-1.json",
+    "restore-failure-0-0.png",
+    "restore-failure-1-0.png",
+    "restore-state-0-0.txt",
+    "restore-state-1-0.txt",
+    "restore-diagnostic-collection-failures.json",
+    "restore-first-failure-0/trace.zip"
+  ],
+  "attachments": [
+    {
+      "name": "restore-startup-0",
+      "path": "attachments/restore-startup-0-c14735fc98e26fcdcb0f418fde790bc129d9dcd2.json"
+    },
+    {
+      "name": "restore-first-failure-0",
+      "path": "attachments/restore-first-failure-0-43f736a9744d7f0b50c8a5dcfdd8e9f452b6f785.zip"
+    },
+    {
+      "name": "restore-failure-0-0",
+      "path": "attachments/restore-failure-0-0-5deb058231a708ee46f24f716523c4ebaf008d25.png"
+    },
+    {
+      "name": "restore-state-0-0",
+      "path": "attachments/restore-state-0-0-64ba2580dd19d4158f99ad0d62d789eb943fa92f.txt"
+    },
+    {
+      "name": "restore-startup-1",
+      "path": "attachments/restore-startup-1-40068b1d9cea80e5a60bf15992381af44b81ada7.json"
+    },
+    {
+      "name": "restore-failure-1-0",
+      "path": "attachments/restore-failure-1-0-3dfca8a30975b71fc7b0c7057c2407767aef12b7.png"
+    },
+    {
+      "name": "restore-state-1-0",
+      "path": "attachments/restore-state-1-0-d5e7333b3da04f15ae74944c1d4bb699f65bd5dc.txt"
+    },
+    {
+      "name": "restore-diagnostic-collection-failures",
+      "path": "attachments/restore-diagnostic-collection-failures-ce53a55dc98b82b70f186a996793cc2d23e8b700.json"
+    }
+  ],
+  "globs": [
+    "test-results/spn124-sized-restore/evidence.json",
+    "test-results/spn124-sized-restore/failure.png",
+    "test-results/theme-screenshots/*.png",
+    "test-results/**/test-failed-*.png",
+    "test-results/**/*-restore-preview.png",
+    "test-results/**/*-export.pdf",
+    "test-results/**/*-export-opened.png",
+    "test-results/**/*-permission-notices.json",
+    "test-results/**/*-sync-presence.png",
+    "test-results/**/spn-059-sheet-menu-*.png",
+    "test-results/**/spn-053-offline-*.png",
+    "test-results/**/spn-055-*.png",
+    "test-results/**/spn-055-*.json",
+    "test-results/**/sync-diagnostics.json",
+    "test-results/**/fixture-evidence.json",
+    "test-results/**/spn098-feedback-pair.json",
+    "test-results/**/phone-doc-caret-events*.json",
+    "test-results/**/phone-doc-selection-evidence*.json",
+    "test-results/**/maintenance-views/*.png",
+    "test-results/**/spn-059-*-soak.json",
+    "test-results/**/error-context.md",
+    "test-results/**/trace.zip",
+    "test-results/**/restore-first-failure-*.zip",
+    "test-results/**/restore-startup-*.json",
+    "test-results/**/restore-diagnostic-collection-failures*.json",
+    "test-results/**/restore-failure-*.png",
+    "test-results/**/restore-state-*.txt",
+    "test-results/**/supervised-restore-first-attempt*.json",
+    "test-results/doc-responsiveness \"test-results/spn108-comparison-$PRESET.json\"",
+    "test-results/**/spn108-*.json",
+    "test-results/**/spn108-profile.cpuprofile",
+    "test-results/**/test-failed-*.png",
+    "test-results/**/error-context.md",
+    "test-results/**/trace.zip",
+    "test-results/doc-callback-lifetimes \\",
+    "test-results/doc-callback-lifetimes/",
+    "test-results/spn113-comparison-*.json"
+  ],
+  "traceMembers": [
+    "trace.trace",
+    "trace.network",
+    "screencast/page@d8ba3d1a6d74f0415770c565003b2e16-1794701750857.jpeg",
+    "screencast/page@d8ba3d1a6d74f0415770c565003b2e16-1794701750884.jpeg",
+    "screencast/page@d8ba3d1a6d74f0415770c565003b2e16-1794701750945.jpeg",
+    "trace.stacks"
+  ],
+  "primaryPreserved": true,
+  "cleanupAttempted": true
+}

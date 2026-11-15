@@ -1,0 +1,351 @@
+{
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 1646,
+      "sha256": "5585cd53f94ecce8f1f84c0a8ba0b5c550f4e4cc816cc806148e5bdb6f8c4cb5"
+    },
+    {
+      "path": "audit/inputs.json",
+      "bytes": 7949,
+      "sha256": "4faf579d0e9d6b4b1396c18e7377a47f0f299cf8db4467a6d46bf22f67561068"
+    },
+    {
+      "path": "audit/preparation-history.json",
+      "bytes": 897,
+      "sha256": "83f429260d372261c2146f34e16e7563054c3af3d0055dac757e40c855499910"
+    },
+    {
+      "path": "audit/revise-review-stage-first.ts",
+      "bytes": 5861,
+      "sha256": "23ed2854ad2d296b16dce06ddf061719c57373a5a6fc9b2057508346008f9489"
+    },
+    {
+      "path": "audit/seal-review-archive.ts",
+      "bytes": 3884,
+      "sha256": "1a1021c92f104fb2533a15cebff08792994cc9fb5366aee77cade8371bb64c3c"
+    },
+    {
+      "path": "audit/spn128-audit-d22baa69-packet.json",
+      "bytes": 663,
+      "sha256": "2119493f44dfa43cbd57857a7654965dc0c71d50e1014aa30f691a18e4da99cb"
+    },
+    {
+      "path": "audit/spn128-audit-d22baa69-packet.ts",
+      "bytes": 2533,
+      "sha256": "9e3815b78dd1a59e36a435e1ea6b3117b5160c36306b4ce0d4ebcea775cc6fbd"
+    },
+    {
+      "path": "audit/spn128-build-d22baa69-packet.ts",
+      "bytes": 12452,
+      "sha256": "8136669c7fb4d63a34276d20d8f3b2a0dd5dff3248b20d5a826504b559ec8928"
+    },
+    {
+      "path": "audit/spn128-root-callback-comparison-audit.json",
+      "bytes": 955,
+      "sha256": "60443b5579025b1ad9598dfb2cb91449d9b484cfca19e0cf1810a2a9310ef27f"
+    },
+    {
+      "path": "audit/spn128-root-callback-comparison-audit.ts",
+      "bytes": 2352,
+      "sha256": "b51ef6ccb3cefa03faf33a194bc0804a9aa77fb6db1b24c38ce6913e51fb88bb"
+    },
+    {
+      "path": "audit/spn128-root-packet-audit-d22baa69.json",
+      "bytes": 1116,
+      "sha256": "40cad5a1da6d42fe0e057689eeaa21f347401b534dd3efe099899c2b05ebcf73"
+    },
+    {
+      "path": "audit/spn128-root-packet-d22baa69-audit-first.ts",
+      "bytes": 2995,
+      "sha256": "35ddee39d533152d63b86487a25d1076a5a506a5798eb6f25760d64c171bfd68"
+    },
+    {
+      "path": "audit/spn128-root-packet-d22baa69-audit.ts",
+      "bytes": 3298,
+      "sha256": "305529fb28395c1895684caa83dd578b8d5dc53946ce90aad2b66fff1ee7dcb2"
+    },
+    {
+      "path": "audit/spn128-root-repair-source-audit.json",
+      "bytes": 1443,
+      "sha256": "0b884576590e8792374cd4bac03fcceee0a9eb850920cd60c27dd0bfdd5eda85"
+    },
+    {
+      "path": "audit/spn128-root-repair-source-audit.ts",
+      "bytes": 2778,
+      "sha256": "5e893e1e8af562f6e88f14958b53aa9146231a19df5c302a799715c8e0dd868d"
+    },
+    {
+      "path": "audit/spn128-root-terminal-628d-audit.ts",
+      "bytes": 4549,
+      "sha256": "ffbc15b45b04b35dbf3cdaa6646aeb4ce24529085754685d47f25e82619f7e36"
+    },
+    {
+      "path": "audit/spn128-root-terminal-audit-628d7798.json",
+      "bytes": 1013,
+      "sha256": "d21be4e608052396b50ed02528a4da4d60ab352ce532e9d215c43fbf307ab8c9"
+    },
+    {
+      "path": "audit/stage-review-archive-first.ts",
+      "bytes": 5300,
+      "sha256": "f20492fd024d45e7d0c2e9cff9fb73430ad2ab03f3093a2cb22c698b3c2ca314"
+    },
+    {
+      "path": "audit/stage-review-archive.ts",
+      "bytes": 7314,
+      "sha256": "9305dff2de5dce95489be05001e23b5eafd907814ee49e73284f840f24075595"
+    },
+    {
+      "path": "audit/stage.log",
+      "bytes": 579,
+      "sha256": "95f6d24417d0942b91f3fa1f599673217b5a852d55954ca1708c30b1813ac645"
+    },
+    {
+      "path": "audit/watch.ts",
+      "bytes": 1412,
+      "sha256": "203c67c3a455f630bd6b79156834cdfc18b4f9c5bb78591fffbe7214057e9dba"
+    },
+    {
+      "path": "execution/a/spinel-dependabot-2026-11-11/spn128-review-a-d22b-probes.json",
+      "bytes": 296,
+      "sha256": "e4d3ce37d946b3cbd98481b92f2e4f2c78e561868cc8e6ab0bd4e90fc355e79c"
+    },
+    {
+      "path": "execution/a/spinel-dependabot-2026-11-11/spn128-review-a-d22b-receipts.json",
+      "bytes": 250,
+      "sha256": "14d12f92fe56a0079bae3bc198d8056ca550b1ec54d349bf20b50a3a637a8f5d"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes.log",
+      "bytes": 1158,
+      "sha256": "e125183927e1dd97c33fb5cfd659b4981d64ffee4e3cd5c47b03edaf25575e9f"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/attachments.spec.ts",
+      "bytes": 4282,
+      "sha256": "bab51ea39be21ff339e3e39a47845ba231212787322a4c584a0cd2e679c78341"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/playwright.config.ts",
+      "bytes": 381,
+      "sha256": "c016954c2a0512b411afd3f5f6dcceb1549c979f0c3acb257044b46c40c05761"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results.json",
+      "bytes": 9931,
+      "sha256": "776424807b703099f1b1c78c44a4dbbbb5739b9cb8e51e4c0599f904ce1f4dc5"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/.last-run.json",
+      "bytes": 45,
+      "sha256": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-diagnostic-collection-failures-ce53a55dc98b82b70f186a996793cc2d23e8b700.json",
+      "bytes": 11,
+      "sha256": "c20a5470d8510e92f6e37e4163e2ea2f7555a5a27f71df936d69875d2616688d"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-failure-0-0-5deb058231a708ee46f24f716523c4ebaf008d25.png",
+      "bytes": 6387,
+      "sha256": "b54f7c641c4983af147d7375ce60cc16c8d7fe73a5bb34171cb6f4245a1323f4"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-failure-1-0-3dfca8a30975b71fc7b0c7057c2407767aef12b7.png",
+      "bytes": 7983,
+      "sha256": "dae448f95740e2d8394f93ef2fab84e56b1aff6844741f7eab2cf5dc6733c85e"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-first-failure-0-43f736a9744d7f0b50c8a5dcfdd8e9f452b6f785.zip",
+      "bytes": 4843,
+      "sha256": "91cae6339c883b7b30fb50e8ce32f030a6ab8084f6e8e948235f2aab73fa6670"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-startup-0-c14735fc98e26fcdcb0f418fde790bc129d9dcd2.json",
+      "bytes": 42,
+      "sha256": "4b1c9f91df9b0e09815294640105a99bbc69ebd7c88e40256c6a083b1c5f135a"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-startup-1-40068b1d9cea80e5a60bf15992381af44b81ada7.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-state-0-0-64ba2580dd19d4158f99ad0d62d789eb943fa92f.txt",
+      "bytes": 25,
+      "sha256": "f4b5b26ecf852a4103101e588721975d5df600e8272e4c1d84b5b07c52cbb429"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/attachments/restore-state-1-0-d5e7333b3da04f15ae74944c1d4bb699f65bd5dc.txt",
+      "bytes": 45,
+      "sha256": "4399a68aaa014464c03645fe2fdc14ee80b046e0e35459ec3c92fdad9d9570c5"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-diagnostic-collection-failures.json",
+      "bytes": 11,
+      "sha256": "c20a5470d8510e92f6e37e4163e2ea2f7555a5a27f71df936d69875d2616688d"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-failure-0-0.png",
+      "bytes": 6387,
+      "sha256": "b54f7c641c4983af147d7375ce60cc16c8d7fe73a5bb34171cb6f4245a1323f4"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-failure-1-0.png",
+      "bytes": 7983,
+      "sha256": "dae448f95740e2d8394f93ef2fab84e56b1aff6844741f7eab2cf5dc6733c85e"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-first-failure-0/trace.zip",
+      "bytes": 4843,
+      "sha256": "91cae6339c883b7b30fb50e8ce32f030a6ab8084f6e8e948235f2aab73fa6670"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-startup-0.json",
+      "bytes": 42,
+      "sha256": "4b1c9f91df9b0e09815294640105a99bbc69ebd7c88e40256c6a083b1c5f135a"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-startup-1.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-state-0-0.txt",
+      "bytes": 25,
+      "sha256": "f4b5b26ecf852a4103101e588721975d5df600e8272e4c1d84b5b07c52cbb429"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/restore-state-1-0.txt",
+      "bytes": 45,
+      "sha256": "4399a68aaa014464c03645fe2fdc14ee80b046e0e35459ec3c92fdad9d9570c5"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/attachments-all-named-fail-4749b-preserves-the-primary-error/upload-coverage.json",
+      "bytes": 3655,
+      "sha256": "5a34ed24374ee9b23e88e4be708435a9b65114601fce36adfd111e54bb57094f"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/trace-ownership-sole-manua-5836f-ey-for-both-manual-contexts/attachments/restore-first-failure-0-bd59dbb0d9154f34c43dba4a3878ef6524fdcf24.zip",
+      "bytes": 3876,
+      "sha256": "8f7ecabc73242a2ab222c780191d7367ec687f88332f82cd103ff4dc607917a5"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/trace-ownership-sole-manua-5836f-ey-for-both-manual-contexts/attachments/restore-first-failure-1-63b58ae3326441c90a3b99c28fcacd5c0e1b5e4e.zip",
+      "bytes": 3440,
+      "sha256": "d60647cb03dd39794700be6c4361573b41b1ace8bd910103c001639182873a5d"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/trace-ownership-sole-manua-5836f-ey-for-both-manual-contexts/restore-first-failure-0/trace.zip",
+      "bytes": 3876,
+      "sha256": "8f7ecabc73242a2ab222c780191d7367ec687f88332f82cd103ff4dc607917a5"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/results/trace-ownership-sole-manua-5836f-ey-for-both-manual-contexts/restore-first-failure-1/trace.zip",
+      "bytes": 3440,
+      "sha256": "d60647cb03dd39794700be6c4361573b41b1ace8bd910103c001639182873a5d"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-probes/trace-ownership.spec.ts",
+      "bytes": 1941,
+      "sha256": "a5f5a65918e7ffefbce747bda03137f239123b3e7b00ff41e50d7886ef5c7a52"
+    },
+    {
+      "path": "execution/a/spn128-review-a-d22b-receipts.log",
+      "bytes": 1411,
+      "sha256": "9d2f91af96823891192beb454b30124726168144610cd15947e8faea23b4402a"
+    },
+    {
+      "path": "execution/b/spinel-dependabot-2026-11-11/spn128-review-b-controls-d22baa69.json",
+      "bytes": 371,
+      "sha256": "cd7c08f57892a47f51b355ee2832dc27e25a516bd97faa7dda515b264cd360ad"
+    },
+    {
+      "path": "execution/b/spinel-dependabot-2026-11-11/spn128-review-b-portable-d22baa69.json",
+      "bytes": 566,
+      "sha256": "5eb6416a16649e37d37ba70d48455a12da993455e3fa43d87a87251a172640bb"
+    },
+    {
+      "path": "execution/b/spn128-review-b-audit-d22baa69.json",
+      "bytes": 749,
+      "sha256": "a79da75c244d6848ac1718d4a0f1ef0faafd74ec16964298b8d3c534d2024dfa"
+    },
+    {
+      "path": "execution/b/spn128-review-b-cleanup-d22baa69.json",
+      "bytes": 215,
+      "sha256": "486cc48d458fef5710b8ba324452046b8b012bd3f8cb9ecf85052dcfbc72e6ad"
+    },
+    {
+      "path": "execution/b/spn128-review-b-controls-d22baa69.log",
+      "bytes": 1997,
+      "sha256": "383b5e90930147da2f58cfa13cdf5cf1df914c22fd0e4b6497dbc15711b247bf"
+    },
+    {
+      "path": "execution/b/spn128-review-b-portable-d22baa69.log",
+      "bytes": 704,
+      "sha256": "7a26f680417a9e38814f320bda9ad7eb7368ea079e738d1c8e0251d0221e4aba"
+    },
+    {
+      "path": "execution/b/spn128-review-b-provenance-d22baa69.json",
+      "bytes": 2319,
+      "sha256": "59279db5921c13984deaa8d5b01077cd11afb26eae0b82fbe488ed2b16c1f7ea"
+    },
+    {
+      "path": "execution/b/spn128-vitest.config.ts",
+      "bytes": 211,
+      "sha256": "df7efab78de6e1bdb25bcc87ec6e0ee8edb120cb9fa6770a842d9a68de12505d"
+    },
+    {
+      "path": "packet-archive-verification.json",
+      "bytes": 276,
+      "sha256": "9f8324930289fd13d5ee8729bb82122719acad72db1369b1b583711635b24cf9"
+    },
+    {
+      "path": "packet-bindings/current-pr-check-guard.json",
+      "bytes": 353,
+      "sha256": "e124390347a33a3cea665bc69725b455326328384767da94605880f25702224f"
+    },
+    {
+      "path": "packet-bindings/current-pr-check.log",
+      "bytes": 554,
+      "sha256": "cf3449f5f04146f33d806ea481203abdf1054e2c57523840c979a252e6e5f12f"
+    },
+    {
+      "path": "packet-bindings/review-input.md",
+      "bytes": 2518,
+      "sha256": "c902c41daab4c0416cb882c7c00ed6afa08696e6b1f9782bbb9f3d179bab8654"
+    },
+    {
+      "path": "packet-bindings/source-bindings.txt",
+      "bytes": 25310,
+      "sha256": "ebd3b5ef6ddec925c05ab49bfcc710c5e496eede97c49c0fde717e0b72ff946c"
+    },
+    {
+      "path": "packet-bindings/source-manifest.json",
+      "bytes": 845343,
+      "sha256": "3f105b060350c736406c9b69ffc8cb998d96319c47de2ef4368f2041fc3221d2"
+    },
+    {
+      "path": "provenance.json",
+      "bytes": 28315,
+      "sha256": "88747ba803d1345396301111ace7ca89c7bb8946c98e6d0b42eed351a271805b"
+    },
+    {
+      "path": "review-packet-d22baa69.tar.gz",
+      "bytes": 7751281,
+      "sha256": "35763c6bf9f5487210ee5b7f552dcb0fb467a83397b724ce70ca9d6da038a3ab"
+    },
+    {
+      "path": "reviews/spn128-review-d22baa69-a.md",
+      "bytes": 13416,
+      "sha256": "276a9d145206368b6fe9560926acb04a5340272527cdb45acd63caf5fa6a2fc9"
+    },
+    {
+      "path": "reviews/spn128-review-d22baa69-b.md",
+      "bytes": 13457,
+      "sha256": "18d9f2b7cae5a916d32c7009bcdcf24de973149c9fa2cf686aba00fba2852885"
+    }
+  ]
+}
