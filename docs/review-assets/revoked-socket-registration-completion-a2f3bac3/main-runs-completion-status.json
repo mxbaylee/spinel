@@ -1,0 +1,24 @@
+{
+  "at": "2026-11-15T01:28:58.392Z",
+  "runs": [
+    {
+      "id": 43663047797,
+      "name": "💎 CI",
+      "status": "completed",
+      "conclusion": "success",
+      "attempt": 1,
+      "head": "104d7ae89d3ed5ff328cc87b838ed9246f0f42ce",
+      "event": "push"
+    },
+    {
+      "id": 43663047727,
+      "name": "📚 Storybook",
+      "status": "in_progress",
+      "conclusion": null,
+      "attempt": 1,
+      "head": "104d7ae89d3ed5ff328cc87b838ed9246f0f42ce",
+      "event": "push"
+    }
+  ],
+  "limits": "Separate main push validation; no waiting or completion inference for any pending run"
+}

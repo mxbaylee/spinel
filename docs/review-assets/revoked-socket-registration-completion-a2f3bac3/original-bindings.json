@@ -1,0 +1,108 @@
+{
+  "source": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef",
+  "parent": "104d7ae89d3ed5ff328cc87b838ed9246f0f42ce",
+  "originals": [
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/merge-response.json",
+      "path": "merge-response.json",
+      "bytes": 266,
+      "sha256": "d370d065ed380deb32cc1f20cc788c2fe018172040e68424ad171bef095bcb2f"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/merged-pr.json",
+      "path": "merged-pr.json",
+      "bytes": 6216,
+      "sha256": "98f8cc8c5cd980773a56808efb9a5eac643e349df4c80ed72f95d2a5bb0fc42d"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/pre-cleanup-active-prs.json",
+      "path": "pre-cleanup-active-prs.json",
+      "bytes": 1117,
+      "sha256": "1de53783f1657f20d06a7b5016084ae7cbc8c8351cb803960bc591f15446a3de"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/cleanup-receipt.json",
+      "path": "cleanup-receipt.json",
+      "bytes": 1097,
+      "sha256": "cdc161527ea18600e6b6334f62918af25bc71261dcf57890c8b079b558a41007"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/cleanup-registration.ts",
+      "path": "cleanup-registration.ts",
+      "bytes": 2555,
+      "sha256": "9e7e014671a7dcefc68615c4510c1088c15af0d7c8d85e5db12c6fbc982022c4"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/root-validation-stage-audit.json",
+      "path": "root-validation-stage-audit.json",
+      "bytes": 442,
+      "sha256": "4bc003c0dff6871476709b9e109978b7ce3e15d5c16803eb43aeadc32522eb3d"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/root-validation-sealed-audit.json",
+      "path": "root-validation-sealed-audit.json",
+      "bytes": 479,
+      "sha256": "4f9d1906e05e11c9167c82c87efc8ae03615cbf1e7613cc96c998f0fb9c7ab6b"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/main-runs-initial.json",
+      "path": "main-runs-initial.json",
+      "bytes": 23481,
+      "sha256": "c38031acd083796d5d79b2086dd2691cc7c4e53c09ba527a3cab2496e6d36e1e"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/main-runs-completion-snapshot.json",
+      "path": "main-runs-completion-snapshot.json",
+      "bytes": 23484,
+      "sha256": "83aba317b4600cbcaa4b9fb0bb72b77b2ef2eb528610875b47c113f9286e182c"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/main-runs-completion-status.json",
+      "path": "main-runs-completion-status.json",
+      "bytes": 606,
+      "sha256": "8d54503a838b6702b8eb3f769619879d55c8801606162b8694445e1f8898a899"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/completion-current-witness.json",
+      "path": "completion-current-witness.json",
+      "bytes": 11095,
+      "sha256": "23104d04fb9a3f56200e09e1a0dde38b56eea1697dac87fc7ad0ab006e196258"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/pr-body-completion-draft.md",
+      "path": "pr-body-completion-draft.md",
+      "bytes": 4850,
+      "sha256": "b16f58412080d62fad410357ad53dc81891050a09625d03caee47520aa7bfc86"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/collect-completion-first.ts",
+      "path": "collect-completion-first.ts",
+      "bytes": 3731,
+      "sha256": "87ebd7c929e86350d3d5d950c0f38a3bb6e43cc5e98260bf54d7c8a08495ca0c"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/collect-completion-second.ts",
+      "path": "collect-completion-second.ts",
+      "bytes": 3743,
+      "sha256": "c5a8bcc6ba684051a15cdf0e049602e77de5ab5c525154cfbe16a22f3c75ec29"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/collect-completion.ts",
+      "path": "collect-completion.ts",
+      "bytes": 3959,
+      "sha256": "eb942e0b48a5e06f61fa652679952303f215d3b2a52f8b4640d863901b1ebf78"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/completion-reader-disposition.json",
+      "path": "completion-reader-disposition.json",
+      "bytes": 1057,
+      "sha256": "d5e8eb3b84011c81801a936e842ad70126c3f47d9c76922341226a2fbf0dfff8"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/prepare-completion-archive.ts",
+      "path": "prepare-completion-archive.ts",
+      "bytes": 4049,
+      "sha256": "24ef442349da79362dc4378cbb769f659a387e3e3e0f5f4acb1278e2347b59d5"
+    }
+  ]
+}

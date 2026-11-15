@@ -1,0 +1,12 @@
+{
+  "originalHelper": "collect-completion-first.ts",
+  "failure": "Read-only ownership assertion matched one unrelated SPN-161 implementation branch because its name also contains socket-closure. Expected zero, observed one; stopped before output/API snapshot, no mutation.",
+  "observedUnrelatedRef": "refs/heads/codex/spn-161-socket-closure 104d7ae89d3ed5ff328cc87b838ed9246f0f42ce",
+  "repair": "Restrict obsolete registration ownership to exact local/tracking codex/register-revoked-socket-closure refs from actual creation/cleanup inventory. Preserve unrelated implementation and Dependabot registration refs.",
+  "originalFilesPreserved": true,
+  "secondReaderFinding": {
+    "originalHelper": "collect-completion-second.ts",
+    "failure": "Read-only git rev-parse could not resolve the ephemeral tested merge object locally (exit 128).",
+    "repair": "Read the exact tested-commit API response from already published verified validation archive 5e1e0cd7; assert its SHA and compare its tree to local source/squash. No fetch or ref mutation."
+  }
+}

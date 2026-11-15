@@ -1,0 +1,15 @@
+{
+  "at": "2026-11-15T01:24:37.273Z",
+  "source": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef",
+  "tested": "1d06bd9c154214035dfb2f99822002f02da59430",
+  "commit": "5e1e0cd721c60993d7f451efda07c572b1d88f58",
+  "payloads": 68,
+  "paths": 69,
+  "originalBindings": 64,
+  "decodedLogs": 11,
+  "originalZips": 4,
+  "allSevenGates": true,
+  "actualDocsOnlyPlan": true,
+  "manifestSha256": "ee0d886e16aca21d9de859c807fe8320384098c41e1c82b42afb215e61bbefac",
+  "gitBlobsVerified": true
+}

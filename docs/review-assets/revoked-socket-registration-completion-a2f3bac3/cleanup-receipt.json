@@ -1,0 +1,19 @@
+{
+  "at": "2026-11-15T01:26:32.241Z",
+  "pr": 293,
+  "source": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef",
+  "merge": "104d7ae89d3ed5ff328cc87b838ed9246f0f42ce",
+  "before": "refs/heads/codex/register-revoked-socket-closure a2f3bac37c084b8f9fbf163d562c96dae4aff8ef\nrefs/remotes/origin/codex/register-revoked-socket-closure a2f3bac37c084b8f9fbf163d562c96dae4aff8ef\n",
+  "after": "",
+  "remoteBefore": "",
+  "remoteDisposition": "Already absent after GitHub squash; no remote delete required",
+  "deletedLocalRefs": [
+    "refs/heads/codex/register-revoked-socket-closure",
+    "refs/remotes/origin/codex/register-revoked-socket-closure"
+  ],
+  "preservedWorktree": "/Users/mxbaylee/projects/spinel-socket-closure-registration",
+  "detached": true,
+  "uniqueSourcePreservedByVerifiedTags": "6ce3cf31f64f2f1bcfc28976582a35415a56dbb8\trefs/tags/archive/revoked-socket-registration-review-a2f3bac3-20261114\n5e1e0cd721c60993d7f451efda07c572b1d88f58\trefs/tags/archive/revoked-socket-registration-validation-a2f3bac3-20261114\n",
+  "unrelatedRefsUntouched": true,
+  "groomingCounterUnchanged": true
+}
