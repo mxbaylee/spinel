@@ -1,0 +1,13 @@
+{
+  "name": "spn128-attachments-lint",
+  "args": [
+    "npm",
+    "run",
+    "lint"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 11376,
+  "peakKiB": 886944
+}

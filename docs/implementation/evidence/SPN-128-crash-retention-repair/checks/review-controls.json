@@ -1,0 +1,14 @@
+{
+  "name": "spn128-crash-review-controls",
+  "args": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "scripts/ci/restore-crash-evidence.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 176,
+  "peakKiB": 0
+}

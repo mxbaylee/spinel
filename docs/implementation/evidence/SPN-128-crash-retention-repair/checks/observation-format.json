@@ -1,0 +1,17 @@
+{
+  "name": "spn128-crash-observation-format",
+  "args": [
+    "node",
+    "node_modules/prettier/bin/prettier.cjs",
+    "--write",
+    "scripts/ci/restore-crash-evidence.ts",
+    "scripts/ci/restore-crash-evidence.test.ts",
+    "src/server/maintenance/restore-crash-evidence.ts",
+    "src/server/maintenance/restore-crash.integration.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 297,
+  "peakKiB": 208192
+}

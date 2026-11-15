@@ -1,0 +1,13 @@
+{
+  "name": "spn128-crash-review-types",
+  "args": [
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 9393,
+  "peakKiB": 1704496
+}

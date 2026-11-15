@@ -1,0 +1,14 @@
+{
+  "name": "spn128-crash-observation-controls-fixed",
+  "args": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "scripts/ci/restore-crash-evidence.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 186,
+  "peakKiB": 0
+}

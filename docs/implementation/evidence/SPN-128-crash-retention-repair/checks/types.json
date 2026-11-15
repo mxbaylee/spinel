@@ -1,0 +1,14 @@
+{
+  "name": "spn128-crash-trace-types",
+  "args": [
+    "node",
+    "node_modules/typescript/bin/tsc",
+    "-p",
+    "."
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 9175,
+  "peakKiB": 1784816
+}

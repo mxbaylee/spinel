@@ -1,0 +1,15 @@
+{
+  "name": "spn128-crash-review-format",
+  "args": [
+    "node",
+    "node_modules/prettier/bin/prettier.cjs",
+    "--write",
+    "scripts/ci/restore-crash-evidence.ts",
+    "scripts/ci/restore-crash-evidence.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 193,
+  "peakKiB": 0
+}
