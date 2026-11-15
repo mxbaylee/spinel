@@ -1,0 +1,1368 @@
+{
+  "source": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "tested": "1d06bd9c154214035dfb2f99822002f02da59430",
+  "sourceTree": "8e9d817e847e5d99ce93efef0018bff2654a52d5",
+  "testedTree": "8e9d817e847e5d99ce93efef0018bff2654a52d5",
+  "selected": [
+    "backlog",
+    "lint",
+    "pull-request"
+  ],
+  "planSha256": "4d988e5f366736dac3a8cc8a2854f7417d6025bc3e349669886dd273a9f638b8",
+  "paths": [
+    "docs/implementation/SPN-128.md",
+    "docs/implementation/SPN-161.md",
+    "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+    "docs/todo/SPN-128.md",
+    "docs/todo/SPN-161.md",
+    "docs/todo/backlog.json",
+    "docs/todo/readme.md"
+  ],
+  "required": [
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43662407000/job/132654817563",
+      "name": "Playwright smoke",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43662407000/job/132654596993",
+      "name": "Lint",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43662407000/job/132654596939",
+      "name": "Typecheck",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43662407000/job/132654597300",
+      "name": "Unit tests",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43662407000/job/132654596949",
+      "name": "Backlog",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43662407000/job/132654597366",
+      "name": "Lib tests",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43662407000/job/132654386066",
+      "name": "Pull request",
+      "state": "SUCCESS"
+    }
+  ],
+  "workflows": [
+    {
+      "name": "ci",
+      "id": 43662407000,
+      "attempt": 1,
+      "success": 8,
+      "skipped": 8,
+      "jobs": [
+        {
+          "id": 132654386066,
+          "name": "Pull request",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-15T01:17:47Z",
+              "completed_at": "2026-11-15T01:17:48Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-15T01:17:48Z",
+              "completed_at": "2026-11-15T01:18:18Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-15T01:18:18Z",
+              "completed_at": "2026-11-15T01:18:21Z"
+            },
+            {
+              "name": "Title, ticket, IDs and size",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-15T01:18:21Z",
+              "completed_at": "2026-11-15T01:18:21Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-15T01:18:21Z",
+              "completed_at": "2026-11-15T01:18:22Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-15T01:18:22Z",
+              "completed_at": "2026-11-15T01:18:22Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-15T01:18:22Z",
+              "completed_at": "2026-11-15T01:18:22Z"
+            }
+          ]
+        },
+        {
+          "id": 132654386223,
+          "name": "Classify changes (43662407000)",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-15T01:17:48Z",
+              "completed_at": "2026-11-15T01:17:49Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-15T01:17:49Z",
+              "completed_at": "2026-11-15T01:18:27Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-15T01:18:27Z",
+              "completed_at": "2026-11-15T01:18:32Z"
+            },
+            {
+              "name": "Run node scripts/ci/changes.ts",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-15T01:18:32Z",
+              "completed_at": "2026-11-15T01:18:32Z"
+            },
+            {
+              "name": "Retain immutable coverage plan",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-15T01:18:32Z",
+              "completed_at": "2026-11-15T01:18:33Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-15T01:18:33Z",
+              "completed_at": "2026-11-15T01:18:33Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-15T01:18:33Z",
+              "completed_at": "2026-11-15T01:18:34Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-15T01:18:34Z",
+              "completed_at": "2026-11-15T01:18:34Z"
+            }
+          ]
+        },
+        {
+          "id": 132654596939,
+          "name": "Typecheck",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-15T01:18:40Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            },
+            {
+              "name": "Require complete applicability",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-15T01:18:43Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 3,
+              "started_at": "2026-11-15T01:18:43Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 4,
+              "started_at": "2026-11-15T01:18:43Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 5,
+              "started_at": "2026-11-15T01:18:43Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            },
+            {
+              "name": "Typecheck",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6,
+              "started_at": "2026-11-15T01:18:43Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            },
+            {
+              "name": "Documentation-only change",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-15T01:18:43Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-15T01:18:43Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            }
+          ]
+        },
+        {
+          "id": 132654596949,
+          "name": "Backlog",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-15T01:18:40Z",
+              "completed_at": "2026-11-15T01:18:41Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-15T01:18:41Z",
+              "completed_at": "2026-11-15T01:18:48Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-15T01:18:48Z",
+              "completed_at": "2026-11-15T01:18:53Z"
+            },
+            {
+              "name": "Tickets and index",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-15T01:18:53Z",
+              "completed_at": "2026-11-15T01:18:53Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-15T01:18:53Z",
+              "completed_at": "2026-11-15T01:18:53Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-15T01:18:53Z",
+              "completed_at": "2026-11-15T01:18:53Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-15T01:18:53Z",
+              "completed_at": "2026-11-15T01:18:53Z"
+            }
+          ]
+        },
+        {
+          "id": 132654596993,
+          "name": "Lint",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-15T01:18:40Z",
+              "completed_at": "2026-11-15T01:18:41Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-15T01:18:41Z",
+              "completed_at": "2026-11-15T01:18:46Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-15T01:18:46Z",
+              "completed_at": "2026-11-15T01:18:51Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-15T01:18:51Z",
+              "completed_at": "2026-11-15T01:19:04Z"
+            },
+            {
+              "name": "Lint",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-15T01:19:04Z",
+              "completed_at": "2026-11-15T01:19:27Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-15T01:19:27Z",
+              "completed_at": "2026-11-15T01:19:27Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-15T01:19:27Z",
+              "completed_at": "2026-11-15T01:19:28Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-15T01:19:28Z",
+              "completed_at": "2026-11-15T01:19:28Z"
+            }
+          ]
+        },
+        {
+          "id": 132654597300,
+          "name": "Unit tests",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-15T01:18:40Z",
+              "completed_at": "2026-11-15T01:18:41Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-15T01:18:41Z",
+              "completed_at": "2026-11-15T01:18:46Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-15T01:18:46Z",
+              "completed_at": "2026-11-15T01:18:50Z"
+            },
+            {
+              "name": "Verify selected evidence and publish result",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-15T01:18:50Z",
+              "completed_at": "2026-11-15T01:18:50Z"
+            },
+            {
+              "name": "Retain coverage result",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-15T01:18:50Z",
+              "completed_at": "2026-11-15T01:18:51Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-15T01:18:51Z",
+              "completed_at": "2026-11-15T01:18:51Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-15T01:18:51Z",
+              "completed_at": "2026-11-15T01:18:51Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-15T01:18:51Z",
+              "completed_at": "2026-11-15T01:18:52Z"
+            }
+          ]
+        },
+        {
+          "id": 132654597366,
+          "name": "Lib tests",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-15T01:18:40Z",
+              "completed_at": "2026-11-15T01:18:41Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-15T01:18:41Z",
+              "completed_at": "2026-11-15T01:18:45Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-15T01:18:45Z",
+              "completed_at": "2026-11-15T01:18:49Z"
+            },
+            {
+              "name": "Verify selected evidence and publish result",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-15T01:18:49Z",
+              "completed_at": "2026-11-15T01:18:49Z"
+            },
+            {
+              "name": "Retain coverage result",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-15T01:18:49Z",
+              "completed_at": "2026-11-15T01:18:50Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-15T01:18:50Z",
+              "completed_at": "2026-11-15T01:18:51Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-15T01:18:51Z",
+              "completed_at": "2026-11-15T01:18:51Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-15T01:18:51Z",
+              "completed_at": "2026-11-15T01:18:51Z"
+            }
+          ]
+        },
+        {
+          "id": 132654597992,
+          "name": "Unit tests (${{ matrix.suite }})",
+          "conclusion": "skipped",
+          "steps": []
+        },
+        {
+          "id": 132654598196,
+          "name": "Playwright smoke (${{ matrix.project }}${{ ((matrix.shard && format(' {0}', matrix.shard)) || '') }})",
+          "conclusion": "skipped",
+          "steps": []
+        },
+        {
+          "id": 132654598494,
+          "name": "Lib tests (${{ matrix.suite }})",
+          "conclusion": "skipped",
+          "steps": []
+        },
+        {
+          "id": 132654598611,
+          "name": "Sized restore acceptance",
+          "conclusion": "skipped",
+          "steps": []
+        },
+        {
+          "id": 132654598660,
+          "name": "Retained sync transition",
+          "conclusion": "skipped",
+          "steps": []
+        },
+        {
+          "id": 132654598735,
+          "name": "Doc responsiveness (${{ matrix.preset }})",
+          "conclusion": "skipped",
+          "steps": []
+        },
+        {
+          "id": 132654598777,
+          "name": "Doc callback lifetimes (${{ matrix.preset }})",
+          "conclusion": "skipped",
+          "steps": []
+        },
+        {
+          "id": 132654598913,
+          "name": "Container smoke",
+          "conclusion": "skipped",
+          "steps": []
+        },
+        {
+          "id": 132654817563,
+          "name": "Playwright smoke",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-15T01:19:34Z",
+              "completed_at": "2026-11-15T01:19:35Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-15T01:19:35Z",
+              "completed_at": "2026-11-15T01:19:39Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-15T01:19:39Z",
+              "completed_at": "2026-11-15T01:19:44Z"
+            },
+            {
+              "name": "Verify selected evidence and publish result",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-15T01:19:44Z",
+              "completed_at": "2026-11-15T01:19:44Z"
+            },
+            {
+              "name": "Retain coverage result",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-15T01:19:44Z",
+              "completed_at": "2026-11-15T01:19:45Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-15T01:19:45Z",
+              "completed_at": "2026-11-15T01:19:45Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-15T01:19:45Z",
+              "completed_at": "2026-11-15T01:19:45Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-15T01:19:45Z",
+              "completed_at": "2026-11-15T01:19:45Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "storybook",
+      "id": 43662407002,
+      "attempt": 1,
+      "success": 3,
+      "skipped": 5,
+      "jobs": [
+        {
+          "id": 132654386135,
+          "name": "Classify changes",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-15T01:17:48Z",
+              "completed_at": "2026-11-15T01:17:49Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-15T01:17:49Z",
+              "completed_at": "2026-11-15T01:18:31Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-15T01:18:31Z",
+              "completed_at": "2026-11-15T01:18:36Z"
+            },
+            {
+              "name": "Run if [ \"$GITHUB_EVENT_NAME\" = pull_request ]; then",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-15T01:18:36Z",
+              "completed_at": "2026-11-15T01:18:36Z"
+            },
+            {
+              "name": "Choose screenshot evidence",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 5,
+              "started_at": "2026-11-15T01:18:36Z",
+              "completed_at": "2026-11-15T01:18:36Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-15T01:18:36Z",
+              "completed_at": "2026-11-15T01:18:36Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 10,
+              "started_at": "2026-11-15T01:18:36Z",
+              "completed_at": "2026-11-15T01:18:36Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 11,
+              "started_at": "2026-11-15T01:18:36Z",
+              "completed_at": "2026-11-15T01:18:36Z"
+            }
+          ]
+        },
+        {
+          "id": 132654607603,
+          "name": "Build Storybook",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-15T01:18:41Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 2,
+              "started_at": "2026-11-15T01:18:43Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 3,
+              "started_at": "2026-11-15T01:18:43Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            },
+            {
+              "name": "Install",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 4,
+              "started_at": "2026-11-15T01:18:43Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            },
+            {
+              "name": "Build",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 5,
+              "started_at": "2026-11-15T01:18:43Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            },
+            {
+              "name": "Upload interactive review build",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 6,
+              "started_at": "2026-11-15T01:18:43Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            },
+            {
+              "name": "Upload for Pages",
+              "status": "completed",
+              "conclusion": "skipped",
+              "number": 7,
+              "started_at": "2026-11-15T01:18:43Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            },
+            {
+              "name": "Documentation-only change",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-15T01:18:43Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-15T01:18:43Z",
+              "completed_at": "2026-11-15T01:18:43Z"
+            }
+          ]
+        },
+        {
+          "id": 132654630243,
+          "name": "Review Storybook states and interactions",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 1,
+              "started_at": "2026-11-15T01:18:47Z",
+              "completed_at": "2026-11-15T01:18:48Z"
+            },
+            {
+              "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 2,
+              "started_at": "2026-11-15T01:18:48Z",
+              "completed_at": "2026-11-15T01:18:52Z"
+            },
+            {
+              "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 3,
+              "started_at": "2026-11-15T01:18:52Z",
+              "completed_at": "2026-11-15T01:18:56Z"
+            },
+            {
+              "name": "Require every viewport review",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 4,
+              "started_at": "2026-11-15T01:18:56Z",
+              "completed_at": "2026-11-15T01:18:56Z"
+            },
+            {
+              "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 7,
+              "started_at": "2026-11-15T01:18:56Z",
+              "completed_at": "2026-11-15T01:18:56Z"
+            },
+            {
+              "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 8,
+              "started_at": "2026-11-15T01:18:56Z",
+              "completed_at": "2026-11-15T01:18:56Z"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success",
+              "number": 9,
+              "started_at": "2026-11-15T01:18:56Z",
+              "completed_at": "2026-11-15T01:18:56Z"
+            }
+          ]
+        },
+        {
+          "id": 132654630673,
+          "name": "Publish PR preview to GitHub Pages",
+          "conclusion": "skipped",
+          "steps": []
+        },
+        {
+          "id": 132654630691,
+          "name": "Review Storybook mobile (${{ matrix.theme }})",
+          "conclusion": "skipped",
+          "steps": []
+        },
+        {
+          "id": 132654630887,
+          "name": "Review Storybook tablet",
+          "conclusion": "skipped",
+          "steps": []
+        },
+        {
+          "id": 132654631203,
+          "name": "Review Storybook desktop (${{ matrix.theme }})",
+          "conclusion": "skipped",
+          "steps": []
+        },
+        {
+          "id": 132654687154,
+          "name": "Deploy to GitHub Pages",
+          "conclusion": "skipped",
+          "steps": []
+        }
+      ]
+    }
+  ],
+  "aggregates": [
+    {
+      "group": "unit",
+      "passed": true,
+      "planSha256": "4d988e5f366736dac3a8cc8a2854f7417d6025bc3e349669886dd273a9f638b8",
+      "results": [
+        {
+          "suite": "unit-tests",
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-128.md",
+            "docs/implementation/SPN-161.md",
+            "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+            "docs/todo/SPN-128.md",
+            "docs/todo/SPN-161.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No unit-tests dependency changed; explicit inapplicability.",
+          "result": "skipped"
+        }
+      ],
+      "gateResults": {}
+    },
+    {
+      "group": "lib",
+      "passed": true,
+      "planSha256": "4d988e5f366736dac3a8cc8a2854f7417d6025bc3e349669886dd273a9f638b8",
+      "results": [
+        {
+          "suite": "lib-test-run",
+          "selected": false,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-128.md",
+            "docs/implementation/SPN-161.md",
+            "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+            "docs/todo/SPN-128.md",
+            "docs/todo/SPN-161.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No lib-test-run dependency changed; explicit inapplicability.",
+          "result": "skipped"
+        }
+      ],
+      "gateResults": {}
+    },
+    {
+      "group": "browser",
+      "passed": true,
+      "planSha256": "4d988e5f366736dac3a8cc8a2854f7417d6025bc3e349669886dd273a9f638b8",
+      "results": [
+        {
+          "suite": "backlog",
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-128.md",
+            "docs/implementation/SPN-161.md",
+            "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+            "docs/todo/SPN-128.md",
+            "docs/todo/SPN-161.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "Automatic coverage for the complete change range.",
+          "result": "success"
+        },
+        {
+          "suite": "pull-request",
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-128.md",
+            "docs/implementation/SPN-161.md",
+            "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+            "docs/todo/SPN-128.md",
+            "docs/todo/SPN-161.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "Automatic coverage for the complete change range.",
+          "result": "success"
+        },
+        {
+          "suite": "lint",
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-128.md",
+            "docs/implementation/SPN-161.md",
+            "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+            "docs/todo/SPN-128.md",
+            "docs/todo/SPN-161.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "Automatic coverage for the complete change range.",
+          "result": "success"
+        },
+        {
+          "suite": "typecheck",
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-128.md",
+            "docs/implementation/SPN-161.md",
+            "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+            "docs/todo/SPN-128.md",
+            "docs/todo/SPN-161.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No typecheck dependency changed; explicit inapplicability.",
+          "result": "skipped"
+        },
+        {
+          "suite": "unit-tests",
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-128.md",
+            "docs/implementation/SPN-161.md",
+            "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+            "docs/todo/SPN-128.md",
+            "docs/todo/SPN-161.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No unit-tests dependency changed; explicit inapplicability.",
+          "result": "skipped"
+        },
+        {
+          "suite": "lib-test-run",
+          "selected": false,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-128.md",
+            "docs/implementation/SPN-161.md",
+            "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+            "docs/todo/SPN-128.md",
+            "docs/todo/SPN-161.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No lib-test-run dependency changed; explicit inapplicability.",
+          "result": "skipped"
+        },
+        {
+          "suite": "playwright-run",
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-128.md",
+            "docs/implementation/SPN-161.md",
+            "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+            "docs/todo/SPN-128.md",
+            "docs/todo/SPN-161.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No playwright-run dependency changed; explicit inapplicability.",
+          "result": "skipped"
+        },
+        {
+          "suite": "container-smoke",
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-128.md",
+            "docs/implementation/SPN-161.md",
+            "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+            "docs/todo/SPN-128.md",
+            "docs/todo/SPN-161.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No container-smoke dependency changed; explicit inapplicability.",
+          "result": "skipped"
+        },
+        {
+          "suite": "restore-timing",
+          "selected": false,
+          "dependencies": [
+            "server/**",
+            "src/{server,shared}/**",
+            "lib/**",
+            "web/** and src/ui/** (shared application/authentication bundle)",
+            "e2e restore/shared helpers (doc-touch, doc-touch-raster, native-sheet-value)",
+            "runtime/build/dependency/workflow inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-128.md",
+            "docs/implementation/SPN-161.md",
+            "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+            "docs/todo/SPN-128.md",
+            "docs/todo/SPN-161.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No restore-timing dependency changed; explicit inapplicability.",
+          "result": "skipped"
+        },
+        {
+          "suite": "sync-transition",
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-128.md",
+            "docs/implementation/SPN-161.md",
+            "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+            "docs/todo/SPN-128.md",
+            "docs/todo/SPN-161.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No sync-transition dependency changed; explicit inapplicability.",
+          "result": "skipped"
+        },
+        {
+          "suite": "doc-responsiveness",
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-128.md",
+            "docs/implementation/SPN-161.md",
+            "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+            "docs/todo/SPN-128.md",
+            "docs/todo/SPN-161.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No doc-responsiveness dependency changed; explicit inapplicability.",
+          "result": "skipped"
+        },
+        {
+          "suite": "doc-callback-lifetimes",
+          "selected": false,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [
+            "docs/implementation/SPN-128.md",
+            "docs/implementation/SPN-161.md",
+            "docs/implementation/grooming-revoked-socket-closure-2026-11-14.md",
+            "docs/todo/SPN-128.md",
+            "docs/todo/SPN-161.md",
+            "docs/todo/backlog.json",
+            "docs/todo/readme.md"
+          ],
+          "reason": "No doc-callback-lifetimes dependency changed; explicit inapplicability.",
+          "result": "skipped"
+        }
+      ],
+      "gateResults": {
+        "typecheck": "success",
+        "unit-tests": "success",
+        "lib-tests": "success"
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14141006324,
+      "name": "ci-results-unit",
+      "zipBytes": 1468,
+      "zipSha256": "51caa2191e2e5667839481fd6249da57931747a389d7f83bd8bf43bf15b5e708",
+      "rawJsonSha256": "d64af9d067bb67f50a60784041f46db3462df6693481af1bdcdcbd2fb2926e6e",
+      "canonicalJsonSha256": "1179c97b736c90d78daf02b5d761be20008af19319cbd506e5ffd5ab1a51de8e"
+    },
+    {
+      "id": 14140966581,
+      "name": "ci-results-lib",
+      "zipBytes": 1486,
+      "zipSha256": "0a41d2ffa83c9524a5d9394995ca8ea21f5e9ecd5f781649a1faff62fd03a441",
+      "rawJsonSha256": "c1a91856f9e67e8009d715eff51dc5dffcc74fd1cf11b496c30b336ec8b619e0",
+      "canonicalJsonSha256": "47873085251bb2478b059710e367df2409e51ef9ac9e41ca7f09938ef155b9c9"
+    },
+    {
+      "id": 14140871765,
+      "name": "ci-plan",
+      "zipBytes": 1183,
+      "zipSha256": "4225cd3c59f31cf1195fe4baef481dc0ed8dfcafc72e21d4a7c82afd458fc5d1",
+      "rawJsonSha256": "79db265ae5823c58f2c82f9b19e54b4ab37ba96003189c110cb626ddd47bd532",
+      "canonicalJsonSha256": "4d988e5f366736dac3a8cc8a2854f7417d6025bc3e349669886dd273a9f638b8"
+    },
+    {
+      "id": 14140817152,
+      "name": "ci-results-browser",
+      "zipBytes": 1700,
+      "zipSha256": "33ca69660c54ebe916f68db468f1760975b4fb1de3a09ef98270a36085eed916",
+      "rawJsonSha256": "f0c4f36f85f4518d3480a53c81f35dae0e8d0dccc7227d11d5e6627df97ac6fb",
+      "canonicalJsonSha256": "89ad9942366bdca319a1cd2dd8d150fda93018ce204c96d15076fb0fa602b338"
+    }
+  ],
+  "logs": [
+    {
+      "id": 132654386066,
+      "name": "Pull request",
+      "bytes": 48785,
+      "sha256": "f01729b80712848934bb8309e201372786beb8effcd62f621c5350d0bcc6a4db",
+      "gzipSha256": "968fb74950a9b651671467097da3d846845509a5c9ca93e67039d2adcb08696d",
+      "credentialPatternMatches": 0,
+      "applicabilityLines": []
+    },
+    {
+      "id": 132654386223,
+      "name": "Classify changes (43662407000)",
+      "bytes": 69467,
+      "sha256": "44f66a377ea4e5f2c881e8e79a8a5765d573cb00907ccafa5cb24fd14f115be5",
+      "gzipSha256": "62ddc63bd18dc2b571921f2def16fa48082738df8afd040c1e37893a63c63239",
+      "credentialPatternMatches": 0,
+      "applicabilityLines": []
+    },
+    {
+      "id": 132654596939,
+      "name": "Typecheck",
+      "bytes": 3365,
+      "sha256": "e36b4edc44fa76926d86860556d84f1e0636d15edae60adbfd1f01c26043c637",
+      "gzipSha256": "cd128aef3ef26c0fbe2582fc3c53f98a472ff2ff22541736a6e35b9ba7391771",
+      "credentialPatternMatches": 0,
+      "applicabilityLines": [
+        "2026-11-15T01:18:43.2332345Z ##[group]Run echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'",
+        "2026-11-15T01:18:43.2333868Z echo 'Not applicable — only allowlisted documentation changed; Backlog and Lint still run.'",
+        "2026-11-15T01:18:43.2406687Z Not applicable — only allowlisted documentation changed; Backlog and Lint still run."
+      ]
+    },
+    {
+      "id": 132654596949,
+      "name": "Backlog",
+      "bytes": 19422,
+      "sha256": "2a5e016e0cf5d6c5ed13804cb1bf4f97c9283df8a22ad2bfe2acf0770c52f0ea",
+      "gzipSha256": "a0b1bc96b82079a4485afb77b65e36777363710293119ba1e710cf85a9b6189c",
+      "credentialPatternMatches": 0,
+      "applicabilityLines": []
+    },
+    {
+      "id": 132654596993,
+      "name": "Lint",
+      "bytes": 20337,
+      "sha256": "8d474e898289c5ab655b4197506ee62713cf1f45838f3407fcb74f4596f89f51",
+      "gzipSha256": "4d0f1e29054460b72a3be17db0e326b20fdc713c47dbee4830294e98c4a89df3",
+      "credentialPatternMatches": 0,
+      "applicabilityLines": []
+    },
+    {
+      "id": 132654597300,
+      "name": "Unit tests",
+      "bytes": 48105,
+      "sha256": "5ac8838b87a6f7e86703656efcb2adec36caf760303f23bcc5442a743110d50b",
+      "gzipSha256": "847a2dfeb668d452473dbbf210ef6160202f9123f01211b4574b115b9553bcf5",
+      "credentialPatternMatches": 0,
+      "applicabilityLines": []
+    },
+    {
+      "id": 132654597366,
+      "name": "Lib tests",
+      "bytes": 48273,
+      "sha256": "e014a6592a0aaa663ae5c42f40af733859ef09660c5101b04a0538e83155dd55",
+      "gzipSha256": "6012a8577f63c7c04efe0c1883a4409ed5b999930a4e77f7c280a5e7a757bbb2",
+      "credentialPatternMatches": 0,
+      "applicabilityLines": []
+    },
+    {
+      "id": 132654817563,
+      "name": "Playwright smoke",
+      "bytes": 62163,
+      "sha256": "2a40d832fd31f1d4c2e20be53d1b3e600a3be89a22dc17afd691d30c6f5ee8a6",
+      "gzipSha256": "1bf03fc44dd49ec25dad02399c67d121dc46af2faada1a3d780e1c3dbc3d70a5",
+      "credentialPatternMatches": 0,
+      "applicabilityLines": []
+    },
+    {
+      "id": 132654386135,
+      "name": "Classify changes",
+      "bytes": 67580,
+      "sha256": "f69087830f467808173718a3a3ce23a84b09747e938723527bb85dde415ebda3",
+      "gzipSha256": "eddccdcf800dc0aadcd67e0c9d0b9e138359caac5f30d2e5ca873bf3f2ce157e",
+      "credentialPatternMatches": 0,
+      "applicabilityLines": []
+    },
+    {
+      "id": 132654607603,
+      "name": "Build Storybook",
+      "bytes": 3333,
+      "sha256": "b7ec603aae8b893aeb2cbe1f4383b87b3dd7cb9c94bafc62fcdbcce0a2039180",
+      "gzipSha256": "2485acd2618850d61b9c9277d966c454380ef14851ebc5d80f013d26ccb64b3a",
+      "credentialPatternMatches": 0,
+      "applicabilityLines": [
+        "2026-11-15T01:18:43.2703228Z ##[group]Run echo 'Not applicable — only allowlisted documentation changed; existing catalogue is unchanged.'",
+        "2026-11-15T01:18:43.2704469Z echo 'Not applicable — only allowlisted documentation changed; existing catalogue is unchanged.'",
+        "2026-11-15T01:18:43.2873587Z Not applicable — only allowlisted documentation changed; existing catalogue is unchanged."
+      ]
+    },
+    {
+      "id": 132654630243,
+      "name": "Review Storybook states and interactions",
+      "bytes": 17854,
+      "sha256": "4ea776145569d841a64b8906f6ac647ab5ae4faea38dca685cd58adc6cff5781",
+      "gzipSha256": "c69d170b9ca1f8fd3d0b78c2ffd36815a54934a0e0024d4e40c0d646bbb88ff5",
+      "credentialPatternMatches": 0,
+      "applicabilityLines": [
+        "2026-11-15T01:18:56.3672990Z Not applicable — only allowlisted documentation changed; existing catalogue is unchanged."
+      ]
+    }
+  ],
+  "applicability": "Only backlog, pull-request and lint selected. Typecheck documentation no-op; unit/lib/browser aggregates verify explicit skipped applicability. Storybook Build is a documentation no-op, three collapsed viewport jobs and both deployment jobs skipped; no actual catalog or native runtime execution.",
+  "readerDisposition": "First log read refused ANSI terminal escapes; original output retained, only missing logs read with explicit raw-byte permission; no workflow rerun."
+}

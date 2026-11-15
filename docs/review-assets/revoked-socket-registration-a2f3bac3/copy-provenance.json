@@ -1,0 +1,392 @@
+{
+  "source": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "reviewArchive": "6ce3cf31f64f2f1bcfc28976582a35415a56dbb8",
+  "reviewManifestSha256": "def2d99af11f85b9d459fa549e60918dfabe2f5d9c80e3010d623c0066210a8e",
+  "copies": [
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15-log-reader-repair/job-132654386066.log.gz",
+      "path": "hosted/2026-11-15-log-reader-repair/job-132654386066.log.gz",
+      "bytes": 9413,
+      "sha256": "968fb74950a9b651671467097da3d846845509a5c9ca93e67039d2adcb08696d"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15-log-reader-repair/job-132654386135.log.gz",
+      "path": "hosted/2026-11-15-log-reader-repair/job-132654386135.log.gz",
+      "bytes": 12428,
+      "sha256": "eddccdcf800dc0aadcd67e0c9d0b9e138359caac5f30d2e5ca873bf3f2ce157e"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15-log-reader-repair/job-132654386223.log.gz",
+      "path": "hosted/2026-11-15-log-reader-repair/job-132654386223.log.gz",
+      "bytes": 12953,
+      "sha256": "62ddc63bd18dc2b571921f2def16fa48082738df8afd040c1e37893a63c63239"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15-log-reader-repair/job-132654596939.log.gz",
+      "path": "hosted/2026-11-15-log-reader-repair/job-132654596939.log.gz",
+      "bytes": 1232,
+      "sha256": "cd128aef3ef26c0fbe2582fc3c53f98a472ff2ff22541736a6e35b9ba7391771"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15-log-reader-repair/job-132654596949.log.gz",
+      "path": "hosted/2026-11-15-log-reader-repair/job-132654596949.log.gz",
+      "bytes": 4487,
+      "sha256": "a0b1bc96b82079a4485afb77b65e36777363710293119ba1e710cf85a9b6189c"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15-log-reader-repair/job-132654596993.log.gz",
+      "path": "hosted/2026-11-15-log-reader-repair/job-132654596993.log.gz",
+      "bytes": 5125,
+      "sha256": "4d0f1e29054460b72a3be17db0e326b20fdc713c47dbee4830294e98c4a89df3"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15-log-reader-repair/job-132654597300.log.gz",
+      "path": "hosted/2026-11-15-log-reader-repair/job-132654597300.log.gz",
+      "bytes": 8661,
+      "sha256": "847a2dfeb668d452473dbbf210ef6160202f9123f01211b4574b115b9553bcf5"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15-log-reader-repair/job-132654597366.log.gz",
+      "path": "hosted/2026-11-15-log-reader-repair/job-132654597366.log.gz",
+      "bytes": 8622,
+      "sha256": "6012a8577f63c7c04efe0c1883a4409ed5b999930a4e77f7c280a5e7a757bbb2"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15-log-reader-repair/job-132654607603.log.gz",
+      "path": "hosted/2026-11-15-log-reader-repair/job-132654607603.log.gz",
+      "bytes": 1204,
+      "sha256": "2485acd2618850d61b9c9277d966c454380ef14851ebc5d80f013d26ccb64b3a"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15-log-reader-repair/job-132654630243.log.gz",
+      "path": "hosted/2026-11-15-log-reader-repair/job-132654630243.log.gz",
+      "bytes": 4409,
+      "sha256": "c69d170b9ca1f8fd3d0b78c2ffd36815a54934a0e0024d4e40c0d646bbb88ff5"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15-log-reader-repair/job-132654817563.log.gz",
+      "path": "hosted/2026-11-15-log-reader-repair/job-132654817563.log.gz",
+      "bytes": 10286,
+      "sha256": "1bf03fc44dd49ec25dad02399c67d121dc46af2faada1a3d780e1c3dbc3d70a5"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15-log-reader-repair/reader-disposition.json",
+      "path": "hosted/2026-11-15-log-reader-repair/reader-disposition.json",
+      "bytes": 669,
+      "sha256": "9ccbcc61d702ab735b65e2c0c3d82e254e5b704a7f4acff8c12e7117bf942bdb"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15-log-reader-repair/requests.json",
+      "path": "hosted/2026-11-15-log-reader-repair/requests.json",
+      "bytes": 5746,
+      "sha256": "c83924963ed2106d43a6fd19236cfcebeb41f9ffea633ff16b899b15c9dc5436"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-19-17-613Z-snapshot/artifacts-ci.json",
+      "path": "hosted/2026-11-15T01-19-17-613Z-snapshot/artifacts-ci.json",
+      "bytes": 2137,
+      "sha256": "98aab7b618d7c0074e8a0458327a00d55576f25db4c2776327f53ee43233c295"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-19-17-613Z-snapshot/check-runs.json",
+      "path": "hosted/2026-11-15T01-19-17-613Z-snapshot/check-runs.json",
+      "bytes": 80849,
+      "sha256": "1149d6d21aada69e9def292bd80fbc0ae320b962b6d848371f4fb6d3ac6a5c0a"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-19-17-613Z-snapshot/jobs-ci.json",
+      "path": "hosted/2026-11-15T01-19-17-613Z-snapshot/jobs-ci.json",
+      "bytes": 22957,
+      "sha256": "bb1dbda70e329fa077056a22189f3c73e0ffe619709842c621c6e203b64d53f3"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-19-17-613Z-snapshot/jobs-storybook.json",
+      "path": "hosted/2026-11-15T01-19-17-613Z-snapshot/jobs-storybook.json",
+      "bytes": 11543,
+      "sha256": "6dc6233de8193146514be5d52feb83b9f7c8e875a12c4bbe97d25f84404a307d"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-19-17-613Z-snapshot/pr-293.json",
+      "path": "hosted/2026-11-15T01-19-17-613Z-snapshot/pr-293.json",
+      "bytes": 20136,
+      "sha256": "536a50c19127be67ac003c2fe73c64946c9f67712297053d9488a7852e7edd65"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-19-17-613Z-snapshot/requests.json",
+      "path": "hosted/2026-11-15T01-19-17-613Z-snapshot/requests.json",
+      "bytes": 2704,
+      "sha256": "9d5dee6c5de6f636e4ab716a02aedec74c26e911df120a3f8566c4985045cbaa"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-19-17-613Z-snapshot/required-checks.json",
+      "path": "hosted/2026-11-15T01-19-17-613Z-snapshot/required-checks.json",
+      "bytes": 753,
+      "sha256": "a8c0ccfdcdcca0f6bc1f02ed2cd2649687477a0f827954e62d35caaacd6ff95f"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-19-17-613Z-snapshot/run-ci.json",
+      "path": "hosted/2026-11-15T01-19-17-613Z-snapshot/run-ci.json",
+      "bytes": 12202,
+      "sha256": "538004a7dd547e7687b51480979403100ef382c5be055e49419e87939df7db8d"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-19-17-613Z-snapshot/run-storybook.json",
+      "path": "hosted/2026-11-15T01-19-17-613Z-snapshot/run-storybook.json",
+      "bytes": 12219,
+      "sha256": "94b901386ecf5bd9f12858e00e9f27f3d086412f7135db478811d6179d664bfc"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-19-17-613Z-snapshot/summary.json",
+      "path": "hosted/2026-11-15T01-19-17-613Z-snapshot/summary.json",
+      "bytes": 6530,
+      "sha256": "eb43628a43b4102a901cf9fc696d15a625d2c9535b2f542a76fd535352d25284"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14140817152-crc.txt",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14140817152-crc.txt",
+      "bytes": 306,
+      "sha256": "0186b34a8a35914db0044ac780afa9e4ecca0174b8f378bf7e126e88de573690"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14140817152.zip",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14140817152.zip",
+      "bytes": 1700,
+      "sha256": "33ca69660c54ebe916f68db468f1760975b4fb1de3a09ef98270a36085eed916"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14140871765-crc.txt",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14140871765-crc.txt",
+      "bytes": 305,
+      "sha256": "4e37b53d105ec7d19d749518971a3d1ae5c02c9a712a258eb7d10fc7cf6bbb88"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14140871765.zip",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14140871765.zip",
+      "bytes": 1183,
+      "sha256": "4225cd3c59f31cf1195fe4baef481dc0ed8dfcafc72e21d4a7c82afd458fc5d1"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14140966581-crc.txt",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14140966581-crc.txt",
+      "bytes": 305,
+      "sha256": "db4ce6efe614d17577464711c15100738c44c48b1957a23fd1c44a63feed3c67"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14140966581.zip",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14140966581.zip",
+      "bytes": 1486,
+      "sha256": "0a41d2ffa83c9524a5d9394995ca8ea21f5e9ecd5f781649a1faff62fd03a441"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14141006324-crc.txt",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14141006324-crc.txt",
+      "bytes": 305,
+      "sha256": "fb81679f71bf59fb59876734f6a3982d56b3a9b9ffc04260c79c763754994415"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14141006324.zip",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14141006324.zip",
+      "bytes": 1468,
+      "sha256": "51caa2191e2e5667839481fd6249da57931747a389d7f83bd8bf43bf15b5e708"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/artifacts-ci.json",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/artifacts-ci.json",
+      "bytes": 2845,
+      "sha256": "2141f488bda0137677161c98d3d097424c87dbf06f14694ce4981e7f10e0f579"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/check-runs.json",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/check-runs.json",
+      "bytes": 84373,
+      "sha256": "7d4c0d820fd639849fbdef54167e2c65f1bb8e0ab1129f3ff46890b558054132"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/ci-plan.json",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/ci-plan.json",
+      "bytes": 7636,
+      "sha256": "79db265ae5823c58f2c82f9b19e54b4ab37ba96003189c110cb626ddd47bd532"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/ci-results-browser.json",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/ci-results-browser.json",
+      "bytes": 19414,
+      "sha256": "f0c4f36f85f4518d3480a53c81f35dae0e8d0dccc7227d11d5e6627df97ac6fb"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/ci-results-lib.json",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/ci-results-lib.json",
+      "bytes": 11968,
+      "sha256": "c1a91856f9e67e8009d715eff51dc5dffcc74fd1cf11b496c30b336ec8b619e0"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/ci-results-unit.json",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/ci-results-unit.json",
+      "bytes": 11859,
+      "sha256": "d64af9d067bb67f50a60784041f46db3462df6693481af1bdcdcbd2fb2926e6e"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/job-132654386066.log",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/job-132654386066.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/job-132654386066.log.stderr",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/job-132654386066.log.stderr",
+      "bytes": 99,
+      "sha256": "8b6407b2fdbca54bf3d53fb93e79a3560dbe59567fa5044cfee4bed1b5b6e467"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/jobs-ci.json",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/jobs-ci.json",
+      "bytes": 25620,
+      "sha256": "b0f5174286cb09838df6a9a4b62c670f6aa73f58d2bcdfd7f42bf0674500b5b0"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/jobs-storybook.json",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/jobs-storybook.json",
+      "bytes": 11543,
+      "sha256": "6dc6233de8193146514be5d52feb83b9f7c8e875a12c4bbe97d25f84404a307d"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/pr-293.json",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/pr-293.json",
+      "bytes": 20134,
+      "sha256": "90107b4f1147c48ea3bae8fdbe8b616e3e620a204b43b980d6cfd7e042301178"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/requests.json",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/requests.json",
+      "bytes": 5070,
+      "sha256": "2e55ca0167feea6c3a3adfb7c140f78294a457f49f5071e6065ffe70b202ecc9"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/required-checks.json",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/required-checks.json",
+      "bytes": 881,
+      "sha256": "0955a5b46b7f6f6a421b7584cde60f130103115b7f420a43b80371369669f1d0"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/run-ci.json",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/run-ci.json",
+      "bytes": 12205,
+      "sha256": "a6db6e0608503eef96d2c6f01867a459128b8d3c5980a10717a834140dd28887"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/run-storybook.json",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/run-storybook.json",
+      "bytes": 12219,
+      "sha256": "94b901386ecf5bd9f12858e00e9f27f3d086412f7135db478811d6179d664bfc"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/source-commit.json",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/source-commit.json",
+      "bytes": 1143,
+      "sha256": "10382cb39979ab88f0239c65c4b3ffe6f826dd1ec2a288292c1360995bf2960c"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/tested-commit.json",
+      "path": "hosted/2026-11-15T01-20-39-800Z-terminal/tested-commit.json",
+      "bytes": 2648,
+      "sha256": "940a6f4db1f969b448e8920e3be7a63334f6c559d2b534f5ddd3ff61be64400e"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/hosted-audit.json",
+      "path": "hosted-audit.json",
+      "bytes": 49510,
+      "sha256": "948458c327c90395ab5789047fa243743666929deeeb4b94eebbf17e0c189adc"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/audit-hosted.ts",
+      "path": "audit-hosted.ts",
+      "bytes": 4875,
+      "sha256": "dd56a4d466f49a1efcd1384a0ccf04e1ffeaf810c35179c020c39417d222da11"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/collect-hosted.ts",
+      "path": "collect-hosted.ts",
+      "bytes": 6156,
+      "sha256": "322db2a368d1e7b01d5b1504cef4c256a8ae8980731892bb0bdde2a24f1a02e6"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/collect-missing-logs.ts",
+      "path": "collect-missing-logs.ts",
+      "bytes": 2229,
+      "sha256": "850c3cfd952c7373b3c16e1f0eb11ae86969dfb1cfdf3add6a84267549b9e9f9"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/pr-created-293.json",
+      "path": "pr-created-293.json",
+      "bytes": 6140,
+      "sha256": "d188813227a89bced90d892ee20e9285c9fc8937fae1de98b3f27e30d93ce7c8"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/pr-body-a2f3bac3-published-reviews.md",
+      "path": "pr-body-a2f3bac3-published-reviews.md",
+      "bytes": 4752,
+      "sha256": "1eccee85c77dc31b92b3dc556ed81de4f2359b0e6a819552292b61e4ca0afda1"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/root-stage-audit.json",
+      "path": "root-stage-audit.json",
+      "bytes": 300,
+      "sha256": "0e6b6078ca8d682f48009a1113e56e17f2132b1f24259fd4ba6704de99240012"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/root-sealed-audit.json",
+      "path": "root-sealed-audit.json",
+      "bytes": 338,
+      "sha256": "6637c1709d55c92736fef41f0793f34cd7f1ab2291d50b8555c1276e361c4e8b"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/draft-finding-dispositions.json",
+      "path": "draft-finding-dispositions.json",
+      "bytes": 973,
+      "sha256": "942db74a73dcb0858ce33664ef59e9072d646af11570ed06558c7fc69f755c15"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/archive-helper-disposition.json",
+      "path": "archive-helper-disposition.json",
+      "bytes": 676,
+      "sha256": "b40f816728c400519308f248004063bd3863f666cd4cb45eafddd537aa4e1748"
+    },
+    {
+      "sourcePath": "/tmp/spinel-socket-closure-registration/prepare-validation-archive.ts",
+      "path": "prepare-validation-archive.ts",
+      "bytes": 5178,
+      "sha256": "d6b4ef26b54a1f939675848e60f2e86f676ada11ec8a88d625988584e1260ccd"
+    },
+    {
+      "sourcePath": "/tmp/spn161-registration-review-a-a2f3bac3.md",
+      "path": "reviews/reviewer-a.md",
+      "bytes": 9424,
+      "sha256": "b40c0cf7831e1daf2a3845b4beb0b5b181e74da7a23121c62ce6923f3a3f5f11"
+    },
+    {
+      "sourcePath": "/tmp/spn161-registration-review-b-a2f3bac3.md",
+      "path": "reviews/reviewer-b.md",
+      "bytes": 10576,
+      "sha256": "03dbcc48c579b93b9f9492fb9c41718e5ccbedc2daeaca9dcb681cf47810eeff"
+    },
+    {
+      "sourcePath": "/tmp/spn161-registration-root-packet-audit.json",
+      "path": "manager/spn161-registration-root-packet-audit.json",
+      "bytes": 1663,
+      "sha256": "808aa94c7422dd1e70cf591c9705e07c9cab2f1b08802cd955e33ba3212011c2"
+    },
+    {
+      "sourcePath": "/tmp/spn161-registration-root-packet-audit.ts",
+      "path": "manager/spn161-registration-root-packet-audit.ts",
+      "bytes": 2930,
+      "sha256": "7e52757ba18a1ad49ded54f2a5a18cbb26f6c8d510cd8450f64026ea289f35bd"
+    },
+    {
+      "sourcePath": "/tmp/spn161-registration-root-packet-audit-first.ts",
+      "path": "manager/spn161-registration-root-packet-audit-first.ts",
+      "bytes": 2504,
+      "sha256": "a125ebb3b1928a0df64b071b06a640c594bf477ceb36d77b12b29a281696d757"
+    }
+  ]
+}

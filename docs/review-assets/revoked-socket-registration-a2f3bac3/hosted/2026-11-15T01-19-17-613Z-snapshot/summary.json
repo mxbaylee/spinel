@@ -1,0 +1,220 @@
+{
+  "at": "2026-11-15T01:19:21.895Z",
+  "source": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "pr": 293,
+  "mode": "snapshot",
+  "runs": {
+    "ci": {
+      "id": 43662407000,
+      "attempt": 1,
+      "status": "in_progress",
+      "conclusion": null
+    },
+    "storybook": {
+      "id": 43662407002,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success"
+    }
+  },
+  "checks": [
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43662407000/job/132654596949",
+      "name": "Backlog",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43662407000/job/132654596993",
+      "name": "Lint",
+      "state": "IN_PROGRESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43662407000/job/132654596939",
+      "name": "Typecheck",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43662407000/job/132654597366",
+      "name": "Lib tests",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43662407000/job/132654597300",
+      "name": "Unit tests",
+      "state": "SUCCESS"
+    },
+    {
+      "link": "https://github.com/mxbaylee/spinel/actions/runs/43662407000/job/132654386066",
+      "name": "Pull request",
+      "state": "SUCCESS"
+    }
+  ],
+  "jobs": {
+    "ci": [
+      {
+        "id": 132654386066,
+        "name": "Pull request",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654386223,
+        "name": "Classify changes (43662407000)",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654596939,
+        "name": "Typecheck",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654596949,
+        "name": "Backlog",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654596993,
+        "name": "Lint",
+        "status": "in_progress",
+        "conclusion": null,
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654597300,
+        "name": "Unit tests",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654597366,
+        "name": "Lib tests",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654597992,
+        "name": "Unit tests (${{ matrix.suite }})",
+        "status": "completed",
+        "conclusion": "skipped",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654598196,
+        "name": "Playwright smoke (${{ matrix.project }}${{ ((matrix.shard && format(' {0}', matrix.shard)) || '') }})",
+        "status": "completed",
+        "conclusion": "skipped",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654598494,
+        "name": "Lib tests (${{ matrix.suite }})",
+        "status": "completed",
+        "conclusion": "skipped",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654598611,
+        "name": "Sized restore acceptance",
+        "status": "completed",
+        "conclusion": "skipped",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654598660,
+        "name": "Retained sync transition",
+        "status": "completed",
+        "conclusion": "skipped",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654598735,
+        "name": "Doc responsiveness (${{ matrix.preset }})",
+        "status": "completed",
+        "conclusion": "skipped",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654598777,
+        "name": "Doc callback lifetimes (${{ matrix.preset }})",
+        "status": "completed",
+        "conclusion": "skipped",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654598913,
+        "name": "Container smoke",
+        "status": "completed",
+        "conclusion": "skipped",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      }
+    ],
+    "storybook": [
+      {
+        "id": 132654386135,
+        "name": "Classify changes",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654607603,
+        "name": "Build Storybook",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654630243,
+        "name": "Review Storybook states and interactions",
+        "status": "completed",
+        "conclusion": "success",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654630673,
+        "name": "Publish PR preview to GitHub Pages",
+        "status": "completed",
+        "conclusion": "skipped",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654630691,
+        "name": "Review Storybook mobile (${{ matrix.theme }})",
+        "status": "completed",
+        "conclusion": "skipped",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654630887,
+        "name": "Review Storybook tablet",
+        "status": "completed",
+        "conclusion": "skipped",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654631203,
+        "name": "Review Storybook desktop (${{ matrix.theme }})",
+        "status": "completed",
+        "conclusion": "skipped",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      },
+      {
+        "id": 132654687154,
+        "name": "Deploy to GitHub Pages",
+        "status": "completed",
+        "conclusion": "skipped",
+        "head_sha": "a2f3bac37c084b8f9fbf163d562c96dae4aff8ef"
+      }
+    ]
+  }
+}

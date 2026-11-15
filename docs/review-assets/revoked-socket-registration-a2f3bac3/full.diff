@@ -1,0 +1,467 @@
+diff --git a/docs/implementation/SPN-128.md b/docs/implementation/SPN-128.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..06c643b051bb8cf1d53204d7dc376d3b6eda6edb
+--- /dev/null
++++ b/docs/implementation/SPN-128.md
+@@ -0,0 +1,39 @@
++# SPN-128 — Preserved-original recovery
++
++## 🔌 Session-revocation verification prerequisite
++
++**2026-11-14, accepted registration decision; implementation acceptance pending.**
++Agent delivery judgment under the [standing four-persona delegation](grooming-2026-10-26.md#agent-decisions-and-visual-review).
++
++SPN-128 source `d22baa6997e27c123ef351a8f5321089cc9e345b`, based on
++`8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d`, failed the independent two-login
++session-revocation observation gate in [CI 43658210882 attempt 1, development
++job 132641633704](https://github.com/mxbaylee/spinel/actions/runs/43658210882/job/132641633704).
++Retry zero lacked an observed protocol close; retry one passed. Neither proves
++the original connection physically leaked or closed. Sixteen direct/shared inputs
++are unchanged, establishing ownership/provenance rather than historical causality.
++The [original failure and source bindings](SPN-161.md#-original-failure-and-source-provenance)
++retain the exact attempts and their evidence limits.
++
++Register [SPN-161](../todo/SPN-161.md) as a separate complete **M** investigation
++and actual verification prerequisite. This is not a new product dependency.
++Keep SPN-128's full **L** preserved-original recovery outcome and all crash cuts,
++fingerprint/generation custody, fresh Operator authority, reconciliation and
++runbook requirements. These remain two separately estimated outcomes: the complete **M** observation
++investigation and the retained **L** recovery outcome. After the
++prerequisite lands, integrate it and obtain SPN-128's own current-source acceptance;
++a passing retry or this registration completes neither ticket.
++
++The alternatives are an unsupported unchanged retry, weakening the physical-close
++contract, or hiding independently owned work inside the recovery ticket. A finite
++three-case observation investigation preserves the security journey while bounding
++effort. Owner and Collaborator retain saved-work and other-login protection;
++Operator retains trustworthy security evidence without document access. Link guest
++is weighed and unaffected: capability/privacy behavior does not change. The cost
++is explicit verification delay, not a relaxed product or CI requirement.
++
++This registration changes no runtime or diagnostic emitter. The [SPN-161 decision](SPN-161.md#-scope-and-persona-decision)
++and [focused registration record](grooming-revoked-socket-closure-2026-11-14.md)
++retain the complete experiment, negative controls and allocation boundary. Existing
++SPN-128 branch-specific implementation evidence remains on its original source;
++this main-side record does not claim those changes have landed.
+diff --git a/docs/implementation/SPN-161.md b/docs/implementation/SPN-161.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..88ae8cdf2cd8fc4ee51f0576c61f75f6f34e8a8c
+--- /dev/null
++++ b/docs/implementation/SPN-161.md
+@@ -0,0 +1,171 @@
++# SPN-161 — Revoked socket closure across navigation
++
++## 📏 Scope and persona decision
++
++**2026-11-14, accepted registration; implementation and acceptance pending.**
++The agent delivery manager applies the owner's continuous backlog workflow and
++[standing four-persona authority](../todo/process.md#decisions). The reviewed
++failure handoff identifies a distinct session-revocation observation investigation
++exposed by SPN-128 validation. Register it on actual main before implementation;
++retain SPN-128's full L product outcome and add this actual verification prerequisite.
++It is not a new product dependency or a way to turn a failing gate into acceptance.
++
++The complete estimate is **M, pre-launch**: finite real-browser investigation,
++demonstrated narrow fixture correction if warranted, safe first-attempt evidence
++custody, focused positive/negative controls, integration and actual existing
++development/production two-login acceptance. Count native/authority/runtime
++investigation and independent exact-head review, not merely a helper edit. A
++confirmed product closure/authorization defect requires a new scope checkpoint
++before broader transport implementation; no unsupported product diagnosis is made.
++
++Options considered: an unchanged full-test retry cannot establish the missing
++first witness; accepting navigation/401 alone weakens the contract; opportunistic
++SPN-128 changes hide an independently owned security journey; a general observer
++framework is unjustified. The selected finite experiment preserves the original
++contract and permits only a demonstrated correction. Non-reproduction is retained
++and ends that sample, without speculative repairs or an automatic completion claim.
++
++**All four personas:** Operator (M) gains bounded truthful security evidence without
++document access. Owner (M) retains real revocation and saved-work protection.
++Collaborator (M) retains the other login's socket, queued edit and durable native
++content. Link guest is explicitly unaffected: existing capability denial/privacy
++remain unchanged, so no impact score or new authority is invented. The tradeoff
++is a separate M investigation and verification delay while its actual prerequisite
++is unresolved; neither historical causal certainty nor a relaxed gate is promised.
++
++## 🧾 Original failure and source provenance
++
++The original source is [d22baa6997e27c123ef351a8f5321089cc9e345b](https://github.com/mxbaylee/spinel/commit/d22baa6997e27c123ef351a8f5321089cc9e345b),
++base `8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d`, tested merge
++`9b48767d1effc0aeb55f6020d8676427d74f7d9f`. [CI 43658210882 attempt 1,
++development 1/2 job 132641633704](https://github.com/mxbaylee/spinel/actions/runs/43658210882/job/132641633704)
++failed the flaky-test gate: 76 expected passes, four skips and one flaky case.
++The two-login case failed retry zero in **11,480 ms** at
++[`e2e/collaboration.spec.ts:462`](https://github.com/mxbaylee/spinel/blob/d22baa6997e27c123ef351a8f5321089cc9e345b/e2e/collaboration.spec.ts#L462):
++the unchanged **5,000 ms** poll did not observe every selected protocol socket
++closed. Retry one passed in **18,432 ms**; it does not replace the first failure.
++
++The first receipt records one target opened at 5,161 ms, edit-held and
++revocation-written at 6,383 ms, then main-frame navigation at 6,438 ms (+55 ms).
++It has no socket-closed/page-close event, one open/zero closed targets, six received
++frames, and observerLost/overflow/reopened all false. Later denial, queued-write,
++saved-reload and broadcast assertions did not run. Retry one's receipt records
++an observed close at 10,347 ms before navigation at 10,395 ms and the full contract.
++Both cleanup arrays remain retained. Only retry one has a trace ZIP; retry zero
++has two screenshots, error context and an inline content-free receipt. A trace
++for the first attempt must not be invented.
++
++The independent failure-audit report at
++`/tmp/spn128-terminal-d22baa69/audit-output/development-first-failure.json`
++was copied into the handoff as `independent-development-first-failure.json`:
++10,352 bytes, SHA-256
++`9b2e4bba33fb7bdc8dfe32363a396c36b131656eb40c030dd0e6f7e1a69daf29`.
++This is a derived audit, not the original Playwright reporter. The original
++artifact ZIP **14139456753** has SHA-256
++`2dfe9b8331b971d4e0ca92ded19d53918ea845a569b8829fcd310ee8fa5c335d`;
++its `playwright-report/development-1-of-2.json` member is 1,483,603 bytes,
++SHA-256 `edd0beae9188fff2171eb0d6dcd1455669bcf2f7cdf5d659b08d0a7d15acf29d`.
++That original reporter contains the inline observation receipts and actual
++attachment references from which the audit records the two attempts.
++The original artifact, derived audit and source-provenance handoff are retained
++locally; the later immutable failure archive is **pending**, not an existing
++link or acceptance claim. CI artifact retention is supplementary. Preserve the
++original observations separately from derived analysis and implementation evidence.
++
++All **16 direct/shared inputs** were independently byte-rechecked between main
++8e9dccbd and d22: `e2e/collaboration.spec.ts`, `e2e/session-revocation.ts`,
++`scripts/ci/session-revocation.test.ts`, `e2e/sync-network.ts`,
++`e2e/native-sheet-value.ts`, `playwright.config.ts`, `scripts/e2e.ts`,
++`scripts/e2e-server.ts`, `src/server/sync/transport.ts`, `src/server/auth/store.ts`,
++`src/server/collaboration/identity.ts`, `web/spinelSync.ts`,
++`lib/sync-client/index.ts`, `lib/sync-server/index.ts`, `package.json` and
++`package-lock.json`. Their blob/byte/hash binding is retained with the registration
++evidence. The observer/spec owner landed with SPN-149 at
++`a3dfc6f3373babecf979d5b851bbbf46c6dbb3b9`; keep its canonical history intact.
++SPN-128's supervised recovery fixture work does not own this security journey.
++Unchanged inputs establish provenance and ownership, not exclusion of every timing
++contribution or proof of the original connection's physical state.
++
++The helper already uses a direct CDP session rather than Playwright's per-document
++WebSocket map. Existing synthetic controls explicitly deliver a close event after
++navigation: they prove consumption, not real Chromium delivery. Production source
++revalidates access before sends/on its existing tick and requests close code 1008 for
++denied connections; that source behavior is not an observed close in this failed
++attempt. Do not claim a physical leak, successful original closure, or a pinned
++browser guarantee from current upstream source. Pinned Playwright **1.64.1** and
++Chromium **156.0.8078.4** (revision 1248) are retained runtime identities; no dependency
++was patched or installed for the diagnosis.
++
++## 🔬 Finite experiment before a repair
++
++After this registration lands and a separate implementation is scoped/reviewed,
++obtain the shared normal-pressure workload slot. Predeclare one small Chromium
++invocation using pinned Node 26.13.0/browser, the existing Playwright fixture and
++`observeSessionRevocation`, a task-owned loopback HTTP/ws server, one worker,
++no retries and **three fresh contexts/sockets**. No app build, install or cache
++mutation is part of this probe. Use a private cache, existing serial 2 GiB/eight-
++minute watchdog and **30-second outer probe bound**. Stop on the first setup,
++harness or resource error; this is a new controlled experiment, not a rerun of
++the failed hosted test.
++
++1. **Close-first control:** establish a real 101 socket and freeze its identity;
++   request server close code 1008, observe that exact server ws and underlying TCP
++   socket close, then navigate. Record direct CDP and page events. Require the
++   observer to recognize actual closure within the unchanged 5,000 ms deadline.
++2. **Navigation-first ordering:** establish a fresh connection and allow a real
++   new-document navigation with the same direct CDP observer. After that boundary,
++   request server close only if the connection still exists; otherwise record
++   that the browser physically closed it earlier. Use actual event barriers, no
++   sleep or navigation blocker. Record server ws/TCP and both browser streams;
++   a no-op close call cannot be represented as a new physical event. Compare the
++   actual ordering without asserting that the intended schedule occurred.
++3. **Live-socket negative:** establish a fresh real connection and deliberately
++   withhold close while returning an actual synthetic 401 HTTP response. The
++   observer must stay false/reject `assertRevoked(401)`; only then perform owned
++   cleanup. Navigation, denial, method invocation or cleanup closure never proves
++   the required protocol-close witness.
++
++If actual physical close is observed but direct CDP misses it, that demonstrates
++a present observation boundary, not the original attempt's physical outcome.
++Choose the smallest proven navigation-independent passive witness tied to that
++exact established connection. If CDP delivers the event but accounting fails,
++repair only demonstrated accounting. If physical closure/authority fails, stop
++for the product-scope checkpoint. Do not build a generic observation framework
++before this finite experiment establishes a need.
++
++## 🧪 Verification and diagnostic upkeep
++
++Extend the existing helper/control owners. Require negatives for absent/wrong/
++stale close, a live socket plus 401, closed socket plus 200, reopened connections,
++observer loss/overflow, late broadcasts and cleanup-only closure. Preserve the
++**5,000 ms closure** and **60-second journey** budgets, configured retries as
++separate failed attempts, fail-on-flaky behavior and all exact queued-write,
++server content, native reload, other-login continuity and authority assertions.
++
++After a demonstrated correction, the existing development and production owners
++each execute one retry-zero two-login case in the first reviewed candidate's
++hosted validation. This does not authorize narrowing unrelated selected work.
++Current source/shared routing must include helper, auth, transport, navigation,
++network/native fixtures, runtime and package/lock inputs; selected missing,
++failed, skipped or cancelled work must fail required aggregates. Synthetic
++controls and the small probe do not replace actual app/native acceptance.
++
++Keep a bounded snapshot before observer/context cleanup and retain cleanup
++separately without replacing the first error. Use one trace owner and actual
++uploaded filenames for retry-zero trace/receipt custody; body-only attachment
++assumptions are insufficient. Receipts include only ordinal identities, relative
++monotonic timestamps, kinds/counts and status/code, never URLs, request IDs,
++cookies/tickets, frame payloads or authored content. Bind exact helper/probe,
++source/base/tested/plan, runtime/browser/package/lock and original outputs.
++
++This registration changes no runtime or production emitter. Fixture-only
++observation work must document its inspected production no-impact decision;
++any actual observed transport/operation boundary change must update the
++[emitter inventory](../diagnostics.md#emitter-maintenance-inventory), content-free
++schema and meaningful observer-isolation regression evidence. Observation cannot
++affect the operation or become authority. No additional metrics are required by
++this documentation registration.
++
++The [focused registration record](grooming-revoked-socket-closure-2026-11-14.md)
++records allocation, dependency and check boundaries. No experiment, repair,
++native acceptance or completion is claimed by registration.
+diff --git a/docs/implementation/grooming-revoked-socket-closure-2026-11-14.md b/docs/implementation/grooming-revoked-socket-closure-2026-11-14.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..1ef3e34a14990a1671058a2377746a7a25c69806
+--- /dev/null
++++ b/docs/implementation/grooming-revoked-socket-closure-2026-11-14.md
+@@ -0,0 +1,67 @@
++# 🔌 Focused registration: revoked socket closure
++
++## 📋 Allocation and scope
++
++**2026-11-14, accepted agent delivery decision under standing delegation.**
++This focused maintenance starts from actual main
++`8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d`. Allocation history showed no prior
++SPN-161 ticket; `npm run backlog:new -- '🔌' 'Verify revoked socket closure across navigation'`
++allocated SPN-161 once and advanced the next ID from 161 to 162. The CLI
++allocation receipt is retained separately; the first complete registration commit
++preserves the allocated identity and specification. No separate allocation-only
++commit is claimed.
++No ID is reused and the index is generated through `npm run backlog:index`.
++
++This is not a full grooming. Preserve the last full grooming date **2026-11-14**
++and its completion list **SPN-098, SPN-090, SPN-120, SPN-123**. Registration does
++not complete a ticket, reset the reminder or change other launch requirements.
++
++[SPN-161's canonical decision](SPN-161.md#-scope-and-persona-decision) records a
++complete **M, pre-launch** observation investigation exposed by SPN-128 validation.
++The [source/failure record](SPN-161.md#-original-failure-and-source-provenance)
++retains exact source, base, tested merge, run/job, first failure and passing retry
++limits. Unchanged direct/shared inputs establish ownership, not physical closure
++or a leak. Durable original failure archive publication is pending.
++
++[SPN-128](../todo/SPN-128.md) gains SPN-161 as an actual verification prerequisite,
++with its full **L** product scope and prior requirements intact. These remain two separately estimated outcomes: the complete **M** observation
++investigation and the retained **L** recovery outcome. This is not a product
++dependency or a scope waiver.
++Its separate current branch must integrate the landed prerequisite and obtain
++fresh acceptance before completion.
++
++## 👥 All four personas and bounded verification
++
++Operator, Owner and Collaborator each have M impact: reliable content-free security
++evidence, real revocation, other-login continuity and durable queued native work.
++Link guest is explicitly weighed and unaffected; no capability or privacy change
++supports an invented impact score. We choose a finite investigation rather than
++an unsupported rerun, a weakened close assertion or hidden recovery-ticket work.
++
++The complete M includes the [three-case real Chromium experiment](SPN-161.md#-finite-experiment-before-a-repair),
++a demonstrated narrow correction if warranted, first-attempt custody, detecting
++negative controls and existing development/production two-login native acceptance.
++Keep original deadlines, flaky-test policy, authority/content assertions and source
++routing. No non-reproduction or synthetic event injection establishes historical
++physical closure. A real product defect requires a new scope checkpoint.
++
++## 🔎 Open PR and dependency-update disposition
++
++A fresh open-PR inventory found eight existing PRs: SPN-156 [#289](https://github.com/mxbaylee/spinel/pull/289),
++SPN-087 [#281](https://github.com/mxbaylee/spinel/pull/281), SPN-089 [#260](https://github.com/mxbaylee/spinel/pull/260),
++SPN-110 [#247](https://github.com/mxbaylee/spinel/pull/247), SPN-106 [#246](https://github.com/mxbaylee/spinel/pull/246),
++SPN-068 [#230](https://github.com/mxbaylee/spinel/pull/230), SPN-128 [#229](https://github.com/mxbaylee/spinel/pull/229)
++and SPN-099 [#223](https://github.com/mxbaylee/spinel/pull/223). Exact heads and
++metadata are retained in the registration audit. None is authored by Dependabot;
++there are no open dependency updates requiring security/compatibility grouping
++or disposition in this focused review. Existing PRs remain independently owned.
++
++## 🧪 Registration acceptance boundary
++
++This PR changes documentation only. Relevant checks cover CLI allocation/index,
++backlog structure, unchanged SPN-128 requirements, local links/anchors, exact
++source bindings, Markdown format and the committed grooming PR shape. No browser
++experiment, runtime repair, product acceptance or emitter change is claimed.
++The source/plan and all seven applicable current-head gates remain required after
++two independent exact-head reviews. Review and hosted results belong in the final
++PR evidence, not as a claimed pass in this registration decision.
+diff --git a/docs/todo/SPN-128.md b/docs/todo/SPN-128.md
+index 866f52aff771fd370616df466b83c35add4a51a6..9bff64eacb5f7c004be5e68733913f581a9acca0 100644
+--- a/docs/todo/SPN-128.md
++++ b/docs/todo/SPN-128.md
+@@ -6,7 +6,7 @@ impact_operator: M
+ impact_owner: M
+ impact_collaborator: M
+ score: 22
+-depends_on: []
++depends_on: [SPN-161]
+ decisions: []
+ ---
+ 
+@@ -28,6 +28,8 @@ And ambiguous or missing evidence still keeps the workspace closed.
+ 
+ ## Rules
+ 
++- Current d22 validation failed the independent session-revocation close-observation gate; [SPN-161](SPN-161.md) owns the finite investigation and actual verification prerequisite. Keep this complete L recovery outcome open, integrate the prerequisite only after it lands, and obtain this ticket's own fresh current-source acceptance. The first failure and passing retry do not prove the original socket leaked or closed. [Recorded boundary](../implementation/SPN-128.md#-session-revocation-verification-prerequisite), agent judgment, 2026-11-14.
++
+ - Follow [sustainable testing](../testing.md); keep the Verify plan and progress evidence current. [Policy](../implementation/SPN-115.md#guidance-for-every-open-ticket-and-progress-checkpoint), owner 2026-11-01.
+ 
+ - Split by SPN-112's merge review, 2026-10-30: [disposition](../implementation/SPN-112.md#merge-review-dispositions). SPN-112 fails and reopens a restore that stopped before activation, stays fail-closed from activation onward, and documents fresh-host recovery from the last backup in `docs/maintenance.md`, which loses work after that backup.
+diff --git a/docs/todo/SPN-161.md b/docs/todo/SPN-161.md
+new file mode 100644
+index 0000000000000000000000000000000000000000..058a09d04b8af360908ceb0aa3f3614710d98e67
+--- /dev/null
++++ b/docs/todo/SPN-161.md
+@@ -0,0 +1,54 @@
++---
++id: SPN-161
++emoji: 🔌
++effort: M
++phase: pre_launch
++impact_operator: M
++impact_owner: M
++impact_collaborator: M
++score: 23
++depends_on: []
++decisions: []
++---
++
++# 🔌 SPN-161 Verify revoked socket closure across navigation
++
++## Story
++
++As the [Owner](../product/personas.md#owner), I want revoking one login to prove that its actual connection closed even while it leaves the document, so that another login's queued work stays safe and later broadcasts cannot reach the revoked login.
++
++## Scenarios
++
++### Revocation remains provable when navigation wins
++
++Given two established logins and a queued native edit in the other login,
++When one login is revoked while its page navigates,
++Then the actual frozen connection identities have a physical-close witness and the revoked login receives 401,
++And the other login retains its socket, queued edit and exact saved/reloaded native value, with no later frame reaching the revoked connection.
++
++### Missing closure or authority never passes
++
++Given an absent, wrong or stale close, a live socket plus 401, a closed socket plus 200, an unauthorized reopen, observer loss/overflow or a later broadcast,
++When the revocation assertion runs,
++Then it rejects the incomplete evidence; navigation, a close-method call and cleanup-only closure cannot satisfy it,
++And the first failure and bounded receipt are retained before owned cleanup, whose result is recorded separately.
++
++## Rules
++
++- Follow [sustainable testing](../testing.md). Preserve the [complete M investigation, original incident and four-persona decision](../implementation/SPN-161.md#-scope-and-persona-decision), agent judgment under standing delegation, 2026-11-14. Link guest is explicitly unaffected; no impact score or capability change is invented.
++- The [original failure](../implementation/SPN-161.md#-original-failure-and-source-provenance) proves a missing observed close, not a physical leak or successful closure. Preserve SPN-149's prior history and both d22 attempts; retry success does not replace retry-zero acceptance. Unchanged inputs establish provenance, not historical causality.
++- Run the [declared three-case experiment](../implementation/SPN-161.md#-finite-experiment-before-a-repair) once before choosing a correction. Fix only a demonstrated observation/accounting boundary; if actual server closure or authority fails, stop and reassess the full scope before product changes. Non-reproduction ends the declared sample without speculative repair or repeat-until-green execution.
++- Retain the original 5,000 ms closure deadline, 60-second journey budget, fail-on-flaky gate, exact connection identity, all native/authority/content assertions and existing configured retries as separate attempts. No sleeps, navigation blocker, deadline increase, retry-based success or generic observation framework.
++- Receipts are passive, bounded and content-free: ordinal connection identities, relative monotonic timing, event kinds/counts and status/code only. Never retain URLs, request IDs, cookies/tickets, frame payloads or authored content. Inspect [diagnostic upkeep](../diagnostics.md#emitter-maintenance-inventory); explain unchanged production emitters for fixture-only work, or update inventory/schema/regression evidence when an actual observed production boundary changes.
++
++## Out of scope
++
++- SPN-128's preserved-original recovery product work, a changed revocation policy, a provider/new browser matrix, dependency upgrades and a general monitoring framework. Registration completes neither ticket.
++
++## Verify
++
++- Contract/negative owners: extend `scripts/ci/session-revocation.test.ts` and `e2e/session-revocation.ts` for absent/wrong/stale closure, live-plus-401, closed-plus-200, reopen, observer loss/overflow, late broadcast and cleanup-only closure; synthetic event injection alone does not prove browser delivery.
++- Real boundary owner: the predeclared close-first, navigation-first and live-socket-negative Chromium experiment, fresh real 101 connections, actual server ws/TCP and direct-CDP/page events, one worker/no retries/30-second outer bound, existing normal-pressure 2 GiB/eight-minute serial watchdog. Preserve failures before stopping observers/contexts; close only owned resources.
++- Integration owner: the existing two-login case in `e2e/collaboration.spec.ts`, once at retry zero in each existing development and production owner on the reviewed candidate. Preserve 401, real closure, other-login continuity, queued-write delivery, exact server/native reload and no-late-broadcast assertions; configured retries remain separate failures.
++- Source/shared selection: observer/controls, collaboration/navigation/sync-network/native helpers, server/auth/transport/identity, sync-client entries, runtime/Playwright config and manifest/lock inputs. Preserve automatic ownership and selected-missing/failed/skipped/cancelled rejection; do not narrow CI to make the gate pass.
++- Evidence: exact source/base/tested/plan/runtime/browser identities, declared experiment and every actual ordering/result, first-attempt trace/receipt under one trace owner with real uploaded filenames, untouched original failure/retry limits, bounded cleanup and current-head native acceptance. [Full evidence contract](../implementation/SPN-161.md#-verification-and-diagnostic-upkeep).
+diff --git a/docs/todo/backlog.json b/docs/todo/backlog.json
+index b3f3f901dfbd1d09dc0a38020133cf56bc81a8c3..b7fb0f369f99b8a504c34e2284a681f4945c5c0b 100644
+--- a/docs/todo/backlog.json
++++ b/docs/todo/backlog.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "Spinel",
+   "prefix": "SPN",
+-  "next_id": 161,
++  "next_id": 162,
+   "personas": "docs/product/personas.md",
+   "grooming": {
+     "every": 7,
+diff --git a/docs/todo/readme.md b/docs/todo/readme.md
+index 6e551248640d85860257ddb8b641946074655b3a..21a9dc865e4a9022dd5ba81c2e4e766f17fe9ecb 100644
+--- a/docs/todo/readme.md
++++ b/docs/todo/readme.md
+@@ -2,11 +2,11 @@
+ 
+ <!-- Generated by `npm run backlog:index` from the SPN-NNN.md tickets and backlog.json. Don't edit it by hand; CI fails if it is stale. -->
+ 
+-How this backlog works: [process.md](process.md). Next ID: **SPN-161**. Grooming: **4** tickets completed since 2026-11-14: SPN-098, SPN-090, SPN-120, SPN-123. Reminder every 7; grooming on request, never a work gate.
++How this backlog works: [process.md](process.md). Next ID: **SPN-162**. Grooming: **4** tickets completed since 2026-11-14: SPN-098, SPN-090, SPN-120, SPN-123. Reminder every 7; grooming on request, never a work gate.
+ 
+ Every ticket and resumed PR follows [sustainable testing](../testing.md). Keep its Verify plan and [progress evidence](../testing.md#carry-the-plan-through-the-work) current; repair test weaknesses introduced by the work before landing.
+ 
+-## Open tickets (23)
++## Open tickets (24)
+ 
+ Complete each phase before the next. Within a phase, take the highest-ranked ticket that has no listed prerequisites.
+ 
+@@ -15,35 +15,36 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
+ | # | Ticket | Effort | Impact | Score | Waiting on |
+ | --- | --- | --- | --- | --- | --- |
+ | 1 | 🔁 [SPN-156](SPN-156.md) Sync saved edits while the file list is open | 🌳 L | 🩷 L | 32 | — |
+-| 2 | 🌷 [SPN-128](SPN-128.md) Reinstall the preserved original after an interrupted restore | 🌳 L | 💜 M | 22 | — |
+-| 3 | 🔕 [SPN-106](SPN-106.md) Avoid a protection warning when opening view-only Docs | 🌿 M | 💜 M | 21 | — |
+-| 4 | ⏳ [SPN-110](SPN-110.md) Expire diagnostic events after seven days | 🌿 M | 💜 M | 21 | — |
+-| 5 | 📋 [SPN-154](SPN-154.md) Pasting an image keeps the page and the edit | 🌿 M | 💜 M | 21 | — |
+-| 6 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌳 L | 🤍 S | 12 | — |
+-| 7 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 11 | — |
+-| 8 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌿 M | 🤍 S | 11 | — |
+-| 9 | 🪩 [SPN-150](SPN-150.md) Show a branded Spinel loading screen | 🌱 S | 🤍 S | 10 | — |
++| 2 | 🔌 [SPN-161](SPN-161.md) Verify revoked socket closure across navigation | 🌿 M | 💜 M | 23 (own 21) | — |
++| 3 | 🌷 [SPN-128](SPN-128.md) Reinstall the preserved original after an interrupted restore | 🌳 L | 💜 M | 22 | [SPN-161](SPN-161.md) |
++| 4 | 🔕 [SPN-106](SPN-106.md) Avoid a protection warning when opening view-only Docs | 🌿 M | 💜 M | 21 | — |
++| 5 | ⏳ [SPN-110](SPN-110.md) Expire diagnostic events after seven days | 🌿 M | 💜 M | 21 | — |
++| 6 | 📋 [SPN-154](SPN-154.md) Pasting an image keeps the page and the edit | 🌿 M | 💜 M | 21 | — |
++| 7 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌳 L | 🤍 S | 12 | — |
++| 8 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 11 | — |
++| 9 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌿 M | 🤍 S | 11 | — |
++| 10 | 🪩 [SPN-150](SPN-150.md) Show a branded Spinel loading screen | 🌱 S | 🤍 S | 10 | — |
+ 
+ ### Launch
+ 
+ | # | Ticket | Effort | Impact | Score | Waiting on |
+ | --- | --- | --- | --- | --- | --- |
+-| 10 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🏔️ XL | 💜 M | 23 | — |
++| 11 | 🌐 [SPN-038](SPN-038.md) Access Spinel over public HTTPS without Tailscale | 🏔️ XL | 💜 M | 23 | — |
+ 
+ ### After launch
+ 
+ | # | Ticket | Effort | Impact | Score | Waiting on |
+ | --- | --- | --- | --- | --- | --- |
+-| 11 | 📤 [SPN-147](SPN-147.md) Send the remaining Univer patches upstream | 🌳 L | 🤍 S | 24 (own 12) | — |
+-| 12 | 📌 [SPN-099](SPN-099.md) Run Univer core unpatched once upstream ships the fixes | 🏔️ XL | 💜 M | 23 | [SPN-147](SPN-147.md), [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938) |
+-| 13 | ☁️ [SPN-114](SPN-114.md) Back up the workspace to AWS S3 after production launch | 🌳 L | 💜 M | 22 | [SPN-038](SPN-038.md) |
+-| 14 | 🪡 [SPN-119](SPN-119.md) Run Univer Docs UI unpatched after the callback fixes ship | 🌳 L | 💜 M | 22 | [dream-num/univer#7969](https://github.com/dream-num/univer/pull/7969) |
+-| 15 | 🧵 [SPN-122](SPN-122.md) Run native Doc composition unpatched after the upstream improvement ships | 🌳 L | 💜 M | 22 | [SPN-147](SPN-147.md) |
+-| 16 | 🗄️ [SPN-125](SPN-125.md) Prune supervised restore evidence safely | 🌿 M | 💜 M | 21 | — |
+-| 17 | 🏷️ [SPN-127](SPN-127.md) Show which saved backups this image can restore | 🌿 M | 💜 M | 21 | — |
+-| 18 | 🧰 [SPN-094](SPN-094.md) Add plugins for document types and file conversion | 🏔️ XL | 🤍 S | 13 | [SPN-038](SPN-038.md) |
+-| 19 | 📥 [SPN-093](SPN-093.md) Import a CSV file as a Sheet | 🌿 M | 🤍 S | 11 | [SPN-038](SPN-038.md) |
+-| 20 | 🔑 [SPN-151](SPN-151.md) Remove leftover BrowserStack hosted resources | 🌱 S | 🤍 S | 10 | — |
+-| 21 | 🍏 [SPN-152](SPN-152.md) Verify offline behaviour on an iPhone | 🌱 S | 🤍 S | 10 | — |
+-| 22 | 🗂️ [SPN-153](SPN-153.md) Fix macOS temp-path failures in script tests | 🌱 S | 🤍 S | 10 | — |
+-| 23 | 💨 [SPN-155](SPN-155.md) No false offline message when a Doc opens online | 🌱 S | 🤍 S | 10 | — |
++| 12 | 📤 [SPN-147](SPN-147.md) Send the remaining Univer patches upstream | 🌳 L | 🤍 S | 24 (own 12) | — |
++| 13 | 📌 [SPN-099](SPN-099.md) Run Univer core unpatched once upstream ships the fixes | 🏔️ XL | 💜 M | 23 | [SPN-147](SPN-147.md), [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938) |
++| 14 | ☁️ [SPN-114](SPN-114.md) Back up the workspace to AWS S3 after production launch | 🌳 L | 💜 M | 22 | [SPN-038](SPN-038.md) |
++| 15 | 🪡 [SPN-119](SPN-119.md) Run Univer Docs UI unpatched after the callback fixes ship | 🌳 L | 💜 M | 22 | [dream-num/univer#7969](https://github.com/dream-num/univer/pull/7969) |
++| 16 | 🧵 [SPN-122](SPN-122.md) Run native Doc composition unpatched after the upstream improvement ships | 🌳 L | 💜 M | 22 | [SPN-147](SPN-147.md) |
++| 17 | 🗄️ [SPN-125](SPN-125.md) Prune supervised restore evidence safely | 🌿 M | 💜 M | 21 | — |
++| 18 | 🏷️ [SPN-127](SPN-127.md) Show which saved backups this image can restore | 🌿 M | 💜 M | 21 | — |
++| 19 | 🧰 [SPN-094](SPN-094.md) Add plugins for document types and file conversion | 🏔️ XL | 🤍 S | 13 | [SPN-038](SPN-038.md) |
++| 20 | 📥 [SPN-093](SPN-093.md) Import a CSV file as a Sheet | 🌿 M | 🤍 S | 11 | [SPN-038](SPN-038.md) |
++| 21 | 🔑 [SPN-151](SPN-151.md) Remove leftover BrowserStack hosted resources | 🌱 S | 🤍 S | 10 | — |
++| 22 | 🍏 [SPN-152](SPN-152.md) Verify offline behaviour on an iPhone | 🌱 S | 🤍 S | 10 | — |
++| 23 | 🗂️ [SPN-153](SPN-153.md) Fix macOS temp-path failures in script tests | 🌱 S | 🤍 S | 10 | — |
++| 24 | 💨 [SPN-155](SPN-155.md) No false offline message when a Doc opens online | 🌱 S | 🤍 S | 10 | — |

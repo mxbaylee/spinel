@@ -1,0 +1,3 @@
+Archive:  /tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14140871765.zip
+    testing: ci-plan.json             OK
+No errors detected in compressed data of /tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal/artifact-14140871765.zip.

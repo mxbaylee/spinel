@@ -1,0 +1,8 @@
+{
+  "originalDirectory": "/tmp/spinel-socket-closure-registration/hosted/2026-11-15T01-20-39-800Z-terminal",
+  "originalFailure": "gh api refused first log output because it contained terminal escape sequences; empty stdout and exact stderr/request retained",
+  "repair": "Explicit --allow-escape-sequences, captured as bytes directly to compressed files; not emitted to terminal. Only missing job logs collected. No workflow rerun, new validation attempt or artifact re-download.",
+  "originalHelper": "/tmp/spinel-socket-closure-registration/collect-hosted.ts",
+  "replacementHelper": "/tmp/spinel-socket-closure-registration/collect-missing-logs.ts",
+  "logs": 11
+}
