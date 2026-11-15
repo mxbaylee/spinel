@@ -1,0 +1,255 @@
+{
+  "at": "2026-11-15T00:45:57.794Z",
+  "verdict": "NOT_ACCEPTED",
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+  "run": 43658210882,
+  "attempt": 1,
+  "job": 132641633704,
+  "artifact": {
+    "id": 14139456753,
+    "path": "/tmp/spn128-terminal-d22baa69/raw-artifacts/artifact-14139456753.zip",
+    "sha256": "2dfe9b8331b971d4e0ca92ded19d53918ea845a569b8829fcd310ee8fa5c335d",
+    "bytes": 36186172
+  },
+  "report": {
+    "member": "playwright-report/development-1-of-2.json",
+    "sha256": "edd0beae9188fff2171eb0d6dcd1455669bcf2f7cdf5d659b08d0a7d15acf29d",
+    "bytes": 1483603,
+    "stats": {
+      "startTime": "2026-11-15T00:29:06.859Z",
+      "duration": 876781.326,
+      "expected": 76,
+      "skipped": 4,
+      "unexpected": 0,
+      "flaky": 1
+    }
+  },
+  "test": {
+    "title": "revoking one login preserves another login’s queued edit and stops later broadcasts",
+    "file": "collaboration.spec.ts",
+    "status": "flaky"
+  },
+  "attempts": [
+    {
+      "retry": 0,
+      "status": "failed",
+      "durationMs": 11480,
+      "startTime": "2026-11-15T00:32:48.848Z",
+      "error": {
+        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate",
+        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n    at /home/runner/work/spinel/spinel/e2e/collaboration.spec.ts:462:73",
+        "location": {
+          "file": "/home/runner/work/spinel/spinel/e2e/collaboration.spec.ts",
+          "column": 73,
+          "line": 462
+        },
+        "snippet": "\u001b[0m \u001b[90m 460 |\u001b[39m     \u001b[90m// The same five-second deadline still requires a real protocol close for\u001b[39m\n \u001b[90m 461 |\u001b[39m     \u001b[90m// every socket established before revocation, even if navigation wins.\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 462 |\u001b[39m     \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39mpoll(() \u001b[33m=>\u001b[39m observation\u001b[33m!\u001b[39m\u001b[33m.\u001b[39misClosed()\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m.\u001b[39mtoBe(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 463 |\u001b[39m     observation\u001b[33m.\u001b[39mcheckpoint(\u001b[32m'closure-observed'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 464 |\u001b[39m     expect(otherClosed)\u001b[33m.\u001b[39mtoBe(otherClosedBefore)\u001b[33m;\u001b[39m\n \u001b[90m 465 |\u001b[39m     \u001b[90m// The revoked login has no unfinished work, so SPN-053's clean 401 handoff\u001b[39m\u001b[0m"
+      },
+      "attachments": [
+        {
+          "name": "session-revocation-observation",
+          "inline": true,
+          "bytes": 984,
+          "sha256": "d5b15562aeba0e85a9292cc61f6f73952a37ea1a303022d2d66fbf28935b2749",
+          "receipt": {
+            "version": 1,
+            "project": "development",
+            "retry": 0,
+            "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+            "node": "v26.13.0",
+            "browser": "156.0.8078.4",
+            "contractCompleted": false,
+            "primaryFailed": true,
+            "cleanupFailures": [],
+            "observation": {
+              "targetCount": 1,
+              "closedTargets": 0,
+              "openSockets": 1,
+              "receivedFrames": 6,
+              "overflow": false,
+              "observerLost": false,
+              "reopened": false,
+              "events": [
+                {
+                  "kind": "navigation",
+                  "ms": 15
+                },
+                {
+                  "kind": "socket-created",
+                  "ms": 5143,
+                  "socket": 1
+                },
+                {
+                  "kind": "socket-opened",
+                  "ms": 5161,
+                  "socket": 1
+                },
+                {
+                  "kind": "edit-held",
+                  "ms": 6383
+                },
+                {
+                  "kind": "revocation-requested",
+                  "ms": 6383
+                },
+                {
+                  "kind": "revocation-written",
+                  "ms": 6383
+                },
+                {
+                  "kind": "navigation",
+                  "ms": 6438
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "screenshot",
+          "member": "test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development/test-failed-1.png",
+          "bytes": 43171,
+          "sha256": "8bb56691e4051fc60a073e3a012b833a7b459b37c5c6628faea41c48d3ff60b8"
+        },
+        {
+          "name": "screenshot",
+          "member": "test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development/test-failed-2.png",
+          "bytes": 55231,
+          "sha256": "5ac27ef5e82c9e48ca3e0dde15708bbcef2b168fff0a8a73ecdff060bca261b6"
+        },
+        {
+          "name": "error-context",
+          "member": "test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development/error-context.md",
+          "bytes": 11238,
+          "sha256": "e3e0fbc7cee342e41d400ccc8599c21de852de18904c474d022e78bdbf3fb871"
+        }
+      ]
+    },
+    {
+      "retry": 1,
+      "status": "passed",
+      "durationMs": 18432,
+      "startTime": "2026-11-15T00:33:00.852Z",
+      "attachments": [
+        {
+          "name": "session-revocation-observation",
+          "inline": true,
+          "bytes": 1551,
+          "sha256": "ec18330211b12bffb89b9826c3dfa1f56080d51c83ef3ac28b710403abcdb593",
+          "receipt": {
+            "version": 1,
+            "project": "development",
+            "retry": 1,
+            "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+            "node": "v26.13.0",
+            "browser": "156.0.8078.4",
+            "contractCompleted": true,
+            "primaryFailed": false,
+            "cleanupFailures": [],
+            "observation": {
+              "targetCount": 1,
+              "closedTargets": 1,
+              "openSockets": 0,
+              "receivedFrames": 5,
+              "overflow": false,
+              "observerLost": false,
+              "reopened": false,
+              "events": [
+                {
+                  "kind": "navigation",
+                  "ms": 30
+                },
+                {
+                  "kind": "socket-created",
+                  "ms": 8539,
+                  "socket": 1
+                },
+                {
+                  "kind": "socket-opened",
+                  "ms": 8557,
+                  "socket": 1
+                },
+                {
+                  "kind": "edit-held",
+                  "ms": 10275
+                },
+                {
+                  "kind": "revocation-requested",
+                  "ms": 10275
+                },
+                {
+                  "kind": "revocation-written",
+                  "ms": 10279
+                },
+                {
+                  "kind": "socket-closed",
+                  "ms": 10347,
+                  "socket": 1
+                },
+                {
+                  "kind": "page-close",
+                  "ms": 10348
+                },
+                {
+                  "kind": "closure-observed",
+                  "ms": 10388
+                },
+                {
+                  "kind": "navigation",
+                  "ms": 10395
+                },
+                {
+                  "kind": "sign-in",
+                  "ms": 12220
+                },
+                {
+                  "kind": "request-denied",
+                  "ms": 12239
+                },
+                {
+                  "kind": "edit-released",
+                  "ms": 12240
+                },
+                {
+                  "kind": "saved",
+                  "ms": 12298
+                },
+                {
+                  "kind": "reloaded",
+                  "ms": 17875
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "trace",
+          "member": "test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development-retry1/trace.zip",
+          "bytes": 2272292,
+          "sha256": "6107b72f2a53661c6907db24f11e1e79602e91a6fdd30b4edc4ee4ef9098b76b"
+        }
+      ]
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "e2e/collaboration.spec.ts",
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "6c03692085cd5949656d123c6a530e9d3aadd3a2bab6a17cdd41b702fef4001c",
+      "bytes": 24881
+    },
+    {
+      "path": "e2e/session-revocation.ts",
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "f2d2994721d85e2b8ea8d71c565628953570054599c90f95ebc9d4f201ce173a",
+      "bytes": 6622
+    }
+  ],
+  "log": {
+    "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641633704.log.gz",
+    "gzipSha256": "4c9ef4398ab85b329feb3fcd491038c9bae2c60335eb7967a3a16352f0193dad",
+    "rawSha256": "60b792b0a84a6a83c96a7698d002d8d4c0cf1a2858a3ff246dcda48b5beb279c"
+  },
+  "disposition": "Required development partition fails closed on flaky first attempt. Retry1 pass does not waive retry0 protocol-close timeout. Actual receipt records navigation and no observed protocol close; no cause inferred. First attempt has inline observation, two screenshots and error context; automatic trace only on configured retry1. No manual retry or budget change.",
+  "limits": "Observation reflects CDP event receipt, not proof of live server socket after navigation. Worker is independently investigating source/observation behavior."
+}

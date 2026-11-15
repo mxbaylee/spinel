@@ -1,0 +1,2290 @@
+{
+  "at": "2026-11-15T00:43:41.054Z",
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+  "workflow": 43658210882,
+  "attempt": 1,
+  "rows": [
+    {
+      "id": 132641633590,
+      "name": "Lib tests (remaining)",
+      "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641633590.log.gz",
+      "gzipSha256": "cc89bf0a622fea196ef3bc397edbe24ca4933017858cba41a9dad66148a299b5",
+      "rawSha256": "14fcb9b80b6581848f11594e2ca0d2a2cc7e42d08307ab343ba4d5fd793b755c",
+      "rawBytes": 112634,
+      "fileSummary": [
+        "2026-11-15T00:37:44.8738866Z  Test Files  90 passed (90)",
+        "2026-11-15T00:37:44.8747067Z       Tests  1002 passed | 3 skipped (1005)"
+      ],
+      "files": [
+        {
+          "path": "lib/sync-server/tests/server.test.ts",
+          "tests": 53,
+          "durationMs": 1023
+        },
+        {
+          "path": "lib/print/doc-native.test.ts",
+          "tests": 17,
+          "durationMs": 14281
+        },
+        {
+          "path": "lib/sync-transform/tests/names.test.ts",
+          "tests": 72,
+          "durationMs": 31349
+        },
+        {
+          "path": "lib/print/native.test.ts",
+          "tests": 14,
+          "durationMs": 8519
+        },
+        {
+          "path": "lib/print/doc-sections.test.ts",
+          "tests": 11,
+          "durationMs": 7315
+        },
+        {
+          "path": "lib/print/doc-fixed-images.test.ts",
+          "tests": 4,
+          "durationMs": 6992
+        },
+        {
+          "path": "lib/print/doc-preparation.test.ts",
+          "tests": 15,
+          "durationMs": 76
+        },
+        {
+          "path": "lib/print/doc-image-groups.test.ts",
+          "tests": 4,
+          "durationMs": 2480
+        },
+        {
+          "path": "lib/sync-client/tests/client.test.ts",
+          "tests": 16,
+          "durationMs": 3314
+        },
+        {
+          "path": "lib/sync-client/tests/diagnostics.test.ts",
+          "tests": 23,
+          "durationMs": 629
+        },
+        {
+          "path": "lib/sync-client/tests/native.test.ts",
+          "tests": 16,
+          "durationMs": 348
+        },
+        {
+          "path": "lib/sync-client/tests/checkpoint.test.ts",
+          "tests": 27,
+          "durationMs": 678
+        },
+        {
+          "path": "lib/doc-formulas/native.test.ts",
+          "tests": 24,
+          "durationMs": 77
+        },
+        {
+          "path": "lib/sync-transform/tests/transform.test.ts",
+          "tests": 61,
+          "durationMs": 33
+        },
+        {
+          "path": "lib/print/layout.test.ts",
+          "tests": 32,
+          "durationMs": 56
+        },
+        {
+          "path": "lib/print/sheet-image-groups.test.ts",
+          "tests": 3,
+          "durationMs": 2127
+        },
+        {
+          "path": "lib/sync-transform/tests/state.test.ts",
+          "tests": 28,
+          "durationMs": 19
+        },
+        {
+          "path": "lib/print/preflight.test.ts",
+          "tests": 16,
+          "durationMs": 20
+        },
+        {
+          "path": "lib/sync-client/tests/drawing-queue.test.ts",
+          "tests": 6,
+          "durationMs": 461
+        },
+        {
+          "path": "lib/sync-client/tests/worksheet-identity.test.ts",
+          "tests": 18,
+          "durationMs": 1073
+        },
+        {
+          "path": "lib/print/doc-floating-pages.test.ts",
+          "tests": 3,
+          "durationMs": 2564
+        },
+        {
+          "path": "lib/print/doc-layout.test.ts",
+          "tests": 7,
+          "durationMs": 4968
+        },
+        {
+          "path": "lib/sync-transform/tests/docs.test.ts",
+          "tests": 21,
+          "durationMs": 14839
+        },
+        {
+          "path": "lib/print/native-images.test.ts",
+          "tests": 5,
+          "durationMs": 2756
+        },
+        {
+          "path": "lib/presence-ui/docPresence.test.ts",
+          "tests": 8,
+          "durationMs": 13
+        },
+        {
+          "path": "lib/sync-client/tests/paragraph-capture.test.ts",
+          "tests": 4,
+          "durationMs": 104
+        },
+        {
+          "path": "lib/print/sheet-source-selection.test.ts",
+          "tests": 4,
+          "durationMs": 359
+        },
+        {
+          "path": "lib/print/doc-image-clusters.test.ts",
+          "tests": 1,
+          "durationMs": 1520
+        },
+        {
+          "path": "lib/print/doc-multiple-images.test.ts",
+          "tests": 1,
+          "durationMs": 1719
+        },
+        {
+          "path": "lib/sync-client/tests/admission.test.ts",
+          "tests": 17,
+          "durationMs": 212
+        },
+        {
+          "path": "lib/print/doc-nested-formulas.test.ts",
+          "tests": 5,
+          "durationMs": 3523
+        },
+        {
+          "path": "lib/sync-transform/tests/sheet-names.test.ts",
+          "tests": 14,
+          "durationMs": 919
+        },
+        {
+          "path": "lib/sync-transform/tests/reference-undo.test.ts",
+          "tests": 13,
+          "durationMs": 253
+        },
+        {
+          "path": "lib/print/sheet-filter.test.ts",
+          "tests": 43,
+          "durationMs": 44
+        },
+        {
+          "path": "lib/print/doc-image-spaces.test.ts",
+          "tests": 2,
+          "durationMs": 2305
+        },
+        {
+          "path": "lib/print/resources.test.ts",
+          "tests": 4,
+          "durationMs": 2136
+        },
+        {
+          "path": "lib/sync-client/tests/docs-drawing.test.ts",
+          "tests": 3,
+          "durationMs": 126
+        },
+        {
+          "path": "lib/sync-client/tests/doc-copy.test.ts",
+          "tests": 8,
+          "durationMs": 252
+        },
+        {
+          "path": "lib/sync-transform/tests/drawings.test.ts",
+          "tests": 11,
+          "durationMs": 25267
+        },
+        {
+          "path": "lib/sync-client/tests/validation-entry.test.ts",
+          "tests": 25,
+          "durationMs": 99
+        },
+        {
+          "path": "lib/sync-transform/tests/content-intent.test.ts",
+          "tests": 7,
+          "durationMs": 138
+        },
+        {
+          "path": "lib/print/doc-story-geometry.test.ts",
+          "tests": 3,
+          "durationMs": 789
+        },
+        {
+          "path": "lib/sync-transform/tests/observations.test.ts",
+          "tests": 8,
+          "durationMs": 21
+        },
+        {
+          "path": "lib/sync-transform/tests/merges.test.ts",
+          "tests": 18,
+          "durationMs": 54668
+        },
+        {
+          "path": "lib/print/doc-image-pages.test.ts",
+          "tests": 1,
+          "durationMs": 1184
+        },
+        {
+          "path": "lib/sync-transform/tests/axis.test.ts",
+          "tests": 35,
+          "durationMs": 704
+        },
+        {
+          "path": "lib/print/worksheet.test.ts",
+          "tests": 10,
+          "durationMs": 13
+        },
+        {
+          "path": "lib/sync-client/tests/pending-buffer.test.ts",
+          "tests": 8,
+          "durationMs": 585
+        },
+        {
+          "path": "lib/sync-client/tests/hash.test.ts",
+          "tests": 11,
+          "durationMs": 64
+        },
+        {
+          "path": "lib/print/doc-square-image.test.ts",
+          "tests": 1,
+          "durationMs": 1036
+        },
+        {
+          "path": "lib/print/doc-source-selection.test.ts",
+          "tests": 3,
+          "durationMs": 11
+        },
+        {
+          "path": "lib/print/images.test.ts",
+          "tests": 8,
+          "durationMs": 64
+        },
+        {
+          "path": "lib/sync-client/tests/persistence.test.ts",
+          "tests": 4,
+          "durationMs": 159
+        },
+        {
+          "path": "lib/presence-ui/rendering.test.ts",
+          "tests": 2,
+          "durationMs": 6
+        },
+        {
+          "path": "lib/sync-server/tests/cells.test.ts",
+          "tests": 5,
+          "durationMs": 112
+        },
+        {
+          "path": "lib/diagnostics/sync.test.ts",
+          "tests": 4,
+          "durationMs": 13
+        },
+        {
+          "path": "lib/print/doc-hyphen-flow.test.ts",
+          "tests": 1,
+          "durationMs": 819
+        },
+        {
+          "path": "lib/sync-transform/tests/properties.test.ts",
+          "tests": 18,
+          "durationMs": 16597
+        },
+        {
+          "path": "lib/doc-formulas/model.test.ts",
+          "tests": 5,
+          "durationMs": 12
+        },
+        {
+          "path": "lib/print/doc-hyperlinks.test.ts",
+          "tests": 5,
+          "durationMs": 16
+        },
+        {
+          "path": "lib/print/package.test.ts",
+          "tests": 1,
+          "durationMs": 1144
+        },
+        {
+          "path": "lib/sync-client/tests/formula-cache.test.ts",
+          "tests": 2,
+          "durationMs": 193
+        },
+        {
+          "path": "lib/sync-client/tests/remote-formula.test.ts",
+          "tests": 1,
+          "durationMs": 272
+        },
+        {
+          "path": "lib/sync-client/tests/bounds.test.ts",
+          "tests": 5,
+          "durationMs": 174
+        },
+        {
+          "path": "lib/print/sheet-seams.test.ts",
+          "tests": 1,
+          "durationMs": 822
+        },
+        {
+          "path": "lib/sync-transform/tests/settings.test.ts",
+          "tests": 9,
+          "durationMs": 16135
+        },
+        {
+          "path": "lib/print/text.test.ts",
+          "tests": 3,
+          "durationMs": 11
+        },
+        {
+          "path": "lib/diagnostics/index.test.ts",
+          "tests": 4,
+          "durationMs": 6
+        },
+        {
+          "path": "lib/print/fonts.test.ts",
+          "tests": 4,
+          "durationMs": 32
+        },
+        {
+          "path": "lib/print/pdf-geometry.test.ts",
+          "tests": 3,
+          "durationMs": 122
+        },
+        {
+          "path": "lib/print/selection.test.ts",
+          "tests": 1,
+          "durationMs": 754
+        },
+        {
+          "path": "lib/diagnostics/server.test.ts",
+          "tests": 1,
+          "durationMs": 5
+        },
+        {
+          "path": "lib/print/doc-story-image.test.ts",
+          "tests": 2,
+          "durationMs": 20
+        },
+        {
+          "path": "lib/doc-formulas/definition.test.ts",
+          "tests": 4,
+          "durationMs": 26
+        },
+        {
+          "path": "lib/diagnostics/client.test.ts",
+          "tests": 11,
+          "durationMs": 8
+        },
+        {
+          "path": "lib/sync-transform/tests/generate-history.test.ts",
+          "tests": 11,
+          "durationMs": 284
+        },
+        {
+          "path": "lib/doc-formulas/completion.test.ts",
+          "tests": 4,
+          "durationMs": 6
+        },
+        {
+          "path": "lib/sync-transform/tests/intent.test.ts",
+          "tests": 3,
+          "durationMs": 180
+        },
+        {
+          "path": "lib/print/doc-image-anchor.test.ts",
+          "tests": 2,
+          "durationMs": 5
+        },
+        {
+          "path": "lib/doc-formulas/evaluate.test.ts",
+          "tests": 2,
+          "durationMs": 5
+        },
+        {
+          "path": "lib/presence-ui/index.test.ts",
+          "tests": 3,
+          "durationMs": 5
+        },
+        {
+          "path": "lib/print/doc-column-breaks.test.ts",
+          "tests": 2,
+          "durationMs": 25
+        },
+        {
+          "path": "lib/sync-transform/tests/coverage.test.ts",
+          "tests": 3,
+          "durationMs": 5
+        },
+        {
+          "path": "lib/print/entry.test.ts",
+          "tests": 1,
+          "durationMs": 705
+        },
+        {
+          "path": "lib/print/raster-text-test-support.test.ts",
+          "tests": 1,
+          "durationMs": 3
+        },
+        {
+          "path": "lib/sync-transform/tests/structure.test.ts",
+          "tests": 3,
+          "durationMs": 43515
+        },
+        {
+          "path": "lib/sync-transform/tests/ids.test.ts",
+          "tests": 1,
+          "durationMs": 49
+        },
+        {
+          "path": "lib/sync-server/tests/headless-formula.test.ts",
+          "tests": 1,
+          "durationMs": 700
+        }
+      ]
+    },
+    {
+      "id": 132641633593,
+      "name": "Unit tests (supervisor)",
+      "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641633593.log.gz",
+      "gzipSha256": "94d67b102cf316550a509fc7156d284c7f106935e49956c8b2443cccc2578621",
+      "rawSha256": "7c74d78db06d7f5dd148b1889a70f5fe2a2e6c3e7253806fd1ce9fa389d5fd14",
+      "rawBytes": 139088,
+      "fileSummary": [
+        "2026-11-15T00:35:43.7466216Z  Test Files  1 passed (1)",
+        "2026-11-15T00:35:43.7466956Z       Tests  131 passed (131)"
+      ],
+      "files": [
+        {
+          "path": "src/server/maintenance/supervisor.test.ts",
+          "tests": 131,
+          "durationMs": 412382
+        }
+      ]
+    },
+    {
+      "id": 132641633600,
+      "name": "Lib tests (mixed-fuzz)",
+      "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641633600.log.gz",
+      "gzipSha256": "a5594d6529253ae5d3f88ca2f1c591fea6e22a7d0d811cc8def61aa1f5ef7dc0",
+      "rawSha256": "e6aa9385130fdc03a1ec09b13933fc567da72f19126bd91866d3e8c59d18616c",
+      "rawBytes": 25951,
+      "fileSummary": [
+        "2026-11-15T00:32:49.6672841Z  Test Files  1 passed (1)",
+        "2026-11-15T00:32:49.6673349Z       Tests  1 passed (1)"
+      ],
+      "files": [
+        {
+          "path": "lib/sync-transform/tests/fuzz.test.ts",
+          "tests": 1,
+          "durationMs": 257585
+        }
+      ]
+    },
+    {
+      "id": 132641633604,
+      "name": "Lib tests (dense-cells)",
+      "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641633604.log.gz",
+      "gzipSha256": "ed3deffa736b4a88b5d61fceff464ae4fbb99b4d53f9d1dd50e1f3ca8ff1474a",
+      "rawSha256": "0c312c4003ee63477bc2904d9dfeacb1b6fbfedc441ef2b183879e062b193464",
+      "rawBytes": 23834,
+      "fileSummary": [
+        "2026-11-15T00:33:36.9542629Z  Test Files  1 passed (1)",
+        "2026-11-15T00:33:36.9543657Z       Tests  5 passed (5)"
+      ],
+      "files": [
+        {
+          "path": "lib/sync-transform/tests/cells-dense.test.ts",
+          "tests": 5,
+          "durationMs": 294784
+        }
+      ]
+    },
+    {
+      "id": 132641633609,
+      "name": "Unit tests (recovery)",
+      "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641633609.log.gz",
+      "gzipSha256": "5f9c936931f508c8670e856644a415626fb35652ce5ed00bfcd7d329dcfe5920",
+      "rawSha256": "a5cb993289b47e1595bc22263ca447eabaf43821c2b58c2ce03c842b004135dc",
+      "rawBytes": 112194,
+      "fileSummary": [
+        "2026-11-15T00:33:54.6995622Z  Test Files  52 passed (52)",
+        "2026-11-15T00:33:54.6997916Z       Tests  678 passed (678)"
+      ],
+      "files": [
+        {
+          "path": "src/server/maintenance/restore-jobs.test.ts",
+          "tests": 56,
+          "durationMs": 8807
+        },
+        {
+          "path": "src/server/backup/restore-registry.test.ts",
+          "tests": 81,
+          "durationMs": 2035
+        },
+        {
+          "path": "src/server/maintenance/restore-crash.integration.test.ts",
+          "tests": 17,
+          "durationMs": 212194
+        },
+        {
+          "path": "src/server/maintenance/restore-files.test.ts",
+          "tests": 55,
+          "durationMs": 1378
+        },
+        {
+          "path": "src/server/backup/restore-candidate.test.ts",
+          "tests": 17,
+          "durationMs": 15856
+        },
+        {
+          "path": "src/server/backup/export-jobs.test.ts",
+          "tests": 16,
+          "durationMs": 1644
+        },
+        {
+          "path": "src/server/backup/verification.test.ts",
+          "tests": 17,
+          "durationMs": 7236
+        },
+        {
+          "path": "src/server/maintenance/http.test.ts",
+          "tests": 11,
+          "durationMs": 1370
+        },
+        {
+          "path": "src/server/maintenance/restore-cold-state.test.ts",
+          "tests": 22,
+          "durationMs": 394
+        },
+        {
+          "path": "src/server/maintenance/supervisor-client.test.ts",
+          "tests": 36,
+          "durationMs": 35
+        },
+        {
+          "path": "src/server/backup/service.test.ts",
+          "tests": 11,
+          "durationMs": 6060
+        },
+        {
+          "path": "src/server/backup/restore-http.integration.test.ts",
+          "tests": 1,
+          "durationMs": 7399
+        },
+        {
+          "path": "src/server/backup/routes.test.ts",
+          "tests": 8,
+          "durationMs": 4007
+        },
+        {
+          "path": "src/server/maintenance/restore-prepare.test.ts",
+          "tests": 16,
+          "durationMs": 99
+        },
+        {
+          "path": "src/server/backup/restore-generations.test.ts",
+          "tests": 9,
+          "durationMs": 767
+        },
+        {
+          "path": "src/server/backup/restore-receipts.test.ts",
+          "tests": 18,
+          "durationMs": 1158
+        },
+        {
+          "path": "src/server/backup/restore-grants.test.ts",
+          "tests": 14,
+          "durationMs": 522
+        },
+        {
+          "path": "src/server/backup/restore-ownership.test.ts",
+          "tests": 12,
+          "durationMs": 609
+        },
+        {
+          "path": "src/server/maintenance/restore-trial.test.ts",
+          "tests": 8,
+          "durationMs": 13378
+        },
+        {
+          "path": "src/server/backup/restore-credentials.test.ts",
+          "tests": 11,
+          "durationMs": 681
+        },
+        {
+          "path": "src/server/backup/backup.test.ts",
+          "tests": 8,
+          "durationMs": 520
+        },
+        {
+          "path": "src/server/maintenance/restore-activate.test.ts",
+          "tests": 12,
+          "durationMs": 329
+        },
+        {
+          "path": "src/server/backup/spaces.test.ts",
+          "tests": 11,
+          "durationMs": 49
+        },
+        {
+          "path": "src/server/maintenance/gate.test.ts",
+          "tests": 9,
+          "durationMs": 69
+        },
+        {
+          "path": "src/server/maintenance/restore-cold-custody.test.ts",
+          "tests": 25,
+          "durationMs": 546
+        },
+        {
+          "path": "src/server/backup/restore-routes.test.ts",
+          "tests": 6,
+          "durationMs": 590
+        },
+        {
+          "path": "src/server/maintenance/restore-failed-custody.test.ts",
+          "tests": 16,
+          "durationMs": 168
+        },
+        {
+          "path": "src/server/maintenance/restore-capacity.test.ts",
+          "tests": 9,
+          "durationMs": 15
+        },
+        {
+          "path": "src/server/backup/restore-admission.integration.test.ts",
+          "tests": 2,
+          "durationMs": 8769
+        },
+        {
+          "path": "src/server/backup/filesystem.test.ts",
+          "tests": 7,
+          "durationMs": 183
+        },
+        {
+          "path": "src/server/maintenance/restore-authority.test.ts",
+          "tests": 16,
+          "durationMs": 33
+        },
+        {
+          "path": "src/server/backup/restore-freeze.test.ts",
+          "tests": 8,
+          "durationMs": 2660
+        },
+        {
+          "path": "src/server/backup/restore-input.test.ts",
+          "tests": 19,
+          "durationMs": 119
+        },
+        {
+          "path": "src/server/backup/restore-registry.integration.test.ts",
+          "tests": 1,
+          "durationMs": 3361
+        },
+        {
+          "path": "src/server/backup/restore-fences.test.ts",
+          "tests": 14,
+          "durationMs": 438
+        },
+        {
+          "path": "src/server/maintenance/ownership.test.ts",
+          "tests": 6,
+          "durationMs": 17
+        },
+        {
+          "path": "src/server/backup/transfer.test.ts",
+          "tests": 9,
+          "durationMs": 177
+        },
+        {
+          "path": "src/server/maintenance/restore-rich-fixture.test.ts",
+          "tests": 1,
+          "durationMs": 284
+        },
+        {
+          "path": "src/server/maintenance/process-exit.test.ts",
+          "tests": 16,
+          "durationMs": 11
+        },
+        {
+          "path": "src/server/backup/restore-operations.test.ts",
+          "tests": 6,
+          "durationMs": 153
+        },
+        {
+          "path": "src/server/backup/config.test.ts",
+          "tests": 5,
+          "durationMs": 32
+        },
+        {
+          "path": "src/server/maintenance/supervisor-test-control.test.ts",
+          "tests": 4,
+          "durationMs": 9
+        },
+        {
+          "path": "src/server/maintenance/restore-job-intent.test.ts",
+          "tests": 2,
+          "durationMs": 8
+        },
+        {
+          "path": "src/server/maintenance/cold-files.test.ts",
+          "tests": 3,
+          "durationMs": 9
+        },
+        {
+          "path": "src/server/backup/recovery-rows.test.ts",
+          "tests": 2,
+          "durationMs": 3337
+        },
+        {
+          "path": "src/server/backup/restore-drain-app.test.ts",
+          "tests": 2,
+          "durationMs": 231
+        },
+        {
+          "path": "src/server/maintenance/restore-failure.test.ts",
+          "tests": 12,
+          "durationMs": 4
+        },
+        {
+          "path": "src/server/backup/restore-notice.test.ts",
+          "tests": 1,
+          "durationMs": 9
+        },
+        {
+          "path": "src/server/backup/restore-drain.test.ts",
+          "tests": 3,
+          "durationMs": 15
+        },
+        {
+          "path": "src/server/maintenance/restore-stop.test.ts",
+          "tests": 2,
+          "durationMs": 3
+        },
+        {
+          "path": "src/server/maintenance/restore-crash-clock.test.ts",
+          "tests": 4,
+          "durationMs": 7
+        },
+        {
+          "path": "src/server/maintenance/cli.test.ts",
+          "tests": 1,
+          "durationMs": 368
+        }
+      ]
+    },
+    {
+      "id": 132641633619,
+      "name": "Lib tests (cells)",
+      "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641633619.log.gz",
+      "gzipSha256": "69fccd96049924886fee7e300b7822bd3156d653acdb351bd064508c42f71bf6",
+      "rawSha256": "cffef0c5204c98608366c5ba3c6c461aebe53cce2b3179a28e841ab0e1431a8a",
+      "rawBytes": 24126,
+      "fileSummary": [
+        "2026-11-15T00:33:11.0478283Z  Test Files  1 passed (1)",
+        "2026-11-15T00:33:11.0480030Z       Tests  106 passed (106)"
+      ],
+      "files": [
+        {
+          "path": "lib/sync-transform/tests/cells.test.ts",
+          "tests": 106,
+          "durationMs": 265649
+        }
+      ]
+    },
+    {
+      "id": 132641633653,
+      "name": "Unit tests (remaining)",
+      "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641633653.log.gz",
+      "gzipSha256": "7302e1899eeb80da85f24f08b0aca946878e225f9747b64ce7078444517502c8",
+      "rawSha256": "5f25ea4e8cc358f99235e6959f9b932a6eae50addf8c6963aadc4fea6a66fdba",
+      "rawBytes": 762115,
+      "fileSummary": [
+        "2026-11-15T00:35:19.8984972Z  Test Files  199 passed (199)",
+        "2026-11-15T00:35:19.9000684Z       Tests  2271 passed (2271)"
+      ],
+      "files": [
+        {
+          "path": "src/ui/spinelSync.test.ts",
+          "tests": 101,
+          "durationMs": 355
+        },
+        {
+          "path": "src/server/sync/transport.test.ts",
+          "tests": 23,
+          "durationMs": 15654
+        },
+        {
+          "path": "src/server/collaboration/service.test.ts",
+          "tests": 24,
+          "durationMs": 2427
+        },
+        {
+          "path": "src/server/collaboration/space-native.test.ts",
+          "tests": 9,
+          "durationMs": 3248
+        },
+        {
+          "path": "src/ui/offlineCreation.test.ts",
+          "tests": 45,
+          "durationMs": 167
+        },
+        {
+          "path": "src/ui/offlineLifecycle.test.ts",
+          "tests": 53,
+          "durationMs": 579
+        },
+        {
+          "path": "src/server/mcp/mcp.test.ts",
+          "tests": 20,
+          "durationMs": 2638
+        },
+        {
+          "path": "src/server/sync/transition.test.ts",
+          "tests": 22,
+          "durationMs": 6053
+        },
+        {
+          "path": "src/server/workspace/archive.test.ts",
+          "tests": 16,
+          "durationMs": 12923
+        },
+        {
+          "path": "server/app.test.ts",
+          "tests": 22,
+          "durationMs": 3952
+        },
+        {
+          "path": "src/ui/deviceInventory.test.ts",
+          "tests": 68,
+          "durationMs": 718
+        },
+        {
+          "path": "src/server/workspace/source-sharing.test.ts",
+          "tests": 28,
+          "durationMs": 3863
+        },
+        {
+          "path": "src/server/pdf/prepare.test.ts",
+          "tests": 17,
+          "durationMs": 2112
+        },
+        {
+          "path": "src/server/collaboration/offline-bundle.test.ts",
+          "tests": 10,
+          "durationMs": 1374
+        },
+        {
+          "path": "src/server/workspace/space-expiry.test.ts",
+          "tests": 25,
+          "durationMs": 1669
+        },
+        {
+          "path": "src/ui/boundedDocHistory.test.ts",
+          "tests": 16,
+          "durationMs": 1261
+        },
+        {
+          "path": "src/server/workspace/offline-creation.test.ts",
+          "tests": 26,
+          "durationMs": 1457
+        },
+        {
+          "path": "src/server/formulas/space-service.test.ts",
+          "tests": 30,
+          "durationMs": 2193
+        },
+        {
+          "path": "src/server/diagnostics/browser.test.ts",
+          "tests": 19,
+          "durationMs": 94
+        },
+        {
+          "path": "src/server/workspace/document-access.test.ts",
+          "tests": 49,
+          "durationMs": 972
+        },
+        {
+          "path": "src/server/workspace/spaces.test.ts",
+          "tests": 18,
+          "durationMs": 2801
+        },
+        {
+          "path": "src/server/workspace/space-recovery.test.ts",
+          "tests": 18,
+          "durationMs": 758
+        },
+        {
+          "path": "src/server/diagnostics/store.test.ts",
+          "tests": 15,
+          "durationMs": 472
+        },
+        {
+          "path": "src/server/workspace/copy.test.ts",
+          "tests": 22,
+          "durationMs": 722
+        },
+        {
+          "path": "src/ui/syncPresence.test.ts",
+          "tests": 28,
+          "durationMs": 56
+        },
+        {
+          "path": "src/ui/offlineRecovery.test.ts",
+          "tests": 38,
+          "durationMs": 188
+        },
+        {
+          "path": "src/ui/accountExit.test.ts",
+          "tests": 34,
+          "durationMs": 1002
+        },
+        {
+          "path": "src/server/diagnostics/feedback.test.ts",
+          "tests": 16,
+          "durationMs": 1652
+        },
+        {
+          "path": "src/server/history/space.test.ts",
+          "tests": 10,
+          "durationMs": 375
+        },
+        {
+          "path": "src/server/workspace/space-images-portable.test.ts",
+          "tests": 32,
+          "durationMs": 785
+        },
+        {
+          "path": "src/server/workspace/portable.test.ts",
+          "tests": 17,
+          "durationMs": 270
+        },
+        {
+          "path": "src/server/formulas/service.test.ts",
+          "tests": 18,
+          "durationMs": 1203
+        },
+        {
+          "path": "src/server/collaboration/space-transport.test.ts",
+          "tests": 7,
+          "durationMs": 4092
+        },
+        {
+          "path": "src/server/workspace/space-boundaries-http.test.ts",
+          "tests": 3,
+          "durationMs": 1931
+        },
+        {
+          "path": "src/ui/offlineRuntime.test.ts",
+          "tests": 34,
+          "durationMs": 180
+        },
+        {
+          "path": "src/ui/offlineStoreProtection.test.ts",
+          "tests": 68,
+          "durationMs": 50
+        },
+        {
+          "path": "src/server/auth/ownership.test.ts",
+          "tests": 18,
+          "durationMs": 5171
+        },
+        {
+          "path": "src/server/diagnostics/feedback-routes.test.ts",
+          "tests": 9,
+          "durationMs": 1286
+        },
+        {
+          "path": "src/ui/nativeSyncPermissions.test.ts",
+          "tests": 10,
+          "durationMs": 208
+        },
+        {
+          "path": "src/server/workspace/space-legacy.test.ts",
+          "tests": 13,
+          "durationMs": 2036
+        },
+        {
+          "path": "src/server/pdf/service.test.ts",
+          "tests": 16,
+          "durationMs": 779
+        },
+        {
+          "path": "src/ui/preparedImages.test.ts",
+          "tests": 31,
+          "durationMs": 124
+        },
+        {
+          "path": "src/server/sync/store.test.ts",
+          "tests": 21,
+          "durationMs": 6296
+        },
+        {
+          "path": "src/server/sync/history.test.ts",
+          "tests": 9,
+          "durationMs": 1358
+        },
+        {
+          "path": "src/server/sync/service.test.ts",
+          "tests": 19,
+          "durationMs": 2159
+        },
+        {
+          "path": "src/server/workspace/space-lifecycle.test.ts",
+          "tests": 10,
+          "durationMs": 1968
+        },
+        {
+          "path": "src/server/diagnostics/routes.test.ts",
+          "tests": 8,
+          "durationMs": 968
+        },
+        {
+          "path": "src/server/workspace/files.test.ts",
+          "tests": 13,
+          "durationMs": 363
+        },
+        {
+          "path": "src/server/workspace/space-schema.test.ts",
+          "tests": 9,
+          "durationMs": 271
+        },
+        {
+          "path": "src/ui/offlinePreparation.test.ts",
+          "tests": 28,
+          "durationMs": 76
+        },
+        {
+          "path": "src/server/history/native.test.ts",
+          "tests": 12,
+          "durationMs": 18057
+        },
+        {
+          "path": "src/server/workspace/space-legacy-direct.test.ts",
+          "tests": 10,
+          "durationMs": 1081
+        },
+        {
+          "path": "src/ui/offlineClaim.test.ts",
+          "tests": 26,
+          "durationMs": 255
+        },
+        {
+          "path": "src/server/auth/self-access.test.ts",
+          "tests": 26,
+          "durationMs": 143
+        },
+        {
+          "path": "src/server/workspace/offline-recovery.test.ts",
+          "tests": 12,
+          "durationMs": 262
+        },
+        {
+          "path": "src/server/auth/oauth.test.ts",
+          "tests": 9,
+          "durationMs": 73
+        },
+        {
+          "path": "src/server/history/store.test.ts",
+          "tests": 7,
+          "durationMs": 900
+        },
+        {
+          "path": "src/server/appearance/store.test.ts",
+          "tests": 8,
+          "durationMs": 272
+        },
+        {
+          "path": "src/server/auth/auth.test.ts",
+          "tests": 17,
+          "durationMs": 424
+        },
+        {
+          "path": "src/ui/offlineDownload.test.ts",
+          "tests": 28,
+          "durationMs": 65
+        },
+        {
+          "path": "src/server/workspace/archive-http.test.ts",
+          "tests": 4,
+          "durationMs": 606
+        },
+        {
+          "path": "src/ui/offlinePersistence.test.ts",
+          "tests": 11,
+          "durationMs": 82
+        },
+        {
+          "path": "src/server/workspace/guest-links.test.ts",
+          "tests": 7,
+          "durationMs": 139
+        },
+        {
+          "path": "src/server/auth/admin.test.ts",
+          "tests": 6,
+          "durationMs": 62
+        },
+        {
+          "path": "src/server/formulas/space-routes.test.ts",
+          "tests": 4,
+          "durationMs": 507
+        },
+        {
+          "path": "src/server/workspace/space-routes.test.ts",
+          "tests": 5,
+          "durationMs": 288
+        },
+        {
+          "path": "src/server/workspace/recovery-holds.test.ts",
+          "tests": 14,
+          "durationMs": 329
+        },
+        {
+          "path": "src/server/auth/console-recovery.test.ts",
+          "tests": 20,
+          "durationMs": 156
+        },
+        {
+          "path": "src/ui/spaceNavigation.test.ts",
+          "tests": 17,
+          "durationMs": 19
+        },
+        {
+          "path": "src/ui/offlineWriterHandoff.test.ts",
+          "tests": 7,
+          "durationMs": 22
+        },
+        {
+          "path": "src/server/workspace/workspace.test.ts",
+          "tests": 7,
+          "durationMs": 353
+        },
+        {
+          "path": "src/server/sync/mcp.test.ts",
+          "tests": 16,
+          "durationMs": 1463
+        },
+        {
+          "path": "src/server/pdf/runner.test.ts",
+          "tests": 15,
+          "durationMs": 52
+        },
+        {
+          "path": "src/server/workspace/space-scope.test.ts",
+          "tests": 12,
+          "durationMs": 158
+        },
+        {
+          "path": "src/ui/connectionState.test.ts",
+          "tests": 23,
+          "durationMs": 56
+        },
+        {
+          "path": "src/server/history/names-http.test.ts",
+          "tests": 1,
+          "durationMs": 629
+        },
+        {
+          "path": "src/server/workspace/shared-creation.test.ts",
+          "tests": 10,
+          "durationMs": 278
+        },
+        {
+          "path": "src/server/pdf/runtime-native.test.ts",
+          "tests": 5,
+          "durationMs": 5811
+        },
+        {
+          "path": "src/ui/docDrainEvidence.test.ts",
+          "tests": 13,
+          "durationMs": 123
+        },
+        {
+          "path": "src/server/workspace/sharing.test.ts",
+          "tests": 8,
+          "durationMs": 214
+        },
+        {
+          "path": "src/server/workspace/trash.test.ts",
+          "tests": 7,
+          "durationMs": 129
+        },
+        {
+          "path": "src/server/workspace/links.test.ts",
+          "tests": 6,
+          "durationMs": 79
+        },
+        {
+          "path": "src/server/auth/self-access-http.test.ts",
+          "tests": 2,
+          "durationMs": 171
+        },
+        {
+          "path": "src/server/workspace/search.test.ts",
+          "tests": 6,
+          "durationMs": 217
+        },
+        {
+          "path": "src/server/collaboration/generations.test.ts",
+          "tests": 8,
+          "durationMs": 85
+        },
+        {
+          "path": "src/server/health/monitor.test.ts",
+          "tests": 8,
+          "durationMs": 16
+        },
+        {
+          "path": "src/server/workspace/guest-links-http.test.ts",
+          "tests": 1,
+          "durationMs": 995
+        },
+        {
+          "path": "src/server/workspace/file-trash.test.ts",
+          "tests": 6,
+          "durationMs": 166
+        },
+        {
+          "path": "src/server/history/classification.test.ts",
+          "tests": 4,
+          "durationMs": 2406
+        },
+        {
+          "path": "src/server/workspace/file-admin.test.ts",
+          "tests": 12,
+          "durationMs": 426
+        },
+        {
+          "path": "src/server/diagnostics/capacity.test.ts",
+          "tests": 4,
+          "durationMs": 146
+        },
+        {
+          "path": "src/ui/pdfApi.test.ts",
+          "tests": 15,
+          "durationMs": 47
+        },
+        {
+          "path": "src/ui/docHistorySync.test.ts",
+          "tests": 2,
+          "durationMs": 12351
+        },
+        {
+          "path": "src/server/workspace/document-catalog.test.ts",
+          "tests": 7,
+          "durationMs": 426
+        },
+        {
+          "path": "src/server/diagnostics/account.test.ts",
+          "tests": 9,
+          "durationMs": 48
+        },
+        {
+          "path": "src/server/workspace/offline-creation-http.test.ts",
+          "tests": 5,
+          "durationMs": 461
+        },
+        {
+          "path": "src/server/workspace/sharing-http.test.ts",
+          "tests": 2,
+          "durationMs": 676
+        },
+        {
+          "path": "src/server/workspace/documents.test.ts",
+          "tests": 8,
+          "durationMs": 306
+        },
+        {
+          "path": "src/server/auth/invitations.test.ts",
+          "tests": 13,
+          "durationMs": 80
+        },
+        {
+          "path": "src/server/workspace/copy-http.test.ts",
+          "tests": 2,
+          "durationMs": 195
+        },
+        {
+          "path": "src/profile/profile.test.ts",
+          "tests": 94,
+          "durationMs": 4088
+        },
+        {
+          "path": "src/ui/runtimeAdmission.test.ts",
+          "tests": 10,
+          "durationMs": 54
+        },
+        {
+          "path": "src/server/workspace/access-details.test.ts",
+          "tests": 5,
+          "durationMs": 144
+        },
+        {
+          "path": "src/server/auth/admin-recovery-http.test.ts",
+          "tests": 3,
+          "durationMs": 150
+        },
+        {
+          "path": "src/ui/formulaMaintenance.test.ts",
+          "tests": 3,
+          "durationMs": 2977
+        },
+        {
+          "path": "src/ui/maintenanceDismissal.test.ts",
+          "tests": 31,
+          "durationMs": 11
+        },
+        {
+          "path": "src/server/workspace/space-structure.test.ts",
+          "tests": 6,
+          "durationMs": 1150
+        },
+        {
+          "path": "src/ui/docIdleEpisode.test.ts",
+          "tests": 5,
+          "durationMs": 11
+        },
+        {
+          "path": "src/server/workspace/shared.test.ts",
+          "tests": 5,
+          "durationMs": 169
+        },
+        {
+          "path": "src/shared/serviceWorker.test.ts",
+          "tests": 6,
+          "durationMs": 57
+        },
+        {
+          "path": "src/server/workspace/offline-recovery-http.test.ts",
+          "tests": 4,
+          "durationMs": 166
+        },
+        {
+          "path": "src/server/workspace/hidden.test.ts",
+          "tests": 4,
+          "durationMs": 170
+        },
+        {
+          "path": "server/database.test.ts",
+          "tests": 5,
+          "durationMs": 428
+        },
+        {
+          "path": "src/server/workspace/source-sharing-http.test.ts",
+          "tests": 1,
+          "durationMs": 308
+        },
+        {
+          "path": "src/server/workspace/ordinary-scope.test.ts",
+          "tests": 6,
+          "durationMs": 170
+        },
+        {
+          "path": "src/server/workspace/sheets.test.ts",
+          "tests": 6,
+          "durationMs": 101
+        },
+        {
+          "path": "src/server/formulas/diagnostics.test.ts",
+          "tests": 4,
+          "durationMs": 131
+        },
+        {
+          "path": "src/shared/autosave.test.ts",
+          "tests": 9,
+          "durationMs": 19
+        },
+        {
+          "path": "src/ui/syncSheetMenus.test.ts",
+          "tests": 5,
+          "durationMs": 243
+        },
+        {
+          "path": "src/server/auth/setup.test.ts",
+          "tests": 10,
+          "durationMs": 69
+        },
+        {
+          "path": "src/server/pdf/routes.test.ts",
+          "tests": 3,
+          "durationMs": 135
+        },
+        {
+          "path": "src/ui/dashboardNavigation.test.ts",
+          "tests": 6,
+          "durationMs": 11
+        },
+        {
+          "path": "src/shared/offlineShell.test.ts",
+          "tests": 31,
+          "durationMs": 16
+        },
+        {
+          "path": "src/ui/spacesApi.test.ts",
+          "tests": 11,
+          "durationMs": 44
+        },
+        {
+          "path": "src/server/workspace/space-discovery.test.ts",
+          "tests": 4,
+          "durationMs": 912
+        },
+        {
+          "path": "src/ui/offlineSpace.test.ts",
+          "tests": 18,
+          "durationMs": 17
+        },
+        {
+          "path": "src/server/diagnostics/feedback-capacity.test.ts",
+          "tests": 3,
+          "durationMs": 394
+        },
+        {
+          "path": "src/server/socialPreview.test.ts",
+          "tests": 5,
+          "durationMs": 573
+        },
+        {
+          "path": "src/server/workspace/tags.test.ts",
+          "tests": 5,
+          "durationMs": 80
+        },
+        {
+          "path": "src/ui/redrawScheduler.test.ts",
+          "tests": 9,
+          "durationMs": 7
+        },
+        {
+          "path": "src/shared/searchInput.test.ts",
+          "tests": 20,
+          "durationMs": 17
+        },
+        {
+          "path": "src/server/appearance/routes.test.ts",
+          "tests": 2,
+          "durationMs": 161
+        },
+        {
+          "path": "src/server/collaboration/transport.test.ts",
+          "tests": 3,
+          "durationMs": 1127
+        },
+        {
+          "path": "src/ui/nativeDrawingResize.test.ts",
+          "tests": 15,
+          "durationMs": 8
+        },
+        {
+          "path": "src/server/auth/sign-out-http.test.ts",
+          "tests": 5,
+          "durationMs": 124
+        },
+        {
+          "path": "src/server/collaboration/snapshotIdentity.test.ts",
+          "tests": 2,
+          "durationMs": 16
+        },
+        {
+          "path": "src/server/sync/transition-ownership.test.ts",
+          "tests": 1,
+          "durationMs": 1963
+        },
+        {
+          "path": "src/server/workspace/trash-http.test.ts",
+          "tests": 1,
+          "durationMs": 312
+        },
+        {
+          "path": "src/server/workspace/portable-http.test.ts",
+          "tests": 1,
+          "durationMs": 219
+        },
+        {
+          "path": "src/shared/formulaRequest.test.ts",
+          "tests": 6,
+          "durationMs": 40
+        },
+        {
+          "path": "src/server/collaboration/guest-transport.test.ts",
+          "tests": 1,
+          "durationMs": 989
+        },
+        {
+          "path": "src/ui/sheetDrawingPermissions.test.ts",
+          "tests": 2,
+          "durationMs": 16
+        },
+        {
+          "path": "src/server/workspace/documents-http.test.ts",
+          "tests": 1,
+          "durationMs": 299
+        },
+        {
+          "path": "src/server/workspace/access-details-http.test.ts",
+          "tests": 1,
+          "durationMs": 102
+        },
+        {
+          "path": "src/ui/presetStyles.test.ts",
+          "tests": 7,
+          "durationMs": 17
+        },
+        {
+          "path": "src/shared/search.test.ts",
+          "tests": 6,
+          "durationMs": 16
+        },
+        {
+          "path": "src/server/pdf/sheet-formulas.test.ts",
+          "tests": 5,
+          "durationMs": 179
+        },
+        {
+          "path": "src/server/workspace/hidden-http.test.ts",
+          "tests": 1,
+          "durationMs": 296
+        },
+        {
+          "path": "src/server/formulas/routes.test.ts",
+          "tests": 1,
+          "durationMs": 812
+        },
+        {
+          "path": "src/server/formulas/admission.test.ts",
+          "tests": 5,
+          "durationMs": 14
+        },
+        {
+          "path": "src/ui/offlineTransactionErrors.test.ts",
+          "tests": 6,
+          "durationMs": 15
+        },
+        {
+          "path": "src/ui/warmCatalog.test.ts",
+          "tests": 6,
+          "durationMs": 60
+        },
+        {
+          "path": "src/ui/offlineAccess.test.ts",
+          "tests": 21,
+          "durationMs": 11
+        },
+        {
+          "path": "src/server/formulas/runner.test.ts",
+          "tests": 5,
+          "durationMs": 5524
+        },
+        {
+          "path": "src/server/diagnostics/supervisor.test.ts",
+          "tests": 1,
+          "durationMs": 29
+        },
+        {
+          "path": "src/server/auth/admin-http.test.ts",
+          "tests": 1,
+          "durationMs": 218
+        },
+        {
+          "path": "src/ui/collaborationPending.test.ts",
+          "tests": 8,
+          "durationMs": 39
+        },
+        {
+          "path": "src/shared/searchScope.test.ts",
+          "tests": 5,
+          "durationMs": 14
+        },
+        {
+          "path": "src/ui/editorTheme.test.ts",
+          "tests": 2,
+          "durationMs": 29
+        },
+        {
+          "path": "src/server/diagnostics/runtime.test.ts",
+          "tests": 3,
+          "durationMs": 9
+        },
+        {
+          "path": "src/server/pwa.test.ts",
+          "tests": 1,
+          "durationMs": 124
+        },
+        {
+          "path": "src/ui/warmOpen.test.ts",
+          "tests": 8,
+          "durationMs": 6
+        },
+        {
+          "path": "src/server/health/routes.test.ts",
+          "tests": 1,
+          "durationMs": 56
+        },
+        {
+          "path": "src/ui/startupDeadlines.test.ts",
+          "tests": 6,
+          "durationMs": 16
+        },
+        {
+          "path": "src/server/diagnostics/feedback-transfer.test.ts",
+          "tests": 3,
+          "durationMs": 20
+        },
+        {
+          "path": "src/ui/entityIcon.test.ts",
+          "tests": 3,
+          "durationMs": 36
+        },
+        {
+          "path": "src/ui/documentAccess.test.ts",
+          "tests": 6,
+          "durationMs": 38
+        },
+        {
+          "path": "server/http.test.ts",
+          "tests": 1,
+          "durationMs": 25
+        },
+        {
+          "path": "src/ui/scopedHTTP.test.ts",
+          "tests": 2,
+          "durationMs": 34
+        },
+        {
+          "path": "server/dev.test.ts",
+          "tests": 1,
+          "durationMs": 4429
+        },
+        {
+          "path": "src/ui/fileNavigation.test.ts",
+          "tests": 3,
+          "durationMs": 8
+        },
+        {
+          "path": "src/shared/restore.test.ts",
+          "tests": 3,
+          "durationMs": 4
+        },
+        {
+          "path": "src/ui/offlineProtection.test.ts",
+          "tests": 4,
+          "durationMs": 5
+        },
+        {
+          "path": "src/ui/guestPendingBuffer.test.ts",
+          "tests": 1,
+          "durationMs": 10
+        },
+        {
+          "path": "src/ui/maintenanceState.test.ts",
+          "tests": 3,
+          "durationMs": 37
+        },
+        {
+          "path": "src/shared/spaceReviewRoute.test.ts",
+          "tests": 2,
+          "durationMs": 6
+        },
+        {
+          "path": "src/server/pdf/concurrency.test.ts",
+          "tests": 1,
+          "durationMs": 2837
+        },
+        {
+          "path": "src/ui/maintenanceFetch.test.ts",
+          "tests": 2,
+          "durationMs": 38
+        },
+        {
+          "path": "src/server/pdf/capacity.test.ts",
+          "tests": 4,
+          "durationMs": 5
+        },
+        {
+          "path": "src/ui/offlineCatalog.test.ts",
+          "tests": 8,
+          "durationMs": 6
+        },
+        {
+          "path": "src/server/history/policy.test.ts",
+          "tests": 3,
+          "durationMs": 5
+        },
+        {
+          "path": "src/shared/historyNavigation.test.ts",
+          "tests": 3,
+          "durationMs": 13
+        },
+        {
+          "path": "src/ui/adminRequest.test.ts",
+          "tests": 4,
+          "durationMs": 34
+        },
+        {
+          "path": "src/server/workspace/retired-pins.test.ts",
+          "tests": 2,
+          "durationMs": 24
+        },
+        {
+          "path": "src/ui/syncSoakIntent.test.ts",
+          "tests": 4,
+          "durationMs": 11
+        },
+        {
+          "path": "src/ui/historyAccess.test.ts",
+          "tests": 2,
+          "durationMs": 32
+        },
+        {
+          "path": "src/ui/operationDiagnostics.test.ts",
+          "tests": 4,
+          "durationMs": 8
+        },
+        {
+          "path": "src/server/workspace/archive-storage.test.ts",
+          "tests": 1,
+          "durationMs": 10
+        },
+        {
+          "path": "src/server/pdf/worker-memory.test.ts",
+          "tests": 1,
+          "durationMs": 368
+        },
+        {
+          "path": "server/request-body.test.ts",
+          "tests": 2,
+          "durationMs": 2864
+        },
+        {
+          "path": "src/ui/bootstrapFailure.test.ts",
+          "tests": 1,
+          "durationMs": 90
+        },
+        {
+          "path": "src/ui/appIcon.test.ts",
+          "tests": 1,
+          "durationMs": 20
+        },
+        {
+          "path": "src/ui/feedbackContext.test.ts",
+          "tests": 3,
+          "durationMs": 5
+        },
+        {
+          "path": "src/ui/maintenanceTime.test.ts",
+          "tests": 4,
+          "durationMs": 23
+        },
+        {
+          "path": "src/server/auth/profile.test.ts",
+          "tests": 1,
+          "durationMs": 12
+        },
+        {
+          "path": "src/server/pdf/fonts.test.ts",
+          "tests": 1,
+          "durationMs": 12
+        },
+        {
+          "path": "src/ui/theatre.test.ts",
+          "tests": 6,
+          "durationMs": 5
+        },
+        {
+          "path": "src/server/collaboration/audit.test.ts",
+          "tests": 1,
+          "durationMs": 5
+        },
+        {
+          "path": "src/server/diagnostics/configuration.test.ts",
+          "tests": 1,
+          "durationMs": 4
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "name": "admission",
+      "passed": true,
+      "durationMs": 4663
+    },
+    {
+      "name": "custody",
+      "passed": true,
+      "durationMs": 4581
+    },
+    {
+      "name": "freeze",
+      "passed": true,
+      "durationMs": 5069
+    },
+    {
+      "name": "activation-plan",
+      "passed": true,
+      "durationMs": 9361
+    },
+    {
+      "name": "staging",
+      "passed": true,
+      "durationMs": 7932
+    },
+    {
+      "name": "activation",
+      "passed": true,
+      "durationMs": 14335
+    },
+    {
+      "name": "private-open",
+      "passed": true,
+      "durationMs": 14549
+    },
+    {
+      "name": "commit",
+      "passed": true,
+      "durationMs": 8958
+    },
+    {
+      "name": "postcommit",
+      "passed": true,
+      "durationMs": 8909
+    },
+    {
+      "name": "original-activation",
+      "passed": true,
+      "durationMs": 15383
+    },
+    {
+      "name": "original-commit",
+      "passed": true,
+      "durationMs": 14351
+    },
+    {
+      "name": "cold-admission",
+      "passed": true,
+      "durationMs": 15836
+    },
+    {
+      "name": "cold-prepared",
+      "passed": true,
+      "durationMs": 16596
+    },
+    {
+      "name": "cold-activation",
+      "passed": true,
+      "durationMs": 17765
+    },
+    {
+      "name": "cold-trial-planned",
+      "passed": true,
+      "durationMs": 18194
+    },
+    {
+      "name": "cold-private-open",
+      "passed": true,
+      "durationMs": 19171
+    },
+    {
+      "name": "cold-commit",
+      "passed": true,
+      "durationMs": 16537
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "src/server/maintenance/restore-jobs.test.ts",
+      "tests": 56,
+      "durationMs": 8807,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "0a711fae4ee5f9e4e5d357bd7cfa91d9de1a907dd987e2b0764794ee8aed12fe"
+    },
+    {
+      "path": "src/server/backup/restore-registry.test.ts",
+      "tests": 81,
+      "durationMs": 2035,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "d1eef8e50f8038474059df0eb7da79b0d6acb9078afacae3c7119543aa491743"
+    },
+    {
+      "path": "src/server/maintenance/restore-crash.integration.test.ts",
+      "tests": 17,
+      "durationMs": 212194,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "6510311bd0ddbbe28a5ac40c217a5351ce6aeb369e7571077a09476eceb7956d"
+    },
+    {
+      "path": "src/server/maintenance/restore-files.test.ts",
+      "tests": 55,
+      "durationMs": 1378,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "99ebc7141d3091338daf45ecc9867ed1ad2c9ce4cd5585dc2272d3934b81cfd8"
+    },
+    {
+      "path": "src/server/backup/restore-candidate.test.ts",
+      "tests": 17,
+      "durationMs": 15856,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "37b9583d73486fb43d83d7dd4dff2269dab45b36de29f273564f97eb59292590"
+    },
+    {
+      "path": "src/server/backup/export-jobs.test.ts",
+      "tests": 16,
+      "durationMs": 1644,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "c782a7d0b73f7a03199727c56ff5e1988c9480faf9e68b65041b9597743de6db"
+    },
+    {
+      "path": "src/server/backup/verification.test.ts",
+      "tests": 17,
+      "durationMs": 7236,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "bc8347e169710c0680b87203152501f058d4600266a8c1b869e931e1072f9b4a"
+    },
+    {
+      "path": "src/server/maintenance/http.test.ts",
+      "tests": 11,
+      "durationMs": 1370,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "209ec3c1c18d4045ade193aecd375cbf125c80d64a57176545863c77200b44f4"
+    },
+    {
+      "path": "src/server/maintenance/restore-cold-state.test.ts",
+      "tests": 22,
+      "durationMs": 394,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "aa66dec11ad5d93b5437e4b7e300b41749b61c1212eae8972d7f3863b525447e"
+    },
+    {
+      "path": "src/server/maintenance/supervisor-client.test.ts",
+      "tests": 36,
+      "durationMs": 35,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "6a1868886fa837083c09fdb2a00c399876ededab719fbbd87de4a0895b4b94c8"
+    },
+    {
+      "path": "src/server/backup/service.test.ts",
+      "tests": 11,
+      "durationMs": 6060,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "a2b4c7f41b0c72a66da574a24a9d89e43a0a021d0db64c67de8335e763e250cf"
+    },
+    {
+      "path": "src/server/backup/restore-http.integration.test.ts",
+      "tests": 1,
+      "durationMs": 7399,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "2561e1a9596b45bad74e2d028eb9bbc3e3ad0d6b06faa7bb585cee0ef7ffa624"
+    },
+    {
+      "path": "src/server/backup/routes.test.ts",
+      "tests": 8,
+      "durationMs": 4007,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "48d0b72aef90257e9245bc7b1992a14bb3cefc8306eb3abecdce4b7e0e317e7c"
+    },
+    {
+      "path": "src/server/maintenance/restore-prepare.test.ts",
+      "tests": 16,
+      "durationMs": 99,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "3c180e59220c42366eebde1eff223ab46432ef7846e83b72f1b4892a3ce59998"
+    },
+    {
+      "path": "src/server/backup/restore-generations.test.ts",
+      "tests": 9,
+      "durationMs": 767,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "d97d65602d528d6ea96a7d5f64c95e8799501bc6426e39f7112b13ee5363a745"
+    },
+    {
+      "path": "src/server/backup/restore-receipts.test.ts",
+      "tests": 18,
+      "durationMs": 1158,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "8ef3280a6ed424f6514349a3b9c3458cabbbb2cb5bdfbedc07bbd05d23327d07"
+    },
+    {
+      "path": "src/server/backup/restore-grants.test.ts",
+      "tests": 14,
+      "durationMs": 522,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "262f3e19babf006252cbe4f3eeed1bffeacf2b02efe7fd9094c2f6db07dc56d8"
+    },
+    {
+      "path": "src/server/backup/restore-ownership.test.ts",
+      "tests": 12,
+      "durationMs": 609,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "cb8a53fbb75544b018e86e957a86bd7afce8fed641dd6ac18e946695ba41f420"
+    },
+    {
+      "path": "src/server/maintenance/restore-trial.test.ts",
+      "tests": 8,
+      "durationMs": 13378,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "5d082707da76c0cda94973b24bef5f505f1cba3763a0397971c4f98a9467d187"
+    },
+    {
+      "path": "src/server/backup/restore-credentials.test.ts",
+      "tests": 11,
+      "durationMs": 681,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "7fe2ccb4b7d23d5069366cf9eff2fc613071c32d3cdaf5b5ea555428439064a8"
+    },
+    {
+      "path": "src/server/backup/backup.test.ts",
+      "tests": 8,
+      "durationMs": 520,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "0b1b6bf2bb737d7672444d1f7a2c521e13a7490de71899c344dc8bfbb57c6311"
+    },
+    {
+      "path": "src/server/maintenance/restore-activate.test.ts",
+      "tests": 12,
+      "durationMs": 329,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "138a17705dccf4e5f1eb8368e46c4a0bf0aebcf47646aade1893dfd2281bcd44"
+    },
+    {
+      "path": "src/server/backup/spaces.test.ts",
+      "tests": 11,
+      "durationMs": 49,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "31451c8f8c173182b74f8b05ce3d2617fdbb296d2f07725c25530dfadd08d60b"
+    },
+    {
+      "path": "src/server/maintenance/gate.test.ts",
+      "tests": 9,
+      "durationMs": 69,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "b51ea6983d135eb8c8fea0f7c89519d9ab133c05b5e243e1051775a6164dd00a"
+    },
+    {
+      "path": "src/server/maintenance/restore-cold-custody.test.ts",
+      "tests": 25,
+      "durationMs": 546,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "7be31f407fc978e5d475addcea1b87923845bff45a359647257ca4a48e4e48a2"
+    },
+    {
+      "path": "src/server/backup/restore-routes.test.ts",
+      "tests": 6,
+      "durationMs": 590,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "6d4dd369b1474c4414b0258d3c2ed60ae9a5d654287afd9bbf3cc56166470e53"
+    },
+    {
+      "path": "src/server/maintenance/restore-failed-custody.test.ts",
+      "tests": 16,
+      "durationMs": 168,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "d8a63a7594ff30510b925f4ce6d52e286b86acd006e65652d64b92b92f28d8ea"
+    },
+    {
+      "path": "src/server/maintenance/restore-capacity.test.ts",
+      "tests": 9,
+      "durationMs": 15,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "388da8f709991937054e52f7ac203bcdb1309e1f0e18ca8982fb56c571a9c3c7"
+    },
+    {
+      "path": "src/server/backup/restore-admission.integration.test.ts",
+      "tests": 2,
+      "durationMs": 8769,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "2ab59cddc0e6936481f98b273dc30a370b73a9cfed255dadefbbef9f0d6aba3e"
+    },
+    {
+      "path": "src/server/backup/filesystem.test.ts",
+      "tests": 7,
+      "durationMs": 183,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "975e5e89587316660ab352c826ede7a6cae315ea47a087328dd55fe77987825c"
+    },
+    {
+      "path": "src/server/maintenance/restore-authority.test.ts",
+      "tests": 16,
+      "durationMs": 33,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "7882ac33efd4893c8cff47d9d1c0f112b9dd730e1dcdf4480331855974a8477a"
+    },
+    {
+      "path": "src/server/backup/restore-freeze.test.ts",
+      "tests": 8,
+      "durationMs": 2660,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "798a51d6db9b59f3c8597d0f6789df17081045900bd80201a1a5e6e090608f5e"
+    },
+    {
+      "path": "src/server/backup/restore-input.test.ts",
+      "tests": 19,
+      "durationMs": 119,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "3f3dd60431bc1657e1f9e08af1f6a50f25228fee5b27d29f97f128afca2397f2"
+    },
+    {
+      "path": "src/server/backup/restore-registry.integration.test.ts",
+      "tests": 1,
+      "durationMs": 3361,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "ffdf534fffa868274f9e0e70ccef01ddfe31d34646bc6f130ee865919749afb1"
+    },
+    {
+      "path": "src/server/backup/restore-fences.test.ts",
+      "tests": 14,
+      "durationMs": 438,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "103976903a007f73fd1df6cfc29d3bd749f3b8af481c3f56d2a03c1bbef00afb"
+    },
+    {
+      "path": "src/server/maintenance/ownership.test.ts",
+      "tests": 6,
+      "durationMs": 17,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "4b95f9c37b9ee356c5df4a717a1828bb37d576baee460f02cacc6c29522d1414"
+    },
+    {
+      "path": "src/server/backup/transfer.test.ts",
+      "tests": 9,
+      "durationMs": 177,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "cb4cfd3632d1dee23013504e32d402e62da1b4e2636d5a25f67284cf5f0ebb1f"
+    },
+    {
+      "path": "src/server/maintenance/restore-rich-fixture.test.ts",
+      "tests": 1,
+      "durationMs": 284,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "b60b9c4cd8e79738f83bd2670efeb6bfcd20bf3b8f19b88f2c887cd84479c404"
+    },
+    {
+      "path": "src/server/maintenance/process-exit.test.ts",
+      "tests": 16,
+      "durationMs": 11,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "ccb4e8332ea68bb4239eb376494c70ef6dbd41acda008d683514d660860c3bce"
+    },
+    {
+      "path": "src/server/backup/restore-operations.test.ts",
+      "tests": 6,
+      "durationMs": 153,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "2794168afe09ebb7065296dfed61f25e36b2883bb07a7bcf1b321d906b745618"
+    },
+    {
+      "path": "src/server/backup/config.test.ts",
+      "tests": 5,
+      "durationMs": 32,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "13f13a348d255e4134e7405834c4eba95f22df180bc5752644fd54e269e32459"
+    },
+    {
+      "path": "src/server/maintenance/supervisor-test-control.test.ts",
+      "tests": 4,
+      "durationMs": 9,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "c2a808b87a1bed59d0d736b8fa4c45eefab716270cf38011c0f4977f486e50f9"
+    },
+    {
+      "path": "src/server/maintenance/restore-job-intent.test.ts",
+      "tests": 2,
+      "durationMs": 8,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "87bb605271601ba6e0f5aa3f030d31c0c9ba0155c53d7b637c370d469c98d266"
+    },
+    {
+      "path": "src/server/maintenance/cold-files.test.ts",
+      "tests": 3,
+      "durationMs": 9,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "5af08ac509b11c2522ca4df10ec07e16680ce5d2190205a8801c06859fccb157"
+    },
+    {
+      "path": "src/server/backup/recovery-rows.test.ts",
+      "tests": 2,
+      "durationMs": 3337,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "15cf59446084bd2f7184236a7c7d8bdd8147e3bc684077091596779bb41b193d"
+    },
+    {
+      "path": "src/server/backup/restore-drain-app.test.ts",
+      "tests": 2,
+      "durationMs": 231,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "1a196b285c4ec5d6757d316bad08dff8624f34a9bc6ee77ba3f0d58cd589c418"
+    },
+    {
+      "path": "src/server/maintenance/restore-failure.test.ts",
+      "tests": 12,
+      "durationMs": 4,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "8720a0ab85ccb20c133a6e352cb653fee7717f8ab3be2ef8d0d19be591fb1dc5"
+    },
+    {
+      "path": "src/server/backup/restore-notice.test.ts",
+      "tests": 1,
+      "durationMs": 9,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "46924280fb5780dcd74819a005289d41fe64f053dc5dbdb7a1db11085184423d"
+    },
+    {
+      "path": "src/server/backup/restore-drain.test.ts",
+      "tests": 3,
+      "durationMs": 15,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "6b973b99c257791af708b0c47fdccb3b177f769aaaece900c5b04037aa5208a6"
+    },
+    {
+      "path": "src/server/maintenance/restore-stop.test.ts",
+      "tests": 2,
+      "durationMs": 3,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "c26b2bade268a665d323e59a136a63990c2496f620fe7ad3c8864edb9a3c13df"
+    },
+    {
+      "path": "src/server/maintenance/restore-crash-clock.test.ts",
+      "tests": 4,
+      "durationMs": 7,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "761d7d540424c8cb7e3756c0ffc6c7242392b29bf6626937108af201d4a1061d"
+    },
+    {
+      "path": "src/server/maintenance/cli.test.ts",
+      "tests": 1,
+      "durationMs": 368,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "sha256": "e4c91c39c22121f19c91cd46372ae112d89e798e4b0915e9d19803a4595be7ee"
+    }
+  ],
+  "conclusion": "All17 exact-source real SIGKILL scenarios and recovery controls executed successfully on Linux. Separate crash-receipts.json independently verifies all17 actual runtime fingerprint/generation/grant/process/cleanup records.",
+  "historicalNineExpiryFailures": "Previous source failures remain retained; exact d22 scenarios now pass with persisted-deadline clock preparation. No unchanged runtime rerun or reduced assertion.",
+  "clockScope": "Fixture-controlled expiry, not 30-minute wall-clock soak.",
+  "libSkips": [
+    {
+      "path": "lib/sync-transform/tests/schema.test.ts",
+      "count": 2,
+      "reason": "Explicit SHRINK_SEED and SWEEP diagnostic-only runIf controls"
+    },
+    {
+      "path": "lib/sync-transform/tests/rule-based.test.ts",
+      "count": 1,
+      "reason": "Explicit diagnostic-only runIf control; exact source retained"
+    }
+  ]
+}

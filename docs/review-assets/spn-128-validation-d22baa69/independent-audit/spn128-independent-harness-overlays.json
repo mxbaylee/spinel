@@ -1,0 +1,205 @@
+{
+  "at": "2026-11-15T01:11:33.432Z",
+  "rows": [
+    {
+      "artifact": 14139089270,
+      "member": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "sha256": "d4b00c55c0f6e6c51aa56d0bb90d027dd969886058c9d63600cbf41bee18b0ef",
+      "role": "baseline-observation",
+      "source": "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d",
+      "dirtyPaths": "M package-lock.json\n M playwright.config.ts\n M web/docResponsivenessEvidence.ts\n?? e2e/doc-responsiveness-boundaries.ts\n?? e2e/doc-responsiveness-callback-converter.ts\n?? e2e/doc-responsiveness-callback-progress.ts\n?? e2e/doc-responsiveness-callback-proto.ts\n?? e2e/doc-responsiveness-callback-sources.ts\n?? e2e/doc-responsiveness-callback-trace.ts\n?? e2e/doc-responsiveness-callbacks.spec.ts\n?? e2e/doc-responsiveness-fixture.ts\n?? e2e/doc-responsiveness-gc-trace.ts\n?? e2e/doc-responsiveness-heap-sample.ts\n?? e2e/doc-responsiveness-native-sources.ts\n?? e2e/doc-responsiveness-native-trace.ts\n?? e2e/doc-responsiveness-native-window.ts\n?? e2e/doc-responsiveness.spec.ts\n?? e2e/doc-responsiveness.ts\n?? src/ui/docIdleEpisode.ts\n?? src/ui/nativeDocFlush.ts\n?? src/ui/nativeDocFlushDiagnostic.ts",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 15
+    },
+    {
+      "artifact": 14139089270,
+      "member": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "sha256": "7247381f95b38baf1093fe9873b6812cee05a7675b60e8e310b1b5f91ab114a2",
+      "role": "baseline-observation",
+      "source": "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d",
+      "dirtyPaths": "M package-lock.json\n M playwright.config.ts\n M web/docResponsivenessEvidence.ts\n?? e2e/doc-responsiveness-boundaries.ts\n?? e2e/doc-responsiveness-callback-converter.ts\n?? e2e/doc-responsiveness-callback-progress.ts\n?? e2e/doc-responsiveness-callback-proto.ts\n?? e2e/doc-responsiveness-callback-sources.ts\n?? e2e/doc-responsiveness-callback-trace.ts\n?? e2e/doc-responsiveness-callbacks.spec.ts\n?? e2e/doc-responsiveness-fixture.ts\n?? e2e/doc-responsiveness-gc-trace.ts\n?? e2e/doc-responsiveness-heap-sample.ts\n?? e2e/doc-responsiveness-native-sources.ts\n?? e2e/doc-responsiveness-native-trace.ts\n?? e2e/doc-responsiveness-native-window.ts\n?? e2e/doc-responsiveness.spec.ts\n?? e2e/doc-responsiveness.ts\n?? src/ui/docIdleEpisode.ts\n?? src/ui/nativeDocFlush.ts\n?? src/ui/nativeDocFlushDiagnostic.ts",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 15
+    },
+    {
+      "artifact": 14139089270,
+      "member": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "sha256": "4487294fbdaebf0a96b26ac8180ed41e067a07d90e1d447dd7e03a4727176fc8",
+      "role": "baseline-observation",
+      "source": "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d",
+      "dirtyPaths": "M package-lock.json\n M playwright.config.ts\n M web/docResponsivenessEvidence.ts\n?? e2e/doc-responsiveness-boundaries.ts\n?? e2e/doc-responsiveness-callback-converter.ts\n?? e2e/doc-responsiveness-callback-progress.ts\n?? e2e/doc-responsiveness-callback-proto.ts\n?? e2e/doc-responsiveness-callback-sources.ts\n?? e2e/doc-responsiveness-callback-trace.ts\n?? e2e/doc-responsiveness-callbacks.spec.ts\n?? e2e/doc-responsiveness-fixture.ts\n?? e2e/doc-responsiveness-gc-trace.ts\n?? e2e/doc-responsiveness-heap-sample.ts\n?? e2e/doc-responsiveness-native-sources.ts\n?? e2e/doc-responsiveness-native-trace.ts\n?? e2e/doc-responsiveness-native-window.ts\n?? e2e/doc-responsiveness.spec.ts\n?? e2e/doc-responsiveness.ts\n?? src/ui/docIdleEpisode.ts\n?? src/ui/nativeDocFlush.ts\n?? src/ui/nativeDocFlushDiagnostic.ts",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 15
+    },
+    {
+      "artifact": 14139089270,
+      "member": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "sha256": "d9d57562ad25df0c3eeee6d2e384e7eb9e0e93c933c4b7426fa894212b003cf0",
+      "role": "baseline-observation",
+      "source": "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d",
+      "dirtyPaths": "M package-lock.json\n M playwright.config.ts\n M web/docResponsivenessEvidence.ts\n?? e2e/doc-responsiveness-boundaries.ts\n?? e2e/doc-responsiveness-callback-converter.ts\n?? e2e/doc-responsiveness-callback-progress.ts\n?? e2e/doc-responsiveness-callback-proto.ts\n?? e2e/doc-responsiveness-callback-sources.ts\n?? e2e/doc-responsiveness-callback-trace.ts\n?? e2e/doc-responsiveness-callbacks.spec.ts\n?? e2e/doc-responsiveness-fixture.ts\n?? e2e/doc-responsiveness-gc-trace.ts\n?? e2e/doc-responsiveness-heap-sample.ts\n?? e2e/doc-responsiveness-native-sources.ts\n?? e2e/doc-responsiveness-native-trace.ts\n?? e2e/doc-responsiveness-native-window.ts\n?? e2e/doc-responsiveness.spec.ts\n?? e2e/doc-responsiveness.ts\n?? src/ui/docIdleEpisode.ts\n?? src/ui/nativeDocFlush.ts\n?? src/ui/nativeDocFlushDiagnostic.ts",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 15
+    },
+    {
+      "artifact": 14139089270,
+      "member": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "sha256": "3f7ab4d8070b3ce618baee34d7fa6595406764e8a411571052b540f9d97fbb3a",
+      "role": "candidate",
+      "source": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "dirtyPaths": "?? baseline-doc-source/",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 15
+    },
+    {
+      "artifact": 14139089270,
+      "member": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "sha256": "c60aa1f82945a1c28e827e27a79e5fbeffe828424d0c1320710e52fb3e43de60",
+      "role": "candidate",
+      "source": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "dirtyPaths": "?? baseline-doc-source/",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 15
+    },
+    {
+      "artifact": 14139089270,
+      "member": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "sha256": "d1b239397eaafbcc17632ba7e08d07ca652df180cd465ef75de8055e589b0430",
+      "role": "candidate",
+      "source": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "dirtyPaths": "?? baseline-doc-source/",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 15
+    },
+    {
+      "artifact": 14139089270,
+      "member": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "sha256": "adc55d4e32d0ea727ce74dd7b9932495e2dc18fa8a2ca460fc8c4de1d8b4b943",
+      "role": "candidate",
+      "source": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "dirtyPaths": "?? baseline-doc-source/",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 15
+    },
+    {
+      "artifact": 14139019550,
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "sha256": "2e9068bb4b18702215a657db3f53d8e0a80f0879d53c6a49542624a6de445f64",
+      "role": "baselineObservation",
+      "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "dirtyPaths": "M e2e/doc-responsiveness-fixture.ts\n M e2e/doc-responsiveness.ts\n M package-lock.json\n M playwright.config.ts\n M web/docResponsivenessEvidence.ts\n?? e2e/doc-responsiveness-callback-converter.ts\n?? e2e/doc-responsiveness-callback-progress.ts\n?? e2e/doc-responsiveness-callback-proto.ts\n?? e2e/doc-responsiveness-callback-sources.ts\n?? e2e/doc-responsiveness-callback-trace.ts\n?? e2e/doc-responsiveness-callbacks.spec.ts\n?? scripts/ci/doc-callback-lifetimes.ts\n?? scripts/ci/doc-trace-processor.ts\n?? src/ui/docIdleEpisode.ts\n?? src/ui/nativeDocFlush.ts\n?? src/ui/nativeDocFlushDiagnostic.ts",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 16
+    },
+    {
+      "artifact": 14139019550,
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "sha256": "a5c3935557a33274cb644aa96bf962aa3aa2fb66221a1a05b0d5c3e9b66b87dd",
+      "role": "candidate",
+      "source": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "dirtyPaths": "",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 16
+    },
+    {
+      "artifact": 14138314242,
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "sha256": "8b5470ae47d2eef73dc19377cd3c707bd076a0235d4a431bf1b9bb5f66499265",
+      "role": "baselineObservation",
+      "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "dirtyPaths": "M e2e/doc-responsiveness-fixture.ts\n M e2e/doc-responsiveness.ts\n M package-lock.json\n M playwright.config.ts\n M web/docResponsivenessEvidence.ts\n?? e2e/doc-responsiveness-callback-converter.ts\n?? e2e/doc-responsiveness-callback-progress.ts\n?? e2e/doc-responsiveness-callback-proto.ts\n?? e2e/doc-responsiveness-callback-sources.ts\n?? e2e/doc-responsiveness-callback-trace.ts\n?? e2e/doc-responsiveness-callbacks.spec.ts\n?? scripts/ci/doc-callback-lifetimes.ts\n?? scripts/ci/doc-trace-processor.ts\n?? src/ui/docIdleEpisode.ts\n?? src/ui/nativeDocFlush.ts\n?? src/ui/nativeDocFlushDiagnostic.ts",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 16
+    },
+    {
+      "artifact": 14138314242,
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "sha256": "ecbaefea078230eac54cca8ff71dedf1a375b87ef557f58a818b955837503de6",
+      "role": "candidate",
+      "source": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "dirtyPaths": "",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 16
+    },
+    {
+      "artifact": 14140895471,
+      "member": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "sha256": "92e98ced3b4c6985d640d9bf3d126a20a9bf4eb8a5fc4e33ff2a548f4650f2d1",
+      "role": "baseline-observation",
+      "source": "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d",
+      "dirtyPaths": "M package-lock.json\n M playwright.config.ts\n M web/docResponsivenessEvidence.ts\n?? e2e/doc-responsiveness-boundaries.ts\n?? e2e/doc-responsiveness-callback-converter.ts\n?? e2e/doc-responsiveness-callback-progress.ts\n?? e2e/doc-responsiveness-callback-proto.ts\n?? e2e/doc-responsiveness-callback-sources.ts\n?? e2e/doc-responsiveness-callback-trace.ts\n?? e2e/doc-responsiveness-callbacks.spec.ts\n?? e2e/doc-responsiveness-fixture.ts\n?? e2e/doc-responsiveness-gc-trace.ts\n?? e2e/doc-responsiveness-heap-sample.ts\n?? e2e/doc-responsiveness-native-sources.ts\n?? e2e/doc-responsiveness-native-trace.ts\n?? e2e/doc-responsiveness-native-window.ts\n?? e2e/doc-responsiveness.spec.ts\n?? e2e/doc-responsiveness.ts\n?? src/ui/docIdleEpisode.ts\n?? src/ui/nativeDocFlush.ts\n?? src/ui/nativeDocFlushDiagnostic.ts",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 15
+    },
+    {
+      "artifact": 14140895471,
+      "member": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "sha256": "73a9123f468dc9403e49342e809efd8885c3400caea47b39c01b90935faa48dc",
+      "role": "baseline-observation",
+      "source": "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d",
+      "dirtyPaths": "M package-lock.json\n M playwright.config.ts\n M web/docResponsivenessEvidence.ts\n?? e2e/doc-responsiveness-boundaries.ts\n?? e2e/doc-responsiveness-callback-converter.ts\n?? e2e/doc-responsiveness-callback-progress.ts\n?? e2e/doc-responsiveness-callback-proto.ts\n?? e2e/doc-responsiveness-callback-sources.ts\n?? e2e/doc-responsiveness-callback-trace.ts\n?? e2e/doc-responsiveness-callbacks.spec.ts\n?? e2e/doc-responsiveness-fixture.ts\n?? e2e/doc-responsiveness-gc-trace.ts\n?? e2e/doc-responsiveness-heap-sample.ts\n?? e2e/doc-responsiveness-native-sources.ts\n?? e2e/doc-responsiveness-native-trace.ts\n?? e2e/doc-responsiveness-native-window.ts\n?? e2e/doc-responsiveness.spec.ts\n?? e2e/doc-responsiveness.ts\n?? src/ui/docIdleEpisode.ts\n?? src/ui/nativeDocFlush.ts\n?? src/ui/nativeDocFlushDiagnostic.ts",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 15
+    },
+    {
+      "artifact": 14140895471,
+      "member": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "sha256": "c26c41c624e6cf32491a2c5a132ea1af1697b654b741d4cd2850f2d61a2fa777",
+      "role": "baseline-observation",
+      "source": "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d",
+      "dirtyPaths": "M package-lock.json\n M playwright.config.ts\n M web/docResponsivenessEvidence.ts\n?? e2e/doc-responsiveness-boundaries.ts\n?? e2e/doc-responsiveness-callback-converter.ts\n?? e2e/doc-responsiveness-callback-progress.ts\n?? e2e/doc-responsiveness-callback-proto.ts\n?? e2e/doc-responsiveness-callback-sources.ts\n?? e2e/doc-responsiveness-callback-trace.ts\n?? e2e/doc-responsiveness-callbacks.spec.ts\n?? e2e/doc-responsiveness-fixture.ts\n?? e2e/doc-responsiveness-gc-trace.ts\n?? e2e/doc-responsiveness-heap-sample.ts\n?? e2e/doc-responsiveness-native-sources.ts\n?? e2e/doc-responsiveness-native-trace.ts\n?? e2e/doc-responsiveness-native-window.ts\n?? e2e/doc-responsiveness.spec.ts\n?? e2e/doc-responsiveness.ts\n?? src/ui/docIdleEpisode.ts\n?? src/ui/nativeDocFlush.ts\n?? src/ui/nativeDocFlushDiagnostic.ts",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 15
+    },
+    {
+      "artifact": 14140895471,
+      "member": "baseline-doc-source/test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "sha256": "4f4174073c482e3d9eab8a33fec999b31c072323f424c671b3e9aa8633e2a9b4",
+      "role": "baseline-observation",
+      "source": "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d",
+      "dirtyPaths": "M package-lock.json\n M playwright.config.ts\n M web/docResponsivenessEvidence.ts\n?? e2e/doc-responsiveness-boundaries.ts\n?? e2e/doc-responsiveness-callback-converter.ts\n?? e2e/doc-responsiveness-callback-progress.ts\n?? e2e/doc-responsiveness-callback-proto.ts\n?? e2e/doc-responsiveness-callback-sources.ts\n?? e2e/doc-responsiveness-callback-trace.ts\n?? e2e/doc-responsiveness-callbacks.spec.ts\n?? e2e/doc-responsiveness-fixture.ts\n?? e2e/doc-responsiveness-gc-trace.ts\n?? e2e/doc-responsiveness-heap-sample.ts\n?? e2e/doc-responsiveness-native-sources.ts\n?? e2e/doc-responsiveness-native-trace.ts\n?? e2e/doc-responsiveness-native-window.ts\n?? e2e/doc-responsiveness.spec.ts\n?? e2e/doc-responsiveness.ts\n?? src/ui/docIdleEpisode.ts\n?? src/ui/nativeDocFlush.ts\n?? src/ui/nativeDocFlushDiagnostic.ts",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 15
+    },
+    {
+      "artifact": 14140895471,
+      "member": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "sha256": "8c5a7c1f37f7a83f622c861991f0026ac3990443cf104bbb1f691fbc874c2d55",
+      "role": "candidate",
+      "source": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "dirtyPaths": "?? baseline-doc-source/",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 15
+    },
+    {
+      "artifact": 14140895471,
+      "member": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "sha256": "a2114e07ba1fc1a44550c075a6470b7631dbc6220d02b31a8ac13ec81b5f3e4c",
+      "role": "candidate",
+      "source": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "dirtyPaths": "?? baseline-doc-source/",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 15
+    },
+    {
+      "artifact": 14140895471,
+      "member": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "sha256": "a4a3830670cc35cbd852d667cc65823583701cc19735b9ddb1312807f2898723",
+      "role": "candidate",
+      "source": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "dirtyPaths": "?? baseline-doc-source/",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 15
+    },
+    {
+      "artifact": 14140895471,
+      "member": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "sha256": "da7127a199310f0e8b14074f514c40872645e9d88a205a9cbb2bfecf1006abf7",
+      "role": "candidate",
+      "source": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "dirtyPaths": "?? baseline-doc-source/",
+      "harnessSource": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "harnessBindings": 15
+    }
+  ]
+}

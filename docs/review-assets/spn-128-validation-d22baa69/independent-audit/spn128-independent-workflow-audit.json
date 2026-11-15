@@ -1,0 +1,1287 @@
+{
+  "at": "2026-11-15T01:11:43.732Z",
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+  "snapshot": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T011128057Z",
+  "allTerminal": true,
+  "workflowStatuses": [
+    {
+      "kind": "ci",
+      "id": 43658210882,
+      "status": "completed",
+      "conclusion": "failure",
+      "completed": 33,
+      "total": 33
+    },
+    {
+      "kind": "storybook",
+      "id": 43658210918,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 10,
+      "total": 10
+    },
+    {
+      "kind": "desktop",
+      "id": 43658210825,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 3,
+      "total": 3
+    },
+    {
+      "kind": "spaces",
+      "id": 43658210985,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 1,
+      "total": 1
+    }
+  ],
+  "bindings": [
+    {
+      "artifact": 14139098537,
+      "member": "evidence.json",
+      "sha256": "f5a2302c1bc812a0348246d04b9d88e8f53b61f9ff25a97b930f236faef6d1aa",
+      "bytes": 181696
+    }
+  ],
+  "reports": [
+    {
+      "artifact": 14138754359,
+      "member": "playwright-report/sync-soak-sheet.json",
+      "stats": {
+        "startTime": "2026-11-15T00:29:27.375Z",
+        "duration": 65830.77399999999,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139440482,
+      "member": "playwright-report/sync-soak-doc.json",
+      "stats": {
+        "startTime": "2026-11-15T00:33:58.507Z",
+        "duration": 38863.808,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14138894299,
+      "member": "playwright-report/sync-development.json",
+      "stats": {
+        "startTime": "2026-11-15T00:29:34.815Z",
+        "duration": 209791.038,
+        "expected": 21,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 21,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139089270,
+      "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-15T00:29:05.113Z",
+        "duration": 307370.38399999996,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 4,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139089270,
+      "member": "playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-15T00:34:14.911Z",
+        "duration": 232596.27,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 7,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139079893,
+      "member": "playwright-report/production-2-of-2.json",
+      "stats": {
+        "startTime": "2026-11-15T00:29:03.686Z",
+        "duration": 674676.255,
+        "expected": 89,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 89,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139019550,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-15T00:32:14.084Z",
+        "duration": 132172.267,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139019550,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-15T00:34:29.997Z",
+        "duration": 99239.48999999999,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14138318841,
+      "member": "playwright-report/mobile-https.json",
+      "stats": {
+        "startTime": "2026-11-15T00:34:04.428Z",
+        "duration": 63277.324,
+        "expected": 10,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 13,
+      "failures": [],
+      "skips": [
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14138314242,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-15T00:29:05.052Z",
+        "duration": 281329.177,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14138314242,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-15T00:33:50.725Z",
+        "duration": 194350.435,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14138229055,
+      "member": "playwright-report/offline-upgrade.json",
+      "stats": {
+        "startTime": "2026-11-15T00:34:54.214Z",
+        "duration": 41764.554,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 3,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139665368,
+      "member": "playwright-report/supervised-restore.json",
+      "stats": {
+        "startTime": "2026-11-15T00:34:44.476Z",
+        "duration": 369441.385,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 2,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139396516,
+      "member": "playwright-report/production-1-of-2.json",
+      "stats": {
+        "startTime": "2026-11-15T00:29:19.059Z",
+        "duration": 701683.954,
+        "expected": 87,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 90,
+      "failures": [],
+      "skips": [
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "project": "production",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "project": "production",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "project": "production",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14139636241,
+      "member": "playwright-report/sync-production.json",
+      "stats": {
+        "startTime": "2026-11-15T00:31:23.951Z",
+        "duration": 699316.462,
+        "expected": 98,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 98,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139456753,
+      "member": "playwright-report/development-1-of-2.json",
+      "stats": {
+        "startTime": "2026-11-15T00:29:06.859Z",
+        "duration": 876781.326,
+        "expected": 76,
+        "skipped": 4,
+        "unexpected": 0,
+        "flaky": 1
+      },
+      "cases": 81,
+      "failures": [
+        {
+          "title": "revoking one login preserves another login’s queued edit and stops later broadcasts",
+          "file": "collaboration.spec.ts",
+          "project": "development",
+          "status": "flaky",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": [
+            {
+              "workerIndex": 0,
+              "parallelIndex": 0,
+              "status": "failed",
+              "duration": 11480,
+              "error": {
+                "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate",
+                "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n    at /home/runner/work/spinel/spinel/e2e/collaboration.spec.ts:462:73",
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/collaboration.spec.ts",
+                  "column": 73,
+                  "line": 462
+                },
+                "snippet": "\u001b[0m \u001b[90m 460 |\u001b[39m     \u001b[90m// The same five-second deadline still requires a real protocol close for\u001b[39m\n \u001b[90m 461 |\u001b[39m     \u001b[90m// every socket established before revocation, even if navigation wins.\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 462 |\u001b[39m     \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39mpoll(() \u001b[33m=>\u001b[39m observation\u001b[33m!\u001b[39m\u001b[33m.\u001b[39misClosed()\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m.\u001b[39mtoBe(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 463 |\u001b[39m     observation\u001b[33m.\u001b[39mcheckpoint(\u001b[32m'closure-observed'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 464 |\u001b[39m     expect(otherClosed)\u001b[33m.\u001b[39mtoBe(otherClosedBefore)\u001b[33m;\u001b[39m\n \u001b[90m 465 |\u001b[39m     \u001b[90m// The revoked login has no unfinished work, so SPN-053's clean 401 handoff\u001b[39m\u001b[0m"
+              },
+              "errors": [
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/e2e/collaboration.spec.ts",
+                    "column": 73,
+                    "line": 462
+                  },
+                  "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  460 |     // The same five-second deadline still requires a real protocol close for\n  461 |     // every socket established before revocation, even if navigation wins.\n> 462 |     await expect.poll(() => observation!.isClosed(), { timeout: 5000 }).toBe(true);\n      |                                                                         ^\n  463 |     observation.checkpoint('closure-observed');\n  464 |     expect(otherClosed).toBe(otherClosedBefore);\n  465 |     // The revoked login has no unfinished work, so SPN-053's clean 401 handoff\n    at /home/runner/work/spinel/spinel/e2e/collaboration.spec.ts:462:73"
+                }
+              ],
+              "stdout": [],
+              "stderr": [],
+              "retry": 0,
+              "startTime": "2026-11-15T00:32:48.848Z",
+              "annotations": [],
+              "attachments": [
+                {
+                  "name": "session-revocation-observation",
+                  "contentType": "application/json",
+                  "body": "ewogICJ2ZXJzaW9uIjogMSwKICAicHJvamVjdCI6ICJkZXZlbG9wbWVudCIsCiAgInJldHJ5IjogMCwKICAidGVzdGVkIjogIjliNDg3NjdkMWVmZmMwYWViNTVmNjAyMGQ4Njc2NDI3ZDc0ZjdkOWYiLAogICJub2RlIjogInYyNi4xMy4wIiwKICAiYnJvd3NlciI6ICIxNTYuMC44MDc4LjQiLAogICJjb250cmFjdENvbXBsZXRlZCI6IGZhbHNlLAogICJwcmltYXJ5RmFpbGVkIjogdHJ1ZSwKICAiY2xlYW51cEZhaWx1cmVzIjogW10sCiAgIm9ic2VydmF0aW9uIjogewogICAgInRhcmdldENvdW50IjogMSwKICAgICJjbG9zZWRUYXJnZXRzIjogMCwKICAgICJvcGVuU29ja2V0cyI6IDEsCiAgICAicmVjZWl2ZWRGcmFtZXMiOiA2LAogICAgIm92ZXJmbG93IjogZmFsc2UsCiAgICAib2JzZXJ2ZXJMb3N0IjogZmFsc2UsCiAgICAicmVvcGVuZWQiOiBmYWxzZSwKICAgICJldmVudHMiOiBbCiAgICAgIHsKICAgICAgICAia2luZCI6ICJuYXZpZ2F0aW9uIiwKICAgICAgICAibXMiOiAxNQogICAgICB9LAogICAgICB7CiAgICAgICAgImtpbmQiOiAic29ja2V0LWNyZWF0ZWQiLAogICAgICAgICJtcyI6IDUxNDMsCiAgICAgICAgInNvY2tldCI6IDEKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogInNvY2tldC1vcGVuZWQiLAogICAgICAgICJtcyI6IDUxNjEsCiAgICAgICAgInNvY2tldCI6IDEKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogImVkaXQtaGVsZCIsCiAgICAgICAgIm1zIjogNjM4MwogICAgICB9LAogICAgICB7CiAgICAgICAgImtpbmQiOiAicmV2b2NhdGlvbi1yZXF1ZXN0ZWQiLAogICAgICAgICJtcyI6IDYzODMKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogInJldm9jYXRpb24td3JpdHRlbiIsCiAgICAgICAgIm1zIjogNjM4MwogICAgICB9LAogICAgICB7CiAgICAgICAgImtpbmQiOiAibmF2aWdhdGlvbiIsCiAgICAgICAgIm1zIjogNjQzOAogICAgICB9CiAgICBdCiAgfQp9"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development/test-failed-1.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development/test-failed-2.png"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development/error-context.md"
+                }
+              ],
+              "errorLocation": {
+                "file": "/home/runner/work/spinel/spinel/e2e/collaboration.spec.ts",
+                "column": 73,
+                "line": 462
+              }
+            },
+            {
+              "workerIndex": 1,
+              "parallelIndex": 0,
+              "status": "passed",
+              "duration": 18432,
+              "errors": [],
+              "stdout": [],
+              "stderr": [],
+              "retry": 1,
+              "startTime": "2026-11-15T00:33:00.852Z",
+              "annotations": [],
+              "attachments": [
+                {
+                  "name": "session-revocation-observation",
+                  "contentType": "application/json",
+                  "body": "ewogICJ2ZXJzaW9uIjogMSwKICAicHJvamVjdCI6ICJkZXZlbG9wbWVudCIsCiAgInJldHJ5IjogMSwKICAidGVzdGVkIjogIjliNDg3NjdkMWVmZmMwYWViNTVmNjAyMGQ4Njc2NDI3ZDc0ZjdkOWYiLAogICJub2RlIjogInYyNi4xMy4wIiwKICAiYnJvd3NlciI6ICIxNTYuMC44MDc4LjQiLAogICJjb250cmFjdENvbXBsZXRlZCI6IHRydWUsCiAgInByaW1hcnlGYWlsZWQiOiBmYWxzZSwKICAiY2xlYW51cEZhaWx1cmVzIjogW10sCiAgIm9ic2VydmF0aW9uIjogewogICAgInRhcmdldENvdW50IjogMSwKICAgICJjbG9zZWRUYXJnZXRzIjogMSwKICAgICJvcGVuU29ja2V0cyI6IDAsCiAgICAicmVjZWl2ZWRGcmFtZXMiOiA1LAogICAgIm92ZXJmbG93IjogZmFsc2UsCiAgICAib2JzZXJ2ZXJMb3N0IjogZmFsc2UsCiAgICAicmVvcGVuZWQiOiBmYWxzZSwKICAgICJldmVudHMiOiBbCiAgICAgIHsKICAgICAgICAia2luZCI6ICJuYXZpZ2F0aW9uIiwKICAgICAgICAibXMiOiAzMAogICAgICB9LAogICAgICB7CiAgICAgICAgImtpbmQiOiAic29ja2V0LWNyZWF0ZWQiLAogICAgICAgICJtcyI6IDg1MzksCiAgICAgICAgInNvY2tldCI6IDEKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogInNvY2tldC1vcGVuZWQiLAogICAgICAgICJtcyI6IDg1NTcsCiAgICAgICAgInNvY2tldCI6IDEKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogImVkaXQtaGVsZCIsCiAgICAgICAgIm1zIjogMTAyNzUKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogInJldm9jYXRpb24tcmVxdWVzdGVkIiwKICAgICAgICAibXMiOiAxMDI3NQogICAgICB9LAogICAgICB7CiAgICAgICAgImtpbmQiOiAicmV2b2NhdGlvbi13cml0dGVuIiwKICAgICAgICAibXMiOiAxMDI3OQogICAgICB9LAogICAgICB7CiAgICAgICAgImtpbmQiOiAic29ja2V0LWNsb3NlZCIsCiAgICAgICAgIm1zIjogMTAzNDcsCiAgICAgICAgInNvY2tldCI6IDEKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogInBhZ2UtY2xvc2UiLAogICAgICAgICJtcyI6IDEwMzQ4CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAia2luZCI6ICJjbG9zdXJlLW9ic2VydmVkIiwKICAgICAgICAibXMiOiAxMDM4OAogICAgICB9LAogICAgICB7CiAgICAgICAgImtpbmQiOiAibmF2aWdhdGlvbiIsCiAgICAgICAgIm1zIjogMTAzOTUKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogInNpZ24taW4iLAogICAgICAgICJtcyI6IDEyMjIwCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAia2luZCI6ICJyZXF1ZXN0LWRlbmllZCIsCiAgICAgICAgIm1zIjogMTIyMzkKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogImVkaXQtcmVsZWFzZWQiLAogICAgICAgICJtcyI6IDEyMjQwCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAia2luZCI6ICJzYXZlZCIsCiAgICAgICAgIm1zIjogMTIyOTgKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogInJlbG9hZGVkIiwKICAgICAgICAibXMiOiAxNzg3NQogICAgICB9CiAgICBdCiAgfQp9"
+                },
+                {
+                  "name": "trace",
+                  "contentType": "application/zip",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development-retry1/trace.zip"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "skips": [
+        {
+          "title": "production open, search, local persistence and server acknowledgement remain distinct in the diagnostics export",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Prepared offline copies require the production runtime manifest.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts",
+                "line": 511,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14139482513,
+      "member": "playwright-report/development-2-of-2.json",
+      "stats": {
+        "startTime": "2026-11-15T00:34:46.828Z",
+        "duration": 830032.298,
+        "expected": 79,
+        "skipped": 1,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 80,
+      "failures": [],
+      "skips": [
+        {
+          "title": "supervised maintenance keeps pending native work, fences old edits, and recovers through cold controls",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Closed-process verification uses the Linux production supervisor.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/maintenance.spec.ts",
+                "line": 206,
+                "column": 8
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14140895471,
+      "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-15T00:34:25.559Z",
+        "duration": 1405648.015,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 4,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14140895471,
+      "member": "playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-15T00:57:54.725Z",
+        "duration": 776129.363,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 7,
+      "failures": [],
+      "skips": []
+    }
+  ],
+  "aggregates": [
+    {
+      "artifact": 14139074793,
+      "member": "ci-results-lib.json",
+      "sha256": "6c757ef2b96ddf410988250ccc31b46345c0ec53d7d1a33b25a89f765fc79168",
+      "passed": true,
+      "actualResults": [
+        {
+          "suite": "lib-test-run",
+          "selected": true,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        }
+      ],
+      "planSha256": "c3fcde43efc4ebbb977a8797dcb7383e1cf846b6f3a51785a88bdddbc6e4c537",
+      "gateResults": {}
+    },
+    {
+      "artifact": 14138568771,
+      "member": "ci-results-unit.json",
+      "sha256": "43013ce728f2bc458c917389c0a96ed7370096d823f11d8e5ea701434819964e",
+      "passed": true,
+      "actualResults": [
+        {
+          "suite": "unit-tests",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        }
+      ],
+      "planSha256": "c3fcde43efc4ebbb977a8797dcb7383e1cf846b6f3a51785a88bdddbc6e4c537",
+      "gateResults": {}
+    },
+    {
+      "artifact": 14140102898,
+      "member": "ci-results-browser.json",
+      "sha256": "afd7df74569b8c37146ad41c3ff4db72d4478780869c9daefb61b1b0cec5809a",
+      "passed": false,
+      "actualResults": {
+        "backlog": "success",
+        "pull-request": "success",
+        "lint": "success",
+        "typecheck": "success",
+        "unit-tests": "success",
+        "lib-test-run": "success",
+        "playwright-run": "failure",
+        "container-smoke": "success",
+        "restore-timing": "success",
+        "sync-transition": "success",
+        "doc-responsiveness": "success",
+        "doc-callback-lifetimes": "success"
+      },
+      "planSha256": "c3fcde43efc4ebbb977a8797dcb7383e1cf846b6f3a51785a88bdddbc6e4c537",
+      "error": "Error: Incomplete coverage playwright-run: selected=true, result=failure"
+    }
+  ],
+  "restores": [
+    {
+      "artifact": 14139098537,
+      "member": "evidence.json",
+      "sha256": "f5a2302c1bc812a0348246d04b9d88e8f53b61f9ff25a97b930f236faef6d1aa",
+      "source": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "image": "sha256:a6395d1f808b65fa929e6a10d3de320bcbf6292a1902548b64eb72016bdd71a7",
+      "sourceBindings": {
+        "source": 1359,
+        "installedLibraries": 170,
+        "shippedImage": 13
+      },
+      "profile": "images-256m",
+      "sourceSizes": {
+        "databaseBytes": 269901824,
+        "archiveBytes": 269366688,
+        "workload": {
+          "documents": 8,
+          "images": 64,
+          "imageBytes": 268981824,
+          "contentSha256": "546f36d1e7855d1409e5ad7fb1efda4c69fda6998af5f75b9dcff20d8bf2bdbd"
+        }
+      },
+      "restoreTimings": {
+        "clock": "host-monotonic-performance.now",
+        "createPasskeyUploadAndPreparationMs": 44064.49000699999,
+        "reviewAndLayoutChecksMs": 313.3081919999968,
+        "confirmPasskeyThroughCommittedRunningMs": 73587.511063,
+        "prepareClickThroughCommittedRunningMs": 117965.309262,
+        "start": "click Verify and prepare",
+        "finish": "canonical candidate-committed, selected, supervisor running"
+      },
+      "nativeRendering": {
+        "ownerDoc": true,
+        "ownerSheet": true,
+        "readerDoc": true,
+        "visibleDocumentInkPixels": 462,
+        "archivedImageRendered": true,
+        "documentNativeCopy": true,
+        "sheetA1NativeCopy": "Archived budget value",
+        "originalOwnerSessionExcluded": true
+      },
+      "richWorkspace": {
+        "sheetContent": true,
+        "docContent": true,
+        "imageSha256": "49e0f79025c2f68f9e0b1a2d6caf30ea62643c2d4be76a3f43f25125825fef91",
+        "historyCheckpoint": true,
+        "retainedViewer": true,
+        "revokedGrantDenied": true,
+        "viewerWriteDenied": true,
+        "revokedGuestDenied": true,
+        "acknowledgedOldCreationRetryDenied": true,
+        "nativeGenerationRenewed": true,
+        "restoredContentUnchanged": true,
+        "documentSnapshotSha256": "5f75bfbdd977d6b67a9e3d76da9a22918574f0a6859eeb3b103dff344fa7e4e5",
+        "sheetSnapshotSha256": "ba14ec8862b4575832f694f1696daeaa2214504de97a779bbdb974c49935820c"
+      },
+      "servingResources": {
+        "memoryLimitBytes": 1073741824,
+        "swapLimitBytes": 0,
+        "cpuMax": "75000 100000",
+        "pidsMax": 128,
+        "memoryPeakBytes": 1073745920,
+        "memoryCurrentBytes": 960864256,
+        "memoryStatSnapshot": {
+          "scope": "Pre-shutdown snapshot; not a peak breakdown or exact preparation-admission counters",
+          "units": "bytes",
+          "recordedAt": "2026-11-15T00:33:34.650Z",
+          "anon": 205099008,
+          "file": 727474176,
+          "shmem": 0,
+          "inactive_file": 727437312,
+          "active_file": 36864,
+          "file_dirty": 8192,
+          "file_writeback": 0
+        },
+        "peakScope": "Serving cgroup through pre-shutdown observation; excludes separate observer and later cold helper",
+        "peakMinusLimitBytes": 4096,
+        "cgroupOomEventCounters": "not retained; Docker OOMKilled is distinct",
+        "closures": {
+          "bootstrapClosure": {
+            "running": false,
+            "pid": 0,
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          "supervisorClosure": {
+            "running": false,
+            "pid": 0,
+            "exitCode": 0,
+            "oomKilled": false
+          },
+          "coldClosure": {
+            "running": false,
+            "pid": 0,
+            "exitCode": 0,
+            "oomKilled": false
+          }
+        },
+        "observerClosure": {
+          "running": false,
+          "pid": 0,
+          "exitCode": 0,
+          "oomKilled": false
+        },
+        "acceptanceDisposition": "Observed 1GiB configured limit, zero swap, CPU/PID limits and successful clean closure; source requires positive safe peak, not peak <= memory.max. Peak is 4096 bytes above observed limit; no headroom or zero cgroup-OOM-event claim."
+      },
+      "scope": "Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance",
+      "closedProof": true,
+      "allOwnedContainersAbsent": true,
+      "privateVolumeRemoved": true,
+      "elapsedMs": 233337
+    }
+  ],
+  "checkouts": [
+    {
+      "id": 132641431814,
+      "name": "Pull request",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "b0a516e70830e3136cddf7a9cdd19938715eba37b6db40bbbc5135d773f0fb71",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641431921,
+      "name": "Classify changes (43658210882)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "6bfc7afcb394789171760c6dcbe005a6dcd709523a0f4979a293944a57ce79b4",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633557,
+      "name": "Lint",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "3249040e71bc86b1f1bff0148727956b5250cf24c0271f6aad97bd20489862ce",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633574,
+      "name": "Backlog",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "62584268eacb6186b78e26926f4ff4193335daaaf2de3c20895f35bd8b5040fc",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633580,
+      "name": "Sized restore acceptance",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "2a6fd9fcd28e755a3cbdb942d942f091728ce3d0dd109c555d822cdeabb29ab0",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633583,
+      "name": "Container smoke",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "4a70e909b66b4e06ae982e92c332798a72f061fa7569a8daa34c533f09dd333b",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633589,
+      "name": "Doc callback lifetimes (mobile)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "471b085c4d6e4398f60b8c653f12a164dcf685cd87ef9bdcc5e55acd319ced85",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "b75e3797a11ac2f53e3833b5615f68b6c0091727"
+      ]
+    },
+    {
+      "id": 132641633590,
+      "name": "Lib tests (remaining)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "14fcb9b80b6581848f11594e2ca0d2a2cc7e42d08307ab343ba4d5fd793b755c",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633593,
+      "name": "Unit tests (supervisor)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "7c74d78db06d7f5dd148b1889a70f5fe2a2e6c3e7253806fd1ce9fa389d5fd14",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633600,
+      "name": "Lib tests (mixed-fuzz)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "e6aa9385130fdc03a1ec09b13933fc567da72f19126bd91866d3e8c59d18616c",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633604,
+      "name": "Lib tests (dense-cells)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "0c312c4003ee63477bc2904d9dfeacb1b6fbfedc441ef2b183879e062b193464",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633607,
+      "name": "Doc responsiveness (desktop)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "9472ec6b0fb0989c864c3eb62aa89d918bec94651700c45b7618210694e08a71",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d"
+      ]
+    },
+    {
+      "id": 132641633609,
+      "name": "Unit tests (recovery)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "a5cb993289b47e1595bc22263ca447eabaf43821c2b58c2ce03c842b004135dc",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633619,
+      "name": "Lib tests (cells)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "cffef0c5204c98608366c5ba3c6c461aebe53cce2b3179a28e841ab0e1431a8a",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633629,
+      "name": "Retained sync transition",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "7d2cf20948f2d78d3e0e2d0bf06b3e61d83de4d4eb3af8b5adc41d37c4a25bf0",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "81cc0774bda11f9bf65942ef84cf7d847bd08029"
+      ]
+    },
+    {
+      "id": 132641633632,
+      "name": "Typecheck",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "0b915151a7967b2c55fb2c10ab0d46fb770e078188ec373b49aa4fc3f1fbcc51",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633653,
+      "name": "Unit tests (remaining)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "5f25ea4e8cc358f99235e6959f9b932a6eae50addf8c6963aadc4fea6a66fdba",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633662,
+      "name": "Doc callback lifetimes (desktop)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "98862c5120f15b5c70d96339c067e14821b99390c296975ef8f888337f20f423",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "b75e3797a11ac2f53e3833b5615f68b6c0091727"
+      ]
+    },
+    {
+      "id": 132641633687,
+      "name": "Playwright smoke (production 1/2)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "9067b4ebd7589f8eeb3adbd25ff575a1f3911b499d86cd34e90ccbd9f5376cc7",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633694,
+      "name": "Playwright smoke (production 2/2)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "dc7de66e3422e8e0583ec3d54af95a42fd286307027d01c2b601df589207a29c",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633696,
+      "name": "Doc responsiveness (mobile)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "7a042b6120afb7cc0afa55f66947a6df208a74cfae2b9d4b2fd6e1405a61f5d7",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d"
+      ]
+    },
+    {
+      "id": 132641633704,
+      "name": "Playwright smoke (development 1/2)",
+      "workflow": 43658210882,
+      "conclusion": "failure",
+      "sha256": "60b792b0a84a6a83c96a7698d002d8d4c0cf1a2858a3ff246dcda48b5beb279c",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633711,
+      "name": "Playwright smoke (sync-soak-sheet)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "e15f5fc9e8f432cd2a6aba2e7f6c56823154569171aa6ae5d7a0f43203839e78",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633713,
+      "name": "Playwright smoke (sync-development)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "a13fa857587e53e7b79f69b86d77eb5fe2a9d1d560c79ce8dbb75d8881c8fceb",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633719,
+      "name": "Playwright smoke (development 2/2)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "9f8132e46725a63463c1a5f5ba8b63c55b1e08fb2f5d29d0cc04172be985f1ac",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633724,
+      "name": "Playwright smoke (mobile-https)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "b8f63bdcc988265a9f0b66eb7345ecc397977eef50a8d27535a90b5977623b92",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633726,
+      "name": "Playwright smoke (sync-production)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "f498630831581b8284399f5380e9abbfcc93c7137d94c75a307eff7b4c87f283",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633735,
+      "name": "Playwright smoke (offline-upgrade)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "ee963a9954251e482fe9f442eca562c3b36b8148b5d42bbbe8e7b37524cf5ed4",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "c2e8cac0fcdec36d992d6ebf3f377c9b579a8002",
+        "3a0e2238fb5be3907d04120eabda2aafd6565d63"
+      ]
+    },
+    {
+      "id": 132641633778,
+      "name": "Playwright smoke (sync-soak-doc)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "5555b5d02441b83eaee547b40a1225e76ca6683a3e51a174c0162fcb48b2ba9f",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641633828,
+      "name": "Playwright smoke (supervised-restore)",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "a6e0d2d827e0fa18a48ba8d4690def6b4eda0b0292a22a5ac01769fe81f091e0",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132643735991,
+      "name": "Unit tests",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "999eba4d0f278926cec928941e5684db8dbe8dc546abe5d7ba56dd65b99fcaf3",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132644266574,
+      "name": "Lib tests",
+      "workflow": 43658210882,
+      "conclusion": "success",
+      "sha256": "51ed868c95e1b07c3b3fa05a4d0b17aace0dd5651fbbc4854df7c2849e09b489",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132652690078,
+      "name": "Playwright smoke",
+      "workflow": 43658210882,
+      "conclusion": "failure",
+      "sha256": "e25c0c125bb1a2344363fd4ce12671914b039556ed2e248c00e47abbd5b54777",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641431585,
+      "name": "Classify changes",
+      "workflow": 43658210918,
+      "conclusion": "success",
+      "sha256": "8800c409efb4e5c11d84f54e20dc617f7f5cc9ace3eaf57791392e7bfd87be18",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641635427,
+      "name": "Build Storybook",
+      "workflow": 43658210918,
+      "conclusion": "success",
+      "sha256": "afa5edba973ee5b7e7a5164988d48b069c7681e5f234e7de3235d7c0bbfd6a67",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641877745,
+      "name": "Review Storybook tablet",
+      "workflow": 43658210918,
+      "conclusion": "success",
+      "sha256": "079f9524ec7e40a3dbcfa0852f5ddfef394df6c6cb07037762646e88b6325175",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641877747,
+      "name": "Review Storybook mobile (dark)",
+      "workflow": 43658210918,
+      "conclusion": "success",
+      "sha256": "dd8ad5d9cf2411af4ede3e51f0e9fa608882fc39a95b0f3d40bfb0a79ef42656",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641877766,
+      "name": "Review Storybook desktop (light)",
+      "workflow": 43658210918,
+      "conclusion": "success",
+      "sha256": "f9f085e4faa8839f12505f1c346a00c42e78aa7c5f9ca6fe5fb5931f956ace5b",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641877778,
+      "name": "Review Storybook desktop (dark)",
+      "workflow": 43658210918,
+      "conclusion": "success",
+      "sha256": "d602e8f61383b57c5538d0f30b15f67f135bb33d646a8b17290e4df553ef3e64",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641877797,
+      "name": "Review Storybook mobile (light)",
+      "workflow": 43658210918,
+      "conclusion": "success",
+      "sha256": "c4f9098a1bcf2fae268c15845b7ec29063340ffb0405a137b10697f547670474",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132645736820,
+      "name": "Review Storybook states and interactions",
+      "workflow": 43658210918,
+      "conclusion": "success",
+      "sha256": "f2586dd35e638bac859f0b21fdcce730d548b3b9e55b58b9e34ba6bd1cd06aee",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641431388,
+      "name": "Native desktop offline (firefox, macos-26)",
+      "workflow": 43658210825,
+      "conclusion": "success",
+      "sha256": "c618b117616f3172db3c1760a93e164a7b591afce3d7bd91d049d50aa1f0bb76",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641431531,
+      "name": "Native desktop offline (chrome, macos-26)",
+      "workflow": 43658210825,
+      "conclusion": "success",
+      "sha256": "937e6f3ff0982af4caa6615a1f78962fdee02f4276a612828d0914c324035a5e",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641431546,
+      "name": "Native desktop offline (safari, macos-15-intel)",
+      "workflow": 43658210825,
+      "conclusion": "success",
+      "sha256": "f644652630bcb66209798dd50c5ea48e29e74242e9494b70a93a1c8c4d17a0d2",
+      "checkoutWitnesses": [
+        "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+      ]
+    },
+    {
+      "id": 132641431911,
+      "name": "🦈 DigitalOcean Spaces",
+      "workflow": 43658210985,
+      "conclusion": "success",
+      "sha256": "2a82fc24ef37c8b65492ea061106eabe5cb69388c8b8ca03b2c12b1b9447eb0c",
+      "checkoutWitnesses": [
+        "d22baa6997e27c123ef351a8f5321089cc9e345b"
+      ]
+    }
+  ],
+  "gateStates": [
+    {
+      "name": "Backlog",
+      "id": 132641633574,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Pull request",
+      "id": 132641431814,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Lint",
+      "id": 132641633557,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Typecheck",
+      "id": 132641633632,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Unit tests",
+      "id": 132643735991,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Lib tests",
+      "id": 132644266574,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Playwright smoke",
+      "id": 132652690078,
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "planHash": "c3fcde43efc4ebbb977a8797dcb7383e1cf846b6f3a51785a88bdddbc6e4c537",
+  "pending": "All new exact-source owners, actual crash receipts and independent source/review/merge gates remain required; preserve every original failure."
+}

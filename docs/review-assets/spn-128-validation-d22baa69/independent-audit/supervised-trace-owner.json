@@ -1,0 +1,261 @@
+{
+  "at": "2026-11-15T00:44:08.284Z",
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+  "run": 43658210882,
+  "attempt": 1,
+  "artifact": {
+    "id": 14139665368,
+    "path": "/tmp/spn128-terminal-d22baa69/raw-artifacts/artifact-14139665368.zip",
+    "sha256": "2b901fe452176e6b31776262f03bf17c092a57706f84014274b66dbf3f453964"
+  },
+  "passed": true,
+  "issues": [],
+  "cases": [
+    {
+      "title": "a catalog restore survives double-clicks, cancel and a lost reply, and fences old clients",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 53253,
+          "startTime": "2026-11-15T00:34:46.106Z",
+          "errors": [],
+          "attachments": [
+            {
+              "name": "supervised-restore-first-attempt",
+              "member": "test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/attachments/supervised-restore-first-attempt-b877d5091562ee5dda1ae6e38ae95e7492611cad.json",
+              "retained": true,
+              "bytes": 3870,
+              "sha256": "f342485eeede5dea6372414b18f3e53ee14c986c1a0e21ea0a2a571d8340c9ed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "an admitted upload outlasts its passkey check and can still be cancelled",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 314456,
+          "startTime": "2026-11-15T00:35:39.391Z",
+          "errors": [],
+          "attachments": []
+        }
+      ]
+    }
+  ],
+  "runtimeReceipts": [
+    {
+      "artifact": 14139665368,
+      "member": "test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/attachments/supervised-restore-first-attempt-b877d5091562ee5dda1ae6e38ae95e7492611cad.json",
+      "sha256": "f342485eeede5dea6372414b18f3e53ee14c986c1a0e21ea0a2a571d8340c9ed",
+      "receipt": {
+        "kind": "supervised-restore-first-attempt",
+        "sourceSha": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "testedSha": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "retry": 0,
+        "capturedBeforeCleanup": true,
+        "snapshotReads": 7,
+        "omittedSnapshotReads": 0,
+        "snapshotRequests": [
+          {
+            "sequence": 1,
+            "phase": "before-backup",
+            "method": "GET",
+            "route": "/api/items/:id/sheet",
+            "startedAt": 13004.541308,
+            "completedAt": 13013.332194,
+            "status": 200
+          },
+          {
+            "sequence": 2,
+            "phase": "before-backup",
+            "method": "GET",
+            "route": "/api/items/:id/doc",
+            "startedAt": 16260.80841,
+            "completedAt": 16342.290447,
+            "status": 200
+          },
+          {
+            "sequence": 3,
+            "phase": "after-backup",
+            "method": "GET",
+            "route": "/api/items/:id/doc",
+            "startedAt": 19784.925257,
+            "completedAt": 19793.101744,
+            "status": 200
+          },
+          {
+            "sequence": 4,
+            "phase": "after-backup",
+            "method": "GET",
+            "route": "/api/items/:id/doc",
+            "startedAt": 19896.314506,
+            "completedAt": 19903.489718,
+            "status": 200
+          },
+          {
+            "sequence": 5,
+            "phase": "after-backup",
+            "method": "GET",
+            "route": "/api/items/:id/sheet",
+            "startedAt": 20357.442587,
+            "completedAt": 20370.248423,
+            "status": 200
+          },
+          {
+            "sequence": 6,
+            "phase": "after-restore",
+            "method": "GET",
+            "route": "/api/items/:id/sheet",
+            "startedAt": 52303.462905,
+            "completedAt": 52367.114512,
+            "status": 200
+          },
+          {
+            "sequence": 7,
+            "phase": "after-restore",
+            "method": "GET",
+            "route": "/api/items/:id/doc",
+            "startedAt": 53599.125394,
+            "completedAt": 53645.901472,
+            "status": 200
+          }
+        ],
+        "failureEvidence": null,
+        "finalEvidence": {
+          "startedAt": 887.010626,
+          "capturedAt": 53648.826167,
+          "completedAt": 53650.456413,
+          "clock": "monotonic milliseconds in the Playwright worker",
+          "wrapper": {
+            "pid": 3800,
+            "identity": {
+              "ok": true,
+              "value": {
+                "pid": 3800,
+                "start": "46192",
+                "boot": "5e6a8592-904d-45f1-b444-79d93cb7b310"
+              }
+            },
+            "identityCapturedAt": 1355.2262,
+            "pidNamespace": "pid:[4026531836]",
+            "exit": null
+          },
+          "journalIdentityDomain": "private service PID namespace",
+          "journal": {
+            "ok": true,
+            "value": {
+              "phase": "running",
+              "epoch": "77dfb26a-0435-4e5a-85ec-96b228bea311",
+              "generationId": "f0a0f8ed-0128-4e4d-b2bd-c0c4d3cfe50e",
+              "updatedAt": 1794702925227,
+              "restorePending": false,
+              "child": {
+                "pid": 190,
+                "start": "49916",
+                "boot": "5e6a8592-904d-45f1-b444-79d93cb7b310"
+              },
+              "childLiveness": "not-inferred-from-journal"
+            }
+          },
+          "health": null,
+          "status": null,
+          "memory": {
+            "setup": {
+              "ok": true
+            },
+            "before": {
+              "low": "0",
+              "high": "0",
+              "max": "0",
+              "oom": "0",
+              "oom_kill": "0",
+              "oom_group_kill": "0"
+            },
+            "after": {
+              "ok": true,
+              "value": {
+                "low": "0",
+                "high": "0",
+                "max": "0",
+                "oom": "0",
+                "oom_kill": "0",
+                "oom_group_kill": "0"
+              }
+            },
+            "scope": "wrapper cgroup; may include other job processes, not proof of this application causing OOM"
+          },
+          "stdout": {
+            "bytes": 226,
+            "retainedBytes": 226,
+            "truncated": false,
+            "codes": [],
+            "headlines": [
+              "Spinel recovery control is available"
+            ],
+            "rawOutputRetained": false
+          },
+          "stderr": {
+            "bytes": 1740,
+            "retainedBytes": 1740,
+            "truncated": false,
+            "codes": [],
+            "headlines": [],
+            "rawOutputRetained": false
+          }
+        }
+      },
+      "limits": "Pre-cleanup content-free wrapper/journal observation; wrapper cgroup counters may include other job processes. This is not the sized-restore cgroup or a child-liveness inference."
+    }
+  ],
+  "bindings": [
+    {
+      "artifact": 14139665368,
+      "member": "playwright-report/supervised-restore.json",
+      "bytes": 1372158,
+      "sha256": "f29e95f6fbf7a516dbc442157ef6d41e5c67253f9446b8c3fb325bc3e22d7424"
+    },
+    {
+      "artifact": 14139665368,
+      "member": "test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/attachments/supervised-restore-first-attempt-b877d5091562ee5dda1ae6e38ae95e7492611cad.json",
+      "bytes": 3870,
+      "sha256": "f342485eeede5dea6372414b18f3e53ee14c986c1a0e21ea0a2a571d8340c9ed",
+      "retry": 0
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "e2e/supervised-restore.spec.ts",
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "bytes": 27871,
+      "sha256": "fcd3d8c8ae3030dee111583979f4face80e0a7a840a391623310b52ccda82ee9"
+    },
+    {
+      "path": "e2e/supervised-restore-tracing.ts",
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "bytes": 3564,
+      "sha256": "cec26aa7b9cf42fddcf1eff28f832b4d952de0b1f2fb706b1d622455ddaa1925"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "bytes": 37228,
+      "sha256": "02afbeeb5ee9933c5609ca75185a671e050b95189f292de88bed71feee253769"
+    }
+  ],
+  "log": {
+    "job": 132641633828,
+    "conclusion": "success",
+    "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641633828.log.gz",
+    "rawSha256": "a6e0d2d827e0fa18a48ba8d4690def6b4eda0b0292a22a5ac01769fe81f091e0"
+  },
+  "limits": "Original628d tracing collision and absent custom attachments remain preserved in published5d186e11. A new first-attempt pass demonstrates current runtime preparation and journey; it does not explain the older ECONNRESET. Passing runs need not produce failure-only captures. No runtime probes, retries or budget changes in this audit."
+}

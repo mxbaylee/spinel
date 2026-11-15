@@ -1,0 +1,77 @@
+{
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "sourceBinding": {
+    "path": "e2e/restore-browser.acceptance.ts",
+    "sha256": "8383b0655ac134588268e86e137583905b9bfcd3a5e86acd0cacfade8cb5595f"
+  },
+  "evidenceBinding": {
+    "artifact": 14139098537,
+    "member": "evidence.json",
+    "bytes": 181696,
+    "sha256": "f5a2302c1bc812a0348246d04b9d88e8f53b61f9ff25a97b930f236faef6d1aa"
+  },
+  "configuredDockerArgs": [
+    "--memory=1024m",
+    "--memory-swap=1024m",
+    "--cpus=0.75",
+    "--pids-limit=128"
+  ],
+  "servingResources": {
+    "memoryLimitBytes": 1073741824,
+    "swapLimitBytes": 0,
+    "cpuMax": "75000 100000",
+    "pidsMax": 128,
+    "memoryPeakBytes": 1073745920,
+    "memoryCurrentBytes": 960864256,
+    "memoryStatSnapshot": {
+      "scope": "Pre-shutdown snapshot; not a peak breakdown or exact preparation-admission counters",
+      "units": "bytes",
+      "recordedAt": "2026-11-15T00:33:34.650Z",
+      "anon": 205099008,
+      "file": 727474176,
+      "shmem": 0,
+      "inactive_file": 727437312,
+      "active_file": 36864,
+      "file_dirty": 8192,
+      "file_writeback": 0
+    },
+    "peakScope": "Serving cgroup through pre-shutdown observation; excludes separate observer and later cold helper"
+  },
+  "peakMinusLimitBytes": 4096,
+  "closures": {
+    "bootstrapClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "supervisorClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "coldClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    }
+  },
+  "observerClosure": {
+    "running": false,
+    "pid": 0,
+    "exitCode": 0,
+    "oomKilled": false
+  },
+  "cgroupMemoryEventCounters": {
+    "retained": false,
+    "zeroEventsClaim": false
+  },
+  "disposition": "Original source gate passed: observed memory.max=1073741824, swap0, CPU75000/100000, PIDs128, positive safe peak and clean closures. Peak1073745920 is4096 bytes above observed limit. Source gate has no peak<=limit comparison. No available-headroom or zero-cgroup-OOM-event assertion; no rerun or changed acceptance.",
+  "sourceLineReferences": {
+    "profile": 72,
+    "measurement": 533,
+    "gate": 1436
+  }
+}

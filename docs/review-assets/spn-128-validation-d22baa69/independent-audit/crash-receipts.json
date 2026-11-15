@@ -1,0 +1,3610 @@
+{
+  "readerCorrection": {
+    "prior": "/tmp/spn128-terminal-d22baa69/audit-output/crash-receipts-reader-overstrict-grant.json",
+    "reason": "Initial independent reader incorrectly required every grant after any refusal to follow the previous deadline. Exact source only requires that ordering after an interrupted cold cut; activation/private-open deliberately perform safe refusals and fresh deliberate commands before prior grant deadlines. Reader now verifies immutable interrupted-attempt history and renewed grant after that cold-cut deadline, while all grants remain after original authority expiry with90,000ms lifetimes. No fixture/assertion/budget/artifact changed."
+  },
+  "executionEvidence": {
+    "job": 132641633609,
+    "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641633609.log.gz",
+    "gzipSha256": "5f9c936931f508c8670e856644a415626fb35652ce5ed00bfcd7d329dcfe5920",
+    "rawSha256": "a5cb993289b47e1595bc22263ca447eabaf43821c2b58c2ce03c842b004135dc",
+    "observed": [
+      {
+        "case": "admission",
+        "durationMs": 4663
+      },
+      {
+        "case": "custody",
+        "durationMs": 4581
+      },
+      {
+        "case": "freeze",
+        "durationMs": 5069
+      },
+      {
+        "case": "activation-plan",
+        "durationMs": 9361
+      },
+      {
+        "case": "staging",
+        "durationMs": 7932
+      },
+      {
+        "case": "activation",
+        "durationMs": 14335
+      },
+      {
+        "case": "private-open",
+        "durationMs": 14549
+      },
+      {
+        "case": "commit",
+        "durationMs": 8958
+      },
+      {
+        "case": "postcommit",
+        "durationMs": 8909
+      },
+      {
+        "case": "original-activation",
+        "durationMs": 15383
+      },
+      {
+        "case": "original-commit",
+        "durationMs": 14351
+      },
+      {
+        "case": "cold-admission",
+        "durationMs": 15836
+      },
+      {
+        "case": "cold-prepared",
+        "durationMs": 16596
+      },
+      {
+        "case": "cold-activation",
+        "durationMs": 17765
+      },
+      {
+        "case": "cold-trial-planned",
+        "durationMs": 18194
+      },
+      {
+        "case": "cold-private-open",
+        "durationMs": 19171
+      },
+      {
+        "case": "cold-commit",
+        "durationMs": 16537
+      }
+    ]
+  },
+  "at": "2026-11-15T00:36:43.207Z",
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+  "tree": "42f35a8883008629716913929a8c21bcaa150589",
+  "run": 43658210882,
+  "attempt": 1,
+  "artifact": {
+    "id": 14139495179,
+    "path": "/tmp/spn128-publication-d22baa69/validation/original-zips/artifact-14139495179.zip",
+    "sha256": "1c4178860433f6453c45aabd152f0aa8867e009c5bee50cf24fa319d21fa9262"
+  },
+  "passed": true,
+  "issues": [],
+  "bindings": [
+    {
+      "artifact": 14139495179,
+      "member": "source.json",
+      "bytes": 188,
+      "sha256": "2308f108a5f0520a5bc17b70b92325ebb22f563c998c23be074a05d12d641e9d",
+      "crc32": "fd9ba2fa"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "admission.json",
+      "bytes": 3263,
+      "sha256": "9a9078e40473924a22f6795a945aabcb0ba816e8ccb1f03a6f927dc307cfc494",
+      "crc32": "f06f0dd4"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "custody.json",
+      "bytes": 3307,
+      "sha256": "91cae1a2bd6dc3d296519e49b2551aace078f905b7b313907424ba1e60f10a6b",
+      "crc32": "252b5969"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "freeze.json",
+      "bytes": 3365,
+      "sha256": "5aa349a70b04eb52b9879967a2250cce0544d5ce2fdca6986761fa447765d569",
+      "crc32": "dce04f22"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "activation-plan.json",
+      "bytes": 3463,
+      "sha256": "4a7b55c238b89d9c514eeb9aae8dd9a07bc49372293ceea195ade48650929b83",
+      "crc32": "de029068"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "staging.json",
+      "bytes": 3447,
+      "sha256": "2bbabf123ab6b5bc5eb6b464156a1999a092871a4d068dd097540964c30a3ece",
+      "crc32": "45e373ff"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "activation.json",
+      "bytes": 7818,
+      "sha256": "666c645d2d0ab93db2c4ba56cef8c7a61ab920e7193aa082f9531991e31fe3b7",
+      "crc32": "03af7c6d"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "private-open.json",
+      "bytes": 7184,
+      "sha256": "fdaa897e59d2cbea6ba4ed3bcae3ead1fcb5bbddc988e8a47343498d0e7220eb",
+      "crc32": "b3856348"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "commit.json",
+      "bytes": 3909,
+      "sha256": "91b168ddd37e444f8cb5ef2f336dc94c9e65689c7a8ea097114735ee0e2e28c0",
+      "crc32": "07d34c26"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "postcommit.json",
+      "bytes": 4006,
+      "sha256": "0120daa555cdf946ca62c66b1febadd2b90ae0db5ccf3a1cb9305aae4c6de2f3",
+      "crc32": "09a35257"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "original-activation.json",
+      "bytes": 6306,
+      "sha256": "b4c2184b3f372841eae06b4f2adb1c1f2921178acbd7f5664dc2f3bf9522a8d4",
+      "crc32": "ddcba038"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "original-commit.json",
+      "bytes": 5754,
+      "sha256": "7ba814d1283a46bed3a94343a6b86b6b5e214def684881c53af7d68ce64d85d0",
+      "crc32": "04f98ae9"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "cold-admission.json",
+      "bytes": 9020,
+      "sha256": "5443c77c9499e719ecb570cc7b1516ad048fb1efd3fb9799ec9523be9673f044",
+      "crc32": "ec5640cf"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "cold-prepared.json",
+      "bytes": 8986,
+      "sha256": "1c6223892748888fac59984e563617ef3425eb5808b080d36a0dddd6a34d20ca",
+      "crc32": "451da3d0"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "cold-activation.json",
+      "bytes": 8995,
+      "sha256": "333a4fdc3a6375e29b087f2fe9fe4f4fc8223c3e3778ec364bb309d08ffbd281",
+      "crc32": "9683800f"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "cold-trial-planned.json",
+      "bytes": 9199,
+      "sha256": "929f139e3bfebc00badf9d692f3e46f94054c5943fd51ac579e4503e82a9f8b9",
+      "crc32": "360fd1b6"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "cold-private-open.json",
+      "bytes": 9121,
+      "sha256": "fcc8471321f3312869294a1fdf152a380be72055371696926326b5f28ea9cff5",
+      "crc32": "ccc713a7"
+    },
+    {
+      "artifact": 14139495179,
+      "member": "cold-commit.json",
+      "bytes": 8459,
+      "sha256": "edb7497fd86b8f5349e061574a6e1c9b441d2e2857f6d0b1eed13204cd8e5312",
+      "crc32": "9bda69b4"
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "src/server/maintenance/restore-crash-evidence.ts",
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "bytes": 8188,
+      "sha256": "6d8e5d15ca8c8e4740ec4807df2faeb67699a5a4e1537e784486ef1fb2c2a84c"
+    },
+    {
+      "path": "scripts/ci/restore-crash-evidence.ts",
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "bytes": 11989,
+      "sha256": "0b74985ed265bb11846c83cfd57f74f275607adfc26393c2870a6cf080653c03"
+    },
+    {
+      "path": "src/server/maintenance/restore-crash.integration.test.ts",
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "bytes": 52667,
+      "sha256": "6510311bd0ddbbe28a5ac40c217a5351ce6aeb369e7571077a09476eceb7956d"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "bytes": 37228,
+      "sha256": "02afbeeb5ee9933c5609ca75185a671e050b95189f292de88bed71feee253769"
+    }
+  ],
+  "records": [
+    {
+      "case": "admission",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "accepted",
+          "operationId": "1fdcb314-7265-4ec2-b10b-3456de5aa711",
+          "intentHash": "67cb5385fd980f00bee5586d400d06f94f9aa5c616b4d2044f279c11a7be3e4f",
+          "generation": {
+            "original": "2da9f7ba-1e41-46fc-9edc-cc07a0804bfc",
+            "current": "2da9f7ba-1e41-46fc-9edc-cc07a0804bfc",
+            "selected": null
+          },
+          "fingerprints": {
+            "stopped": null,
+            "frozen": null,
+            "frozenBoundary": "not-created-at-this-journal-phase",
+            "preparedOriginal": null,
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702527583,
+            "originalExpiresAt": 1794704327583,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": []
+          },
+          "plannedChild": null,
+          "child": {
+            "pid": 318,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "11417"
+          }
+        },
+        {
+          "stage": "completed",
+          "phase": "failed",
+          "operationId": "1fdcb314-7265-4ec2-b10b-3456de5aa711",
+          "intentHash": "67cb5385fd980f00bee5586d400d06f94f9aa5c616b4d2044f279c11a7be3e4f",
+          "generation": {
+            "original": "2da9f7ba-1e41-46fc-9edc-cc07a0804bfc",
+            "current": "2da9f7ba-1e41-46fc-9edc-cc07a0804bfc",
+            "selected": null
+          },
+          "fingerprints": {
+            "stopped": null,
+            "frozen": null,
+            "frozenBoundary": "not-created-at-this-journal-phase",
+            "preparedOriginal": null,
+            "outcome": null,
+            "live": "e6dd7f4ab65547873de7406eb4b792a69ef2675cf1382ec468b0ecab25de3c25",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702527583,
+            "originalExpiresAt": 1794704327583,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": []
+          },
+          "plannedChild": null,
+          "child": null
+        }
+      ],
+      "observedFrozen": null,
+      "controllers": [
+        {
+          "pid": 298,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 364,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 400,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "admission",
+          "pid": 298,
+          "bytesWritten": null
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 298,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "custody",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "originals-retained",
+          "operationId": "0b801449-1ae3-4236-9b7b-da976b436460",
+          "intentHash": "4e3d2a92898330ee1d9ee8a3328df728f579e8189f7e4cb211f4fcdc0e5eec56",
+          "generation": {
+            "original": "f9a1c56b-26e0-4e8c-ada1-7298e142e33a",
+            "current": "f9a1c56b-26e0-4e8c-ada1-7298e142e33a",
+            "selected": null
+          },
+          "fingerprints": {
+            "stopped": "568ad6e4a4211bd184af207fa559802c697decae6b63c183abd8ad5501fd7bc3",
+            "frozen": null,
+            "frozenBoundary": "not-created-at-this-journal-phase",
+            "preparedOriginal": null,
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702532079,
+            "originalExpiresAt": 1794704332079,
+            "currentOperationMatches": true,
+            "currentAuthority": "original-session",
+            "currentExpiresAt": 1794704332079,
+            "cold": []
+          },
+          "plannedChild": null,
+          "child": null
+        },
+        {
+          "stage": "completed",
+          "phase": "failed",
+          "operationId": "0b801449-1ae3-4236-9b7b-da976b436460",
+          "intentHash": "4e3d2a92898330ee1d9ee8a3328df728f579e8189f7e4cb211f4fcdc0e5eec56",
+          "generation": {
+            "original": "f9a1c56b-26e0-4e8c-ada1-7298e142e33a",
+            "current": "f9a1c56b-26e0-4e8c-ada1-7298e142e33a",
+            "selected": null
+          },
+          "fingerprints": {
+            "stopped": "568ad6e4a4211bd184af207fa559802c697decae6b63c183abd8ad5501fd7bc3",
+            "frozen": null,
+            "frozenBoundary": "not-created-at-this-journal-phase",
+            "preparedOriginal": null,
+            "outcome": null,
+            "live": "d98c3397357b486f71dbd0f0b25d5319388705247952152cbf061cf3528ff613",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702532079,
+            "originalExpiresAt": 1794704332079,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": []
+          },
+          "plannedChild": null,
+          "child": null
+        }
+      ],
+      "observedFrozen": null,
+      "controllers": [
+        {
+          "pid": 430,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 500,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 540,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "custody",
+          "pid": 430,
+          "bytesWritten": null
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 430,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "freeze",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "frozen",
+          "operationId": "bf8831fa-d6ab-4553-b409-a2868cc4a651",
+          "intentHash": "3f30a9bf9ef3bbb2391e342321234c4e610709da75d4e41057ac9608d4cafb9d",
+          "generation": {
+            "original": "613c9b3b-c1a5-4389-8efa-8b4119bb6a2e",
+            "current": "613c9b3b-c1a5-4389-8efa-8b4119bb6a2e",
+            "selected": null
+          },
+          "fingerprints": {
+            "stopped": "84cf840d3c6b372ab7fcd3c86b54f7f1113a6ef53216ac57013ebf9ac092131f",
+            "frozen": "84cf840d3c6b372ab7fcd3c86b54f7f1113a6ef53216ac57013ebf9ac092131f",
+            "frozenBoundary": "created",
+            "preparedOriginal": null,
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702536668,
+            "originalExpiresAt": 1794704336668,
+            "currentOperationMatches": true,
+            "currentAuthority": "original-session",
+            "currentExpiresAt": 1794704336668,
+            "cold": []
+          },
+          "plannedChild": null,
+          "child": null
+        },
+        {
+          "stage": "completed",
+          "phase": "failed",
+          "operationId": "bf8831fa-d6ab-4553-b409-a2868cc4a651",
+          "intentHash": "3f30a9bf9ef3bbb2391e342321234c4e610709da75d4e41057ac9608d4cafb9d",
+          "generation": {
+            "original": "613c9b3b-c1a5-4389-8efa-8b4119bb6a2e",
+            "current": "613c9b3b-c1a5-4389-8efa-8b4119bb6a2e",
+            "selected": null
+          },
+          "fingerprints": {
+            "stopped": "84cf840d3c6b372ab7fcd3c86b54f7f1113a6ef53216ac57013ebf9ac092131f",
+            "frozen": "84cf840d3c6b372ab7fcd3c86b54f7f1113a6ef53216ac57013ebf9ac092131f",
+            "frozenBoundary": "created",
+            "preparedOriginal": null,
+            "outcome": null,
+            "live": "6c20ca276c8b5b2e248dcf216efc7652b7a36a74a669e98c50748947e48655e9",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702536668,
+            "originalExpiresAt": 1794704336668,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": []
+          },
+          "plannedChild": null,
+          "child": null
+        }
+      ],
+      "observedFrozen": null,
+      "controllers": [
+        {
+          "pid": 566,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 651,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 691,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "freeze",
+          "pid": 566,
+          "bytesWritten": null
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 566,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "activation-plan",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "activation-planned",
+          "operationId": "c9df447a-493b-4db4-a8fb-1743bdb7f3c1",
+          "intentHash": "25fe9e59402725508b9e41637272749d0648b2c0c65a1a69b7ed6334f2a5ac78",
+          "generation": {
+            "original": "731b8f1a-3745-4730-8b6b-189c4679a138",
+            "current": "731b8f1a-3745-4730-8b6b-189c4679a138",
+            "selected": "168b913c-6af1-4d65-aafd-c744cc593804"
+          },
+          "fingerprints": {
+            "stopped": "62fd274e51c138e0fb37df0044ba77c46143d37462063bf5b54cd31dcdad6397",
+            "frozen": "62fd274e51c138e0fb37df0044ba77c46143d37462063bf5b54cd31dcdad6397",
+            "frozenBoundary": "created",
+            "preparedOriginal": null,
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702541963,
+            "originalExpiresAt": 1794704341963,
+            "currentOperationMatches": true,
+            "currentAuthority": "original-session",
+            "currentExpiresAt": 1794704341963,
+            "cold": []
+          },
+          "plannedChild": null,
+          "child": null
+        },
+        {
+          "stage": "completed",
+          "phase": "failed",
+          "operationId": "c9df447a-493b-4db4-a8fb-1743bdb7f3c1",
+          "intentHash": "25fe9e59402725508b9e41637272749d0648b2c0c65a1a69b7ed6334f2a5ac78",
+          "generation": {
+            "original": "731b8f1a-3745-4730-8b6b-189c4679a138",
+            "current": "731b8f1a-3745-4730-8b6b-189c4679a138",
+            "selected": "168b913c-6af1-4d65-aafd-c744cc593804"
+          },
+          "fingerprints": {
+            "stopped": "62fd274e51c138e0fb37df0044ba77c46143d37462063bf5b54cd31dcdad6397",
+            "frozen": "62fd274e51c138e0fb37df0044ba77c46143d37462063bf5b54cd31dcdad6397",
+            "frozenBoundary": "created",
+            "preparedOriginal": null,
+            "outcome": null,
+            "live": "e96de21426fc90911d232d1c206afce028ea00c287e659a786f547f7b70f128b",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702541963,
+            "originalExpiresAt": 1794704341963,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": []
+          },
+          "plannedChild": null,
+          "child": null
+        }
+      ],
+      "observedFrozen": null,
+      "controllers": [
+        {
+          "pid": 717,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 864,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 904,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "activation-plan",
+          "pid": 717,
+          "bytesWritten": null
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 717,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "staging",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "candidate-staged",
+          "operationId": "1b19efc9-f180-4175-94ef-94826d47b8fa",
+          "intentHash": "fd5f96d6905790648a50f12b3c4b2575595d1fcb93fd395c664bc1ba586f8e90",
+          "generation": {
+            "original": "7ee2df1a-0360-4901-b67a-8b2c3d70c69f",
+            "current": "7ee2df1a-0360-4901-b67a-8b2c3d70c69f",
+            "selected": "ae187c9f-97ce-40f7-bd5a-3b6a8aedd927"
+          },
+          "fingerprints": {
+            "stopped": "efe6bfe64ba1ff7d63b86351f5fcf6a9b7e62f1c8c2c8c6fa01c4df6e0da13d5",
+            "frozen": "efe6bfe64ba1ff7d63b86351f5fcf6a9b7e62f1c8c2c8c6fa01c4df6e0da13d5",
+            "frozenBoundary": "created",
+            "preparedOriginal": null,
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702551034,
+            "originalExpiresAt": 1794704351033,
+            "currentOperationMatches": true,
+            "currentAuthority": "original-session",
+            "currentExpiresAt": 1794704351033,
+            "cold": []
+          },
+          "plannedChild": null,
+          "child": null
+        },
+        {
+          "stage": "completed",
+          "phase": "failed",
+          "operationId": "1b19efc9-f180-4175-94ef-94826d47b8fa",
+          "intentHash": "fd5f96d6905790648a50f12b3c4b2575595d1fcb93fd395c664bc1ba586f8e90",
+          "generation": {
+            "original": "7ee2df1a-0360-4901-b67a-8b2c3d70c69f",
+            "current": "7ee2df1a-0360-4901-b67a-8b2c3d70c69f",
+            "selected": "ae187c9f-97ce-40f7-bd5a-3b6a8aedd927"
+          },
+          "fingerprints": {
+            "stopped": "efe6bfe64ba1ff7d63b86351f5fcf6a9b7e62f1c8c2c8c6fa01c4df6e0da13d5",
+            "frozen": "efe6bfe64ba1ff7d63b86351f5fcf6a9b7e62f1c8c2c8c6fa01c4df6e0da13d5",
+            "frozenBoundary": "created",
+            "preparedOriginal": null,
+            "outcome": null,
+            "live": "e8ba127262ff7c4c77629df1abe4b64bc93a5976384c79eaa78b32a41a8b9d9f",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702551034,
+            "originalExpiresAt": 1794704351033,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": []
+          },
+          "plannedChild": null,
+          "child": null
+        }
+      ],
+      "observedFrozen": null,
+      "controllers": [
+        {
+          "pid": 930,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 1077,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 1117,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "staging",
+          "pid": 930,
+          "bytesWritten": null
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 930,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "activation",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "candidate-replacing",
+          "operationId": "6b869156-062a-4b17-b37c-7aac4f84405c",
+          "intentHash": "663f4d204f75c83a05d1fe597b0b0570beff5cd53b5fddf4c678d5ee4b2b1748",
+          "generation": {
+            "original": "7403ebe1-c140-4083-9b6a-afaa6df56de5",
+            "current": "7403ebe1-c140-4083-9b6a-afaa6df56de5",
+            "selected": "465cc08e-72fc-4bdc-92f7-f5a98ff963b2"
+          },
+          "fingerprints": {
+            "stopped": "46a023122dc61022bdd36d725674b5ea39513008fae6189f8dc2ad885793f377",
+            "frozen": "46a023122dc61022bdd36d725674b5ea39513008fae6189f8dc2ad885793f377",
+            "frozenBoundary": "created",
+            "preparedOriginal": null,
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702559328,
+            "originalExpiresAt": 1794704359328,
+            "currentOperationMatches": true,
+            "currentAuthority": "original-session",
+            "currentExpiresAt": 1794704359328,
+            "cold": []
+          },
+          "plannedChild": null,
+          "child": null
+        },
+        {
+          "stage": "recovered",
+          "phase": "original-committed",
+          "operationId": "6b869156-062a-4b17-b37c-7aac4f84405c",
+          "intentHash": "663f4d204f75c83a05d1fe597b0b0570beff5cd53b5fddf4c678d5ee4b2b1748",
+          "generation": {
+            "original": "7403ebe1-c140-4083-9b6a-afaa6df56de5",
+            "current": "1fc3bec3-2ceb-4518-88d1-e1ffd9d826cb",
+            "selected": "1fc3bec3-2ceb-4518-88d1-e1ffd9d826cb"
+          },
+          "fingerprints": {
+            "stopped": "46a023122dc61022bdd36d725674b5ea39513008fae6189f8dc2ad885793f377",
+            "frozen": "46a023122dc61022bdd36d725674b5ea39513008fae6189f8dc2ad885793f377",
+            "frozenBoundary": "created",
+            "preparedOriginal": "fa4a42b3acfbacb43a014acdd3ef38e7eed7fdd2287fdedf7152d0db86200d07",
+            "outcome": "fa4a42b3acfbacb43a014acdd3ef38e7eed7fdd2287fdedf7152d0db86200d07",
+            "live": "fa4a42b3acfbacb43a014acdd3ef38e7eed7fdd2287fdedf7152d0db86200d07",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702559328,
+            "originalExpiresAt": 1794704359328,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704359510,
+                "deadline": 1794704449510,
+                "priorGeneration": "7403ebe1-c140-4083-9b6a-afaa6df56de5",
+                "generation": "e93bca00-ea89-43dd-80e6-41c1c301dbdd",
+                "bootEpoch": "dc7e562d-8322-4721-996d-3386db56edc0",
+                "phase": "original-evidence-ready"
+              },
+              {
+                "grantedAt": 1794704359923,
+                "deadline": 1794704449923,
+                "priorGeneration": "7403ebe1-c140-4083-9b6a-afaa6df56de5",
+                "generation": "d2a2dd42-0441-474d-9d0b-a32d4b9d607a",
+                "bootEpoch": "40947936-63b9-406b-8398-9c979dc0883e",
+                "phase": "original-evidence-ready"
+              },
+              {
+                "grantedAt": 1794704360343,
+                "deadline": 1794704450343,
+                "priorGeneration": "7403ebe1-c140-4083-9b6a-afaa6df56de5",
+                "generation": "1fc3bec3-2ceb-4518-88d1-e1ffd9d826cb",
+                "bootEpoch": "9757613f-ad3c-462b-afdf-151f6dffbfbd",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 1379,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "15444"
+          },
+          "child": {
+            "pid": 1379,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "15444"
+          }
+        },
+        {
+          "stage": "completed",
+          "phase": "original-committed",
+          "operationId": "6b869156-062a-4b17-b37c-7aac4f84405c",
+          "intentHash": "663f4d204f75c83a05d1fe597b0b0570beff5cd53b5fddf4c678d5ee4b2b1748",
+          "generation": {
+            "original": "7403ebe1-c140-4083-9b6a-afaa6df56de5",
+            "current": "1fc3bec3-2ceb-4518-88d1-e1ffd9d826cb",
+            "selected": "1fc3bec3-2ceb-4518-88d1-e1ffd9d826cb"
+          },
+          "fingerprints": {
+            "stopped": "46a023122dc61022bdd36d725674b5ea39513008fae6189f8dc2ad885793f377",
+            "frozen": "46a023122dc61022bdd36d725674b5ea39513008fae6189f8dc2ad885793f377",
+            "frozenBoundary": "created",
+            "preparedOriginal": "fa4a42b3acfbacb43a014acdd3ef38e7eed7fdd2287fdedf7152d0db86200d07",
+            "outcome": "fa4a42b3acfbacb43a014acdd3ef38e7eed7fdd2287fdedf7152d0db86200d07",
+            "live": "2bef63c10ce9ba2b76291554e60a5966cf0f3654e36f1cb425f17ee9e574a13c",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702559328,
+            "originalExpiresAt": 1794704359328,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704359510,
+                "deadline": 1794704449510,
+                "priorGeneration": "7403ebe1-c140-4083-9b6a-afaa6df56de5",
+                "generation": "e93bca00-ea89-43dd-80e6-41c1c301dbdd",
+                "bootEpoch": "dc7e562d-8322-4721-996d-3386db56edc0",
+                "phase": "original-evidence-ready"
+              },
+              {
+                "grantedAt": 1794704359923,
+                "deadline": 1794704449923,
+                "priorGeneration": "7403ebe1-c140-4083-9b6a-afaa6df56de5",
+                "generation": "d2a2dd42-0441-474d-9d0b-a32d4b9d607a",
+                "bootEpoch": "40947936-63b9-406b-8398-9c979dc0883e",
+                "phase": "original-evidence-ready"
+              },
+              {
+                "grantedAt": 1794704360343,
+                "deadline": 1794704450343,
+                "priorGeneration": "7403ebe1-c140-4083-9b6a-afaa6df56de5",
+                "generation": "1fc3bec3-2ceb-4518-88d1-e1ffd9d826cb",
+                "bootEpoch": "9757613f-ad3c-462b-afdf-151f6dffbfbd",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 1379,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "15444"
+          },
+          "child": null
+        }
+      ],
+      "observedFrozen": "46a023122dc61022bdd36d725674b5ea39513008fae6189f8dc2ad885793f377",
+      "controllers": [
+        {
+          "pid": 1165,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 1312,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 1324,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 1336,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 1395,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 1459,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "activation",
+          "pid": 1165,
+          "bytesWritten": 65536
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 1165,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "private-open",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "trial-opening",
+          "operationId": "2c204f22-202f-4c21-8cf3-c073004413d1",
+          "intentHash": "86288d6594ece6136bc6c032d6f801dc3ea6b578f0e7395f376a8079560274c1",
+          "generation": {
+            "original": "a6c33cef-650a-4d27-a7e4-3eb9c28a6e63",
+            "current": "27b254bb-c95c-4d7b-b8cf-6ac9ade8576a",
+            "selected": "27b254bb-c95c-4d7b-b8cf-6ac9ade8576a"
+          },
+          "fingerprints": {
+            "stopped": "ba2a73eeeb97dfb5c763f588dcc0ab663afb6b29b3fb9d15b3627662121ccb2f",
+            "frozen": "ba2a73eeeb97dfb5c763f588dcc0ab663afb6b29b3fb9d15b3627662121ccb2f",
+            "frozenBoundary": "created",
+            "preparedOriginal": null,
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702573563,
+            "originalExpiresAt": 1794704373563,
+            "currentOperationMatches": true,
+            "currentAuthority": "original-session",
+            "currentExpiresAt": 1794704373563,
+            "cold": []
+          },
+          "plannedChild": {
+            "pid": 1682,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "16557"
+          },
+          "child": {
+            "pid": 1682,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "16557"
+          }
+        },
+        {
+          "stage": "recovered",
+          "phase": "original-committed",
+          "operationId": "2c204f22-202f-4c21-8cf3-c073004413d1",
+          "intentHash": "86288d6594ece6136bc6c032d6f801dc3ea6b578f0e7395f376a8079560274c1",
+          "generation": {
+            "original": "a6c33cef-650a-4d27-a7e4-3eb9c28a6e63",
+            "current": "57156055-4d6d-4d69-8ce4-630bca553a26",
+            "selected": "57156055-4d6d-4d69-8ce4-630bca553a26"
+          },
+          "fingerprints": {
+            "stopped": "ba2a73eeeb97dfb5c763f588dcc0ab663afb6b29b3fb9d15b3627662121ccb2f",
+            "frozen": "ba2a73eeeb97dfb5c763f588dcc0ab663afb6b29b3fb9d15b3627662121ccb2f",
+            "frozenBoundary": "created",
+            "preparedOriginal": "3fc248f41476fca87feb456022fa1ac94f1c0dcc45c1412dab8cb36ba59ccb92",
+            "outcome": "3fc248f41476fca87feb456022fa1ac94f1c0dcc45c1412dab8cb36ba59ccb92",
+            "live": "3fc248f41476fca87feb456022fa1ac94f1c0dcc45c1412dab8cb36ba59ccb92",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702573563,
+            "originalExpiresAt": 1794704373563,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704373943,
+                "deadline": 1794704463943,
+                "priorGeneration": "27b254bb-c95c-4d7b-b8cf-6ac9ade8576a",
+                "generation": "49af888c-fb41-4ec5-9690-ec84da17d340",
+                "bootEpoch": "fd31644b-f1d0-47f4-bf7b-1660fd3b24e7",
+                "phase": "original-custody-retained"
+              },
+              {
+                "grantedAt": 1794704374819,
+                "deadline": 1794704464819,
+                "priorGeneration": "27b254bb-c95c-4d7b-b8cf-6ac9ade8576a",
+                "generation": "57156055-4d6d-4d69-8ce4-630bca553a26",
+                "bootEpoch": "69778897-6227-4c08-b430-c28fc2f2ef80",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 1794,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "17008"
+          },
+          "child": {
+            "pid": 1794,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "17008"
+          }
+        },
+        {
+          "stage": "completed",
+          "phase": "original-committed",
+          "operationId": "2c204f22-202f-4c21-8cf3-c073004413d1",
+          "intentHash": "86288d6594ece6136bc6c032d6f801dc3ea6b578f0e7395f376a8079560274c1",
+          "generation": {
+            "original": "a6c33cef-650a-4d27-a7e4-3eb9c28a6e63",
+            "current": "57156055-4d6d-4d69-8ce4-630bca553a26",
+            "selected": "57156055-4d6d-4d69-8ce4-630bca553a26"
+          },
+          "fingerprints": {
+            "stopped": "ba2a73eeeb97dfb5c763f588dcc0ab663afb6b29b3fb9d15b3627662121ccb2f",
+            "frozen": "ba2a73eeeb97dfb5c763f588dcc0ab663afb6b29b3fb9d15b3627662121ccb2f",
+            "frozenBoundary": "created",
+            "preparedOriginal": "3fc248f41476fca87feb456022fa1ac94f1c0dcc45c1412dab8cb36ba59ccb92",
+            "outcome": "3fc248f41476fca87feb456022fa1ac94f1c0dcc45c1412dab8cb36ba59ccb92",
+            "live": "68eb433c10363f1754bb82a3c4ff7cf12cc41eca7e63d294eecb1831d2a37966",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702573563,
+            "originalExpiresAt": 1794704373563,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704373943,
+                "deadline": 1794704463943,
+                "priorGeneration": "27b254bb-c95c-4d7b-b8cf-6ac9ade8576a",
+                "generation": "49af888c-fb41-4ec5-9690-ec84da17d340",
+                "bootEpoch": "fd31644b-f1d0-47f4-bf7b-1660fd3b24e7",
+                "phase": "original-custody-retained"
+              },
+              {
+                "grantedAt": 1794704374819,
+                "deadline": 1794704464819,
+                "priorGeneration": "27b254bb-c95c-4d7b-b8cf-6ac9ade8576a",
+                "generation": "57156055-4d6d-4d69-8ce4-630bca553a26",
+                "bootEpoch": "69778897-6227-4c08-b430-c28fc2f2ef80",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 1794,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "17008"
+          },
+          "child": null
+        }
+      ],
+      "observedFrozen": "ba2a73eeeb97dfb5c763f588dcc0ab663afb6b29b3fb9d15b3627662121ccb2f",
+      "controllers": [
+        {
+          "pid": 1535,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 1698,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 1736,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 1810,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 1846,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "private-open",
+          "pid": 1682,
+          "bytesWritten": null
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 1535,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "commit",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "candidate-committed",
+          "operationId": "5403649a-a944-4961-9efb-ba26172466e6",
+          "intentHash": "c40c194b08cf04e940c09ac7e87cd9109c6f2d927ca27e906003c0b5c1405635",
+          "generation": {
+            "original": "f7526595-65c6-484b-a4f9-dafdb9b4f2b7",
+            "current": "4909d695-f957-44ea-a86a-b179acf05403",
+            "selected": "4909d695-f957-44ea-a86a-b179acf05403"
+          },
+          "fingerprints": {
+            "stopped": "a1d684b00880f386fb2eda044dd43281a8cac0fcc3d44d35ed0f0195a648818b",
+            "frozen": "a1d684b00880f386fb2eda044dd43281a8cac0fcc3d44d35ed0f0195a648818b",
+            "frozenBoundary": "created",
+            "preparedOriginal": null,
+            "outcome": "e368d724d5dc396878bef04c7c29377b8f41e9bacaeade6bf8de3aac401e73da",
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702587951,
+            "originalExpiresAt": 1794704387950,
+            "currentOperationMatches": true,
+            "currentAuthority": "original-session",
+            "currentExpiresAt": 1794704387950,
+            "cold": []
+          },
+          "plannedChild": {
+            "pid": 2047,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "18019"
+          },
+          "child": {
+            "pid": 2047,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "18019"
+          }
+        },
+        {
+          "stage": "completed",
+          "phase": "candidate-committed",
+          "operationId": "5403649a-a944-4961-9efb-ba26172466e6",
+          "intentHash": "c40c194b08cf04e940c09ac7e87cd9109c6f2d927ca27e906003c0b5c1405635",
+          "generation": {
+            "original": "f7526595-65c6-484b-a4f9-dafdb9b4f2b7",
+            "current": "4909d695-f957-44ea-a86a-b179acf05403",
+            "selected": "4909d695-f957-44ea-a86a-b179acf05403"
+          },
+          "fingerprints": {
+            "stopped": "a1d684b00880f386fb2eda044dd43281a8cac0fcc3d44d35ed0f0195a648818b",
+            "frozen": "a1d684b00880f386fb2eda044dd43281a8cac0fcc3d44d35ed0f0195a648818b",
+            "frozenBoundary": "created",
+            "preparedOriginal": null,
+            "outcome": "e368d724d5dc396878bef04c7c29377b8f41e9bacaeade6bf8de3aac401e73da",
+            "live": "6870bd6b528926f5c3b82fbf73328a2afaa76684fa246d24662644a6e76b59da",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702587951,
+            "originalExpiresAt": 1794704387950,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": []
+          },
+          "plannedChild": {
+            "pid": 2047,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "18019"
+          },
+          "child": null
+        }
+      ],
+      "observedFrozen": null,
+      "controllers": [
+        {
+          "pid": 1900,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 2063,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 2103,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "commit",
+          "pid": 1900,
+          "bytesWritten": null
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 1900,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "postcommit",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "candidate-committed",
+          "operationId": "204c6c93-6be1-4a0a-8f0a-90cac51128c3",
+          "intentHash": "4505df1d442769c44088591209b4d7c38c0fc75947725686d654bbd9ea29a549",
+          "generation": {
+            "original": "6e59996d-44ff-48a6-b385-0d77ca13fd56",
+            "current": "cd00d817-b97a-4a9b-9ae2-9164abb102d9",
+            "selected": "cd00d817-b97a-4a9b-9ae2-9164abb102d9"
+          },
+          "fingerprints": {
+            "stopped": "1d69d18fc5f75674f6e8bd73a79b6bd0ce3cdaccb6a6149b4d3848fa08473172",
+            "frozen": "1d69d18fc5f75674f6e8bd73a79b6bd0ce3cdaccb6a6149b4d3848fa08473172",
+            "frozenBoundary": "created",
+            "preparedOriginal": null,
+            "outcome": "0c81ffeb0147721b929c7ce89680246829cfd008f3d73282faba4a348e508ee3",
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702596899,
+            "originalExpiresAt": 1794704396899,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": []
+          },
+          "plannedChild": {
+            "pid": 2287,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "18899"
+          },
+          "child": {
+            "pid": 2287,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "18899"
+          }
+        },
+        {
+          "stage": "completed",
+          "phase": "candidate-committed",
+          "operationId": "204c6c93-6be1-4a0a-8f0a-90cac51128c3",
+          "intentHash": "4505df1d442769c44088591209b4d7c38c0fc75947725686d654bbd9ea29a549",
+          "generation": {
+            "original": "6e59996d-44ff-48a6-b385-0d77ca13fd56",
+            "current": "cd00d817-b97a-4a9b-9ae2-9164abb102d9",
+            "selected": "cd00d817-b97a-4a9b-9ae2-9164abb102d9"
+          },
+          "fingerprints": {
+            "stopped": "1d69d18fc5f75674f6e8bd73a79b6bd0ce3cdaccb6a6149b4d3848fa08473172",
+            "frozen": "1d69d18fc5f75674f6e8bd73a79b6bd0ce3cdaccb6a6149b4d3848fa08473172",
+            "frozenBoundary": "created",
+            "preparedOriginal": null,
+            "outcome": "0c81ffeb0147721b929c7ce89680246829cfd008f3d73282faba4a348e508ee3",
+            "live": "ea24312cecfa2f1423bbe0bce08820474a924bbe6aa6e5d140e4505a377d5281",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702596899,
+            "originalExpiresAt": 1794704396899,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": []
+          },
+          "plannedChild": {
+            "pid": 2287,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "18899"
+          },
+          "child": null
+        }
+      ],
+      "observedFrozen": null,
+      "controllers": [
+        {
+          "pid": 2140,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 2303,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 2339,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "postcommit",
+          "pid": 2140,
+          "bytesWritten": null
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 2287,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        },
+        {
+          "pid": 2140,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "original-activation",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "original-replacing",
+          "operationId": "82160595-3fb7-46ad-b9b3-29a2394cf72e",
+          "intentHash": "26a63cbc1714be727a2cc9fccd37c2b1fd30121401ec2763d84b6df4fe7c4214",
+          "generation": {
+            "original": "12120b84-38dd-4358-94c1-a9d3a5fa0370",
+            "current": "4fa60360-976b-4960-9f3b-ba07504d8c54",
+            "selected": "cc63100f-d5c4-4c8e-8f53-8b346d92781b"
+          },
+          "fingerprints": {
+            "stopped": "a5c6191ceb4c4e7a27b510a7e27c3eb197c549c0679772a53b7949891a1de4cf",
+            "frozen": "a5c6191ceb4c4e7a27b510a7e27c3eb197c549c0679772a53b7949891a1de4cf",
+            "frozenBoundary": "created",
+            "preparedOriginal": "47db331dc21465b2825b477bb5db6b3434dea518abcf5ad6856e98588853b812",
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702606038,
+            "originalExpiresAt": 1794704406038,
+            "currentOperationMatches": true,
+            "currentAuthority": "original-session",
+            "currentExpiresAt": 1794704406038,
+            "cold": []
+          },
+          "plannedChild": {
+            "pid": 2534,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "19825"
+          },
+          "child": null
+        },
+        {
+          "stage": "recovered",
+          "phase": "original-committed",
+          "operationId": "82160595-3fb7-46ad-b9b3-29a2394cf72e",
+          "intentHash": "26a63cbc1714be727a2cc9fccd37c2b1fd30121401ec2763d84b6df4fe7c4214",
+          "generation": {
+            "original": "12120b84-38dd-4358-94c1-a9d3a5fa0370",
+            "current": "9ff49a51-f4fd-415d-b207-9a17d6bca3b7",
+            "selected": "9ff49a51-f4fd-415d-b207-9a17d6bca3b7"
+          },
+          "fingerprints": {
+            "stopped": "a5c6191ceb4c4e7a27b510a7e27c3eb197c549c0679772a53b7949891a1de4cf",
+            "frozen": "a5c6191ceb4c4e7a27b510a7e27c3eb197c549c0679772a53b7949891a1de4cf",
+            "frozenBoundary": "created",
+            "preparedOriginal": "578bef920055f8dc97f1128c83901e4bc91e39da8036094d2623ac2f800187cd",
+            "outcome": "578bef920055f8dc97f1128c83901e4bc91e39da8036094d2623ac2f800187cd",
+            "live": "578bef920055f8dc97f1128c83901e4bc91e39da8036094d2623ac2f800187cd",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702606038,
+            "originalExpiresAt": 1794704406038,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704406223,
+                "deadline": 1794704496223,
+                "priorGeneration": "4fa60360-976b-4960-9f3b-ba07504d8c54",
+                "generation": "9ff49a51-f4fd-415d-b207-9a17d6bca3b7",
+                "bootEpoch": "0a53c1c1-daaf-4692-8c96-53e088d1e9f7",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 2639,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "20346"
+          },
+          "child": {
+            "pid": 2639,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "20346"
+          }
+        },
+        {
+          "stage": "completed",
+          "phase": "original-committed",
+          "operationId": "82160595-3fb7-46ad-b9b3-29a2394cf72e",
+          "intentHash": "26a63cbc1714be727a2cc9fccd37c2b1fd30121401ec2763d84b6df4fe7c4214",
+          "generation": {
+            "original": "12120b84-38dd-4358-94c1-a9d3a5fa0370",
+            "current": "9ff49a51-f4fd-415d-b207-9a17d6bca3b7",
+            "selected": "9ff49a51-f4fd-415d-b207-9a17d6bca3b7"
+          },
+          "fingerprints": {
+            "stopped": "a5c6191ceb4c4e7a27b510a7e27c3eb197c549c0679772a53b7949891a1de4cf",
+            "frozen": "a5c6191ceb4c4e7a27b510a7e27c3eb197c549c0679772a53b7949891a1de4cf",
+            "frozenBoundary": "created",
+            "preparedOriginal": "578bef920055f8dc97f1128c83901e4bc91e39da8036094d2623ac2f800187cd",
+            "outcome": "578bef920055f8dc97f1128c83901e4bc91e39da8036094d2623ac2f800187cd",
+            "live": "527120a3b48f5e08c888ae58c97886f088d035a69286b36d44179ee8e0e79123",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702606038,
+            "originalExpiresAt": 1794704406038,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704406223,
+                "deadline": 1794704496223,
+                "priorGeneration": "4fa60360-976b-4960-9f3b-ba07504d8c54",
+                "generation": "9ff49a51-f4fd-415d-b207-9a17d6bca3b7",
+                "bootEpoch": "0a53c1c1-daaf-4692-8c96-53e088d1e9f7",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 2639,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "20346"
+          },
+          "child": null
+        }
+      ],
+      "observedFrozen": "a5c6191ceb4c4e7a27b510a7e27c3eb197c549c0679772a53b7949891a1de4cf",
+      "controllers": [
+        {
+          "pid": 2387,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 2596,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 2655,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 2691,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "original-activation",
+          "pid": 2387,
+          "bytesWritten": 65536
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 2387,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "original-commit",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "original-committed",
+          "operationId": "9d8347c8-6ff8-4b21-8b3c-b37caf12d0dd",
+          "intentHash": "4ffe5b763d45ab23601f6adf8e8433cbef5cc2fd7df1d2df0f6ed6d979641115",
+          "generation": {
+            "original": "032173a8-825f-4e57-9043-f00e953d8463",
+            "current": "fdecaa12-16e4-407d-9f1a-0d9cd85153d6",
+            "selected": "fdecaa12-16e4-407d-9f1a-0d9cd85153d6"
+          },
+          "fingerprints": {
+            "stopped": "0113f47dfd2136944e672d2e2216bf9d9c30a857bfb4d3b9d61a9df8d734fb5b",
+            "frozen": "0113f47dfd2136944e672d2e2216bf9d9c30a857bfb4d3b9d61a9df8d734fb5b",
+            "frozenBoundary": "created",
+            "preparedOriginal": "43792465b62789a24987df911c16c8edd76b968f171d6c303dde93119d65d395",
+            "outcome": "43792465b62789a24987df911c16c8edd76b968f171d6c303dde93119d65d395",
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702621308,
+            "originalExpiresAt": 1794704421308,
+            "currentOperationMatches": true,
+            "currentAuthority": "original-session",
+            "currentExpiresAt": 1794704421308,
+            "cold": []
+          },
+          "plannedChild": {
+            "pid": 2976,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "21645"
+          },
+          "child": {
+            "pid": 2976,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "21645"
+          }
+        },
+        {
+          "stage": "recovered",
+          "phase": "original-committed",
+          "operationId": "9d8347c8-6ff8-4b21-8b3c-b37caf12d0dd",
+          "intentHash": "4ffe5b763d45ab23601f6adf8e8433cbef5cc2fd7df1d2df0f6ed6d979641115",
+          "generation": {
+            "original": "032173a8-825f-4e57-9043-f00e953d8463",
+            "current": "fdecaa12-16e4-407d-9f1a-0d9cd85153d6",
+            "selected": "fdecaa12-16e4-407d-9f1a-0d9cd85153d6"
+          },
+          "fingerprints": {
+            "stopped": "0113f47dfd2136944e672d2e2216bf9d9c30a857bfb4d3b9d61a9df8d734fb5b",
+            "frozen": "0113f47dfd2136944e672d2e2216bf9d9c30a857bfb4d3b9d61a9df8d734fb5b",
+            "frozenBoundary": "created",
+            "preparedOriginal": "43792465b62789a24987df911c16c8edd76b968f171d6c303dde93119d65d395",
+            "outcome": "43792465b62789a24987df911c16c8edd76b968f171d6c303dde93119d65d395",
+            "live": "43792465b62789a24987df911c16c8edd76b968f171d6c303dde93119d65d395",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702621308,
+            "originalExpiresAt": 1794704421308,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": []
+          },
+          "plannedChild": {
+            "pid": 2976,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "21645"
+          },
+          "child": {
+            "pid": 3016,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "21779"
+          }
+        },
+        {
+          "stage": "completed",
+          "phase": "original-committed",
+          "operationId": "9d8347c8-6ff8-4b21-8b3c-b37caf12d0dd",
+          "intentHash": "4ffe5b763d45ab23601f6adf8e8433cbef5cc2fd7df1d2df0f6ed6d979641115",
+          "generation": {
+            "original": "032173a8-825f-4e57-9043-f00e953d8463",
+            "current": "fdecaa12-16e4-407d-9f1a-0d9cd85153d6",
+            "selected": "fdecaa12-16e4-407d-9f1a-0d9cd85153d6"
+          },
+          "fingerprints": {
+            "stopped": "0113f47dfd2136944e672d2e2216bf9d9c30a857bfb4d3b9d61a9df8d734fb5b",
+            "frozen": "0113f47dfd2136944e672d2e2216bf9d9c30a857bfb4d3b9d61a9df8d734fb5b",
+            "frozenBoundary": "created",
+            "preparedOriginal": "43792465b62789a24987df911c16c8edd76b968f171d6c303dde93119d65d395",
+            "outcome": "43792465b62789a24987df911c16c8edd76b968f171d6c303dde93119d65d395",
+            "live": "4c18d14f772fcaa83da23ba9880ceb39accca7a376732527930d970adc190bf8",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702621308,
+            "originalExpiresAt": 1794704421308,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": []
+          },
+          "plannedChild": {
+            "pid": 2976,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "21645"
+          },
+          "child": null
+        }
+      ],
+      "observedFrozen": "0113f47dfd2136944e672d2e2216bf9d9c30a857bfb4d3b9d61a9df8d734fb5b",
+      "controllers": [
+        {
+          "pid": 2767,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 2992,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 3032,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 3068,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "original-commit",
+          "pid": 2767,
+          "bytesWritten": null
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 2767,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "cold-admission",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "original-replacing",
+          "operationId": "1829775b-429a-42f8-8b9e-4951e2053167",
+          "intentHash": "8ebbff218ab01969be30593305a6337fcf2654ec457957fe43d10ef5685e7176",
+          "generation": {
+            "original": "1d75cd4e-7086-4d5f-8463-59e6d738667b",
+            "current": "12afcd97-df17-433c-9bfe-aa5d4f38a2eb",
+            "selected": "1b8ab279-1860-447d-aaf3-54d2eabf1311"
+          },
+          "fingerprints": {
+            "stopped": "d854e53817100a1aefb6d4151f4f518f8fb63a5c9d9fdbe43a4e8ee43039c0de",
+            "frozen": "d854e53817100a1aefb6d4151f4f518f8fb63a5c9d9fdbe43a4e8ee43039c0de",
+            "frozenBoundary": "created",
+            "preparedOriginal": "7f7123db2991b983ed710e22daf45ecf4e721ebd0d8543ed5849660db1c7f778",
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702635715,
+            "originalExpiresAt": 1794704435715,
+            "currentOperationMatches": true,
+            "currentAuthority": "original-session",
+            "currentExpiresAt": 1794704435715,
+            "cold": []
+          },
+          "plannedChild": {
+            "pid": 3291,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "22791"
+          },
+          "child": null
+        },
+        {
+          "stage": "cold-cut",
+          "phase": "original-capture-planned",
+          "operationId": "1829775b-429a-42f8-8b9e-4951e2053167",
+          "intentHash": "8ebbff218ab01969be30593305a6337fcf2654ec457957fe43d10ef5685e7176",
+          "generation": {
+            "original": "1d75cd4e-7086-4d5f-8463-59e6d738667b",
+            "current": "12afcd97-df17-433c-9bfe-aa5d4f38a2eb",
+            "selected": "fb0c322e-0760-455d-8b3a-ab8a67965733"
+          },
+          "fingerprints": {
+            "stopped": "d854e53817100a1aefb6d4151f4f518f8fb63a5c9d9fdbe43a4e8ee43039c0de",
+            "frozen": "d854e53817100a1aefb6d4151f4f518f8fb63a5c9d9fdbe43a4e8ee43039c0de",
+            "frozenBoundary": "created",
+            "preparedOriginal": "7f7123db2991b983ed710e22daf45ecf4e721ebd0d8543ed5849660db1c7f778",
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702635715,
+            "originalExpiresAt": 1794704435715,
+            "currentOperationMatches": true,
+            "currentAuthority": "original-session",
+            "currentExpiresAt": 1794704435715,
+            "cold": [
+              {
+                "grantedAt": 1794704435907,
+                "deadline": 1794704525907,
+                "priorGeneration": "12afcd97-df17-433c-9bfe-aa5d4f38a2eb",
+                "generation": "fb0c322e-0760-455d-8b3a-ab8a67965733",
+                "bootEpoch": "b73c1c07-0689-43e3-88b4-843c336d9518",
+                "phase": "original-capture-planned"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 3291,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "22791"
+          },
+          "child": null
+        },
+        {
+          "stage": "recovered",
+          "phase": "original-committed",
+          "operationId": "1829775b-429a-42f8-8b9e-4951e2053167",
+          "intentHash": "8ebbff218ab01969be30593305a6337fcf2654ec457957fe43d10ef5685e7176",
+          "generation": {
+            "original": "1d75cd4e-7086-4d5f-8463-59e6d738667b",
+            "current": "2f0dac26-a007-4e6c-ab5e-646d198e4ccf",
+            "selected": "2f0dac26-a007-4e6c-ab5e-646d198e4ccf"
+          },
+          "fingerprints": {
+            "stopped": "d854e53817100a1aefb6d4151f4f518f8fb63a5c9d9fdbe43a4e8ee43039c0de",
+            "frozen": "d854e53817100a1aefb6d4151f4f518f8fb63a5c9d9fdbe43a4e8ee43039c0de",
+            "frozenBoundary": "created",
+            "preparedOriginal": "3c8ab97ba3919f51e8a5894ecaf2ef23f76eea09a233053e69f0680047bfe053",
+            "outcome": "3c8ab97ba3919f51e8a5894ecaf2ef23f76eea09a233053e69f0680047bfe053",
+            "live": "3c8ab97ba3919f51e8a5894ecaf2ef23f76eea09a233053e69f0680047bfe053",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702635715,
+            "originalExpiresAt": 1794704435715,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704435907,
+                "deadline": 1794704525907,
+                "priorGeneration": "12afcd97-df17-433c-9bfe-aa5d4f38a2eb",
+                "generation": "fb0c322e-0760-455d-8b3a-ab8a67965733",
+                "bootEpoch": "b73c1c07-0689-43e3-88b4-843c336d9518",
+                "phase": "original-capture-planned"
+              },
+              {
+                "grantedAt": 1794704526089,
+                "deadline": 1794704616089,
+                "priorGeneration": "12afcd97-df17-433c-9bfe-aa5d4f38a2eb",
+                "generation": "2f0dac26-a007-4e6c-ab5e-646d198e4ccf",
+                "bootEpoch": "c2e76034-a21e-4358-a826-a9be637dd8c4",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 3404,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "23352"
+          },
+          "child": {
+            "pid": 3404,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "23352"
+          }
+        },
+        {
+          "stage": "completed",
+          "phase": "original-committed",
+          "operationId": "1829775b-429a-42f8-8b9e-4951e2053167",
+          "intentHash": "8ebbff218ab01969be30593305a6337fcf2654ec457957fe43d10ef5685e7176",
+          "generation": {
+            "original": "1d75cd4e-7086-4d5f-8463-59e6d738667b",
+            "current": "2f0dac26-a007-4e6c-ab5e-646d198e4ccf",
+            "selected": "2f0dac26-a007-4e6c-ab5e-646d198e4ccf"
+          },
+          "fingerprints": {
+            "stopped": "d854e53817100a1aefb6d4151f4f518f8fb63a5c9d9fdbe43a4e8ee43039c0de",
+            "frozen": "d854e53817100a1aefb6d4151f4f518f8fb63a5c9d9fdbe43a4e8ee43039c0de",
+            "frozenBoundary": "created",
+            "preparedOriginal": "3c8ab97ba3919f51e8a5894ecaf2ef23f76eea09a233053e69f0680047bfe053",
+            "outcome": "3c8ab97ba3919f51e8a5894ecaf2ef23f76eea09a233053e69f0680047bfe053",
+            "live": "a68c2e345d6ec08e55696a6c99f467945009883c85bcce4b3cb9e2fab0beed6a",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702635715,
+            "originalExpiresAt": 1794704435715,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704435907,
+                "deadline": 1794704525907,
+                "priorGeneration": "12afcd97-df17-433c-9bfe-aa5d4f38a2eb",
+                "generation": "fb0c322e-0760-455d-8b3a-ab8a67965733",
+                "bootEpoch": "b73c1c07-0689-43e3-88b4-843c336d9518",
+                "phase": "original-capture-planned"
+              },
+              {
+                "grantedAt": 1794704526089,
+                "deadline": 1794704616089,
+                "priorGeneration": "12afcd97-df17-433c-9bfe-aa5d4f38a2eb",
+                "generation": "2f0dac26-a007-4e6c-ab5e-646d198e4ccf",
+                "bootEpoch": "c2e76034-a21e-4358-a826-a9be637dd8c4",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 3404,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "23352"
+          },
+          "child": null
+        }
+      ],
+      "observedFrozen": "d854e53817100a1aefb6d4151f4f518f8fb63a5c9d9fdbe43a4e8ee43039c0de",
+      "controllers": [
+        {
+          "pid": 3144,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 3353,
+          "initial": false,
+          "cold": true,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 3361,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 3420,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 3456,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "original-activation",
+          "pid": 3144,
+          "bytesWritten": 65536
+        },
+        {
+          "name": "cold-admission",
+          "pid": 3353,
+          "bytesWritten": null
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 3144,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        },
+        {
+          "pid": 3353,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "cold-prepared",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "original-replacing",
+          "operationId": "a443d079-f0d4-432b-bf08-a68beae48665",
+          "intentHash": "7db26ca396a1400a6aaaea2986c766072985eac3fcdba501acc668b0cd843a9d",
+          "generation": {
+            "original": "a1764564-7d38-439e-952e-9db678a6823d",
+            "current": "aa7e2887-0f86-443e-8f9b-def87d694bd1",
+            "selected": "bc95fd68-aa71-4c2e-992b-01163ef7778f"
+          },
+          "fingerprints": {
+            "stopped": "6f8a365c494eca798111bb9d9f81957a927cce787a3c750c2769cdabf7b9502a",
+            "frozen": "6f8a365c494eca798111bb9d9f81957a927cce787a3c750c2769cdabf7b9502a",
+            "frozenBoundary": "created",
+            "preparedOriginal": "c0d6d13dc4c69b295a61ae3238459e2927f2704ea34326710b582d1b9b05cee9",
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702651574,
+            "originalExpiresAt": 1794704451574,
+            "currentOperationMatches": true,
+            "currentAuthority": "original-session",
+            "currentExpiresAt": 1794704451574,
+            "cold": []
+          },
+          "plannedChild": {
+            "pid": 3679,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "24367"
+          },
+          "child": null
+        },
+        {
+          "stage": "cold-cut",
+          "phase": "original-prepared",
+          "operationId": "a443d079-f0d4-432b-bf08-a68beae48665",
+          "intentHash": "7db26ca396a1400a6aaaea2986c766072985eac3fcdba501acc668b0cd843a9d",
+          "generation": {
+            "original": "a1764564-7d38-439e-952e-9db678a6823d",
+            "current": "aa7e2887-0f86-443e-8f9b-def87d694bd1",
+            "selected": "7f4bea83-3f41-4666-8f72-84dba4e20cfe"
+          },
+          "fingerprints": {
+            "stopped": "6f8a365c494eca798111bb9d9f81957a927cce787a3c750c2769cdabf7b9502a",
+            "frozen": "6f8a365c494eca798111bb9d9f81957a927cce787a3c750c2769cdabf7b9502a",
+            "frozenBoundary": "created",
+            "preparedOriginal": "916174aa1bdb3caedbf1a5dcac59c1c4238feaf9d04a0a1c5d6e426c3b6f1102",
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702651574,
+            "originalExpiresAt": 1794704451574,
+            "currentOperationMatches": true,
+            "currentAuthority": "private-host",
+            "currentExpiresAt": 1794704541768,
+            "cold": [
+              {
+                "grantedAt": 1794704451768,
+                "deadline": 1794704541768,
+                "priorGeneration": "aa7e2887-0f86-443e-8f9b-def87d694bd1",
+                "generation": "7f4bea83-3f41-4666-8f72-84dba4e20cfe",
+                "bootEpoch": "37e0dd29-19e6-483c-aa2d-c4cf8c45e2dd",
+                "phase": "original-prepared"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 3679,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "24367"
+          },
+          "child": null
+        },
+        {
+          "stage": "recovered",
+          "phase": "original-committed",
+          "operationId": "a443d079-f0d4-432b-bf08-a68beae48665",
+          "intentHash": "7db26ca396a1400a6aaaea2986c766072985eac3fcdba501acc668b0cd843a9d",
+          "generation": {
+            "original": "a1764564-7d38-439e-952e-9db678a6823d",
+            "current": "e29c0374-d9d9-4339-a96b-d11f3254f456",
+            "selected": "e29c0374-d9d9-4339-a96b-d11f3254f456"
+          },
+          "fingerprints": {
+            "stopped": "6f8a365c494eca798111bb9d9f81957a927cce787a3c750c2769cdabf7b9502a",
+            "frozen": "6f8a365c494eca798111bb9d9f81957a927cce787a3c750c2769cdabf7b9502a",
+            "frozenBoundary": "created",
+            "preparedOriginal": "c7ead5830e985f2cccc2e1bffe937597cbc131127bdd008873308e372c34831d",
+            "outcome": "c7ead5830e985f2cccc2e1bffe937597cbc131127bdd008873308e372c34831d",
+            "live": "c7ead5830e985f2cccc2e1bffe937597cbc131127bdd008873308e372c34831d",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702651574,
+            "originalExpiresAt": 1794704451574,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704451768,
+                "deadline": 1794704541768,
+                "priorGeneration": "aa7e2887-0f86-443e-8f9b-def87d694bd1",
+                "generation": "7f4bea83-3f41-4666-8f72-84dba4e20cfe",
+                "bootEpoch": "37e0dd29-19e6-483c-aa2d-c4cf8c45e2dd",
+                "phase": "original-prepared"
+              },
+              {
+                "grantedAt": 1794704541960,
+                "deadline": 1794704631960,
+                "priorGeneration": "aa7e2887-0f86-443e-8f9b-def87d694bd1",
+                "generation": "e29c0374-d9d9-4339-a96b-d11f3254f456",
+                "bootEpoch": "73ab4e89-0450-42cf-bed1-5055fa39fa0a",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 3811,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "25020"
+          },
+          "child": {
+            "pid": 3811,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "25020"
+          }
+        },
+        {
+          "stage": "completed",
+          "phase": "original-committed",
+          "operationId": "a443d079-f0d4-432b-bf08-a68beae48665",
+          "intentHash": "7db26ca396a1400a6aaaea2986c766072985eac3fcdba501acc668b0cd843a9d",
+          "generation": {
+            "original": "a1764564-7d38-439e-952e-9db678a6823d",
+            "current": "e29c0374-d9d9-4339-a96b-d11f3254f456",
+            "selected": "e29c0374-d9d9-4339-a96b-d11f3254f456"
+          },
+          "fingerprints": {
+            "stopped": "6f8a365c494eca798111bb9d9f81957a927cce787a3c750c2769cdabf7b9502a",
+            "frozen": "6f8a365c494eca798111bb9d9f81957a927cce787a3c750c2769cdabf7b9502a",
+            "frozenBoundary": "created",
+            "preparedOriginal": "c7ead5830e985f2cccc2e1bffe937597cbc131127bdd008873308e372c34831d",
+            "outcome": "c7ead5830e985f2cccc2e1bffe937597cbc131127bdd008873308e372c34831d",
+            "live": "957ce2efed4133abae750d61eecca010b175ee34ccfc3e3155e01d27c50d432b",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702651574,
+            "originalExpiresAt": 1794704451574,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704451768,
+                "deadline": 1794704541768,
+                "priorGeneration": "aa7e2887-0f86-443e-8f9b-def87d694bd1",
+                "generation": "7f4bea83-3f41-4666-8f72-84dba4e20cfe",
+                "bootEpoch": "37e0dd29-19e6-483c-aa2d-c4cf8c45e2dd",
+                "phase": "original-prepared"
+              },
+              {
+                "grantedAt": 1794704541960,
+                "deadline": 1794704631960,
+                "priorGeneration": "aa7e2887-0f86-443e-8f9b-def87d694bd1",
+                "generation": "e29c0374-d9d9-4339-a96b-d11f3254f456",
+                "bootEpoch": "73ab4e89-0450-42cf-bed1-5055fa39fa0a",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 3811,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "25020"
+          },
+          "child": null
+        }
+      ],
+      "observedFrozen": "6f8a365c494eca798111bb9d9f81957a927cce787a3c750c2769cdabf7b9502a",
+      "controllers": [
+        {
+          "pid": 3532,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 3741,
+          "initial": false,
+          "cold": true,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 3768,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 3827,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 3863,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "original-activation",
+          "pid": 3532,
+          "bytesWritten": 65536
+        },
+        {
+          "name": "cold-prepared",
+          "pid": 3741,
+          "bytesWritten": null
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 3532,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        },
+        {
+          "pid": 3741,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "cold-activation",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "original-replacing",
+          "operationId": "db1f9464-5d9d-4f10-a477-ee319826bd92",
+          "intentHash": "25efe75091dcea1f0e27938c6093a4e6f852e2265308f615f1e4e8285e17696a",
+          "generation": {
+            "original": "de307f8b-6815-4edd-8110-c9248e62c2c2",
+            "current": "77fe459d-651f-4bf1-ac2d-9944e70e2263",
+            "selected": "2adcc04e-85e5-4a48-ac77-9013146854d9"
+          },
+          "fingerprints": {
+            "stopped": "9d8b11df7bed82ed42e3c7709e39dc5e83a0693deafada21d65073f1881eb19a",
+            "frozen": "9d8b11df7bed82ed42e3c7709e39dc5e83a0693deafada21d65073f1881eb19a",
+            "frozenBoundary": "created",
+            "preparedOriginal": "3eb212dcc7c8e099c92fb9ba00be3ea308b56c59dd9d4d18a1ec93c8a68aae58",
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702668124,
+            "originalExpiresAt": 1794704468124,
+            "currentOperationMatches": true,
+            "currentAuthority": "original-session",
+            "currentExpiresAt": 1794704468124,
+            "cold": []
+          },
+          "plannedChild": {
+            "pid": 4086,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "26026"
+          },
+          "child": null
+        },
+        {
+          "stage": "cold-cut",
+          "phase": "original-replacing",
+          "operationId": "db1f9464-5d9d-4f10-a477-ee319826bd92",
+          "intentHash": "25efe75091dcea1f0e27938c6093a4e6f852e2265308f615f1e4e8285e17696a",
+          "generation": {
+            "original": "de307f8b-6815-4edd-8110-c9248e62c2c2",
+            "current": "77fe459d-651f-4bf1-ac2d-9944e70e2263",
+            "selected": "a1125b2e-ea68-4773-9b40-ca594664fdc6"
+          },
+          "fingerprints": {
+            "stopped": "9d8b11df7bed82ed42e3c7709e39dc5e83a0693deafada21d65073f1881eb19a",
+            "frozen": "9d8b11df7bed82ed42e3c7709e39dc5e83a0693deafada21d65073f1881eb19a",
+            "frozenBoundary": "created",
+            "preparedOriginal": "f71ac6a2ff2de4c4fab5af99aef4e6c991564b0921137773c185e090df84e827",
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702668124,
+            "originalExpiresAt": 1794704468124,
+            "currentOperationMatches": true,
+            "currentAuthority": "private-host",
+            "currentExpiresAt": 1794704558324,
+            "cold": [
+              {
+                "grantedAt": 1794704468324,
+                "deadline": 1794704558324,
+                "priorGeneration": "77fe459d-651f-4bf1-ac2d-9944e70e2263",
+                "generation": "a1125b2e-ea68-4773-9b40-ca594664fdc6",
+                "bootEpoch": "296adc6f-4d18-4df2-abc4-a5b053dd6fa7",
+                "phase": "original-replacing"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 4086,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "26026"
+          },
+          "child": null
+        },
+        {
+          "stage": "recovered",
+          "phase": "original-committed",
+          "operationId": "db1f9464-5d9d-4f10-a477-ee319826bd92",
+          "intentHash": "25efe75091dcea1f0e27938c6093a4e6f852e2265308f615f1e4e8285e17696a",
+          "generation": {
+            "original": "de307f8b-6815-4edd-8110-c9248e62c2c2",
+            "current": "88177c0c-2856-4a9f-9499-c96d270479cc",
+            "selected": "88177c0c-2856-4a9f-9499-c96d270479cc"
+          },
+          "fingerprints": {
+            "stopped": "9d8b11df7bed82ed42e3c7709e39dc5e83a0693deafada21d65073f1881eb19a",
+            "frozen": "9d8b11df7bed82ed42e3c7709e39dc5e83a0693deafada21d65073f1881eb19a",
+            "frozenBoundary": "created",
+            "preparedOriginal": "880ca51068b7b3612cd011b9ad6db4f59deb264723d0b52566a80dc4ee080f4a",
+            "outcome": "880ca51068b7b3612cd011b9ad6db4f59deb264723d0b52566a80dc4ee080f4a",
+            "live": "880ca51068b7b3612cd011b9ad6db4f59deb264723d0b52566a80dc4ee080f4a",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702668124,
+            "originalExpiresAt": 1794704468124,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704468324,
+                "deadline": 1794704558324,
+                "priorGeneration": "77fe459d-651f-4bf1-ac2d-9944e70e2263",
+                "generation": "a1125b2e-ea68-4773-9b40-ca594664fdc6",
+                "bootEpoch": "296adc6f-4d18-4df2-abc4-a5b053dd6fa7",
+                "phase": "original-replacing"
+              },
+              {
+                "grantedAt": 1794704558504,
+                "deadline": 1794704648504,
+                "priorGeneration": "77fe459d-651f-4bf1-ac2d-9944e70e2263",
+                "generation": "88177c0c-2856-4a9f-9499-c96d270479cc",
+                "bootEpoch": "9d1cb75a-3c2a-4f17-9c28-11db0f519661",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 4234,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "26775"
+          },
+          "child": {
+            "pid": 4234,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "26775"
+          }
+        },
+        {
+          "stage": "completed",
+          "phase": "original-committed",
+          "operationId": "db1f9464-5d9d-4f10-a477-ee319826bd92",
+          "intentHash": "25efe75091dcea1f0e27938c6093a4e6f852e2265308f615f1e4e8285e17696a",
+          "generation": {
+            "original": "de307f8b-6815-4edd-8110-c9248e62c2c2",
+            "current": "88177c0c-2856-4a9f-9499-c96d270479cc",
+            "selected": "88177c0c-2856-4a9f-9499-c96d270479cc"
+          },
+          "fingerprints": {
+            "stopped": "9d8b11df7bed82ed42e3c7709e39dc5e83a0693deafada21d65073f1881eb19a",
+            "frozen": "9d8b11df7bed82ed42e3c7709e39dc5e83a0693deafada21d65073f1881eb19a",
+            "frozenBoundary": "created",
+            "preparedOriginal": "880ca51068b7b3612cd011b9ad6db4f59deb264723d0b52566a80dc4ee080f4a",
+            "outcome": "880ca51068b7b3612cd011b9ad6db4f59deb264723d0b52566a80dc4ee080f4a",
+            "live": "ce695f6d838ce1eed28700bb0c2ad86feca17651244b2348457c95f6079ea11d",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702668124,
+            "originalExpiresAt": 1794704468124,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704468324,
+                "deadline": 1794704558324,
+                "priorGeneration": "77fe459d-651f-4bf1-ac2d-9944e70e2263",
+                "generation": "a1125b2e-ea68-4773-9b40-ca594664fdc6",
+                "bootEpoch": "296adc6f-4d18-4df2-abc4-a5b053dd6fa7",
+                "phase": "original-replacing"
+              },
+              {
+                "grantedAt": 1794704558504,
+                "deadline": 1794704648504,
+                "priorGeneration": "77fe459d-651f-4bf1-ac2d-9944e70e2263",
+                "generation": "88177c0c-2856-4a9f-9499-c96d270479cc",
+                "bootEpoch": "9d1cb75a-3c2a-4f17-9c28-11db0f519661",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 4234,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "26775"
+          },
+          "child": null
+        }
+      ],
+      "observedFrozen": "9d8b11df7bed82ed42e3c7709e39dc5e83a0693deafada21d65073f1881eb19a",
+      "controllers": [
+        {
+          "pid": 3939,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 4148,
+          "initial": false,
+          "cold": true,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 4191,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 4250,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 4286,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "original-activation",
+          "pid": 3939,
+          "bytesWritten": 65536
+        },
+        {
+          "name": "cold-activation",
+          "pid": 4148,
+          "bytesWritten": 65536
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 3939,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        },
+        {
+          "pid": 4148,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "cold-trial-planned",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "original-replacing",
+          "operationId": "36aed99e-a304-407a-94cc-f4e9861cbed5",
+          "intentHash": "9e83715d2c18a19d9433417153d37cd5d2902c6018ffe7a6564a12e6a29af581",
+          "generation": {
+            "original": "fb6abe64-f163-49f3-ab87-9fb481b37743",
+            "current": "3a43a1bb-c520-4666-a595-21717824fa39",
+            "selected": "f6a62772-999d-4882-b48c-184baa07de69"
+          },
+          "fingerprints": {
+            "stopped": "6c385a0e1ff9631b3b7003da955a00a51176cd2263e9a012d5331d5504b40fe0",
+            "frozen": "6c385a0e1ff9631b3b7003da955a00a51176cd2263e9a012d5331d5504b40fe0",
+            "frozenBoundary": "created",
+            "preparedOriginal": "015e575222e0b9d67189f51db7d6446a1e67901fe86244c30c3cd2b09fca9d3c",
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702686105,
+            "originalExpiresAt": 1794704486105,
+            "currentOperationMatches": true,
+            "currentAuthority": "original-session",
+            "currentExpiresAt": 1794704486105,
+            "cold": []
+          },
+          "plannedChild": {
+            "pid": 4509,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "27838"
+          },
+          "child": null
+        },
+        {
+          "stage": "cold-cut",
+          "phase": "original-trial-planned",
+          "operationId": "36aed99e-a304-407a-94cc-f4e9861cbed5",
+          "intentHash": "9e83715d2c18a19d9433417153d37cd5d2902c6018ffe7a6564a12e6a29af581",
+          "generation": {
+            "original": "fb6abe64-f163-49f3-ab87-9fb481b37743",
+            "current": "3a43a1bb-c520-4666-a595-21717824fa39",
+            "selected": "56a38577-02e2-4716-938a-6e482c1d8a87"
+          },
+          "fingerprints": {
+            "stopped": "6c385a0e1ff9631b3b7003da955a00a51176cd2263e9a012d5331d5504b40fe0",
+            "frozen": "6c385a0e1ff9631b3b7003da955a00a51176cd2263e9a012d5331d5504b40fe0",
+            "frozenBoundary": "created",
+            "preparedOriginal": "391f74305d1c680af8f03cdfbdabfb87b5aa5c05abf410b88871b9febc778445",
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702686105,
+            "originalExpiresAt": 1794704486105,
+            "currentOperationMatches": true,
+            "currentAuthority": "private-host",
+            "currentExpiresAt": 1794704576305,
+            "cold": [
+              {
+                "grantedAt": 1794704486305,
+                "deadline": 1794704576305,
+                "priorGeneration": "3a43a1bb-c520-4666-a595-21717824fa39",
+                "generation": "56a38577-02e2-4716-938a-6e482c1d8a87",
+                "bootEpoch": "22d8bf16-42cf-4d6e-b0cd-1b0b6b881352",
+                "phase": "original-trial-planned"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 4614,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "28390"
+          },
+          "child": null
+        },
+        {
+          "stage": "recovered",
+          "phase": "original-committed",
+          "operationId": "36aed99e-a304-407a-94cc-f4e9861cbed5",
+          "intentHash": "9e83715d2c18a19d9433417153d37cd5d2902c6018ffe7a6564a12e6a29af581",
+          "generation": {
+            "original": "fb6abe64-f163-49f3-ab87-9fb481b37743",
+            "current": "44e07720-287c-43c7-a0b5-b7c2e20af34b",
+            "selected": "44e07720-287c-43c7-a0b5-b7c2e20af34b"
+          },
+          "fingerprints": {
+            "stopped": "6c385a0e1ff9631b3b7003da955a00a51176cd2263e9a012d5331d5504b40fe0",
+            "frozen": "6c385a0e1ff9631b3b7003da955a00a51176cd2263e9a012d5331d5504b40fe0",
+            "frozenBoundary": "created",
+            "preparedOriginal": "923ca8577ba2cb90dc70e94ae8144b6f24951b1646e92abfea518262f340b1a7",
+            "outcome": "923ca8577ba2cb90dc70e94ae8144b6f24951b1646e92abfea518262f340b1a7",
+            "live": "923ca8577ba2cb90dc70e94ae8144b6f24951b1646e92abfea518262f340b1a7",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702686105,
+            "originalExpiresAt": 1794704486105,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704486305,
+                "deadline": 1794704576305,
+                "priorGeneration": "3a43a1bb-c520-4666-a595-21717824fa39",
+                "generation": "56a38577-02e2-4716-938a-6e482c1d8a87",
+                "bootEpoch": "22d8bf16-42cf-4d6e-b0cd-1b0b6b881352",
+                "phase": "original-trial-planned"
+              },
+              {
+                "grantedAt": 1794704576538,
+                "deadline": 1794704666538,
+                "priorGeneration": "3a43a1bb-c520-4666-a595-21717824fa39",
+                "generation": "44e07720-287c-43c7-a0b5-b7c2e20af34b",
+                "bootEpoch": "af3a827b-5e98-47a7-bbcc-4139c42a49bf",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 4664,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "28606"
+          },
+          "child": {
+            "pid": 4664,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "28606"
+          }
+        },
+        {
+          "stage": "completed",
+          "phase": "original-committed",
+          "operationId": "36aed99e-a304-407a-94cc-f4e9861cbed5",
+          "intentHash": "9e83715d2c18a19d9433417153d37cd5d2902c6018ffe7a6564a12e6a29af581",
+          "generation": {
+            "original": "fb6abe64-f163-49f3-ab87-9fb481b37743",
+            "current": "44e07720-287c-43c7-a0b5-b7c2e20af34b",
+            "selected": "44e07720-287c-43c7-a0b5-b7c2e20af34b"
+          },
+          "fingerprints": {
+            "stopped": "6c385a0e1ff9631b3b7003da955a00a51176cd2263e9a012d5331d5504b40fe0",
+            "frozen": "6c385a0e1ff9631b3b7003da955a00a51176cd2263e9a012d5331d5504b40fe0",
+            "frozenBoundary": "created",
+            "preparedOriginal": "923ca8577ba2cb90dc70e94ae8144b6f24951b1646e92abfea518262f340b1a7",
+            "outcome": "923ca8577ba2cb90dc70e94ae8144b6f24951b1646e92abfea518262f340b1a7",
+            "live": "b16c51b0f2636208066a10f8513d27be99de0adae392c48f2566f2fa65a1d28a",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702686105,
+            "originalExpiresAt": 1794704486105,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704486305,
+                "deadline": 1794704576305,
+                "priorGeneration": "3a43a1bb-c520-4666-a595-21717824fa39",
+                "generation": "56a38577-02e2-4716-938a-6e482c1d8a87",
+                "bootEpoch": "22d8bf16-42cf-4d6e-b0cd-1b0b6b881352",
+                "phase": "original-trial-planned"
+              },
+              {
+                "grantedAt": 1794704576538,
+                "deadline": 1794704666538,
+                "priorGeneration": "3a43a1bb-c520-4666-a595-21717824fa39",
+                "generation": "44e07720-287c-43c7-a0b5-b7c2e20af34b",
+                "bootEpoch": "af3a827b-5e98-47a7-bbcc-4139c42a49bf",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 4664,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "28606"
+          },
+          "child": null
+        }
+      ],
+      "observedFrozen": "6c385a0e1ff9631b3b7003da955a00a51176cd2263e9a012d5331d5504b40fe0",
+      "controllers": [
+        {
+          "pid": 4362,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 4571,
+          "initial": false,
+          "cold": true,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 4621,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 4680,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 4716,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "original-activation",
+          "pid": 4362,
+          "bytesWritten": 65536
+        },
+        {
+          "name": "cold-trial-planned",
+          "pid": 4571,
+          "bytesWritten": null
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 4362,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        },
+        {
+          "pid": 4571,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [
+        {
+          "pid": 4614,
+          "boundary": "cold-restart",
+          "released": false
+        },
+        {
+          "pid": 4614,
+          "boundary": "cold-recovered",
+          "released": true
+        }
+      ],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "cold-private-open",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "original-replacing",
+          "operationId": "3d90c856-6fae-4006-acef-8f68237e89da",
+          "intentHash": "31c186744b95b62a1d6e64909266329760508c48713c0200acf8b48a7a509dbd",
+          "generation": {
+            "original": "db83a3e8-1002-4a89-a758-beb88d0824f8",
+            "current": "a157e283-3e80-4ae5-842a-c57ebe15bee4",
+            "selected": "f5a0b8aa-0ec5-4231-89f1-f96a6afa3d80"
+          },
+          "fingerprints": {
+            "stopped": "362cbc88af6e400602ec518205af4774a1d1140e614675ee04ce5243e91286ea",
+            "frozen": "362cbc88af6e400602ec518205af4774a1d1140e614675ee04ce5243e91286ea",
+            "frozenBoundary": "created",
+            "preparedOriginal": "1ef64a4b47c0f03e75425ddbd317587a46ab22b98303c5ec5c482f8c6e4f52de",
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702704023,
+            "originalExpiresAt": 1794704504023,
+            "currentOperationMatches": true,
+            "currentAuthority": "original-session",
+            "currentExpiresAt": 1794704504023,
+            "cold": []
+          },
+          "plannedChild": {
+            "pid": 4939,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "29631"
+          },
+          "child": null
+        },
+        {
+          "stage": "cold-cut",
+          "phase": "original-trial-opening",
+          "operationId": "3d90c856-6fae-4006-acef-8f68237e89da",
+          "intentHash": "31c186744b95b62a1d6e64909266329760508c48713c0200acf8b48a7a509dbd",
+          "generation": {
+            "original": "db83a3e8-1002-4a89-a758-beb88d0824f8",
+            "current": "fb319a0e-b6b7-4a78-9430-9c6c75fb7e6b",
+            "selected": "fb319a0e-b6b7-4a78-9430-9c6c75fb7e6b"
+          },
+          "fingerprints": {
+            "stopped": "362cbc88af6e400602ec518205af4774a1d1140e614675ee04ce5243e91286ea",
+            "frozen": "362cbc88af6e400602ec518205af4774a1d1140e614675ee04ce5243e91286ea",
+            "frozenBoundary": "created",
+            "preparedOriginal": "21c9079597f3fcf27b5725278f6e4f08af1f8cfca0c68ea3771b75c51881dbfe",
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702704023,
+            "originalExpiresAt": 1794704504023,
+            "currentOperationMatches": true,
+            "currentAuthority": "private-host",
+            "currentExpiresAt": 1794704594217,
+            "cold": [
+              {
+                "grantedAt": 1794704504217,
+                "deadline": 1794704594217,
+                "priorGeneration": "a157e283-3e80-4ae5-842a-c57ebe15bee4",
+                "generation": "fb319a0e-b6b7-4a78-9430-9c6c75fb7e6b",
+                "bootEpoch": "66f6ba57-2498-474d-81ee-a76af32c91aa",
+                "phase": "original-trial-opening"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 5044,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "30177"
+          },
+          "child": {
+            "pid": 5044,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "30177"
+          }
+        },
+        {
+          "stage": "recovered",
+          "phase": "original-committed",
+          "operationId": "3d90c856-6fae-4006-acef-8f68237e89da",
+          "intentHash": "31c186744b95b62a1d6e64909266329760508c48713c0200acf8b48a7a509dbd",
+          "generation": {
+            "original": "db83a3e8-1002-4a89-a758-beb88d0824f8",
+            "current": "93c34582-c8ee-48bd-836a-9792dcb65caa",
+            "selected": "93c34582-c8ee-48bd-836a-9792dcb65caa"
+          },
+          "fingerprints": {
+            "stopped": "362cbc88af6e400602ec518205af4774a1d1140e614675ee04ce5243e91286ea",
+            "frozen": "362cbc88af6e400602ec518205af4774a1d1140e614675ee04ce5243e91286ea",
+            "frozenBoundary": "created",
+            "preparedOriginal": "39b0513225482d87163077e0b7312e66f95d6a66605bd5080e274276f20e12eb",
+            "outcome": "39b0513225482d87163077e0b7312e66f95d6a66605bd5080e274276f20e12eb",
+            "live": "39b0513225482d87163077e0b7312e66f95d6a66605bd5080e274276f20e12eb",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702704023,
+            "originalExpiresAt": 1794704504023,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704504217,
+                "deadline": 1794704594217,
+                "priorGeneration": "a157e283-3e80-4ae5-842a-c57ebe15bee4",
+                "generation": "fb319a0e-b6b7-4a78-9430-9c6c75fb7e6b",
+                "bootEpoch": "66f6ba57-2498-474d-81ee-a76af32c91aa",
+                "phase": "original-trial-opening"
+              },
+              {
+                "grantedAt": 1794704594474,
+                "deadline": 1794704684474,
+                "priorGeneration": "fb319a0e-b6b7-4a78-9430-9c6c75fb7e6b",
+                "generation": "93c34582-c8ee-48bd-836a-9792dcb65caa",
+                "bootEpoch": "488fc3de-9c6a-4a4a-9811-bb1d401372b8",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 5118,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "30522"
+          },
+          "child": {
+            "pid": 5118,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "30522"
+          }
+        },
+        {
+          "stage": "completed",
+          "phase": "original-committed",
+          "operationId": "3d90c856-6fae-4006-acef-8f68237e89da",
+          "intentHash": "31c186744b95b62a1d6e64909266329760508c48713c0200acf8b48a7a509dbd",
+          "generation": {
+            "original": "db83a3e8-1002-4a89-a758-beb88d0824f8",
+            "current": "93c34582-c8ee-48bd-836a-9792dcb65caa",
+            "selected": "93c34582-c8ee-48bd-836a-9792dcb65caa"
+          },
+          "fingerprints": {
+            "stopped": "362cbc88af6e400602ec518205af4774a1d1140e614675ee04ce5243e91286ea",
+            "frozen": "362cbc88af6e400602ec518205af4774a1d1140e614675ee04ce5243e91286ea",
+            "frozenBoundary": "created",
+            "preparedOriginal": "39b0513225482d87163077e0b7312e66f95d6a66605bd5080e274276f20e12eb",
+            "outcome": "39b0513225482d87163077e0b7312e66f95d6a66605bd5080e274276f20e12eb",
+            "live": "07cd49d53bfd079a3f1bd63831461f522cf748db959c2c14461a1c08fea0f7d2",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702704023,
+            "originalExpiresAt": 1794704504023,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704504217,
+                "deadline": 1794704594217,
+                "priorGeneration": "a157e283-3e80-4ae5-842a-c57ebe15bee4",
+                "generation": "fb319a0e-b6b7-4a78-9430-9c6c75fb7e6b",
+                "bootEpoch": "66f6ba57-2498-474d-81ee-a76af32c91aa",
+                "phase": "original-trial-opening"
+              },
+              {
+                "grantedAt": 1794704594474,
+                "deadline": 1794704684474,
+                "priorGeneration": "fb319a0e-b6b7-4a78-9430-9c6c75fb7e6b",
+                "generation": "93c34582-c8ee-48bd-836a-9792dcb65caa",
+                "bootEpoch": "488fc3de-9c6a-4a4a-9811-bb1d401372b8",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 5118,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "30522"
+          },
+          "child": null
+        }
+      ],
+      "observedFrozen": "362cbc88af6e400602ec518205af4774a1d1140e614675ee04ce5243e91286ea",
+      "controllers": [
+        {
+          "pid": 4792,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 5001,
+          "initial": false,
+          "cold": true,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 5060,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 5134,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 5170,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "original-activation",
+          "pid": 4792,
+          "bytesWritten": 65536
+        },
+        {
+          "name": "cold-private-open",
+          "pid": 5044,
+          "bytesWritten": null
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 4792,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        },
+        {
+          "pid": 5001,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "cold-commit",
+      "source": {
+        "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+        "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+        "tree": "42f35a8883008629716913929a8c21bcaa150589",
+        "run": "43658210882",
+        "attempt": "1"
+      },
+      "result": "passed",
+      "snapshots": [
+        {
+          "stage": "cut",
+          "phase": "original-replacing",
+          "operationId": "f3aff2a6-a8ca-47d1-9dc5-6bb0b631acc7",
+          "intentHash": "14bc08fcc327439b803405d9fb2f8b1f28608cff4d166177af460fee4df440f1",
+          "generation": {
+            "original": "5a10660b-59c5-4d70-9a43-f14339bd5360",
+            "current": "7d96d9da-c218-4dd4-8501-87f63c68a0b3",
+            "selected": "ec0995b4-e820-4d88-94ec-eba39133d9e3"
+          },
+          "fingerprints": {
+            "stopped": "bfa6d89e13580ccbfd1df7d5198572bd678f2c99abdc8f29e1257d063b9aae53",
+            "frozen": "bfa6d89e13580ccbfd1df7d5198572bd678f2c99abdc8f29e1257d063b9aae53",
+            "frozenBoundary": "created",
+            "preparedOriginal": "efcaa11a439f084d427c577ed823bd64f16801224423c06f4a9eb8bc881709f8",
+            "outcome": null,
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702723349,
+            "originalExpiresAt": 1794704523349,
+            "currentOperationMatches": true,
+            "currentAuthority": "original-session",
+            "currentExpiresAt": 1794704523349,
+            "cold": []
+          },
+          "plannedChild": {
+            "pid": 5393,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "31555"
+          },
+          "child": null
+        },
+        {
+          "stage": "cold-cut",
+          "phase": "original-committed",
+          "operationId": "f3aff2a6-a8ca-47d1-9dc5-6bb0b631acc7",
+          "intentHash": "14bc08fcc327439b803405d9fb2f8b1f28608cff4d166177af460fee4df440f1",
+          "generation": {
+            "original": "5a10660b-59c5-4d70-9a43-f14339bd5360",
+            "current": "6c7ca04f-5cf5-4d87-aa76-8a72574b3542",
+            "selected": "6c7ca04f-5cf5-4d87-aa76-8a72574b3542"
+          },
+          "fingerprints": {
+            "stopped": "bfa6d89e13580ccbfd1df7d5198572bd678f2c99abdc8f29e1257d063b9aae53",
+            "frozen": "bfa6d89e13580ccbfd1df7d5198572bd678f2c99abdc8f29e1257d063b9aae53",
+            "frozenBoundary": "created",
+            "preparedOriginal": "c6b9910bd6d5dc044790901acb47b09ffb709b1f911f2a71ca8d46dee88fdb2b",
+            "outcome": "c6b9910bd6d5dc044790901acb47b09ffb709b1f911f2a71ca8d46dee88fdb2b",
+            "live": null,
+            "liveBoundary": "not-opened-at-this-boundary"
+          },
+          "authority": {
+            "confirmedAt": 1794702723349,
+            "originalExpiresAt": 1794704523349,
+            "currentOperationMatches": true,
+            "currentAuthority": "private-host",
+            "currentExpiresAt": 1794704613543,
+            "cold": [
+              {
+                "grantedAt": 1794704523543,
+                "deadline": 1794704613543,
+                "priorGeneration": "7d96d9da-c218-4dd4-8501-87f63c68a0b3",
+                "generation": "6c7ca04f-5cf5-4d87-aa76-8a72574b3542",
+                "bootEpoch": "e06d55c2-d8c3-4d1f-9fb2-fa33483fc302",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 5498,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "32076"
+          },
+          "child": {
+            "pid": 5498,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "32076"
+          }
+        },
+        {
+          "stage": "recovered",
+          "phase": "original-committed",
+          "operationId": "f3aff2a6-a8ca-47d1-9dc5-6bb0b631acc7",
+          "intentHash": "14bc08fcc327439b803405d9fb2f8b1f28608cff4d166177af460fee4df440f1",
+          "generation": {
+            "original": "5a10660b-59c5-4d70-9a43-f14339bd5360",
+            "current": "6c7ca04f-5cf5-4d87-aa76-8a72574b3542",
+            "selected": "6c7ca04f-5cf5-4d87-aa76-8a72574b3542"
+          },
+          "fingerprints": {
+            "stopped": "bfa6d89e13580ccbfd1df7d5198572bd678f2c99abdc8f29e1257d063b9aae53",
+            "frozen": "bfa6d89e13580ccbfd1df7d5198572bd678f2c99abdc8f29e1257d063b9aae53",
+            "frozenBoundary": "created",
+            "preparedOriginal": "c6b9910bd6d5dc044790901acb47b09ffb709b1f911f2a71ca8d46dee88fdb2b",
+            "outcome": "c6b9910bd6d5dc044790901acb47b09ffb709b1f911f2a71ca8d46dee88fdb2b",
+            "live": "c6b9910bd6d5dc044790901acb47b09ffb709b1f911f2a71ca8d46dee88fdb2b",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702723349,
+            "originalExpiresAt": 1794704523349,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704523543,
+                "deadline": 1794704613543,
+                "priorGeneration": "7d96d9da-c218-4dd4-8501-87f63c68a0b3",
+                "generation": "6c7ca04f-5cf5-4d87-aa76-8a72574b3542",
+                "bootEpoch": "e06d55c2-d8c3-4d1f-9fb2-fa33483fc302",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 5498,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "32076"
+          },
+          "child": {
+            "pid": 5538,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "32198"
+          }
+        },
+        {
+          "stage": "completed",
+          "phase": "original-committed",
+          "operationId": "f3aff2a6-a8ca-47d1-9dc5-6bb0b631acc7",
+          "intentHash": "14bc08fcc327439b803405d9fb2f8b1f28608cff4d166177af460fee4df440f1",
+          "generation": {
+            "original": "5a10660b-59c5-4d70-9a43-f14339bd5360",
+            "current": "6c7ca04f-5cf5-4d87-aa76-8a72574b3542",
+            "selected": "6c7ca04f-5cf5-4d87-aa76-8a72574b3542"
+          },
+          "fingerprints": {
+            "stopped": "bfa6d89e13580ccbfd1df7d5198572bd678f2c99abdc8f29e1257d063b9aae53",
+            "frozen": "bfa6d89e13580ccbfd1df7d5198572bd678f2c99abdc8f29e1257d063b9aae53",
+            "frozenBoundary": "created",
+            "preparedOriginal": "c6b9910bd6d5dc044790901acb47b09ffb709b1f911f2a71ca8d46dee88fdb2b",
+            "outcome": "c6b9910bd6d5dc044790901acb47b09ffb709b1f911f2a71ca8d46dee88fdb2b",
+            "live": "63b57c2148c30498c6a4854ad18c97ace7fc9ff839142c564e77f1c1e56742a0",
+            "liveBoundary": "closed-read-only-probe"
+          },
+          "authority": {
+            "confirmedAt": 1794702723349,
+            "originalExpiresAt": 1794704523349,
+            "currentOperationMatches": false,
+            "currentAuthority": "none",
+            "currentExpiresAt": null,
+            "cold": [
+              {
+                "grantedAt": 1794704523543,
+                "deadline": 1794704613543,
+                "priorGeneration": "7d96d9da-c218-4dd4-8501-87f63c68a0b3",
+                "generation": "6c7ca04f-5cf5-4d87-aa76-8a72574b3542",
+                "bootEpoch": "e06d55c2-d8c3-4d1f-9fb2-fa33483fc302",
+                "phase": "original-committed"
+              }
+            ]
+          },
+          "plannedChild": {
+            "pid": 5498,
+            "boot": "e4467ae5-70b1-4779-b258-8d51036fc3f0",
+            "start": "32076"
+          },
+          "child": null
+        }
+      ],
+      "observedFrozen": "bfa6d89e13580ccbfd1df7d5198572bd678f2c99abdc8f29e1257d063b9aae53",
+      "controllers": [
+        {
+          "pid": 5246,
+          "initial": true,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 5455,
+          "initial": false,
+          "cold": true,
+          "cleanup": false,
+          "exitCode": null,
+          "signal": "SIGKILL"
+        },
+        {
+          "pid": 5514,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 5554,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        },
+        {
+          "pid": 5590,
+          "initial": false,
+          "cold": false,
+          "cleanup": false,
+          "exitCode": 0,
+          "signal": null
+        }
+      ],
+      "cuts": [
+        {
+          "name": "original-activation",
+          "pid": 5246,
+          "bytesWritten": 65536
+        },
+        {
+          "name": "cold-commit",
+          "pid": 5455,
+          "bytesWritten": null
+        }
+      ],
+      "terminations": [
+        {
+          "pid": 5246,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        },
+        {
+          "pid": 5455,
+          "action": "sigkill",
+          "signal": "SIGKILL",
+          "released": true
+        }
+      ],
+      "resources": [],
+      "primaryFailure": null,
+      "secondaryFailures": [],
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    }
+  ],
+  "limits": "Retained actual values, not assertion labels. Frozen original and reconciled live fingerprints have distinct meanings. Clock-controlled expiry is not a wall-clock soak. Failure or missing evidence remains failure; this read-only audit performs no workloads or production-verifier execution."
+}

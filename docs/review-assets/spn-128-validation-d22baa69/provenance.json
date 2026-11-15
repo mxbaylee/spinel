@@ -1,0 +1,50 @@
+{
+  "at": "2026-11-15T01:12:16.688Z",
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "parent": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "prefix": "docs/review-assets/spn-128-validation-d22baa69",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+  "snapshot": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T011128057Z",
+  "allTerminal": true,
+  "acceptance": "NOT_ACCEPTED",
+  "jobCounts": {
+    "total": 47,
+    "success": 43,
+    "failure": 2,
+    "skipped": 2
+  },
+  "artifacts": 35,
+  "memberCount": 3612,
+  "relocatedInitialJsonMembers": 451,
+  "originalTerminalReport": {
+    "path": "independent-audit/independent-terminal-audit.json",
+    "sha256": "2b26776ccb1cb925c949540753c4145083089d31658a626ac60570e2e7bc4238"
+  },
+  "auditIndexRelocation": {
+    "originalPath": "/tmp/spn128-terminal-d22baa69/original-audit-artifact-inventory.json",
+    "originalSha256": "de4e2b4065d470ffdd323024b49c6b9a5bf3374dd28a067ee46190b1e75f6c11",
+    "preservedPath": "independent-audit/initial-artifact-inventory.json",
+    "finalIndex": "artifact-inventory.json",
+    "mapping": "member-relocations.json"
+  },
+  "readerPreparationDispositions": [
+    "Initial receipt reader overconstrained post-refusal grant expiry; its overstrict report remains retained. Corrected reader enforces actual interrupted-cut expiry and monotonic grants without changing runtime or evidence.",
+    "Initial retained-member staging adapter had a same-line comment that hid its retain variable; it stopped before member writes. Corrected local script then streamed all originals and verified CRC/size/SHA.",
+    "Development failure reader initially named a nonexistent helper path; explicit source import resolved session-revocation.ts before final report. No claimed binding for missing bytes.",
+    "The audit inventory original is immutable at a separate original-audit path; canonical retention remapping is explicit and never claims overwritten path byte equality."
+  ],
+  "limits": [
+    "Current candidate is NOT_ACCEPTED: selected development partition is flaky and aggregate must fail; automatic retry pass does not erase first failure.",
+    "Original628d failed receipts/tracing/callback validation remains retained in separate published archive5d186e11; old body-edit cancellation is distinct from these four current runs.",
+    "No source/ref/remote mutations, runtime workloads, dispatch/rerun/cancel, timeout or budget changes by this audit.",
+    "Linux expiry is fixture-controlled, not a30-minute wall-clock soak; frozen originals and reconciled live fingerprints have distinct legitimate values.",
+    "Native offline results are macOS browser evidence. Emulated mobile viewports and synthetic CDP passkeys do not establish physical-phone acceptance.",
+    "Provider/sized restore fixtures are synthetic, not proof of live production-host acceptance.",
+    "Sized serving memory.max1073741824, peak1073745920, current960864256; no headroom claim. Docker OOMKilled=false differs from cgroup OOM event counters, which were not retained for sized restore.",
+    "First verified browser-local drain is the enforced gate; late read upper bounds and profiled callback timings are descriptive.",
+    "Full raw original ZIPs are local; final archive retention inventory explicitly discloses omitted passing binary/proto/source pack payloads."
+  ],
+  "publicationClaim": false,
+  "sealExecuted": false
+}

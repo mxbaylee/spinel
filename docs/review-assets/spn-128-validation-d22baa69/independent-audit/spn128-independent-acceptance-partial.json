@@ -1,0 +1,1566 @@
+{
+  "at": "2026-11-15T01:11:43.606Z",
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+  "latestSnapshot": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T011128057Z",
+  "workflowStatuses": [
+    {
+      "kind": "ci",
+      "id": 43658210882,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "completed": 33,
+      "total": 33
+    },
+    {
+      "kind": "storybook",
+      "id": 43658210918,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 10,
+      "total": 10
+    },
+    {
+      "kind": "desktop",
+      "id": 43658210825,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 3,
+      "total": 3
+    },
+    {
+      "kind": "spaces",
+      "id": 43658210985,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 1,
+      "total": 1
+    }
+  ],
+  "allTerminal": true,
+  "bindings": [
+    {
+      "artifact": 14138823787,
+      "member": "ci-plan.json",
+      "bytes": 3937,
+      "sha256": "52aa34a8c5998789df5a7ec3dd42dea894c9d901ee9cbc5e2f5e76f605d5a4d3"
+    },
+    {
+      "artifact": 14138128758,
+      "member": "chrome/acceptance.json",
+      "bytes": 55233,
+      "sha256": "97638e2525ff7a2d93b7fdc22c4e157cf42d69b3eead1fa8cdc83c1770415b09"
+    },
+    {
+      "artifact": 14138963484,
+      "member": "spaces-acceptance.json",
+      "bytes": 1245,
+      "sha256": "185cf4feddf549d1f0819cee66c27827c7d1706a748060101f623011aa57e902"
+    },
+    {
+      "artifact": 14138754359,
+      "member": "playwright-report/sync-soak-sheet.json",
+      "bytes": 1370587,
+      "sha256": "40c19da3d24afc1abd8e7f2b83d502aadc468506be9acaf3a10a7b197c4c0534"
+    },
+    {
+      "artifact": 14138978892,
+      "member": "firefox/acceptance.json",
+      "bytes": 56472,
+      "sha256": "3839c92cf8a94f0b8bae3112eaff225a2dc811d91485b5bc5f1f9ca2c3696825"
+    },
+    {
+      "artifact": 14139440482,
+      "member": "playwright-report/sync-soak-doc.json",
+      "bytes": 1370541,
+      "sha256": "8ccb8be1f4a6aafc4962a10471f7b102bec99bd6b270b74bff1fc3b0ebe3dc21"
+    },
+    {
+      "artifact": 14138894299,
+      "member": "playwright-report/sync-development.json",
+      "bytes": 1394209,
+      "sha256": "dd4977c4fce9665e14b1909604034efebd3ba33023ee936c90fcd86d2cb16f24"
+    },
+    {
+      "artifact": 14139089270,
+      "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "bytes": 1356877,
+      "sha256": "b4e554fc1d7a4b9ae8ec74ee17ac2f204fbfe44695465d34bf8c2a33d58db429"
+    },
+    {
+      "artifact": 14139089270,
+      "member": "playwright-report/doc-responsiveness.json",
+      "bytes": 1377643,
+      "sha256": "7b517d474b17da459991eb2ffbb5511600b96f33bb99f64598c9690995f6389b"
+    },
+    {
+      "artifact": 14139079893,
+      "member": "playwright-report/production-2-of-2.json",
+      "bytes": 1574492,
+      "sha256": "f1bade4c174328f805dfa2097f8ae903c7603b66e8ac41c8f6183da15a75d755"
+    },
+    {
+      "artifact": 14139074793,
+      "member": "ci-results-lib.json",
+      "bytes": 6354,
+      "sha256": "6c757ef2b96ddf410988250ccc31b46345c0ec53d7d1a33b25a89f765fc79168"
+    },
+    {
+      "artifact": 14139019550,
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 23587021,
+      "sha256": "2e9068bb4b18702215a657db3f53d8e0a80f0879d53c6a49542624a6de445f64"
+    },
+    {
+      "artifact": 14139019550,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "bytes": 1356045,
+      "sha256": "ef1d0da35b502c0f65004762bf59e7c0818ccb7e7041c99e45b89c21907423da"
+    },
+    {
+      "artifact": 14139019550,
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 20580568,
+      "sha256": "a5c3935557a33274cb644aa96bf962aa3aa2fb66221a1a05b0d5c3e9b66b87dd"
+    },
+    {
+      "artifact": 14139019550,
+      "member": "test-results/spn113-comparison-desktop.json",
+      "bytes": 968711,
+      "sha256": "50eda363a4fc7acc41f9ca75b0d3386cd106585e06452bfc8531a77df63a0a74"
+    },
+    {
+      "artifact": 14139019550,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "bytes": 1370730,
+      "sha256": "3290d6d9313b5acbd4443b0b8ef377dad00cd00c3fcf246a1ee8f83b03c50bd1"
+    },
+    {
+      "artifact": 14138568771,
+      "member": "ci-results-unit.json",
+      "bytes": 6247,
+      "sha256": "43013ce728f2bc458c917389c0a96ed7370096d823f11d8e5ea701434819964e"
+    },
+    {
+      "artifact": 14138318841,
+      "member": "playwright-report/mobile-https.json",
+      "bytes": 1386993,
+      "sha256": "00abb12df0fba28f7c1e178283bd6ff183b537ff365174d603dec560c2d4f29e"
+    },
+    {
+      "artifact": 14138314242,
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 21437916,
+      "sha256": "8b5470ae47d2eef73dc19377cd3c707bd076a0235d4a431bf1b9bb5f66499265"
+    },
+    {
+      "artifact": 14138314242,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "bytes": 26394,
+      "sha256": "1550ced7fc06a2a6730810dd2aaae2e95d9be92ca85643f091eb54118a2b6536"
+    },
+    {
+      "artifact": 14138314242,
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 19503622,
+      "sha256": "ecbaefea078230eac54cca8ff71dedf1a375b87ef557f58a818b955837503de6"
+    },
+    {
+      "artifact": 14138314242,
+      "member": "test-results/spn113-comparison-mobile.json",
+      "bytes": 966085,
+      "sha256": "0c0ca6c9daf2699e2a77687bd55fd362e0d3f10b11da7f5aa1e72ad7156a47bc"
+    },
+    {
+      "artifact": 14138314242,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "bytes": 1370722,
+      "sha256": "f7599ffbe145325e24422a3a7faebfd61b37cba498f3811f52ec1aacae2ddb7d"
+    },
+    {
+      "artifact": 14138229055,
+      "member": "playwright-report/offline-upgrade.json",
+      "bytes": 1386336,
+      "sha256": "e9a7743d69d212b6334cfe3353956b4046970f5b7da69737f2d3798208569e02"
+    },
+    {
+      "artifact": 14139107698,
+      "member": "safari/acceptance.json",
+      "bytes": 53118,
+      "sha256": "31cfcece27428162437c791e0da01400e431b6d2a778f1071abb2d89662dffc8"
+    },
+    {
+      "artifact": 14139665368,
+      "member": "playwright-report/supervised-restore.json",
+      "bytes": 1372158,
+      "sha256": "f29e95f6fbf7a516dbc442157ef6d41e5c67253f9446b8c3fb325bc3e22d7424"
+    },
+    {
+      "artifact": 14139396516,
+      "member": "playwright-report/production-1-of-2.json",
+      "bytes": 1487005,
+      "sha256": "13126f7b874fdb3815dbe37ff636b2f739c028a3eb1f39410ba171d2740101bb"
+    },
+    {
+      "artifact": 14139636241,
+      "member": "playwright-report/sync-production.json",
+      "bytes": 1491989,
+      "sha256": "bdd5ccc0fd2c2b44432db19a42a95f6de4e4bc20383f39a9bf2434d52a25ec03"
+    },
+    {
+      "artifact": 14139456753,
+      "member": "playwright-report/development-1-of-2.json",
+      "bytes": 1483603,
+      "sha256": "edd0beae9188fff2171eb0d6dcd1455669bcf2f7cdf5d659b08d0a7d15acf29d"
+    },
+    {
+      "artifact": 14139482513,
+      "member": "playwright-report/development-2-of-2.json",
+      "bytes": 1562157,
+      "sha256": "e6d35bf9c4afba297ebd150134e9d37291530463721c3067f8f5e9f3fc5b4819"
+    },
+    {
+      "artifact": 14140895471,
+      "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "bytes": 1356869,
+      "sha256": "52b52575cdd343138a3ead2a902a7873f93b0f4ee54a0cc526dc2e37a6117b83"
+    },
+    {
+      "artifact": 14140895471,
+      "member": "playwright-report/doc-responsiveness.json",
+      "bytes": 1377641,
+      "sha256": "05ddda23a1479b6b8b4d076ca856a45f6d3244a65f4aca331345af020e0e30f0"
+    },
+    {
+      "artifact": 14140102898,
+      "member": "ci-results-browser.json",
+      "bytes": 593,
+      "sha256": "afd7df74569b8c37146ad41c3ff4db72d4478780869c9daefb61b1b0cec5809a"
+    }
+  ],
+  "plans": [
+    {
+      "artifact": 14138823787,
+      "sha256": "52aa34a8c5998789df5a7ec3dd42dea894c9d901ee9cbc5e2f5e76f605d5a4d3",
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+      "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "mode": "full",
+      "suites": [
+        "backlog",
+        "pull-request",
+        "lint",
+        "typecheck",
+        "unit-tests",
+        "lib-test-run",
+        "playwright-run",
+        "container-smoke",
+        "restore-timing",
+        "sync-transition",
+        "doc-responsiveness",
+        "doc-callback-lifetimes",
+        "responsiveness-baseline",
+        "callback-baseline",
+        "phone-compatibility"
+      ]
+    }
+  ],
+  "reports": [
+    {
+      "artifact": 14138754359,
+      "member": "playwright-report/sync-soak-sheet.json",
+      "stats": {
+        "startTime": "2026-11-15T00:29:27.375Z",
+        "duration": 65830.77399999999,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139440482,
+      "member": "playwright-report/sync-soak-doc.json",
+      "stats": {
+        "startTime": "2026-11-15T00:33:58.507Z",
+        "duration": 38863.808,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14138894299,
+      "member": "playwright-report/sync-development.json",
+      "stats": {
+        "startTime": "2026-11-15T00:29:34.815Z",
+        "duration": 209791.038,
+        "expected": 21,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 21,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139089270,
+      "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-15T00:29:05.113Z",
+        "duration": 307370.38399999996,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 4,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139089270,
+      "member": "playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-15T00:34:14.911Z",
+        "duration": 232596.27,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 7,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139079893,
+      "member": "playwright-report/production-2-of-2.json",
+      "stats": {
+        "startTime": "2026-11-15T00:29:03.686Z",
+        "duration": 674676.255,
+        "expected": 89,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 89,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139019550,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-15T00:32:14.084Z",
+        "duration": 132172.267,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139019550,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-15T00:34:29.997Z",
+        "duration": 99239.48999999999,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14138318841,
+      "member": "playwright-report/mobile-https.json",
+      "stats": {
+        "startTime": "2026-11-15T00:34:04.428Z",
+        "duration": 63277.324,
+        "expected": 10,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 13,
+      "failures": [],
+      "skips": [
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14138314242,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-15T00:29:05.052Z",
+        "duration": 281329.177,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14138314242,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-15T00:33:50.725Z",
+        "duration": 194350.435,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14138229055,
+      "member": "playwright-report/offline-upgrade.json",
+      "stats": {
+        "startTime": "2026-11-15T00:34:54.214Z",
+        "duration": 41764.554,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 3,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139665368,
+      "member": "playwright-report/supervised-restore.json",
+      "stats": {
+        "startTime": "2026-11-15T00:34:44.476Z",
+        "duration": 369441.385,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 2,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139396516,
+      "member": "playwright-report/production-1-of-2.json",
+      "stats": {
+        "startTime": "2026-11-15T00:29:19.059Z",
+        "duration": 701683.954,
+        "expected": 87,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 90,
+      "failures": [],
+      "skips": [
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "project": "production",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "project": "production",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "project": "production",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14139636241,
+      "member": "playwright-report/sync-production.json",
+      "stats": {
+        "startTime": "2026-11-15T00:31:23.951Z",
+        "duration": 699316.462,
+        "expected": 98,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 98,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14139456753,
+      "member": "playwright-report/development-1-of-2.json",
+      "stats": {
+        "startTime": "2026-11-15T00:29:06.859Z",
+        "duration": 876781.326,
+        "expected": 76,
+        "skipped": 4,
+        "unexpected": 0,
+        "flaky": 1
+      },
+      "cases": 81,
+      "failures": [
+        {
+          "title": "revoking one login preserves another login’s queued edit and stops later broadcasts",
+          "file": "collaboration.spec.ts",
+          "project": "development",
+          "status": "flaky",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": [
+            {
+              "workerIndex": 0,
+              "parallelIndex": 0,
+              "status": "failed",
+              "duration": 11480,
+              "error": {
+                "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate",
+                "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n    at /home/runner/work/spinel/spinel/e2e/collaboration.spec.ts:462:73",
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/collaboration.spec.ts",
+                  "column": 73,
+                  "line": 462
+                },
+                "snippet": "\u001b[0m \u001b[90m 460 |\u001b[39m     \u001b[90m// The same five-second deadline still requires a real protocol close for\u001b[39m\n \u001b[90m 461 |\u001b[39m     \u001b[90m// every socket established before revocation, even if navigation wins.\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 462 |\u001b[39m     \u001b[36mawait\u001b[39m expect\u001b[33m.\u001b[39mpoll(() \u001b[33m=>\u001b[39m observation\u001b[33m!\u001b[39m\u001b[33m.\u001b[39misClosed()\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m.\u001b[39mtoBe(\u001b[36mtrue\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 463 |\u001b[39m     observation\u001b[33m.\u001b[39mcheckpoint(\u001b[32m'closure-observed'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 464 |\u001b[39m     expect(otherClosed)\u001b[33m.\u001b[39mtoBe(otherClosedBefore)\u001b[33m;\u001b[39m\n \u001b[90m 465 |\u001b[39m     \u001b[90m// The revoked login has no unfinished work, so SPN-053's clean 401 handoff\u001b[39m\u001b[0m"
+              },
+              "errors": [
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/e2e/collaboration.spec.ts",
+                    "column": 73,
+                    "line": 462
+                  },
+                  "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  460 |     // The same five-second deadline still requires a real protocol close for\n  461 |     // every socket established before revocation, even if navigation wins.\n> 462 |     await expect.poll(() => observation!.isClosed(), { timeout: 5000 }).toBe(true);\n      |                                                                         ^\n  463 |     observation.checkpoint('closure-observed');\n  464 |     expect(otherClosed).toBe(otherClosedBefore);\n  465 |     // The revoked login has no unfinished work, so SPN-053's clean 401 handoff\n    at /home/runner/work/spinel/spinel/e2e/collaboration.spec.ts:462:73"
+                }
+              ],
+              "stdout": [],
+              "stderr": [],
+              "retry": 0,
+              "startTime": "2026-11-15T00:32:48.848Z",
+              "annotations": [],
+              "attachments": [
+                {
+                  "name": "session-revocation-observation",
+                  "contentType": "application/json",
+                  "body": "ewogICJ2ZXJzaW9uIjogMSwKICAicHJvamVjdCI6ICJkZXZlbG9wbWVudCIsCiAgInJldHJ5IjogMCwKICAidGVzdGVkIjogIjliNDg3NjdkMWVmZmMwYWViNTVmNjAyMGQ4Njc2NDI3ZDc0ZjdkOWYiLAogICJub2RlIjogInYyNi4xMy4wIiwKICAiYnJvd3NlciI6ICIxNTYuMC44MDc4LjQiLAogICJjb250cmFjdENvbXBsZXRlZCI6IGZhbHNlLAogICJwcmltYXJ5RmFpbGVkIjogdHJ1ZSwKICAiY2xlYW51cEZhaWx1cmVzIjogW10sCiAgIm9ic2VydmF0aW9uIjogewogICAgInRhcmdldENvdW50IjogMSwKICAgICJjbG9zZWRUYXJnZXRzIjogMCwKICAgICJvcGVuU29ja2V0cyI6IDEsCiAgICAicmVjZWl2ZWRGcmFtZXMiOiA2LAogICAgIm92ZXJmbG93IjogZmFsc2UsCiAgICAib2JzZXJ2ZXJMb3N0IjogZmFsc2UsCiAgICAicmVvcGVuZWQiOiBmYWxzZSwKICAgICJldmVudHMiOiBbCiAgICAgIHsKICAgICAgICAia2luZCI6ICJuYXZpZ2F0aW9uIiwKICAgICAgICAibXMiOiAxNQogICAgICB9LAogICAgICB7CiAgICAgICAgImtpbmQiOiAic29ja2V0LWNyZWF0ZWQiLAogICAgICAgICJtcyI6IDUxNDMsCiAgICAgICAgInNvY2tldCI6IDEKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogInNvY2tldC1vcGVuZWQiLAogICAgICAgICJtcyI6IDUxNjEsCiAgICAgICAgInNvY2tldCI6IDEKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogImVkaXQtaGVsZCIsCiAgICAgICAgIm1zIjogNjM4MwogICAgICB9LAogICAgICB7CiAgICAgICAgImtpbmQiOiAicmV2b2NhdGlvbi1yZXF1ZXN0ZWQiLAogICAgICAgICJtcyI6IDYzODMKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogInJldm9jYXRpb24td3JpdHRlbiIsCiAgICAgICAgIm1zIjogNjM4MwogICAgICB9LAogICAgICB7CiAgICAgICAgImtpbmQiOiAibmF2aWdhdGlvbiIsCiAgICAgICAgIm1zIjogNjQzOAogICAgICB9CiAgICBdCiAgfQp9"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development/test-failed-1.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development/test-failed-2.png"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development/error-context.md"
+                }
+              ],
+              "errorLocation": {
+                "file": "/home/runner/work/spinel/spinel/e2e/collaboration.spec.ts",
+                "column": 73,
+                "line": 462
+              }
+            },
+            {
+              "workerIndex": 1,
+              "parallelIndex": 0,
+              "status": "passed",
+              "duration": 18432,
+              "errors": [],
+              "stdout": [],
+              "stderr": [],
+              "retry": 1,
+              "startTime": "2026-11-15T00:33:00.852Z",
+              "annotations": [],
+              "attachments": [
+                {
+                  "name": "session-revocation-observation",
+                  "contentType": "application/json",
+                  "body": "ewogICJ2ZXJzaW9uIjogMSwKICAicHJvamVjdCI6ICJkZXZlbG9wbWVudCIsCiAgInJldHJ5IjogMSwKICAidGVzdGVkIjogIjliNDg3NjdkMWVmZmMwYWViNTVmNjAyMGQ4Njc2NDI3ZDc0ZjdkOWYiLAogICJub2RlIjogInYyNi4xMy4wIiwKICAiYnJvd3NlciI6ICIxNTYuMC44MDc4LjQiLAogICJjb250cmFjdENvbXBsZXRlZCI6IHRydWUsCiAgInByaW1hcnlGYWlsZWQiOiBmYWxzZSwKICAiY2xlYW51cEZhaWx1cmVzIjogW10sCiAgIm9ic2VydmF0aW9uIjogewogICAgInRhcmdldENvdW50IjogMSwKICAgICJjbG9zZWRUYXJnZXRzIjogMSwKICAgICJvcGVuU29ja2V0cyI6IDAsCiAgICAicmVjZWl2ZWRGcmFtZXMiOiA1LAogICAgIm92ZXJmbG93IjogZmFsc2UsCiAgICAib2JzZXJ2ZXJMb3N0IjogZmFsc2UsCiAgICAicmVvcGVuZWQiOiBmYWxzZSwKICAgICJldmVudHMiOiBbCiAgICAgIHsKICAgICAgICAia2luZCI6ICJuYXZpZ2F0aW9uIiwKICAgICAgICAibXMiOiAzMAogICAgICB9LAogICAgICB7CiAgICAgICAgImtpbmQiOiAic29ja2V0LWNyZWF0ZWQiLAogICAgICAgICJtcyI6IDg1MzksCiAgICAgICAgInNvY2tldCI6IDEKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogInNvY2tldC1vcGVuZWQiLAogICAgICAgICJtcyI6IDg1NTcsCiAgICAgICAgInNvY2tldCI6IDEKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogImVkaXQtaGVsZCIsCiAgICAgICAgIm1zIjogMTAyNzUKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogInJldm9jYXRpb24tcmVxdWVzdGVkIiwKICAgICAgICAibXMiOiAxMDI3NQogICAgICB9LAogICAgICB7CiAgICAgICAgImtpbmQiOiAicmV2b2NhdGlvbi13cml0dGVuIiwKICAgICAgICAibXMiOiAxMDI3OQogICAgICB9LAogICAgICB7CiAgICAgICAgImtpbmQiOiAic29ja2V0LWNsb3NlZCIsCiAgICAgICAgIm1zIjogMTAzNDcsCiAgICAgICAgInNvY2tldCI6IDEKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogInBhZ2UtY2xvc2UiLAogICAgICAgICJtcyI6IDEwMzQ4CiAgICAgIH0sCiAgICAgIHsKICAgICAgICAia2luZCI6ICJjbG9zdXJlLW9ic2VydmVkIiwKICAgICAgICAibXMiOiAxMDM4OAogICAgICB9LAogICAgICB7CiAgICAgICAgImtpbmQiOiAibmF2aWdhdGlvbiIsCiAgICAgICAgIm1zIjogMTAzOTUKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogInNpZ24taW4iLAogICAgICAgICJtcyI6IDEyMjIwCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAia2luZCI6ICJyZXF1ZXN0LWRlbmllZCIsCiAgICAgICAgIm1zIjogMTIyMzkKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogImVkaXQtcmVsZWFzZWQiLAogICAgICAgICJtcyI6IDEyMjQwCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAia2luZCI6ICJzYXZlZCIsCiAgICAgICAgIm1zIjogMTIyOTgKICAgICAgfSwKICAgICAgewogICAgICAgICJraW5kIjogInJlbG9hZGVkIiwKICAgICAgICAibXMiOiAxNzg3NQogICAgICB9CiAgICBdCiAgfQp9"
+                },
+                {
+                  "name": "trace",
+                  "contentType": "application/zip",
+                  "path": "/home/runner/work/spinel/spinel/test-results/development/collaboration-revoking-one-97229--and-stops-later-broadcasts-development-retry1/trace.zip"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "skips": [
+        {
+          "title": "production open, search, local persistence and server acknowledgement remain distinct in the diagnostics export",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Prepared offline copies require the production runtime manifest.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts",
+                "line": 511,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14139482513,
+      "member": "playwright-report/development-2-of-2.json",
+      "stats": {
+        "startTime": "2026-11-15T00:34:46.828Z",
+        "duration": 830032.298,
+        "expected": 79,
+        "skipped": 1,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 80,
+      "failures": [],
+      "skips": [
+        {
+          "title": "supervised maintenance keeps pending native work, fences old edits, and recovers through cold controls",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Closed-process verification uses the Linux production supervisor.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/maintenance.spec.ts",
+                "line": 206,
+                "column": 8
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14140895471,
+      "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-15T00:34:25.559Z",
+        "duration": 1405648.015,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 4,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14140895471,
+      "member": "playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-15T00:57:54.725Z",
+        "duration": 776129.363,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 7,
+      "failures": [],
+      "skips": []
+    }
+  ],
+  "native": [
+    {
+      "artifact": 14138128758,
+      "browser": "chrome",
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "stages": 44,
+      "cleanup": {
+        "name": "browser-stop",
+        "time": "2026-11-15T00:29:40.511Z",
+        "kind": "chrome",
+        "browserPid": 5297,
+        "driverPid": 5296,
+        "browserExited": true,
+        "driverExited": true,
+        "stoppedAt": "2026-11-15T00:29:40.511Z"
+      },
+      "transportSnapshot": {
+        "forwardedRequests": 569,
+        "blockedRequests": 121,
+        "forwardedUpgrades": 16,
+        "blockedUpgrades": 6,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 0
+      }
+    },
+    {
+      "artifact": 14138978892,
+      "browser": "firefox",
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "stages": 44,
+      "cleanup": {
+        "name": "browser-stop",
+        "time": "2026-11-15T00:31:09.385Z",
+        "kind": "firefox",
+        "browserPid": 32733,
+        "driverPid": 32719,
+        "browserExited": true,
+        "driverExited": true,
+        "stoppedAt": "2026-11-15T00:31:09.385Z"
+      },
+      "transportSnapshot": {
+        "forwardedRequests": 621,
+        "blockedRequests": 1384,
+        "forwardedUpgrades": 16,
+        "blockedUpgrades": 6,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 3
+      }
+    },
+    {
+      "artifact": 14139107698,
+      "browser": "safari",
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "stages": 46,
+      "cleanup": {
+        "name": "browser-stop",
+        "time": "2026-11-15T00:37:32.142Z",
+        "kind": "safari",
+        "browserPid": 16831,
+        "driverPid": null,
+        "browserExited": true,
+        "driverExited": true,
+        "stoppedAt": "2026-11-15T00:37:32.142Z"
+      },
+      "transportSnapshot": {
+        "forwardedRequests": 834,
+        "blockedRequests": 681,
+        "forwardedUpgrades": 18,
+        "blockedUpgrades": 6,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 0
+      }
+    }
+  ],
+  "providers": [
+    {
+      "artifact": 14138963484,
+      "status": "passed",
+      "sourceCommit": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "checks": [
+        "bucket-retention-policy",
+        "private-publication-and-readback",
+        "anonymous-access-denial",
+        "authenticated-download-and-encrypted-restore",
+        "paginated-complete-catalog-and-pending-cleanup",
+        "retention-and-deletion",
+        "complete-app-provider-fixture",
+        "operator-provider-catalog",
+        "catalog-source-preparation",
+        "catalog-confirmation-and-private-release",
+        "provider-restore-session-revocation-and-outcome",
+        "provider-restored-content-and-current-passkey"
+      ],
+      "cleanup": "complete",
+      "archiveBytes": 663,
+      "supervisedRestore": {
+        "status": "passed",
+        "checks": [
+          "complete-app-provider-fixture",
+          "operator-provider-catalog",
+          "catalog-source-preparation",
+          "catalog-confirmation-and-private-release",
+          "provider-restore-session-revocation-and-outcome",
+          "provider-restored-content-and-current-passkey"
+        ],
+        "runtime": "real-app-child-process",
+        "imagePolicy": "synthetic-fixture",
+        "localCleanup": "safe",
+        "archiveBytes": 12345,
+        "sourceSha256": "85f79714db1a26f9298a8c222ac64955cb458f78c0a8b93d97e9fdb52e8efc59"
+      },
+      "durationMs": 17743
+    }
+  ],
+  "callbacks": [
+    {
+      "artifact": 14139019550,
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "role": "baselineObservation",
+      "preset": "desktop",
+      "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "attempt": 0,
+      "complete": true,
+      "passed": true,
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      },
+      "evidenceFailures": [],
+      "candidateViolations": [
+        "cursor pending high-water 7341 exceeds 4.",
+        "cursor retains callbacks at/after editor disposal.",
+        "cursor fires or installs callbacks after editor disposal.",
+        "zoom-update pending high-water 1669 exceeds 1."
+      ],
+      "caps": {
+        "cursor": 4,
+        "zoom-init": 1,
+        "zoom-update": 1
+      },
+      "ledger": 37754,
+      "phaseAtUs": {
+        "beforeMount": 946709626,
+        "inputStart": 947862828,
+        "finalKey": 1013521114,
+        "disposed": 1017889132,
+        "end": 1019092670
+      },
+      "mainThreadTaskKeys": [
+        "count",
+        "sumMs",
+        "unionMs",
+        "maxMs",
+        "instantaneousEvents",
+        "boundaryEvents",
+        "postInput",
+        "postDisposal",
+        "spans"
+      ],
+      "rawKeydown": 2086,
+      "rawKeyToFrame": 2086,
+      "harnessBindings": 0,
+      "traceRead": {
+        "sourceEvents": 1010886,
+        "retainedEvents": 1010886,
+        "callbackEvents": 219747,
+        "uncompressedBytes": 658584734,
+        "uncompressedSha256": "eed5d2ed5c1d0fb3592448ecbcd406b9f328ac50f9dcfc72737d09e1a5486a18",
+        "maxEventBytes": 18371
+      }
+    },
+    {
+      "artifact": 14139019550,
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "role": "candidate",
+      "preset": "desktop",
+      "source": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "attempt": 0,
+      "complete": true,
+      "passed": true,
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      },
+      "evidenceFailures": [],
+      "candidateViolations": [],
+      "caps": {
+        "cursor": 4,
+        "zoom-init": 1,
+        "zoom-update": 1
+      },
+      "ledger": 30465,
+      "phaseAtUs": {
+        "beforeMount": 1079271560,
+        "inputStart": 1080483812,
+        "finalKey": 1115709077,
+        "disposed": 1120631783,
+        "end": 1121834900
+      },
+      "mainThreadTaskKeys": [
+        "count",
+        "sumMs",
+        "unionMs",
+        "maxMs",
+        "instantaneousEvents",
+        "boundaryEvents",
+        "postInput",
+        "postDisposal",
+        "spans"
+      ],
+      "rawKeydown": 2086,
+      "rawKeyToFrame": 2086,
+      "harnessBindings": 16,
+      "traceRead": {
+        "sourceEvents": 994441,
+        "retainedEvents": 994441,
+        "callbackEvents": 232244,
+        "uncompressedBytes": 666886253,
+        "uncompressedSha256": "e1a71b59609586ccb60a839a44d7c16c05a955f0aff2ef984d583505d96c08ef",
+        "maxEventBytes": 18372
+      }
+    },
+    {
+      "artifact": 14138314242,
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "role": "baselineObservation",
+      "preset": "mobile",
+      "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "attempt": 0,
+      "complete": true,
+      "passed": true,
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      },
+      "evidenceFailures": [],
+      "candidateViolations": [
+        "cursor pending high-water 8348 exceeds 4.",
+        "cursor retains callbacks at/after editor disposal.",
+        "cursor fires or installs callbacks after editor disposal.",
+        "zoom-update pending high-water 2085 exceeds 1."
+      ],
+      "caps": {
+        "cursor": 4,
+        "zoom-init": 1,
+        "zoom-update": 1
+      },
+      "ledger": 35758,
+      "phaseAtUs": {
+        "beforeMount": 72163281,
+        "inputStart": 74537388,
+        "finalKey": 282377440,
+        "disposed": 291636999,
+        "end": 292842070
+      },
+      "mainThreadTaskKeys": [
+        "count",
+        "sumMs",
+        "unionMs",
+        "maxMs",
+        "instantaneousEvents",
+        "boundaryEvents",
+        "postInput",
+        "postDisposal",
+        "spans"
+      ],
+      "rawKeydown": 2086,
+      "rawKeyToFrame": 2086,
+      "harnessBindings": 0,
+      "traceRead": {
+        "sourceEvents": 937335,
+        "retainedEvents": 937335,
+        "callbackEvents": 167573,
+        "uncompressedBytes": 588882343,
+        "uncompressedSha256": "b4c7251d0cb2a99ff5db823bf65f07ab8b5f15c9525ba37035681da755484538",
+        "maxEventBytes": 17410
+      }
+    },
+    {
+      "artifact": 14138314242,
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "role": "candidate",
+      "preset": "mobile",
+      "source": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "attempt": 0,
+      "complete": true,
+      "passed": true,
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      },
+      "evidenceFailures": [],
+      "candidateViolations": [],
+      "caps": {
+        "cursor": 4,
+        "zoom-init": 1,
+        "zoom-update": 1
+      },
+      "ledger": 29522,
+      "phaseAtUs": {
+        "beforeMount": 354502716,
+        "inputStart": 357434072,
+        "finalKey": 481276112,
+        "disposed": 490850622,
+        "end": 492055089
+      },
+      "mainThreadTaskKeys": [
+        "count",
+        "sumMs",
+        "unionMs",
+        "maxMs",
+        "instantaneousEvents",
+        "boundaryEvents",
+        "postInput",
+        "postDisposal",
+        "spans"
+      ],
+      "rawKeydown": 2086,
+      "rawKeyToFrame": 2086,
+      "harnessBindings": 16,
+      "traceRead": {
+        "sourceEvents": 967004,
+        "retainedEvents": 967004,
+        "callbackEvents": 186534,
+        "uncompressedBytes": 605540822,
+        "uncompressedSha256": "6ad7ba23a10defaefad9cf48726754da00d478943edbe8842c6c92b315be7f60",
+        "maxEventBytes": 16127
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "artifact": 14139019550,
+      "member": "test-results/spn113-comparison-desktop.json",
+      "preset": "desktop",
+      "accepted": true,
+      "failures": [],
+      "mode": "paired",
+      "timing": "Traced callback observations are descriptive; unchanged unprofiled SPN-108 gates remain required.",
+      "baselineSource": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "candidateSource": "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+    },
+    {
+      "artifact": 14138314242,
+      "member": "test-results/spn113-comparison-mobile.json",
+      "preset": "mobile",
+      "accepted": true,
+      "failures": [],
+      "mode": "paired",
+      "timing": "Traced callback observations are descriptive; unchanged unprofiled SPN-108 gates remain required.",
+      "baselineSource": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "candidateSource": "9b48767d1effc0aeb55f6020d8676427d74f7d9f"
+    }
+  ],
+  "aggregates": [
+    {
+      "artifact": 14139074793,
+      "member": "ci-results-lib.json",
+      "data": {
+        "passed": true,
+        "evidence": {
+          "planSha256": "c3fcde43efc4ebbb977a8797dcb7383e1cf846b6f3a51785a88bdddbc6e4c537",
+          "plan": {
+            "version": 1,
+            "event": "pull_request",
+            "action": "synchronize",
+            "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+            "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+            "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+            "mode": "full",
+            "labels": [],
+            "paths": null,
+            "suites": {
+              "backlog": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "pull-request": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "lint": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "typecheck": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "unit-tests": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "lib-test-run": {
+                "selected": true,
+                "dependencies": [
+                  "lib/**",
+                  "scripts/dependencies/**",
+                  "package{,-lock}.json",
+                  "vitest.config.ts",
+                  "tsconfig.json",
+                  ".nvmrc",
+                  ".github/workflows/ci.yml"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "playwright-run": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "container-smoke": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "restore-timing": {
+                "selected": true,
+                "dependencies": [
+                  "server/**",
+                  "src/{server,shared}/**",
+                  "lib/**",
+                  "web/** and src/ui/** (shared application/authentication bundle)",
+                  "e2e restore/shared helpers (doc-touch, doc-touch-raster, native-sheet-value)",
+                  "runtime/build/dependency/workflow inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "sync-transition": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "doc-responsiveness": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "doc-callback-lifetimes": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "responsiveness-baseline": {
+                "selected": true,
+                "dependencies": [
+                  "web/**",
+                  "server/**",
+                  "lib/**",
+                  "e2e/**",
+                  "src/shared/**",
+                  "src/server/{sync,history,collaboration}/**",
+                  "scripts/{ci,dependencies,sync-transition}/**",
+                  "build/runtime/dependency/workflow configuration"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "callback-baseline": {
+                "selected": true,
+                "dependencies": [
+                  "web/**",
+                  "server/**",
+                  "lib/**",
+                  "e2e/**",
+                  "src/shared/**",
+                  "src/server/{sync,history,collaboration}/**",
+                  "scripts/{ci,dependencies,sync-transition}/**",
+                  "build/runtime/dependency/workflow configuration"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "phone-compatibility": {
+                "selected": true,
+                "dependencies": [
+                  "full plan backstop; ordinary phone owners remain in routine browser coverage"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              }
+            }
+          },
+          "gateResults": {},
+          "results": [
+            {
+              "suite": "lib-test-run",
+              "selected": true,
+              "dependencies": [
+                "lib/**",
+                "scripts/dependencies/**",
+                "package{,-lock}.json",
+                "vitest.config.ts",
+                "tsconfig.json",
+                ".nvmrc",
+                ".github/workflows/ci.yml"
+              ],
+              "inputs": [],
+              "reason": "Immutable range or event labels unavailable; full coverage.",
+              "result": "success"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "artifact": 14138568771,
+      "member": "ci-results-unit.json",
+      "data": {
+        "passed": true,
+        "evidence": {
+          "planSha256": "c3fcde43efc4ebbb977a8797dcb7383e1cf846b6f3a51785a88bdddbc6e4c537",
+          "plan": {
+            "version": 1,
+            "event": "pull_request",
+            "action": "synchronize",
+            "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+            "head": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+            "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+            "mode": "full",
+            "labels": [],
+            "paths": null,
+            "suites": {
+              "backlog": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "pull-request": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "lint": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "typecheck": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "unit-tests": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "lib-test-run": {
+                "selected": true,
+                "dependencies": [
+                  "lib/**",
+                  "scripts/dependencies/**",
+                  "package{,-lock}.json",
+                  "vitest.config.ts",
+                  "tsconfig.json",
+                  ".nvmrc",
+                  ".github/workflows/ci.yml"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "playwright-run": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "container-smoke": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "restore-timing": {
+                "selected": true,
+                "dependencies": [
+                  "server/**",
+                  "src/{server,shared}/**",
+                  "lib/**",
+                  "web/** and src/ui/** (shared application/authentication bundle)",
+                  "e2e restore/shared helpers (doc-touch, doc-touch-raster, native-sheet-value)",
+                  "runtime/build/dependency/workflow inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "sync-transition": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "doc-responsiveness": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "doc-callback-lifetimes": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "responsiveness-baseline": {
+                "selected": true,
+                "dependencies": [
+                  "web/**",
+                  "server/**",
+                  "lib/**",
+                  "e2e/**",
+                  "src/shared/**",
+                  "src/server/{sync,history,collaboration}/**",
+                  "scripts/{ci,dependencies,sync-transition}/**",
+                  "build/runtime/dependency/workflow configuration"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "callback-baseline": {
+                "selected": true,
+                "dependencies": [
+                  "web/**",
+                  "server/**",
+                  "lib/**",
+                  "e2e/**",
+                  "src/shared/**",
+                  "src/server/{sync,history,collaboration}/**",
+                  "scripts/{ci,dependencies,sync-transition}/**",
+                  "build/runtime/dependency/workflow configuration"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "phone-compatibility": {
+                "selected": true,
+                "dependencies": [
+                  "full plan backstop; ordinary phone owners remain in routine browser coverage"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              }
+            }
+          },
+          "gateResults": {},
+          "results": [
+            {
+              "suite": "unit-tests",
+              "selected": true,
+              "dependencies": [
+                "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+              ],
+              "inputs": [],
+              "reason": "Immutable range or event labels unavailable; full coverage.",
+              "result": "success"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "artifact": 14140102898,
+      "member": "ci-results-browser.json",
+      "data": {
+        "passed": false,
+        "evidence": {
+          "planSha256": "c3fcde43efc4ebbb977a8797dcb7383e1cf846b6f3a51785a88bdddbc6e4c537",
+          "error": "Error: Incomplete coverage playwright-run: selected=true, result=failure",
+          "results": "{\"backlog\":\"success\",\"pull-request\":\"success\",\"lint\":\"success\",\"typecheck\":\"success\",\"unit-tests\":\"success\",\"lib-test-run\":\"success\",\"playwright-run\":\"failure\",\"container-smoke\":\"success\",\"restore-timing\":\"success\",\"sync-transition\":\"success\",\"doc-responsiveness\":\"success\",\"doc-callback-lifetimes\":\"success\"}"
+        }
+      }
+    }
+  ],
+  "readerPreparationCorrection": "Reader adapted the prior source-independent raw-artifact audit to exact d22 source/base/tested/run identities and uses immutable Git objects; no source/runtime mutation.",
+  "pending": "New exact-source outcomes require separate17-case receipt, supervised trace-owner and all selected owner audits. Original628d failures remain historical; no merge approval from pending work."
+}

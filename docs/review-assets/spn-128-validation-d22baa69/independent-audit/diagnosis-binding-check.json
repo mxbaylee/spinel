@@ -1,0 +1,17 @@
+{
+  "at": "2026-11-15T00:52:33.633Z",
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "passed": true,
+  "sourceFiles": 16,
+  "originalCopyBindings": [
+    {
+      "path": "/tmp/spn128-terminal-d22baa69/audit-output/development-first-failure.json",
+      "copy": "independent-development-first-failure.json",
+      "sha256": "9b2e4bba33fb7bdc8dfe32363a396c36b131656eb40c030dd0e6f7e1a69daf29",
+      "bytes": 10352
+    }
+  ],
+  "provenanceSha256": "b1d6d8bc617cdd26156cda8342b0d646274106da4530f0af5d54f04ab4980b4f",
+  "limits": "Independently verifies exact source equality and original copy custody; does not establish runtime cause or waive original failure."
+}

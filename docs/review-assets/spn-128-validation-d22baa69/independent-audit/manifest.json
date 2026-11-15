@@ -1,0 +1,294 @@
+{
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "verdict": "NOT_ACCEPTED",
+  "files": [
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/original-audit-artifact-inventory.json",
+      "retainedPath": "independent-audit/initial-artifact-inventory.json",
+      "originalBytes": 812278,
+      "originalSha256": "de4e2b4065d470ffdd323024b49c6b9a5bf3374dd28a067ee46190b1e75f6c11",
+      "retainedBytes": 812278,
+      "retainedSha256": "de4e2b4065d470ffdd323024b49c6b9a5bf3374dd28a067ee46190b1e75f6c11",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/audit/acceptance-audit.ts",
+      "retainedPath": "independent-audit/scripts/acceptance-audit.ts",
+      "originalBytes": 7958,
+      "originalSha256": "ed9bd481897dbc8ac8b7239a82bdc28491693abf2253829ae5bee4dcac947f77",
+      "retainedBytes": 7958,
+      "retainedSha256": "ed9bd481897dbc8ac8b7239a82bdc28491693abf2253829ae5bee4dcac947f77",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/audit/browser-receipts.ts",
+      "retainedPath": "independent-audit/scripts/browser-receipts.ts",
+      "originalBytes": 2530,
+      "originalSha256": "3e64b7093cb819343534bdad14ee3511bbed7e0ae9b072fd023e85c907c03485",
+      "retainedBytes": 2530,
+      "retainedSha256": "3e64b7093cb819343534bdad14ee3511bbed7e0ae9b072fd023e85c907c03485",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/audit/callback-numerics.ts",
+      "retainedPath": "independent-audit/scripts/callback-numerics.ts",
+      "originalBytes": 4243,
+      "originalSha256": "bd5eab97ca04dc80e2dec4026663825cbdf9250ecf8f9c2315ffe3024b3add49",
+      "retainedBytes": 4243,
+      "retainedSha256": "bd5eab97ca04dc80e2dec4026663825cbdf9250ecf8f9c2315ffe3024b3add49",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/audit/crash-receipts.ts",
+      "retainedPath": "independent-audit/scripts/crash-receipts.ts",
+      "originalBytes": 11245,
+      "originalSha256": "462327af7615859c05822e4f72a43138429183a73f6dfb12baac7c3af08c2eaf",
+      "retainedBytes": 11245,
+      "retainedSha256": "462327af7615859c05822e4f72a43138429183a73f6dfb12baac7c3af08c2eaf",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/audit/development-failure.ts",
+      "retainedPath": "independent-audit/scripts/development-failure.ts",
+      "originalBytes": 3627,
+      "originalSha256": "569d3daf860565e2582f4e01add9f875490be4d49063fb79dd42f504bf0e4fb9",
+      "retainedBytes": 3627,
+      "retainedSha256": "569d3daf860565e2582f4e01add9f875490be4d49063fb79dd42f504bf0e4fb9",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/audit/harness-overlays.ts",
+      "retainedPath": "independent-audit/scripts/harness-overlays.ts",
+      "originalBytes": 1835,
+      "originalSha256": "cc80f3171144385aa29b140f8b1e77c73cd3c8417c341d91605893e4f1d4da17",
+      "retainedBytes": 1835,
+      "retainedSha256": "cc80f3171144385aa29b140f8b1e77c73cd3c8417c341d91605893e4f1d4da17",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/audit/identity.ts",
+      "retainedPath": "independent-audit/scripts/identity.ts",
+      "originalBytes": 2586,
+      "originalSha256": "45973e14438882d640a08a2ad7b079a26d034b503ece516bdc26cd1b390ca2c5",
+      "retainedBytes": 2586,
+      "retainedSha256": "45973e14438882d640a08a2ad7b079a26d034b503ece516bdc26cd1b390ca2c5",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/audit/linux-audit.ts",
+      "retainedPath": "independent-audit/scripts/linux-audit.ts",
+      "originalBytes": 3354,
+      "originalSha256": "8eda7f08135ff712794d1ff76a61a59526b3bd4188ca7b4cdebf4ee4160e7087",
+      "retainedBytes": 3354,
+      "retainedSha256": "8eda7f08135ff712794d1ff76a61a59526b3bd4188ca7b4cdebf4ee4160e7087",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/audit/metrics-audit.ts",
+      "retainedPath": "independent-audit/scripts/metrics-audit.ts",
+      "originalBytes": 6967,
+      "originalSha256": "dc70a5de36615e8ce910e6f00ee194aabfe840d887234d8c0cf777f7a5d2e8d7",
+      "retainedBytes": 6967,
+      "retainedSha256": "dc70a5de36615e8ce910e6f00ee194aabfe840d887234d8c0cf777f7a5d2e8d7",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/audit/responsiveness-budgets.ts",
+      "retainedPath": "independent-audit/scripts/responsiveness-budgets.ts",
+      "originalBytes": 3506,
+      "originalSha256": "41633155e9e5c0c5c0838168ee34278563322df9076c414e0227731e42f09b65",
+      "retainedBytes": 3506,
+      "retainedSha256": "41633155e9e5c0c5c0838168ee34278563322df9076c414e0227731e42f09b65",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/audit/skip-owners.ts",
+      "retainedPath": "independent-audit/scripts/skip-owners.ts",
+      "originalBytes": 1800,
+      "originalSha256": "f3e4846310fc3579518163b7e49615aedd9566e3cdb6ef0d5c17b514448c06c7",
+      "retainedBytes": 1800,
+      "retainedSha256": "f3e4846310fc3579518163b7e49615aedd9566e3cdb6ef0d5c17b514448c06c7",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/audit/supervised-trace-owner.ts",
+      "retainedPath": "independent-audit/scripts/supervised-trace-owner.ts",
+      "originalBytes": 5697,
+      "originalSha256": "81850d1b0adcdd8d654e638130b34da11b1999a303a4ec674a3cace7d0253a3d",
+      "retainedBytes": 5697,
+      "retainedSha256": "81850d1b0adcdd8d654e638130b34da11b1999a303a4ec674a3cace7d0253a3d",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/audit/terminal-audit.ts",
+      "retainedPath": "independent-audit/scripts/terminal-audit.ts",
+      "originalBytes": 6356,
+      "originalSha256": "c7ed79de7e16a4b44c8678e21f032008c048b38278b5e357ec88b2b9940b7a8e",
+      "retainedBytes": 6356,
+      "retainedSha256": "c7ed79de7e16a4b44c8678e21f032008c048b38278b5e357ec88b2b9940b7a8e",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-publication-d22baa69/audit/workflow-audit.ts",
+      "retainedPath": "independent-audit/scripts/workflow-audit.ts",
+      "originalBytes": 8924,
+      "originalSha256": "3918b917c11b02509c98f44f53a01e1f64cb4eb6c46570c0ad697f16ecf7cd48",
+      "retainedBytes": 8924,
+      "retainedSha256": "3918b917c11b02509c98f44f53a01e1f64cb4eb6c46570c0ad697f16ecf7cd48",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/independent-terminal-audit.json",
+      "retainedPath": "independent-audit/independent-terminal-audit.json",
+      "originalBytes": 70896,
+      "originalSha256": "2b26776ccb1cb925c949540753c4145083089d31658a626ac60570e2e7bc4238",
+      "retainedBytes": 70896,
+      "retainedSha256": "2b26776ccb1cb925c949540753c4145083089d31658a626ac60570e2e7bc4238",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/audit-output/crash-receipts-reader-overstrict-grant.json",
+      "retainedPath": "independent-audit/crash-receipts-reader-overstrict-grant.json",
+      "originalBytes": 109684,
+      "originalSha256": "0472521eff535b727a5bad7f8e5c188ca5a73f79862e6b6bf7892231c9a4a150",
+      "retainedBytes": 109684,
+      "retainedSha256": "0472521eff535b727a5bad7f8e5c188ca5a73f79862e6b6bf7892231c9a4a150",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/audit-output/crash-receipts.json",
+      "retainedPath": "independent-audit/crash-receipts.json",
+      "originalBytes": 126777,
+      "originalSha256": "ae4408c9e5276cb083b42baee87f0faa0bc6da8596b1f27600a82009e182b8e0",
+      "retainedBytes": 126777,
+      "retainedSha256": "ae4408c9e5276cb083b42baee87f0faa0bc6da8596b1f27600a82009e182b8e0",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/audit-output/development-first-failure.json",
+      "retainedPath": "independent-audit/development-first-failure.json",
+      "originalBytes": 10352,
+      "originalSha256": "9b2e4bba33fb7bdc8dfe32363a396c36b131656eb40c030dd0e6f7e1a69daf29",
+      "retainedBytes": 10352,
+      "retainedSha256": "9b2e4bba33fb7bdc8dfe32363a396c36b131656eb40c030dd0e6f7e1a69daf29",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/audit-output/diagnosis-binding-check.json",
+      "retainedPath": "independent-audit/diagnosis-binding-check.json",
+      "originalBytes": 726,
+      "originalSha256": "8b644b4a40ae138f84398f7d83899733b2e1beda8876a6ea3fa0d32b44c46d60",
+      "retainedBytes": 726,
+      "retainedSha256": "8b644b4a40ae138f84398f7d83899733b2e1beda8876a6ea3fa0d32b44c46d60",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/audit-output/linux-audit.json",
+      "retainedPath": "independent-audit/linux-audit.json",
+      "originalBytes": 64580,
+      "originalSha256": "d239fa40d8f55093815a0077b2300d191c63ed33a2867b24c6881d3fff6c7f1c",
+      "retainedBytes": 64580,
+      "retainedSha256": "d239fa40d8f55093815a0077b2300d191c63ed33a2867b24c6881d3fff6c7f1c",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/audit-output/sized-restore-memory-disposition.json",
+      "retainedPath": "independent-audit/sized-restore-memory-disposition.json",
+      "originalBytes": 2278,
+      "originalSha256": "d57ba8534fce1862b349b1cc3767bbd96ce7f6c4e0b40692721007f215565336",
+      "retainedBytes": 2278,
+      "retainedSha256": "d57ba8534fce1862b349b1cc3767bbd96ce7f6c4e0b40692721007f215565336",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/audit-output/spn128-independent-acceptance-partial.json",
+      "retainedPath": "independent-audit/spn128-independent-acceptance-partial.json",
+      "originalBytes": 59225,
+      "originalSha256": "624f5b0ce87892be59a10b5edad5adbb6869198d6e03f641ff515a531f0a58d8",
+      "retainedBytes": 59225,
+      "retainedSha256": "624f5b0ce87892be59a10b5edad5adbb6869198d6e03f641ff515a531f0a58d8",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/audit-output/spn128-independent-browser-receipts.json",
+      "retainedPath": "independent-audit/spn128-independent-browser-receipts.json",
+      "originalBytes": 67243,
+      "originalSha256": "1ad6f33981b411c4115b098067ccf7e0318eb8118b6217dab043c55748a1ccc4",
+      "retainedBytes": 67243,
+      "retainedSha256": "1ad6f33981b411c4115b098067ccf7e0318eb8118b6217dab043c55748a1ccc4",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/audit-output/spn128-independent-callback-numerics.json",
+      "retainedPath": "independent-audit/spn128-independent-callback-numerics.json",
+      "originalBytes": 12200,
+      "originalSha256": "8d7566135d85fec68402fc391cee748ad3ed538c433ef1bc21cb306640ff5473",
+      "retainedBytes": 12200,
+      "retainedSha256": "8d7566135d85fec68402fc391cee748ad3ed538c433ef1bc21cb306640ff5473",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/audit-output/spn128-independent-harness-overlays.json",
+      "retainedPath": "independent-audit/spn128-independent-harness-overlays.json",
+      "originalBytes": 17973,
+      "originalSha256": "014ec2c218b440d03237f0fb491f09ae3473fe41c4cc8d725f09fa21a23a0260",
+      "retainedBytes": 17973,
+      "retainedSha256": "014ec2c218b440d03237f0fb491f09ae3473fe41c4cc8d725f09fa21a23a0260",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/audit-output/spn128-independent-metrics-audit.json",
+      "retainedPath": "independent-audit/spn128-independent-metrics-audit.json",
+      "originalBytes": 164206,
+      "originalSha256": "5969b49c48c141e78d923e25e7296f19a3adec90146c3e60a4c253c027c7d0d3",
+      "retainedBytes": 164206,
+      "retainedSha256": "5969b49c48c141e78d923e25e7296f19a3adec90146c3e60a4c253c027c7d0d3",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/audit-output/spn128-independent-responsiveness-budgets.json",
+      "retainedPath": "independent-audit/spn128-independent-responsiveness-budgets.json",
+      "originalBytes": 7099,
+      "originalSha256": "7237df07af9cfaa5ee939c20829ee252065fa9d78681a91c75c19774d43ebba5",
+      "retainedBytes": 7099,
+      "retainedSha256": "7237df07af9cfaa5ee939c20829ee252065fa9d78681a91c75c19774d43ebba5",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/audit-output/spn128-independent-skip-owners.json",
+      "retainedPath": "independent-audit/spn128-independent-skip-owners.json",
+      "originalBytes": 3070,
+      "originalSha256": "b6c98e7db7989b71919b3b730518829a0a21747facde70a22cee600166c1d2b7",
+      "retainedBytes": 3070,
+      "retainedSha256": "b6c98e7db7989b71919b3b730518829a0a21747facde70a22cee600166c1d2b7",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/audit-output/spn128-independent-workflow-audit.json",
+      "retainedPath": "independent-audit/spn128-independent-workflow-audit.json",
+      "originalBytes": 46578,
+      "originalSha256": "28960de0d970bccf8cae4cdf0d9a520c255504c64472948c01461a44eb4d5e77",
+      "retainedBytes": 46578,
+      "retainedSha256": "28960de0d970bccf8cae4cdf0d9a520c255504c64472948c01461a44eb4d5e77",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/audit-output/supervised-trace-owner.json",
+      "retainedPath": "independent-audit/supervised-trace-owner.json",
+      "originalBytes": 9054,
+      "originalSha256": "d0637a7a7248b19ea4cb4d226f1249e4c60c7fdfceb9ec24a3b8be66e9fe52f2",
+      "retainedBytes": 9054,
+      "retainedSha256": "d0637a7a7248b19ea4cb4d226f1249e4c60c7fdfceb9ec24a3b8be66e9fe52f2",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-d22baa69/audit-output/unchanged-budget-source.json",
+      "retainedPath": "independent-audit/unchanged-budget-source.json",
+      "originalBytes": 1258,
+      "originalSha256": "6ee6583a66fcb6f0d29a708761ba2809b39c06d27bfad81adbca0aee859bd579",
+      "retainedBytes": 1258,
+      "retainedSha256": "6ee6583a66fcb6f0d29a708761ba2809b39c06d27bfad81adbca0aee859bd579",
+      "encoding": "original-file-bytes"
+    }
+  ]
+}

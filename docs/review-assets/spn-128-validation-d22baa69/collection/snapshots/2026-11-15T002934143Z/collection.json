@@ -1,0 +1,626 @@
+{
+  "at": "2026-11-15T00:29:48.610Z",
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "snapshot": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z",
+  "readOnly": true,
+  "workflows": [
+    {
+      "kind": "ci",
+      "id": 43658210882,
+      "attempt": 1,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "status": "queued",
+      "conclusion": null,
+      "jobs": [
+        {
+          "id": 132641431814,
+          "name": "Pull request",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132641431921,
+          "name": "Classify changes (43658210882)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132641633557,
+          "name": "Lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132641633574,
+          "name": "Backlog",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132641633580,
+          "name": "Sized restore acceptance",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641633583,
+          "name": "Container smoke",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641633589,
+          "name": "Doc callback lifetimes (mobile)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641633590,
+          "name": "Lib tests (remaining)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641633593,
+          "name": "Unit tests (supervisor)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641633600,
+          "name": "Lib tests (mixed-fuzz)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641633604,
+          "name": "Lib tests (dense-cells)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641633607,
+          "name": "Doc responsiveness (desktop)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641633609,
+          "name": "Unit tests (recovery)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641633619,
+          "name": "Lib tests (cells)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641633629,
+          "name": "Retained sync transition",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132641633632,
+          "name": "Typecheck",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132641633653,
+          "name": "Unit tests (remaining)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641633662,
+          "name": "Doc callback lifetimes (desktop)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132641633687,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641633694,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641633696,
+          "name": "Doc responsiveness (mobile)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132641633704,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641633711,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641633713,
+          "name": "Playwright smoke (sync-development)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641633719,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132641633724,
+          "name": "Playwright smoke (mobile-https)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132641633726,
+          "name": "Playwright smoke (sync-production)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132641633735,
+          "name": "Playwright smoke (offline-upgrade)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132641633778,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132641633828,
+          "name": "Playwright smoke (supervised-restore)",
+          "status": "queued",
+          "conclusion": null
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14138823787,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzODgyMzc4Nw==",
+          "name": "ci-plan",
+          "size_in_bytes": 949,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14138823787",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14138823787/zip",
+          "expired": false,
+          "digest": "sha256:314f46ce2e16657561dda5d0433b8be4893c6caa8ab7a2bd9182fd1cfc227b73",
+          "created_at": "2026-11-15T00:27:42Z",
+          "updated_at": "2026-11-15T00:27:42Z",
+          "expires_at": "2026-12-15T00:27:42Z",
+          "workflow_run": {
+            "id": 43658210882,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-128-original-recovery",
+            "head_sha": "d22baa6997e27c123ef351a8f5321089cc9e345b"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "storybook",
+      "id": 43658210918,
+      "attempt": 1,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "status": "queued",
+      "conclusion": null,
+      "jobs": [
+        {
+          "id": 132641431585,
+          "name": "Classify changes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132641635427,
+          "name": "Build Storybook",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132641877745,
+          "name": "Review Storybook tablet",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132641877747,
+          "name": "Review Storybook mobile (dark)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641877766,
+          "name": "Review Storybook desktop (light)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132641877778,
+          "name": "Review Storybook desktop (dark)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132641877797,
+          "name": "Review Storybook mobile (light)",
+          "status": "queued",
+          "conclusion": null
+        },
+        {
+          "id": 132641879448,
+          "name": "Publish PR preview to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14138334893,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzODMzNDg5Mw==",
+          "name": "storybook-review",
+          "size_in_bytes": 6267317,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14138334893",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14138334893/zip",
+          "expired": false,
+          "digest": "sha256:b8228bf942168e52c09bf3e14a0ec00d71fb04890690980371bcc119e8143789",
+          "created_at": "2026-11-15T00:28:42Z",
+          "updated_at": "2026-11-15T00:28:42Z",
+          "expires_at": "2026-11-22T00:28:40Z",
+          "workflow_run": {
+            "id": 43658210918,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-128-original-recovery",
+            "head_sha": "d22baa6997e27c123ef351a8f5321089cc9e345b"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "desktop",
+      "id": 43658210825,
+      "attempt": 1,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "status": "in_progress",
+      "conclusion": null,
+      "jobs": [
+        {
+          "id": 132641431388,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641431531,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641431546,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "status": "in_progress",
+          "conclusion": null
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14138128758,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzODEyODc1OA==",
+          "name": "desktop-offline-chrome-macos-26-43658210825-1",
+          "size_in_bytes": 222936,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14138128758",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14138128758/zip",
+          "expired": false,
+          "digest": "sha256:1569ed8ec954d11e6226a729efbc08e07adb10c7eb82a4ab7c00f2baa1576988",
+          "created_at": "2026-11-15T00:29:43Z",
+          "updated_at": "2026-11-15T00:29:43Z",
+          "expires_at": "2026-11-29T00:29:41Z",
+          "workflow_run": {
+            "id": 43658210825,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-128-original-recovery",
+            "head_sha": "d22baa6997e27c123ef351a8f5321089cc9e345b"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "spaces",
+      "id": 43658210985,
+      "attempt": 1,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 132641431911,
+          "name": "🦈 DigitalOcean Spaces",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "artifacts": [
+        {
+          "id": 14138963484,
+          "node_id": "MDg6QXJ0aWZhY3QxNDEzODk2MzQ4NA==",
+          "name": "spaces-acceptance",
+          "size_in_bytes": 669,
+          "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14138963484",
+          "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14138963484/zip",
+          "expired": false,
+          "digest": "sha256:84d69734f1d812372ba711e68dc7a44b14118f6aba537d2437ed1a9452f36b12",
+          "created_at": "2026-11-15T00:27:50Z",
+          "updated_at": "2026-11-15T00:27:50Z",
+          "expires_at": "2026-11-29T00:27:50Z",
+          "workflow_run": {
+            "id": 43658210985,
+            "repository_id": 1423484121,
+            "head_repository_id": 1423484121,
+            "head_branch": "codex/spn-128-original-recovery",
+            "head_sha": "d22baa6997e27c123ef351a8f5321089cc9e345b"
+          }
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "files": [
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/source-commit.json.gz",
+      "bytes": 16647,
+      "sha256": "693de2708856b74861718f7439c16eb9a9f50e847fa1422166b7baa072d2b7c9",
+      "rawBytes": 147821,
+      "rawSha256": "21548838add4366b93e9badfcd0f78284665445b81014b360c210870fab9f0e5"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/all-source-runs.json.gz",
+      "bytes": 2390,
+      "sha256": "1794eb2f598ba0eab41bc928e262a5b24dc6df4612ba2159abd1654582bab689",
+      "rawBytes": 48916,
+      "rawSha256": "ab5f79b873e0556a76f97a2c1ccf7055e011e8e6f3a20790b0fab8db772a9627"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/check-runs.json.gz",
+      "bytes": 5086,
+      "sha256": "6a20d9dc17f69486cdacb1aa3498c05944071e523c1799b18c02d950e51297df",
+      "rawBytes": 146609,
+      "rawSha256": "87cda4abc74ccb775adad286c459d25643e2c646af0f346eed93c033e2272e8f"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/pr.json.gz",
+      "bytes": 9225,
+      "sha256": "8472ad0fb3d3f652cbd2ea8b8b22abae3a3f528b284ca3b2555f1482dac61838",
+      "rawBytes": 33167,
+      "rawSha256": "f51349d82b48f0e68f799c050703e31f22e30a5d5aebbdf79e52a946aba00b4b"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/observed-pr-body.md.gz",
+      "bytes": 7344,
+      "sha256": "22dd686ec1ca08e541432c7d248ef617c2275a97b8d7fca6c5a28a3a42683f77",
+      "rawBytes": 17709,
+      "rawSha256": "29196bbb79765cb80271a8a05247b54fc4de543a2fd02f3d896586cfbccea9f7"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/observed-merge-commit.json.gz",
+      "bytes": 138392,
+      "sha256": "838b5d7f2e14b11a952927384cd4db56fcf9ce7346ab3cfe8558e2bf8dd525db",
+      "rawBytes": 705700,
+      "rawSha256": "d0cf81452e88dcc39f1b596cd0ea0a0ecc13cd084e925641c66e6f0608936a32"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/artifacts-ci.json.gz",
+      "bytes": 434,
+      "sha256": "673f5d19878970fcf4e8fa8cd393a99bbebf07fdec75a359cd007ebc5ed08950",
+      "rawBytes": 723,
+      "rawSha256": "d8046129fc6457e2215f58980cea7f9eb5909d4c400f24365183e3ffa0d70b0d"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/run-ci.json.gz",
+      "bytes": 1662,
+      "sha256": "80ddf4541b587d8f5034b6182f37c6986dce0947553831de06fec21689a21aff",
+      "rawBytes": 12198,
+      "rawSha256": "4c79a4fe05614164fa5569404cde24def85a6f4ca6e5702e277137e71dd00821"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/jobs-ci-attempt-1.json.gz",
+      "bytes": 4270,
+      "sha256": "63fbf631b35e7001bb37aa4b287621cbb8abd78ee314edeee54b50922d1c8226",
+      "rawBytes": 66884,
+      "rawSha256": "707388b02762b035e88b62f79cb197c76e39335b9893494d4d6352297b1829d0"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641431814.log.gz",
+      "bytes": 9512,
+      "sha256": "32d00dbef039b23b5bccdd5cd3e68d57bcf91138eb1d5ba6cd53ce5732c686f8",
+      "rawBytes": 48586,
+      "rawSha256": "b0a516e70830e3136cddf7a9cdd19938715eba37b6db40bbbc5135d773f0fb71"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641431921.log.gz",
+      "bytes": 11790,
+      "sha256": "46b78cf8ac3b5d89813d2eb387e0470b87c6650d5aed4571195129e9cfd852cd",
+      "rawBytes": 60641,
+      "rawSha256": "6bfc7afcb394789171760c6dcbe005a6dcd709523a0f4979a293944a57ce79b4"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641633557.log.gz",
+      "bytes": 5083,
+      "sha256": "89fd5b854cb42b50eca3c183c1d2361ae18821a9186be5b333ed69da6d3f9e95",
+      "rawBytes": 20338,
+      "rawSha256": "3249040e71bc86b1f1bff0148727956b5250cf24c0271f6aad97bd20489862ce"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641633574.log.gz",
+      "bytes": 4478,
+      "sha256": "51d7ada9317b70583833913c1f9d6d6924163a32e791ca2235451e7546b788f6",
+      "rawBytes": 19297,
+      "rawSha256": "62584268eacb6186b78e26926f4ff4193335daaaf2de3c20895f35bd8b5040fc"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641633629.log.gz",
+      "bytes": 7101,
+      "sha256": "553f241a138131d4b9b69539d891fc4c1075804e4a82a597075a8c1419a6c651",
+      "rawBytes": 37374,
+      "rawSha256": "7d2cf20948f2d78d3e0e2d0bf06b3e61d83de4d4eb3af8b5adc41d37c4a25bf0"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/original-zips/artifact-14138823787.zip",
+      "bytes": 949,
+      "sha256": "314f46ce2e16657561dda5d0433b8be4893c6caa8ab7a2bd9182fd1cfc227b73",
+      "artifact": {
+        "id": 14138823787,
+        "node_id": "MDg6QXJ0aWZhY3QxNDEzODgyMzc4Nw==",
+        "name": "ci-plan",
+        "size_in_bytes": 949,
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14138823787",
+        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14138823787/zip",
+        "expired": false,
+        "digest": "sha256:314f46ce2e16657561dda5d0433b8be4893c6caa8ab7a2bd9182fd1cfc227b73",
+        "created_at": "2026-11-15T00:27:42Z",
+        "updated_at": "2026-11-15T00:27:42Z",
+        "expires_at": "2026-12-15T00:27:42Z",
+        "workflow_run": {
+          "id": 43658210882,
+          "repository_id": 1423484121,
+          "head_repository_id": 1423484121,
+          "head_branch": "codex/spn-128-original-recovery",
+          "head_sha": "d22baa6997e27c123ef351a8f5321089cc9e345b"
+        }
+      }
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/artifacts-storybook.json.gz",
+      "bytes": 447,
+      "sha256": "0402c17db7997d13bcc16f65579b71bf6155a6abb2d87de26cb4aa2e03ece4b8",
+      "rawBytes": 736,
+      "rawSha256": "ded2e36d99b421c8351972e140e65d2ba885f7628bd4db1a53e4cef5cf9970f4"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/run-storybook.json.gz",
+      "bytes": 1667,
+      "sha256": "d3a8fdca518f7e5d5a9ce671051d1cdb78362b751cfac1739cd871cbd5788dc5",
+      "rawBytes": 12212,
+      "rawSha256": "f76cac8be3e99ae16af3af32183f8d0b50a3e7fb798ad9b71c080cfdb703eeb0"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/jobs-storybook-attempt-1.json.gz",
+      "bytes": 1473,
+      "sha256": "e15a7a2726d266a1edbf9f6a708dbfff8e6fb6eb9b7e79470453505c47a65e9c",
+      "rawBytes": 12166,
+      "rawSha256": "2fee8510829ebcb95bb4b8b7befe72422ad2e50e46372a2c381dc3620749ca11"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641431585.log.gz",
+      "bytes": 11239,
+      "sha256": "388634d86640bf3b93b522d39b5d61eb7dec1c48597d1e97eab735d61a0be9ea",
+      "rawBytes": 58761,
+      "rawSha256": "8800c409efb4e5c11d84f54e20dc617f7f5cc9ace3eaf57791392e7bfd87be18"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641635427.log.gz",
+      "bytes": 19307,
+      "sha256": "7eb5ebc457c05e0dd341aa83248005ddd077d8bf731a14009bd4958ba16e6bfa",
+      "rawBytes": 85306,
+      "rawSha256": "afa5edba973ee5b7e7a5164988d48b069c7681e5f234e7de3235d7c0bbfd6a67"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/artifacts-desktop.json.gz",
+      "bytes": 462,
+      "sha256": "48f58fae1d1925fd79d8a6f6bdf65204e58cf57943192fc8cd07465757f8b592",
+      "rawBytes": 764,
+      "rawSha256": "e36d2d3a5424d2299fe9da17bb242c74cfafdc5f731408c2175fd753fe3a25b6"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/run-desktop.json.gz",
+      "bytes": 1673,
+      "sha256": "eb335cac337ae289132ae4bf05d384f0a635b7151394ea3d5236b1b07099d857",
+      "rawBytes": 12228,
+      "rawSha256": "9cdfd5a15202f001bee5e5ecc2e3c092de6341e07565b1c265f60112a37aa19a"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/jobs-desktop-attempt-1.json.gz",
+      "bytes": 1279,
+      "sha256": "fd65d085a1ca18fdc4a082faa26fca68914bc3ee7040227d88587f0f8f0ce5ae",
+      "rawBytes": 9270,
+      "rawSha256": "91b61250c4102da4f73b76bab54f93a9e18b839eb90ab467acf6e48e03e0da6e"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/artifacts-spaces.json.gz",
+      "bytes": 443,
+      "sha256": "9f600f831993ef68d88ac892bdb59e3f4a32bf44a407e94a279ba550e728b146",
+      "rawBytes": 733,
+      "rawSha256": "e1300544a4454b1fed06759e49c4b4a88dcbb5f1d7ba5b20a47516f6b86d5b5b"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/run-spaces.json.gz",
+      "bytes": 1688,
+      "sha256": "20d8804bdf8de5ef73bd4c1b4aad650fdf10e150f14c4ba3b810c365852dbad9",
+      "rawBytes": 12237,
+      "rawSha256": "91f1bb251ff7381919aee3b6a66225775963e2cbcf78ecbb962e5b60605ba3ff"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002934143Z/jobs-spaces-attempt-1.json.gz",
+      "bytes": 807,
+      "sha256": "49d7fd7db22c27fd6e0e78ab8b65a881a5e25cf8f96f3dbcdc13611c5cfdbe02",
+      "rawBytes": 2844,
+      "rawSha256": "4bc059354c0afc91f207de256dbd863925726a1c0e2bf14d31733261e1192ef3"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/logs/job-132641431911.log.gz",
+      "bytes": 7358,
+      "sha256": "e030c422f3ee31d957692334b2d7cf6e8f53bf89c717ad14fcb4f9a8aee3d52b",
+      "rawBytes": 29373,
+      "rawSha256": "2a82fc24ef37c8b65492ea061106eabe5cb69388c8b8ca03b2c12b1b9447eb0c"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/original-zips/artifact-14138963484.zip",
+      "bytes": 669,
+      "sha256": "84d69734f1d812372ba711e68dc7a44b14118f6aba537d2437ed1a9452f36b12",
+      "artifact": {
+        "id": 14138963484,
+        "node_id": "MDg6QXJ0aWZhY3QxNDEzODk2MzQ4NA==",
+        "name": "spaces-acceptance",
+        "size_in_bytes": 669,
+        "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14138963484",
+        "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/14138963484/zip",
+        "expired": false,
+        "digest": "sha256:84d69734f1d812372ba711e68dc7a44b14118f6aba537d2437ed1a9452f36b12",
+        "created_at": "2026-11-15T00:27:50Z",
+        "updated_at": "2026-11-15T00:27:50Z",
+        "expires_at": "2026-11-29T00:27:50Z",
+        "workflow_run": {
+          "id": 43658210985,
+          "repository_id": 1423484121,
+          "head_repository_id": 1423484121,
+          "head_branch": "codex/spn-128-original-recovery",
+          "head_sha": "d22baa6997e27c123ef351a8f5321089cc9e345b"
+        }
+      }
+    }
+  ],
+  "allTerminal": false,
+  "note": "First attempts on repaired d22 only. Original628d failures remain in published5d186e11 archive. No rerun/cancel/dispatch/source/ref/metadata mutation. Required missing or failed work cannot pass; internal retries and explicit skips remain separate. Crash receipts require independent actual source/tested/tree/run/attempt and17-case completeness audit. Candidate callback success cannot replace required baseline. No budget increase or waiver."
+}

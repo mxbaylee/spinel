@@ -1,0 +1,229 @@
+{
+  "at": "2026-11-15T00:38:50.035Z",
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "tested": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+  "run": 43658210882,
+  "artifact": {
+    "id": 14139495179,
+    "path": "/tmp/spn128-publication-d22baa69/validation/original-zips/artifact-14139495179.zip",
+    "sha256": "1c4178860433f6453c45aabd152f0aa8867e009c5bee50cf24fa319d21fa9262"
+  },
+  "receipts": [
+    {
+      "case": "admission",
+      "initialPhase": "accepted",
+      "finalPhase": "failed",
+      "killedControllers": 1,
+      "observedOriginal": null,
+      "completedLive": "e6dd7f4ab65547873de7406eb4b792a69ef2675cf1382ec468b0ecab25de3c25",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "custody",
+      "initialPhase": "originals-retained",
+      "finalPhase": "failed",
+      "killedControllers": 1,
+      "observedOriginal": null,
+      "completedLive": "d98c3397357b486f71dbd0f0b25d5319388705247952152cbf061cf3528ff613",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "freeze",
+      "initialPhase": "frozen",
+      "finalPhase": "failed",
+      "killedControllers": 1,
+      "observedOriginal": null,
+      "completedLive": "6c20ca276c8b5b2e248dcf216efc7652b7a36a74a669e98c50748947e48655e9",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "activation-plan",
+      "initialPhase": "activation-planned",
+      "finalPhase": "failed",
+      "killedControllers": 1,
+      "observedOriginal": null,
+      "completedLive": "e96de21426fc90911d232d1c206afce028ea00c287e659a786f547f7b70f128b",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "staging",
+      "initialPhase": "candidate-staged",
+      "finalPhase": "failed",
+      "killedControllers": 1,
+      "observedOriginal": null,
+      "completedLive": "e8ba127262ff7c4c77629df1abe4b64bc93a5976384c79eaa78b32a41a8b9d9f",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "activation",
+      "initialPhase": "candidate-replacing",
+      "finalPhase": "original-committed",
+      "killedControllers": 1,
+      "observedOriginal": "46a023122dc61022bdd36d725674b5ea39513008fae6189f8dc2ad885793f377",
+      "recoveredFingerprint": "fa4a42b3acfbacb43a014acdd3ef38e7eed7fdd2287fdedf7152d0db86200d07",
+      "completedLive": "2bef63c10ce9ba2b76291554e60a5966cf0f3654e36f1cb425f17ee9e574a13c",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "private-open",
+      "initialPhase": "trial-opening",
+      "finalPhase": "original-committed",
+      "killedControllers": 1,
+      "observedOriginal": "ba2a73eeeb97dfb5c763f588dcc0ab663afb6b29b3fb9d15b3627662121ccb2f",
+      "recoveredFingerprint": "3fc248f41476fca87feb456022fa1ac94f1c0dcc45c1412dab8cb36ba59ccb92",
+      "completedLive": "68eb433c10363f1754bb82a3c4ff7cf12cc41eca7e63d294eecb1831d2a37966",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "commit",
+      "initialPhase": "candidate-committed",
+      "finalPhase": "candidate-committed",
+      "killedControllers": 1,
+      "observedOriginal": null,
+      "completedLive": "6870bd6b528926f5c3b82fbf73328a2afaa76684fa246d24662644a6e76b59da",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "postcommit",
+      "initialPhase": "candidate-committed",
+      "finalPhase": "candidate-committed",
+      "killedControllers": 1,
+      "observedOriginal": null,
+      "completedLive": "ea24312cecfa2f1423bbe0bce08820474a924bbe6aa6e5d140e4505a377d5281",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "original-activation",
+      "initialPhase": "original-replacing",
+      "finalPhase": "original-committed",
+      "killedControllers": 1,
+      "observedOriginal": "a5c6191ceb4c4e7a27b510a7e27c3eb197c549c0679772a53b7949891a1de4cf",
+      "recoveredFingerprint": "578bef920055f8dc97f1128c83901e4bc91e39da8036094d2623ac2f800187cd",
+      "completedLive": "527120a3b48f5e08c888ae58c97886f088d035a69286b36d44179ee8e0e79123",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "original-commit",
+      "initialPhase": "original-committed",
+      "finalPhase": "original-committed",
+      "killedControllers": 1,
+      "observedOriginal": "0113f47dfd2136944e672d2e2216bf9d9c30a857bfb4d3b9d61a9df8d734fb5b",
+      "recoveredFingerprint": "43792465b62789a24987df911c16c8edd76b968f171d6c303dde93119d65d395",
+      "completedLive": "4c18d14f772fcaa83da23ba9880ceb39accca7a376732527930d970adc190bf8",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "cold-admission",
+      "initialPhase": "original-replacing",
+      "finalPhase": "original-committed",
+      "killedControllers": 2,
+      "observedOriginal": "d854e53817100a1aefb6d4151f4f518f8fb63a5c9d9fdbe43a4e8ee43039c0de",
+      "recoveredFingerprint": "3c8ab97ba3919f51e8a5894ecaf2ef23f76eea09a233053e69f0680047bfe053",
+      "completedLive": "a68c2e345d6ec08e55696a6c99f467945009883c85bcce4b3cb9e2fab0beed6a",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "cold-prepared",
+      "initialPhase": "original-replacing",
+      "finalPhase": "original-committed",
+      "killedControllers": 2,
+      "observedOriginal": "6f8a365c494eca798111bb9d9f81957a927cce787a3c750c2769cdabf7b9502a",
+      "recoveredFingerprint": "c7ead5830e985f2cccc2e1bffe937597cbc131127bdd008873308e372c34831d",
+      "completedLive": "957ce2efed4133abae750d61eecca010b175ee34ccfc3e3155e01d27c50d432b",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "cold-activation",
+      "initialPhase": "original-replacing",
+      "finalPhase": "original-committed",
+      "killedControllers": 2,
+      "observedOriginal": "9d8b11df7bed82ed42e3c7709e39dc5e83a0693deafada21d65073f1881eb19a",
+      "recoveredFingerprint": "880ca51068b7b3612cd011b9ad6db4f59deb264723d0b52566a80dc4ee080f4a",
+      "completedLive": "ce695f6d838ce1eed28700bb0c2ad86feca17651244b2348457c95f6079ea11d",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "cold-trial-planned",
+      "initialPhase": "original-replacing",
+      "finalPhase": "original-committed",
+      "killedControllers": 2,
+      "observedOriginal": "6c385a0e1ff9631b3b7003da955a00a51176cd2263e9a012d5331d5504b40fe0",
+      "recoveredFingerprint": "923ca8577ba2cb90dc70e94ae8144b6f24951b1646e92abfea518262f340b1a7",
+      "completedLive": "b16c51b0f2636208066a10f8513d27be99de0adae392c48f2566f2fa65a1d28a",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "cold-private-open",
+      "initialPhase": "original-replacing",
+      "finalPhase": "original-committed",
+      "killedControllers": 2,
+      "observedOriginal": "362cbc88af6e400602ec518205af4774a1d1140e614675ee04ce5243e91286ea",
+      "recoveredFingerprint": "39b0513225482d87163077e0b7312e66f95d6a66605bd5080e274276f20e12eb",
+      "completedLive": "07cd49d53bfd079a3f1bd63831461f522cf748db959c2c14461a1c08fea0f7d2",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    },
+    {
+      "case": "cold-commit",
+      "initialPhase": "original-replacing",
+      "finalPhase": "original-committed",
+      "killedControllers": 2,
+      "observedOriginal": "bfa6d89e13580ccbfd1df7d5198572bd678f2c99abdc8f29e1257d063b9aae53",
+      "recoveredFingerprint": "c6b9910bd6d5dc044790901acb47b09ffb709b1f911f2a71ca8d46dee88fdb2b",
+      "completedLive": "63b57c2148c30498c6a4854ad18c97ace7fc9ff839142c564e77f1c1e56742a0",
+      "cleanup": {
+        "closure": "passed",
+        "temporaryData": "removed"
+      }
+    }
+  ],
+  "rawLogSHA": "a5cb993289b47e1595bc22263ca447eabaf43821c2b58c2ce03c842b004135dc",
+  "scope": "Root independently verified original bytes and source identities,17 actual controller kills/cleanup/authority/projected fingerprint receipts. Read cold-commit and postcommit in full. Broader native and all gates remain separate."
+}

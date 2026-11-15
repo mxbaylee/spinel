@@ -1,0 +1,226 @@
+{
+  "at": "2026-11-15T00:27:33.599Z",
+  "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "snapshot": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z",
+  "readOnly": true,
+  "workflows": [
+    {
+      "kind": "ci",
+      "id": 43658210882,
+      "attempt": 1,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "status": "in_progress",
+      "conclusion": null,
+      "jobs": [
+        {
+          "id": 132641431814,
+          "name": "Pull request",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641431921,
+          "name": "Classify changes (43658210882)",
+          "status": "in_progress",
+          "conclusion": null
+        }
+      ],
+      "artifacts": []
+    },
+    {
+      "kind": "storybook",
+      "id": 43658210918,
+      "attempt": 1,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "status": "in_progress",
+      "conclusion": null,
+      "jobs": [
+        {
+          "id": 132641431585,
+          "name": "Classify changes",
+          "status": "in_progress",
+          "conclusion": null
+        }
+      ],
+      "artifacts": []
+    },
+    {
+      "kind": "desktop",
+      "id": 43658210825,
+      "attempt": 1,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "status": "in_progress",
+      "conclusion": null,
+      "jobs": [
+        {
+          "id": 132641431388,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641431531,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 132641431546,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "status": "in_progress",
+          "conclusion": null
+        }
+      ],
+      "artifacts": []
+    },
+    {
+      "kind": "spaces",
+      "id": 43658210985,
+      "attempt": 1,
+      "source": "d22baa6997e27c123ef351a8f5321089cc9e345b",
+      "status": "in_progress",
+      "conclusion": null,
+      "jobs": [
+        {
+          "id": 132641431911,
+          "name": "🦈 DigitalOcean Spaces",
+          "status": "in_progress",
+          "conclusion": null
+        }
+      ],
+      "artifacts": []
+    }
+  ],
+  "errors": [],
+  "files": [
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/all-source-runs.json.gz",
+      "bytes": 2346,
+      "sha256": "2c6fcdbe64dc3537febcef1e9973d57e57c4e3d1453dd704b3d48139c3b23147",
+      "rawBytes": 48923,
+      "rawSha256": "c4c61dc09bf8f48161d91c9d2ce3b68e6eaaaafdfaa388004f9c479941ce916b"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/check-runs.json.gz",
+      "bytes": 1962,
+      "sha256": "f6652d671a94e6052d7a5a6ea1d2e17a34f23aa2066d03ff879a0e80eac4055b",
+      "rawBytes": 24466,
+      "rawSha256": "98f0fe132ba4d464fbf95081ffd8ed6dad6fbece364b945b0e46908461973c0c"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/source-commit.json.gz",
+      "bytes": 16647,
+      "sha256": "693de2708856b74861718f7439c16eb9a9f50e847fa1422166b7baa072d2b7c9",
+      "rawBytes": 147821,
+      "rawSha256": "21548838add4366b93e9badfcd0f78284665445b81014b360c210870fab9f0e5"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/pr.json.gz",
+      "bytes": 9225,
+      "sha256": "8472ad0fb3d3f652cbd2ea8b8b22abae3a3f528b284ca3b2555f1482dac61838",
+      "rawBytes": 33167,
+      "rawSha256": "f51349d82b48f0e68f799c050703e31f22e30a5d5aebbdf79e52a946aba00b4b"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/observed-pr-body.md.gz",
+      "bytes": 7344,
+      "sha256": "22dd686ec1ca08e541432c7d248ef617c2275a97b8d7fca6c5a28a3a42683f77",
+      "rawBytes": 17709,
+      "rawSha256": "29196bbb79765cb80271a8a05247b54fc4de543a2fd02f3d896586cfbccea9f7"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/observed-merge-commit.json.gz",
+      "bytes": 138392,
+      "sha256": "838b5d7f2e14b11a952927384cd4db56fcf9ce7346ab3cfe8558e2bf8dd525db",
+      "rawBytes": 705700,
+      "rawSha256": "d0cf81452e88dcc39f1b596cd0ea0a0ecc13cd084e925641c66e6f0608936a32"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/artifacts-ci.json.gz",
+      "bytes": 54,
+      "sha256": "2c982da5a3e7d204787db3c0b82e8bb46e95d6c9ed2cfa29a29111c9cd5b9cf7",
+      "rawBytes": 34,
+      "rawSha256": "af3c25b59e7048d2e4b6ea03a688b2eced4e1786b5ae40f71516bc3ce0d4149e"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/run-ci.json.gz",
+      "bytes": 1662,
+      "sha256": "ed5ccd69eb01966f2329671edb7b8135d15e424caae2906d598640702f596fad",
+      "rawBytes": 12203,
+      "rawSha256": "6178e602bbc1cdb2577bebe4434dab88395d6b0d909efa32d7c3ee6dd64a1807"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/jobs-ci-attempt-1.json.gz",
+      "bytes": 793,
+      "sha256": "5c414814ccbfe52048a10952a799524674e2aad9060e249e594548ae62e342a1",
+      "rawBytes": 3492,
+      "rawSha256": "873375eff095b3aaea8b1772c8e8015fb73018fc0462f17b0eec6376fab2854d"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/artifacts-storybook.json.gz",
+      "bytes": 54,
+      "sha256": "2c982da5a3e7d204787db3c0b82e8bb46e95d6c9ed2cfa29a29111c9cd5b9cf7",
+      "rawBytes": 34,
+      "rawSha256": "af3c25b59e7048d2e4b6ea03a688b2eced4e1786b5ae40f71516bc3ce0d4149e"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/run-storybook.json.gz",
+      "bytes": 1670,
+      "sha256": "d775e350d50409946b96ac214c6173be374f85d6dc210cf553d884a92dcde92f",
+      "rawBytes": 12217,
+      "rawSha256": "1659f5a92c7f89948e93b26f5904d2165ca019f6b0da6f2c1e0bdc61f831c665"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/jobs-storybook-attempt-1.json.gz",
+      "bytes": 722,
+      "sha256": "daf5b0dbf0833ad08a4d3abefafe9d7667b5a85ba6bec5768b0eb7b735d7a3c6",
+      "rawBytes": 1848,
+      "rawSha256": "d287449f02e4361c5d99807ef05bb0de3f275626c68c67a210050f15a33f25fb"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/artifacts-desktop.json.gz",
+      "bytes": 54,
+      "sha256": "2c982da5a3e7d204787db3c0b82e8bb46e95d6c9ed2cfa29a29111c9cd5b9cf7",
+      "rawBytes": 34,
+      "rawSha256": "af3c25b59e7048d2e4b6ea03a688b2eced4e1786b5ae40f71516bc3ce0d4149e"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/run-desktop.json.gz",
+      "bytes": 1673,
+      "sha256": "eb335cac337ae289132ae4bf05d384f0a635b7151394ea3d5236b1b07099d857",
+      "rawBytes": 12228,
+      "rawSha256": "9cdfd5a15202f001bee5e5ecc2e3c092de6341e07565b1c265f60112a37aa19a"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/jobs-desktop-attempt-1.json.gz",
+      "bytes": 1097,
+      "sha256": "f2fbaa4188575d2bf0b13b6e12e27df9e128b76e5bc14a82ec152d15e3c2005f",
+      "rawBytes": 8428,
+      "rawSha256": "3d8e48bf6d183b74bd09e10a08bb797c2756e65eeb1ef604a4aa8176ba51e238"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/artifacts-spaces.json.gz",
+      "bytes": 54,
+      "sha256": "2c982da5a3e7d204787db3c0b82e8bb46e95d6c9ed2cfa29a29111c9cd5b9cf7",
+      "rawBytes": 34,
+      "rawSha256": "af3c25b59e7048d2e4b6ea03a688b2eced4e1786b5ae40f71516bc3ce0d4149e"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/run-spaces.json.gz",
+      "bytes": 1686,
+      "sha256": "4dd64226edab7e1eb6c758d7696109b68c2a2474f295da09438e84cfb4047315",
+      "rawBytes": 12234,
+      "rawSha256": "c551d6bed552967ca59feafa62b4d6368c1d0ee606f95d7a8ff2288d49be4bcb"
+    },
+    {
+      "path": "/tmp/spn128-publication-d22baa69/validation/snapshots/2026-11-15T002730466Z/jobs-spaces-attempt-1.json.gz",
+      "bytes": 802,
+      "sha256": "e02d8500941614836ce32e6ca710abd9b0a0e7ff3ea5ff6b0f52fd06d754f898",
+      "rawBytes": 2519,
+      "rawSha256": "130548f229f048c7d9710853aa0b2b1844cf00dd58ace7fb42111bdd63d63a05"
+    }
+  ],
+  "allTerminal": false,
+  "note": "First attempts on repaired d22 only. Original628d failures remain in published5d186e11 archive. No rerun/cancel/dispatch/source/ref/metadata mutation. Required missing or failed work cannot pass; internal retries and explicit skips remain separate. Crash receipts require independent actual source/tested/tree/run/attempt and17-case completeness audit. Candidate callback success cannot replace required baseline. No budget increase or waiver."
+}

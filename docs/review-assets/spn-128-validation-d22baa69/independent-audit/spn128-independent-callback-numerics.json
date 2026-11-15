@@ -1,0 +1,434 @@
+{
+  "at": "2026-11-15T00:42:37.882Z",
+  "rows": [
+    {
+      "artifact": 14139019550,
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "sha256": "2e9068bb4b18702215a657db3f53d8e0a80f0879d53c6a49542624a6de445f64",
+      "role": "baselineObservation",
+      "preset": "desktop",
+      "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "families": {
+        "cursor": {
+          "independentHighWater": 7341,
+          "cap": 4,
+          "pendingHighWater": 7341,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 10,
+            "finalKey": 7337,
+            "disposed": 9,
+            "end": 0
+          },
+          "postDisposalCallbacks": 9,
+          "directCallbackWall": {
+            "count": 8319,
+            "sumMs": 66.588,
+            "unionMs": 66.588,
+            "maxMs": 0.213
+          },
+          "postInputCallbackWall": {
+            "count": 7356,
+            "sumMs": 59.129,
+            "unionMs": 59.129,
+            "maxMs": 0.213
+          }
+        },
+        "zoom-init": {
+          "independentHighWater": 1,
+          "cap": 1,
+          "pendingHighWater": 1,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 0,
+            "disposed": 0,
+            "end": 0
+          },
+          "postDisposalCallbacks": 0,
+          "directCallbackWall": {
+            "count": 1,
+            "sumMs": 3.956,
+            "unionMs": 3.956,
+            "maxMs": 3.956
+          },
+          "postInputCallbackWall": {
+            "count": 0,
+            "sumMs": 0,
+            "unionMs": 0,
+            "maxMs": 0
+          }
+        },
+        "zoom-update": {
+          "independentHighWater": 1669,
+          "cap": 1,
+          "pendingHighWater": 1669,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 1668,
+            "disposed": 0,
+            "end": 0
+          },
+          "postDisposalCallbacks": 0,
+          "directCallbackWall": {
+            "count": 2087,
+            "sumMs": 333.257,
+            "unionMs": 333.257,
+            "maxMs": 1.383
+          },
+          "postInputCallbackWall": {
+            "count": 1669,
+            "sumMs": 257.129,
+            "unionMs": 257.129,
+            "maxMs": 1.383
+          }
+        }
+      },
+      "mainThreadTasks": {
+        "count": 43436,
+        "sumMs": 67376.553,
+        "unionMs": 67376.553,
+        "maxMs": 115.736,
+        "instantaneousEvents": 22,
+        "boundaryEvents": [
+          {
+            "phase": "unclosed-start",
+            "atUs": 1019099577
+          }
+        ],
+        "postInput": {
+          "count": 13082,
+          "sumMs": 1495.355,
+          "unionMs": 1495.355,
+          "maxMs": 36.006
+        },
+        "postDisposal": {
+          "count": 36,
+          "sumMs": 2.426,
+          "unionMs": 2.426,
+          "maxMs": 0.935
+        }
+      },
+      "limitation": "Traced descriptive measurements; unprofiled responsiveness budget is separately required."
+    },
+    {
+      "artifact": 14139019550,
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "sha256": "a5c3935557a33274cb644aa96bf962aa3aa2fb66221a1a05b0d5c3e9b66b87dd",
+      "role": "candidate",
+      "preset": "desktop",
+      "source": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "families": {
+        "cursor": {
+          "independentHighWater": 4,
+          "cap": 4,
+          "pendingHighWater": 4,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 2,
+            "finalKey": 2,
+            "disposed": 0,
+            "end": 0
+          },
+          "postDisposalCallbacks": 0,
+          "directCallbackWall": {
+            "count": 9,
+            "sumMs": 0.483,
+            "unionMs": 0.483,
+            "maxMs": 0.091
+          },
+          "postInputCallbackWall": {
+            "count": 9,
+            "sumMs": 0.483,
+            "unionMs": 0.483,
+            "maxMs": 0.091
+          }
+        },
+        "zoom-init": {
+          "independentHighWater": 1,
+          "cap": 1,
+          "pendingHighWater": 1,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 0,
+            "disposed": 0,
+            "end": 0
+          },
+          "postDisposalCallbacks": 0,
+          "directCallbackWall": {
+            "count": 1,
+            "sumMs": 3.313,
+            "unionMs": 3.313,
+            "maxMs": 3.313
+          },
+          "postInputCallbackWall": {
+            "count": 0,
+            "sumMs": 0,
+            "unionMs": 0,
+            "maxMs": 0
+          }
+        },
+        "zoom-update": {
+          "independentHighWater": 1,
+          "cap": 1,
+          "pendingHighWater": 1,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 1,
+            "disposed": 0,
+            "end": 0
+          },
+          "postDisposalCallbacks": 0,
+          "directCallbackWall": {
+            "count": 2,
+            "sumMs": 1.469,
+            "unionMs": 1.469,
+            "maxMs": 0.825
+          },
+          "postInputCallbackWall": {
+            "count": 1,
+            "sumMs": 0.644,
+            "unionMs": 0.644,
+            "maxMs": 0.644
+          }
+        }
+      },
+      "mainThreadTasks": {
+        "count": 69071,
+        "sumMs": 37055.926,
+        "unionMs": 37055.926,
+        "maxMs": 133.89,
+        "instantaneousEvents": 212,
+        "boundaryEvents": [],
+        "postInput": {
+          "count": 47564,
+          "sumMs": 1625.283,
+          "unionMs": 1625.283,
+          "maxMs": 25.427
+        },
+        "postDisposal": {
+          "count": 28,
+          "sumMs": 1.906,
+          "unionMs": 1.906,
+          "maxMs": 0.929
+        }
+      },
+      "limitation": "Traced descriptive measurements; unprofiled responsiveness budget is separately required."
+    },
+    {
+      "artifact": 14138314242,
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "sha256": "8b5470ae47d2eef73dc19377cd3c707bd076a0235d4a431bf1b9bb5f66499265",
+      "role": "baselineObservation",
+      "preset": "mobile",
+      "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "families": {
+        "cursor": {
+          "independentHighWater": 8348,
+          "cap": 4,
+          "pendingHighWater": 8348,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 4,
+            "finalKey": 8344,
+            "disposed": 8,
+            "end": 0
+          },
+          "postDisposalCallbacks": 8,
+          "directCallbackWall": {
+            "count": 8377,
+            "sumMs": 247.289,
+            "unionMs": 247.289,
+            "maxMs": 3.615
+          },
+          "postInputCallbackWall": {
+            "count": 8369,
+            "sumMs": 247.174,
+            "unionMs": 247.174,
+            "maxMs": 3.615
+          }
+        },
+        "zoom-init": {
+          "independentHighWater": 1,
+          "cap": 1,
+          "pendingHighWater": 1,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 0,
+            "disposed": 0,
+            "end": 0
+          },
+          "postDisposalCallbacks": 0,
+          "directCallbackWall": {
+            "count": 1,
+            "sumMs": 13.592,
+            "unionMs": 13.592,
+            "maxMs": 13.592
+          },
+          "postInputCallbackWall": {
+            "count": 0,
+            "sumMs": 0,
+            "unionMs": 0,
+            "maxMs": 0
+          }
+        },
+        "zoom-update": {
+          "independentHighWater": 2085,
+          "cap": 1,
+          "pendingHighWater": 2085,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 2084,
+            "disposed": 0,
+            "end": 0
+          },
+          "postDisposalCallbacks": 0,
+          "directCallbackWall": {
+            "count": 2087,
+            "sumMs": 1384.448,
+            "unionMs": 1384.448,
+            "maxMs": 17.639
+          },
+          "postInputCallbackWall": {
+            "count": 2085,
+            "sumMs": 1374.856,
+            "unionMs": 1374.856,
+            "maxMs": 17.639
+          }
+        }
+      },
+      "mainThreadTasks": {
+        "count": 37961,
+        "sumMs": 215097.673,
+        "unionMs": 215097.673,
+        "maxMs": 417.72,
+        "instantaneousEvents": 52,
+        "boundaryEvents": [],
+        "postInput": {
+          "count": 17673,
+          "sumMs": 6612.944,
+          "unionMs": 6612.944,
+          "maxMs": 203.253
+        },
+        "postDisposal": {
+          "count": 52,
+          "sumMs": 11.701,
+          "unionMs": 11.701,
+          "maxMs": 5.43
+        }
+      },
+      "limitation": "Traced descriptive measurements; unprofiled responsiveness budget is separately required."
+    },
+    {
+      "artifact": 14138314242,
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "sha256": "ecbaefea078230eac54cca8ff71dedf1a375b87ef557f58a818b955837503de6",
+      "role": "candidate",
+      "preset": "mobile",
+      "source": "9b48767d1effc0aeb55f6020d8676427d74f7d9f",
+      "families": {
+        "cursor": {
+          "independentHighWater": 4,
+          "cap": 4,
+          "pendingHighWater": 4,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 2,
+            "finalKey": 2,
+            "disposed": 0,
+            "end": 0
+          },
+          "postDisposalCallbacks": 0,
+          "directCallbackWall": {
+            "count": 12,
+            "sumMs": 3.393,
+            "unionMs": 3.393,
+            "maxMs": 0.841
+          },
+          "postInputCallbackWall": {
+            "count": 12,
+            "sumMs": 3.393,
+            "unionMs": 3.393,
+            "maxMs": 0.841
+          }
+        },
+        "zoom-init": {
+          "independentHighWater": 1,
+          "cap": 1,
+          "pendingHighWater": 1,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 0,
+            "disposed": 0,
+            "end": 0
+          },
+          "postDisposalCallbacks": 0,
+          "directCallbackWall": {
+            "count": 1,
+            "sumMs": 14.653,
+            "unionMs": 14.653,
+            "maxMs": 14.653
+          },
+          "postInputCallbackWall": {
+            "count": 0,
+            "sumMs": 0,
+            "unionMs": 0,
+            "maxMs": 0
+          }
+        },
+        "zoom-update": {
+          "independentHighWater": 1,
+          "cap": 1,
+          "pendingHighWater": 1,
+          "pendingAt": {
+            "beforeMount": 0,
+            "inputStart": 0,
+            "finalKey": 1,
+            "disposed": 0,
+            "end": 0
+          },
+          "postDisposalCallbacks": 0,
+          "directCallbackWall": {
+            "count": 2,
+            "sumMs": 8.041,
+            "unionMs": 8.041,
+            "maxMs": 5.109
+          },
+          "postInputCallbackWall": {
+            "count": 1,
+            "sumMs": 2.932,
+            "unionMs": 2.932,
+            "maxMs": 2.932
+          }
+        }
+      },
+      "mainThreadTasks": {
+        "count": 71859,
+        "sumMs": 130944.888,
+        "unionMs": 130944.888,
+        "maxMs": 149.711,
+        "instantaneousEvents": 110,
+        "boundaryEvents": [],
+        "postInput": {
+          "count": 52115,
+          "sumMs": 6541.625,
+          "unionMs": 6541.625,
+          "maxMs": 100.808
+        },
+        "postDisposal": {
+          "count": 30,
+          "sumMs": 1.776,
+          "unionMs": 1.776,
+          "maxMs": 0.726
+        }
+      },
+      "limitation": "Traced descriptive measurements; unprofiled responsiveness budget is separately required."
+    }
+  ]
+}
