@@ -1,0 +1,60 @@
+{
+  "at": "2026-11-15T00:14:11.628Z",
+  "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "parent": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "prefix": "docs/review-assets/spn-128-validation-628d7798",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "tested": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+  "snapshot": "/tmp/spn128-publication-628d7798/validation/snapshots/2026-11-15T000353932Z",
+  "allTerminal": true,
+  "acceptance": "NOT_ACCEPTED",
+  "jobCounts": {
+    "total": 47,
+    "success": 42,
+    "failure": 3,
+    "skipped": 2
+  },
+  "artifacts": 34,
+  "memberCount": 3564,
+  "relocatedInitialJsonMembers": 432,
+  "originalTerminalReport": {
+    "path": "independent-audit/independent-terminal-audit.json",
+    "sha256": "47cfc4d665b3d5c51367cfd53a610d6583ea370317de08aaa65b1bbb4f252434"
+  },
+  "auditIndexRelocation": {
+    "originalSha256": "ea4402d35b3077db9ee8d88710aea0941660b448d7ad01a5de3980ea0a1bebb6",
+    "preservedPath": "independent-audit/initial-artifact-inventory.json",
+    "finalIndex": "artifact-inventory.json",
+    "mapping": "member-relocations.json"
+  },
+  "readerPreparationDispositions": [
+    "Read-only audit parser corrections (singular test counts, optional diagnostic skips, pending owner results, actual failed-aggregate schema, incomplete baseline analysis and a bounded JSON subprocess-buffer probe) did not change runtime evidence or rerun a test.",
+    "A premature inventory read rejected an in-progress download before consuming incomplete artifact bytes. The original GET then completed and matched API size/SHA.",
+    "Final retained-path consolidation removes duplicate initial JSON copies only after matching original member SHA/CRC/bytes to canonical retained originals. An initial duplicate-path unlink stopped staging; identical-content members shared one audit filename. Unique-path removal corrected this filesystem-only preparation issue; all original and canonical evidence bytes remained preserved."
+  ],
+  "historicalLimits": [
+    "Original failed/cancelled prior source validations and source-qualified review archives remain historical, not rewritten.",
+    "No new source defect or cause of hosted baseline slowdown is established by the bounded123 comparison.",
+    "No runtime/timeout change, unchanged retry, dispatch, cancellation, ref/remote mutation, or converter re-execution."
+  ],
+  "sealHelper": "collectors/seal-validation-archive.ts",
+  "sealExecuted": false,
+  "privateOriginalZipBytes": 465343471,
+  "publicationClaim": false,
+  "inventoryOriginCorrection": {
+    "at": "2026-11-15T00:16:48.432Z",
+    "oldManifestSha256": "02308f33a02687ef78e4cf9bcc0fd188d6474264a29e8cb070126b0fcdbaf75e",
+    "supersededPointInTimePath": "/tmp/spn128-terminal-628d7798/archive/artifact-inventory.json",
+    "preservedOriginalPath": "/tmp/spn128-terminal-628d7798/original-audit-artifact-inventory.json",
+    "preservedArchivePath": "independent-audit/initial-artifact-inventory.json",
+    "originalBytes": 795702,
+    "originalSha256": "ea4402d35b3077db9ee8d88710aea0941660b448d7ad01a5de3980ea0a1bebb6",
+    "currentCanonicalPath": "artifact-inventory.json",
+    "currentCanonicalBytes": 1854361,
+    "currentCanonicalSha256": "9da3f336eb6c8a375a206b034ed185607d0e01e09657fe924f8b9b8180bd6d58",
+    "historicalTerminalReportIndexPointer": "The original independent terminal report retains its point-in-time index path/hash; this explicit mapping resolves it to the preserved original index, not to current canonical bytes.",
+    "rootReaderPreparation": "Root first probed the former retention-inventory.json name and received ENOENT before mutation; canonical final filename is artifact-inventory.json. README uses final names.",
+    "sourceRefRemoteMutations": false,
+    "sealExecuted": false
+  }
+}

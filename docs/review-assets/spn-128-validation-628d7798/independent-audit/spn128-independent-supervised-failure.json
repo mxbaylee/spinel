@@ -1,0 +1,219 @@
+{
+  "at": "2026-11-14T23:53:47.946Z",
+  "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "tested": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+  "workflow": 43654184206,
+  "job": 132629194147,
+  "workflowAttempt": 1,
+  "artifact": {
+    "id": 14136844448,
+    "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14136844448.zip",
+    "sha256": "cb5c15166cd3e73508ed9aaacb91a09f320b92584d21307ab2d9fb99178fd9ee"
+  },
+  "report": {
+    "member": "playwright-report/supervised-restore.json",
+    "sha256": "1bb6a33671b91019e80782c4eb9114921b0fad87bd597f8c0fe6a2fe3172876a"
+  },
+  "log": {
+    "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194147.log.gz",
+    "gzipSha256": "9e05f84f69aaf04422c519df80d91f7be1ad01ff62d080c37fd8a39794eedb04",
+    "rawSha256": "ca35e575ec0cec0927baa282404988f7650b8579244873a92ded38388272c946"
+  },
+  "stats": {
+    "startTime": "2026-11-14T23:45:43.272Z",
+    "duration": 323256.833,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "cases": [
+    {
+      "title": "a catalog restore survives double-clicks, cancel and a lost reply, and fences old clients",
+      "status": "unexpected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "retry": 0,
+          "status": "failed",
+          "durationMs": 2576,
+          "startTime": "2026-11-14T23:45:44.621Z",
+          "error": "Error: tracing.start: Tracing has been already started",
+          "errorLocation": {
+            "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+            "column": 25,
+            "line": 27
+          },
+          "attachments": [
+            {
+              "name": "restore-startup-0",
+              "contentType": "application/json",
+              "inlineBody": true,
+              "retained": true
+            },
+            {
+              "name": "restore-first-failure-0",
+              "contentType": "application/zip",
+              "reportPath": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/attachments/restore-first-failure-0-df4d32a2d9eb53497e5a30a4ff25f2f34915cd7f.zip",
+              "inlineBody": false,
+              "artifactMember": "test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/attachments/restore-first-failure-0-df4d32a2d9eb53497e5a30a4ff25f2f34915cd7f.zip",
+              "retained": false
+            },
+            {
+              "name": "supervised-restore-first-attempt",
+              "contentType": "application/json",
+              "reportPath": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/attachments/supervised-restore-first-attempt-b877d5091562ee5dda1ae6e38ae95e7492611cad.json",
+              "inlineBody": false,
+              "artifactMember": "test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/attachments/supervised-restore-first-attempt-b877d5091562ee5dda1ae6e38ae95e7492611cad.json",
+              "retained": false
+            },
+            {
+              "name": "error-context",
+              "contentType": "text/markdown",
+              "reportPath": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/error-context.md",
+              "inlineBody": false,
+              "artifactMember": "test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/error-context.md",
+              "retained": true
+            },
+            {
+              "name": "trace",
+              "contentType": "application/zip",
+              "reportPath": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/trace.zip",
+              "inlineBody": false,
+              "artifactMember": "test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/trace.zip",
+              "retained": true
+            }
+          ]
+        },
+        {
+          "retry": 1,
+          "status": "failed",
+          "durationMs": 2360,
+          "startTime": "2026-11-14T23:45:47.629Z",
+          "error": "Error: tracing.start: Tracing has been already started",
+          "errorLocation": {
+            "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+            "column": 25,
+            "line": 27
+          },
+          "attachments": [
+            {
+              "name": "restore-startup-0",
+              "contentType": "application/json",
+              "inlineBody": true,
+              "retained": true
+            },
+            {
+              "name": "restore-first-failure-0",
+              "contentType": "application/zip",
+              "reportPath": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry1/attachments/restore-first-failure-0-53d0478673f9f5b3786a39dbf606d5c1a8310737.zip",
+              "inlineBody": false,
+              "artifactMember": "test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry1/attachments/restore-first-failure-0-53d0478673f9f5b3786a39dbf606d5c1a8310737.zip",
+              "retained": false
+            },
+            {
+              "name": "error-context",
+              "contentType": "text/markdown",
+              "reportPath": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry1/error-context.md",
+              "inlineBody": false,
+              "artifactMember": "test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry1/error-context.md",
+              "retained": true
+            },
+            {
+              "name": "trace",
+              "contentType": "application/zip",
+              "reportPath": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry1/trace.zip",
+              "inlineBody": false,
+              "artifactMember": "test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry1/trace.zip",
+              "retained": true
+            }
+          ]
+        },
+        {
+          "retry": 2,
+          "status": "failed",
+          "durationMs": 2403,
+          "startTime": "2026-11-14T23:45:50.440Z",
+          "error": "Error: tracing.start: Tracing has been already started",
+          "errorLocation": {
+            "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+            "column": 25,
+            "line": 27
+          },
+          "attachments": [
+            {
+              "name": "restore-startup-0",
+              "contentType": "application/json",
+              "inlineBody": true,
+              "retained": true
+            },
+            {
+              "name": "restore-first-failure-0",
+              "contentType": "application/zip",
+              "reportPath": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry2/attachments/restore-first-failure-0-d83c3b9b8735d0de5484b455b4dc1a9900a44781.zip",
+              "inlineBody": false,
+              "artifactMember": "test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry2/attachments/restore-first-failure-0-d83c3b9b8735d0de5484b455b4dc1a9900a44781.zip",
+              "retained": false
+            },
+            {
+              "name": "error-context",
+              "contentType": "text/markdown",
+              "reportPath": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry2/error-context.md",
+              "inlineBody": false,
+              "artifactMember": "test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry2/error-context.md",
+              "retained": true
+            },
+            {
+              "name": "trace",
+              "contentType": "application/zip",
+              "reportPath": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry2/trace.zip",
+              "inlineBody": false,
+              "artifactMember": "test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry2/trace.zip",
+              "retained": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "an admitted upload outlasts its passkey check and can still be cancelled",
+      "status": "expected",
+      "expectedStatus": "passed",
+      "results": [
+        {
+          "retry": 0,
+          "status": "passed",
+          "durationMs": 313170,
+          "startTime": "2026-11-14T23:45:53.304Z",
+          "attachments": []
+        }
+      ]
+    }
+  ],
+  "traces": [
+    {
+      "name": "test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/trace.zip",
+      "bytes": 14710,
+      "compressedBytes": 14177,
+      "crc32": "dff467d8",
+      "sha256": "9b7b3b391fbee6c33111d76a11a89f4befb9e0baab9b075b3054972b04c48631"
+    },
+    {
+      "name": "test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry1/trace.zip",
+      "bytes": 13568,
+      "compressedBytes": 13151,
+      "crc32": "97116631",
+      "sha256": "d3f77a14cedf35a765654ec307650b427b90d725ca00f382f9d867d8bcde356e"
+    },
+    {
+      "name": "test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry2/trace.zip",
+      "bytes": 13569,
+      "compressedBytes": 13152,
+      "crc32": "13b4798b",
+      "sha256": "bafb30933d81bb88bdfce667cb5e060f03e50894c0a6f260eef29663d337afa1"
+    }
+  ],
+  "diagnosis": "Source line313 retain-on-failure test extension already owns tracing for manual browser contexts. observeStartup line27 starts tracing again before Operator navigation, producing same original and configured-retry failure. Current record cannot prove catalog runtime acceptance; admitted-upload lifetime case separately passed. This does not explain prior historical ECONNRESET.",
+  "retentionGap": "Reporter file attachments for restore-first-failure traces and supervised-restore-first-attempt JSON are absent from artifact ZIP. Automatic trace.zip is retained for each actual attempt. Correct upload ownership alongside chosen trace owner.",
+  "repair": "Maintain one trace owner and first-attempt pre-navigation diagnostics with actual upload; preserve error and retry identities and do not waive runtime assertions."
+}

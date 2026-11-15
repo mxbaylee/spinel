@@ -1,0 +1,292 @@
+{
+  "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "originalTerminalVerdict": "NOT_ACCEPTED",
+  "files": [
+    {
+      "original": "/tmp/spn128-terminal-628d7798/original-audit-artifact-inventory.json",
+      "retainedPath": "independent-audit/initial-artifact-inventory.json",
+      "originalBytes": 795702,
+      "originalSha256": "ea4402d35b3077db9ee8d88710aea0941660b448d7ad01a5de3980ea0a1bebb6",
+      "retainedBytes": 795702,
+      "retainedSha256": "ea4402d35b3077db9ee8d88710aea0941660b448d7ad01a5de3980ea0a1bebb6",
+      "encoding": "original-file-bytes",
+      "originalPathSuperseded": "/tmp/spn128-terminal-628d7798/archive/artifact-inventory.json",
+      "originSemantics": "Point-in-time audit-stage index at the superseded path; original bytes preserved separately before sealing. The current canonical index at that path is a different final-retention document.",
+      "currentCanonical": {
+        "path": "artifact-inventory.json",
+        "bytes": 1854361,
+        "sha256": "9da3f336eb6c8a375a206b034ed185607d0e01e09657fe924f8b9b8180bd6d58"
+      }
+    },
+    {
+      "original": "/tmp/spn128-terminal-628d7798/independent-terminal-audit.json",
+      "retainedPath": "independent-audit/independent-terminal-audit.json",
+      "originalBytes": 61805,
+      "originalSha256": "47cfc4d665b3d5c51367cfd53a610d6583ea370317de08aaa65b1bbb4f252434",
+      "retainedBytes": 61805,
+      "retainedSha256": "47cfc4d665b3d5c51367cfd53a610d6583ea370317de08aaa65b1bbb4f252434",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-crash-retention-gap.json",
+      "retainedPath": "independent-audit/spn128-crash-retention-gap.json",
+      "originalBytes": 3934,
+      "originalSha256": "192853e5cd6ee305bb652b776907a6337e097051f12a67ca867a4426d1c6cfd1",
+      "retainedBytes": 3934,
+      "retainedSha256": "192853e5cd6ee305bb652b776907a6337e097051f12a67ca867a4426d1c6cfd1",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-checkout-binding.json",
+      "retainedPath": "independent-audit/spn128-independent-checkout-binding.json",
+      "originalBytes": 1199,
+      "originalSha256": "36481a40e200580ddef20f340e3a687d3928bbdab925af97c7a47a945cc64776",
+      "retainedBytes": 1199,
+      "retainedSha256": "36481a40e200580ddef20f340e3a687d3928bbdab925af97c7a47a945cc64776",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-linux-audit.json",
+      "retainedPath": "independent-audit/spn128-independent-linux-audit.json",
+      "originalBytes": 65415,
+      "originalSha256": "b9312530022db0cd6363dcb4af24555b113db40162ea09c43a567e1db2580216",
+      "retainedBytes": 65415,
+      "retainedSha256": "b9312530022db0cd6363dcb4af24555b113db40162ea09c43a567e1db2580216",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-supervised-failure.json",
+      "retainedPath": "independent-audit/spn128-independent-supervised-failure.json",
+      "originalBytes": 11328,
+      "originalSha256": "5198358b177d8a76cc2df6f256f7ac9dfe061d492b306f3889bd441c49cde745",
+      "retainedBytes": 11328,
+      "retainedSha256": "5198358b177d8a76cc2df6f256f7ac9dfe061d492b306f3889bd441c49cde745",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-callback-failure.json",
+      "retainedPath": "independent-audit/spn128-independent-callback-failure.json",
+      "originalBytes": 7220,
+      "originalSha256": "f828e1caeabd5c577f3cd3c38bc9920f6ac670bad0f30f9801429cb77533b1da",
+      "retainedBytes": 7220,
+      "retainedSha256": "f828e1caeabd5c577f3cd3c38bc9920f6ac670bad0f30f9801429cb77533b1da",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-acceptance-partial.json",
+      "retainedPath": "independent-audit/spn128-independent-acceptance-partial.json",
+      "originalBytes": 67329,
+      "originalSha256": "a86a2a20c4b0b6aad983005ae4c520d78405e905ba78be47daa7526922600cee",
+      "retainedBytes": 67329,
+      "retainedSha256": "a86a2a20c4b0b6aad983005ae4c520d78405e905ba78be47daa7526922600cee",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-workflow-audit.json",
+      "retainedPath": "independent-audit/spn128-independent-workflow-audit.json",
+      "originalBytes": 53758,
+      "originalSha256": "f92072c42a9a42fd4d83d0c0c3e63b77acf19acc20da3a0a43304dc39de4bdb1",
+      "retainedBytes": 53758,
+      "retainedSha256": "f92072c42a9a42fd4d83d0c0c3e63b77acf19acc20da3a0a43304dc39de4bdb1",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-metrics-audit.json",
+      "retainedPath": "independent-audit/spn128-independent-metrics-audit.json",
+      "originalBytes": 164373,
+      "originalSha256": "341a9e4a971307829a1d07b1bed43d9c73704293ccaa836eb2f89a09b7ca0c20",
+      "retainedBytes": 164373,
+      "retainedSha256": "341a9e4a971307829a1d07b1bed43d9c73704293ccaa836eb2f89a09b7ca0c20",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-callback-numerics.json",
+      "retainedPath": "independent-audit/spn128-independent-callback-numerics.json",
+      "originalBytes": 9037,
+      "originalSha256": "ba1b9975ef00cd60cc349d77b522acd91d819114398907435746cd5611d7054e",
+      "retainedBytes": 9037,
+      "retainedSha256": "ba1b9975ef00cd60cc349d77b522acd91d819114398907435746cd5611d7054e",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-harness-overlays.json",
+      "retainedPath": "independent-audit/spn128-independent-harness-overlays.json",
+      "originalBytes": 17973,
+      "originalSha256": "67b770018e52b7889f8376f79344068b2f2e076c9aa9876f66d52d0419cc7726",
+      "retainedBytes": 17973,
+      "retainedSha256": "67b770018e52b7889f8376f79344068b2f2e076c9aa9876f66d52d0419cc7726",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-responsiveness-budgets.json",
+      "retainedPath": "independent-audit/spn128-independent-responsiveness-budgets.json",
+      "originalBytes": 7181,
+      "originalSha256": "ce6b6b6d327c0de3292e244051e1ec39a9597420a8a8f5b133782822d0e12768",
+      "retainedBytes": 7181,
+      "retainedSha256": "ce6b6b6d327c0de3292e244051e1ec39a9597420a8a8f5b133782822d0e12768",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-skip-owners.json",
+      "retainedPath": "independent-audit/spn128-independent-skip-owners.json",
+      "originalBytes": 3070,
+      "originalSha256": "b082c765602f9b7d1ea79e96f36dd1a739d63035ce015a0f3e9fae9e8239dc4a",
+      "retainedBytes": 3070,
+      "retainedSha256": "b082c765602f9b7d1ea79e96f36dd1a739d63035ce015a0f3e9fae9e8239dc4a",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-browser-receipts.json",
+      "retainedPath": "independent-audit/spn128-independent-browser-receipts.json",
+      "originalBytes": 67242,
+      "originalSha256": "b40076f0b80ba8e91d36b0296078d1f54049091cbb187afc74868d558c95b8e5",
+      "retainedBytes": 67242,
+      "retainedSha256": "b40076f0b80ba8e91d36b0296078d1f54049091cbb187afc74868d558c95b8e5",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-callback-123-comparison.json",
+      "retainedPath": "independent-audit/spn128-independent-callback-123-comparison.json",
+      "originalBytes": 43322,
+      "originalSha256": "39909352c4880b543704c96090c3635001b8eabbd5d78a286f0427a6392ee7b1",
+      "retainedBytes": 43322,
+      "retainedSha256": "39909352c4880b543704c96090c3635001b8eabbd5d78a286f0427a6392ee7b1",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-inventory.ts",
+      "retainedPath": "independent-audit/scripts/spn128-inventory.ts",
+      "originalBytes": 2365,
+      "originalSha256": "7b444e664d976682d7ae5f967c19dcdb991cf34748a1b2786de0555006e52244",
+      "retainedBytes": 2365,
+      "retainedSha256": "7b444e664d976682d7ae5f967c19dcdb991cf34748a1b2786de0555006e52244",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-crash-retention-gap.ts",
+      "retainedPath": "independent-audit/scripts/spn128-crash-retention-gap.ts",
+      "originalBytes": 2911,
+      "originalSha256": "14aadfc36eff137f1d98a00c75f4683b98e48926118fa71882eadd7785641d7c",
+      "retainedBytes": 2911,
+      "retainedSha256": "14aadfc36eff137f1d98a00c75f4683b98e48926118fa71882eadd7785641d7c",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-linux-audit.ts",
+      "retainedPath": "independent-audit/scripts/spn128-linux-audit.ts",
+      "originalBytes": 3370,
+      "originalSha256": "3ac7046d9e2b294c3da3b9e15f9ddeb98424de1b0b7e541fe680b5136ddb2426",
+      "retainedBytes": 3370,
+      "retainedSha256": "3ac7046d9e2b294c3da3b9e15f9ddeb98424de1b0b7e541fe680b5136ddb2426",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-browser-receipts.ts",
+      "retainedPath": "independent-audit/scripts/spn128-browser-receipts.ts",
+      "originalBytes": 2445,
+      "originalSha256": "cfe4d26d674cfa363b91c69b1ffb207356fca9074555c29ce8e5d868ad2a9391",
+      "retainedBytes": 2445,
+      "retainedSha256": "cfe4d26d674cfa363b91c69b1ffb207356fca9074555c29ce8e5d868ad2a9391",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-supervised-failure-audit.ts",
+      "retainedPath": "independent-audit/scripts/spn128-supervised-failure-audit.ts",
+      "originalBytes": 3406,
+      "originalSha256": "418de79b82d9aed060e11ed2ec266dfaca81eb1c4e6a650e9c288f60c0182570",
+      "retainedBytes": 3406,
+      "retainedSha256": "418de79b82d9aed060e11ed2ec266dfaca81eb1c4e6a650e9c288f60c0182570",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-callback-failure-audit.ts",
+      "retainedPath": "independent-audit/scripts/spn128-callback-failure-audit.ts",
+      "originalBytes": 4691,
+      "originalSha256": "f5171fb58cb55beb175918170fdf99869386732670e2f672eb6ddc9b45d73d05",
+      "retainedBytes": 4691,
+      "retainedSha256": "f5171fb58cb55beb175918170fdf99869386732670e2f672eb6ddc9b45d73d05",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-callback-comparison-audit.ts",
+      "retainedPath": "independent-audit/scripts/spn128-callback-comparison-audit.ts",
+      "originalBytes": 6231,
+      "originalSha256": "e2a0d4f5c88c914a8ff62f5f1baee2ba5f34af4d37316c7f5aad46e23be49bbd",
+      "retainedBytes": 6231,
+      "retainedSha256": "e2a0d4f5c88c914a8ff62f5f1baee2ba5f34af4d37316c7f5aad46e23be49bbd",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-terminal-audit.ts",
+      "retainedPath": "independent-audit/scripts/spn128-terminal-audit.ts",
+      "originalBytes": 5571,
+      "originalSha256": "388c83ee547bafeeb6e22af317aad3de64611b79769354d5a7086e41cffac14f",
+      "retainedBytes": 5571,
+      "retainedSha256": "388c83ee547bafeeb6e22af317aad3de64611b79769354d5a7086e41cffac14f",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-acceptance-audit.ts",
+      "retainedPath": "independent-audit/scripts/spn128-independent-acceptance-audit.ts",
+      "originalBytes": 7859,
+      "originalSha256": "7eaef5d19e87759f35d804b9a929521160bddbb53de25100e26863fc2b7ed31b",
+      "retainedBytes": 7859,
+      "retainedSha256": "7eaef5d19e87759f35d804b9a929521160bddbb53de25100e26863fc2b7ed31b",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-workflow-audit.ts",
+      "retainedPath": "independent-audit/scripts/spn128-independent-workflow-audit.ts",
+      "originalBytes": 8581,
+      "originalSha256": "dc4e3c6e3e819f2a5b3153f1e6ba1d549afb809cb5441836cdbc91a07c2d0fc7",
+      "retainedBytes": 8581,
+      "retainedSha256": "dc4e3c6e3e819f2a5b3153f1e6ba1d549afb809cb5441836cdbc91a07c2d0fc7",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-metrics-audit.ts",
+      "retainedPath": "independent-audit/scripts/spn128-independent-metrics-audit.ts",
+      "originalBytes": 6793,
+      "originalSha256": "c4cd52f16b67e73fb74a30bf934f7054f78d3d1a04fdcf6de6d03e6c1f32e6e5",
+      "retainedBytes": 6793,
+      "retainedSha256": "c4cd52f16b67e73fb74a30bf934f7054f78d3d1a04fdcf6de6d03e6c1f32e6e5",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-callback-numerics.ts",
+      "retainedPath": "independent-audit/scripts/spn128-independent-callback-numerics.ts",
+      "originalBytes": 4131,
+      "originalSha256": "93307a65724c71f49ae407968bed5f2eacdb3518ea465d69100116f9f17d965a",
+      "retainedBytes": 4131,
+      "retainedSha256": "93307a65724c71f49ae407968bed5f2eacdb3518ea465d69100116f9f17d965a",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-harness-overlays.ts",
+      "retainedPath": "independent-audit/scripts/spn128-independent-harness-overlays.ts",
+      "originalBytes": 1647,
+      "originalSha256": "ccd6ed0256c969032fe6a8c245a2e8b18062b1026c65de30d151f11c3c1c4d29",
+      "retainedBytes": 1647,
+      "retainedSha256": "ccd6ed0256c969032fe6a8c245a2e8b18062b1026c65de30d151f11c3c1c4d29",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-responsiveness-budgets.ts",
+      "retainedPath": "independent-audit/scripts/spn128-independent-responsiveness-budgets.ts",
+      "originalBytes": 3394,
+      "originalSha256": "13506c2395e71dfb9c3fd54833c6b563fc9e3d6dcbbb4a18640b302bbb0cca7a",
+      "retainedBytes": 3394,
+      "retainedSha256": "13506c2395e71dfb9c3fd54833c6b563fc9e3d6dcbbb4a18640b302bbb0cca7a",
+      "encoding": "original-file-bytes"
+    },
+    {
+      "original": "/tmp/spn128-independent-skip-owners.ts",
+      "retainedPath": "independent-audit/scripts/spn128-independent-skip-owners.ts",
+      "originalBytes": 1650,
+      "originalSha256": "8ce3bb60bc69adc61d5564c34f7da6efbcb933c99976c9372a485b1c8c9f59d2",
+      "retainedBytes": 1650,
+      "retainedSha256": "8ce3bb60bc69adc61d5564c34f7da6efbcb933c99976c9372a485b1c8c9f59d2",
+      "encoding": "original-file-bytes"
+    }
+  ]
+}

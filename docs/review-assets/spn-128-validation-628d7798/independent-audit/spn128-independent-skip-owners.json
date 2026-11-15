@@ -1,0 +1,78 @@
+{
+  "at": "2026-11-14T23:58:04.818Z",
+  "uniqueSkippedTitles": 5,
+  "passedDistinctOwners": [
+    {
+      "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+      "project": "sync-development",
+      "artifact": 14137024349,
+      "member": "playwright-report/sync-development.json",
+      "sha256": "4489b6f5bdd1d27839811c071b5df0cc945493a38e6abe58ea3cd963de45b082",
+      "status": "passed",
+      "retry": 0
+    },
+    {
+      "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+      "project": "sync-development",
+      "artifact": 14137024349,
+      "member": "playwright-report/sync-development.json",
+      "sha256": "4489b6f5bdd1d27839811c071b5df0cc945493a38e6abe58ea3cd963de45b082",
+      "status": "passed",
+      "retry": 0
+    },
+    {
+      "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+      "project": "sync-development",
+      "artifact": 14137024349,
+      "member": "playwright-report/sync-development.json",
+      "sha256": "4489b6f5bdd1d27839811c071b5df0cc945493a38e6abe58ea3cd963de45b082",
+      "status": "passed",
+      "retry": 0
+    },
+    {
+      "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+      "project": "sync-production",
+      "artifact": 14136749851,
+      "member": "playwright-report/sync-production.json",
+      "sha256": "3900db928c3eb256adbf0509ddee0fbd5c1c18a494c63c682939b63e55e9e70c",
+      "status": "passed",
+      "retry": 0
+    },
+    {
+      "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+      "project": "sync-production",
+      "artifact": 14136749851,
+      "member": "playwright-report/sync-production.json",
+      "sha256": "3900db928c3eb256adbf0509ddee0fbd5c1c18a494c63c682939b63e55e9e70c",
+      "status": "passed",
+      "retry": 0
+    },
+    {
+      "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+      "project": "sync-production",
+      "artifact": 14136749851,
+      "member": "playwright-report/sync-production.json",
+      "sha256": "3900db928c3eb256adbf0509ddee0fbd5c1c18a494c63c682939b63e55e9e70c",
+      "status": "passed",
+      "retry": 0
+    },
+    {
+      "title": "supervised maintenance keeps pending native work, fences old edits, and recovers through cold controls",
+      "project": "production",
+      "artifact": 14137314556,
+      "member": "playwright-report/production-2-of-2.json",
+      "sha256": "791c2d306fd71e3db3835f3642a7ab3fa692215cfeafed9cc12d0e9db97cbdaa",
+      "status": "passed",
+      "retry": 0
+    },
+    {
+      "title": "production open, search, local persistence and server acknowledgement remain distinct in the diagnostics export",
+      "project": "production",
+      "artifact": 14137154097,
+      "member": "playwright-report/production-1-of-2.json",
+      "sha256": "f02fe5d64b800d924b00dbf5dc436bd9082c601b3c3e9818747f65453969117b",
+      "status": "passed",
+      "retry": 0
+    }
+  ]
+}

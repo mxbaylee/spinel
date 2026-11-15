@@ -1,0 +1,1687 @@
+{
+  "at": "2026-11-15T00:04:35.562Z",
+  "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "tested": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+  "latestSnapshot": "/tmp/spn128-publication-628d7798/validation/snapshots/2026-11-15T000353932Z",
+  "workflowStatuses": [
+    {
+      "kind": "ci",
+      "id": 43654184206,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "completed": 33,
+      "total": 33
+    },
+    {
+      "kind": "storybook",
+      "id": 43654184145,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 10,
+      "total": 10
+    },
+    {
+      "kind": "desktop",
+      "id": 43654184097,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 3,
+      "total": 3
+    },
+    {
+      "kind": "spaces",
+      "id": 43654184159,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 1,
+      "total": 1
+    }
+  ],
+  "allTerminal": true,
+  "bindings": [
+    {
+      "artifact": 14137631522,
+      "member": "ci-plan.json",
+      "bytes": 3937,
+      "sha256": "e7cf5ea230e8f5813e668f24357b54350ec20031580b1509a79368cdc4e3a9ff"
+    },
+    {
+      "artifact": 14137316568,
+      "member": "spaces-acceptance.json",
+      "bytes": 1245,
+      "sha256": "f6281c4c2d4cb72ba3b747a20b20be648df338b18577bc130d35d03202ebf167"
+    },
+    {
+      "artifact": 14137816316,
+      "member": "playwright-report/mobile-https.json",
+      "bytes": 1398069,
+      "sha256": "ea727a8f9876f0dc7404c5514952c2bf74b3fee5765c5a3d9ad634937050f09d"
+    },
+    {
+      "artifact": 14137801317,
+      "member": "firefox/acceptance.json",
+      "bytes": 56438,
+      "sha256": "e18546edadacbcb822b18a222c17d9618d2e925e56e38cd7f4c18fea791fa9e1"
+    },
+    {
+      "artifact": 14137024349,
+      "member": "playwright-report/sync-development.json",
+      "bytes": 1405282,
+      "sha256": "4489b6f5bdd1d27839811c071b5df0cc945493a38e6abe58ea3cd963de45b082"
+    },
+    {
+      "artifact": 14137442648,
+      "member": "chrome/acceptance.json",
+      "bytes": 55275,
+      "sha256": "c736c63feffd37393c99e7fa5523b9c81afe364d823c4628ad1b3c09d414fa0f"
+    },
+    {
+      "artifact": 14137179276,
+      "member": "safari/acceptance.json",
+      "bytes": 53105,
+      "sha256": "ead79e76da56824a9f0f8bee217b7e8e406cab493cc181810c8550fffa813130"
+    },
+    {
+      "artifact": 14137073328,
+      "member": "playwright-report/sync-soak-sheet.json",
+      "bytes": 1381655,
+      "sha256": "8af35516c6002ed2261078a9e2ae1a6374fdaa11f64c3aa4c289a1d8a2bf8014"
+    },
+    {
+      "artifact": 14137861923,
+      "member": "ci-results-unit.json",
+      "bytes": 6247,
+      "sha256": "dc9c403a19a417e585813fd842975b701dec7b0c53c295f79d0b9d8fe5967bb0"
+    },
+    {
+      "artifact": 14137572869,
+      "member": "playwright-report/offline-upgrade.json",
+      "bytes": 1397413,
+      "sha256": "fd1dacbb8282f32fa0c6cabfc25a8a26175850d0a2c38a62bcb2794df584cd2d"
+    },
+    {
+      "artifact": 14137179532,
+      "member": "playwright-report/sync-soak-doc.json",
+      "bytes": 1381626,
+      "sha256": "1c63fbcbaa65ce4d9d17a5a48e03c31e73bce489396885db6c60791c41323b05"
+    },
+    {
+      "artifact": 14137299129,
+      "member": "ci-results-lib.json",
+      "bytes": 6354,
+      "sha256": "dc9c617896ed18b9c0cee786876f07cf907dba7057fb6f49762b4c2937dbe84b"
+    },
+    {
+      "artifact": 14137906222,
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 23897576,
+      "sha256": "f70ee2e0d4d3a1a79d4cc5a6d7707ba8785b8ec1e680ab93b7f77a3b85cefd3d"
+    },
+    {
+      "artifact": 14137906222,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "bytes": 26404,
+      "sha256": "327650f531620ac65ffccb330f0bb2cc8b9fbe5270da8651a568fd3992bcfb20"
+    },
+    {
+      "artifact": 14137906222,
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 21908144,
+      "sha256": "217053299a9adea28469ba9492b33dce481afab3f2d20e6c58bbcfad8d75e897"
+    },
+    {
+      "artifact": 14137906222,
+      "member": "test-results/spn113-comparison-desktop.json",
+      "bytes": 969514,
+      "sha256": "1277e2618d542fecf9b8b7af60ea05f107ed578cdfe0860d70091cfd4a815a37"
+    },
+    {
+      "artifact": 14137906222,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "bytes": 1381800,
+      "sha256": "bb65b353ee97d10cfd0fb40d4d1bbcfd3ef86ee089ee27c2ce5204261446bbfb"
+    },
+    {
+      "artifact": 14136844448,
+      "member": "playwright-report/supervised-restore.json",
+      "bytes": 1397994,
+      "sha256": "1bb6a33671b91019e80782c4eb9114921b0fad87bd597f8c0fe6a2fe3172876a"
+    },
+    {
+      "artifact": 14136749851,
+      "member": "playwright-report/sync-production.json",
+      "bytes": 1503067,
+      "sha256": "3900db928c3eb256adbf0509ddee0fbd5c1c18a494c63c682939b63e55e9e70c"
+    },
+    {
+      "artifact": 14137818168,
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 357277,
+      "sha256": "ee2d640daa1ef758b9618212b5024f4c0a2f016e22fd0d87c4b5ddb2da2a27a4"
+    },
+    {
+      "artifact": 14137818168,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "bytes": 28978,
+      "sha256": "4485140aa9d213e5d960406c256dab4a05c205f1cab27c6047a519824e6806ae"
+    },
+    {
+      "artifact": 14137818168,
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "bytes": 19805282,
+      "sha256": "05a4ec74389a1e7f45f1d21f9d42961444be1c77b7664edb733f47e1417f50f9"
+    },
+    {
+      "artifact": 14137818168,
+      "member": "test-results/spn113-comparison-mobile.json",
+      "bytes": 5867,
+      "sha256": "69facd65dae273aeedc9fc92c1e445abedddc18228a0740678cd4d839a6251b6"
+    },
+    {
+      "artifact": 14137818168,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "bytes": 1381798,
+      "sha256": "92a87b2a632217148d3e7319b219e5c28489ef3d38ec53979e8832db001d4aef"
+    },
+    {
+      "artifact": 14137314556,
+      "member": "playwright-report/production-2-of-2.json",
+      "bytes": 1585525,
+      "sha256": "791c2d306fd71e3db3835f3642a7ab3fa692215cfeafed9cc12d0e9db97cbdaa"
+    },
+    {
+      "artifact": 14137454196,
+      "member": "playwright-report/development-2-of-2.json",
+      "bytes": 1573272,
+      "sha256": "53626455a8c8c86459bd2276667c45b8902ef02f13b90322529739817a0c1611"
+    },
+    {
+      "artifact": 14137014079,
+      "member": "playwright-report/development-1-of-2.json",
+      "bytes": 1487674,
+      "sha256": "7e81f843b6d57491f6affe49518258b101aaabcc44207c9441de42d78ad11ba0"
+    },
+    {
+      "artifact": 14137878213,
+      "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "bytes": 29455,
+      "sha256": "771dbe4c8a5876ac8b9e6d5cdea8a4dd7d57da2258a00e1b9a6e0abc4442c344"
+    },
+    {
+      "artifact": 14137878213,
+      "member": "playwright-report/doc-responsiveness.json",
+      "bytes": 1388720,
+      "sha256": "b062260083050b891ba30a061def10cd25ccc7d5d2466982cb5f295feb6647f3"
+    },
+    {
+      "artifact": 14137154097,
+      "member": "playwright-report/production-1-of-2.json",
+      "bytes": 1498078,
+      "sha256": "f02fe5d64b800d924b00dbf5dc436bd9082c601b3c3e9818747f65453969117b"
+    },
+    {
+      "artifact": 14138395646,
+      "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "bytes": 29442,
+      "sha256": "e48d1c9c8421a5624aacd0b6b2fced972d7702be5ddcc15922e51f09a5f5ab7a"
+    },
+    {
+      "artifact": 14138395646,
+      "member": "playwright-report/doc-responsiveness.json",
+      "bytes": 1388716,
+      "sha256": "c82a956da2eed99589dd8bb92c796913c6012536536c42e2f688dc03ed21e14d"
+    },
+    {
+      "artifact": 14138007198,
+      "member": "ci-results-browser.json",
+      "bytes": 593,
+      "sha256": "6ae62139f379c4d6d43b56b161d4c0df303c0d48a4c8378ad68c844255b1c4c4"
+    }
+  ],
+  "plans": [
+    {
+      "artifact": 14137631522,
+      "sha256": "e7cf5ea230e8f5813e668f24357b54350ec20031580b1509a79368cdc4e3a9ff",
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+      "tested": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+      "mode": "full",
+      "suites": [
+        "backlog",
+        "pull-request",
+        "lint",
+        "typecheck",
+        "unit-tests",
+        "lib-test-run",
+        "playwright-run",
+        "container-smoke",
+        "restore-timing",
+        "sync-transition",
+        "doc-responsiveness",
+        "doc-callback-lifetimes",
+        "responsiveness-baseline",
+        "callback-baseline",
+        "phone-compatibility"
+      ]
+    }
+  ],
+  "reports": [
+    {
+      "artifact": 14137816316,
+      "member": "playwright-report/mobile-https.json",
+      "stats": {
+        "startTime": "2026-11-14T23:39:29.977Z",
+        "duration": 55520.846,
+        "expected": 10,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 13,
+      "failures": [],
+      "skips": [
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14137024349,
+      "member": "playwright-report/sync-development.json",
+      "stats": {
+        "startTime": "2026-11-14T23:39:51.013Z",
+        "duration": 151560.107,
+        "expected": 21,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 21,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137073328,
+      "member": "playwright-report/sync-soak-sheet.json",
+      "stats": {
+        "startTime": "2026-11-14T23:45:53.484Z",
+        "duration": 70014.439,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137572869,
+      "member": "playwright-report/offline-upgrade.json",
+      "stats": {
+        "startTime": "2026-11-14T23:46:28.690Z",
+        "duration": 48260.923,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 3,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137179532,
+      "member": "playwright-report/sync-soak-doc.json",
+      "stats": {
+        "startTime": "2026-11-14T23:46:37.628Z",
+        "duration": 39755.513999999996,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137906222,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-14T23:44:28.958Z",
+        "duration": 183567.44999999998,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137906222,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-14T23:47:38.224Z",
+        "duration": 159546.441,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14136844448,
+      "member": "playwright-report/supervised-restore.json",
+      "stats": {
+        "startTime": "2026-11-14T23:45:43.272Z",
+        "duration": 323256.833,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "cases": 2,
+      "failures": [
+        {
+          "title": "a catalog restore survives double-clicks, cancel and a lost reply, and fences old clients",
+          "file": "supervised-restore.spec.ts",
+          "project": "supervised-restore",
+          "status": "unexpected",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": [
+            {
+              "workerIndex": 0,
+              "parallelIndex": 0,
+              "status": "failed",
+              "duration": 2576,
+              "error": {
+                "message": "Error: tracing.start: Tracing has been already started",
+                "stack": "Error: tracing.start: Tracing has been already started\n    at observeStartup (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:27:25)\n    at enrollOperator (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:153:9)\n    at /home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:366:22",
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                  "column": 25,
+                  "line": 27
+                },
+                "snippet": "\u001b[0m \u001b[90m 25 |\u001b[39m   \u001b[90m// These contexts are created manually, so the project trace setting does not\u001b[39m\n \u001b[90m 26 |\u001b[39m   \u001b[90m// cover them. Capture the original attempt, before any page can navigate.\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 27 |\u001b[39m   \u001b[36mawait\u001b[39m context\u001b[33m.\u001b[39mtracing\u001b[33m.\u001b[39mstart({ screenshots\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m,\u001b[39m snapshots\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 28 |\u001b[39m   context\u001b[33m.\u001b[39mon(\u001b[32m'page'\u001b[39m\u001b[33m,\u001b[39m (page) \u001b[33m=>\u001b[39m {\n \u001b[90m 29 |\u001b[39m     page\u001b[33m.\u001b[39mon(\u001b[32m'console'\u001b[39m\u001b[33m,\u001b[39m (message) \u001b[33m=>\u001b[39m {\n \u001b[90m 30 |\u001b[39m       \u001b[36mif\u001b[39m (message\u001b[33m.\u001b[39mtype() \u001b[33m===\u001b[39m \u001b[32m'error'\u001b[39m \u001b[33m&&\u001b[39m message\u001b[33m.\u001b[39mtext()\u001b[33m.\u001b[39mstartsWith(\u001b[32m'[spinel:startup]'\u001b[39m))\u001b[0m"
+              },
+              "errors": [
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                    "column": 25,
+                    "line": 27
+                  },
+                  "message": "Error: tracing.start: Tracing has been already started\n\n  25 |   // These contexts are created manually, so the project trace setting does not\n  26 |   // cover them. Capture the original attempt, before any page can navigate.\n> 27 |   await context.tracing.start({ screenshots: true, snapshots: true });\n     |                         ^\n  28 |   context.on('page', (page) => {\n  29 |     page.on('console', (message) => {\n  30 |       if (message.type() === 'error' && message.text().startsWith('[spinel:startup]'))\n    at observeStartup (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:27:25)\n    at enrollOperator (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:153:9)\n    at /home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:366:22"
+                }
+              ],
+              "stdout": [],
+              "stderr": [],
+              "retry": 0,
+              "startTime": "2026-11-14T23:45:44.621Z",
+              "annotations": [],
+              "attachments": [
+                {
+                  "name": "restore-startup-0",
+                  "contentType": "application/json",
+                  "body": "W10="
+                },
+                {
+                  "name": "restore-first-failure-0",
+                  "contentType": "application/zip",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/attachments/restore-first-failure-0-df4d32a2d9eb53497e5a30a4ff25f2f34915cd7f.zip"
+                },
+                {
+                  "name": "supervised-restore-first-attempt",
+                  "contentType": "application/json",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/attachments/supervised-restore-first-attempt-b877d5091562ee5dda1ae6e38ae95e7492611cad.json"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/error-context.md"
+                },
+                {
+                  "name": "trace",
+                  "contentType": "application/zip",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/trace.zip"
+                }
+              ],
+              "errorLocation": {
+                "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                "column": 25,
+                "line": 27
+              }
+            },
+            {
+              "workerIndex": 1,
+              "parallelIndex": 0,
+              "status": "failed",
+              "duration": 2360,
+              "error": {
+                "message": "Error: tracing.start: Tracing has been already started",
+                "stack": "Error: tracing.start: Tracing has been already started\n    at observeStartup (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:27:25)\n    at enrollOperator (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:153:9)\n    at /home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:366:22",
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                  "column": 25,
+                  "line": 27
+                },
+                "snippet": "\u001b[0m \u001b[90m 25 |\u001b[39m   \u001b[90m// These contexts are created manually, so the project trace setting does not\u001b[39m\n \u001b[90m 26 |\u001b[39m   \u001b[90m// cover them. Capture the original attempt, before any page can navigate.\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 27 |\u001b[39m   \u001b[36mawait\u001b[39m context\u001b[33m.\u001b[39mtracing\u001b[33m.\u001b[39mstart({ screenshots\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m,\u001b[39m snapshots\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 28 |\u001b[39m   context\u001b[33m.\u001b[39mon(\u001b[32m'page'\u001b[39m\u001b[33m,\u001b[39m (page) \u001b[33m=>\u001b[39m {\n \u001b[90m 29 |\u001b[39m     page\u001b[33m.\u001b[39mon(\u001b[32m'console'\u001b[39m\u001b[33m,\u001b[39m (message) \u001b[33m=>\u001b[39m {\n \u001b[90m 30 |\u001b[39m       \u001b[36mif\u001b[39m (message\u001b[33m.\u001b[39mtype() \u001b[33m===\u001b[39m \u001b[32m'error'\u001b[39m \u001b[33m&&\u001b[39m message\u001b[33m.\u001b[39mtext()\u001b[33m.\u001b[39mstartsWith(\u001b[32m'[spinel:startup]'\u001b[39m))\u001b[0m"
+              },
+              "errors": [
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                    "column": 25,
+                    "line": 27
+                  },
+                  "message": "Error: tracing.start: Tracing has been already started\n\n  25 |   // These contexts are created manually, so the project trace setting does not\n  26 |   // cover them. Capture the original attempt, before any page can navigate.\n> 27 |   await context.tracing.start({ screenshots: true, snapshots: true });\n     |                         ^\n  28 |   context.on('page', (page) => {\n  29 |     page.on('console', (message) => {\n  30 |       if (message.type() === 'error' && message.text().startsWith('[spinel:startup]'))\n    at observeStartup (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:27:25)\n    at enrollOperator (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:153:9)\n    at /home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:366:22"
+                }
+              ],
+              "stdout": [],
+              "stderr": [],
+              "retry": 1,
+              "startTime": "2026-11-14T23:45:47.629Z",
+              "annotations": [],
+              "attachments": [
+                {
+                  "name": "restore-startup-0",
+                  "contentType": "application/json",
+                  "body": "W10="
+                },
+                {
+                  "name": "restore-first-failure-0",
+                  "contentType": "application/zip",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry1/attachments/restore-first-failure-0-53d0478673f9f5b3786a39dbf606d5c1a8310737.zip"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry1/error-context.md"
+                },
+                {
+                  "name": "trace",
+                  "contentType": "application/zip",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry1/trace.zip"
+                }
+              ],
+              "errorLocation": {
+                "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                "column": 25,
+                "line": 27
+              }
+            },
+            {
+              "workerIndex": 2,
+              "parallelIndex": 0,
+              "status": "failed",
+              "duration": 2403,
+              "error": {
+                "message": "Error: tracing.start: Tracing has been already started",
+                "stack": "Error: tracing.start: Tracing has been already started\n    at observeStartup (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:27:25)\n    at enrollOperator (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:153:9)\n    at /home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:366:22",
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                  "column": 25,
+                  "line": 27
+                },
+                "snippet": "\u001b[0m \u001b[90m 25 |\u001b[39m   \u001b[90m// These contexts are created manually, so the project trace setting does not\u001b[39m\n \u001b[90m 26 |\u001b[39m   \u001b[90m// cover them. Capture the original attempt, before any page can navigate.\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 27 |\u001b[39m   \u001b[36mawait\u001b[39m context\u001b[33m.\u001b[39mtracing\u001b[33m.\u001b[39mstart({ screenshots\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m,\u001b[39m snapshots\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 28 |\u001b[39m   context\u001b[33m.\u001b[39mon(\u001b[32m'page'\u001b[39m\u001b[33m,\u001b[39m (page) \u001b[33m=>\u001b[39m {\n \u001b[90m 29 |\u001b[39m     page\u001b[33m.\u001b[39mon(\u001b[32m'console'\u001b[39m\u001b[33m,\u001b[39m (message) \u001b[33m=>\u001b[39m {\n \u001b[90m 30 |\u001b[39m       \u001b[36mif\u001b[39m (message\u001b[33m.\u001b[39mtype() \u001b[33m===\u001b[39m \u001b[32m'error'\u001b[39m \u001b[33m&&\u001b[39m message\u001b[33m.\u001b[39mtext()\u001b[33m.\u001b[39mstartsWith(\u001b[32m'[spinel:startup]'\u001b[39m))\u001b[0m"
+              },
+              "errors": [
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                    "column": 25,
+                    "line": 27
+                  },
+                  "message": "Error: tracing.start: Tracing has been already started\n\n  25 |   // These contexts are created manually, so the project trace setting does not\n  26 |   // cover them. Capture the original attempt, before any page can navigate.\n> 27 |   await context.tracing.start({ screenshots: true, snapshots: true });\n     |                         ^\n  28 |   context.on('page', (page) => {\n  29 |     page.on('console', (message) => {\n  30 |       if (message.type() === 'error' && message.text().startsWith('[spinel:startup]'))\n    at observeStartup (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:27:25)\n    at enrollOperator (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:153:9)\n    at /home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:366:22"
+                }
+              ],
+              "stdout": [],
+              "stderr": [],
+              "retry": 2,
+              "startTime": "2026-11-14T23:45:50.440Z",
+              "annotations": [],
+              "attachments": [
+                {
+                  "name": "restore-startup-0",
+                  "contentType": "application/json",
+                  "body": "W10="
+                },
+                {
+                  "name": "restore-first-failure-0",
+                  "contentType": "application/zip",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry2/attachments/restore-first-failure-0-d83c3b9b8735d0de5484b455b4dc1a9900a44781.zip"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry2/error-context.md"
+                },
+                {
+                  "name": "trace",
+                  "contentType": "application/zip",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry2/trace.zip"
+                }
+              ],
+              "errorLocation": {
+                "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                "column": 25,
+                "line": 27
+              }
+            }
+          ]
+        }
+      ],
+      "skips": []
+    },
+    {
+      "artifact": 14136749851,
+      "member": "playwright-report/sync-production.json",
+      "stats": {
+        "startTime": "2026-11-14T23:39:54.980Z",
+        "duration": 671053.8250000001,
+        "expected": 98,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 98,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137818168,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-14T23:39:53.033Z",
+        "duration": 427525.445,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [
+        {
+          "title": "mobile native callback lifetimes",
+          "file": "doc-responsiveness-callbacks.spec.ts",
+          "project": "doc-callback-lifetimes",
+          "status": "unexpected",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": [
+            {
+              "workerIndex": 0,
+              "parallelIndex": 0,
+              "status": "timedOut",
+              "duration": 420319,
+              "error": {
+                "message": "\u001b[31mTest timeout of 420000ms exceeded.\u001b[39m",
+                "stack": "\u001b[31mTest timeout of 420000ms exceeded.\u001b[39m"
+              },
+              "errors": [
+                {
+                  "message": "\u001b[31mTest timeout of 420000ms exceeded.\u001b[39m"
+                },
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callbacks.spec.ts",
+                    "column": 26,
+                    "line": 117
+                  },
+                  "message": "Error: Callback observation timedOut.\n\n  115 |       detach: () => {},\n  116 |       abort: () =>\n> 117 |         controller.abort(new Error(`Callback observation ${info.status ?? 'interrupted'}.`)),\n      |                          ^\n  118 |       interrupt: async () => {},\n  119 |     };\n  120 |     observations.set(info, observation);\n    at Object.abort (/home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callbacks.spec.ts:117:26)\n    at settleCallbackObservation (/home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callback-progress.ts:78:17)\n    at /home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callbacks.spec.ts:98:11"
+                }
+              ],
+              "stdout": [],
+              "stderr": [],
+              "retry": 0,
+              "startTime": "2026-11-14T23:39:59.863Z",
+              "annotations": [],
+              "attachments": [
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/test-failed-1.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/test-failed-2.png"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/error-context.md"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "skips": []
+    },
+    {
+      "artifact": 14137818168,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-14T23:47:06.652Z",
+        "duration": 306310.352,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137314556,
+      "member": "playwright-report/production-2-of-2.json",
+      "stats": {
+        "startTime": "2026-11-14T23:40:13.990Z",
+        "duration": 732711.4060000001,
+        "expected": 89,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 89,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137454196,
+      "member": "playwright-report/development-2-of-2.json",
+      "stats": {
+        "startTime": "2026-11-14T23:39:25.865Z",
+        "duration": 833855.907,
+        "expected": 79,
+        "skipped": 1,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 80,
+      "failures": [],
+      "skips": [
+        {
+          "title": "supervised maintenance keeps pending native work, fences old edits, and recovers through cold controls",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Closed-process verification uses the Linux production supervisor.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/maintenance.spec.ts",
+                "line": 206,
+                "column": 8
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14137014079,
+      "member": "playwright-report/development-1-of-2.json",
+      "stats": {
+        "startTime": "2026-11-14T23:39:25.886Z",
+        "duration": 850643.0700000001,
+        "expected": 77,
+        "skipped": 4,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 81,
+      "failures": [],
+      "skips": [
+        {
+          "title": "production open, search, local persistence and server acknowledgement remain distinct in the diagnostics export",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Prepared offline copies require the production runtime manifest.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts",
+                "line": 511,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14137878213,
+      "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-14T23:41:26.451Z",
+        "duration": 497113.89999999997,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 4,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137878213,
+      "member": "playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-14T23:49:47.278Z",
+        "duration": 379837.447,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 7,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137154097,
+      "member": "playwright-report/production-1-of-2.json",
+      "stats": {
+        "startTime": "2026-11-14T23:46:35.467Z",
+        "duration": 619394.105,
+        "expected": 87,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 90,
+      "failures": [],
+      "skips": [
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "project": "production",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "project": "production",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "project": "production",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14138395646,
+      "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-14T23:39:37.357Z",
+        "duration": 841501.654,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 4,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14138395646,
+      "member": "playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-14T23:53:41.330Z",
+        "duration": 524339.176,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 7,
+      "failures": [],
+      "skips": []
+    }
+  ],
+  "native": [
+    {
+      "artifact": 14137801317,
+      "browser": "firefox",
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "tested": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+      "stages": 44,
+      "cleanup": {
+        "name": "browser-stop",
+        "time": "2026-11-14T23:40:12.776Z",
+        "kind": "firefox",
+        "browserPid": 4124,
+        "driverPid": 4122,
+        "browserExited": true,
+        "driverExited": true,
+        "stoppedAt": "2026-11-14T23:40:12.776Z"
+      },
+      "transportSnapshot": {
+        "forwardedRequests": 612,
+        "blockedRequests": 1203,
+        "forwardedUpgrades": 16,
+        "blockedUpgrades": 6,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 0
+      }
+    },
+    {
+      "artifact": 14137442648,
+      "browser": "chrome",
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "tested": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+      "stages": 44,
+      "cleanup": {
+        "name": "browser-stop",
+        "time": "2026-11-14T23:41:59.069Z",
+        "kind": "chrome",
+        "browserPid": 24571,
+        "driverPid": 24550,
+        "browserExited": true,
+        "driverExited": true,
+        "stoppedAt": "2026-11-14T23:41:59.069Z"
+      },
+      "transportSnapshot": {
+        "forwardedRequests": 589,
+        "blockedRequests": 130,
+        "forwardedUpgrades": 16,
+        "blockedUpgrades": 6,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 0
+      }
+    },
+    {
+      "artifact": 14137179276,
+      "browser": "safari",
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "tested": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+      "stages": 46,
+      "cleanup": {
+        "name": "browser-stop",
+        "time": "2026-11-14T23:45:43.084Z",
+        "kind": "safari",
+        "browserPid": 10554,
+        "driverPid": null,
+        "browserExited": true,
+        "driverExited": true,
+        "stoppedAt": "2026-11-14T23:45:43.084Z"
+      },
+      "transportSnapshot": {
+        "forwardedRequests": 792,
+        "blockedRequests": 605,
+        "forwardedUpgrades": 18,
+        "blockedUpgrades": 6,
+        "logins": 1,
+        "offline": true,
+        "activeBrowserSockets": 0
+      }
+    }
+  ],
+  "providers": [
+    {
+      "artifact": 14137316568,
+      "status": "passed",
+      "sourceCommit": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "checks": [
+        "bucket-retention-policy",
+        "private-publication-and-readback",
+        "anonymous-access-denial",
+        "authenticated-download-and-encrypted-restore",
+        "paginated-complete-catalog-and-pending-cleanup",
+        "retention-and-deletion",
+        "complete-app-provider-fixture",
+        "operator-provider-catalog",
+        "catalog-source-preparation",
+        "catalog-confirmation-and-private-release",
+        "provider-restore-session-revocation-and-outcome",
+        "provider-restored-content-and-current-passkey"
+      ],
+      "cleanup": "complete",
+      "archiveBytes": 663,
+      "supervisedRestore": {
+        "status": "passed",
+        "checks": [
+          "complete-app-provider-fixture",
+          "operator-provider-catalog",
+          "catalog-source-preparation",
+          "catalog-confirmation-and-private-release",
+          "provider-restore-session-revocation-and-outcome",
+          "provider-restored-content-and-current-passkey"
+        ],
+        "runtime": "real-app-child-process",
+        "imagePolicy": "synthetic-fixture",
+        "localCleanup": "safe",
+        "archiveBytes": 12327,
+        "sourceSha256": "0c5004f049a896c938c3b798d8c2a73427f2721d11063502a3f7fcdd97f2ac98"
+      },
+      "durationMs": 15913
+    }
+  ],
+  "callbacks": [
+    {
+      "artifact": 14137906222,
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "role": "baselineObservation",
+      "preset": "desktop",
+      "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "attempt": 0,
+      "complete": true,
+      "passed": true,
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      },
+      "evidenceFailures": [],
+      "candidateViolations": [
+        "cursor pending high-water 7856 exceeds 4.",
+        "cursor retains callbacks at/after editor disposal.",
+        "cursor fires or installs callbacks after editor disposal.",
+        "zoom-update pending high-water 1889 exceeds 1."
+      ],
+      "caps": {
+        "cursor": 4,
+        "zoom-init": 1,
+        "zoom-update": 1
+      },
+      "ledger": 37883,
+      "phaseAtUs": {
+        "beforeMount": 88254797,
+        "inputStart": 89894510,
+        "finalKey": 175977498,
+        "disposed": 181409089,
+        "end": 182611309
+      },
+      "mainThreadTaskKeys": [
+        "count",
+        "sumMs",
+        "unionMs",
+        "maxMs",
+        "instantaneousEvents",
+        "boundaryEvents",
+        "postInput",
+        "postDisposal",
+        "spans"
+      ],
+      "rawKeydown": 2086,
+      "rawKeyToFrame": 2086,
+      "harnessBindings": 0,
+      "traceRead": {
+        "sourceEvents": 1055222,
+        "retainedEvents": 1055222,
+        "callbackEvents": 221335,
+        "uncompressedBytes": 666844902,
+        "uncompressedSha256": "042dc3b10f43294fe11ed4f8b311ad1dabee439deb3c1cf3608f7e55fc2acd41",
+        "maxEventBytes": 18370
+      }
+    },
+    {
+      "artifact": 14137906222,
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "role": "candidate",
+      "preset": "desktop",
+      "source": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+      "attempt": 0,
+      "complete": true,
+      "passed": true,
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      },
+      "evidenceFailures": [],
+      "candidateViolations": [],
+      "caps": {
+        "cursor": 4,
+        "zoom-init": 1,
+        "zoom-update": 1
+      },
+      "ledger": 31637,
+      "phaseAtUs": {
+        "beforeMount": 273167897,
+        "inputStart": 274566508,
+        "finalKey": 333624306,
+        "disposed": 340027072,
+        "end": 341230518
+      },
+      "mainThreadTaskKeys": [
+        "count",
+        "sumMs",
+        "unionMs",
+        "maxMs",
+        "instantaneousEvents",
+        "boundaryEvents",
+        "postInput",
+        "postDisposal",
+        "spans"
+      ],
+      "rawKeydown": 2086,
+      "rawKeyToFrame": 2086,
+      "harnessBindings": 16,
+      "traceRead": {
+        "sourceEvents": 1125633,
+        "retainedEvents": 1125633,
+        "callbackEvents": 243840,
+        "uncompressedBytes": 707019194,
+        "uncompressedSha256": "ed601b43245296c09cdbc405b246dfef6b22b7561fe99c0ca0c2ff425d8083cd",
+        "maxEventBytes": 18371
+      }
+    },
+    {
+      "artifact": 14137818168,
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "role": "baselineObservation",
+      "preset": "mobile",
+      "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "attempt": 0,
+      "complete": false,
+      "passed": false,
+      "phase": "trace-convert",
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      },
+      "analysisAvailable": false,
+      "excludedFromPassingNumericClaims": true
+    },
+    {
+      "artifact": 14137818168,
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "role": "candidate",
+      "preset": "mobile",
+      "source": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+      "attempt": 0,
+      "complete": true,
+      "passed": true,
+      "cleanup": {
+        "sessionDetached": true,
+        "fixtureClosed": true
+      },
+      "evidenceFailures": [],
+      "candidateViolations": [],
+      "caps": {
+        "cursor": 4,
+        "zoom-init": 1,
+        "zoom-update": 1
+      },
+      "ledger": 29534,
+      "phaseAtUs": {
+        "beforeMount": 656414396,
+        "inputStart": 660319820,
+        "finalKey": 838894147,
+        "disposed": 855081056,
+        "end": 856285710
+      },
+      "mainThreadTaskKeys": [
+        "count",
+        "sumMs",
+        "unionMs",
+        "maxMs",
+        "instantaneousEvents",
+        "boundaryEvents",
+        "postInput",
+        "postDisposal",
+        "spans"
+      ],
+      "rawKeydown": 2086,
+      "rawKeyToFrame": 2086,
+      "harnessBindings": 16,
+      "traceRead": {
+        "sourceEvents": 1010934,
+        "retainedEvents": 1010934,
+        "callbackEvents": 186558,
+        "uncompressedBytes": 620164859,
+        "uncompressedSha256": "a1f5994cb37774ffeaefcab28b863e40cff5d813c3d23bdc5584ddba4d3eaeda",
+        "maxEventBytes": 16127
+      }
+    }
+  ],
+  "comparisons": [
+    {
+      "artifact": 14137906222,
+      "member": "test-results/spn113-comparison-desktop.json",
+      "preset": "desktop",
+      "accepted": true,
+      "failures": [],
+      "mode": "paired",
+      "timing": "Traced callback observations are descriptive; unchanged unprofiled SPN-108 gates remain required.",
+      "baselineSource": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "candidateSource": "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+    },
+    {
+      "artifact": 14137818168,
+      "member": "test-results/spn113-comparison-mobile.json",
+      "preset": "mobile",
+      "accepted": false,
+      "failures": [
+        "baseline: Terminal callback progress does not confirm successful owned cleanup.",
+        "baseline: Retained source attribution artifacts are missing.",
+        "baseline: callback collection or native behavior did not complete successfully.",
+        "baseline: derived trace or converter receipt is missing.",
+        "baseline: unmapped source observations were not retained.",
+        "baseline: recomputed callback evidence is incomplete or rejected."
+      ],
+      "mode": "paired",
+      "timing": "Traced callback observations are descriptive; unchanged unprofiled SPN-108 gates remain required.",
+      "baselineSource": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "candidateSource": "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+    }
+  ],
+  "aggregates": [
+    {
+      "artifact": 14137861923,
+      "member": "ci-results-unit.json",
+      "data": {
+        "passed": true,
+        "evidence": {
+          "planSha256": "5e2b79d7b30463345f19dc7f3dd11189f95c641fc187de62e056e879f5e786c6",
+          "plan": {
+            "version": 1,
+            "event": "pull_request",
+            "action": "synchronize",
+            "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+            "head": "628d77987e7d9a08863465a7553a2ed82579728b",
+            "tested": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+            "mode": "full",
+            "labels": [],
+            "paths": null,
+            "suites": {
+              "backlog": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "pull-request": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "lint": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "typecheck": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "unit-tests": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "lib-test-run": {
+                "selected": true,
+                "dependencies": [
+                  "lib/**",
+                  "scripts/dependencies/**",
+                  "package{,-lock}.json",
+                  "vitest.config.ts",
+                  "tsconfig.json",
+                  ".nvmrc",
+                  ".github/workflows/ci.yml"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "playwright-run": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "container-smoke": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "restore-timing": {
+                "selected": true,
+                "dependencies": [
+                  "server/**",
+                  "src/{server,shared}/**",
+                  "lib/**",
+                  "web/** and src/ui/** (shared application/authentication bundle)",
+                  "e2e restore/shared helpers (doc-touch, doc-touch-raster, native-sheet-value)",
+                  "runtime/build/dependency/workflow inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "sync-transition": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "doc-responsiveness": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "doc-callback-lifetimes": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "responsiveness-baseline": {
+                "selected": true,
+                "dependencies": [
+                  "web/**",
+                  "server/**",
+                  "lib/**",
+                  "e2e/**",
+                  "src/shared/**",
+                  "src/server/{sync,history,collaboration}/**",
+                  "scripts/{ci,dependencies,sync-transition}/**",
+                  "build/runtime/dependency/workflow configuration"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "callback-baseline": {
+                "selected": true,
+                "dependencies": [
+                  "web/**",
+                  "server/**",
+                  "lib/**",
+                  "e2e/**",
+                  "src/shared/**",
+                  "src/server/{sync,history,collaboration}/**",
+                  "scripts/{ci,dependencies,sync-transition}/**",
+                  "build/runtime/dependency/workflow configuration"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "phone-compatibility": {
+                "selected": true,
+                "dependencies": [
+                  "full plan backstop; ordinary phone owners remain in routine browser coverage"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              }
+            }
+          },
+          "gateResults": {},
+          "results": [
+            {
+              "suite": "unit-tests",
+              "selected": true,
+              "dependencies": [
+                "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+              ],
+              "inputs": [],
+              "reason": "Immutable range or event labels unavailable; full coverage.",
+              "result": "success"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "artifact": 14137299129,
+      "member": "ci-results-lib.json",
+      "data": {
+        "passed": true,
+        "evidence": {
+          "planSha256": "5e2b79d7b30463345f19dc7f3dd11189f95c641fc187de62e056e879f5e786c6",
+          "plan": {
+            "version": 1,
+            "event": "pull_request",
+            "action": "synchronize",
+            "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+            "head": "628d77987e7d9a08863465a7553a2ed82579728b",
+            "tested": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+            "mode": "full",
+            "labels": [],
+            "paths": null,
+            "suites": {
+              "backlog": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "pull-request": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "lint": {
+                "selected": true,
+                "dependencies": [
+                  "complete immutable change range and current event metadata"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "typecheck": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "unit-tests": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "lib-test-run": {
+                "selected": true,
+                "dependencies": [
+                  "lib/**",
+                  "scripts/dependencies/**",
+                  "package{,-lock}.json",
+                  "vitest.config.ts",
+                  "tsconfig.json",
+                  ".nvmrc",
+                  ".github/workflows/ci.yml"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "playwright-run": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "container-smoke": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "restore-timing": {
+                "selected": true,
+                "dependencies": [
+                  "server/**",
+                  "src/{server,shared}/**",
+                  "lib/**",
+                  "web/** and src/ui/** (shared application/authentication bundle)",
+                  "e2e restore/shared helpers (doc-touch, doc-touch-raster, native-sheet-value)",
+                  "runtime/build/dependency/workflow inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "sync-transition": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "doc-responsiveness": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "doc-callback-lifetimes": {
+                "selected": true,
+                "dependencies": [
+                  "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "responsiveness-baseline": {
+                "selected": true,
+                "dependencies": [
+                  "web/**",
+                  "server/**",
+                  "lib/**",
+                  "e2e/**",
+                  "src/shared/**",
+                  "src/server/{sync,history,collaboration}/**",
+                  "scripts/{ci,dependencies,sync-transition}/**",
+                  "build/runtime/dependency/workflow configuration"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "callback-baseline": {
+                "selected": true,
+                "dependencies": [
+                  "web/**",
+                  "server/**",
+                  "lib/**",
+                  "e2e/**",
+                  "src/shared/**",
+                  "src/server/{sync,history,collaboration}/**",
+                  "scripts/{ci,dependencies,sync-transition}/**",
+                  "build/runtime/dependency/workflow configuration"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              },
+              "phone-compatibility": {
+                "selected": true,
+                "dependencies": [
+                  "full plan backstop; ordinary phone owners remain in routine browser coverage"
+                ],
+                "inputs": [],
+                "reason": "Immutable range or event labels unavailable; full coverage."
+              }
+            }
+          },
+          "gateResults": {},
+          "results": [
+            {
+              "suite": "lib-test-run",
+              "selected": true,
+              "dependencies": [
+                "lib/**",
+                "scripts/dependencies/**",
+                "package{,-lock}.json",
+                "vitest.config.ts",
+                "tsconfig.json",
+                ".nvmrc",
+                ".github/workflows/ci.yml"
+              ],
+              "inputs": [],
+              "reason": "Immutable range or event labels unavailable; full coverage.",
+              "result": "success"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "artifact": 14138007198,
+      "member": "ci-results-browser.json",
+      "data": {
+        "passed": false,
+        "evidence": {
+          "planSha256": "5e2b79d7b30463345f19dc7f3dd11189f95c641fc187de62e056e879f5e786c6",
+          "error": "Error: Incomplete coverage playwright-run: selected=true, result=failure",
+          "results": "{\"backlog\":\"success\",\"pull-request\":\"success\",\"lint\":\"success\",\"typecheck\":\"success\",\"unit-tests\":\"success\",\"lib-test-run\":\"success\",\"playwright-run\":\"failure\",\"container-smoke\":\"success\",\"restore-timing\":\"success\",\"sync-transition\":\"success\",\"doc-responsiveness\":\"success\",\"doc-callback-lifetimes\":\"failure\"}"
+        }
+      }
+    }
+  ],
+  "readerPreparationCorrection": "Reader adapted the prior source-independent raw-artifact audit to exact628d source/base/tested/run identities and uses immutable Git objects; no source/runtime mutation.",
+  "pending": "Original628d remains blocked by missing per-cut retained crash receipts regardless of workflow outcome. Remaining current first-attempt owners audited as they complete; no merge approval."
+}

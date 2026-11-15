@@ -1,0 +1,60 @@
+{
+  "at": "2026-11-14T23:44:05.253Z",
+  "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "pr": 229,
+  "blocking": true,
+  "requirement": [
+    "- Track supervisor, rollback/reconciliation, journal/fingerprint, auth and shared fixture dependencies in routing. Retain every crash cut's frozen/live fingerprint, generation, authority and first-failure/process evidence; bounded cleanup must preserve the initial cause and never touch another workload.",
+    "",
+    "- Real-process SIGKILL tests at trial-opening, activation, original-activation and original-commit, each followed by restart, the new command, and a check that the live fingerprint equals the frozen original's."
+  ],
+  "sources": [
+    {
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "src/server/maintenance/restore-crash.integration.test.ts",
+      "sha256": "d8757dac253b21d4e03a50bfe6988e1a73afa6cd4f17bdcd4a696e4d88e299fb",
+      "bytes": 46389
+    },
+    {
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "src/server/maintenance/restore-crash-fixture.ts",
+      "sha256": "81a097f9c3d1d394bb410f15995e4df3c367e0bad5f3631634317880d0a6d382",
+      "bytes": 9787
+    },
+    {
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "src/server/maintenance/restore-crash-cleanup-fixture.ts",
+      "sha256": "3b78a9c249b092ee5228f8f950d885aa54104a819f4241081028451a4531ad87",
+      "bytes": 2902
+    },
+    {
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": ".github/workflows/ci.yml",
+      "sha256": "f46c9d4455c1b892c32e6da9489644b6b6e03b060af2fdfc52cba80348f1295a",
+      "bytes": 35970
+    },
+    {
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "vitest.config.ts",
+      "sha256": "5d9906eaf4293df87618e9b889d848668f94c10c86eeb31537ad6c3762a2428b",
+      "bytes": 374
+    },
+    {
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "scripts/ci/pid-namespace.ts",
+      "sha256": "ccbfd99129c33e8347109f23c15ad7492af071808e1755df42a01efb40376b48",
+      "bytes": 7368
+    }
+  ],
+  "finding": "Crash acceptance asserts actual per-cut values in runtime memory and private temporary files, then deletes successful fixture directories. Failed fixture files remain on the ephemeral worker but have no workflow artifact upload. Default Vitest stdout retains scenario titles and durations; child stdout/stderr is ignored. No retained actual per-cut fingerprint/generation/authority/process/first-failure receipt exists in this source owner. Passing named assertions cannot satisfy the separate retained-evidence contract.",
+  "disposition": "Original source cannot merge even if all first-attempt workflows pass. Continue and preserve original execution outcomes; repair worker owns a bounded receipt + fail-closed completeness + always-upload source change. No current run interrupted.",
+  "requiredRepair": [
+    "Bounded content-free per-scenario evidence outside fixture cleanup directory, written on success and failure before cleanup",
+    "Bind original frozen, prepared, live fingerprints and actual generation, bounded grant metadata, durable phase and exact process kill/closure facts without credential/document disclosure",
+    "Preserve first failure independently of later evidence/cleanup failures; explicit unavailable fields before applicable stages",
+    "Fail closed on missing/duplicate/incomplete or wrong-source coverage for every selected crash cut; retain original per-cut outcomes",
+    "Always upload recovery evidence in its existing selected Linux partition; revalidate repaired exact head with both independent reviewers and required hosted owners"
+  ],
+  "limits": "This identifies an evidence-retention acceptance failure, not a demonstrated runtime recovery failure. Current original-run correctness remains separately audited."
+}

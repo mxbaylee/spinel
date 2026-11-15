@@ -1,0 +1,27 @@
+{
+  "at": "2026-11-15T00:00:25.342Z",
+  "snapshot": "/tmp/spn128-publication-628d7798/validation/snapshots/2026-11-14T235929492Z",
+  "tree": "ed0a3f30660e9817d67e3fc86ec49f006896edcc",
+  "source": {
+    "path": "/tmp/spn128-publication-628d7798/validation/snapshots/2026-11-14T235929492Z/source-commit.json.gz",
+    "gzipSha256": "d3127cd84c610e7a1f96be8ee469b9f15b4c8a3baf593c9c46f29d51932b7512",
+    "rawSha256": "f3d90128a54132ae9e5a1d2d1b6776045bb2ad7f69f33067e8d6172134484b14",
+    "data": {
+      "sha": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "tree": "ed0a3f30660e9817d67e3fc86ec49f006896edcc"
+    }
+  },
+  "tested": {
+    "path": "/tmp/spn128-publication-628d7798/validation/snapshots/2026-11-14T235929492Z/observed-merge-commit.json.gz",
+    "gzipSha256": "db3e4ffd7ec1bea84c1187fdce344b8f3ba175576763546b003c03edf30dd754",
+    "rawSha256": "790891477b735228254bdb1df0376c8b0cd84d204d79894139de80a92a675404",
+    "data": {
+      "sha": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+      "tree": "ed0a3f30660e9817d67e3fc86ec49f006896edcc",
+      "parents": [
+        "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+        "628d77987e7d9a08863465a7553a2ed82579728b"
+      ]
+    }
+  }
+}

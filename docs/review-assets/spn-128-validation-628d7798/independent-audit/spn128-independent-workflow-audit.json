@@ -1,0 +1,1395 @@
+{
+  "at": "2026-11-15T00:04:53.839Z",
+  "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "tested": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+  "snapshot": "/tmp/spn128-publication-628d7798/validation/snapshots/2026-11-15T000353932Z",
+  "allTerminal": true,
+  "workflowStatuses": [
+    {
+      "kind": "ci",
+      "id": 43654184206,
+      "status": "completed",
+      "conclusion": "failure",
+      "completed": 33,
+      "total": 33
+    },
+    {
+      "kind": "storybook",
+      "id": 43654184145,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 10,
+      "total": 10
+    },
+    {
+      "kind": "desktop",
+      "id": 43654184097,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 3,
+      "total": 3
+    },
+    {
+      "kind": "spaces",
+      "id": 43654184159,
+      "status": "completed",
+      "conclusion": "success",
+      "completed": 1,
+      "total": 1
+    }
+  ],
+  "bindings": [
+    {
+      "artifact": 14136883856,
+      "member": "evidence.json",
+      "sha256": "bd5b0731a175c7172af8eb1552e36b6513696a30ffdb9e938cf7168e1e5c8ccc",
+      "bytes": 181229
+    }
+  ],
+  "reports": [
+    {
+      "artifact": 14137816316,
+      "member": "playwright-report/mobile-https.json",
+      "stats": {
+        "startTime": "2026-11-14T23:39:29.977Z",
+        "duration": 55520.846,
+        "expected": 10,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 13,
+      "failures": [],
+      "skips": [
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "project": "mobile-https",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14137024349,
+      "member": "playwright-report/sync-development.json",
+      "stats": {
+        "startTime": "2026-11-14T23:39:51.013Z",
+        "duration": 151560.107,
+        "expected": 21,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 21,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137073328,
+      "member": "playwright-report/sync-soak-sheet.json",
+      "stats": {
+        "startTime": "2026-11-14T23:45:53.484Z",
+        "duration": 70014.439,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137572869,
+      "member": "playwright-report/offline-upgrade.json",
+      "stats": {
+        "startTime": "2026-11-14T23:46:28.690Z",
+        "duration": 48260.923,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 3,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137179532,
+      "member": "playwright-report/sync-soak-doc.json",
+      "stats": {
+        "startTime": "2026-11-14T23:46:37.628Z",
+        "duration": 39755.513999999996,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137906222,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-14T23:44:28.958Z",
+        "duration": 183567.44999999998,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137906222,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-14T23:47:38.224Z",
+        "duration": 159546.441,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14136844448,
+      "member": "playwright-report/supervised-restore.json",
+      "stats": {
+        "startTime": "2026-11-14T23:45:43.272Z",
+        "duration": 323256.833,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "cases": 2,
+      "failures": [
+        {
+          "title": "a catalog restore survives double-clicks, cancel and a lost reply, and fences old clients",
+          "file": "supervised-restore.spec.ts",
+          "project": "supervised-restore",
+          "status": "unexpected",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": [
+            {
+              "workerIndex": 0,
+              "parallelIndex": 0,
+              "status": "failed",
+              "duration": 2576,
+              "error": {
+                "message": "Error: tracing.start: Tracing has been already started",
+                "stack": "Error: tracing.start: Tracing has been already started\n    at observeStartup (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:27:25)\n    at enrollOperator (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:153:9)\n    at /home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:366:22",
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                  "column": 25,
+                  "line": 27
+                },
+                "snippet": "\u001b[0m \u001b[90m 25 |\u001b[39m   \u001b[90m// These contexts are created manually, so the project trace setting does not\u001b[39m\n \u001b[90m 26 |\u001b[39m   \u001b[90m// cover them. Capture the original attempt, before any page can navigate.\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 27 |\u001b[39m   \u001b[36mawait\u001b[39m context\u001b[33m.\u001b[39mtracing\u001b[33m.\u001b[39mstart({ screenshots\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m,\u001b[39m snapshots\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 28 |\u001b[39m   context\u001b[33m.\u001b[39mon(\u001b[32m'page'\u001b[39m\u001b[33m,\u001b[39m (page) \u001b[33m=>\u001b[39m {\n \u001b[90m 29 |\u001b[39m     page\u001b[33m.\u001b[39mon(\u001b[32m'console'\u001b[39m\u001b[33m,\u001b[39m (message) \u001b[33m=>\u001b[39m {\n \u001b[90m 30 |\u001b[39m       \u001b[36mif\u001b[39m (message\u001b[33m.\u001b[39mtype() \u001b[33m===\u001b[39m \u001b[32m'error'\u001b[39m \u001b[33m&&\u001b[39m message\u001b[33m.\u001b[39mtext()\u001b[33m.\u001b[39mstartsWith(\u001b[32m'[spinel:startup]'\u001b[39m))\u001b[0m"
+              },
+              "errors": [
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                    "column": 25,
+                    "line": 27
+                  },
+                  "message": "Error: tracing.start: Tracing has been already started\n\n  25 |   // These contexts are created manually, so the project trace setting does not\n  26 |   // cover them. Capture the original attempt, before any page can navigate.\n> 27 |   await context.tracing.start({ screenshots: true, snapshots: true });\n     |                         ^\n  28 |   context.on('page', (page) => {\n  29 |     page.on('console', (message) => {\n  30 |       if (message.type() === 'error' && message.text().startsWith('[spinel:startup]'))\n    at observeStartup (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:27:25)\n    at enrollOperator (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:153:9)\n    at /home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:366:22"
+                }
+              ],
+              "stdout": [],
+              "stderr": [],
+              "retry": 0,
+              "startTime": "2026-11-14T23:45:44.621Z",
+              "annotations": [],
+              "attachments": [
+                {
+                  "name": "restore-startup-0",
+                  "contentType": "application/json",
+                  "body": "W10="
+                },
+                {
+                  "name": "restore-first-failure-0",
+                  "contentType": "application/zip",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/attachments/restore-first-failure-0-df4d32a2d9eb53497e5a30a4ff25f2f34915cd7f.zip"
+                },
+                {
+                  "name": "supervised-restore-first-attempt",
+                  "contentType": "application/json",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/attachments/supervised-restore-first-attempt-b877d5091562ee5dda1ae6e38ae95e7492611cad.json"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/error-context.md"
+                },
+                {
+                  "name": "trace",
+                  "contentType": "application/zip",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore/trace.zip"
+                }
+              ],
+              "errorLocation": {
+                "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                "column": 25,
+                "line": 27
+              }
+            },
+            {
+              "workerIndex": 1,
+              "parallelIndex": 0,
+              "status": "failed",
+              "duration": 2360,
+              "error": {
+                "message": "Error: tracing.start: Tracing has been already started",
+                "stack": "Error: tracing.start: Tracing has been already started\n    at observeStartup (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:27:25)\n    at enrollOperator (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:153:9)\n    at /home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:366:22",
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                  "column": 25,
+                  "line": 27
+                },
+                "snippet": "\u001b[0m \u001b[90m 25 |\u001b[39m   \u001b[90m// These contexts are created manually, so the project trace setting does not\u001b[39m\n \u001b[90m 26 |\u001b[39m   \u001b[90m// cover them. Capture the original attempt, before any page can navigate.\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 27 |\u001b[39m   \u001b[36mawait\u001b[39m context\u001b[33m.\u001b[39mtracing\u001b[33m.\u001b[39mstart({ screenshots\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m,\u001b[39m snapshots\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 28 |\u001b[39m   context\u001b[33m.\u001b[39mon(\u001b[32m'page'\u001b[39m\u001b[33m,\u001b[39m (page) \u001b[33m=>\u001b[39m {\n \u001b[90m 29 |\u001b[39m     page\u001b[33m.\u001b[39mon(\u001b[32m'console'\u001b[39m\u001b[33m,\u001b[39m (message) \u001b[33m=>\u001b[39m {\n \u001b[90m 30 |\u001b[39m       \u001b[36mif\u001b[39m (message\u001b[33m.\u001b[39mtype() \u001b[33m===\u001b[39m \u001b[32m'error'\u001b[39m \u001b[33m&&\u001b[39m message\u001b[33m.\u001b[39mtext()\u001b[33m.\u001b[39mstartsWith(\u001b[32m'[spinel:startup]'\u001b[39m))\u001b[0m"
+              },
+              "errors": [
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                    "column": 25,
+                    "line": 27
+                  },
+                  "message": "Error: tracing.start: Tracing has been already started\n\n  25 |   // These contexts are created manually, so the project trace setting does not\n  26 |   // cover them. Capture the original attempt, before any page can navigate.\n> 27 |   await context.tracing.start({ screenshots: true, snapshots: true });\n     |                         ^\n  28 |   context.on('page', (page) => {\n  29 |     page.on('console', (message) => {\n  30 |       if (message.type() === 'error' && message.text().startsWith('[spinel:startup]'))\n    at observeStartup (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:27:25)\n    at enrollOperator (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:153:9)\n    at /home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:366:22"
+                }
+              ],
+              "stdout": [],
+              "stderr": [],
+              "retry": 1,
+              "startTime": "2026-11-14T23:45:47.629Z",
+              "annotations": [],
+              "attachments": [
+                {
+                  "name": "restore-startup-0",
+                  "contentType": "application/json",
+                  "body": "W10="
+                },
+                {
+                  "name": "restore-first-failure-0",
+                  "contentType": "application/zip",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry1/attachments/restore-first-failure-0-53d0478673f9f5b3786a39dbf606d5c1a8310737.zip"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry1/error-context.md"
+                },
+                {
+                  "name": "trace",
+                  "contentType": "application/zip",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry1/trace.zip"
+                }
+              ],
+              "errorLocation": {
+                "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                "column": 25,
+                "line": 27
+              }
+            },
+            {
+              "workerIndex": 2,
+              "parallelIndex": 0,
+              "status": "failed",
+              "duration": 2403,
+              "error": {
+                "message": "Error: tracing.start: Tracing has been already started",
+                "stack": "Error: tracing.start: Tracing has been already started\n    at observeStartup (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:27:25)\n    at enrollOperator (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:153:9)\n    at /home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:366:22",
+                "location": {
+                  "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                  "column": 25,
+                  "line": 27
+                },
+                "snippet": "\u001b[0m \u001b[90m 25 |\u001b[39m   \u001b[90m// These contexts are created manually, so the project trace setting does not\u001b[39m\n \u001b[90m 26 |\u001b[39m   \u001b[90m// cover them. Capture the original attempt, before any page can navigate.\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 27 |\u001b[39m   \u001b[36mawait\u001b[39m context\u001b[33m.\u001b[39mtracing\u001b[33m.\u001b[39mstart({ screenshots\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m,\u001b[39m snapshots\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 28 |\u001b[39m   context\u001b[33m.\u001b[39mon(\u001b[32m'page'\u001b[39m\u001b[33m,\u001b[39m (page) \u001b[33m=>\u001b[39m {\n \u001b[90m 29 |\u001b[39m     page\u001b[33m.\u001b[39mon(\u001b[32m'console'\u001b[39m\u001b[33m,\u001b[39m (message) \u001b[33m=>\u001b[39m {\n \u001b[90m 30 |\u001b[39m       \u001b[36mif\u001b[39m (message\u001b[33m.\u001b[39mtype() \u001b[33m===\u001b[39m \u001b[32m'error'\u001b[39m \u001b[33m&&\u001b[39m message\u001b[33m.\u001b[39mtext()\u001b[33m.\u001b[39mstartsWith(\u001b[32m'[spinel:startup]'\u001b[39m))\u001b[0m"
+              },
+              "errors": [
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                    "column": 25,
+                    "line": 27
+                  },
+                  "message": "Error: tracing.start: Tracing has been already started\n\n  25 |   // These contexts are created manually, so the project trace setting does not\n  26 |   // cover them. Capture the original attempt, before any page can navigate.\n> 27 |   await context.tracing.start({ screenshots: true, snapshots: true });\n     |                         ^\n  28 |   context.on('page', (page) => {\n  29 |     page.on('console', (message) => {\n  30 |       if (message.type() === 'error' && message.text().startsWith('[spinel:startup]'))\n    at observeStartup (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:27:25)\n    at enrollOperator (/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:153:9)\n    at /home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts:366:22"
+                }
+              ],
+              "stdout": [],
+              "stderr": [],
+              "retry": 2,
+              "startTime": "2026-11-14T23:45:50.440Z",
+              "annotations": [],
+              "attachments": [
+                {
+                  "name": "restore-startup-0",
+                  "contentType": "application/json",
+                  "body": "W10="
+                },
+                {
+                  "name": "restore-first-failure-0",
+                  "contentType": "application/zip",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry2/attachments/restore-first-failure-0-d83c3b9b8735d0de5484b455b4dc1a9900a44781.zip"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry2/error-context.md"
+                },
+                {
+                  "name": "trace",
+                  "contentType": "application/zip",
+                  "path": "/home/runner/work/spinel/spinel/test-results/supervised-restore/supervised-restore-a-catal-8435e-eply-and-fences-old-clients-supervised-restore-retry2/trace.zip"
+                }
+              ],
+              "errorLocation": {
+                "file": "/home/runner/work/spinel/spinel/e2e/supervised-restore.spec.ts",
+                "column": 25,
+                "line": 27
+              }
+            }
+          ]
+        }
+      ],
+      "skips": []
+    },
+    {
+      "artifact": 14136749851,
+      "member": "playwright-report/sync-production.json",
+      "stats": {
+        "startTime": "2026-11-14T23:39:54.980Z",
+        "duration": 671053.8250000001,
+        "expected": 98,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 98,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137818168,
+      "member": "baseline-callback-source/playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-14T23:39:53.033Z",
+        "duration": 427525.445,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [
+        {
+          "title": "mobile native callback lifetimes",
+          "file": "doc-responsiveness-callbacks.spec.ts",
+          "project": "doc-callback-lifetimes",
+          "status": "unexpected",
+          "expectedStatus": "passed",
+          "annotations": [],
+          "results": [
+            {
+              "workerIndex": 0,
+              "parallelIndex": 0,
+              "status": "timedOut",
+              "duration": 420319,
+              "error": {
+                "message": "\u001b[31mTest timeout of 420000ms exceeded.\u001b[39m",
+                "stack": "\u001b[31mTest timeout of 420000ms exceeded.\u001b[39m"
+              },
+              "errors": [
+                {
+                  "message": "\u001b[31mTest timeout of 420000ms exceeded.\u001b[39m"
+                },
+                {
+                  "location": {
+                    "file": "/home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callbacks.spec.ts",
+                    "column": 26,
+                    "line": 117
+                  },
+                  "message": "Error: Callback observation timedOut.\n\n  115 |       detach: () => {},\n  116 |       abort: () =>\n> 117 |         controller.abort(new Error(`Callback observation ${info.status ?? 'interrupted'}.`)),\n      |                          ^\n  118 |       interrupt: async () => {},\n  119 |     };\n  120 |     observations.set(info, observation);\n    at Object.abort (/home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callbacks.spec.ts:117:26)\n    at settleCallbackObservation (/home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callback-progress.ts:78:17)\n    at /home/runner/work/spinel/spinel/baseline-callback-source/e2e/doc-responsiveness-callbacks.spec.ts:98:11"
+                }
+              ],
+              "stdout": [],
+              "stderr": [],
+              "retry": 0,
+              "startTime": "2026-11-14T23:39:59.863Z",
+              "annotations": [],
+              "attachments": [
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/test-failed-1.png"
+                },
+                {
+                  "name": "screenshot",
+                  "contentType": "image/png",
+                  "path": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/test-failed-2.png"
+                },
+                {
+                  "name": "error-context",
+                  "contentType": "text/markdown",
+                  "path": "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/error-context.md"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "skips": []
+    },
+    {
+      "artifact": 14137818168,
+      "member": "playwright-report/doc-callback-lifetimes.json",
+      "stats": {
+        "startTime": "2026-11-14T23:47:06.652Z",
+        "duration": 306310.352,
+        "expected": 1,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 1,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137314556,
+      "member": "playwright-report/production-2-of-2.json",
+      "stats": {
+        "startTime": "2026-11-14T23:40:13.990Z",
+        "duration": 732711.4060000001,
+        "expected": 89,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 89,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137454196,
+      "member": "playwright-report/development-2-of-2.json",
+      "stats": {
+        "startTime": "2026-11-14T23:39:25.865Z",
+        "duration": 833855.907,
+        "expected": 79,
+        "skipped": 1,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 80,
+      "failures": [],
+      "skips": [
+        {
+          "title": "supervised maintenance keeps pending native work, fences old edits, and recovers through cold controls",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Closed-process verification uses the Linux production supervisor.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/maintenance.spec.ts",
+                "line": 206,
+                "column": 8
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14137014079,
+      "member": "playwright-report/development-1-of-2.json",
+      "stats": {
+        "startTime": "2026-11-14T23:39:25.886Z",
+        "duration": 850643.0700000001,
+        "expected": 77,
+        "skipped": 4,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 81,
+      "failures": [],
+      "skips": [
+        {
+          "title": "production open, search, local persistence and server acknowledgement remain distinct in the diagnostics export",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Prepared offline copies require the production runtime manifest.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts",
+                "line": 511,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "project": "development",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14137878213,
+      "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-14T23:41:26.451Z",
+        "duration": 497113.89999999997,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 4,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137878213,
+      "member": "playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-14T23:49:47.278Z",
+        "duration": 379837.447,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 7,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14137154097,
+      "member": "playwright-report/production-1-of-2.json",
+      "stats": {
+        "startTime": "2026-11-14T23:46:35.467Z",
+        "duration": 619394.105,
+        "expected": 87,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 90,
+      "failures": [],
+      "skips": [
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "project": "production",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "project": "production",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "project": "production",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "artifact": 14138395646,
+      "member": "baseline-doc-source/playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-14T23:39:37.357Z",
+        "duration": 841501.654,
+        "expected": 4,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 4,
+      "failures": [],
+      "skips": []
+    },
+    {
+      "artifact": 14138395646,
+      "member": "playwright-report/doc-responsiveness.json",
+      "stats": {
+        "startTime": "2026-11-14T23:53:41.330Z",
+        "duration": 524339.176,
+        "expected": 7,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": 7,
+      "failures": [],
+      "skips": []
+    }
+  ],
+  "aggregates": [
+    {
+      "artifact": 14137861923,
+      "member": "ci-results-unit.json",
+      "sha256": "dc9c403a19a417e585813fd842975b701dec7b0c53c295f79d0b9d8fe5967bb0",
+      "passed": true,
+      "actualResults": [
+        {
+          "suite": "unit-tests",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        }
+      ],
+      "planSha256": "5e2b79d7b30463345f19dc7f3dd11189f95c641fc187de62e056e879f5e786c6",
+      "gateResults": {}
+    },
+    {
+      "artifact": 14137299129,
+      "member": "ci-results-lib.json",
+      "sha256": "dc9c617896ed18b9c0cee786876f07cf907dba7057fb6f49762b4c2937dbe84b",
+      "passed": true,
+      "actualResults": [
+        {
+          "suite": "lib-test-run",
+          "selected": true,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        }
+      ],
+      "planSha256": "5e2b79d7b30463345f19dc7f3dd11189f95c641fc187de62e056e879f5e786c6",
+      "gateResults": {}
+    },
+    {
+      "artifact": 14138007198,
+      "member": "ci-results-browser.json",
+      "sha256": "6ae62139f379c4d6d43b56b161d4c0df303c0d48a4c8378ad68c844255b1c4c4",
+      "passed": false,
+      "actualResults": {
+        "backlog": "success",
+        "pull-request": "success",
+        "lint": "success",
+        "typecheck": "success",
+        "unit-tests": "success",
+        "lib-test-run": "success",
+        "playwright-run": "failure",
+        "container-smoke": "success",
+        "restore-timing": "success",
+        "sync-transition": "success",
+        "doc-responsiveness": "success",
+        "doc-callback-lifetimes": "failure"
+      },
+      "planSha256": "5e2b79d7b30463345f19dc7f3dd11189f95c641fc187de62e056e879f5e786c6",
+      "error": "Error: Incomplete coverage playwright-run: selected=true, result=failure"
+    }
+  ],
+  "restores": [
+    {
+      "artifact": 14136883856,
+      "member": "evidence.json",
+      "sha256": "bd5b0731a175c7172af8eb1552e36b6513696a30ffdb9e938cf7168e1e5c8ccc",
+      "source": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+      "image": "sha256:be968c544a07594347f722827559fa741da020778b7953fb82c89304c6a415b3",
+      "sourceBindings": {
+        "source": 1355,
+        "installedLibraries": 170,
+        "shippedImage": 13
+      },
+      "profile": "images-256m",
+      "sourceSizes": {
+        "databaseBytes": 269901824,
+        "archiveBytes": 269366213,
+        "workload": {
+          "documents": 8,
+          "images": 64,
+          "imageBytes": 268981824,
+          "contentSha256": "574de79b8c385532712fa1356280becb8feca66a9293804a62f63cd22eaf3d27"
+        }
+      },
+      "restoreTimings": {
+        "clock": "host-monotonic-performance.now",
+        "createPasskeyUploadAndPreparationMs": 49243.306369000005,
+        "reviewAndLayoutChecksMs": 300.7853289999912,
+        "confirmPasskeyThroughCommittedRunningMs": 90902.81012300002,
+        "prepareClickThroughCommittedRunningMs": 140446.901821,
+        "start": "click Verify and prepare",
+        "finish": "canonical candidate-committed, selected, supervisor running"
+      },
+      "nativeRendering": {
+        "ownerDoc": true,
+        "ownerSheet": true,
+        "readerDoc": true,
+        "visibleDocumentInkPixels": 462,
+        "archivedImageRendered": true,
+        "documentNativeCopy": true,
+        "sheetA1NativeCopy": "Archived budget value",
+        "originalOwnerSessionExcluded": true
+      },
+      "richWorkspace": {
+        "sheetContent": true,
+        "docContent": true,
+        "imageSha256": "49e0f79025c2f68f9e0b1a2d6caf30ea62643c2d4be76a3f43f25125825fef91",
+        "historyCheckpoint": true,
+        "retainedViewer": true,
+        "revokedGrantDenied": true,
+        "viewerWriteDenied": true,
+        "revokedGuestDenied": true,
+        "acknowledgedOldCreationRetryDenied": true,
+        "nativeGenerationRenewed": true,
+        "restoredContentUnchanged": true,
+        "documentSnapshotSha256": "9490bbb5dedfd764faebb5214832d8772c2c36c589b0212c2f451dad4dd32a30",
+        "sheetSnapshotSha256": "f33c877894565983ad0d920ff98a0f2a246fda06a8bfac50872e207bfaa1aee1"
+      },
+      "servingResources": {
+        "memoryPeakBytes": 1073741824,
+        "memoryCurrentBytes": 936706048,
+        "scope": "Serving cgroup through pre-shutdown observation; excludes separate observer and later cold helper"
+      },
+      "scope": "Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance",
+      "closedProof": true,
+      "allOwnedContainersAbsent": true,
+      "privateVolumeRemoved": true,
+      "elapsedMs": 259175
+    }
+  ],
+  "checkouts": [
+    {
+      "id": 132628976793,
+      "name": "Classify changes (43654184206)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "7924e02349646f5fc3d11f5bc6ddc89eebe38321ad91ad54be82292f7e2ec639",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132628976958,
+      "name": "Pull request",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "6624227e54df01b13d4cca3542ac2844df96b62650c50c44808bd3fef9ecc83a",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629193957,
+      "name": "Backlog",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "a00d18d2d6c083504a678e36a25451041851bf88afc0e36b73e30853017a598d",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629193982,
+      "name": "Lint",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "0c4720a8579da09f474529b9378cf848e20ee19d65edf549fd03a229a1eadb24",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629193998,
+      "name": "Unit tests (supervisor)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "36e238e29d779268e42f01af446cf7eb622ebc57c402f3132b45f24cf530309c",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194000,
+      "name": "Container smoke",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "0f41ee7ad73afc04142235251d4e932241535943603e7188e12bcbf1d9473abc",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194004,
+      "name": "Unit tests (recovery)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "cd28d2bef2c6bd8e82c0e31be96a85610968bcc343297cda43447eee7242f4b2",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194006,
+      "name": "Typecheck",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "d2ba6b5ef1603e1247adfa3097c518d06c97ba3ba6bf6c167740977eb8afac7f",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194014,
+      "name": "Doc responsiveness (mobile)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "69fe53280beff7a61445476508dd481aa7200a73efce76f438d0476f5fe1e074",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+        "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d"
+      ]
+    },
+    {
+      "id": 132629194020,
+      "name": "Lib tests (dense-cells)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "195c6a9c521b70ca14e5a7d0732f9261cbbf8574e6944cc7f415e0bff39a1815",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194028,
+      "name": "Doc callback lifetimes (desktop)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "5ca71104c4145a583c53df1db2f819b5f08ece341013e26ed1f1057bba14de27",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+        "b75e3797a11ac2f53e3833b5615f68b6c0091727"
+      ]
+    },
+    {
+      "id": 132629194032,
+      "name": "Doc callback lifetimes (mobile)",
+      "workflow": 43654184206,
+      "conclusion": "failure",
+      "sha256": "fb982bea63e3a63875f2914352093cd5785d1893a034fc14bd83610032553d01",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+        "b75e3797a11ac2f53e3833b5615f68b6c0091727"
+      ]
+    },
+    {
+      "id": 132629194036,
+      "name": "Unit tests (remaining)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "c43c5c7772df5d099b083dafc1ac0469647bfc78d0d95186277334bc22ff1024",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194039,
+      "name": "Sized restore acceptance",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "5bdb9d2fb3bbbc6fe9216688e6b114a3b4e3f6a23d1f21f565fa8f3253800b7b",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194044,
+      "name": "Lib tests (cells)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "fa5530629c9e4f5626ce1869d53ed29a7d8fed77f83447993541ade544f39a1e",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194048,
+      "name": "Lib tests (mixed-fuzz)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "20b1c5c099cf3c394c7ca2debe3674b654a0c22cd0b6e79f79bf12487fcfd91d",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194062,
+      "name": "Retained sync transition",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "9de16d9f97e29572475305046171014a5b65215a57d6ffffa057bd393c2d18a2",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+        "81cc0774bda11f9bf65942ef84cf7d847bd08029"
+      ]
+    },
+    {
+      "id": 132629194065,
+      "name": "Lib tests (remaining)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "2acded3ad28e0b882642e1f7f057f363666827580637872b08d90ecf93f3b4df",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194083,
+      "name": "Doc responsiveness (desktop)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "a567a9c8a3c3ff0b8283a42bfe1e850ee3d4f9478a2f23f4ce9037e7733a8a77",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+        "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d"
+      ]
+    },
+    {
+      "id": 132629194097,
+      "name": "Playwright smoke (development 1/2)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "ebca722b0577950cc72b26257b9ba5b03e945d7082679154a6b335bf6ccc59fa",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194103,
+      "name": "Playwright smoke (development 2/2)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "e20ae9b191ea48f091c37ce2799568621bd2d94198d6c8d68b8149efaac419d1",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194119,
+      "name": "Playwright smoke (mobile-https)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "2a2e4a8e3c69bfb7a9f2347dbb5d10ccb695b362c1e4123b62d9e54386ee2b6b",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194124,
+      "name": "Playwright smoke (production 2/2)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "88cc2c8f7011fa216017b900903f479aa276d2021f9797d449ed831b6bf57386",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194137,
+      "name": "Playwright smoke (sync-development)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "02977d5a14f71705a63a8b2219e07c7cf31a620f27329439763a30a872c7d10a",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194138,
+      "name": "Playwright smoke (sync-production)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "3faed4f06815b5f9f132aaf6af220fbb34b83d87421f16cd8381fac438b9eddb",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194147,
+      "name": "Playwright smoke (supervised-restore)",
+      "workflow": 43654184206,
+      "conclusion": "failure",
+      "sha256": "ca35e575ec0cec0927baa282404988f7650b8579244873a92ded38388272c946",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194154,
+      "name": "Playwright smoke (sync-soak-sheet)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "9d57157ccd83b7b72aa11c2941c43e750a0495e2efed4a2882c954129c726880",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194156,
+      "name": "Playwright smoke (offline-upgrade)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "1122cd8028b0a653d4317a3c5f376cd2d9855fd0933be9fc9aeb6a48c1d654eb",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+        "c2e8cac0fcdec36d992d6ebf3f377c9b579a8002",
+        "3a0e2238fb5be3907d04120eabda2aafd6565d63"
+      ]
+    },
+    {
+      "id": 132629194163,
+      "name": "Playwright smoke (sync-soak-doc)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "87192ce1e0211a6d745768f030adf343b931fb957b95695341d86445b2a280ab",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629194165,
+      "name": "Playwright smoke (production 1/2)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "ad095430bcc1530fff4721fe49cf338a50bd702de9008acb9b55854e43288fc8",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132631420377,
+      "name": "Unit tests",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "7a96c0d197f140552fc8a1574fbaf505dad6e3805f8b2f34ec4a7cf3980684e9",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132631707280,
+      "name": "Lib tests",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "0d1b314a73141ccd65a0a5722e2462e8f4aa1e1e773c1bd2e0f9f88b47558002",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132635114157,
+      "name": "Playwright smoke",
+      "workflow": 43654184206,
+      "conclusion": "failure",
+      "sha256": "0b61e202e721d62c93ff8a7a316c5d8975c040b086542603126603da590e27be",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132628976810,
+      "name": "Classify changes",
+      "workflow": 43654184145,
+      "conclusion": "success",
+      "sha256": "b03bb179f97635ac3807fd9aafd734c0cb0b2b2bc98cbb7d41ca9d0ecd42bdae",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629131179,
+      "name": "Build Storybook",
+      "workflow": 43654184145,
+      "conclusion": "success",
+      "sha256": "e41a0796cec2f8a01c893c902f8b1786bad48f39d502832e158d51aa78e986e4",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629339428,
+      "name": "Review Storybook mobile (light)",
+      "workflow": 43654184145,
+      "conclusion": "success",
+      "sha256": "22fba8f1231168c365eabef5b00bf84a8fa8133a7bc78210bcd487e8fec55520",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629339458,
+      "name": "Review Storybook desktop (dark)",
+      "workflow": 43654184145,
+      "conclusion": "success",
+      "sha256": "e194510563aa2e58f01684ccd8acf42a78ee7114ca5da8a0617042b34c4098e0",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629339469,
+      "name": "Review Storybook tablet",
+      "workflow": 43654184145,
+      "conclusion": "success",
+      "sha256": "6c915b5262d44b7c55705c92c5fdde1eb52ab545c722ab73978d047c80f1a6a7",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629339471,
+      "name": "Review Storybook desktop (light)",
+      "workflow": 43654184145,
+      "conclusion": "success",
+      "sha256": "a00957954b5b2c0abc272c0a335f3bdaa9f0cad3bb0ebcf721ba36cebfd7cd79",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132629339500,
+      "name": "Review Storybook mobile (dark)",
+      "workflow": 43654184145,
+      "conclusion": "success",
+      "sha256": "4a9d12ce4d613ae8c4cb45e399be343596c1855b8a69382fdab5424b30490aac",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132633311733,
+      "name": "Review Storybook states and interactions",
+      "workflow": 43654184145,
+      "conclusion": "success",
+      "sha256": "4e6c3ea8d0ac8784f36d3a6f6087d22c327e9de1fdcceacc0fd4355dbe803d5f",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132628976334,
+      "name": "Native desktop offline (firefox, macos-26)",
+      "workflow": 43654184097,
+      "conclusion": "success",
+      "sha256": "1f4b09de0f37f623b920afb961155d04751c22baceb233ddb9d0ac5f34412bfa",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132628976504,
+      "name": "Native desktop offline (safari, macos-15-intel)",
+      "workflow": 43654184097,
+      "conclusion": "success",
+      "sha256": "d057ce15bc03be909dcc30696d0f2f83b614ccd92b553d5c122c9a2fb0c7ab81",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132628976517,
+      "name": "Native desktop offline (chrome, macos-26)",
+      "workflow": 43654184097,
+      "conclusion": "success",
+      "sha256": "6760ccb8b1bc61b5a1d64a1f7d91a5f921e23046bee0db67785c26ea76e54964",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ]
+    },
+    {
+      "id": 132628976698,
+      "name": "🦈 DigitalOcean Spaces",
+      "workflow": 43654184159,
+      "conclusion": "success",
+      "sha256": "768e70abf5c9dcbcaa9f5d0215cf64a3d969dabcef2e919ad400e496dea712a1",
+      "checkoutWitnesses": [
+        "628d77987e7d9a08863465a7553a2ed82579728b"
+      ]
+    }
+  ],
+  "gateStates": [
+    {
+      "name": "Backlog",
+      "id": 132629193957,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Pull request",
+      "id": 132628976958,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Lint",
+      "id": 132629193982,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Typecheck",
+      "id": 132629194006,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Unit tests",
+      "id": 132631420377,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Lib tests",
+      "id": 132631707280,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Playwright smoke",
+      "id": 132635114157,
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "planHash": "5e2b79d7b30463345f19dc7f3dd11189f95c641fc187de62e056e879f5e786c6",
+  "pending": "Original628d is blocked by missing per-cut retained crash receipts; full terminal execution outcomes remain separately recorded and cannot authorize merge."
+}

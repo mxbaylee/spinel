@@ -1,0 +1,190 @@
+{
+  "at": "2026-11-14T23:55:21.638Z",
+  "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "tested": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+  "workflow": 43654184206,
+  "job": 132629194032,
+  "attempt": 1,
+  "artifact": {
+    "id": 14137818168,
+    "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137818168.zip",
+    "bytes": 129070179,
+    "sha256": "a1c8fd09e8387ee2d6168b3a2909ea944637b629fa0543a2f1c4aa25fa373ef8"
+  },
+  "bindings": [
+    {
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "sha256": "ee2d640daa1ef758b9618212b5024f4c0a2f016e22fd0d87c4b5ddb2da2a27a4",
+      "bytes": 357277
+    },
+    {
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "sha256": "05a4ec74389a1e7f45f1d21f9d42961444be1c77b7664edb733f47e1417f50f9",
+      "bytes": 19805282
+    },
+    {
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+      "sha256": "3c389d8322d2e61d5e059214a455c3eb131a84f27d8045b411fbfd045deba95d",
+      "bytes": 6529
+    },
+    {
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+      "sha256": "aba2edcd817e43fd9e9a2b57a91f2f3ec782b4d007968ddb9bfb95effebee26a",
+      "bytes": 1377
+    },
+    {
+      "member": "test-results/spn113-comparison-mobile.json",
+      "sha256": "69facd65dae273aeedc9fc92c1e445abedddc18228a0740678cd4d839a6251b6",
+      "bytes": 5867
+    }
+  ],
+  "traces": [
+    {
+      "role": "baselineObservation",
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn144-trace.pftrace.gz",
+      "bytes": 35673572,
+      "sha256": "160848b7e3f5a1dfb3bb1ceeb3fe83920cadebf928b84c1ca54073d778f04bf0",
+      "decodedBytes": 489553194,
+      "decodedSha256": "9fc7f6554fef04df2879dbea2c12e254521d0653c3e8e1d871806b2bc81560d8"
+    },
+    {
+      "role": "candidate",
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn144-trace.pftrace.gz",
+      "bytes": 34287673,
+      "sha256": "a67878485921d0472db28afd86599791fb0336582437df781e29ece291a2bda2",
+      "decodedBytes": 488644056,
+      "decodedSha256": "4000663084223ad4d23d69ea4bef6dda449ce4aa909e18fc031a24085ad6509c"
+    },
+    {
+      "role": "candidate",
+      "member": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn144-derived.json.gz",
+      "bytes": 48254935,
+      "sha256": "0fc01d614893061b8f8f52e2b65842dd95fb806aa45d8e647da6cad764fe9080",
+      "decodedBytes": 620164859,
+      "decodedSha256": "a1f5994cb37774ffeaefcab28b863e40cff5d813c3d23bdc5584ddba4d3eaeda"
+    }
+  ],
+  "baseline": {
+    "source": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+    "attempt": 0,
+    "complete": false,
+    "passed": false,
+    "behaviorPassed": true,
+    "phase": "trace-convert",
+    "collectionError": "Error: Callback observation timedOut.",
+    "cleanup": {
+      "sessionDetached": true,
+      "fixtureClosed": true
+    },
+    "rawInputs": 2086,
+    "firstFailure": {
+      "atMs": 420050.23384,
+      "phase": "trace-convert",
+      "kind": "timedOut"
+    },
+    "terminal": "timedOut",
+    "phases": [
+      {
+        "atMs": 351845.49797300005,
+        "phase": "behavior-complete",
+        "kind": "phase"
+      },
+      {
+        "atMs": 391053.124933,
+        "phase": "trace-stream-close",
+        "kind": "phase",
+        "count": 489553194
+      },
+      {
+        "atMs": 394475.19690900005,
+        "phase": "trace-convert",
+        "kind": "phase"
+      },
+      {
+        "atMs": 420050.24445,
+        "phase": "trace-convert",
+        "kind": "timedOut"
+      },
+      {
+        "atMs": 420177.00945300004,
+        "phase": "fixture-cleanup-complete",
+        "kind": "phase"
+      },
+      {
+        "atMs": 420302.908728,
+        "phase": "fixture-cleanup-complete",
+        "kind": "trace"
+      },
+      {
+        "atMs": 420314.423955,
+        "phase": "fixture-cleanup-complete",
+        "kind": "timedOut"
+      }
+    ],
+    "converter": {
+      "authority": {
+        "release": "v59.1",
+        "source": "1e9c61e9844affd7dccd3d42d9ea9f3a3d10cf6d",
+        "manifest": "f5cb5074e59208ec89c65aeeed53cc9cf6204cd5",
+        "platform": "linux-x64",
+        "target": "linux-amd64",
+        "bytes": 15885448,
+        "sha256": "2434129a3af4dc9e2034a476f7b76447b490975213e301769310d3bd0d5d6458",
+        "url": "https://commondatastorage.googleapis.com/perfetto-luci-artifacts/v59.1/linux-amd64/trace_processor_shell"
+      },
+      "input": {
+        "bytes": 489553194,
+        "sha256": "9fc7f6554fef04df2879dbea2c12e254521d0653c3e8e1d871806b2bc81560d8"
+      },
+      "passed": false,
+      "temporaryRemoved": true,
+      "framing": {
+        "bytes": 489553194,
+        "sha256": "9fc7f6554fef04df2879dbea2c12e254521d0653c3e8e1d871806b2bc81560d8",
+        "packets": 1930458,
+        "emptyPackets": 0
+      },
+      "conversion": {
+        "args": [
+          "convert",
+          "json",
+          "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/.spn144-converter-xx11xv/input.pftrace"
+        ],
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": "",
+        "stdout": "",
+        "diagnosticsTruncated": false,
+        "elapsedMs": 25775.397186000017,
+        "childClosed": true,
+        "outputRemoved": true,
+        "outputCloseFailure": null
+      },
+      "failure": "Error: Callback observation timedOut."
+    }
+  },
+  "candidate": {
+    "source": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+    "attempt": 0,
+    "complete": true,
+    "passed": true,
+    "accepted": true,
+    "cleanup": {
+      "sessionDetached": true,
+      "fixtureClosed": true
+    },
+    "rawInputs": 2086
+  },
+  "comparison": {
+    "accepted": false,
+    "failures": [
+      "baseline: Terminal callback progress does not confirm successful owned cleanup.",
+      "baseline: Retained source attribution artifacts are missing.",
+      "baseline: callback collection or native behavior did not complete successfully.",
+      "baseline: derived trace or converter receipt is missing.",
+      "baseline: unmapped source observations were not retained.",
+      "baseline: recomputed callback evidence is incomplete or rejected."
+    ]
+  },
+  "limits": "Original first-attempt baseline collection timeout after behavior completed; independent streaming SHA verification only, no converter re-execution or trace re-analysis. Successful cleanup is distinct from successful terminal collection. Candidate success cannot replace required paired baseline."
+}

@@ -1,0 +1,669 @@
+{
+  "at": "2026-11-15T00:07:41.205Z",
+  "sources": {
+    "prior": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+    "current": "628d77987e7d9a08863465a7553a2ed82579728b"
+  },
+  "bindings": [
+    {
+      "role": "prior",
+      "artifact": 14135182838,
+      "zip": "/tmp/spn123-terminal-f232e21b/raw-artifacts/artifact-14135182838.zip",
+      "zipSha256": "6c9cbbca3ce5a66cdd8fa859a137654c3a69566ee4a3bf6fe9ef32e5c9f45341",
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "sha256": "da95411abb47102038a641e57bfd10e78be53f5513a4a2a89d7a4a06b2939dd9",
+      "bytes": 21554131
+    },
+    {
+      "role": "prior",
+      "artifact": 14135182838,
+      "zip": "/tmp/spn123-terminal-f232e21b/raw-artifacts/artifact-14135182838.zip",
+      "zipSha256": "6c9cbbca3ce5a66cdd8fa859a137654c3a69566ee4a3bf6fe9ef32e5c9f45341",
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+      "sha256": "542a606d177fd08deb03283eed0aa2975a5e4b5ebdc05a9f003d529e83de1796",
+      "bytes": 6574
+    },
+    {
+      "role": "prior",
+      "artifact": 14135182838,
+      "zip": "/tmp/spn123-terminal-f232e21b/raw-artifacts/artifact-14135182838.zip",
+      "zipSha256": "6c9cbbca3ce5a66cdd8fa859a137654c3a69566ee4a3bf6fe9ef32e5c9f45341",
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+      "sha256": "cca8627d83fc40968568335b3de7890220cc1f9af3fdbc49ab362dab5c7fa034",
+      "bytes": 3109
+    },
+    {
+      "role": "current",
+      "artifact": 14137818168,
+      "zip": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137818168.zip",
+      "zipSha256": "a1c8fd09e8387ee2d6168b3a2909ea944637b629fa0543a2f1c4aa25fa373ef8",
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+      "sha256": "ee2d640daa1ef758b9618212b5024f4c0a2f016e22fd0d87c4b5ddb2da2a27a4",
+      "bytes": 357277
+    },
+    {
+      "role": "current",
+      "artifact": 14137818168,
+      "zip": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137818168.zip",
+      "zipSha256": "a1c8fd09e8387ee2d6168b3a2909ea944637b629fa0543a2f1c4aa25fa373ef8",
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn134-progress.json",
+      "sha256": "3c389d8322d2e61d5e059214a455c3eb131a84f27d8045b411fbfd045deba95d",
+      "bytes": 6529
+    },
+    {
+      "role": "current",
+      "artifact": 14137818168,
+      "zip": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137818168.zip",
+      "zipSha256": "a1c8fd09e8387ee2d6168b3a2909ea944637b629fa0543a2f1c4aa25fa373ef8",
+      "member": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn144-conversion.json",
+      "sha256": "aba2edcd817e43fd9e9a2b57a91f2f3ec782b4d007968ddb9bfb95effebee26a",
+      "bytes": 1377
+    }
+  ],
+  "sourceBindings": [
+    {
+      "path": "e2e/doc-responsiveness-callbacks.spec.ts",
+      "bytes": 26183,
+      "sha256": "d81f4d58084c0f5be249919f1fdce0ce1be6629e5dc7781e15634deda90d5904",
+      "identical": true
+    },
+    {
+      "path": "e2e/doc-responsiveness-callback-sources.ts",
+      "bytes": 12959,
+      "sha256": "c3f7765326dae1481a17c24ab771e33dfd9a6023f718c55888eb7d7e10dbb0f9",
+      "identical": true
+    },
+    {
+      "path": "e2e/doc-responsiveness-callback-trace.ts",
+      "bytes": 16417,
+      "sha256": "20ab5c607ca27ea860c1c364b31e188910bb34fde98ee8d81a7fb0432c309f8b",
+      "identical": true
+    },
+    {
+      "path": "e2e/doc-responsiveness-callback-proto.ts",
+      "bytes": 4772,
+      "sha256": "ff13be473c7571d502ec00f6eb8c2c3cea6a11ff73650fe40be16c64d32306dc",
+      "identical": true
+    },
+    {
+      "path": "e2e/doc-responsiveness-callback-converter.ts",
+      "bytes": 8082,
+      "sha256": "4d76e82bd0ddf2c633293ce59d3f6ff1e0b9891aa7bfd0a6a46a56fcf8c79412",
+      "identical": true
+    },
+    {
+      "path": "scripts/ci/doc-trace-processor.ts",
+      "bytes": 3809,
+      "sha256": "40324bcd91a5781ad7341354522bebc007410a74334c9dde7e23f4e2eae98ab1",
+      "identical": true
+    },
+    {
+      "path": "e2e/doc-responsiveness-callback-progress.ts",
+      "bytes": 5690,
+      "sha256": "ea96b2845310eef88e154b42d6339c55cbc1b96801702b0477d366b99ac38e1b",
+      "identical": true
+    },
+    {
+      "path": "e2e/doc-responsiveness-fixture.ts",
+      "bytes": 7066,
+      "sha256": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+      "identical": true
+    },
+    {
+      "path": "e2e/doc-responsiveness.ts",
+      "bytes": 16901,
+      "sha256": "5ce4de359311d6389365d6244617e5037ef367d1d22af442fbfadcfe62880aea",
+      "identical": true
+    },
+    {
+      "path": "scripts/ci/doc-callback-lifetimes.ts",
+      "bytes": 19781,
+      "sha256": "f35be9f51f6940c4bc0c9dbc07a9657d661c68a63ef2efe0cd3e8d8e8bcd8c68",
+      "identical": true
+    },
+    {
+      "path": "web/docResponsivenessEvidence.ts",
+      "bytes": 15812,
+      "sha256": "6fce1b08e40f44b729f0e49f61ab6cb515e583774011e8032f5c21f1db5b1059",
+      "identical": true
+    },
+    {
+      "path": "src/ui/docIdleEpisode.ts",
+      "bytes": 7462,
+      "sha256": "27cabbc433e322e687c294b95ad4bf76111ca035d5e78dcf5dba392835583e2d",
+      "identical": true
+    },
+    {
+      "path": "src/ui/nativeDocFlush.ts",
+      "bytes": 968,
+      "sha256": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+      "identical": true
+    },
+    {
+      "path": "src/ui/nativeDocFlushDiagnostic.ts",
+      "bytes": 6933,
+      "sha256": "c0633bfc5eedd20afcb21f20b3623f10f764187725b7e14236e40e2483081111",
+      "identical": true
+    },
+    {
+      "path": "playwright.config.ts",
+      "bytes": 11761,
+      "sha256": "5ed2d15eb3a547699aca0d594488a7bd1a632c9dc32ba608b17cade9f00e991e",
+      "identical": true
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 366686,
+      "sha256": "5c247ce8ca878599d97d5cc4f9dd6794dbbebc707d0d6d98355c789fce3d6be2",
+      "identical": true
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 35970,
+      "sha256": "f46c9d4455c1b892c32e6da9489644b6b6e03b060af2fdfc52cba80348f1295a",
+      "identical": true
+    }
+  ],
+  "rows": {
+    "prior": {
+      "source": "f232e21b4910afe6209a22d8d78516c598eba1a5",
+      "artifact": 14135182838,
+      "baselineSource": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "runner": {
+        "run": "43648312553",
+        "attempt": "1",
+        "name": "GitHub Actions 1000054208"
+      },
+      "runtime": "v26.13.0",
+      "playwright": "1.64.1",
+      "browser": "156.0.8078.4",
+      "environment": {
+        "coarsePointer": true,
+        "devicePixelRatio": 1,
+        "maxTouchPoints": 1,
+        "visibility": "visible",
+        "focused": true
+      },
+      "instrumentation": {
+        "converterAuthority": {
+          "release": "v59.1",
+          "source": "1e9c61e9844affd7dccd3d42d9ea9f3a3d10cf6d",
+          "manifest": "f5cb5074e59208ec89c65aeeed53cc9cf6204cd5",
+          "platform": "linux-x64",
+          "target": "linux-amd64",
+          "bytes": 15885448,
+          "sha256": "2434129a3af4dc9e2034a476f7b76447b490975213e301769310d3bd0d5d6458",
+          "url": "https://commondatastorage.googleapis.com/perfetto-luci-artifacts/v59.1/linux-amd64/trace_processor_shell"
+        },
+        "categories": [
+          "devtools.timeline",
+          "disabled-by-default-devtools.timeline.stack",
+          "toplevel",
+          "v8",
+          "blink.user_timing",
+          "disabled-by-default-renderer.scheduler"
+        ],
+        "traceConfig": {
+          "recordMode": "recordUntilFull",
+          "traceBufferSizeInKb": 1048576,
+          "includedCategories": [
+            "devtools.timeline",
+            "disabled-by-default-devtools.timeline.stack",
+            "toplevel",
+            "v8",
+            "blink.user_timing",
+            "disabled-by-default-renderer.scheduler"
+          ]
+        },
+        "transferMode": "ReturnAsStream",
+        "streamFormat": "proto",
+        "streamCompression": "none",
+        "bufferUsageReportingInterval": 1000,
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "sourceMaps": "hidden; exact built bundle source content",
+        "cpuThrottle": 4,
+        "mountedEditors": 1,
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "touch": true,
+        "deviceScaleFactor": 1,
+        "playwrightTrace": false,
+        "latencyBudgetsEnforced": false,
+        "postDisposalMs": 1200,
+        "buildFlags": {
+          "VITE_DOC_RESPONSIVENESS_EVIDENCE": "1",
+          "VITE_DOC_SELECTION_EVIDENCE": "1",
+          "VITE_SYNC_EVIDENCE": "0"
+        }
+      },
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeKeydowns": 2086,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "harnessSha256": {
+        "e2e/doc-responsiveness-callbacks.spec.ts": "d81f4d58084c0f5be249919f1fdce0ce1be6629e5dc7781e15634deda90d5904",
+        "e2e/doc-responsiveness-callback-sources.ts": "c3f7765326dae1481a17c24ab771e33dfd9a6023f718c55888eb7d7e10dbb0f9",
+        "e2e/doc-responsiveness-callback-trace.ts": "20ab5c607ca27ea860c1c364b31e188910bb34fde98ee8d81a7fb0432c309f8b",
+        "e2e/doc-responsiveness-callback-proto.ts": "ff13be473c7571d502ec00f6eb8c2c3cea6a11ff73650fe40be16c64d32306dc",
+        "e2e/doc-responsiveness-callback-converter.ts": "4d76e82bd0ddf2c633293ce59d3f6ff1e0b9891aa7bfd0a6a46a56fcf8c79412",
+        "scripts/ci/doc-trace-processor.ts": "40324bcd91a5781ad7341354522bebc007410a74334c9dde7e23f4e2eae98ab1",
+        "e2e/doc-responsiveness-callback-progress.ts": "ea96b2845310eef88e154b42d6339c55cbc1b96801702b0477d366b99ac38e1b",
+        "e2e/doc-responsiveness-fixture.ts": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+        "e2e/doc-responsiveness.ts": "5ce4de359311d6389365d6244617e5037ef367d1d22af442fbfadcfe62880aea",
+        "scripts/ci/doc-callback-lifetimes.ts": "f35be9f51f6940c4bc0c9dbc07a9657d661c68a63ef2efe0cd3e8d8e8bcd8c68",
+        "web/docResponsivenessEvidence.ts": "6fce1b08e40f44b729f0e49f61ab6cb515e583774011e8032f5c21f1db5b1059",
+        "src/ui/docIdleEpisode.ts": "27cabbc433e322e687c294b95ad4bf76111ca035d5e78dcf5dba392835583e2d",
+        "src/ui/nativeDocFlush.ts": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+        "src/ui/nativeDocFlushDiagnostic.ts": "c0633bfc5eedd20afcb21f20b3623f10f764187725b7e14236e40e2483081111",
+        "playwright.config.ts": "5ed2d15eb3a547699aca0d594488a7bd1a632c9dc32ba608b17cade9f00e991e",
+        "package-lock.json": "5c247ce8ca878599d97d5cc4f9dd6794dbbebc707d0d6d98355c789fce3d6be2"
+      },
+      "dirtyPaths": "M e2e/doc-responsiveness-fixture.ts\n M e2e/doc-responsiveness.ts\n M package-lock.json\n M playwright.config.ts\n M web/docResponsivenessEvidence.ts\n?? e2e/doc-responsiveness-callback-converter.ts\n?? e2e/doc-responsiveness-callback-progress.ts\n?? e2e/doc-responsiveness-callback-proto.ts\n?? e2e/doc-responsiveness-callback-sources.ts\n?? e2e/doc-responsiveness-callback-trace.ts\n?? e2e/doc-responsiveness-callbacks.spec.ts\n?? scripts/ci/doc-callback-lifetimes.ts\n?? scripts/ci/doc-trace-processor.ts\n?? src/ui/docIdleEpisode.ts\n?? src/ui/nativeDocFlush.ts\n?? src/ui/nativeDocFlushDiagnostic.ts",
+      "behaviorPassed": true,
+      "complete": true,
+      "passed": true,
+      "firstFailure": null,
+      "terminal": "passed",
+      "typingWallMs": 249771.805775,
+      "behaviorCompleteMs": 268005.666719,
+      "traceEndMs": 268009.134824,
+      "traceStreamOpenMs": 278196.18867299997,
+      "traceStreamCloseMs": 285529.847655,
+      "traceConvertMs": 288560.366535,
+      "traceConvertCompleteMs": 326176.70529,
+      "cleanupCompleteMs": 345717.652244,
+      "traceCompletionWaitMs": 10187.05384899996,
+      "traceReadMs": 7333.658982000023,
+      "protoBytes": 478455517,
+      "compressedProtoBytes": 33721027,
+      "trace": {
+        "file": "spn144-trace.pftrace.gz",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "proto",
+          "streamCompression": "none"
+        },
+        "bytes": 33721027,
+        "sha256": "aa7014c52efd7aef62999ac9ec32f8183346b0fbb8d1ae98399b59a044e97095",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "transport": {
+          "bytes": 478455517,
+          "sha256": "155aa5c5d684cd214b88230482ff8e1c8be7211c255a46e606b5fc0eab2ab617"
+        }
+      },
+      "converter": {
+        "args": [
+          "convert",
+          "json",
+          "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/.spn144-converter-JuMULv/input.pftrace"
+        ],
+        "code": 0,
+        "signal": null,
+        "stderr": "",
+        "stdout": "",
+        "diagnosticsTruncated": false,
+        "elapsedMs": 37615.69075399998,
+        "childClosed": true,
+        "outputRemoved": false,
+        "outputCloseFailure": null
+      },
+      "log": {
+        "path": "/tmp/spn123-publication-f232e21b/validation/logs/job-132611187524.log.gz",
+        "sha256": "6b59deb757d341505f7ad3c5736b40e34cd25e2168b130c13a1dfc4390da5bfa"
+      },
+      "runnerImage": [
+        "Version: 20261103.629",
+        "Ubuntu",
+        "26.04.1",
+        "Image: ubuntu-26.04",
+        "Version: 20261111.196.1"
+      ],
+      "jsAssetListing": [
+        "dist/assets/documentAccess-DlrFGGWB.js             0.47 kB │ gzip:     0.31 kB │ map:      1.58 kB",
+        "dist/assets/rolldown-runtime-XKyaHtl9.js           0.72 kB │ gzip:     0.42 kB",
+        "dist/assets/offlineError-BUk56pzC.js               1.48 kB │ gzip:     0.76 kB │ map:      6.33 kB",
+        "dist/assets/module-preload-7y9sWmk5.js             1.61 kB │ gzip:     0.82 kB",
+        "dist/assets/snapshotIdentity-DblywMtG.js           1.70 kB │ gzip:     0.75 kB │ map:      6.02 kB",
+        "dist/assets/OfflineViewer-D00YhcXX.js              1.93 kB │ gzip:     0.99 kB │ map:      5.89 kB",
+        "dist/assets/rendering-DZJqUBPy.js                  2.48 kB │ gzip:     1.14 kB │ map:      8.22 kB",
+        "dist/assets/runtime-BUQS9nEo.js                    2.63 kB │ gzip:     1.08 kB │ map:     10.29 kB",
+        "dist/assets/OfflineAccess-BlNYUkme.js              2.95 kB │ gzip:     1.45 kB │ map:     11.65 kB",
+        "dist/assets/download-DSlaxTap.js                   3.32 kB │ gzip:     1.63 kB │ map:     11.96 kB",
+        "dist/assets/main-DhDjZ_m4.js                       3.71 kB │ gzip:     1.83 kB │ map:      7.91 kB",
+        "dist/assets/spaceNavigation-hsChalBr.js            3.95 kB │ gzip:     1.64 kB │ map:     15.86 kB",
+        "dist/assets/checkpoint-CNBwfwki.js                 5.36 kB │ gzip:     1.94 kB │ map:     25.07 kB",
+        "dist/assets/SheetEditor-ISaPV-GJ.js                5.66 kB │ gzip:     2.65 kB │ map:     24.24 kB",
+        "dist/assets/PreparedImages-DxTqDsTH.js             6.59 kB │ gzip:     2.59 kB │ map:     24.66 kB",
+        "dist/assets/native-DkIa_Izu.js                     7.10 kB │ gzip:     3.11 kB │ map:     27.90 kB",
+        "dist/assets/existingDatabase-D6zEq-NF.js           8.29 kB │ gzip:     3.10 kB │ map:     19.18 kB",
+        "dist/assets/useDiagnostics-DSvA1PDM.js            13.16 kB │ gzip:     4.29 kB │ map:     47.29 kB",
+        "dist/assets/HistoryBrowser-BZPVEP-_.js            20.96 kB │ gzip:     7.46 kB │ map:     89.82 kB",
+        "dist/assets/offlineStore-D7JTxGwG.js              24.96 kB │ gzip:     7.57 kB │ map:     93.56 kB",
+        "dist/assets/DocEditor-NwwtOz3C.js                 29.10 kB │ gzip:    10.78 kB │ map:    118.78 kB",
+        "dist/assets/guestPendingBuffer-B9GkYB8d.js       118.44 kB │ gzip:    37.87 kB │ map:    501.47 kB",
+        "dist/assets/model-f_-_kf02.js                    128.08 kB │ gzip:    36.22 kB │ map:    503.85 kB",
+        "dist/assets/documentReady-BOTdWZ6V.js            179.31 kB │ gzip:    48.64 kB │ map:    652.23 kB",
+        "dist/assets/floating-ui.react-dom-CeedVpeg.js    222.14 kB │ gzip:    69.54 kB │ map:  1,061.57 kB",
+        "dist/assets/application-CdHLglVZ.js              266.37 kB │ gzip:    76.38 kB │ map:    901.08 kB",
+        "dist/assets/profile-CUeznPAf.js                  282.02 kB │ gzip:    57.72 kB │ map:    356.22 kB",
+        "dist/assets/lib-D5Mi1RkO.js                      391.44 kB │ gzip:   107.83 kB │ map:  1,477.61 kB",
+        "dist/assets/theme-BstKV0a6.js                    613.06 kB │ gzip:   156.61 kB │ map:  2,745.24 kB",
+        "dist/assets/portable-6n-RSV4p.js                 635.18 kB │ gzip:   109.57 kB │ map:    206.68 kB",
+        "dist/assets/es-jU5RMvFT.js                     1,166.78 kB │ gzip:   203.76 kB │ map:  4,029.38 kB",
+        "dist/assets/nativeSyncPermissions-Cf83TKX9.js  3,862.69 kB │ gzip: 1,033.51 kB │ map: 12,306.78 kB",
+        "dist/assets/univer-renderer-DOCsq0ta.js        5,922.29 kB │ gzip: 1,468.50 kB │ map: 13,445.75 kB",
+        "dist/assets/rolldown-runtime-CNOWq4Kh.js                                                                       0.81 kB │ gzip:     0.47 kB",
+        "dist/assets/deadlines-Dj8sTYN1.js                                                                              1.51 kB │ gzip:     0.91 kB │ map:      6.10 kB",
+        "dist/assets/module-preload-DaOqYLuo.js                                                                         1.72 kB │ gzip:     0.90 kB",
+        "dist/assets/snapshotIdentity-DvBjpF8T.js                                                                       1.77 kB │ gzip:     0.78 kB │ map:      6.06 kB",
+        "dist/assets/OfflineViewer-Zl0IRYPb.js                                                                          2.04 kB │ gzip:     1.04 kB │ map:      6.01 kB",
+        "dist/assets/OfflineAccess-D-Qbrktz.js                                                                          3.19 kB │ gzip:     1.56 kB │ map:     11.97 kB",
+        "dist/assets/startupStage-LrB-XkSu.js                                                                           3.46 kB │ gzip:     1.53 kB │ map:     12.96 kB",
+        "dist/assets/download-DYm-kg3h.js                                                                               3.59 kB │ gzip:     1.76 kB │ map:     12.43 kB",
+        "dist/assets/documentAccess-qDV8-2fK.js                                                                         3.68 kB │ gzip:     1.66 kB │ map:     12.48 kB",
+        "dist/assets/spaceNavigation-D2YpFhMm.js                                                                        4.03 kB │ gzip:     1.67 kB │ map:     15.88 kB",
+        "dist/assets/main-B2I7nbD5.js                                                                                   4.39 kB │ gzip:     2.12 kB │ map:     10.31 kB",
+        "dist/assets/checkpoint-J5L26ZDd.js                                                                             5.69 kB │ gzip:     2.09 kB │ map:     25.76 kB",
+        "dist/assets/PreparedImages-Dkfkz5yC.js                                                                         6.75 kB │ gzip:     2.67 kB │ map:     24.71 kB",
+        "dist/assets/SheetEditor-CEDxfpDZ.js                                                                            6.82 kB │ gzip:     3.19 kB │ map:     28.19 kB",
+        "dist/assets/native-CGH0xMng.js                                                                                 7.27 kB │ gzip:     3.19 kB │ map:     28.00 kB",
+        "dist/assets/react-CdlCbvX4.js                                                                                  7.87 kB │ gzip:     3.01 kB │ map:     30.71 kB",
+        "dist/assets/offlineError-BMzT11US.js                                                                          10.80 kB │ gzip:     4.05 kB │ map:     27.69 kB",
+        "dist/assets/diagnostics-C_p-lv7a.js                                                                           13.27 kB │ gzip:     3.90 kB │ map:     48.76 kB",
+        "dist/assets/HistoryBrowser-B-9JKztM.js                                                                        16.86 kB │ gzip:     6.34 kB │ map:     67.41 kB",
+        "dist/assets/floating-ui.dom-BN-MIWOs.js                                                                       18.83 kB │ gzip:     7.47 kB │ map:    110.95 kB",
+        "dist/assets/DocEditor-5Cd7QSrJ.js                                                                             30.74 kB │ gzip:    11.44 kB │ map:    125.27 kB",
+        "dist/assets/offlineStore-RSfsSZtX.js                                                                          30.95 kB │ gzip:     9.13 kB │ map:    115.07 kB",
+        "dist/assets/nativeCopy-BphqzcMC.js                                                                           135.45 kB │ gzip:    43.89 kB │ map:    556.87 kB",
+        "dist/assets/documentReady-BKg-oHRk.js                                                                        184.48 kB │ gzip:    50.33 kB │ map:    862.45 kB",
+        "dist/assets/floating-ui.react-dom-Cu3TIp2r.js                                                                214.40 kB │ gzip:    67.21 kB │ map:  1,031.43 kB",
+        "dist/assets/rendering-bq0cEhoZ.js                                                                            249.62 kB │ gzip:    92.46 kB │ map:    673.12 kB",
+        "dist/assets/application-CGGhHyhL.js                                                                          364.05 kB │ gzip:   106.08 kB │ map:  1,180.97 kB",
+        "dist/assets/lib-CdIRs2bO.js                                                                                  396.71 kB │ gzip:   108.61 kB │ map:  1,724.73 kB",
+        "dist/assets/profile-CWPuQQA6.js                                                                              433.43 kB │ gzip:    78.01 kB │ map:    562.40 kB",
+        "dist/assets/es-C2cdTh_D.js                                                                                   499.32 kB │ gzip:   159.05 kB │ map:  2,282.57 kB",
+        "dist/assets/CopyFile-NAWNdJ-b.js                                                                             651.39 kB │ gzip:   114.90 kB │ map:    247.26 kB",
+        "dist/assets/useDiagnostics-DxGTxtPP.js                                                                       741.49 kB │ gzip:   189.55 kB │ map:  2,828.53 kB",
+        "dist/assets/es-BsfLrfik.js                                                                                 1,173.70 kB │ gzip:   208.07 kB │ map:  4,042.17 kB",
+        "dist/assets/nativeSyncPermissions-g02O_qsO.js                                                              3,894.75 kB │ gzip: 1,047.31 kB │ map: 12,287.87 kB",
+        "dist/assets/univer-renderer-BP8c5GDI.js                                                                    5,310.20 kB │ gzip: 1,257.58 kB │ map: 10,933.92 kB"
+      ]
+    },
+    "current": {
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "artifact": 14137818168,
+      "baselineSource": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "runner": {
+        "run": "43654184206",
+        "attempt": "1",
+        "name": "GitHub Actions 1000054296"
+      },
+      "runtime": "v26.13.0",
+      "playwright": "1.64.1",
+      "browser": "156.0.8078.4",
+      "environment": {
+        "coarsePointer": true,
+        "devicePixelRatio": 1,
+        "maxTouchPoints": 1,
+        "visibility": "visible",
+        "focused": true
+      },
+      "instrumentation": {
+        "converterAuthority": {
+          "release": "v59.1",
+          "source": "1e9c61e9844affd7dccd3d42d9ea9f3a3d10cf6d",
+          "manifest": "f5cb5074e59208ec89c65aeeed53cc9cf6204cd5",
+          "platform": "linux-x64",
+          "target": "linux-amd64",
+          "bytes": 15885448,
+          "sha256": "2434129a3af4dc9e2034a476f7b76447b490975213e301769310d3bd0d5d6458",
+          "url": "https://commondatastorage.googleapis.com/perfetto-luci-artifacts/v59.1/linux-amd64/trace_processor_shell"
+        },
+        "categories": [
+          "devtools.timeline",
+          "disabled-by-default-devtools.timeline.stack",
+          "toplevel",
+          "v8",
+          "blink.user_timing",
+          "disabled-by-default-renderer.scheduler"
+        ],
+        "traceConfig": {
+          "recordMode": "recordUntilFull",
+          "traceBufferSizeInKb": 1048576,
+          "includedCategories": [
+            "devtools.timeline",
+            "disabled-by-default-devtools.timeline.stack",
+            "toplevel",
+            "v8",
+            "blink.user_timing",
+            "disabled-by-default-renderer.scheduler"
+          ]
+        },
+        "transferMode": "ReturnAsStream",
+        "streamFormat": "proto",
+        "streamCompression": "none",
+        "bufferUsageReportingInterval": 1000,
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "sourceMaps": "hidden; exact built bundle source content",
+        "cpuThrottle": 4,
+        "mountedEditors": 1,
+        "viewport": {
+          "width": 390,
+          "height": 844
+        },
+        "touch": true,
+        "deviceScaleFactor": 1,
+        "playwrightTrace": false,
+        "latencyBudgetsEnforced": false,
+        "postDisposalMs": 1200,
+        "buildFlags": {
+          "VITE_DOC_RESPONSIVENESS_EVIDENCE": "1",
+          "VITE_DOC_SELECTION_EVIDENCE": "1",
+          "VITE_SYNC_EVIDENCE": "0"
+        }
+      },
+      "fixture": {
+        "paragraphs": 16,
+        "typedCharacters": 2071,
+        "enterKeys": 15,
+        "nativeKeydowns": 2086,
+        "nativeTextLength": 2088,
+        "sha256": "6c714aa1049090072c1b3c4acb27bf6e12c9e56426c8df01cf069a23c6529b44",
+        "input": "keyboard.type, zero requested delay; Enter between all sixteen paragraphs"
+      },
+      "harnessSha256": {
+        "e2e/doc-responsiveness-callbacks.spec.ts": "d81f4d58084c0f5be249919f1fdce0ce1be6629e5dc7781e15634deda90d5904",
+        "e2e/doc-responsiveness-callback-sources.ts": "c3f7765326dae1481a17c24ab771e33dfd9a6023f718c55888eb7d7e10dbb0f9",
+        "e2e/doc-responsiveness-callback-trace.ts": "20ab5c607ca27ea860c1c364b31e188910bb34fde98ee8d81a7fb0432c309f8b",
+        "e2e/doc-responsiveness-callback-proto.ts": "ff13be473c7571d502ec00f6eb8c2c3cea6a11ff73650fe40be16c64d32306dc",
+        "e2e/doc-responsiveness-callback-converter.ts": "4d76e82bd0ddf2c633293ce59d3f6ff1e0b9891aa7bfd0a6a46a56fcf8c79412",
+        "scripts/ci/doc-trace-processor.ts": "40324bcd91a5781ad7341354522bebc007410a74334c9dde7e23f4e2eae98ab1",
+        "e2e/doc-responsiveness-callback-progress.ts": "ea96b2845310eef88e154b42d6339c55cbc1b96801702b0477d366b99ac38e1b",
+        "e2e/doc-responsiveness-fixture.ts": "e5f8aeb0485d88a1e601ed4054d4a7c718f1afad725079d53159ea12c707d8ed",
+        "e2e/doc-responsiveness.ts": "5ce4de359311d6389365d6244617e5037ef367d1d22af442fbfadcfe62880aea",
+        "scripts/ci/doc-callback-lifetimes.ts": "f35be9f51f6940c4bc0c9dbc07a9657d661c68a63ef2efe0cd3e8d8e8bcd8c68",
+        "web/docResponsivenessEvidence.ts": "6fce1b08e40f44b729f0e49f61ab6cb515e583774011e8032f5c21f1db5b1059",
+        "src/ui/docIdleEpisode.ts": "27cabbc433e322e687c294b95ad4bf76111ca035d5e78dcf5dba392835583e2d",
+        "src/ui/nativeDocFlush.ts": "626d22d13fc08c00cb4c080a30f7d201cac8438b0416473f2069691c18681875",
+        "src/ui/nativeDocFlushDiagnostic.ts": "c0633bfc5eedd20afcb21f20b3623f10f764187725b7e14236e40e2483081111",
+        "playwright.config.ts": "5ed2d15eb3a547699aca0d594488a7bd1a632c9dc32ba608b17cade9f00e991e",
+        "package-lock.json": "5c247ce8ca878599d97d5cc4f9dd6794dbbebc707d0d6d98355c789fce3d6be2"
+      },
+      "dirtyPaths": "M e2e/doc-responsiveness-fixture.ts\n M e2e/doc-responsiveness.ts\n M package-lock.json\n M playwright.config.ts\n M web/docResponsivenessEvidence.ts\n?? e2e/doc-responsiveness-callback-converter.ts\n?? e2e/doc-responsiveness-callback-progress.ts\n?? e2e/doc-responsiveness-callback-proto.ts\n?? e2e/doc-responsiveness-callback-sources.ts\n?? e2e/doc-responsiveness-callback-trace.ts\n?? e2e/doc-responsiveness-callbacks.spec.ts\n?? scripts/ci/doc-callback-lifetimes.ts\n?? scripts/ci/doc-trace-processor.ts\n?? src/ui/docIdleEpisode.ts\n?? src/ui/nativeDocFlush.ts\n?? src/ui/nativeDocFlushDiagnostic.ts",
+      "behaviorPassed": true,
+      "complete": false,
+      "passed": false,
+      "firstFailure": {
+        "atMs": 420050.23384,
+        "phase": "trace-convert",
+        "kind": "timedOut"
+      },
+      "terminal": "timedOut",
+      "typingWallMs": 330151.74739,
+      "behaviorCompleteMs": 351845.49797300005,
+      "traceEndMs": 351849.88433100004,
+      "traceStreamOpenMs": 382880.687265,
+      "traceStreamCloseMs": 391053.124933,
+      "traceConvertMs": 394475.19690900005,
+      "cleanupCompleteMs": 420177.00945300004,
+      "traceCompletionWaitMs": 31030.802933999978,
+      "traceReadMs": 8172.437667999999,
+      "protoBytes": 489553194,
+      "compressedProtoBytes": 35673572,
+      "trace": {
+        "file": "spn144-trace.pftrace.gz",
+        "completion": {
+          "dataLossOccurred": false,
+          "stream": "1",
+          "traceFormat": "proto",
+          "streamCompression": "none"
+        },
+        "bytes": 35673572,
+        "sha256": "160848b7e3f5a1dfb3bb1ceeb3fe83920cadebf928b84c1ca54073d778f04bf0",
+        "storage": {
+          "compression": "gzip",
+          "producer": "node:zlib",
+          "level": 1
+        },
+        "transport": {
+          "bytes": 489553194,
+          "sha256": "9fc7f6554fef04df2879dbea2c12e254521d0653c3e8e1d871806b2bc81560d8"
+        }
+      },
+      "converter": {
+        "args": [
+          "convert",
+          "json",
+          "/home/runner/work/spinel/spinel/baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/.spn144-converter-xx11xv/input.pftrace"
+        ],
+        "code": null,
+        "signal": "SIGKILL",
+        "stderr": "",
+        "stdout": "",
+        "diagnosticsTruncated": false,
+        "elapsedMs": 25775.397186000017,
+        "childClosed": true,
+        "outputRemoved": true,
+        "outputCloseFailure": null
+      },
+      "log": {
+        "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194032.log.gz",
+        "sha256": "fb982bea63e3a63875f2914352093cd5785d1893a034fc14bd83610032553d01"
+      },
+      "runnerImage": [
+        "Version: 20261103.629",
+        "Ubuntu",
+        "26.04.1",
+        "Image: ubuntu-26.04",
+        "Version: 20261111.196.1"
+      ],
+      "jsAssetListing": [
+        "dist/assets/documentAccess-DlrFGGWB.js             0.47 kB │ gzip:     0.31 kB │ map:      1.58 kB",
+        "dist/assets/rolldown-runtime-XKyaHtl9.js           0.72 kB │ gzip:     0.42 kB",
+        "dist/assets/offlineError-BUk56pzC.js               1.48 kB │ gzip:     0.76 kB │ map:      6.33 kB",
+        "dist/assets/module-preload-7y9sWmk5.js             1.61 kB │ gzip:     0.82 kB",
+        "dist/assets/snapshotIdentity-DblywMtG.js           1.70 kB │ gzip:     0.75 kB │ map:      6.02 kB",
+        "dist/assets/OfflineViewer-D00YhcXX.js              1.93 kB │ gzip:     0.99 kB │ map:      5.89 kB",
+        "dist/assets/rendering-DZJqUBPy.js                  2.48 kB │ gzip:     1.14 kB │ map:      8.22 kB",
+        "dist/assets/runtime-BUQS9nEo.js                    2.63 kB │ gzip:     1.08 kB │ map:     10.29 kB",
+        "dist/assets/OfflineAccess-BlNYUkme.js              2.95 kB │ gzip:     1.45 kB │ map:     11.65 kB",
+        "dist/assets/download-DSlaxTap.js                   3.32 kB │ gzip:     1.63 kB │ map:     11.96 kB",
+        "dist/assets/main-DhDjZ_m4.js                       3.71 kB │ gzip:     1.83 kB │ map:      7.91 kB",
+        "dist/assets/spaceNavigation-hsChalBr.js            3.95 kB │ gzip:     1.64 kB │ map:     15.86 kB",
+        "dist/assets/checkpoint-CNBwfwki.js                 5.36 kB │ gzip:     1.94 kB │ map:     25.07 kB",
+        "dist/assets/SheetEditor-ISaPV-GJ.js                5.66 kB │ gzip:     2.65 kB │ map:     24.24 kB",
+        "dist/assets/PreparedImages-DxTqDsTH.js             6.59 kB │ gzip:     2.59 kB │ map:     24.66 kB",
+        "dist/assets/native-DkIa_Izu.js                     7.10 kB │ gzip:     3.11 kB │ map:     27.90 kB",
+        "dist/assets/existingDatabase-D6zEq-NF.js           8.29 kB │ gzip:     3.10 kB │ map:     19.18 kB",
+        "dist/assets/useDiagnostics-DSvA1PDM.js            13.16 kB │ gzip:     4.29 kB │ map:     47.29 kB",
+        "dist/assets/HistoryBrowser-BZPVEP-_.js            20.96 kB │ gzip:     7.46 kB │ map:     89.82 kB",
+        "dist/assets/offlineStore-D7JTxGwG.js              24.96 kB │ gzip:     7.57 kB │ map:     93.56 kB",
+        "dist/assets/DocEditor-NwwtOz3C.js                 29.10 kB │ gzip:    10.78 kB │ map:    118.78 kB",
+        "dist/assets/guestPendingBuffer-B9GkYB8d.js       118.44 kB │ gzip:    37.87 kB │ map:    501.47 kB",
+        "dist/assets/model-f_-_kf02.js                    128.08 kB │ gzip:    36.22 kB │ map:    503.85 kB",
+        "dist/assets/documentReady-BOTdWZ6V.js            179.31 kB │ gzip:    48.64 kB │ map:    652.23 kB",
+        "dist/assets/floating-ui.react-dom-CeedVpeg.js    222.14 kB │ gzip:    69.54 kB │ map:  1,061.57 kB",
+        "dist/assets/application-CdHLglVZ.js              266.37 kB │ gzip:    76.38 kB │ map:    901.08 kB",
+        "dist/assets/profile-CUeznPAf.js                  282.02 kB │ gzip:    57.72 kB │ map:    356.22 kB",
+        "dist/assets/lib-D5Mi1RkO.js                      391.44 kB │ gzip:   107.83 kB │ map:  1,477.61 kB",
+        "dist/assets/theme-BstKV0a6.js                    613.06 kB │ gzip:   156.61 kB │ map:  2,745.24 kB",
+        "dist/assets/portable-6n-RSV4p.js                 635.18 kB │ gzip:   109.57 kB │ map:    206.68 kB",
+        "dist/assets/es-jU5RMvFT.js                     1,166.78 kB │ gzip:   203.76 kB │ map:  4,029.38 kB",
+        "dist/assets/nativeSyncPermissions-Cf83TKX9.js  3,862.69 kB │ gzip: 1,033.51 kB │ map: 12,306.78 kB",
+        "dist/assets/univer-renderer-DOCsq0ta.js        5,922.29 kB │ gzip: 1,468.50 kB │ map: 13,445.75 kB",
+        "dist/assets/rolldown-runtime-CNOWq4Kh.js                                                                       0.81 kB │ gzip:     0.47 kB",
+        "dist/assets/deadlines-Dj8sTYN1.js                                                                              1.51 kB │ gzip:     0.91 kB │ map:      6.10 kB",
+        "dist/assets/module-preload-DaOqYLuo.js                                                                         1.72 kB │ gzip:     0.90 kB",
+        "dist/assets/snapshotIdentity-DvBjpF8T.js                                                                       1.77 kB │ gzip:     0.78 kB │ map:      6.06 kB",
+        "dist/assets/OfflineViewer-Zl0IRYPb.js                                                                          2.04 kB │ gzip:     1.04 kB │ map:      6.01 kB",
+        "dist/assets/OfflineAccess-D-Qbrktz.js                                                                          3.19 kB │ gzip:     1.56 kB │ map:     11.97 kB",
+        "dist/assets/startupStage-LrB-XkSu.js                                                                           3.46 kB │ gzip:     1.53 kB │ map:     12.96 kB",
+        "dist/assets/download-DYm-kg3h.js                                                                               3.59 kB │ gzip:     1.76 kB │ map:     12.43 kB",
+        "dist/assets/documentAccess-qDV8-2fK.js                                                                         3.68 kB │ gzip:     1.66 kB │ map:     12.48 kB",
+        "dist/assets/spaceNavigation-D2YpFhMm.js                                                                        4.03 kB │ gzip:     1.67 kB │ map:     15.88 kB",
+        "dist/assets/main-B2I7nbD5.js                                                                                   4.39 kB │ gzip:     2.12 kB │ map:     10.31 kB",
+        "dist/assets/checkpoint-J5L26ZDd.js                                                                             5.69 kB │ gzip:     2.09 kB │ map:     25.76 kB",
+        "dist/assets/PreparedImages-Dkfkz5yC.js                                                                         6.75 kB │ gzip:     2.67 kB │ map:     24.71 kB",
+        "dist/assets/SheetEditor-CEDxfpDZ.js                                                                            6.82 kB │ gzip:     3.19 kB │ map:     28.19 kB",
+        "dist/assets/native-CGH0xMng.js                                                                                 7.27 kB │ gzip:     3.19 kB │ map:     28.00 kB",
+        "dist/assets/react-CdlCbvX4.js                                                                                  7.87 kB │ gzip:     3.01 kB │ map:     30.71 kB",
+        "dist/assets/offlineError-BMzT11US.js                                                                          10.80 kB │ gzip:     4.05 kB │ map:     27.69 kB",
+        "dist/assets/diagnostics-C_p-lv7a.js                                                                           13.27 kB │ gzip:     3.90 kB │ map:     48.76 kB",
+        "dist/assets/HistoryBrowser-B-9JKztM.js                                                                        16.86 kB │ gzip:     6.34 kB │ map:     67.41 kB",
+        "dist/assets/floating-ui.dom-BN-MIWOs.js                                                                       18.83 kB │ gzip:     7.47 kB │ map:    110.95 kB",
+        "dist/assets/DocEditor-5Cd7QSrJ.js                                                                             30.74 kB │ gzip:    11.44 kB │ map:    125.27 kB",
+        "dist/assets/offlineStore-RSfsSZtX.js                                                                          30.95 kB │ gzip:     9.13 kB │ map:    115.07 kB",
+        "dist/assets/nativeCopy-BphqzcMC.js                                                                           135.45 kB │ gzip:    43.89 kB │ map:    556.87 kB",
+        "dist/assets/documentReady-BKg-oHRk.js                                                                        184.48 kB │ gzip:    50.33 kB │ map:    862.45 kB",
+        "dist/assets/floating-ui.react-dom-Cu3TIp2r.js                                                                214.40 kB │ gzip:    67.21 kB │ map:  1,031.43 kB",
+        "dist/assets/rendering-bq0cEhoZ.js                                                                            249.62 kB │ gzip:    92.46 kB │ map:    673.12 kB",
+        "dist/assets/application-CGGhHyhL.js                                                                          364.05 kB │ gzip:   106.08 kB │ map:  1,180.97 kB",
+        "dist/assets/lib-CdIRs2bO.js                                                                                  396.71 kB │ gzip:   108.61 kB │ map:  1,724.73 kB",
+        "dist/assets/profile-CWPuQQA6.js                                                                              433.43 kB │ gzip:    78.01 kB │ map:    562.40 kB",
+        "dist/assets/es-C2cdTh_D.js                                                                                   499.32 kB │ gzip:   159.05 kB │ map:  2,282.57 kB",
+        "dist/assets/CopyFile-NAWNdJ-b.js                                                                             651.39 kB │ gzip:   114.90 kB │ map:    247.26 kB",
+        "dist/assets/useDiagnostics-DxGTxtPP.js                                                                       741.49 kB │ gzip:   189.55 kB │ map:  2,828.53 kB",
+        "dist/assets/es-BsfLrfik.js                                                                                 1,173.70 kB │ gzip:   208.07 kB │ map:  4,042.17 kB",
+        "dist/assets/nativeSyncPermissions-g02O_qsO.js                                                              3,894.75 kB │ gzip: 1,047.31 kB │ map: 12,287.87 kB",
+        "dist/assets/univer-renderer-BP8c5GDI.js                                                                    5,310.20 kB │ gzip: 1,257.58 kB │ map: 10,933.92 kB"
+      ]
+    }
+  },
+  "delta": {
+    "typingWallMs": 80379.94161499999,
+    "behaviorCompleteMs": 83839.83125400008,
+    "traceCompletionWaitMs": 20843.749085000018,
+    "traceReadMs": 838.778685999976,
+    "traceConvertMs": 105914.83037400007,
+    "protoBytes": 11097677,
+    "compressedProtoBytes": 1952545
+  },
+  "measuredConcentration": {
+    "typingShareOfExtraPreConversionTime": 0.7589111112312334,
+    "traceCompletionWaitShareOfExtraPreConversionTime": 0.19679726636390604,
+    "protoGrowthPercent": 2.319479367608588
+  },
+  "finding": "No source, harness overlay, workflow, pinned runtime/browser/converter, fixture, viewport/throttle/build-flag, reported runner-image, or68-row JS asset listing difference was found. Different hosted runner instances observed the same immutable baseline. Extra time before conversion is dominated by typing and trace completion wait. Current baseline conversion was interrupted after25.775s; prior conversion took37.616s and full run cleanup completed345.718s. This comparison does not identify why the hosted execution slowed or establish a concrete source defect.",
+  "nextStepConstraint": "Preserve failure. Do not raise any budget or retry unchanged work to green. A repair needs a source-supported bounded efficiency/correctness improvement with unchanged measured/native/attribution contracts, followed by exact-source independent validation. No such defect is proven by this comparison alone.",
+  "limits": "Bounded reads of existing JSON/log originals and Git objects only. No extra trace parsing, converter execution, runtime probe, benchmark, dispatch, rerun, or source mutation. Equal asset listing rows do not claim independently hashed full built bundles; failed run never completed attribution artifact retention."
+}

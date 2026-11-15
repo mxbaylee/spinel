@@ -1,0 +1,213 @@
+{
+  "at": "2026-11-15T00:03:35.288Z",
+  "rows": [
+    {
+      "artifact": 14137878213,
+      "member": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "sha256": "e4ad64dfae69b1a071f9a1a6d66804a1db3e333db6824d399caca2e50fa734b9",
+      "preset": "desktop",
+      "sample": "plain-1",
+      "budgetEnforced": true,
+      "budgets": {
+        "inputP95Ms": 100,
+        "longTaskMaxMs": 200,
+        "flushP95Ms": 16,
+        "flushMaxMs": 50,
+        "localDrainMs": 1000,
+        "groupLimit": 16
+      },
+      "capacityFlushCount": 130,
+      "capacityFlushP95Ms": 2.699999999953434,
+      "idleFlushP95Ms": 0.5999999999767169,
+      "pairedFlushMaximumMs": 6.600000000093132,
+      "historyHighWater": 16,
+      "collaborationHighWater": 16
+    },
+    {
+      "artifact": 14137878213,
+      "member": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "sha256": "2584ff4131696e9761f598cf3090afbb8e6e301b63e4449860cda1931ec66d79",
+      "preset": "desktop",
+      "sample": "plain-2",
+      "budgetEnforced": true,
+      "budgets": {
+        "inputP95Ms": 100,
+        "longTaskMaxMs": 200,
+        "flushP95Ms": 16,
+        "flushMaxMs": 50,
+        "localDrainMs": 1000,
+        "groupLimit": 16
+      },
+      "capacityFlushCount": 130,
+      "capacityFlushP95Ms": 2.599999999976717,
+      "idleFlushP95Ms": 0.5999999999767169,
+      "pairedFlushMaximumMs": 6.099999999976717,
+      "historyHighWater": 16,
+      "collaborationHighWater": 16
+    },
+    {
+      "artifact": 14137878213,
+      "member": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "sha256": "b6759167f176766b12cd18d36b47aa9587e49cfcfd744ef555147bbb6f0de97e",
+      "preset": "desktop",
+      "sample": "plain-3",
+      "budgetEnforced": true,
+      "budgets": {
+        "inputP95Ms": 100,
+        "longTaskMaxMs": 200,
+        "flushP95Ms": 16,
+        "flushMaxMs": 50,
+        "localDrainMs": 1000,
+        "groupLimit": 16
+      },
+      "capacityFlushCount": 130,
+      "capacityFlushP95Ms": 2.799999999930151,
+      "idleFlushP95Ms": 0.5,
+      "pairedFlushMaximumMs": 6.199999999953434,
+      "historyHighWater": 16,
+      "collaborationHighWater": 16
+    },
+    {
+      "artifact": 14137878213,
+      "member": "test-results/doc-responsiveness/doc-responsiveness-desktop-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "sha256": "157bd1ffa575aad8943ce5263548e02af85331be50fd52362b6ec127d18d4358",
+      "preset": "desktop",
+      "sample": "profile",
+      "budgetEnforced": false,
+      "budgets": {
+        "inputP95Ms": 100,
+        "longTaskMaxMs": 200,
+        "flushP95Ms": 16,
+        "flushMaxMs": 50,
+        "localDrainMs": 1000,
+        "groupLimit": 16
+      },
+      "capacityFlushCount": 130,
+      "capacityFlushP95Ms": 3,
+      "idleFlushP95Ms": 0.40000000002328306,
+      "pairedFlushMaximumMs": 7.5,
+      "historyHighWater": 16,
+      "collaborationHighWater": 16
+    },
+    {
+      "artifact": 14138395646,
+      "member": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/spn108-metrics.json",
+      "sha256": "210c2243ee21097f56708c6a88fbb2b6e3fdceee2d90d28f2f515098f5d4e236",
+      "preset": "mobile",
+      "sample": "plain-1",
+      "budgetEnforced": true,
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100,
+        "localDrainMs": 1000,
+        "groupLimit": 16
+      },
+      "capacityFlushCount": 130,
+      "capacityFlushP95Ms": 5.799999999930151,
+      "idleFlushP95Ms": 5.399999999906868,
+      "pairedFlushMaximumMs": 14,
+      "historyHighWater": 16,
+      "collaborationHighWater": 16
+    },
+    {
+      "artifact": 14138395646,
+      "member": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-2-doc-responsiveness/spn108-metrics.json",
+      "sha256": "f764af9e0e5963f8a3a94c8677d071c8a0c642871eeab8ee5989d0735345acf7",
+      "preset": "mobile",
+      "sample": "plain-2",
+      "budgetEnforced": true,
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100,
+        "localDrainMs": 1000,
+        "groupLimit": 16
+      },
+      "capacityFlushCount": 130,
+      "capacityFlushP95Ms": 6.100000000093132,
+      "idleFlushP95Ms": 2.800000000046566,
+      "pairedFlushMaximumMs": 13.900000000139698,
+      "historyHighWater": 16,
+      "collaborationHighWater": 16
+    },
+    {
+      "artifact": 14138395646,
+      "member": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-3-doc-responsiveness/spn108-metrics.json",
+      "sha256": "145527c580e86efdf6dc49282322e21c787e52b190856181244b7ecae3623b03",
+      "preset": "mobile",
+      "sample": "plain-3",
+      "budgetEnforced": true,
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100,
+        "localDrainMs": 1000,
+        "groupLimit": 16
+      },
+      "capacityFlushCount": 130,
+      "capacityFlushP95Ms": 5.800000000046566,
+      "idleFlushP95Ms": 1.6999999999534339,
+      "pairedFlushMaximumMs": 15.399999999906868,
+      "historyHighWater": 16,
+      "collaborationHighWater": 16
+    },
+    {
+      "artifact": 14138395646,
+      "member": "test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-profile-doc-responsiveness/spn108-metrics.json",
+      "sha256": "45803ac266e3746790b272f9cabea2ebfdb68a5111dcf7091f2d3a70304ef47c",
+      "preset": "mobile",
+      "sample": "profile",
+      "budgetEnforced": false,
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100,
+        "localDrainMs": 1000,
+        "groupLimit": 16
+      },
+      "capacityFlushCount": 130,
+      "capacityFlushP95Ms": 7.099999999860302,
+      "idleFlushP95Ms": 1.1999999999534339,
+      "pairedFlushMaximumMs": 16.0999999998603,
+      "historyHighWater": 16,
+      "collaborationHighWater": 16
+    }
+  ],
+  "maxima": {
+    "desktop": {
+      "budgets": {
+        "inputP95Ms": 100,
+        "longTaskMaxMs": 200,
+        "flushP95Ms": 16,
+        "flushMaxMs": 50,
+        "localDrainMs": 1000,
+        "groupLimit": 16
+      },
+      "capacityFlushP95Ms": 2.799999999930151,
+      "idleFlushP95Ms": 0.5999999999767169,
+      "pairedFlushMaximumMs": 6.600000000093132,
+      "historyHighWater": 16,
+      "collaborationHighWater": 16
+    },
+    "mobile": {
+      "budgets": {
+        "inputP95Ms": 200,
+        "longTaskMaxMs": 500,
+        "flushP95Ms": 50,
+        "flushMaxMs": 100,
+        "localDrainMs": 1000,
+        "groupLimit": 16
+      },
+      "capacityFlushP95Ms": 6.100000000093132,
+      "idleFlushP95Ms": 5.399999999906868,
+      "pairedFlushMaximumMs": 15.399999999906868,
+      "historyHighWater": 16,
+      "collaborationHighWater": 16
+    }
+  }
+}

@@ -1,0 +1,1690 @@
+{
+  "at": "2026-11-15T00:08:13.702Z",
+  "verdict": "NOT_ACCEPTED",
+  "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+  "base": "8e9dccbd90f04ad79bd12cba3695e5c4ff04e02d",
+  "tested": "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+  "testedTree": "ed0a3f30660e9817d67e3fc86ec49f006896edcc",
+  "snapshot": "/tmp/spn128-publication-628d7798/validation/snapshots/2026-11-15T000353932Z",
+  "allTerminal": true,
+  "firstWorkflowAttemptsOnly": true,
+  "workflowStatuses": [
+    {
+      "kind": "ci",
+      "id": 43654184206,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "jobs": [
+        {
+          "id": 132628976793,
+          "name": "Classify changes (43654184206)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132628976958,
+          "name": "Pull request",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629193957,
+          "name": "Backlog",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629193982,
+          "name": "Lint",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629193998,
+          "name": "Unit tests (supervisor)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194000,
+          "name": "Container smoke",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194004,
+          "name": "Unit tests (recovery)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194006,
+          "name": "Typecheck",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194014,
+          "name": "Doc responsiveness (mobile)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194020,
+          "name": "Lib tests (dense-cells)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194028,
+          "name": "Doc callback lifetimes (desktop)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194032,
+          "name": "Doc callback lifetimes (mobile)",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 132629194036,
+          "name": "Unit tests (remaining)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194039,
+          "name": "Sized restore acceptance",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194044,
+          "name": "Lib tests (cells)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194048,
+          "name": "Lib tests (mixed-fuzz)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194062,
+          "name": "Retained sync transition",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194065,
+          "name": "Lib tests (remaining)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194083,
+          "name": "Doc responsiveness (desktop)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194097,
+          "name": "Playwright smoke (development 1/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194103,
+          "name": "Playwright smoke (development 2/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194119,
+          "name": "Playwright smoke (mobile-https)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194124,
+          "name": "Playwright smoke (production 2/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194137,
+          "name": "Playwright smoke (sync-development)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194138,
+          "name": "Playwright smoke (sync-production)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194147,
+          "name": "Playwright smoke (supervised-restore)",
+          "status": "completed",
+          "conclusion": "failure"
+        },
+        {
+          "id": 132629194154,
+          "name": "Playwright smoke (sync-soak-sheet)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194156,
+          "name": "Playwright smoke (offline-upgrade)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194163,
+          "name": "Playwright smoke (sync-soak-doc)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629194165,
+          "name": "Playwright smoke (production 1/2)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132631420377,
+          "name": "Unit tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132631707280,
+          "name": "Lib tests",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132635114157,
+          "name": "Playwright smoke",
+          "status": "completed",
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "kind": "storybook",
+      "id": 43654184145,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 132628976810,
+          "name": "Classify changes",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629131179,
+          "name": "Build Storybook",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629339428,
+          "name": "Review Storybook mobile (light)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629339458,
+          "name": "Review Storybook desktop (dark)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629339469,
+          "name": "Review Storybook tablet",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629339471,
+          "name": "Review Storybook desktop (light)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629339500,
+          "name": "Review Storybook mobile (dark)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132629341252,
+          "name": "Publish PR preview to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        },
+        {
+          "id": 132633311733,
+          "name": "Review Storybook states and interactions",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132633398900,
+          "name": "Deploy to GitHub Pages",
+          "status": "completed",
+          "conclusion": "skipped"
+        }
+      ]
+    },
+    {
+      "kind": "desktop",
+      "id": 43654184097,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 132628976334,
+          "name": "Native desktop offline (firefox, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132628976504,
+          "name": "Native desktop offline (safari, macos-15-intel)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 132628976517,
+          "name": "Native desktop offline (chrome, macos-26)",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "kind": "spaces",
+      "id": 43654184159,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "id": 132628976698,
+          "name": "🦈 DigitalOcean Spaces",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "gates": [
+    {
+      "name": "Backlog",
+      "id": 132629193957,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Pull request",
+      "id": 132628976958,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Lint",
+      "id": 132629193982,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Typecheck",
+      "id": 132629194006,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Unit tests",
+      "id": 132631420377,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Lib tests",
+      "id": 132631707280,
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "name": "Playwright smoke",
+      "id": 132635114157,
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "aggregateEvidence": [
+    {
+      "artifact": 14137861923,
+      "member": "ci-results-unit.json",
+      "sha256": "dc9c403a19a417e585813fd842975b701dec7b0c53c295f79d0b9d8fe5967bb0",
+      "passed": true,
+      "actualResults": [
+        {
+          "suite": "unit-tests",
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        }
+      ],
+      "planSha256": "5e2b79d7b30463345f19dc7f3dd11189f95c641fc187de62e056e879f5e786c6",
+      "gateResults": {}
+    },
+    {
+      "artifact": 14137299129,
+      "member": "ci-results-lib.json",
+      "sha256": "dc9c617896ed18b9c0cee786876f07cf907dba7057fb6f49762b4c2937dbe84b",
+      "passed": true,
+      "actualResults": [
+        {
+          "suite": "lib-test-run",
+          "selected": true,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage.",
+          "result": "success"
+        }
+      ],
+      "planSha256": "5e2b79d7b30463345f19dc7f3dd11189f95c641fc187de62e056e879f5e786c6",
+      "gateResults": {}
+    },
+    {
+      "artifact": 14138007198,
+      "member": "ci-results-browser.json",
+      "sha256": "6ae62139f379c4d6d43b56b161d4c0df303c0d48a4c8378ad68c844255b1c4c4",
+      "passed": false,
+      "actualResults": {
+        "backlog": "success",
+        "pull-request": "success",
+        "lint": "success",
+        "typecheck": "success",
+        "unit-tests": "success",
+        "lib-test-run": "success",
+        "playwright-run": "failure",
+        "container-smoke": "success",
+        "restore-timing": "success",
+        "sync-transition": "success",
+        "doc-responsiveness": "success",
+        "doc-callback-lifetimes": "failure"
+      },
+      "planSha256": "5e2b79d7b30463345f19dc7f3dd11189f95c641fc187de62e056e879f5e786c6",
+      "error": "Error: Incomplete coverage playwright-run: selected=true, result=failure"
+    }
+  ],
+  "blockers": [
+    {
+      "kind": "missing-retained-crash-receipts",
+      "receipt": "/tmp/spn128-crash-retention-gap.json",
+      "runtimeRecoveryPassed": true
+    },
+    {
+      "kind": "catalog-restore-tracing-collision",
+      "receipt": "/tmp/spn128-independent-supervised-failure.json",
+      "internalAttempts": [
+        0,
+        1,
+        2
+      ],
+      "allFailed": true,
+      "missingCustomFileAttachments": 4
+    },
+    {
+      "kind": "mobile-callback-baseline-collection-timeout",
+      "receipt": "/tmp/spn128-independent-callback-failure.json",
+      "baselineSource": "b75e3797a11ac2f53e3833b5615f68b6c0091727",
+      "phase": "trace-convert",
+      "deadlineMs": 420000,
+      "candidatePassed": true,
+      "pairedAccepted": false
+    }
+  ],
+  "execution": {
+    "browserReporters": 19,
+    "reportTotals": {
+      "expected": 492,
+      "skipped": 11,
+      "unexpected": 2,
+      "flaky": 0
+    },
+    "passingReportCasesHaveSingleRetryZeroResult": true,
+    "linuxCrashScenarios": 17,
+    "recoveryTests": 678,
+    "supervisorTests": 131,
+    "remainingUnitTests": 2271,
+    "nativeBrowsers": [
+      "firefox",
+      "chrome",
+      "safari"
+    ],
+    "providerChecks": 12,
+    "storybookVariants": 5,
+    "storiesEach": 1078,
+    "rawPerformanceMeasurements": 16,
+    "performanceMaxima": {
+      "desktop": {
+        "unprofiledCases": 3,
+        "p95": 29.199999999953434,
+        "longestTask": 0,
+        "firstVerifiedBrowserLocalDrainMs": 348,
+        "lateReadUpperBoundMs": 1244.9000000000233
+      },
+      "mobile": {
+        "unprofiledCases": 3,
+        "p95": 51.5,
+        "longestTask": 96,
+        "firstVerifiedBrowserLocalDrainMs": 410.0999999999767,
+        "lateReadUpperBoundMs": 7565
+      }
+    },
+    "flushBudgets": {
+      "desktop": {
+        "budgets": {
+          "inputP95Ms": 100,
+          "longTaskMaxMs": 200,
+          "flushP95Ms": 16,
+          "flushMaxMs": 50,
+          "localDrainMs": 1000,
+          "groupLimit": 16
+        },
+        "capacityFlushP95Ms": 2.799999999930151,
+        "idleFlushP95Ms": 0.5999999999767169,
+        "pairedFlushMaximumMs": 6.600000000093132,
+        "historyHighWater": 16,
+        "collaborationHighWater": 16
+      },
+      "mobile": {
+        "budgets": {
+          "inputP95Ms": 200,
+          "longTaskMaxMs": 500,
+          "flushP95Ms": 50,
+          "flushMaxMs": 100,
+          "localDrainMs": 1000,
+          "groupLimit": 16
+        },
+        "capacityFlushP95Ms": 6.100000000093132,
+        "idleFlushP95Ms": 5.399999999906868,
+        "pairedFlushMaximumMs": 15.399999999906868,
+        "historyHighWater": 16,
+        "collaborationHighWater": 16
+      }
+    }
+  },
+  "artifacts": [
+    {
+      "id": 14137631522,
+      "name": "ci-plan",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-publication-628d7798/validation/original-zips/artifact-14137631522.zip",
+      "bytes": 950,
+      "sha256": "ad2b07bba392ade2a951243e1e6ad7be8413b7c8543fdc11a48dfb676856cb47",
+      "members": 1,
+      "hashedJsonMembers": 1
+    },
+    {
+      "id": 14137601652,
+      "name": "storybook-review",
+      "run": 43654184145,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137601652.zip",
+      "bytes": 6267322,
+      "sha256": "1250a3d3b302e094e72623bdf1748151210962cb8d962f8c483b2920dcd5db00",
+      "members": 370,
+      "hashedJsonMembers": 3
+    },
+    {
+      "id": 14137316568,
+      "name": "spaces-acceptance",
+      "run": 43654184159,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-publication-628d7798/validation/original-zips/artifact-14137316568.zip",
+      "bytes": 670,
+      "sha256": "eab5b9095c0444cacd466d9ebda2f1d52560d6f3c0d38515835bc26eb775e4af",
+      "members": 1,
+      "hashedJsonMembers": 1
+    },
+    {
+      "id": 14137816316,
+      "name": "theme-screenshots-mobile-https",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137816316.zip",
+      "bytes": 1527074,
+      "sha256": "00d80cea2dfd61fe1e6db85f3b0f6bbc0f89d58be9c076848ef68d417791ff80",
+      "members": 38,
+      "hashedJsonMembers": 10
+    },
+    {
+      "id": 14137801317,
+      "name": "desktop-offline-firefox-macos-26-43654184097-1",
+      "run": 43654184097,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137801317.zip",
+      "bytes": 498772,
+      "sha256": "80a8bc4b3ffd6135dcad97351366dbb0b3a7bb2561cbb135c3059e719c8348f7",
+      "members": 16,
+      "hashedJsonMembers": 3
+    },
+    {
+      "id": 14137024349,
+      "name": "theme-screenshots-sync-development",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137024349.zip",
+      "bytes": 2159253,
+      "sha256": "628837c2fbc1da442134b2536974a9ccda6119dba08c7806b3ab9011c08d89cb",
+      "members": 75,
+      "hashedJsonMembers": 34
+    },
+    {
+      "id": 14137861044,
+      "name": "entity-icon-checks",
+      "run": 43654184145,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137861044.zip",
+      "bytes": 509,
+      "sha256": "caf852900aeb19ec5693187ad96879168ae5676a22c8e80288ba6d17b77fe977",
+      "members": 1,
+      "hashedJsonMembers": 1
+    },
+    {
+      "id": 14137442648,
+      "name": "desktop-offline-chrome-macos-26-43654184097-1",
+      "run": 43654184097,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137442648.zip",
+      "bytes": 225214,
+      "sha256": "f04505b01e61de0eb6e6f5602a3cb267f3a7b347adf2c23ea1ec02432f7868ff",
+      "members": 14,
+      "hashedJsonMembers": 2
+    },
+    {
+      "id": 14137772243,
+      "name": "pdf-collaboration-overlap",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137772243.zip",
+      "bytes": 179618,
+      "sha256": "6ac76fd662713a919901bf099c06a27912c22b1959a56d1556c68d6bead02dd5",
+      "members": 5,
+      "hashedJsonMembers": 1
+    },
+    {
+      "id": 14136883856,
+      "name": "sized-restore-acceptance",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-publication-628d7798/validation/original-zips/artifact-14136883856.zip",
+      "bytes": 75619,
+      "sha256": "20ebb22817ffd7a2f637b745807a7bff35acb314de4356fa115a0fe0f4d4f03a",
+      "members": 1,
+      "hashedJsonMembers": 1
+    },
+    {
+      "id": 14137179276,
+      "name": "desktop-offline-safari-macos-15-intel-43654184097-1",
+      "run": 43654184097,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137179276.zip",
+      "bytes": 999835,
+      "sha256": "11826b81b74bf204a9938e755117fc1145af083f3c96a33ca609a6ba791eff6e",
+      "members": 18,
+      "hashedJsonMembers": 3
+    },
+    {
+      "id": 14137073328,
+      "name": "theme-screenshots-sync-soak-sheet",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137073328.zip",
+      "bytes": 440978,
+      "sha256": "2d4de1f54e1392c80db835805e646624d7113b0aee61719907b5d911068ad52b",
+      "members": 5,
+      "hashedJsonMembers": 5
+    },
+    {
+      "id": 14137861923,
+      "name": "ci-results-unit",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-publication-628d7798/validation/original-zips/artifact-14137861923.zip",
+      "bytes": 1173,
+      "sha256": "b467ef55b68bbf5d6b71afc99527b5ce905f130e6293512332097673baef749e",
+      "members": 1,
+      "hashedJsonMembers": 1
+    },
+    {
+      "id": 14137572869,
+      "name": "theme-screenshots-offline-upgrade",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137572869.zip",
+      "bytes": 401828,
+      "sha256": "c9fdeb05492dc4e5e6f58e8fbd96e39b105901d7c5283f2d88c59a41d5c2d7eb",
+      "members": 5,
+      "hashedJsonMembers": 5
+    },
+    {
+      "id": 14137179532,
+      "name": "theme-screenshots-sync-soak-doc",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137179532.zip",
+      "bytes": 463527,
+      "sha256": "ed571761f2c67f4b1fa7229816db7af56eb0274281fe1bc8d595652bf0fb8ffd",
+      "members": 5,
+      "hashedJsonMembers": 5
+    },
+    {
+      "id": 14137299129,
+      "name": "ci-results-lib",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-publication-628d7798/validation/original-zips/artifact-14137299129.zip",
+      "bytes": 1191,
+      "sha256": "32f7de23331103817d8de90a0aee663bdfa11e740883a7d85c144b0c433a06e2",
+      "members": 1,
+      "hashedJsonMembers": 1
+    },
+    {
+      "id": 14136914038,
+      "name": "sheet-pdf-evidence",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14136914038.zip",
+      "bytes": 735469,
+      "sha256": "004eeb63a2e5f5aa440ed6517c2e63a7701b734cc556326a219a26be0bcdfdbc",
+      "members": 130,
+      "hashedJsonMembers": 1
+    },
+    {
+      "id": 14136694739,
+      "name": "doc-pdf-evidence",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14136694739.zip",
+      "bytes": 8558396,
+      "sha256": "07412c6ec81df339b4daa843ee84267a6a763b2883d3e8f76d21f28be16ff9c5",
+      "members": 757,
+      "hashedJsonMembers": 3
+    },
+    {
+      "id": 14137538246,
+      "name": "storybook-check-mobile-light",
+      "run": 43654184145,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137538246.zip",
+      "bytes": 17678,
+      "sha256": "93a14f31674fa327680cab5225d30305664465150fddc499216c2cb71e71e7fb",
+      "members": 5,
+      "hashedJsonMembers": 4
+    },
+    {
+      "id": 14137383623,
+      "name": "storybook-check-desktop-light",
+      "run": 43654184145,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137383623.zip",
+      "bytes": 17757,
+      "sha256": "337ad7d9070e6e14189963a454298b212fce89fe2f02f2cb203b736acbeacbbe",
+      "members": 5,
+      "hashedJsonMembers": 4
+    },
+    {
+      "id": 14137906222,
+      "name": "doc-callback-lifetimes-desktop",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137906222.zip",
+      "bytes": 201084714,
+      "sha256": "2b46a2c15647fb6ee14495febbfede75097cd2e07cdd471957d6b2bdd207cea3",
+      "members": 95,
+      "hashedJsonMembers": 9
+    },
+    {
+      "id": 14136844448,
+      "name": "theme-screenshots-supervised-restore",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14136844448.zip",
+      "bytes": 402628,
+      "sha256": "cb5c15166cd3e73508ed9aaacb91a09f320b92584d21307ab2d9fb99178fd9ee",
+      "members": 8,
+      "hashedJsonMembers": 2
+    },
+    {
+      "id": 14136749851,
+      "name": "theme-screenshots-sync-production",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14136749851.zip",
+      "bytes": 5009663,
+      "sha256": "dfdb02da44d79c1bfe440b2c415e55f84148242ca7183895a62392fbaeb20452",
+      "members": 271,
+      "hashedJsonMembers": 187
+    },
+    {
+      "id": 14136859575,
+      "name": "storybook-check-tablet",
+      "run": 43654184145,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14136859575.zip",
+      "bytes": 17695,
+      "sha256": "62ca5963e4455d31aaadfc9e733a5255eb6e6aab325712d0811b78f172a2973e",
+      "members": 5,
+      "hashedJsonMembers": 4
+    },
+    {
+      "id": 14137818168,
+      "name": "doc-callback-lifetimes-mobile",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137818168.zip",
+      "bytes": 129070179,
+      "sha256": "a1c8fd09e8387ee2d6168b3a2909ea944637b629fa0543a2f1c4aa25fa373ef8",
+      "members": 64,
+      "hashedJsonMembers": 9
+    },
+    {
+      "id": 14137314556,
+      "name": "theme-screenshots-production-2",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137314556.zip",
+      "bytes": 18453447,
+      "sha256": "a79453ce53616713083d8ff1ba278deaf53d78d15d943aa1f9b797bd9c5115da",
+      "members": 357,
+      "hashedJsonMembers": 43
+    },
+    {
+      "id": 14137454196,
+      "name": "theme-screenshots-development-2",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137454196.zip",
+      "bytes": 16494826,
+      "sha256": "58127b7b16c079a390cc0be4157d99251b999329c090d40465e60cd16b8faebc",
+      "members": 318,
+      "hashedJsonMembers": 18
+    },
+    {
+      "id": 14137014079,
+      "name": "theme-screenshots-development-1",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137014079.zip",
+      "bytes": 33627119,
+      "sha256": "f164cd5f18c073ee63068bc9d05122aeb33720e7dcd085aa7082202bb7d15999",
+      "members": 456,
+      "hashedJsonMembers": 15
+    },
+    {
+      "id": 14137454260,
+      "name": "storybook-check-desktop-dark",
+      "run": 43654184145,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137454260.zip",
+      "bytes": 17685,
+      "sha256": "1e4d817289c63fd9282ae527646cf411db38cc00d2ed00c63daa99d5b8a50d0d",
+      "members": 5,
+      "hashedJsonMembers": 4
+    },
+    {
+      "id": 14137878213,
+      "name": "doc-responsiveness-desktop",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137878213.zip",
+      "bytes": 1343051,
+      "sha256": "07dbb92787f7662da3a9e867504a3a2d5e142910f31b30a7a43d824a14c5771a",
+      "members": 18,
+      "hashedJsonMembers": 16
+    },
+    {
+      "id": 14137154097,
+      "name": "theme-screenshots-production-1",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137154097.zip",
+      "bytes": 35416279,
+      "sha256": "38ba8828483569ee49f3a7b3905882fd2a57a72a8a4d15e113a934de350d3065",
+      "members": 489,
+      "hashedJsonMembers": 15
+    },
+    {
+      "id": 14137009402,
+      "name": "storybook-check-mobile-dark",
+      "run": 43654184145,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14137009402.zip",
+      "bytes": 17767,
+      "sha256": "736c6ff16f5dd58309c81cc1e7f839ab8e9fc3b27b50b4fa87055c4550f6e4e2",
+      "members": 5,
+      "hashedJsonMembers": 4
+    },
+    {
+      "id": 14138395646,
+      "name": "doc-responsiveness-mobile",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-terminal-628d7798/raw-artifacts/artifact-14138395646.zip",
+      "bytes": 1815115,
+      "sha256": "feb90cabde46ee4a40409a66dc9a3ad7e90f89e9825d148b19a958e8f8f43dfe",
+      "members": 18,
+      "hashedJsonMembers": 16
+    },
+    {
+      "id": 14138007198,
+      "name": "ci-results-browser",
+      "run": 43654184206,
+      "source": "628d77987e7d9a08863465a7553a2ed82579728b",
+      "path": "/tmp/spn128-publication-628d7798/validation/original-zips/artifact-14138007198.zip",
+      "bytes": 470,
+      "sha256": "b318e5c08ec18e7d66a0c543fa16d6c0b99184f8ff4901af58946539b4aec35c",
+      "members": 1,
+      "hashedJsonMembers": 1
+    }
+  ],
+  "logs": [
+    {
+      "id": 132628976793,
+      "name": "Classify changes (43654184206)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "7924e02349646f5fc3d11f5bc6ddc89eebe38321ad91ad54be82292f7e2ec639",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132628976793.log.gz",
+      "gzipBytes": 11730,
+      "gzipSha256": "932ca864bfa1e095da94bb68aa34016ace0457a700e9e1ad9e383557593e2bd8",
+      "rawBytes": 60360,
+      "rawSha256": "7924e02349646f5fc3d11f5bc6ddc89eebe38321ad91ad54be82292f7e2ec639"
+    },
+    {
+      "id": 132628976958,
+      "name": "Pull request",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "6624227e54df01b13d4cca3542ac2844df96b62650c50c44808bd3fef9ecc83a",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132628976958.log.gz",
+      "gzipBytes": 9459,
+      "gzipSha256": "d21d9a399ad33bd69df8bbea6a0e9705182bc59973aaca0d76035ca13893e727",
+      "rawBytes": 48304,
+      "rawSha256": "6624227e54df01b13d4cca3542ac2844df96b62650c50c44808bd3fef9ecc83a"
+    },
+    {
+      "id": 132629193957,
+      "name": "Backlog",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "a00d18d2d6c083504a678e36a25451041851bf88afc0e36b73e30853017a598d",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629193957.log.gz",
+      "gzipBytes": 4480,
+      "gzipSha256": "5e024ba0b50706df8fd72e4fb689f7d09381f48df49fc24ec7ac9255cfe80267",
+      "rawBytes": 19299,
+      "rawSha256": "a00d18d2d6c083504a678e36a25451041851bf88afc0e36b73e30853017a598d"
+    },
+    {
+      "id": 132629193982,
+      "name": "Lint",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "0c4720a8579da09f474529b9378cf848e20ee19d65edf549fd03a229a1eadb24",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629193982.log.gz",
+      "gzipBytes": 5139,
+      "gzipSha256": "d6d5a6ada7579c5fa867bb409f486cef923db691ed8b35cdc8a5419d454310be",
+      "rawBytes": 20343,
+      "rawSha256": "0c4720a8579da09f474529b9378cf848e20ee19d65edf549fd03a229a1eadb24"
+    },
+    {
+      "id": 132629193998,
+      "name": "Unit tests (supervisor)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "36e238e29d779268e42f01af446cf7eb622ebc57c402f3132b45f24cf530309c",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629193998.log.gz",
+      "gzipBytes": 16717,
+      "gzipSha256": "f2b5fc6c4982bc4d2c07977353780a1c87ad9db7e0fd604936f785d8aa9b54d9",
+      "rawBytes": 137676,
+      "rawSha256": "36e238e29d779268e42f01af446cf7eb622ebc57c402f3132b45f24cf530309c"
+    },
+    {
+      "id": 132629194000,
+      "name": "Container smoke",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "0f41ee7ad73afc04142235251d4e932241535943603e7188e12bcbf1d9473abc",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194000.log.gz",
+      "gzipBytes": 9938,
+      "gzipSha256": "f3cfe9b685947a9acacf18520ef6dc2092c41cb13dd5f65964f21ce2abb4d9d2",
+      "rawBytes": 41920,
+      "rawSha256": "0f41ee7ad73afc04142235251d4e932241535943603e7188e12bcbf1d9473abc"
+    },
+    {
+      "id": 132629194004,
+      "name": "Unit tests (recovery)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "cd28d2bef2c6bd8e82c0e31be96a85610968bcc343297cda43447eee7242f4b2",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194004.log.gz",
+      "gzipBytes": 15371,
+      "gzipSha256": "b6bf21c0bb07f06790e599d4cf62632ae5b59fe46f3f15299e9d8595833caf17",
+      "rawBytes": 108154,
+      "rawSha256": "cd28d2bef2c6bd8e82c0e31be96a85610968bcc343297cda43447eee7242f4b2"
+    },
+    {
+      "id": 132629194006,
+      "name": "Typecheck",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "d2ba6b5ef1603e1247adfa3097c518d06c97ba3ba6bf6c167740977eb8afac7f",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194006.log.gz",
+      "gzipBytes": 4978,
+      "gzipSha256": "e22668a6bb0537cc6ed30cd557f1816c03f4b92d41a71b55931ecaa1702e6eb4",
+      "rawBytes": 19988,
+      "rawSha256": "d2ba6b5ef1603e1247adfa3097c518d06c97ba3ba6bf6c167740977eb8afac7f"
+    },
+    {
+      "id": 132629194014,
+      "name": "Doc responsiveness (mobile)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "69fe53280beff7a61445476508dd481aa7200a73efce76f438d0476f5fe1e074",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+        "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194014.log.gz",
+      "gzipBytes": 21105,
+      "gzipSha256": "adf26b35a0967d8cd91bd60762ee22a71ddff3b9fe9e09e8efaadc14ed808688",
+      "rawBytes": 98611,
+      "rawSha256": "69fe53280beff7a61445476508dd481aa7200a73efce76f438d0476f5fe1e074"
+    },
+    {
+      "id": 132629194020,
+      "name": "Lib tests (dense-cells)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "195c6a9c521b70ca14e5a7d0732f9261cbbf8574e6944cc7f415e0bff39a1815",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194020.log.gz",
+      "gzipBytes": 5683,
+      "gzipSha256": "9c6c7c84714579ae79e0e7e871ed214d1b3f1543df714df62bb1dd93ad1c8cc5",
+      "rawBytes": 23820,
+      "rawSha256": "195c6a9c521b70ca14e5a7d0732f9261cbbf8574e6944cc7f415e0bff39a1815"
+    },
+    {
+      "id": 132629194028,
+      "name": "Doc callback lifetimes (desktop)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "5ca71104c4145a583c53df1db2f819b5f08ece341013e26ed1f1057bba14de27",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+        "b75e3797a11ac2f53e3833b5615f68b6c0091727"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194028.log.gz",
+      "gzipBytes": 20192,
+      "gzipSha256": "4531c2f7a121d5b07389d15aa7e98652ab07b58a80c642c52dc446a8d8af5ff7",
+      "rawBytes": 94215,
+      "rawSha256": "5ca71104c4145a583c53df1db2f819b5f08ece341013e26ed1f1057bba14de27"
+    },
+    {
+      "id": 132629194032,
+      "name": "Doc callback lifetimes (mobile)",
+      "workflow": 43654184206,
+      "conclusion": "failure",
+      "sha256": "fb982bea63e3a63875f2914352093cd5785d1893a034fc14bd83610032553d01",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+        "b75e3797a11ac2f53e3833b5615f68b6c0091727"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194032.log.gz",
+      "gzipBytes": 21018,
+      "gzipSha256": "c5db2404edc4284e8b8d038134cbadbca91283df88d89090ce9d9c4db78bd341",
+      "rawBytes": 98419,
+      "rawSha256": "fb982bea63e3a63875f2914352093cd5785d1893a034fc14bd83610032553d01"
+    },
+    {
+      "id": 132629194036,
+      "name": "Unit tests (remaining)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "c43c5c7772df5d099b083dafc1ac0469647bfc78d0d95186277334bc22ff1024",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194036.log.gz",
+      "gzipBytes": 86330,
+      "gzipSha256": "205db2711b08cd2e872c2a3b033fc8795698ce239408951863870772d1678fd2",
+      "rawBytes": 758396,
+      "rawSha256": "c43c5c7772df5d099b083dafc1ac0469647bfc78d0d95186277334bc22ff1024"
+    },
+    {
+      "id": 132629194039,
+      "name": "Sized restore acceptance",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "5bdb9d2fb3bbbc6fe9216688e6b114a3b4e3f6a23d1f21f565fa8f3253800b7b",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194039.log.gz",
+      "gzipBytes": 15076,
+      "gzipSha256": "8c120843506936722da82fa5d324fb77d591cbaf8f05bec28f2e1d219a9ce2f3",
+      "rawBytes": 68128,
+      "rawSha256": "5bdb9d2fb3bbbc6fe9216688e6b114a3b4e3f6a23d1f21f565fa8f3253800b7b"
+    },
+    {
+      "id": 132629194044,
+      "name": "Lib tests (cells)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "fa5530629c9e4f5626ce1869d53ed29a7d8fed77f83447993541ade544f39a1e",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194044.log.gz",
+      "gzipBytes": 5815,
+      "gzipSha256": "ca25a9607ead9ea00341e73099f3a81e16ced264755e75964a3e3f95fd2ff101",
+      "rawBytes": 24126,
+      "rawSha256": "fa5530629c9e4f5626ce1869d53ed29a7d8fed77f83447993541ade544f39a1e"
+    },
+    {
+      "id": 132629194048,
+      "name": "Lib tests (mixed-fuzz)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "20b1c5c099cf3c394c7ca2debe3674b654a0c22cd0b6e79f79bf12487fcfd91d",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194048.log.gz",
+      "gzipBytes": 6484,
+      "gzipSha256": "483da57b7050559490f69b22fbff22b5bf78fec851117034fe0e8d2ec9d0381c",
+      "rawBytes": 25950,
+      "rawSha256": "20b1c5c099cf3c394c7ca2debe3674b654a0c22cd0b6e79f79bf12487fcfd91d"
+    },
+    {
+      "id": 132629194062,
+      "name": "Retained sync transition",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "9de16d9f97e29572475305046171014a5b65215a57d6ffffa057bd393c2d18a2",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+        "81cc0774bda11f9bf65942ef84cf7d847bd08029"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194062.log.gz",
+      "gzipBytes": 7139,
+      "gzipSha256": "49e66de94616345ad7acdd445145673b0d9161a22405132a7de47479c425644b",
+      "rawBytes": 37376,
+      "rawSha256": "9de16d9f97e29572475305046171014a5b65215a57d6ffffa057bd393c2d18a2"
+    },
+    {
+      "id": 132629194065,
+      "name": "Lib tests (remaining)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "2acded3ad28e0b882642e1f7f057f363666827580637872b08d90ecf93f3b4df",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194065.log.gz",
+      "gzipBytes": 18534,
+      "gzipSha256": "4f392d7cca46e569e7ad433928abfdf2dcdab1ce50f85f4e6c7aa3a929a5cb7c",
+      "rawBytes": 112644,
+      "rawSha256": "2acded3ad28e0b882642e1f7f057f363666827580637872b08d90ecf93f3b4df"
+    },
+    {
+      "id": 132629194083,
+      "name": "Doc responsiveness (desktop)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "a567a9c8a3c3ff0b8283a42bfe1e850ee3d4f9478a2f23f4ce9037e7733a8a77",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+        "96ae9e0a07d113c5de771f6e4e0f4ae83fae812d"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194083.log.gz",
+      "gzipBytes": 21251,
+      "gzipSha256": "e4f8cbce0df432aac0e9ce6a6d2a4b79066f6f37f46fde76ea3f45b46b6eb087",
+      "rawBytes": 99209,
+      "rawSha256": "a567a9c8a3c3ff0b8283a42bfe1e850ee3d4f9478a2f23f4ce9037e7733a8a77"
+    },
+    {
+      "id": 132629194097,
+      "name": "Playwright smoke (development 1/2)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "ebca722b0577950cc72b26257b9ba5b03e945d7082679154a6b335bf6ccc59fa",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194097.log.gz",
+      "gzipBytes": 18281,
+      "gzipSha256": "6ff887998d1251fbe23b4aa8e80af510909ba484cf6373d3361d1429b0665080",
+      "rawBytes": 78818,
+      "rawSha256": "ebca722b0577950cc72b26257b9ba5b03e945d7082679154a6b335bf6ccc59fa"
+    },
+    {
+      "id": 132629194103,
+      "name": "Playwright smoke (development 2/2)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "e20ae9b191ea48f091c37ce2799568621bd2d94198d6c8d68b8149efaac419d1",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194103.log.gz",
+      "gzipBytes": 16937,
+      "gzipSha256": "ec266c113cf7502ecc5d0ff2bcef3a9f8a32304404e88620b229da03972be4cf",
+      "rawBytes": 71641,
+      "rawSha256": "e20ae9b191ea48f091c37ce2799568621bd2d94198d6c8d68b8149efaac419d1"
+    },
+    {
+      "id": 132629194119,
+      "name": "Playwright smoke (mobile-https)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "2a2e4a8e3c69bfb7a9f2347dbb5d10ccb695b362c1e4123b62d9e54386ee2b6b",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194119.log.gz",
+      "gzipBytes": 14914,
+      "gzipSha256": "b5a993edb3ff945be748fc8d685100dd544d34aaed668f0c1d813d787fad5872",
+      "rawBytes": 77536,
+      "rawSha256": "2a2e4a8e3c69bfb7a9f2347dbb5d10ccb695b362c1e4123b62d9e54386ee2b6b"
+    },
+    {
+      "id": 132629194124,
+      "name": "Playwright smoke (production 2/2)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "88cc2c8f7011fa216017b900903f479aa276d2021f9797d449ed831b6bf57386",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194124.log.gz",
+      "gzipBytes": 18454,
+      "gzipSha256": "be6453752154e16f9c16a6fdc3772baa0e569d644d91c6f16d77957da1f81a8d",
+      "rawBytes": 78260,
+      "rawSha256": "88cc2c8f7011fa216017b900903f479aa276d2021f9797d449ed831b6bf57386"
+    },
+    {
+      "id": 132629194137,
+      "name": "Playwright smoke (sync-development)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "02977d5a14f71705a63a8b2219e07c7cf31a620f27329439763a30a872c7d10a",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194137.log.gz",
+      "gzipBytes": 14247,
+      "gzipSha256": "8824628fe34d42a3e3279c1789e77b2f490541553187b4871f76925bec762b52",
+      "rawBytes": 62951,
+      "rawSha256": "02977d5a14f71705a63a8b2219e07c7cf31a620f27329439763a30a872c7d10a"
+    },
+    {
+      "id": 132629194138,
+      "name": "Playwright smoke (sync-production)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "3faed4f06815b5f9f132aaf6af220fbb34b83d87421f16cd8381fac438b9eddb",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194138.log.gz",
+      "gzipBytes": 17230,
+      "gzipSha256": "cbdffdef7445ebab752d663773e3a7c1832f39a1bc6f0086b5fbb698912639ed",
+      "rawBytes": 80354,
+      "rawSha256": "3faed4f06815b5f9f132aaf6af220fbb34b83d87421f16cd8381fac438b9eddb"
+    },
+    {
+      "id": 132629194147,
+      "name": "Playwright smoke (supervised-restore)",
+      "workflow": 43654184206,
+      "conclusion": "failure",
+      "sha256": "ca35e575ec0cec0927baa282404988f7650b8579244873a92ded38388272c946",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194147.log.gz",
+      "gzipBytes": 15104,
+      "gzipSha256": "9e05f84f69aaf04422c519df80d91f7be1ad01ff62d080c37fd8a39794eedb04",
+      "rawBytes": 73083,
+      "rawSha256": "ca35e575ec0cec0927baa282404988f7650b8579244873a92ded38388272c946"
+    },
+    {
+      "id": 132629194154,
+      "name": "Playwright smoke (sync-soak-sheet)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "9d57157ccd83b7b72aa11c2941c43e750a0495e2efed4a2882c954129c726880",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194154.log.gz",
+      "gzipBytes": 13259,
+      "gzipSha256": "b7cdd98d1006cd072594c1397b1762c9b11bfb10ec525ad8b899c0477cd8eb92",
+      "rawBytes": 58138,
+      "rawSha256": "9d57157ccd83b7b72aa11c2941c43e750a0495e2efed4a2882c954129c726880"
+    },
+    {
+      "id": 132629194156,
+      "name": "Playwright smoke (offline-upgrade)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "1122cd8028b0a653d4317a3c5f376cd2d9855fd0933be9fc9aeb6a48c1d654eb",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9",
+        "c2e8cac0fcdec36d992d6ebf3f377c9b579a8002",
+        "3a0e2238fb5be3907d04120eabda2aafd6565d63"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194156.log.gz",
+      "gzipBytes": 15729,
+      "gzipSha256": "1dd31bbfd9d48e636c0a2f1333efa83f15add1a40b5913e8a2507773ccf78a64",
+      "rawBytes": 80658,
+      "rawSha256": "1122cd8028b0a653d4317a3c5f376cd2d9855fd0933be9fc9aeb6a48c1d654eb"
+    },
+    {
+      "id": 132629194163,
+      "name": "Playwright smoke (sync-soak-doc)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "87192ce1e0211a6d745768f030adf343b931fb957b95695341d86445b2a280ab",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194163.log.gz",
+      "gzipBytes": 13271,
+      "gzipSha256": "11d5cadcb281f494d9f6629917260965cba5af54303a9ca2f164753e3e398724",
+      "rawBytes": 58123,
+      "rawSha256": "87192ce1e0211a6d745768f030adf343b931fb957b95695341d86445b2a280ab"
+    },
+    {
+      "id": 132629194165,
+      "name": "Playwright smoke (production 1/2)",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "ad095430bcc1530fff4721fe49cf338a50bd702de9008acb9b55854e43288fc8",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629194165.log.gz",
+      "gzipBytes": 19159,
+      "gzipSha256": "c420ffb5793d474a87e526dac31187df35e10a2ba8e2b60119bd633b9532801a",
+      "rawBytes": 83714,
+      "rawSha256": "ad095430bcc1530fff4721fe49cf338a50bd702de9008acb9b55854e43288fc8"
+    },
+    {
+      "id": 132631420377,
+      "name": "Unit tests",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "7a96c0d197f140552fc8a1574fbaf505dad6e3805f8b2f34ec4a7cf3980684e9",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132631420377.log.gz",
+      "gzipBytes": 7103,
+      "gzipSha256": "d795e28703d4086451c9d1dddc36b49e06032539d5d13d3c6955143d17b45283",
+      "rawBytes": 34852,
+      "rawSha256": "7a96c0d197f140552fc8a1574fbaf505dad6e3805f8b2f34ec4a7cf3980684e9"
+    },
+    {
+      "id": 132631707280,
+      "name": "Lib tests",
+      "workflow": 43654184206,
+      "conclusion": "success",
+      "sha256": "0d1b314a73141ccd65a0a5722e2462e8f4aa1e1e773c1bd2e0f9f88b47558002",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132631707280.log.gz",
+      "gzipBytes": 7095,
+      "gzipSha256": "42091d512a8f69d564a0f47a1b8527401eea67d370c4a8544aab7d616e469fe5",
+      "rawBytes": 35018,
+      "rawSha256": "0d1b314a73141ccd65a0a5722e2462e8f4aa1e1e773c1bd2e0f9f88b47558002"
+    },
+    {
+      "id": 132635114157,
+      "name": "Playwright smoke",
+      "workflow": 43654184206,
+      "conclusion": "failure",
+      "sha256": "0b61e202e721d62c93ff8a7a316c5d8975c040b086542603126603da590e27be",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132635114157.log.gz",
+      "gzipBytes": 5967,
+      "gzipSha256": "18f1498d2e2854009f4f9e8ca9b2821cba850be6c444224a6823472b726bcc03",
+      "rawBytes": 24645,
+      "rawSha256": "0b61e202e721d62c93ff8a7a316c5d8975c040b086542603126603da590e27be"
+    },
+    {
+      "id": 132628976810,
+      "name": "Classify changes",
+      "workflow": 43654184145,
+      "conclusion": "success",
+      "sha256": "b03bb179f97635ac3807fd9aafd734c0cb0b2b2bc98cbb7d41ca9d0ecd42bdae",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132628976810.log.gz",
+      "gzipBytes": 11078,
+      "gzipSha256": "ce418018fb32c85ed3cfa4a427e4985f255a655ade6b0fa3cfbecf46767e6f50",
+      "rawBytes": 58480,
+      "rawSha256": "b03bb179f97635ac3807fd9aafd734c0cb0b2b2bc98cbb7d41ca9d0ecd42bdae"
+    },
+    {
+      "id": 132629131179,
+      "name": "Build Storybook",
+      "workflow": 43654184145,
+      "conclusion": "success",
+      "sha256": "e41a0796cec2f8a01c893c902f8b1786bad48f39d502832e158d51aa78e986e4",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629131179.log.gz",
+      "gzipBytes": 19381,
+      "gzipSha256": "c263c60eec9b6911932673a30b2e19add284043a3a8fbba04041dd3b21f470de",
+      "rawBytes": 85306,
+      "rawSha256": "e41a0796cec2f8a01c893c902f8b1786bad48f39d502832e158d51aa78e986e4"
+    },
+    {
+      "id": 132629339428,
+      "name": "Review Storybook mobile (light)",
+      "workflow": 43654184145,
+      "conclusion": "success",
+      "sha256": "22fba8f1231168c365eabef5b00bf84a8fa8133a7bc78210bcd487e8fec55520",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629339428.log.gz",
+      "gzipBytes": 27466,
+      "gzipSha256": "8feb4363490f0655c4ea3309f378a8e88232c147e377df8944790fe3465d8e99",
+      "rawBytes": 134383,
+      "rawSha256": "22fba8f1231168c365eabef5b00bf84a8fa8133a7bc78210bcd487e8fec55520"
+    },
+    {
+      "id": 132629339458,
+      "name": "Review Storybook desktop (dark)",
+      "workflow": 43654184145,
+      "conclusion": "success",
+      "sha256": "e194510563aa2e58f01684ccd8acf42a78ee7114ca5da8a0617042b34c4098e0",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629339458.log.gz",
+      "gzipBytes": 27426,
+      "gzipSha256": "244db2234cca81ac7358f3804de954a3b68319ec7e3f1127013065381f8601d1",
+      "rawBytes": 133303,
+      "rawSha256": "e194510563aa2e58f01684ccd8acf42a78ee7114ca5da8a0617042b34c4098e0"
+    },
+    {
+      "id": 132629339469,
+      "name": "Review Storybook tablet",
+      "workflow": 43654184145,
+      "conclusion": "success",
+      "sha256": "6c915b5262d44b7c55705c92c5fdde1eb52ab545c722ab73978d047c80f1a6a7",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629339469.log.gz",
+      "gzipBytes": 27487,
+      "gzipSha256": "4e452a627a8fc19c370f90b00baff8e58684f32b0bea7bfb287a27734ceb40ec",
+      "rawBytes": 135338,
+      "rawSha256": "6c915b5262d44b7c55705c92c5fdde1eb52ab545c722ab73978d047c80f1a6a7"
+    },
+    {
+      "id": 132629339471,
+      "name": "Review Storybook desktop (light)",
+      "workflow": 43654184145,
+      "conclusion": "success",
+      "sha256": "a00957954b5b2c0abc272c0a335f3bdaa9f0cad3bb0ebcf721ba36cebfd7cd79",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629339471.log.gz",
+      "gzipBytes": 28063,
+      "gzipSha256": "a19235620e00a12ea26366040502cd419714ebe1dfe41342dd090c785aa445c5",
+      "rawBytes": 136763,
+      "rawSha256": "a00957954b5b2c0abc272c0a335f3bdaa9f0cad3bb0ebcf721ba36cebfd7cd79"
+    },
+    {
+      "id": 132629339500,
+      "name": "Review Storybook mobile (dark)",
+      "workflow": 43654184145,
+      "conclusion": "success",
+      "sha256": "4a9d12ce4d613ae8c4cb45e399be343596c1855b8a69382fdab5424b30490aac",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132629339500.log.gz",
+      "gzipBytes": 27601,
+      "gzipSha256": "6498d79f6ba9904c8dad1902e3859e9d64b319ad8c3c9606d0d1606ed6aa3236",
+      "rawBytes": 139762,
+      "rawSha256": "4a9d12ce4d613ae8c4cb45e399be343596c1855b8a69382fdab5424b30490aac"
+    },
+    {
+      "id": 132633311733,
+      "name": "Review Storybook states and interactions",
+      "workflow": 43654184145,
+      "conclusion": "success",
+      "sha256": "4e6c3ea8d0ac8784f36d3a6f6087d22c327e9de1fdcceacc0fd4355dbe803d5f",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132633311733.log.gz",
+      "gzipBytes": 4406,
+      "gzipSha256": "156ad13efaa8d403ed7e63500a85201d9b72c50b181828929268368873d1b251",
+      "rawBytes": 17855,
+      "rawSha256": "4e6c3ea8d0ac8784f36d3a6f6087d22c327e9de1fdcceacc0fd4355dbe803d5f"
+    },
+    {
+      "id": 132628976334,
+      "name": "Native desktop offline (firefox, macos-26)",
+      "workflow": 43654184097,
+      "conclusion": "success",
+      "sha256": "1f4b09de0f37f623b920afb961155d04751c22baceb233ddb9d0ac5f34412bfa",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132628976334.log.gz",
+      "gzipBytes": 26210,
+      "gzipSha256": "148c3107cd73fbca9ad077a00a611232e48d696e029eb63d1117d8b23d0899e6",
+      "rawBytes": 141860,
+      "rawSha256": "1f4b09de0f37f623b920afb961155d04751c22baceb233ddb9d0ac5f34412bfa"
+    },
+    {
+      "id": 132628976504,
+      "name": "Native desktop offline (safari, macos-15-intel)",
+      "workflow": 43654184097,
+      "conclusion": "success",
+      "sha256": "d057ce15bc03be909dcc30696d0f2f83b614ccd92b553d5c122c9a2fb0c7ab81",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132628976504.log.gz",
+      "gzipBytes": 45483,
+      "gzipSha256": "982eaecc246e6f3c727622c8d2ce51cd9b4742be15a7745c0a92b476dda3a563",
+      "rawBytes": 336348,
+      "rawSha256": "d057ce15bc03be909dcc30696d0f2f83b614ccd92b553d5c122c9a2fb0c7ab81"
+    },
+    {
+      "id": 132628976517,
+      "name": "Native desktop offline (chrome, macos-26)",
+      "workflow": 43654184097,
+      "conclusion": "success",
+      "sha256": "6760ccb8b1bc61b5a1d64a1f7d91a5f921e23046bee0db67785c26ea76e54964",
+      "checkoutWitnesses": [
+        "1119579c4d835c5b79db5824bb94bf39f0efb0d9"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132628976517.log.gz",
+      "gzipBytes": 26893,
+      "gzipSha256": "0d8331dc4b5c39fa52d88fc2e278cf03ff4c507e6110bdf07eb76ee6b3af87f0",
+      "rawBytes": 145103,
+      "rawSha256": "6760ccb8b1bc61b5a1d64a1f7d91a5f921e23046bee0db67785c26ea76e54964"
+    },
+    {
+      "id": 132628976698,
+      "name": "🦈 DigitalOcean Spaces",
+      "workflow": 43654184159,
+      "conclusion": "success",
+      "sha256": "768e70abf5c9dcbcaa9f5d0215cf64a3d969dabcef2e919ad400e496dea712a1",
+      "checkoutWitnesses": [
+        "628d77987e7d9a08863465a7553a2ed82579728b"
+      ],
+      "path": "/tmp/spn128-publication-628d7798/validation/logs/job-132628976698.log.gz",
+      "gzipBytes": 7350,
+      "gzipSha256": "da3921585ae35b6fc311f2666adbd548b312d47c8d6b2bc47d4e183b9ee5ec27",
+      "rawBytes": 29366,
+      "rawSha256": "768e70abf5c9dcbcaa9f5d0215cf64a3d969dabcef2e919ad400e496dea712a1"
+    }
+  ],
+  "audits": [
+    {
+      "path": "/tmp/spn128-crash-retention-gap.json",
+      "bytes": 3934,
+      "sha256": "192853e5cd6ee305bb652b776907a6337e097051f12a67ca867a4426d1c6cfd1"
+    },
+    {
+      "path": "/tmp/spn128-independent-checkout-binding.json",
+      "bytes": 1199,
+      "sha256": "36481a40e200580ddef20f340e3a687d3928bbdab925af97c7a47a945cc64776"
+    },
+    {
+      "path": "/tmp/spn128-independent-linux-audit.json",
+      "bytes": 65415,
+      "sha256": "b9312530022db0cd6363dcb4af24555b113db40162ea09c43a567e1db2580216"
+    },
+    {
+      "path": "/tmp/spn128-independent-supervised-failure.json",
+      "bytes": 11328,
+      "sha256": "5198358b177d8a76cc2df6f256f7ac9dfe061d492b306f3889bd441c49cde745"
+    },
+    {
+      "path": "/tmp/spn128-independent-callback-failure.json",
+      "bytes": 7220,
+      "sha256": "f828e1caeabd5c577f3cd3c38bc9920f6ac670bad0f30f9801429cb77533b1da"
+    },
+    {
+      "path": "/tmp/spn128-independent-acceptance-partial.json",
+      "bytes": 67329,
+      "sha256": "a86a2a20c4b0b6aad983005ae4c520d78405e905ba78be47daa7526922600cee"
+    },
+    {
+      "path": "/tmp/spn128-independent-workflow-audit.json",
+      "bytes": 53758,
+      "sha256": "f92072c42a9a42fd4d83d0c0c3e63b77acf19acc20da3a0a43304dc39de4bdb1"
+    },
+    {
+      "path": "/tmp/spn128-independent-metrics-audit.json",
+      "bytes": 164373,
+      "sha256": "341a9e4a971307829a1d07b1bed43d9c73704293ccaa836eb2f89a09b7ca0c20"
+    },
+    {
+      "path": "/tmp/spn128-independent-callback-numerics.json",
+      "bytes": 9037,
+      "sha256": "ba1b9975ef00cd60cc349d77b522acd91d819114398907435746cd5611d7054e"
+    },
+    {
+      "path": "/tmp/spn128-independent-harness-overlays.json",
+      "bytes": 17973,
+      "sha256": "67b770018e52b7889f8376f79344068b2f2e076c9aa9876f66d52d0419cc7726"
+    },
+    {
+      "path": "/tmp/spn128-independent-responsiveness-budgets.json",
+      "bytes": 7181,
+      "sha256": "ce6b6b6d327c0de3292e244051e1ec39a9597420a8a8f5b133782822d0e12768"
+    },
+    {
+      "path": "/tmp/spn128-independent-skip-owners.json",
+      "bytes": 3070,
+      "sha256": "b082c765602f9b7d1ea79e96f36dd1a739d63035ce015a0f3e9fae9e8239dc4a"
+    },
+    {
+      "path": "/tmp/spn128-independent-browser-receipts.json",
+      "bytes": 67242,
+      "sha256": "b40076f0b80ba8e91d36b0296078d1f54049091cbb187afc74868d558c95b8e5"
+    },
+    {
+      "path": "/tmp/spn128-independent-callback-123-comparison.json",
+      "bytes": 43322,
+      "sha256": "39909352c4880b543704c96090c3635001b8eabbd5d78a286f0427a6392ee7b1"
+    },
+    {
+      "path": "/tmp/spn128-terminal-628d7798/archive/artifact-inventory.json",
+      "bytes": 795702,
+      "sha256": "ea4402d35b3077db9ee8d88710aea0941660b448d7ad01a5de3980ea0a1bebb6"
+    }
+  ],
+  "limits": [
+    "Original628d cannot merge: workflow failures and missing retained per-cut receipt contract remain independent blockers.",
+    "No source/ref/remote metadata mutations, test/build/browser workloads, dispatches, reruns, cancellations or timeout changes performed by this audit.",
+    "Failed original attempts remain failures; configured internal browser retries are preserved separately.",
+    "Linux expiry is fixture-controlled, not a30-minute wall-clock soak; final live recovered fingerprint legitimately differs from frozen original after reconciliation.",
+    "Desktop native results are macOS browser evidence; phone viewports are emulated and do not replace physical-phone acceptance.",
+    "Provider result uses synthetic fixture; sized restore uses synthetic CDP passkey/disposable Linux host and is not production-host acceptance.",
+    "First verified browser-local drain is the gate; later descriptive read upper bounds and profiled callback timings are not substitute budgets.",
+    "Private original ZIPs include synthetic fixture databases and traces. They are retained locally; this audit does not authorize blindly publishing raw contents."
+  ]
+}
