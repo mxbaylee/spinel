@@ -1,0 +1,20 @@
+{
+  "priorPublishedHead": "47bf4aad2a7b7e880dbb3cf43eb09d90da70c6ee",
+  "initialRepairCommit": "4d46f558b29df3dfa8d273b2f38f0f290c2664b4",
+  "base": "89e4426dfff1c3469b260305e21180ffd79fdb7f",
+  "repairFile": "docs/review-assets/spn-120-current/collection-driver.ts",
+  "repairFileSha256": "df99bb861ca3ec4c4187f5e2fc0d4f598d2b1294559b39e9211cc1c74756739f",
+  "scope": "Relative import and formatting of retained evidence helper only; every non-doc path unchanged from47. Actual hosted audit driver unchanged.",
+  "typecheckEnvironment": {
+    "Node": "26.13.0",
+    "GOMEMLIMIT": "1GiB",
+    "GOMAXPROCS": "2"
+  },
+  "checks": [
+    "full tsc -p .",
+    "focused oxlint",
+    "focused format check",
+    "backlog check"
+  ],
+  "limits": "New-head independent reviews, exact-head PR check and required hosted checks still pending. Original47 audit belongs to47; no rerun or promotion claimed."
+}

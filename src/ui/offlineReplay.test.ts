@@ -4,6 +4,8 @@ import { watchOfflineReplay } from '../../web/offline/replay.ts';
 import { replayOfflineItem } from '../../web/offline/replayHost.ts';
 import * as storage from '../../web/offline/offlineStore.ts';
 import type { OfflineDownload, OfflineStore } from '../../web/offline/offlineStore.ts';
+import { captureDiagnostic } from '@spinel/diagnostics';
+import type { DiagnosticSource } from '@spinel/diagnostics';
 
 vi.mock('../../web/offline/replayHost.ts', () => ({ replayOfflineItem: vi.fn() }));
 const account = 'replay-account';
@@ -89,6 +91,75 @@ test('account replacement stops the current job and fences further queued items'
   expect(jobs[0].stop).toHaveBeenCalled();
   expect(current()).toBe(false);
   expect(replayOfflineItem).toHaveBeenCalledTimes(1);
+});
+
+test('replay observations retain their initiating subscription and stop at account or visibility boundaries', async () => {
+  const source = vi.fn(() => ({ sink: vi.fn(), context: { component: 'dashboard' as const } }));
+  const firstFactory = vi.fn(() => source);
+  const secondFactory = vi.fn(() => source);
+  const first = watchOfflineReplay(account, null, firstFactory);
+  const second = watchOfflineReplay(account, null, secondFactory);
+  cleanups.push(first.dispose, second.dispose);
+  await turns();
+  const firstSource = vi.mocked(replayOfflineItem).mock.calls[0][3];
+  expect(captureDiagnostic(firstSource)).toBeDefined();
+  expect(firstFactory).toHaveBeenCalledWith(downloads[0]);
+  first.dispose();
+  expect(captureDiagnostic(firstSource)).toBeUndefined();
+  expect(firstFactory).toHaveBeenCalledOnce();
+  expect(secondFactory).not.toHaveBeenCalled();
+  jobs[0].finish();
+  await turns();
+  const nextSource = vi.mocked(replayOfflineItem).mock.calls[1][3];
+  expect(captureDiagnostic(nextSource)).toBeDefined();
+  expect(secondFactory).toHaveBeenCalledWith(downloads[1]);
+  vi.stubGlobal('document', Object.assign(new EventTarget(), { visibilityState: 'hidden' }));
+  expect(captureDiagnostic(nextSource)).toBeUndefined();
+  vi.stubGlobal('document', Object.assign(new EventTarget(), { visibilityState: 'visible' }));
+  vi.stubGlobal('navigator', { onLine: false, locks });
+  expect(captureDiagnostic(nextSource)).toBeUndefined();
+  vi.stubGlobal('navigator', { onLine: true, locks });
+  storage.setPreparedAccount('replacement-account');
+  expect(captureDiagnostic(nextSource)).toBeUndefined();
+  expect(secondFactory).toHaveBeenCalledOnce();
+});
+
+test('a throwing observation factory cannot stop the pending queue', async () => {
+  const observer = vi.fn((): DiagnosticSource => {
+    throw new Error('optional observer factory');
+  });
+  const owner = watchOfflineReplay(account, null, observer);
+  cleanups.push(owner.dispose);
+  await turns();
+  expect(captureDiagnostic(vi.mocked(replayOfflineItem).mock.calls[0][3])).toBeUndefined();
+  expect(observer).toHaveBeenCalledOnce();
+  jobs[0].finish();
+  await turns();
+  expect(replayOfflineItem).toHaveBeenCalledTimes(2);
+});
+
+test('a durable change arriving while the owned account lock releases starts the next replay', async () => {
+  let changed = false;
+  vi.spyOn(storage, 'openExistingOfflineStore').mockResolvedValue({
+    downloads: async () => (changed ? structuredClone(downloads) : []),
+    close() {},
+  } as unknown as OfflineStore);
+  const request = (name: string, options: LockOptions, callback: LockGrantedCallback<unknown>) =>
+    locks.request(name, options, async (lock) => {
+      const result = await callback(lock);
+      if (lock && !changed) {
+        changed = true;
+        storage.offlineChanged(account, downloads[0].itemId, true);
+      }
+      return result;
+    });
+  vi.stubGlobal('navigator', { onLine: true, locks: { request } });
+  const owner = watchOfflineReplay(account, null);
+  cleanups.push(owner.dispose);
+  await turns();
+  expect(changed).toBe(true);
+  expect(replayOfflineItem).toHaveBeenCalledOnce();
+  expect(vi.mocked(replayOfflineItem).mock.calls[0][1].itemId).toBe(downloads[0].itemId);
 });
 
 test('offline pauses replay without polling and reconnect processes pending items in order', async () => {

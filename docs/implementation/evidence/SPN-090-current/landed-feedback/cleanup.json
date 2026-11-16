@@ -1,0 +1,9 @@
+{
+  "observedAt": "2026-11-14T19:26:46.522533+00:00",
+  "ownedAppProcessMatches": [],
+  "ports": "",
+  "pressure": "1",
+  "lockExists": false,
+  "restoredAdminPageSha256": "f79dcc7fe3288d4e42461ff0c22396a02bc1637c3f6f933a425c85fc04295cfb",
+  "positiveAdminPageSha256": "f79dcc7fe3288d4e42461ff0c22396a02bc1637c3f6f933a425c85fc04295cfb"
+}

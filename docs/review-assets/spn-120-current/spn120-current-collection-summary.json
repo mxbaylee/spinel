@@ -1,0 +1,255 @@
+{
+  "kind": "collection-only",
+  "recordCount": 26,
+  "projectCounts": {
+    "development": 10,
+    "production": 12,
+    "sync-production": 4
+  },
+  "errors": [],
+  "config": {
+    "workers": 1,
+    "projects": [
+      {
+        "name": "development",
+        "repeatEach": 2,
+        "retries": 0
+      },
+      {
+        "name": "production",
+        "repeatEach": 2,
+        "retries": 0
+      },
+      {
+        "name": "sync-development",
+        "repeatEach": 1,
+        "retries": 0
+      },
+      {
+        "name": "sync-production",
+        "repeatEach": 2,
+        "retries": 0
+      },
+      {
+        "name": "sync-soak-sheet",
+        "repeatEach": 1,
+        "retries": 0
+      },
+      {
+        "name": "sync-soak-doc",
+        "repeatEach": 1,
+        "retries": 0
+      },
+      {
+        "name": "doc-responsiveness",
+        "repeatEach": 1,
+        "retries": 0
+      },
+      {
+        "name": "doc-callback-lifetimes",
+        "repeatEach": 1,
+        "retries": 0
+      },
+      {
+        "name": "offline-upgrade",
+        "repeatEach": 1,
+        "retries": 0
+      },
+      {
+        "name": "supervised-restore",
+        "repeatEach": 1,
+        "retries": 0
+      },
+      {
+        "name": "mobile-https",
+        "repeatEach": 1,
+        "retries": 0
+      }
+    ]
+  },
+  "tests": [
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+      "project": "development",
+      "specId": "7dd7d36b1c104a24ca8b-4585046e84398f9d5443",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+      "project": "development",
+      "specId": "7dd7d36b1c104a24ca8b-c8ac74dced9b93be918d",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+      "project": "development",
+      "specId": "7dd7d36b1c104a24ca8b-2281a647679863c311a3",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+      "project": "development",
+      "specId": "7dd7d36b1c104a24ca8b-2f5a8b4dff2d8a7ceeed",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+      "project": "development",
+      "specId": "7dd7d36b1c104a24ca8b-baa30983bd59af2f99ff",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+      "project": "development",
+      "specId": "7dd7d36b1c104a24ca8b-01cf4693b73a1b80e3ad",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+      "project": "development",
+      "specId": "7dd7d36b1c104a24ca8b-7e4892e56c09f5f88d51",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+      "project": "development",
+      "specId": "7dd7d36b1c104a24ca8b-c8510d120689414e6da9",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+      "project": "production",
+      "specId": "7dd7d36b1c104a24ca8b-bbd6b90e2ec270ad238c",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+      "project": "production",
+      "specId": "7dd7d36b1c104a24ca8b-466a026d674f5e519af7",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+      "project": "production",
+      "specId": "7dd7d36b1c104a24ca8b-b58e5aa9d07e80c4860b",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+      "project": "production",
+      "specId": "7dd7d36b1c104a24ca8b-292dc15db9e2dcca8357",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc light native pan, zoom and editor behavior preserve the document",
+      "project": "production",
+      "specId": "7dd7d36b1c104a24ca8b-0125f7dbc16d3dc1df88",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc dark native pan, zoom and editor behavior preserve the document",
+      "project": "production",
+      "specId": "7dd7d36b1c104a24ca8b-68639437389a18595c3a",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc light native pan, zoom and guest-viewer behavior preserve the document",
+      "project": "production",
+      "specId": "7dd7d36b1c104a24ca8b-95d4285a7921ca43a366",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "doc-phone-navigation.spec.ts",
+      "title": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+      "project": "production",
+      "specId": "7dd7d36b1c104a24ca8b-4f6dd4e998387e214613",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "passkey-management.spec.ts",
+      "title": "profile signs out another browser, then verifies and removes its passkey without losing the current account",
+      "project": "development",
+      "specId": "5af9f0c6976febdaf1f3-86fe3fcccd20d2b38bc0",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "passkey-management.spec.ts",
+      "title": "profile signs out another browser, then verifies and removes its passkey without losing the current account",
+      "project": "development",
+      "specId": "5af9f0c6976febdaf1f3-cd4b2598332a484d9b42",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "passkey-management.spec.ts",
+      "title": "profile signs out another browser, then verifies and removes its passkey without losing the current account",
+      "project": "production",
+      "specId": "5af9f0c6976febdaf1f3-f44b12a4dca4651b84e8",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "passkey-management.spec.ts",
+      "title": "profile signs out another browser, then verifies and removes its passkey without losing the current account",
+      "project": "production",
+      "specId": "5af9f0c6976febdaf1f3-3464d5456fcdb271e02f",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "offline-sign-out.spec.ts",
+      "title": "ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie",
+      "project": "production",
+      "specId": "ccad38f60b47bfc68793-dc2ce66896d5e230117f",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "offline-sign-out.spec.ts",
+      "title": "ordinary passkeys work without Web Locks and an old logout response cannot clear the new cookie",
+      "project": "production",
+      "specId": "ccad38f60b47bfc68793-7be8898b7f5fb244873f",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "offline-recovery.spec.ts",
+      "title": "an unfinished native Sheet draft remains copyable before recovery freezes the queued edits",
+      "project": "sync-production",
+      "specId": "d4610c33918c0d3d6a19-c2031c9a72e169522ee1",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "offline-recovery.spec.ts",
+      "title": "an unfinished native Sheet draft remains copyable before recovery freezes the queued edits",
+      "project": "sync-production",
+      "specId": "d4610c33918c0d3d6a19-d886ccd988b54df0134d",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "sync-client.spec.ts",
+      "title": "native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits",
+      "project": "sync-production",
+      "specId": "542c6445fd575a52fb22-9bd4429710c034b4c3c4",
+      "expectedStatus": "passed"
+    },
+    {
+      "file": "sync-client.spec.ts",
+      "title": "native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits",
+      "project": "sync-production",
+      "specId": "542c6445fd575a52fb22-08bba0e21594e3c6e808",
+      "expectedStatus": "passed"
+    }
+  ],
+  "limits": "No browser or server was started; collection does not establish a passing scenario."
+}

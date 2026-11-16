@@ -1,0 +1,88 @@
+{
+  "format": 1,
+  "build": "focused production Storybook; original main/preview, only StartupStage and OfflineAvailability catalog entries; not full hosted acceptance",
+  "sources": {
+    "web/StartupStage.stories.tsx": "21153f93485e5c08d138e30f6035564ab1988f306aa8d0f29a91c916c93b27f8",
+    "web/startupStage.ts": "2403310d1e6b2683924c5a0c4b6973bd549896ae60b89414eca452973a8aac49",
+    "web/offline/OfflineAvailability.stories.tsx": "310adb9c2c44c04aaf5d42ac8e0121a49a3a87bbe9da3e5474d015b99fbece28",
+    "web/offline/OfflineAvailability.tsx": "eb9ac406e5dce2713fef20b49388180959d529cad22f047485efaf477f16d1a5",
+    "web/offline/protection.ts": "7250087e58f919a11edd1816cf4a1d6aa4c32086bfa2016b2b97970ddf7715a6",
+    "src/ui/appIcon.ts": "fcfb1c778d7c4c5e01c8a0af84a337a6d46dbab97a1f1ef34b3cc5b12a862744",
+    "src/ui/gemGeometry.ts": "0667a7513138c174a37d961f9b0bc25cd407b810e4fb01078ca0acbacbdecc10",
+    "src/ui/palette.ts": "ce27ba0d6aef260b0d74658c99c0ce517437b513a3de7920157cffedfba9499a",
+    ".storybook/main.ts": "65028312f728ee4ccc82b3257d34c4fafc5567316bb053b3f3c24a88c7052f3a",
+    ".storybook/preview.tsx": "7fccf62c47f7aa078057d8adbe6343febf4337147e1fb445bcf4e5d893f9bb1c"
+  },
+  "captures": [
+    {
+      "id": "current-production-startup-status--slow-start",
+      "theme": "light",
+      "width": 1280,
+      "height": 900,
+      "filename": "current-production-startup-status--slow-start-light.png",
+      "play": "success",
+      "afterGuidanceClosed": false
+    },
+    {
+      "id": "offline-availability--protection-pending",
+      "theme": "light",
+      "width": 1280,
+      "height": 900,
+      "filename": "offline-availability--protection-pending-light.png",
+      "play": "success",
+      "afterGuidanceClosed": true
+    },
+    {
+      "id": "current-production-startup-status--slow-start",
+      "theme": "dark",
+      "width": 1280,
+      "height": 900,
+      "filename": "current-production-startup-status--slow-start-dark.png",
+      "play": "success",
+      "afterGuidanceClosed": false
+    },
+    {
+      "id": "offline-availability--protection-pending",
+      "theme": "dark",
+      "width": 1280,
+      "height": 900,
+      "filename": "offline-availability--protection-pending-dark.png",
+      "play": "success",
+      "afterGuidanceClosed": true
+    },
+    {
+      "id": "current-production-startup-status--slow-start",
+      "theme": "light",
+      "width": 390,
+      "height": 900,
+      "filename": "current-production-startup-status--slow-start-phone.png",
+      "play": "success",
+      "afterGuidanceClosed": false
+    },
+    {
+      "id": "offline-availability--protection-pending",
+      "theme": "light",
+      "width": 390,
+      "height": 900,
+      "filename": "offline-availability--protection-pending-phone.png",
+      "play": "success",
+      "afterGuidanceClosed": true
+    },
+    {
+      "filename": "installed-icon-192.png",
+      "width": 192,
+      "height": 192,
+      "source": "production iconSvg(), same sharp path as vite installation assets",
+      "purpose": "any maskable",
+      "ownerOffset": 2.5
+    },
+    {
+      "filename": "installed-icon-512.png",
+      "width": 512,
+      "height": 512,
+      "source": "production iconSvg(), same sharp path as vite installation assets",
+      "purpose": "any maskable",
+      "ownerOffset": 2.5
+    }
+  ]
+}

@@ -3,25 +3,8 @@ import { Router } from 'express';
 import { iconSvg } from '../ui/appIcon.ts';
 import { faviconSvg } from '../ui/favicon.ts';
 import { fileURLToPath } from 'node:url';
-import { palettes } from '../ui/palette.ts';
-
-export const manifest = {
-  id: '/',
-  name: 'Spinel',
-  short_name: 'Spinel',
-  description: 'Your private workspace for documents and spreadsheets.',
-  start_url: '/',
-  scope: '/',
-  display: 'standalone',
-  background_color: palettes.light['sp-bg'],
-  theme_color: palettes.light['sp-rail'],
-  icons: [192, 512].map((size) => ({
-    src: `/app-icon-${size}.png`,
-    sizes: `${size}x${size}`,
-    type: 'image/png',
-    purpose: 'any maskable',
-  })),
-};
+import { pwaManifest as manifest } from '../shared/pwa.ts';
+export { manifest };
 
 export function pwaRoutes() {
   const router = Router();

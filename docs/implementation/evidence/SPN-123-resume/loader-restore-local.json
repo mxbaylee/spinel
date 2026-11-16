@@ -1,0 +1,441 @@
+{
+  "scope": "SPN-123 local Safari framework loader and restore navigation coordination; fresh hosted acceptance pending",
+  "previousSource": "d7e9f996db07e362210e9d07bcdecd50ff093570",
+  "base": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+  "node": "v26.12.1",
+  "guards": {
+    "serialized": true,
+    "processTreeLimitKiB": 2097152,
+    "deadlineMs": 480000
+  },
+  "beforeWork": {
+    "memAvailableKiB": 9485088,
+    "cgroupCurrentBytes": 4917141504,
+    "cgroupMaxBytes": 8589934592,
+    "memoryPSI": "Unavailable in this environment; /proc and cgroup sampled, process tree guarded"
+  },
+  "sourceSha256": {
+    "scripts/ci/desktop-safari-identity.ts": "a678dcde864ae50805db4ba3f917f750fa69583d15b7f72b1c974aac72af9c65",
+    "scripts/ci/desktop-safari-identity.test.ts": "0e1dbed427c28022afeb3dc0e02252682a56e2c6241bbbeb4341afb12beb5be6",
+    "e2e/restore-browser.acceptance.ts": "ba1d12043b3bbee6b34e64f088e8b1df12714009cbf99ceaa4fbaf4d6c19259e"
+  },
+  "checks": [
+    {
+      "name": "safari-loader-red",
+      "evidence": {
+        "startedAt": "2026-11-05T02:59:05.150Z",
+        "finishedAt": "2026-11-05T02:59:06.077Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "--test",
+          "--test-name-pattern=the direct loader",
+          "scripts/ci/desktop-safari-identity.test.ts"
+        ],
+        "elapsedMs": 927,
+        "peakKiB": 294068,
+        "code": 1,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "expected negative control against old bundle route"
+    },
+    {
+      "name": "safari-loader-focused",
+      "evidence": {
+        "startedAt": "2026-11-05T03:04:32.999Z",
+        "finishedAt": "2026-11-05T03:04:33.900Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "--test",
+          "scripts/ci/desktop-safari-identity.test.ts",
+          "scripts/ci/desktop-storage.test.ts",
+          "scripts/ci/desktop-pointer.test.ts"
+        ],
+        "elapsedMs": 901,
+        "peakKiB": 484152,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "passed"
+    },
+    {
+      "name": "safari-loader-format",
+      "evidence": {
+        "startedAt": "2026-11-05T03:05:33.480Z",
+        "finishedAt": "2026-11-05T03:05:34.560Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "node_modules/prettier/bin/prettier.cjs",
+          "--write",
+          "scripts/ci/desktop-safari-identity.ts",
+          "scripts/ci/desktop-safari-identity.test.ts"
+        ],
+        "elapsedMs": 1079,
+        "peakKiB": 260424,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "passed"
+    },
+    {
+      "name": "safari-loader-final-tests",
+      "evidence": {
+        "startedAt": "2026-11-05T03:05:45.895Z",
+        "finishedAt": "2026-11-05T03:05:46.997Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "--test",
+          "scripts/ci/desktop-safari-identity.test.ts",
+          "scripts/ci/desktop-storage.test.ts",
+          "scripts/ci/desktop-pointer.test.ts"
+        ],
+        "elapsedMs": 1102,
+        "peakKiB": 500164,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "passed"
+    },
+    {
+      "name": "loader-restore-typecheck",
+      "evidence": {
+        "startedAt": "2026-11-05T03:15:13.453Z",
+        "finishedAt": "2026-11-05T03:15:23.268Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "--max-old-space-size=1024",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "."
+        ],
+        "elapsedMs": 9815,
+        "peakKiB": 1930596,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "passed"
+    },
+    {
+      "name": "loader-restore-lint",
+      "evidence": {
+        "startedAt": "2026-11-05T03:15:32.955Z",
+        "finishedAt": "2026-11-05T03:16:06.658Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/lib/node_modules/npm/bin/npm-cli.js",
+          "run",
+          "lint"
+        ],
+        "elapsedMs": 33702,
+        "peakKiB": 778100,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "passed"
+    },
+    {
+      "name": "restore-navigation-control-initial-run",
+      "evidence": {
+        "startedAt": "2026-11-05T03:10:36.142Z",
+        "finishedAt": "2026-11-05T03:10:50.847Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "/workspace/scratch/bcf5836a3f8b/validation/restore-navigation-control.ts"
+        ],
+        "elapsedMs": 14704,
+        "peakKiB": 731136,
+        "code": 1,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "failed/inconclusive experiment; not passing acceptance"
+    },
+    {
+      "name": "restore-navigation-observation-run",
+      "evidence": {
+        "startedAt": "2026-11-05T03:14:26.205Z",
+        "finishedAt": "2026-11-05T03:14:41.028Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/bcf5836a3f8b/spinel",
+        "command": "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+        "args": [
+          "scripts/serial.ts",
+          "/tmp/spn089-alignment-runtime/node-v26.12.1-linux-x64/bin/node",
+          "/workspace/scratch/bcf5836a3f8b/validation/restore-navigation-control.ts"
+        ],
+        "elapsedMs": 14823,
+        "peakKiB": 757180,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "result": "passed"
+    }
+  ],
+  "outcomes": {
+    "finalFocused": {
+      "passed": 92,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0
+    },
+    "typecheck": "passed",
+    "lint": "passed",
+    "browserControl": {
+      "scope": "Bounded actual Chromium navigation control; synthetic pages, no product restore or passkey authentication",
+      "node": "v26.12.1",
+      "cases": [
+        {
+          "name": "passive-navigation",
+          "phase": "complete",
+          "status": "passive URL wait and later button action passed",
+          "signInRequests": 1,
+          "elapsedMs": 204
+        },
+        {
+          "name": "missing-redirect",
+          "phase": "complete",
+          "status": "expected bounded missing-redirect rejection",
+          "signInRequests": 0,
+          "elapsedMs": 530
+        },
+        {
+          "name": "missing-button",
+          "phase": "complete",
+          "status": "expected bounded missing-button rejection",
+          "signInRequests": 1,
+          "elapsedMs": 542
+        }
+      ],
+      "browserVersion": "156.0.8078.4",
+      "current": {
+        "name": "missing-button",
+        "phase": "complete",
+        "status": "expected bounded missing-button rejection",
+        "signInRequests": 1,
+        "elapsedMs": 542
+      },
+      "status": "passed",
+      "cleanup": {
+        "browserClosed": true,
+        "serverClosed": true
+      }
+    }
+  },
+  "dispositions": {
+    "scope": "SPN-123 local Safari loader and restore navigation repairs; fresh hosted acceptance remains required",
+    "sourceParent": "d7e9f996db07e362210e9d07bcdecd50ff093570",
+    "safariNegativeControl": "The new direct-loader fixture failed against the old NSBundle helper, as expected. Its original red receipt is preserved; it is not passing acceptance.",
+    "initialCollisionExperiment": {
+      "status": "failed before a valid result",
+      "receipt": "restore-navigation-control-initial-run.json",
+      "result": "restore-navigation-control-initial-result.json",
+      "scopeLimit": "A five-second experimental readiness deadline was exceeded before any case completed. Browser and server cleanup completed. The saved result does not identify which readiness await failed; no exact-cause claim is made."
+    },
+    "revisedCollisionExperiment": {
+      "status": "manually interrupted, not a test pass",
+      "source": "restore-navigation-control-interrupted.ts",
+      "log": "restore-navigation-control-interrupted.log",
+      "session": 64456,
+      "exitCode": 130,
+      "scopeLimit": "The revised attempt tried to dispatch page-owned navigation while an explicit navigation was held before commit. No result or new watchdog receipt was emitted. The browser interaction did not finish; no collision or successful helper-owned cleanup is claimed. The executor confirmed session termination. A later visible-process scan found no control script/headless Chromium, but it cannot independently inspect another isolated PID namespace."
+    },
+    "serialCleanup": {
+      "originalOwner": "13 21",
+      "originalOwnerFileModifiedAt": "2026-11-05T03:11:39.873Z",
+      "waitingWrapperSession": 61974,
+      "waitingWrapperExitCode": 130,
+      "reason": "The old experiment session and first waiting wrapper were confirmed terminated. Isolated process namespaces reuse the old runner PID, preventing the serial helper from detecting that stale owner. The original task-owned lock was removed only after exact content, sole-member and timestamp checks. The final wrapper then claimed its own lock and completed normally.",
+      "waitingLog": "restore-navigation-observation-lock-wait.log",
+      "browserWorkInWaitingWrapper": false
+    },
+    "finalObservationControl": {
+      "status": "passed",
+      "source": "restore-navigation-control.ts",
+      "receipt": "restore-navigation-observation-run.json",
+      "result": "restore-navigation-control-result.json",
+      "cases": [
+        "passive navigation with one target request and later button",
+        "missing redirect fails with no target request",
+        "blank target fails the button action"
+      ],
+      "scopeLimit": "The final three executed cases do not execute the retained earlier collision branch. They establish Playwright observation/action semantics on synthetic pages, not original-exception attribution, product passkey authentication, or restore acceptance."
+    }
+  },
+  "limits": [
+    "No macOS/JXA execution occurred locally.",
+    "Synthetic Chromium controls do not reconstruct the omitted original exception or prove production authentication/restore.",
+    "No timeout, identity, passkey, content, access or aggregate predicate was relaxed.",
+    "Both exact-source reviews and fresh automatic hosted checks remain mandatory."
+  ],
+  "originalFailureEvidence": {
+    "safari-loader-first-attempt.json": "1721fdeaea6925ffc55f0b2baf47ed02c2da6aadba20536697f20f1fc0433a1f",
+    "safari-loader-first-attempt.zip": "251097b3284d215d69fe723311b63a9bb53ee249ff8871c6a80dc0842f9285a8",
+    "restore-navigation-first-attempt.json": "2e67fb8724edb46d3ad662a6cef5d9d8c7d3494d817aea034808c00b3aee1c4f",
+    "restore-navigation-first-attempt.zip": "455c1b5b5d324ba655a0fd00455810fd56c4b6014068a1790988171481b6eb19"
+  },
+  "archive": {
+    "name": "loader-restore-local.zip",
+    "sha256": "23494c3f30e7acfb2b8cd97905d00616f15266043a63720d6fb7e87a2dcd7b4e",
+    "members": [
+      {
+        "name": "safari-loader-red.json",
+        "bytes": 553,
+        "sha256": "3c93ee871d065bd5e1b03a3fd2040268089ca824005c6b853c16a0e82b2292e5"
+      },
+      {
+        "name": "safari-loader-red.log",
+        "bytes": 1922,
+        "sha256": "b2cc00f32cb6718f8d3d146344a24a9112c30be0cae1d962547db20f8acc9912"
+      },
+      {
+        "name": "safari-loader-focused.json",
+        "bytes": 592,
+        "sha256": "0b376b837bdb73fc3df69562059b08ca86d014036751d74e7e39bdc599e8c6ea"
+      },
+      {
+        "name": "safari-loader-focused.log",
+        "bytes": 8538,
+        "sha256": "db08a73bc2ff0ff69f935f26adbbe7b1949f6eb6b153fad2aece90cd61e587a2"
+      },
+      {
+        "name": "safari-loader-format.json",
+        "bytes": 601,
+        "sha256": "22353fb3b50e0a4f29ec74b081e5ad9b1eeb020840fa582560133ea5a26454f5"
+      },
+      {
+        "name": "safari-loader-format.log",
+        "bytes": 628,
+        "sha256": "82c98c67110312af7180f517cfc57d544ecfd9546a37fb69c150613a48505c04"
+      },
+      {
+        "name": "safari-loader-final-tests.json",
+        "bytes": 593,
+        "sha256": "04f8cb8e1a5fa19007c153da1e0066ade699525941ffdfdd8176cbba7503f351"
+      },
+      {
+        "name": "safari-loader-final-tests.log",
+        "bytes": 8541,
+        "sha256": "d8e4c56ddd752ed808d7b6bb5fb99e98b3f4cb3362eb86fe85effa8d4762b39d"
+      },
+      {
+        "name": "loader-restore-typecheck.json",
+        "bytes": 537,
+        "sha256": "9d82b7aedb61fdf77ff996e982c01023f08ffbf6527df57a749dba40c0af1353"
+      },
+      {
+        "name": "loader-restore-typecheck.log",
+        "bytes": 459,
+        "sha256": "0ff78d789f446a9a2709fa3f58da4048c69406a38e90105577285bfb0455ac05"
+      },
+      {
+        "name": "loader-restore-lint.json",
+        "bytes": 566,
+        "sha256": "291bbcb75fafafd8d5e70e60cd6c5080ef46c240cbd7fc494ce3187831bc2e63"
+      },
+      {
+        "name": "loader-restore-lint.log",
+        "bytes": 1563,
+        "sha256": "02988e623f3c0a38b7e94854a8b0dd387eb2f490a94174fab0e40d90c5f8b955"
+      },
+      {
+        "name": "restore-navigation-control-initial-run.json",
+        "bytes": 526,
+        "sha256": "e8cbec7dfe7a606f3bde2692bc33812a1fb021953d70c705458f85be7e79234f"
+      },
+      {
+        "name": "restore-navigation-control-initial-run.log",
+        "bytes": 1291,
+        "sha256": "86e62f6ccb4b4c8430bf89e9b44ee4bfffd44d64efdb3dfa53f701a14c439134"
+      },
+      {
+        "name": "restore-navigation-observation-run.json",
+        "bytes": 526,
+        "sha256": "29e2c299a798acb45bda7c7fed6d04ab671d2084c9c9c5811f12fc07eee45f26"
+      },
+      {
+        "name": "restore-navigation-observation-run.log",
+        "bytes": 1327,
+        "sha256": "1ecb458ba056dfda9d568059d98b70bfdda6ef4fa42aa9abda21ba32115176d8"
+      },
+      {
+        "name": "restore-navigation-control-initial.ts",
+        "bytes": 6214,
+        "sha256": "3e866c6f24a95ec6a903808e7feeab7f76e083fe33a5fc0182439d9b6873ab51"
+      },
+      {
+        "name": "restore-navigation-control-initial-result.json",
+        "bytes": 351,
+        "sha256": "b3db8886dc5e2c4ae820adab7e73b2cf4be7d8d97aea11c5fbccfd7245a4016e"
+      },
+      {
+        "name": "restore-navigation-control-interrupted.ts",
+        "bytes": 7060,
+        "sha256": "883f4269ee91a45f92cdb7bc270a4f1bbd91b87eecc76460e9bd1df0f88d7ea1"
+      },
+      {
+        "name": "restore-navigation-control-interrupted.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "restore-navigation-observation-lock-wait.log",
+        "bytes": 118,
+        "sha256": "6aab847d2b1b6fd991fda15815ba36915280249984d2bbf9f38974c7e994bcb4"
+      },
+      {
+        "name": "restore-navigation-control.ts",
+        "bytes": 7054,
+        "sha256": "c5e42be88b7aa531ebdd55c1101f81547870f6b4ce7e6d6944ae41e50a5255d7"
+      },
+      {
+        "name": "restore-navigation-control-result.json",
+        "bytes": 1035,
+        "sha256": "74484999c0acb808449704d9aed7245e64e38fe3fc0288fd5adab3e32549bec7"
+      },
+      {
+        "name": "loader-restore-local-dispositions.json",
+        "bytes": 2867,
+        "sha256": "8f94f73762a499a5d6f25a24ca946a45f7a371902f82a17f28f9f14e8fa2798d"
+      },
+      {
+        "name": "restore-navigation-process-check.json",
+        "bytes": 398,
+        "sha256": "4d61a7a27b1302b2348ed913f9656bd8d50d23115d2450bea51d159e8ea41861"
+      }
+    ]
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "originalLocal": "aeee60266b505b1ac6f928c4725639d90c768073",
+  "checkedRuntimeCommit": "e0ba8a1bdbbc0234f6d39cac344ab2c355769146",
+  "integratedMain": "c525aa933505d6e78b8fdd7a89940d87506d5cb3",
+  "runtimeUnchangedFromCheckedCommit": true,
+  "node": "26.13.0",
+  "hostedAcceptance": "pending; these source-bound local results are not hosted acceptance",
+  "historicalReviewDisposition": "Original PR snapshot is archival-only; review copies mask all numerical assessments while retaining findings, identities and failures",
+  "files": [
+    {
+      "name": "spn123-final-docs-sdk.json",
+      "sha256": "67fbb70c35cb9e36e5ba6a45ac1a3550efadc6d3b44038d0cd647ac84aca4f12"
+    },
+    {
+      "name": "spn123-final-docs-sdk.log.gz",
+      "sha256": "528875f111f0deddf2e58c70942fc1dc98be15b77367651e3e8fbd26a3a6aad9"
+    },
+    {
+      "name": "spn123-final-index.json",
+      "sha256": "457f891ea65b4368c707ac2376afd8c3ba0dd48baaa0aeff3363c40fa1d17a17"
+    },
+    {
+      "name": "spn123-final-index.log.gz",
+      "sha256": "8a6126a7c7046cf94ddd7ce5e0f5714a795af8a98648b9cf4a08e84d58a12117"
+    },
+    {
+      "name": "spn123-final-overhead-sample.json",
+      "sha256": "793f35783f83e3a2bafe4e57756c08773db3141934c50f233f5025ce4fcde910"
+    },
+    {
+      "name": "spn123-final-overhead.json",
+      "sha256": "6d7579b6d7e498381a0cc482c424dc2f2fc3d1844083b21ccd1d1444fc8c3e03"
+    },
+    {
+      "name": "spn123-final-overhead.log.gz",
+      "sha256": "e885dd296c73477a439e206a2475864c2699c024a948dd6e2507a8763be781bb"
+    },
+    {
+      "name": "spn123-final-production-contracts.json",
+      "sha256": "67b9cfbad1190bcfaa07c301303a00070ced99c02ed143dc4ab8697a76c6008a"
+    },
+    {
+      "name": "spn123-final-production-contracts.log.gz",
+      "sha256": "374c0a62576d891f2200ac995ef5a5ca04917aafc648935d760e03484470404d"
+    },
+    {
+      "name": "spn123-final-quality.json",
+      "sha256": "9ce297899a69bdd63a794f2e04398c8cde42ad9a2f9faba0e3f5da1f97860e90"
+    },
+    {
+      "name": "spn123-final-quality.log.gz",
+      "sha256": "6c8137e7f0b6236e63f484d17f37447588232d326bc7f90783bee452569a755a"
+    },
+    {
+      "name": "spn123-final-quality.ts.gz",
+      "sha256": "88f5181d79e0c881391cf03d9ed61b0b7d4844425be9690bbe7c49334efc61fa"
+    },
+    {
+      "name": "spn123-final-routing-tests.json",
+      "sha256": "729cb618da2a9acd61efea7dc94b1f17272de7d1972d93cd5d88b633c96060dc"
+    },
+    {
+      "name": "spn123-final-routing-tests.log.gz",
+      "sha256": "67a06cecc2b4941f5068edc50e98a823ad27ee22234c6b77073056ca24439ffe"
+    },
+    {
+      "name": "spn123-final-source-reuse.json",
+      "sha256": "d3fde4687820e8b201746438e613239f650ad7858a0e820fff6cd887253957ba"
+    },
+    {
+      "name": "spn123-pr220-original.json.gz",
+      "sha256": "12aabdce364fd306fc62fce33323cf11caff30773c7a0cf92a9bfa7fe00ab775"
+    },
+    {
+      "name": "spn123-root-integration-e0ba8a1b.json",
+      "sha256": "aafc93a2602b34e2b2ca8910723ffb73deb8a630d42d663bb5232e12b845fc3c"
+    }
+  ]
+}

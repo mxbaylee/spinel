@@ -1,0 +1,106 @@
+{
+  "checkedAt": "2026-11-14T09:54:34.363240+00:00",
+  "head": "c03e7d6f669ed503b52c3cf361d33b490745a020",
+  "merge": "d777c01c655762b112caa4846de07987fe628f49",
+  "base": "87c34e30ed810e6789d876e55b23dcbb349fa506",
+  "priorCandidate": "43846f1d680dc9eab8ca70493bdabe31c10231c9",
+  "commonAncestor": "89e4426dfff1c3469b260305e21180ffd79fdb7f",
+  "ownNonDocPreserved": [
+    ".github/workflows/ci.yml",
+    ".github/workflows/fixture-audit.yml",
+    ".gitignore",
+    "e2e/app-process.ts",
+    "e2e/doc-phone-navigation.spec.ts",
+    "e2e/fixture-evidence.ts",
+    "e2e/fixture-session.ts",
+    "e2e/offline-fixture.ts",
+    "e2e/offline-recovery.spec.ts",
+    "e2e/offline-sign-out.spec.ts",
+    "e2e/owned-process.ts",
+    "e2e/passkey-management.spec.ts",
+    "e2e/sync-client.spec.ts",
+    "package.json",
+    "playwright.config.ts",
+    "scripts/ci/app-process.test.ts",
+    "scripts/ci/fixture-audit-reporter.ts",
+    "scripts/ci/fixture-audit.test.ts",
+    "scripts/ci/fixture-audit.ts",
+    "scripts/ci/fixture-evidence.test.ts",
+    "scripts/ci/fixture-session-http.test.ts",
+    "scripts/ci/fixture-session.test.ts",
+    "scripts/e2e-server.ts"
+  ],
+  "mainNonDocPreserved": [
+    "THIRD-PARTY-NOTICES.md",
+    "e2e/collaboration.spec.ts",
+    "e2e/session-revocation.ts",
+    "scripts/ci/session-revocation.test.ts",
+    "scripts/screenshots.ts",
+    "src/server/maintenance/http.test.ts",
+    "src/server/maintenance/ownership-fixture.ts",
+    "src/server/maintenance/ownership.test.ts",
+    "src/server/maintenance/ownership.ts",
+    "src/server/maintenance/restore-crash.integration.test.ts",
+    "src/server/maintenance/restore-http-test-client.ts",
+    "src/server/maintenance/supervisor-test-control.test.ts",
+    "src/server/maintenance/supervisor-test-control.ts",
+    "src/server/maintenance/supervisor.test.ts",
+    "src/ui/nativeDrawingResize.test.ts",
+    "web/SyncNative.stories.tsx",
+    "web/nativeDrawingResize.ts"
+  ],
+  "disjoint": true,
+  "laterDocOnlyPaths": [
+    "docs/implementation/SPN-120.md",
+    "docs/review-assets/spn-120-current/accepted-prerequisite-local-checks.json",
+    "docs/review-assets/spn-120-current/spn120-d777-cleanup.json",
+    "docs/review-assets/spn-120-current/spn120-d777-controls.json",
+    "docs/review-assets/spn-120-current/spn120-d777-controls.log",
+    "docs/review-assets/spn-120-current/spn120-d777-dependencies.json",
+    "docs/review-assets/spn-120-current/spn120-d777-dependencies.log",
+    "docs/review-assets/spn-120-current/spn120-d777-format.json",
+    "docs/review-assets/spn-120-current/spn120-d777-format.log",
+    "docs/review-assets/spn-120-current/spn120-d777-lint.json",
+    "docs/review-assets/spn-120-current/spn120-d777-lint.log",
+    "docs/review-assets/spn-120-current/spn120-d777-types.json",
+    "docs/review-assets/spn-120-current/spn120-d777-types.log"
+  ],
+  "mainTicketAndBookkeepingExact": true,
+  "clean": true,
+  "rootReadChecksAndControlLog": true,
+  "checks": {
+    "spn120-d777-controls": {
+      "code": 0,
+      "elapsedMs": 6645,
+      "peakKiB": 297216
+    },
+    "spn120-d777-types": {
+      "code": 0,
+      "elapsedMs": 9000,
+      "peakKiB": 1753568
+    },
+    "spn120-d777-dependencies": {
+      "code": 0,
+      "elapsedMs": 118,
+      "peakKiB": 0
+    },
+    "spn120-d777-lint": {
+      "code": 0,
+      "elapsedMs": 191,
+      "peakKiB": 0
+    },
+    "spn120-d777-format": {
+      "code": 0,
+      "elapsedMs": 580,
+      "peakKiB": 317248
+    }
+  },
+  "controlContract": "62 exact-readiness, identity, fatal process/transport, bounded joined cleanup and first-attempt sample identity controls; actual HTTP transport included",
+  "receiptHashes": {
+    "accepted-prerequisite-local-checks.json": "2d9b3eb3a1bead5318e8ecdaaab89435ba2d6cd3dc54cc3fda8cecf84e05178c",
+    "spn120-d777-controls.log": "6be9a44426f06cbfa7312c09733a4a77d87d781fa2ff774c427a30f26c308d30",
+    "spn120-d777-types.json": "e00d9419a7a5dce5b916acd9a9caa24d555a63583226b12adbb77233b8fedf36",
+    "spn120-d777-cleanup.json": "fbd0bc0ed0a5ee7503a4d5265005b0c5b10a30c1f0aae6c863955ab6509b485a"
+  },
+  "limits": "Not final-head review or hosted acceptance. Carry only after actual future input equality, including docs TypeScript."
+}

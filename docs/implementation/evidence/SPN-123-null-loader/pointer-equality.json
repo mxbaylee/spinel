@@ -1,0 +1,12 @@
+{
+  "durationMs": 51,
+  "result": {
+    "missingHandleIsNull": true,
+    "errorIsNonNull": true,
+    "resetIsNull": true,
+    "loadedHandleIsNonNull": true,
+    "loadErrorIsNull": true,
+    "classAvailable": true
+  },
+  "scope": "local ARM bridge and fixed system image only; no Safari process or Apple Events"
+}

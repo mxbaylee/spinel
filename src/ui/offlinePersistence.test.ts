@@ -10,6 +10,7 @@ import * as offlineStorage from '../../web/offline/offlineStore.ts';
 import type { OfflineStore } from '../../web/offline/offlineStore.ts';
 import { replayOfflineItem } from '../../web/offline/replayHost.ts';
 import * as binding from '../../web/spinelSync.ts';
+import type { DiagnosticContext, DiagnosticEvent, DiagnosticSource } from '@spinel/diagnostics';
 
 const cleanup: (() => void)[] = [];
 const scope = {
@@ -145,6 +146,185 @@ function native(active: OfflineSession) {
     },
   };
 }
+
+test('local durable diagnostics wait for the real checkpoint commit and distinguish a skipped store', async () => {
+  const events: DiagnosticEvent[] = [];
+  const f = session();
+  f.active.diagnostics = () => ({
+    sink: (event) => events.push(event),
+    context: { component: 'editor' },
+  });
+  await f.active.persist(() => checkpoint);
+  expect(events).toEqual([
+    expect.objectContaining({
+      name: 'offline.persistence',
+      details: expect.objectContaining({ outcome: 'skipped', reason: 'not-prepared' }),
+    }),
+  ]);
+  f.store.bundle.mockResolvedValue(downloaded());
+  const entered = Promise.withResolvers<void>();
+  const commit = Promise.withResolvers<void>();
+  f.store.saveCheckpoint.mockImplementationOnce(async (_scope, value, verify) => {
+    entered.resolve();
+    await commit.promise;
+    verify();
+    f.saved.push(structuredClone(value));
+  });
+  const saving = f.active.persist(() => checkpoint);
+  try {
+    await entered.promise;
+    expect(events.some((event) => event.name === 'operation.result')).toBe(false);
+    commit.resolve();
+    await saving;
+    expect(f.saved).toHaveLength(1);
+    expect(events.filter((event) => event.name === 'operation.result')).toEqual([
+      expect.objectContaining({
+        details: expect.objectContaining({ operation: 'document-save-local', outcome: 'success' }),
+      }),
+    ]);
+    expect(
+      events.some(
+        (event) =>
+          event.name === 'operation.result' &&
+          event.details.operation === 'document-save-server-ack',
+      ),
+    ).toBe(false);
+  } finally {
+    commit.resolve();
+  }
+});
+
+test('a failing real store preserves its original exception while a throwing observer cannot prevent a durable write', async () => {
+  const f = session(downloaded());
+  const events: DiagnosticEvent[] = [];
+  f.active.diagnostics = () => ({
+    sink: (event) => {
+      events.push(event);
+      throw new Error('observer');
+    },
+    context: { component: 'editor' },
+  });
+  const failure = new Error('disk full');
+  f.store.saveCheckpoint.mockRejectedValueOnce(failure);
+  await expect(f.active.persist(() => checkpoint)).rejects.toBe(failure);
+  expect(f.saved).toHaveLength(0);
+  expect(events).toContainEqual(
+    expect.objectContaining({
+      name: 'offline.persistence',
+      details: expect.objectContaining({ outcome: 'failure' }),
+    }),
+  );
+  await f.active.persist(() => checkpoint);
+  expect(f.saved).toHaveLength(1);
+  expect(f.active.checkpoint).toEqual(checkpoint);
+});
+
+test.each(['enabled', 'throwing sink', 'throwing source', 'absent'] as const)(
+  'background replay keeps actual pending content and durable diagnostics independent (%s)',
+  async (mode) => {
+    vi.stubGlobal('navigator', { locks, onLine: false });
+    vi.stubGlobal('document', Object.assign(new EventTarget(), { visibilityState: 'visible' }));
+    vi.stubGlobal('location', {
+      origin: 'https://spinel.test',
+      protocol: 'https:',
+      pathname: '/files',
+    });
+    const download = downloaded();
+    download.outbox = {
+      version: 1,
+      ...scope,
+      checkpoint: { ...structuredClone(checkpoint), buffer: [[insertText('Kept during replay')]] },
+    };
+    const f = session(download);
+    const observed: { event: DiagnosticEvent; context: DiagnosticContext }[] = [];
+    const diagnostics: DiagnosticSource | undefined =
+      mode === 'absent'
+        ? undefined
+        : () => {
+            if (mode === 'throwing source') throw new Error('observer source');
+            return {
+              context: { component: 'dashboard', fileId: scope.item, route: '/files' },
+              sink(event, context) {
+                observed.push({ event, context });
+                if (mode === 'throwing sink') throw new Error('observer sink');
+              },
+            };
+          };
+    const attached = Promise.withResolvers<void>();
+    const attach = binding.attachSpinelSync;
+    vi.spyOn(binding, 'attachSpinelSync').mockImplementation((...args) => {
+      const result = attach(...args);
+      attached.resolve();
+      return result;
+    });
+    const replay = replayOfflineItem(
+      scope.account,
+      {
+        itemId: scope.item,
+        spaceId: scope.spaceId,
+        name: bundle.name,
+        kind: 'doc',
+        readOnly: false,
+        revision: bundle.revision,
+        downloadedAt: 0,
+        pending: true,
+      },
+      () => true,
+      diagnostics,
+    );
+    try {
+      await Promise.race([
+        attached.promise,
+        replay.done.then(() => {
+          throw new Error('Replay ended before attaching its real native client.');
+        }),
+      ]);
+      await replay.stop();
+      await replay.done;
+      expect(f.saved.at(-1)?.buffer).toEqual(download.outbox.checkpoint.buffer);
+      const events = observed.map(({ event }) => event);
+      if (mode === 'enabled' || mode === 'throwing sink') {
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            name: 'offline.persistence',
+            details: expect.objectContaining({ outcome: 'persisted' }),
+          }),
+        );
+        expect(events).toContainEqual(
+          expect.objectContaining({
+            name: 'operation.result',
+            details: expect.objectContaining({
+              operation: 'document-save-local',
+              outcome: 'success',
+            }),
+          }),
+        );
+        expect(
+          observed.every(
+            ({ context }) => context.component === 'dashboard' && context.fileId === scope.item,
+          ),
+        ).toBe(true);
+      } else expect(events).toEqual([]);
+      expect(
+        events.some(
+          (event) =>
+            event.name === 'operation.result' &&
+            ['document-open', 'document-save-server-ack'].includes(event.details.operation),
+        ),
+      ).toBe(false);
+      expect(
+        await locks.request(
+          `spinel-offline:${scope.account}:${scope.item}`,
+          { ifAvailable: true },
+          (lock) => Boolean(lock),
+        ),
+      ).toBe(true);
+    } finally {
+      await replay.stop();
+      await replay.done.catch(() => {});
+    }
+  },
+);
 
 test.each([false, true])(
   'the actual background session drains before foreground admission, even when native cleanup throws (%s)',

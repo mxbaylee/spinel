@@ -1,0 +1,14 @@
+{
+  "name": "spn123-ack-types",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/typescript/bin/tsc",
+    "-p",
+    "."
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": "Resource guard",
+  "elapsedMs": 4464,
+  "peakKiB": 1151040
+}

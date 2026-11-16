@@ -47,6 +47,8 @@ import type { ConnectionState } from './connectionState.ts';
 import { guestPendingBuffer } from './guestPendingBuffer.ts';
 import type { RegisterGuestEditor } from './guestRevocation.ts';
 import { nativeSyncPermissions } from './nativeSyncPermissions.ts';
+import { useDiagnostics } from './useDiagnostics.tsx';
+import { beginOperation, diagnosticSource } from './operationDiagnostics.ts';
 import { BehaviorSubject } from 'rxjs';
 import { copyUnavailable, NativeCopyPlugin } from './nativeCopy.tsx';
 import { guestItemId } from './documentAccess.ts';
@@ -73,6 +75,7 @@ export function SheetEditor({
   localAccountId?: string;
 }) {
   const chrome = useEditorChrome();
+  const diagnostics = useDiagnostics();
   const mobile = useRef(useMobileSheetControls()).current;
   const [people, setPeople] = useState<Collaborator[]>([]);
   const container = useRef<HTMLDivElement>(null);
@@ -86,6 +89,12 @@ export function SheetEditor({
     failed: false,
   });
   useEffect(() => {
+    const observe = diagnosticSource(diagnostics, {
+      component: 'editor',
+      fileId: id,
+      ...(spaceId ? { spaceId, route: '/spaces/:id' as const } : { route: '/files/:id' as const }),
+    });
+    const opened = beginOperation(observe, 'document-open');
     let disposed = false;
     let offlineSession: OfflineSession | undefined;
     let initialized = false;
@@ -273,6 +282,7 @@ export function SheetEditor({
         spaceId,
         access: data.access,
         kind: 'sheet',
+        diagnostics: observe,
         signal: loading.signal,
         isCurrent: () => !disposed,
         offline: data.offline,
@@ -390,7 +400,9 @@ export function SheetEditor({
       initialized = true;
       save = watchCollaboration(univer, publish, readOnly, publishConnection);
       controller.current = save;
+      opened('success');
     })().catch((error) => {
+      opened(disposed || loading.signal.aborted ? 'cancelled' : 'failure');
       // Failed checkpoint/SDK initialization must not leave a writable canvas
       // without native capture. A bound client may already own pending input.
       if (!captureReady) {
@@ -410,6 +422,7 @@ export function SheetEditor({
         });
     });
     return () => {
+      opened('cancelled');
       disposed = true;
       copyStatus.next('This document is closed.');
       copyStatus.complete();

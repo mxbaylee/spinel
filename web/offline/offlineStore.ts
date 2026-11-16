@@ -766,9 +766,9 @@ export async function withOfflineCatalogLock<T>(
 }
 
 /**
- * Hand a same-tab maintenance writer to an opening editor. New maintenance
- * cannot slip into the handoff; other tabs still use the nonblocking Web Lock
- * admission and are never mistaken for a temporary operation we may await.
+ * Hand temporary work to an opening editor without admitting new maintenance.
+ * Cross-tab replay/foreground admission has a bounded FIFO handoff; the actual
+ * item writer stays nonblocking and never waits for a live editor's lifetime.
  */
 export async function withOfflineEditorAdmission<T>(
   accountId: string,
@@ -792,6 +792,7 @@ export async function withOfflineEditorAdmission<T>(
         await replayWriters.get(key)?.();
       },
       acquire,
+      'editor',
     );
   } finally {
     const count = editorAdmissions.get(key)!;

@@ -4,32 +4,39 @@ import {
   preparedAccount,
   watchOfflineChanges,
 } from './offlineStore.ts';
+import type { OfflineDownload } from './offlineStore.ts';
+import type { DiagnosticSource } from '@spinel/diagnostics';
 
 type Job = { stop(): Promise<void>; done: Promise<void> };
 type Owner = ReturnType<typeof createReplayOwner>;
+type ReplayDiagnostics = (download: OfflineDownload) => DiagnosticSource;
 const owners = new Map<string, Owner>();
 const retiring = new Map<string, Promise<void>>();
 
 /** Multiple file-list surfaces share one account-scoped, event-driven owner. */
-export function watchOfflineReplay(accountId: string, foregroundItem: string | null) {
+export function watchOfflineReplay(
+  accountId: string,
+  foregroundItem: string | null,
+  diagnostics?: ReplayDiagnostics,
+) {
   let owner = owners.get(accountId);
   if (!owner) {
     owner = createReplayOwner(accountId);
     owners.set(accountId, owner);
   }
-  return owner.subscribe(foregroundItem);
+  return owner.subscribe(foregroundItem, diagnostics);
 }
 
 function createReplayOwner(accountId: string) {
   const previous = retiring.get(accountId);
-  const views = new Map<symbol, string | null>();
+  const views = new Map<symbol, { item: string | null; diagnostics?: ReplayDiagnostics }>();
   let disposed = false;
   let running = false;
   let requested = false;
   let draining = Promise.resolve();
   let job: Job | undefined;
   let activeItem: string | undefined;
-  const foreground = (itemId: string) => [...views.values()].includes(itemId);
+  const foreground = (itemId: string) => [...views.values()].some((view) => view.item === itemId);
   const visible = () => document.visibilityState !== 'hidden' && navigator.onLine;
   const current = () => !disposed && views.size > 0;
   const admitted = () => current() && preparedAccount() === accountId && visible();
@@ -43,6 +50,7 @@ function createReplayOwner(accountId: string) {
   };
   async function run() {
     running = true;
+    let acquired = false;
     try {
       await previous;
       if (!navigator.locks) return;
@@ -50,7 +58,9 @@ function createReplayOwner(accountId: string) {
         `spinel-offline-replay:${accountId}`,
         { ifAvailable: true },
         async (lock) => {
-          if (lock) await replayQueue();
+          if (!lock) return;
+          acquired = true;
+          await replayQueue();
         },
       );
     } catch {
@@ -58,6 +68,10 @@ function createReplayOwner(accountId: string) {
       // reconnect/foreground or independent durable change can retry admission.
     } finally {
       running = false;
+      // A durable change may arrive after the queue's final check but before
+      // Web Locks completes release. Preserve that wake without polling a lock
+      // held by another tab: only the owner of the completed run may restart.
+      if (acquired && requested && admitted()) draining = run();
     }
   }
   async function replayQueue() {
@@ -83,8 +97,18 @@ function createReplayOwner(accountId: string) {
         const { replayOfflineItem } = await import('./replayHost.ts');
         if (!admitted() || !scope.isCurrent()) return;
         if (foreground(download.itemId)) continue;
+        const observer = [...views].find(([, view]) => view.diagnostics);
+        // Capture through one initiating subscription. A retiring job must not
+        // bind observations to a replacement account or another mounted view.
+        // Keep factory calls inside the optional observer's exception boundary.
+        const diagnostics: DiagnosticSource | undefined = observer
+          ? () => {
+              if (!admitted() || !scope.isCurrent() || !views.has(observer[0])) return;
+              return observer[1].diagnostics?.(download)?.();
+            }
+          : undefined;
         activeItem = download.itemId;
-        job = replayOfflineItem(accountId, download, scope.isCurrent);
+        job = replayOfflineItem(accountId, download, scope.isCurrent, diagnostics);
         try {
           await job.done;
         } catch {
@@ -112,15 +136,15 @@ function createReplayOwner(accountId: string) {
   for (const event of events) window.addEventListener(event, wake);
   document.addEventListener('visibilitychange', wake);
   const owner = {
-    subscribe(itemId: string | null) {
+    subscribe(itemId: string | null, diagnostics?: ReplayDiagnostics) {
       const key = Symbol();
       let detached = false;
-      views.set(key, itemId);
+      views.set(key, { item: itemId, diagnostics });
       wake();
       return {
         foreground(item: string | null) {
           if (detached) return;
-          views.set(key, item);
+          views.set(key, { item, diagnostics });
           if (item && activeItem === item) void job?.stop();
           wake();
         },

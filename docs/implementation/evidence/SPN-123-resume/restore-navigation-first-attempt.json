@@ -1,0 +1,370 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "/root/source_review_v2/sdk_ci_acceptance",
+  "reviewedAt": "2026-11-05T03:11:01.961167+00:00",
+  "status": "failed-first-attempt-preserved-with-narrow-harness-repair-assessment",
+  "acceptanceIssued": false,
+  "metadata": {
+    "job": {
+      "id": 127015085748,
+      "run_id": 41957085098,
+      "workflow_name": "\ud83d\udc8e CI",
+      "head_branch": "codex/spn-123-operation-diagnostics",
+      "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/41957085098",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVNik2c8AAAAdkrBmtA",
+      "head_sha": "d7e9f996db07e362210e9d07bcdecd50ff093570",
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/127015085748",
+      "html_url": "https://github.com/mxbaylee/spinel/actions/runs/41957085098/job/127015085748",
+      "status": "completed",
+      "conclusion": "failure",
+      "created_at": "2026-11-05T02:45:39Z",
+      "started_at": "2026-11-05T02:55:42Z",
+      "completed_at": "2026-11-05T03:00:54Z",
+      "name": "Sized restore acceptance",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-05T02:55:43Z",
+          "completed_at": "2026-11-05T02:55:44Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-05T02:55:44Z",
+          "completed_at": "2026-11-05T02:55:49Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-05T02:55:49Z",
+          "completed_at": "2026-11-05T02:55:54Z"
+        },
+        {
+          "name": "Install acceptance driver and Chromium",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-05T02:55:54Z",
+          "completed_at": "2026-11-05T02:56:32Z"
+        },
+        {
+          "name": "Build the exact production image",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-11-05T02:56:32Z",
+          "completed_at": "2026-11-05T02:57:12Z"
+        },
+        {
+          "name": "Measure and verify the real 256 MiB restore",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 6,
+          "started_at": "2026-11-05T02:57:12Z",
+          "completed_at": "2026-11-05T03:00:51Z"
+        },
+        {
+          "name": "Preserve safe timing and integrity evidence",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-11-05T03:00:51Z",
+          "completed_at": "2026-11-05T03:00:52Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-05T03:00:52Z",
+          "completed_at": "2026-11-05T03:00:52Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 14,
+          "started_at": "2026-11-05T03:00:52Z",
+          "completed_at": "2026-11-05T03:00:53Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 15,
+          "started_at": "2026-11-05T03:00:53Z",
+          "completed_at": "2026-11-05T03:00:53Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/127015085748",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000042141,
+      "runner_name": "GitHub Actions 1000042141",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    "artifact": {
+      "id": 13383668817,
+      "name": "sized-restore-acceptance",
+      "size_in_bytes": 69161,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13383668817",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13383668817/zip",
+      "expired": false,
+      "created_at": "2026-11-05T03:00:52Z",
+      "expires_at": "2026-11-19T03:00:52Z",
+      "updated_at": "2026-11-05T03:00:52Z",
+      "digest": "sha256:455c1b5b5d324ba655a0fd00455810fd56c4b6014068a1790988171481b6eb19",
+      "workflow_run": {
+        "id": 41957085098,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-123-operation-diagnostics",
+        "head_sha": "d7e9f996db07e362210e9d07bcdecd50ff093570"
+      }
+    },
+    "reviewedHead": "d7e9f996db07e362210e9d07bcdecd50ff093570",
+    "validatedBase": "1045e729c391c47a9b6a895782a2fa69dc6fa044",
+    "testedRevision": "d1fe07394ed0de017128dd9e0d1b097eddaa5915",
+    "reviewedTestedTree": "c4650caa39a03570ff40b9e4d529fad42411b8c4"
+  },
+  "observed": {
+    "scope": "Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance",
+    "stage": "authenticating-after-session-reset",
+    "stageTimings": [
+      {
+        "stage": "initializing",
+        "elapsedMs": 0
+      },
+      {
+        "stage": "starting-linux-supervisor",
+        "elapsedMs": 590
+      },
+      {
+        "stage": "bootstrapping-closed-workspace",
+        "elapsedMs": 835
+      },
+      {
+        "stage": "starting-shipped-supervisor",
+        "elapsedMs": 38209
+      },
+      {
+        "stage": "cli-verify",
+        "elapsedMs": 42349
+      },
+      {
+        "stage": "cli-start",
+        "elapsedMs": 43317
+      },
+      {
+        "stage": "cli-resume",
+        "elapsedMs": 46430
+      },
+      {
+        "stage": "authenticating-browser",
+        "elapsedMs": 46914
+      },
+      {
+        "stage": "authenticating-current-owner",
+        "elapsedMs": 54639
+      },
+      {
+        "stage": "preparing-through-admin",
+        "elapsedMs": 65243
+      },
+      {
+        "stage": "confirming-and-restoring",
+        "elapsedMs": 115729
+      },
+      {
+        "stage": "checking-owner-session-reset",
+        "elapsedMs": 216552
+      },
+      {
+        "stage": "authenticating-after-session-reset",
+        "elapsedMs": 216564
+      }
+    ],
+    "failureSource": {
+      "file": "restore-browser.acceptance.ts",
+      "line": 1297,
+      "column": 14
+    },
+    "pageErrors": 0,
+    "browserBootstrap": null,
+    "elapsedMs": 219044,
+    "finalStageElapsedMs": 2480,
+    "restoreHttpTimings": [
+      {
+        "route": "create",
+        "startedAtMs": 18216.634670000007,
+        "elapsedMs": 11.717248999993899,
+        "status": 202
+      },
+      {
+        "route": "upload",
+        "startedAtMs": 18230.166336000002,
+        "elapsedMs": 49789.429694000006,
+        "status": 200
+      },
+      {
+        "route": "confirm",
+        "startedAtMs": 68571.097102,
+        "elapsedMs": 5646.211436999991,
+        "status": 202
+      }
+    ],
+    "restoreTimings": {
+      "clock": "host-monotonic-performance.now",
+      "createPasskeyUploadAndPreparationMs": 49953.90190200001,
+      "reviewAndLayoutChecksMs": 405.96901999998954,
+      "confirmPasskeyThroughCommittedRunningMs": 100822.946601,
+      "prepareClickThroughCommittedRunningMs": 151182.817523,
+      "start": "click Verify and prepare",
+      "finish": "canonical candidate-committed, selected, supervisor running"
+    },
+    "serviceDiagnostic": {
+      "errorCode": null,
+      "errno": null,
+      "syscall": null
+    },
+    "supervisorClosure": {
+      "running": false,
+      "pid": 0,
+      "exitCode": 0,
+      "oomKilled": false
+    },
+    "passed": false,
+    "completedAt": "2026-11-05T03:00:51.954Z",
+    "retainedBrowserTrafficEvents": 80,
+    "signInTraffic": [
+      {
+        "kind": "response",
+        "route": "/sign-in",
+        "status": 200
+      },
+      {
+        "kind": "navigation",
+        "route": "/sign-in"
+      },
+      {
+        "kind": "response",
+        "route": "/sign-in",
+        "status": 200
+      },
+      {
+        "kind": "navigation",
+        "route": "/sign-in"
+      }
+    ]
+  },
+  "sourceFiles": [
+    {
+      "file": "e2e/restore-browser.acceptance.ts",
+      "sha256": "814d6f43f35af4e0f60f9af8c6ac12278346019cccd4e3e2bd91cb7ef93588ae",
+      "matchedArtifactSourceHash": true,
+      "url": "https://github.com/mxbaylee/spinel/blob/d7e9f996db07e362210e9d07bcdecd50ff093570/e2e/restore-browser.acceptance.ts"
+    },
+    {
+      "file": "web/App.tsx",
+      "sha256": "3fb5027b590d28644c2dd8db0f1e8fa554308c051b3526c72a0882cffd480d96",
+      "matchedArtifactSourceHash": true,
+      "url": "https://github.com/mxbaylee/spinel/blob/d7e9f996db07e362210e9d07bcdecd50ff093570/web/App.tsx"
+    },
+    {
+      "file": "web/Maintenance.tsx",
+      "sha256": "abb86ff00a96132381437d015a9864dae980d5e3456586273358ed396b377a4c",
+      "matchedArtifactSourceHash": true,
+      "url": "https://github.com/mxbaylee/spinel/blob/d7e9f996db07e362210e9d07bcdecd50ff093570/web/Maintenance.tsx"
+    },
+    {
+      "file": "web/connectionState.ts",
+      "sha256": "948cb3b882cb08a09f6cf215d0c912038fde22e29ead41e2d4884ce536a448e5",
+      "matchedArtifactSourceHash": true,
+      "url": "https://github.com/mxbaylee/spinel/blob/d7e9f996db07e362210e9d07bcdecd50ff093570/web/connectionState.ts"
+    },
+    {
+      "file": "web/useConnectionStatus.ts",
+      "sha256": "05a3ae05b05267632f596893704902bfa371942fe880d5d193d404d0ff41b731",
+      "matchedArtifactSourceHash": true,
+      "url": "https://github.com/mxbaylee/spinel/blob/d7e9f996db07e362210e9d07bcdecd50ff093570/web/useConnectionStatus.ts"
+    },
+    {
+      "file": "web/api.ts",
+      "sha256": "45121a0724c70091d5f0d4e6e71fb80aa8bf282b63ddc1c99d7aa958171138cf",
+      "matchedArtifactSourceHash": true,
+      "url": "https://github.com/mxbaylee/spinel/blob/d7e9f996db07e362210e9d07bcdecd50ff093570/web/api.ts"
+    },
+    {
+      "file": "src/ui/connectionState.test.ts",
+      "sha256": "7c8d78c8708c6cdb25082f49d4e2b8ff8b6174e25897fb1a8cb0a62b6442293f",
+      "matchedArtifactSourceHash": true,
+      "url": "https://github.com/mxbaylee/spinel/blob/d7e9f996db07e362210e9d07bcdecd50ff093570/src/ui/connectionState.test.ts"
+    }
+  ],
+  "files": [
+    {
+      "path": "/workspace/scratch/bcf5836a3f8b/validation/sized-restore-41957085098.zip",
+      "bytes": 69161,
+      "sha256": "455c1b5b5d324ba655a0fd00455810fd56c4b6014068a1790988171481b6eb19"
+    },
+    {
+      "path": "/workspace/scratch/bcf5836a3f8b/validation/sized-restore-41957085098/evidence.json",
+      "bytes": 168819,
+      "sha256": "7bb012c9faba726f67daa610fe019f7a03abb8347fdd64f367a948127027e532"
+    },
+    {
+      "path": "/workspace/scratch/bcf5836a3f8b/validation/sized-restore-41957085098/failure.png",
+      "bytes": 5864,
+      "sha256": "684407c83e2bc942c8d531e1df7fc509dee93150215bfe3dca2da7dfcd98b977"
+    },
+    {
+      "path": "/workspace/scratch/bcf5836a3f8b/validation/sized-restore-41957085098-job127015085748.log",
+      "bytes": 63283,
+      "sha256": "3419f1410fe96272c211315594a17f3d749a87e5a5d57bbff8a9baf2e2c1f935"
+    }
+  ],
+  "assessment": {
+    "originalExceptionRetained": false,
+    "sourceLevelHazardEstablished": true,
+    "observedNavigationCollisionProven": false,
+    "mechanism": "The mounted operator shell owns an automatic sign-in redirect on a 401 health response while the acceptance harness independently starts a goto to that same entry.",
+    "narrowRepair": "Replace only the post-restore page.goto(origin + /sign-in) with passive page.waitForURL for the exact same URL, preserving the existing 30,000 ms page timeout and following passkey/Administration/content checks.",
+    "noCatchRetryOrFallback": true,
+    "productionChangeRecommended": false,
+    "hostedAcceptanceStillRequired": true,
+    "controlsProposedOnly": [
+      "Delayed page-owned redirect followed by delayed button: waiter and click succeed with exactly one target navigation request.",
+      "No redirect: passive waiter times out at a short explicit bound without making a target request.",
+      "Blank sign-in target: URL arrival succeeds but the unchanged button action times out."
+    ],
+    "controlScopeLimitation": "These actual-browser controls check Playwright wait/action semantics only. They do not reproduce the unknown original exception or prove the complete production restore. Root owns any execution; this reviewer ran no browser workload."
+  },
+  "existingCompletedEvidence": {
+    "sdkJobId": 127015085567,
+    "suite": "src/ui/connectionState.test.ts",
+    "tests": 23,
+    "allPassed": true,
+    "durationMs": 39,
+    "contractCase": "a 401 ends the session once without presenting it as an offline entitlement"
+  },
+  "primaryDocumentation": [
+    {
+      "url": "https://playwright.dev/docs/api/class-page#page-wait-for-url",
+      "facts": [
+        "Waits for main-frame navigation; an exact string without wildcards requires exact URL equality.",
+        "The wait honors page.setDefaultTimeout; the harness sets 30,000 ms.",
+        "Default waitUntil is load."
+      ]
+    }
+  ]
+}

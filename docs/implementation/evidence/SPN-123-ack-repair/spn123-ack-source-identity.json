@@ -1,0 +1,17 @@
+{
+  "sourceParent": "cae5a58689b049e4f62c3a815482e21bb5212f49",
+  "donorHead": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "donorClean": true,
+  "verifiedDependencyInputs": 16,
+  "verifiedSDKFiles": 10,
+  "externalLinks": 302,
+  "candidateWorkspaceLinks": 7,
+  "sources": {
+    "lib/sync-client/src/client.ts": "bd803a83094b51fbe00630f2f7f437cdea872fccda4f6992dc622ff505966fee",
+    "lib/sync-client/tests/diagnostics.test.ts": "05c571cb6d9e1a02b081b193115487102196b5d99c4e9fadc3f2cf22fb9f42b0",
+    "lib/sync-client/src/checkpoint.ts": "a816a56591ed8160d968371e08115fb4320df68b3a2d1b6c9853023f7581b8bc",
+    "lib/sync-server/src/server.ts": "5be58a9b33110f50f7aa5927eb159335655024e2838eb55ce84bb88f8146ed49",
+    "scripts/ci/diagnostics-overhead.ts": "c1232f6454e24587b28436aee2c4b6a9ffcbfd5b792ea021979387513c29e6b9"
+  },
+  "existingDependencyManifestSHA256": "4f06160bf3b3f26e0bc9c904e450ff151777a599c8bc5aaf7c253db043f09818"
+}

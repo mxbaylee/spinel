@@ -1,4 +1,5 @@
 import { NativeReplica } from '@spinel/sync-client';
+import type { DiagnosticSource } from '@spinel/diagnostics';
 import { attachSpinelSync } from '../spinelSync.ts';
 import { OfflineSession } from './OfflineSession.ts';
 import { reserveOfflineReplay } from './offlineStore.ts';
@@ -10,6 +11,7 @@ export function replayOfflineItem(
   accountId: string,
   download: OfflineDownload,
   current: () => boolean,
+  diagnostics?: DiagnosticSource,
 ) {
   const end = Promise.withResolvers<void>();
   const completed = Promise.withResolvers<void>();
@@ -52,6 +54,7 @@ export function replayOfflineItem(
             signal: new AbortController().signal,
             isCurrent: current,
             offline: session,
+            diagnostics,
             // Retain attention for the existing visible recovery entry. Background
             // replay must not create a recovery copy or navigate a hidden editor.
             canRefresh: () => false,

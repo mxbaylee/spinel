@@ -372,6 +372,87 @@ const checkpoint: ClientCheckpoint = {
   buffer: [],
 };
 
+test('overlapping editor admissions queue only the short handoff and keep the second native view read-only', async () => {
+  const store = {
+    bundle: vi.fn(async () => ({ bundle: structuredClone(bundle), bytes: new Map() })),
+    close: vi.fn(),
+  };
+  vi.spyOn(offlineStorage, 'openExistingOfflineStore').mockResolvedValue(
+    store as unknown as OfflineStore,
+  );
+  const gate = `spinel-offline-replay-admission:${JSON.stringify([accountId, itemId])}`;
+  const queued = deferred();
+  const entered = deferred();
+  const admissionRelease = deferred();
+  const writerRelease = deferred();
+  const manager = {
+    query: () => locks.query(),
+    request(name: string, options: LockOptions, callback: LockGrantedCallback<unknown>) {
+      const result = locks.request(name, options, callback);
+      if (name === gate && options.signal) queued.resolve();
+      return result;
+    },
+  };
+  vi.stubGlobal('navigator', { locks: manager });
+  let writer: Promise<unknown> | undefined;
+  const first = withOfflineEditorAdmission(
+    accountId,
+    itemId,
+    () => {},
+    async () => {
+      writer = locks.request(lockName, { ifAvailable: true }, async (lock) => {
+        expect(lock).not.toBeNull();
+        entered.resolve();
+        await writerRelease.promise;
+      });
+      await entered.promise;
+      await admissionRelease.promise;
+    },
+  );
+  const second = new OfflineSession(accountId, itemId, bundle.spaceId, () => true);
+  let opening: Promise<void> | undefined;
+  try {
+    await entered.promise;
+    const maintenance = vi.fn(async () => {});
+    await expect(
+      createReplayAdmission(window, manager as unknown as LockManager).foreground(
+        accountId,
+        itemId,
+        () => {},
+        async () => {},
+        maintenance,
+      ),
+    ).rejects.toThrow('Close this document in every tab');
+    expect(maintenance).not.toHaveBeenCalled();
+    opening = second.activate();
+    const outcome = opening.then(
+      () => 'opened',
+      () => 'refused',
+    );
+    expect(await Promise.race([queued.promise.then(() => 'queued'), outcome])).toBe('queued');
+    expect((await locks.query()).pending).toContainEqual(
+      expect.objectContaining({ name: gate, mode: 'exclusive' }),
+    );
+    admissionRelease.resolve();
+    await first;
+    await opening;
+    expect(second.enabled).toBe(true);
+    expect(second.readOnly).toBe(true);
+    expect(second.problem).toContain('open in another tab');
+    expect(await locks.request(lockName, { ifAvailable: true }, (lock) => Boolean(lock))).toBe(
+      false,
+    );
+  } finally {
+    admissionRelease.resolve();
+    await first;
+    await opening?.catch(() => {});
+    second.dispose();
+    writerRelease.resolve();
+    await writer;
+    expect(await locks.query()).toEqual({ held: [], pending: [] });
+  }
+});
+
 test.each(['editor', 'maintenance'] as const)(
   '%s admission joins replay persistence and reserves the handoff against another replay',
   async (next) => {

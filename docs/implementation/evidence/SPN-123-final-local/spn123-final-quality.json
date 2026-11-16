@@ -1,0 +1,12 @@
+{
+  "name": "spn123-final-quality",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "/tmp/spinel-dependabot-2026-11-11/spn123-final-quality.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 10914,
+  "peakKiB": 695552
+}

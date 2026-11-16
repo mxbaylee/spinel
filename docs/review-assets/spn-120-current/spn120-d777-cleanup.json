@@ -1,0 +1,8 @@
+{
+  "source": "d777c01c655762b112caa4846de07987fe628f49",
+  "audit": "ps pid/ppid/start/command scan after all five jobs; only audit shell and rg matched task/native-compiler patterns",
+  "ownedSurvivors": [],
+  "terminated": [],
+  "donorClean": true,
+  "slotReleased": true
+}

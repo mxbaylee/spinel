@@ -53,6 +53,7 @@ export function createReplayAdmission(
       verify: () => void,
       stopLocal: () => Promise<void>,
       work: () => Promise<T>,
+      kind: 'editor' | 'maintenance' = 'maintenance',
     ): Promise<T> {
       const name = gateName(account, item);
       const admitted = async () => {
@@ -65,9 +66,14 @@ export function createReplayAdmission(
         lock ? { value: await admitted() } : undefined,
       );
       if (immediate) return immediate.value;
-      // Another maintenance operation is not a replay we can ask to yield.
+      // Maintenance cannot interrupt another foreground operation. Editors may
+      // join its bounded admission queue, then ask the real item writer for the
+      // usual writable/read-only result without awaiting a live editor lifetime.
       const state = await locks.query();
-      if (state.held?.some((entry) => entry.name === name && entry.mode === 'exclusive'))
+      if (
+        kind === 'maintenance' &&
+        state.held?.some((entry) => entry.name === name && entry.mode === 'exclusive')
+      )
         throw busy();
       verify();
       const controller = new AbortController();

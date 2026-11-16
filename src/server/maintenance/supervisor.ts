@@ -5,6 +5,8 @@ import type { RestoreCapacityVolume } from './restore-capacity.ts';
 import { RecoveryResourceError } from '../backup/resource-error.ts';
 import { prepareAndActivateRestoreOriginal } from './restore-original.ts';
 import { fork } from 'node:child_process';
+import { observe } from '@spinel/diagnostics';
+import type { DiagnosticSink } from '@spinel/diagnostics';
 import type { ChildProcess } from 'node:child_process';
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from 'node:crypto';
 import {
@@ -171,6 +173,7 @@ interface SupervisorOptions {
     restoreMs?: number;
   };
   onTransition?: (status: MaintenanceAdminStatus) => void;
+  diagnostics?: DiagnosticSink;
 }
 interface Waiter {
   resolve: () => void;
@@ -376,6 +379,7 @@ export class MaintenanceSupervisor {
   private publicServer: HttpServer | undefined;
   private controlServer: HttpServer | undefined;
   private noticeTimer: ReturnType<typeof setInterval> | undefined;
+  private observedPhase?: MaintenanceAdminStatus['phase'];
   private closing = false;
   private closingTask: Promise<void> | undefined;
   private constructor(journal: RecoveryJournal, options: SupervisorOptions) {
@@ -486,6 +490,7 @@ export class MaintenanceSupervisor {
       this.failure('restore-job-pending');
     }
     this.reconcileNotice(true);
+    this.observePhase();
     // Only expose cold commands after every startup reconciliation has finished;
     // its cleanup must never erase the identity of a newly started child.
     this.journal.checkRoot();
@@ -768,10 +773,26 @@ export class MaintenanceSupervisor {
         verifiedAt: null,
       };
       this.sendState();
+      this.observePhase();
       throw error;
     }
     this.sendState();
-    this.options.onTransition?.(this.status());
+    this.observePhase();
+    try {
+      this.options.onTransition?.(this.status());
+    } catch {
+      /* Observers do not decide whether a durable maintenance transition succeeded. */
+    }
+  }
+  private observePhase() {
+    const phase = this.journal.state.phase;
+    if (phase === this.observedPhase) return;
+    this.observedPhase = phase;
+    observe(
+      this.options.diagnostics,
+      { name: 'maintenance.phase', details: { phase } },
+      { component: 'server' },
+    );
   }
   private childControlFailed(child: ChildProcess, reason = 'application-disconnected') {
     if (child !== this.child) return;
@@ -2109,88 +2130,103 @@ export class MaintenanceSupervisor {
     }
   }
   private async verify() {
-    this.journal.assertNoPendingRestoreJobs();
-    assertNoPendingRestore(this.journal.databasePath);
-    if (
-      this.childReady ||
-      this.child?.exitCode === null ||
-      (this.journal.state.child && groupMembers(this.journal.state.child).length)
-    )
-      throw new Error('Stop the application before verifying its closed workspace.');
-    await this.journal.bindWorkspace();
-    this.journal.assertNoPendingRestoreJobs();
-    assertWorkspaceHandlesClosed(this.journal.databasePath);
-    const current = fileIdentity(this.journal.databasePath);
-    if (
-      this.journal.state.databaseIdentity &&
-      !sameFile(current, this.journal.state.databaseIdentity)
-    ) {
-      this.failure('generation-changed');
-      throw new Error(
-        'The configured dataset has changed. This maintenance control cannot activate replacements.',
-      );
-    }
-    const groupToken = randomUUID();
-    const worker = fork(fileURLToPath(new URL('./verify-worker.ts', import.meta.url)), [], {
-      env: {
-        ...process.env,
-        DATABASE_PATH: this.journal.databasePath,
-        SPINEL_PROCESS_GROUP_TOKEN: groupToken,
-      },
-      execArgv: [
-        '--max-old-space-size=64',
-        '--max-semi-space-size=4',
-        `--process-timeout=${Math.max(1, Math.ceil((this.options.budgets?.verifyMs ?? VERIFY_MS) / 1000))}s`,
-      ],
-      stdio: ['ignore', 'ignore', 'ignore', 'ipc'],
-      detached: true,
-    });
-    const workerIdentity = worker.pid ? processIdentity(worker.pid, groupToken) : null;
-    if (!workerIdentity) throw new Error('Recovery verification process did not start.');
-    let result = false;
-    const exited = new Promise<number | null>((resolveExit) => {
-      worker.on('message', (value: unknown) => {
-        if (object(value) && value.ok === true) result = true;
-      });
-      worker.once('error', () => resolveExit(null));
-      worker.once('exit', (code) => resolveExit(code));
-    });
-    // Covers process startup and every handoff/ack wait, not just SQLite work.
-    const timeout = setTimeout(() => {
-      try {
-        if (groupMembers(workerIdentity).length) process.kill(-workerIdentity.pid, 'SIGKILL');
-      } catch {
-        /* An inconclusive identity remains closed; never signal another group. */
-      }
-    }, this.options.budgets?.verifyMs ?? VERIFY_MS);
+    const started = performance.now();
+    let outcome: 'success' | 'failure' | 'refused' = 'refused';
     try {
-      this.transition({ verifier: workerIdentity });
-      const [exit] = await Promise.all([
-        exited,
-        shareWorkspaceOwnership(
-          worker,
-          this.journal.workspaceOwnership(),
-          this.options.budgets?.verifyMs ?? VERIFY_MS,
-        ),
-      ]);
+      this.journal.assertNoPendingRestoreJobs();
+      assertNoPendingRestore(this.journal.databasePath);
+      if (
+        this.childReady ||
+        this.child?.exitCode === null ||
+        (this.journal.state.child && groupMembers(this.journal.state.child).length)
+      )
+        throw new Error('Stop the application before verifying its closed workspace.');
+      outcome = 'failure';
+      await this.journal.bindWorkspace();
+      this.journal.assertNoPendingRestoreJobs();
       assertWorkspaceHandlesClosed(this.journal.databasePath);
-      if (!result || exit !== 0 || !sameFile(current, fileIdentity(this.journal.databasePath)))
-        throw new Error('The current workspace did not pass closed integrity verification.');
-      this.journal.acceptJournal();
-      this.transition({
-        phase: 'stopped',
-        databaseIdentity: current,
-        child: null,
-        verifier: null,
-        verifiedAt: this.now(),
-        lastFailure: null,
+      const current = fileIdentity(this.journal.databasePath);
+      if (
+        this.journal.state.databaseIdentity &&
+        !sameFile(current, this.journal.state.databaseIdentity)
+      ) {
+        this.failure('generation-changed');
+        throw new Error(
+          'The configured dataset has changed. This maintenance control cannot activate replacements.',
+        );
+      }
+      const groupToken = randomUUID();
+      const worker = fork(fileURLToPath(new URL('./verify-worker.ts', import.meta.url)), [], {
+        env: {
+          ...process.env,
+          DATABASE_PATH: this.journal.databasePath,
+          SPINEL_PROCESS_GROUP_TOKEN: groupToken,
+        },
+        execArgv: [
+          '--max-old-space-size=64',
+          '--max-semi-space-size=4',
+          `--process-timeout=${Math.max(1, Math.ceil((this.options.budgets?.verifyMs ?? VERIFY_MS) / 1000))}s`,
+        ],
+        stdio: ['ignore', 'ignore', 'ignore', 'ipc'],
+        detached: true,
       });
-    } catch (error) {
-      this.failure('verification-failed');
-      await this.stopGroup(workerIdentity, false).catch(() => {});
-      throw error;
+      const workerIdentity = worker.pid ? processIdentity(worker.pid, groupToken) : null;
+      if (!workerIdentity) throw new Error('Recovery verification process did not start.');
+      let result = false;
+      const exited = new Promise<number | null>((resolveExit) => {
+        worker.on('message', (value: unknown) => {
+          if (object(value) && value.ok === true) result = true;
+        });
+        worker.once('error', () => resolveExit(null));
+        worker.once('exit', (code) => resolveExit(code));
+      });
+      // Covers process startup and every handoff/ack wait, not just SQLite work.
+      const timeout = setTimeout(() => {
+        try {
+          if (groupMembers(workerIdentity).length) process.kill(-workerIdentity.pid, 'SIGKILL');
+        } catch {
+          /* An inconclusive identity remains closed; never signal another group. */
+        }
+      }, this.options.budgets?.verifyMs ?? VERIFY_MS);
+      try {
+        this.transition({ verifier: workerIdentity });
+        const [exit] = await Promise.all([
+          exited,
+          shareWorkspaceOwnership(
+            worker,
+            this.journal.workspaceOwnership(),
+            this.options.budgets?.verifyMs ?? VERIFY_MS,
+          ),
+        ]);
+        assertWorkspaceHandlesClosed(this.journal.databasePath);
+        if (!result || exit !== 0 || !sameFile(current, fileIdentity(this.journal.databasePath)))
+          throw new Error('The current workspace did not pass closed integrity verification.');
+        this.journal.acceptJournal();
+        this.transition({
+          phase: 'stopped',
+          databaseIdentity: current,
+          child: null,
+          verifier: null,
+          verifiedAt: this.now(),
+          lastFailure: null,
+        });
+      } catch (error) {
+        this.failure('verification-failed');
+        await this.stopGroup(workerIdentity, false).catch(() => {});
+        throw error;
+      } finally {
+        clearTimeout(timeout);
+      }
+      outcome = 'success';
     } finally {
-      clearTimeout(timeout);
+      observe(
+        this.options.diagnostics,
+        {
+          name: 'maintenance.verification',
+          details: { outcome, durationMs: Math.max(0, performance.now() - started) },
+        },
+        { component: 'server' },
+      );
     }
   }
   private applicationEnvironment() {

@@ -1,0 +1,23 @@
+{
+  "checkedAt": "2026-11-14T16:56:54.797944+00:00",
+  "source": "e0ba8a1bdbbc0234f6d39cac344ab2c355769146",
+  "parents": [
+    "df87eea061d9742404e58a4d6abdb7e3e0178f5a",
+    "87c34e30ed810e6789d876e55b23dcbb349fa506"
+  ],
+  "manifestPayloads": 9,
+  "sourceHashesVerified": 70,
+  "dependencyInputsVerified": 16,
+  "candidateLocalWorkspacesVerified": 7,
+  "installedSdkHashesVerified": 10,
+  "donorCleanAndUnchanged": true,
+  "mainTicketBookkeepingHistoryStorageExact": true,
+  "rootReadFullConflictDispositionsAndOriginalCheckLogs": true,
+  "observedChecks": {
+    "desktop": 166,
+    "syncNative": 85,
+    "typecheck": "passed"
+  },
+  "scope": "Full L remains pending final measurements, final-main integration, checks, reviews and current hosted acceptance. Original failures retained.",
+  "setupNote": "Initial payload reader attempted gzip as UTF8; switched by file encoding, no source or test changes."
+}
