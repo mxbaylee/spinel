@@ -262,6 +262,19 @@ its retained rows and counters are observations, not a complete operation census
 | `runtime.cpu`, `runtime.event-loop`                             | `src/server/diagnostics/runtime.ts` via existing minute health sampling: cumulative process user+system CPU delta in milliseconds; mean/max event-loop delay from a bounded 20 ms-resolution histogram, converted from nanoseconds to milliseconds. Each row states its actual monotonic window.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `src/server/diagnostics/runtime.test.ts`                                                                |
 | Existing Formula/job/memory/storage/server-sync observations    | Existing producers remain in place; registry changes retain schema-v1 names, units and exports. Legacy `document-save` remains readable; new producers use the two explicit save names.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | Existing diagnostics, Formula, health and sync suites                                                   |
 
+🔁 **File-list replay uses these same emitters.** `web/offline/replayHost.ts`
+attaches the existing native client and `OfflineSession` to the account shell's
+collector. Connection, queue, checkpoint, local durable-save and server-ack
+observations use `component: dashboard`, the authorized file/Space identifiers,
+and the fixed `/files` or `/spaces/:id` route. The nonvisual native pair does not
+emit `document-open`. Capture remains bound to its initiating mounted subscription
+and account/preparation lifetime; hidden, offline, retired and replaced-account
+sources cannot begin a new observation. Existing collection/session authorization,
+sampling and observer-failure isolation still apply, without another collector or
+persistent queue. `src/ui/offlineReplay.test.ts` covers those lifetime boundaries;
+`src/ui/offlinePersistence.test.ts` exercises the actual replay host, native client
+and durable checkpoint with enabled, absent and throwing observers.
+
 The native queue observer checks its one-second cadence and immediate empty
 transition before counting mutations or evaluating ages. Suppressed state
 publications do not build queue observations. Admitted observations use one scan

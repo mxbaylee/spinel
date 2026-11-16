@@ -1,0 +1,15 @@
+{
+  "name": "spn156-hit-ready-negative",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "--test",
+    "--test-concurrency=1",
+    "--test-name-pattern=named readiness rejects an otherwise interactable target",
+    "scripts/ci/desktop-pointer.test.ts"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 164,
+  "peakKiB": 0
+}

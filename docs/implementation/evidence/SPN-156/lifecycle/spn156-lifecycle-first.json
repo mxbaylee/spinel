@@ -1,0 +1,19 @@
+{
+  "name": "spn156-lifecycle-first",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/offlineReplay.test.ts",
+    "src/ui/offlineWriterHandoff.test.ts",
+    "src/ui/spinelSync.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn156-vitest-lifecycle"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 2794,
+  "peakKiB": 1097280
+}

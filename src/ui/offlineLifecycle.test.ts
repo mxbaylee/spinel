@@ -339,10 +339,18 @@ test('a downloaded viewer promotion keeps its writer for the current native chec
   let held = false;
   vi.stubGlobal('navigator', {
     locks: {
-      request: async (_name: string, _options: unknown, work: (lock: object) => Promise<void>) => {
+      request: async (
+        name: string,
+        _options: unknown,
+        work: (lock: object) => Promise<unknown>,
+      ) => {
+        if (name.startsWith('spinel-offline-replay-admission:')) return work({});
         held = true;
-        await work({});
-        held = false;
+        try {
+          return await work({});
+        } finally {
+          held = false;
+        }
       },
     },
   });
@@ -371,10 +379,18 @@ test('an account change during downloaded promotion releases the new writer with
   let held = false;
   vi.stubGlobal('navigator', {
     locks: {
-      request: async (_name: string, _options: unknown, work: (lock: object) => Promise<void>) => {
+      request: async (
+        name: string,
+        _options: unknown,
+        work: (lock: object) => Promise<unknown>,
+      ) => {
+        if (name.startsWith('spinel-offline-replay-admission:')) return work({});
         held = true;
-        await work({});
-        held = false;
+        try {
+          return await work({});
+        } finally {
+          held = false;
+        }
       },
     },
   });

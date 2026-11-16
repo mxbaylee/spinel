@@ -1,0 +1,15 @@
+{
+  "source": "40dee0d32cd3cce4bd9c1cbea74aeccdd1d83b47",
+  "tested": "eaaf75f393ab91d9fd1120cbff63c034b481bada",
+  "run": 43572863994,
+  "attempt": 1,
+  "job": 132380800458,
+  "artifact": 14105073087,
+  "artifactSha256": "c7887b140a624c9387eae654ca1a376cf0beee1e031739eeeba379acacf3b479",
+  "reservedArchiveTag": "archive/spn-156-validation-40dee0d3-20261114",
+  "reservedArchivePath": "docs/review-assets/spn-156-validation-40dee0d3/desktop-chrome-first",
+  "archivePublication": "Pending manager verification/publication; missing archive never means pass.",
+  "boundary": "visible save-details target intercepted by top-center native permission warning",
+  "firstProductTrigger": "Unresolved; no warning suppression or permission change",
+  "repairSource": "def39e338f9aab57e11a940aa1622b5015f1f930"
+}

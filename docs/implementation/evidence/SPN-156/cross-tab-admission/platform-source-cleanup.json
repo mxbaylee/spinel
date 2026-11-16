@@ -1,0 +1,10 @@
+{
+  "sources": {
+    "/tmp/spn156-lock-abort-probe.ts": "ca1b64c02c95bc58015359dac8c99b2b2330089a1b123b63d47f0e23caacd52f",
+    "/tmp/spn156-lock-abort-progress-probe.ts": "5c3eeada819a19e1ea01a03a48f8f6482a1d9479377cbe97ea7be7c8493df440",
+    "/tmp/spn156-locks-playwright.config.ts": "1352b2a189bfce064cdfeb0f85da4ce873aed1e2ccbf59df79057fd616729b0d",
+    "/Users/mxbaylee/projects/spinel-spn-156/e2e/offline-locks.spec.ts": "7ddad0697d6c44d2de44cfb40af91dee6868eb050c48b8c0dca786cc2745b5f5"
+  },
+  "serialLockPresent": false,
+  "processAudit": "Full raw process snapshot retained locally at /tmp/spinel-dependabot-2026-11-11/spn156-locks-capability-source-and-cleanup.json. Filter for Playwright CLI and playwright_chromiumdev_profile found no owned runner/browser candidates; no app process/server was started."
+}

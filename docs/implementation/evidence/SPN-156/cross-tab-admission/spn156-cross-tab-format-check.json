@@ -1,0 +1,22 @@
+{
+  "name": "spn156-cross-tab-format-check",
+  "args": [
+    "node",
+    "node_modules/prettier/bin/prettier.cjs",
+    "--check",
+    "web/offline/replayAdmission.ts",
+    "web/offline/replayHost.ts",
+    "web/offline/offlineStore.ts",
+    "src/ui/offlineWriterHandoff.test.ts",
+    "src/ui/offlinePersistence.test.ts",
+    "src/ui/offlineLifecycle.test.ts",
+    "e2e/offline-device.spec.ts",
+    "e2e/offline-sign-out.spec.ts",
+    "e2e/offline-locks.spec.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 436,
+  "peakKiB": 300448
+}

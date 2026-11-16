@@ -1,0 +1,14 @@
+{
+  "name": "spn156-main87-typecheck",
+  "args": [
+    "node",
+    "node_modules/typescript/bin/tsc",
+    "-p",
+    "."
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 8899,
+  "peakKiB": 1788528
+}

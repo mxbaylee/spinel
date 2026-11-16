@@ -1,0 +1,19 @@
+{
+  "name": "spn156-epoch-original-negative",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/offlineWriterHandoff.test.ts",
+    "-t",
+    "a denied writer epoch",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn156-epoch-negative-cache"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 2218,
+  "peakKiB": 972288
+}

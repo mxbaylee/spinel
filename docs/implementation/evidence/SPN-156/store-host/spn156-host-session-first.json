@@ -1,0 +1,19 @@
+{
+  "name": "spn156-host-session-first",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/offlinePersistence.test.ts",
+    "-t",
+    "actual background session|background admission|background host never binds",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn156-vitest-host"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 2307,
+  "peakKiB": 1032848
+}

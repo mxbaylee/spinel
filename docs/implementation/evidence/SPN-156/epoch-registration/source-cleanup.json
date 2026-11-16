@@ -1,0 +1,14 @@
+{
+  "parent": "32897ce33c7924835a2700955c182364fff50f44",
+  "base": "87c34e30ed810e6789d876e55b23dcbb349fa506",
+  "sources": {
+    "web/offline/offlineStore.ts": "c15b05c403522800a09fda143ab22ae27fcea3b8879d89c6c261f695d5ec01b7",
+    "src/ui/offlineWriterHandoff.test.ts": "8620a78f9fa22c4e979a4bbc0f92756575b39c64fad85c96c36ca2e914a16065"
+  },
+  "privateCaches": [
+    "/tmp/spn156-epoch-private-cache",
+    "/tmp/spn156-epoch-negative-cache"
+  ],
+  "serialLockPresent": false,
+  "ownedWorkloadCandidates": []
+}

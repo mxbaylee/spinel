@@ -1,0 +1,83 @@
+[WebServer] (node:50765) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+[WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+[WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+[WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+[WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+[WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+[WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+[WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+[WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+Running 2 tests using 1 worker
+
+(node:50933) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+[1/2] [sync-production] › e2e/offline-editing.spec.ts:53:3 › downloaded native editors › the file list replays queued Doc and Sheet edits without reopening either editor
+  1) [sync-production] › e2e/offline-editing.spec.ts:53:3 › downloaded native editors › the file list replays queued Doc and Sheet edits without reopening either editor 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+      101 |       await savedLocally(f.page);
+      102 |       await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
+    > 103 |       expect(pending((await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint)).toBe(true);
+          |                                                                                          ^
+      104 |       expect(pending((await stored(f.page, f.actor.id, sheet.id))?.outbox?.checkpoint)).toBe(true);
+      105 |       await expect(f.page.locator('.univer-container')).toHaveCount(0);
+      106 |       const sentBefore = f.network.outgoing.length;
+        at /Users/mxbaylee/projects/spinel-spn-156/e2e/offline-editing.spec.ts:103:90
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/sync-production/offline-editing-downloaded-2a31e-out-reopening-either-editor-sync-production/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/sync-production/offline-editing-downloaded-2a31e-out-reopening-either-editor-sync-production/error-context.md
+
+
+Testing stopped early after 1 maximum allowed failures.
+
+  1 failed
+    [sync-production] › e2e/offline-editing.spec.ts:53:3 › downloaded native editors › the file list replays queued Doc and Sheet edits without reopening either editor 
+  1 did not run
+  1 error was not a part of any test, see above for details
+{"name":"spn156-browser-first","args":["/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node","node_modules/@playwright/test/cli.js","test","e2e/offline-editing.spec.ts","--project=sync-production","--grep","file.list replay","--workers=1","--retries=0","--max-failures=1"],"code":1,"signal":null,"reason":null,"elapsedMs":9221,"peakKiB":1624000}

@@ -1,0 +1,4 @@
+Checking formatting...
+[warn] docs/implementation/evidence/SPN-156/integration-c525aa93/source-identity.json
+[warn] Code style issues found in the above file. Run Prettier with --write to fix.
+{"name":"spn156-groom-evidence-format","args":["node","node_modules/prettier/bin/prettier.cjs","--check","docs/implementation/SPN-156.md","docs/implementation/evidence/SPN-156/integration-c525aa93/README.md","docs/implementation/evidence/SPN-156/integration-c525aa93/source-identity.json"],"code":1,"signal":null,"reason":null,"elapsedMs":257,"peakKiB":197632}

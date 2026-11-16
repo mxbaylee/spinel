@@ -12,6 +12,7 @@ import { openExistingDatabase } from './existingDatabase.ts';
 import { releaseAccountRuntime } from './runtime.ts';
 import type { AccountRuntimeRequirement } from './runtime.ts';
 import { isAccessUpgrade } from '../../src/shared/accessUpgrade.ts';
+import { offlineReplayAdmission } from './replayAdmission.ts';
 
 /**
  * Account-scoped IndexedDB storage for documents downloaded on this device
@@ -334,6 +335,18 @@ const itemWriterChanges = new Map<string, AccountOfflineChange[]>();
 const itemWriterKey = (accountId: string, itemId: string) => JSON.stringify([accountId, itemId]);
 const temporaryItemWriters = new Map<string, Set<Promise<void>>>();
 const editorAdmissions = new Map<string, number>();
+const replayWriters = new Map<string, () => Promise<void>>();
+
+/** Reserve a same-tab replay lifetime before its asynchronous writer admission. */
+export function reserveOfflineReplay(accountId: string, itemId: string, stop: () => Promise<void>) {
+  const key = itemWriterKey(accountId, itemId);
+  if (editorAdmissions.has(key) || temporaryItemWriters.has(key) || replayWriters.has(key))
+    return undefined;
+  replayWriters.set(key, stop);
+  return () => {
+    if (replayWriters.get(key) === stop) replayWriters.delete(key);
+  };
+}
 
 function publishOfflineChange(detail: AccountOfflineChange) {
   window.dispatchEvent(new CustomEvent('spinel-offline-changed', { detail }));
@@ -753,9 +766,9 @@ export async function withOfflineCatalogLock<T>(
 }
 
 /**
- * Hand a same-tab maintenance writer to an opening editor. New maintenance
- * cannot slip into the handoff; other tabs still use the nonblocking Web Lock
- * admission and are never mistaken for a temporary operation we may await.
+ * Hand temporary work to an opening editor without admitting new maintenance.
+ * Cross-tab replay/foreground admission has a bounded FIFO handoff; the actual
+ * item writer stays nonblocking and never waits for a live editor's lifetime.
  */
 export async function withOfflineEditorAdmission<T>(
   accountId: string,
@@ -767,8 +780,20 @@ export async function withOfflineEditorAdmission<T>(
   editorAdmissions.set(key, (editorAdmissions.get(key) ?? 0) + 1);
   try {
     await Promise.all(temporaryItemWriters.get(key) ?? []);
-    verifyCurrent();
-    return await acquire();
+    if (!navigator.locks) {
+      verifyCurrent();
+      return await acquire();
+    }
+    return await offlineReplayAdmission().foreground(
+      accountId,
+      itemId,
+      verifyCurrent,
+      async () => {
+        await replayWriters.get(key)?.();
+      },
+      acquire,
+      'editor',
+    );
   } finally {
     const count = editorAdmissions.get(key)!;
     if (count === 1) editorAdmissions.delete(key);
@@ -787,6 +812,8 @@ export async function withOfflineItemWriter<T>(
   const key = itemWriterKey(accountId, itemId);
   if (editorAdmissions.has(key))
     throw new Error('Close this document in every tab before changing its device copy.');
+  // A denied storage fence must not leave a registered writer with no finally.
+  const verify = offlineEpoch();
   let finish!: () => void;
   const completed = new Promise<void>((resolve) => {
     finish = resolve;
@@ -796,16 +823,25 @@ export async function withOfflineItemWriter<T>(
   temporaryItemWriters.set(key, writers);
   let changes: AccountOfflineChange[] | undefined;
   try {
-    return await navigator.locks.request(
-      `spinel-offline:${accountId}:${itemId}`,
-      { ifAvailable: true },
-      async (lock) => {
-        if (!lock)
-          throw new Error('Close this document in every tab before changing its device copy.');
-        changes = [];
-        itemWriterChanges.set(key, changes);
-        return operation();
+    return await offlineReplayAdmission().foreground(
+      accountId,
+      itemId,
+      verify,
+      async () => {
+        await replayWriters.get(key)?.();
       },
+      () =>
+        navigator.locks.request(
+          `spinel-offline:${accountId}:${itemId}`,
+          { ifAvailable: true },
+          async (lock) => {
+            if (!lock)
+              throw new Error('Close this document in every tab before changing its device copy.');
+            changes = [];
+            itemWriterChanges.set(key, changes);
+            return operation();
+          },
+        ),
     );
   } finally {
     writers.delete(completed);

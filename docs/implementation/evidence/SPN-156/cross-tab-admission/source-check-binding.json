@@ -1,0 +1,30 @@
+{
+  "parent": "a42c6917ea2d5c75dcc7cfa34467b5a58d44a8d8",
+  "sources": {
+    "web/offline/replayAdmission.ts": "f31be5442b1fc9406c86f63736eb3eb23a65f945a42bb5c3c3693287d5ff8d8c",
+    "web/offline/replayHost.ts": "ba899e9ae3e292aa875bcf2eee1f7de64279ed442051c621d811af89d6c42d01",
+    "web/offline/offlineStore.ts": "9f8b64735e82fdc61b7c08b3c150fdd8e58d0f58000ab0f0103aba545e9afd18",
+    "src/ui/offlineWriterHandoff.test.ts": "522dfb053f2d411a01eec105f7edb1084d698ffcafe00aa0f9b44d04c043afa6",
+    "src/ui/offlinePersistence.test.ts": "a561a7378738702021f1fc9f1924fd03dede9619dbbe9910eebb8cdb2f296252",
+    "src/ui/offlineLifecycle.test.ts": "4be1073b3caafe00a199a096a46e57a2e939df8c009772413decfa2eac3563b8",
+    "e2e/offline-device.spec.ts": "e517f9b07a662371df1d4636fd779a9c5c26bf3cc89e1670fd8e9be600d46b77",
+    "e2e/offline-sign-out.spec.ts": "f3078977b9a36d7b917ac8854f02ddc51414f6a1fd25b78281740d998738b220",
+    "e2e/offline-locks.spec.ts": "d47d24e88d923734e4067a1fbefba586451819868b0cca85b12fbbce1e4f0d1a"
+  },
+  "compiler": "7.0.2",
+  "compilerLauncherSha256": "2219f428a7e55aaf1f7ad85b9b0f0cf5078aeb76ccc9a7c6036c92d48f492ffd",
+  "node": "26.13.0",
+  "privateVitestCache": "/tmp/spn156-cross-tab-cache",
+  "negativeCache": "/tmp/spn156-cross-tab-negative-cache",
+  "serialLockPresent": false,
+  "ownedSurvivors": [],
+  "limits": {
+    "rssKiB": 2097152,
+    "durationMs": 480000,
+    "typecheckEnvironment": {
+      "GOMEMLIMIT": "640MiB",
+      "GOGC": "50",
+      "GOMAXPROCS": "2"
+    }
+  }
+}
