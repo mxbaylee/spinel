@@ -611,11 +611,45 @@ async function updateWorker(page: Page) {
       };
       const timer = setTimeout(() => {
         record('timeout');
-        finish(
-          new Error(
-            `The emitted worker did not finish installing or activating. ${JSON.stringify(observations)}`,
-          ),
-        );
+        // SPN-166: a worker that installed but never activated is held by the
+        // old worker's in-flight event or by the shared runtime lock. Name the
+        // holders and waiters; the wait still fails exactly as before.
+        void (async () => {
+          // Lock names carry account and item ids and client ids are opaque, so
+          // keep only the name prefix before the first colon and number the clients. A 2 s race keeps
+          // a stuck query from replacing the 120 s error.
+          const ids = new Map<string, number>();
+          const ordinal = (clientId?: string) => {
+            if (!clientId) return null;
+            if (!ids.has(clientId)) ids.set(clientId, ids.size + 1);
+            return ids.get(clientId)!;
+          };
+          const shape = ({
+            name,
+            mode,
+            clientId,
+          }: {
+            name?: string;
+            mode?: string;
+            clientId?: string;
+          }) => ({
+            name: (name ?? '').split(':')[0],
+            mode,
+            client: ordinal(clientId),
+          });
+          const held = await Promise.race([
+            navigator.locks.query().then((snapshot) => ({
+              held: (snapshot.held ?? []).map(shape),
+              pending: (snapshot.pending ?? []).map(shape),
+            })),
+            new Promise<string>((resolve) => setTimeout(() => resolve('timed out'), 2_000)),
+          ]).catch(() => 'unavailable');
+          finish(
+            new Error(
+              `The emitted worker did not finish installing or activating. Locks ${JSON.stringify(held)}. ${JSON.stringify(observations)}`,
+            ),
+          );
+        })();
       }, 120_000);
       const controllerChanged = () => record('controllerchange');
       const finish = (value: Error | 'activated' | 'redundant') => {

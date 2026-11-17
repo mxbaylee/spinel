@@ -58,6 +58,8 @@ export default defineConfig({
           'json',
           { outputFile: `playwright-report/${project ?? 'all'}${shard ? `-${shard}` : ''}.json` },
         ],
+        // SPN-166: pair any connection reset with the owned server's state.
+        ['./e2e/reset-diagnostics-reporter.ts'],
       ]
     : 'line',
   // Recording every action/DOM snapshot distorts the real-time latency checks.

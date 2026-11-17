@@ -14,7 +14,7 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 
 | # | Ticket | Effort | Impact | Score | Waiting on |
 | --- | --- | --- | --- | --- | --- |
-| 1 | 🎲 [SPN-166](SPN-166.md) Stop the Playwright smoke jobs from flaking | 🌿 M | 🩷 L | 31 | — |
+| 1 | 🎲 [SPN-166](SPN-166.md) Stop the Playwright smoke jobs from flaking | 🌳 L | 🩷 L | 32 | — |
 | 2 | 🌷 [SPN-128](SPN-128.md) Reinstall the preserved original after an interrupted restore | 🌳 L | 💜 M | 22 | — |
 | 3 | 🔔 [SPN-163](SPN-163.md) Show which files still need to sync without asking for action | 🌳 L | 💜 M | 22 | — |
 | 4 | 🔕 [SPN-106](SPN-106.md) Avoid a protection warning when opening view-only Docs | 🌿 M | 💜 M | 21 | — |

@@ -154,6 +154,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       await page.getByRole('button', { name: 'Save version name' }).click();
       const original = page.getByRole('listitem').filter({ hasText: 'Original version' });
       await expect(original).toBeVisible();
+      const clickedAt = Date.now();
       const popup = page.waitForEvent('popup');
       await original.getByRole('link', { name: 'Preview version' }).click();
       preview = await popup;
@@ -162,12 +163,22 @@ for (const kind of ['sheet', 'doc'] as const) {
         .getByRole('button', { name: 'Close dialog', exact: true })
         .click();
       preview.setDefaultTimeout(15_000);
-      await expect(
-        preview.getByRole('heading', { name: 'Preview — Restore example' }),
-      ).toBeVisible();
+      // SPN-166: the heading names the loaded item, so it appears only once the
+      // popup has loaded the whole app and fetched the version. That is the same
+      // load the Restore button waits for. A default 5 s check ahead of the
+      // button's 30 s one was an unplanned shorter deadline (the load takes about
+      // 2.3 s locally; a slow CI runner may have exceeded 5 s). Wait for readiness
+      // under its one 30 s budget first; the heading is then already present.
       await expect(preview.getByRole('button', { name: 'Restore this version' })).toBeEnabled({
         timeout: 30_000,
       });
+      info.annotations.push({
+        type: 'preview-ready-ms',
+        description: String(Date.now() - clickedAt),
+      });
+      await expect(
+        preview.getByRole('heading', { name: 'Preview — Restore example' }),
+      ).toBeVisible();
       await expect(preview.getByRole('button', { name: 'Bold', exact: true })).toBeDisabled();
       await expect(
         preview.getByText('This content is protected. This action is not allowed.', {
