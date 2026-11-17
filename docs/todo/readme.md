@@ -14,14 +14,14 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 
 | # | Ticket | Effort | Impact | Score | Waiting on |
 | --- | --- | --- | --- | --- | --- |
-| 1 | 🌷 [SPN-128](SPN-128.md) Reinstall the preserved original after an interrupted restore | 🌳 L | 💜 M | 22 | — |
-| 2 | 🔔 [SPN-163](SPN-163.md) Show which files still need to sync without asking for action | 🌳 L | 💜 M | 22 | — |
-| 3 | 🔕 [SPN-106](SPN-106.md) Avoid a protection warning when opening view-only Docs | 🌿 M | 💜 M | 21 | — |
-| 4 | ⏳ [SPN-110](SPN-110.md) Expire diagnostic events after seven days | 🌿 M | 💜 M | 21 | — |
-| 5 | 📋 [SPN-154](SPN-154.md) Pasting an image keeps the page and the edit | 🌿 M | 💜 M | 21 | — |
-| 6 | ⏱️ [SPN-164](SPN-164.md) Shorten the sign-in check wait after reconnecting | 🌿 M | 💜 M | 21 | — |
-| 7 | 🧮 [SPN-165](SPN-165.md) Find why a phone Sheet shows no formula value | 🌿 M | 💜 M | 21 | — |
-| 8 | 🎲 [SPN-166](SPN-166.md) Stop the sync-production smoke job from flaking | 🌿 M | 💜 M | 21 | — |
+| 1 | 🎲 [SPN-166](SPN-166.md) Stop the Playwright smoke jobs from flaking | 🌿 M | 🩷 L | 31 | — |
+| 2 | 🌷 [SPN-128](SPN-128.md) Reinstall the preserved original after an interrupted restore | 🌳 L | 💜 M | 22 | — |
+| 3 | 🔔 [SPN-163](SPN-163.md) Show which files still need to sync without asking for action | 🌳 L | 💜 M | 22 | — |
+| 4 | 🔕 [SPN-106](SPN-106.md) Avoid a protection warning when opening view-only Docs | 🌿 M | 💜 M | 21 | — |
+| 5 | ⏳ [SPN-110](SPN-110.md) Expire diagnostic events after seven days | 🌿 M | 💜 M | 21 | — |
+| 6 | 📋 [SPN-154](SPN-154.md) Pasting an image keeps the page and the edit | 🌿 M | 💜 M | 21 | — |
+| 7 | ⏱️ [SPN-164](SPN-164.md) Shorten the sign-in check wait after reconnecting | 🌿 M | 💜 M | 21 | — |
+| 8 | 🧮 [SPN-165](SPN-165.md) Find why a phone Sheet shows no formula value | 🌿 M | 💜 M | 21 | — |
 | 9 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌳 L | 🤍 S | 12 | — |
 | 10 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 11 | — |
 | 11 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌿 M | 🤍 S | 11 | — |
