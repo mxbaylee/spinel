@@ -194,6 +194,12 @@ Credentials, names, mutations and document contents never appear in the fixed
 `collaboration.edit_denied` audit event. [Sharing](sharing.md) and
 [history](history.md) define the existing role and recovery rules.
 
+Revoking one login must close that login's actual sockets while another login
+keeps its socket, queued edit and saved native value. The revocation journey
+proves closure through a loopback relay, because Chromium closes a document's socket
+silently when navigation wins; the deadline, budget and fail-on-flaky gate are
+unchanged. See [SPN-161](implementation/SPN-161.md#-experiment-result-2026-11-16).
+
 Soft Trash keeps live content. Permanent deletion atomically queues the relevant
 native generations before metadata cascades. Purge invalidates loaded runtimes,
 removes their snapshots/revision receipts, and acknowledges the queue afterward;

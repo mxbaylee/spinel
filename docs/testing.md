@@ -135,6 +135,34 @@ removed execution and any pre-existing runtime inapplicability. Collection prove
 selection, not runtime behavior. A lower count or duration alone never justifies
 deletion, and emulation must not be described as physical-device evidence.
 
+## 🔌 Revocation closure evidence
+
+The revoked-login journey proves closure with a relay witness, not a browser event
+(see [collaboration](collaboration.md#access-lifecycle-and-recovery)). Keep these
+rules when changing it:
+
+- Navigation, a close-method call, a 401, a Playwright or CDP close event and
+  cleanup-only closure are never evidence by themselves. Only the physical close
+  of the exact tunnel counts, whoever initiated it (the relay also records whether
+  the server ended first, as a receipt); a reset or crashed server is marked failed and is never evidence.
+- Receipts keep ordinals, relative monotonic times, event kinds, counts and
+  status only: never URLs, request IDs, cookies, tickets, frame payloads or
+  authored content. They are bounded and are attached before cleanup, which is
+  reported separately from the first failure.
+- The 5,000 ms closure deadline, 60-second journey budget and fail-on-flaky gate
+  stay as they are. The two-login case runs once at retry zero in each existing
+  `development` and `production` owner, and configured retries are separate
+  failures. No sleeps, navigation blocker or deadline increase.
+- `e2e/socket-relay.spec.ts` needs only a browser, yet runs in both of those
+  owners on purpose: it is a small, app-independent boundary check and a failure
+  in either owner is a failure of that build's run.
+- In development Vite's HMR socket is refused as `unexpected`, so that count can
+  be non-zero there; production asserts zero.
+- Match is by count: the relay and CDP must agree how many sockets were
+  established before revocation, and every one of them must be closed with no
+  new one afterwards. A tunnel is not bound to one specific CDP socket, and when
+  navigation wins the relay proves physical closure but not who initiated it.
+
 ## Keep coverage routing complete
 
 Most new tests belong to an existing suite and need no new CI job. Check that
