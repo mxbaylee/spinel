@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import type { Frame, Page, WebSocket } from '@playwright/test';
+import type { SocketRelay } from './socket-relay.ts';
 
 type Checkpoint =
   | 'edit-held'
@@ -22,8 +23,18 @@ type EventKind =
 
 /** Chromium owns this journey. Observe its real socket independently of
  * Playwright's per-document map, which navigation clears before a late close.
+ * When navigation wins, Chromium closes the socket with no CDP or page event, so
+ * a relay that carries this page's traffic is the navigation-independent witness:
+ * every relay tunnel established before revocation must be fully closed, and the
+ * relay and browser must agree on how many were established. The match is by count,
+ * and it proves physical closure, not who initiated it. Without a relay the browser's
+ * own close event is the witness; the CDP-only owner tests keep exercising that path.
  * Never retain URLs, request IDs, credentials, frame payloads or document data. */
-export async function observeSessionRevocation(page: Page, socketURL: string) {
+export async function observeSessionRevocation(
+  page: Page,
+  socketURL: string,
+  relay?: Pick<SocketRelay, 'tunnels' | 'overflowed' | 'isStopped'>,
+) {
   const expected = new URL(socketURL);
   const session = await page.context().newCDPSession(page);
   const started = performance.now();
@@ -31,6 +42,8 @@ export async function observeSessionRevocation(page: Page, socketURL: string) {
   const pageSockets = new Map<WebSocket, () => void>();
   const events: { kind: EventKind; ms: number; socket?: number }[] = [];
   let targets: string[] | undefined;
+  let relayTargets: number[] | undefined;
+  let relayFrozen = 0;
   let received = 0;
   let overflow = false;
   let observerLost = false;
@@ -121,14 +134,27 @@ export async function observeSessionRevocation(page: Page, socketURL: string) {
     await cleanupSessionRevocation([{ name: 'observer', run: stop }]);
     throw error;
   }
+  const relayClosed = () => {
+    if (!relay || !relayTargets) return true;
+    if (relay.isStopped() || relay.overflowed()) return false;
+    const tunnels = relay.tunnels();
+    return (
+      tunnels.length === relayFrozen &&
+      relayTargets.every((ordinal) => tunnels[ordinal - 1]?.closedMs !== undefined)
+    );
+  };
+  // Without a relay the browser's own close event is the witness. With one, the
+  // relay's TCP close is: navigation may close the socket without any browser event.
   const isClosed = () =>
     !stopped &&
     !overflow &&
     !observerLost &&
     !reopened &&
     !!targets?.length &&
-    targets.every((id) => sockets.get(id)!.closed) &&
-    ![...sockets.values()].some((socket) => socket.opened && !socket.closed);
+    (relay
+      ? relayClosed()
+      : targets.every((id) => sockets.get(id)!.closed) &&
+        ![...sockets.values()].some((socket) => socket.opened && !socket.closed));
   return {
     beforeRevoke() {
       assert(
@@ -139,6 +165,17 @@ export async function observeSessionRevocation(page: Page, socketURL: string) {
         .filter(([, socket]) => socket.opened && !socket.closed)
         .map(([id]) => id);
       assert(targets.length > 0, 'Revocation requires an observed established socket.');
+      if (relay) {
+        relayTargets = relay
+          .tunnels()
+          .filter((tunnel) => tunnel.closedMs === undefined)
+          .map((tunnel) => tunnel.ordinal);
+        relayFrozen = relay.tunnels().length;
+        assert(
+          relayTargets.length === targets.length,
+          'The relay and browser disagree about the established sockets.',
+        );
+      }
       record('revocation-requested');
     },
     isClosed,
@@ -152,6 +189,13 @@ export async function observeSessionRevocation(page: Page, socketURL: string) {
       targetCount: targets?.length ?? 0,
       closedTargets: targets?.filter((id) => sockets.get(id)!.closed).length ?? 0,
       openSockets: [...sockets.values()].filter((socket) => socket.opened && !socket.closed).length,
+      relayTargets: relayTargets?.length ?? 0,
+      relayClosedTargets:
+        relay && relayTargets
+          ? relay
+              .tunnels()
+              .filter((t) => relayTargets!.includes(t.ordinal) && t.closedMs !== undefined).length
+          : 0,
       receivedFrames: received,
       overflow,
       observerLost,
@@ -167,7 +211,7 @@ export async function observeSessionRevocation(page: Page, socketURL: string) {
  * test's primary error. Callers report these finite phase names, never raw errors. */
 export async function cleanupSessionRevocation(
   phases: {
-    name: 'writes' | 'observer' | 'context' | 'database' | 'diagnostics';
+    name: 'writes' | 'observer' | 'context' | 'relay' | 'server' | 'database' | 'diagnostics';
     run: () => unknown | Promise<unknown>;
   }[],
 ) {

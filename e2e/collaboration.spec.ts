@@ -6,6 +6,7 @@ import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import type { BrowserContext } from '@playwright/test';
 import { cleanupSessionRevocation, observeSessionRevocation } from './session-revocation.ts';
+import { startSocketRelay, type SocketRelay } from './socket-relay.ts';
 import { expectNativeSheetValue } from './native-sheet-value.ts';
 
 test('two authenticated editors receive each other’s sheet edits without reloading', async ({
@@ -363,8 +364,6 @@ test('two document editors merge text and navigate to a collaborator selection',
 });
 
 test('revoking one login preserves another login’s queued edit and stops later broadcasts', async ({
-  page,
-  context,
   browser,
   baseURL,
 }, info) => {
@@ -378,6 +377,8 @@ test('revoking one login preserves another login’s queued edit and stops later
     workspace = new WorkspaceStore(auth);
   let ownerId: string | undefined, itemId: string | undefined;
   let second: BrowserContext | undefined;
+  let context: BrowserContext | undefined;
+  let relay: SocketRelay | undefined;
   let network: Awaited<ReturnType<typeof syncNetwork>> | undefined;
   let observation: Awaited<ReturnType<typeof observeSessionRevocation>> | undefined;
   let primaryFailed = false,
@@ -401,12 +402,22 @@ test('revoking one login preserves another login’s queued edit and stops later
     });
     itemId = item.id;
     const sessions = [auth.createSession(owner.id), auth.createSession(owner.id)];
+    const socketURL = new URL(`/sync-api/items/${item.id}/socket`, baseURL);
+    // The revoked login's traffic crosses this loopback relay. When navigation wins,
+    // Chromium closes the socket without any CDP or Playwright event, so the relay's
+    // TCP close is the navigation-independent witness (SPN-161).
+    relay = await startSocketRelay(baseURL!, socketURL.pathname);
+    context = await browser.newContext({
+      baseURL,
+      viewport: { width: 1280, height: 720 },
+      proxy: { server: relay.proxyServer },
+    });
+    const page = await context.newPage();
+    socketURL.protocol = socketURL.protocol === 'https:' ? 'wss:' : 'ws:';
     second = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
     network = await syncNetwork(second);
     const other = await second.newPage();
-    const socketURL = new URL(`/sync-api/items/${item.id}/socket`, baseURL);
-    socketURL.protocol = socketURL.protocol === 'https:' ? 'wss:' : 'ws:';
-    observation = await observeSessionRevocation(page, socketURL.href);
+    observation = await observeSessionRevocation(page, socketURL.href, relay);
     other.on('websocket', (socket) => {
       if (new URL(socket.url()).pathname !== socketURL.pathname) return;
       socket.on('close', () => {
@@ -506,6 +517,10 @@ test('revoking one login preserves another login’s queued edit and stops later
       (await context.request.get(`${baseURL}/api/items/${item.id}/sheet`)).status(),
     );
     expect(observation.frameCount()).toBe(boundary);
+    // Asserted once at the end: a failed tunnel can only appear while closing.
+    expect(relay.snapshot().failed).toBe(0);
+    // Vite's HMR socket is a foreign authority in development only.
+    if (test.info().project.name !== 'development') expect(relay.snapshot().unexpected).toBe(0);
     contractCompleted = true;
   } catch (error) {
     primaryFailed = true;
@@ -516,7 +531,15 @@ test('revoking one login preserves another login’s queued edit and stops later
     cleanupFailures = await cleanupSessionRevocation([
       { name: 'writes', run: () => network?.drainWrites() },
       { name: 'observer', run: () => observation?.stop() },
-      { name: 'context', run: () => second?.close() },
+      {
+        name: 'context',
+        run: async () => {
+          const results = await Promise.allSettled([context?.close(), second?.close()]);
+          if (results.some((result) => result.status === 'rejected'))
+            throw new Error('Owned context cleanup failed.');
+        },
+      },
+      { name: 'relay', run: () => relay?.stop() },
       {
         name: 'database',
         run: () => {
@@ -551,6 +574,7 @@ test('revoking one login preserves another login’s queued edit and stops later
                   primaryFailed,
                   cleanupFailures,
                   observation: observation?.snapshot() ?? null,
+                  relay: relay?.snapshot() ?? null,
                 },
                 null,
                 2,

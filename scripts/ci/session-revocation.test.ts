@@ -349,6 +349,122 @@ test('a stalled cleanup phase reaches its original bound and still releases late
   assert.equal(databaseClosed, true);
 });
 
+function fakeRelay() {
+  const tunnels: { ordinal: number; openedMs: number; closedMs?: number }[] = [];
+  let stopped = false;
+  let overflow = false;
+  return {
+    tunnels: () => tunnels.map((tunnel) => ({ ...tunnel })),
+    overflowed: () => overflow,
+    isStopped: () => stopped,
+    open: () => tunnels.push({ ordinal: tunnels.length + 1, openedMs: tunnels.length }),
+    close: (ordinal: number) => {
+      if (!stopped) tunnels[ordinal - 1].closedMs = 100 + ordinal;
+    },
+    stop: () => {
+      stopped = true;
+    },
+    overflow: () => {
+      overflow = true;
+    },
+  };
+}
+
+async function relayFixture(t: TestContext) {
+  const f = await fixture(t);
+  const relay = fakeRelay();
+  const observer = await observeSessionRevocation(f.page as unknown as Page, socketURL, relay);
+  t.after(() => observer.stop());
+  f.create('revoked');
+  f.open('revoked');
+  relay.open();
+  return { ...f, observer, relay };
+}
+
+test('relay witness accepts navigation-first closure that Chromium never reports to CDP', async (t) => {
+  const f = await relayFixture(t);
+  f.observer.beforeRevoke();
+  f.navigate();
+  assert.equal(f.observer.isClosed(), false);
+  f.relay.close(1);
+  assert.equal(f.observer.snapshot().closedTargets, 0);
+  assert.doesNotThrow(() => f.observer.assertRevoked(401));
+  assert.throws(() => f.observer.assertRevoked(200), /denied by the server/);
+  const snapshot = f.observer.snapshot();
+  assert.equal(snapshot.relayTargets, 1);
+  assert.equal(snapshot.relayClosedTargets, 1);
+});
+
+test('a browser close event, navigation or 401 cannot replace the relay witness', async (t) => {
+  const f = await relayFixture(t);
+  f.observer.beforeRevoke();
+  f.close('revoked');
+  f.navigate();
+  assert.equal(f.observer.snapshot().closedTargets, 1);
+  assert.throws(() => f.observer.assertRevoked(401), /observed socket close/);
+});
+
+test('relay and browser must agree on the established sockets before revocation', async (t) => {
+  const f = await relayFixture(t);
+  f.relay.open();
+  assert.throws(() => f.observer.beforeRevoke(), /disagree/);
+  assert.throws(() => f.observer.assertRevoked(401), /observed socket close/);
+});
+
+test('a tunnel closed before revocation is stale and an extra tunnel afterwards reopens', async (t) => {
+  const f = await relayFixture(t);
+  f.relay.close(1);
+  f.close('revoked');
+  f.relay.open();
+  f.create('second');
+  f.open('second');
+  f.observer.beforeRevoke();
+  assert.equal(f.observer.snapshot().relayTargets, 1);
+  f.relay.close(2);
+  assert.doesNotThrow(() => f.observer.assertRevoked(401));
+  f.relay.open();
+  assert.throws(() => f.observer.assertRevoked(401), /observed socket close/);
+});
+
+test('every relay target must close, and a new tunnel after revocation rejects acceptance', async (t) => {
+  const f = await relayFixture(t);
+  f.create('another');
+  f.open('another');
+  f.relay.open();
+  f.observer.beforeRevoke();
+  f.relay.close(1);
+  assert.throws(() => f.observer.assertRevoked(401), /observed socket close/);
+  f.relay.close(2);
+  assert.doesNotThrow(() => f.observer.assertRevoked(401));
+  f.relay.open();
+  assert.equal(f.observer.isClosed(), false);
+});
+
+test('cleanup-only relay stop, relay overflow and observer loss never pass', async (t) => {
+  for (const spoil of ['stop', 'overflow', 'observer-lost'] as const) {
+    const f = await relayFixture(t);
+    f.observer.beforeRevoke();
+    if (spoil === 'stop') {
+      f.relay.stop();
+      f.relay.close(1);
+    } else {
+      f.relay.close(1);
+      if (spoil === 'overflow') f.relay.overflow();
+      else f.session.emit('close');
+    }
+    assert.throws(() => f.observer.assertRevoked(401), /observed socket close/, spoil);
+  }
+});
+
+test('relay snapshots stay content-free and bounded', async (t) => {
+  const f = await relayFixture(t);
+  f.observer.beforeRevoke();
+  f.relay.close(1);
+  const json = JSON.stringify(f.observer.snapshot());
+  assert.ok(Buffer.byteLength(json) < 8 * 1024);
+  assert.equal(json.includes(socketURL), false);
+});
+
 test('revocation source and shared inputs keep unit/browser owners and fail-closed aggregates', () => {
   const head = 'b'.repeat(40);
   const event = {
@@ -357,6 +473,8 @@ test('revocation source and shared inputs keep unit/browser owners and fail-clos
   };
   for (const path of [
     'e2e/session-revocation.ts',
+    'e2e/socket-relay.ts',
+    'scripts/ci/socket-relay.test.ts',
     'e2e/collaboration.spec.ts',
     'e2e/native-sheet-value.ts',
     'e2e/sync-network.ts',
