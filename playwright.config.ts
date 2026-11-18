@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { defineConfig, devices } from '@playwright/test';
 
 const project = process.env.SPINEL_E2E_PROJECT;
@@ -58,8 +59,12 @@ export default defineConfig({
           'json',
           { outputFile: `playwright-report/${project ?? 'all'}${shard ? `-${shard}` : ''}.json` },
         ],
-        // SPN-166: pair any connection reset with the owned server's state.
-        ['./e2e/reset-diagnostics-reporter.ts'],
+        // SPN-166: pair any connection reset with the owned server's state. The
+        // paired doc baselines copy this config over older checkouts that do
+        // not have the reporter, so it loads only where the file exists.
+        ...(existsSync('./e2e/reset-diagnostics-reporter.ts')
+          ? [['./e2e/reset-diagnostics-reporter.ts'] as [string]]
+          : []),
       ]
     : 'line',
   // Recording every action/DOM snapshot distorts the real-time latency checks.
