@@ -163,6 +163,15 @@ rules when changing it:
   new one afterwards. A tunnel is not bound to one specific CDP socket, and when
   navigation wins the relay proves physical closure but not who initiated it.
 
+## 🎲 Smoke flake diagnostics
+
+A smoke case that fails its first attempt and passes on retry still fails the job; find the
+cause, do not add retries or budgets. The CI reporter `e2e/reset-diagnostics-reporter.ts`
+(see [SPN-166](implementation/SPN-166.md)) logs one content-free `econnreset-diagnostic` line per
+connection reset, paired with the owned server's state. The `offline-upgrade` timeout error lists
+the held and pending Web Locks. A wait that guards a page load shares that load's one budget:
+do not put a shorter default `expect` deadline ahead of it. Both diagnostics are observe-only.
+
 ## Keep coverage routing complete
 
 Most new tests belong to an existing suite and need no new CI job. Check that
