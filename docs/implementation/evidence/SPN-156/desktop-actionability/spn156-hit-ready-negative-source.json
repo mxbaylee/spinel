@@ -1,0 +1,8 @@
+{
+  "source": "def39e338f9aab57e11a940aa1622b5015f1f930",
+  "mutation": "Remove only named-control hit-test admission",
+  "originalSha256": "be3c3a510c6d18c751750eed633fea73102b45a629a246913b51a77c2e94ca34",
+  "mutantSha256": "8a98d7cc4b703a3ee08c9826e0b1aa6411af7507e9371fcc174a0d6d38911083",
+  "restoredSha256": "be3c3a510c6d18c751750eed633fea73102b45a629a246913b51a77c2e94ca34",
+  "exitCode": 1
+}

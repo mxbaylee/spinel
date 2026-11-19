@@ -272,6 +272,19 @@ additional event schema is emitted. Throwing observers remain isolated from
 recovery and verification errors. Existing maintenance supervisor/gate regressions
 own observer isolation; Linux restore crash coverage owns recovery durability.
 
+🔁 **File-list replay uses these same emitters.** `web/offline/replayHost.ts`
+attaches the existing native client and `OfflineSession` to the account shell's
+collector. Connection, queue, checkpoint, local durable-save and server-ack
+observations use `component: dashboard`, the authorized file/Space identifiers,
+and the fixed `/files` or `/spaces/:id` route. The nonvisual native pair does not
+emit `document-open`. Capture remains bound to its initiating mounted subscription
+and account/preparation lifetime; hidden, offline, retired and replaced-account
+sources cannot begin a new observation. Existing collection/session authorization,
+sampling and observer-failure isolation still apply, without another collector or
+persistent queue. `src/ui/offlineReplay.test.ts` covers those lifetime boundaries;
+`src/ui/offlinePersistence.test.ts` exercises the actual replay host, native client
+and durable checkpoint with enabled, absent and throwing observers.
+
 The native queue observer checks its one-second cadence and immediate empty
 transition before counting mutations or evaluating ages. Suppressed state
 publications do not build queue observations. Admitted observations use one scan

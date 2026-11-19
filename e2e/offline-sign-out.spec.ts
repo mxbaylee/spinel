@@ -114,6 +114,11 @@ test('offline exit locks both tabs, keeps exact Space changes, drains before an 
     await f.network.setOffline(true);
     await edit(f.page, 'doc', 'Kept through account exit 5581 ');
     await savedLocally(f.page);
+    await expect
+      .poll(async () =>
+        JSON.stringify((await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint.buffer),
+      )
+      .toContain('Kept through account exit 5581 ');
     const checkpoint = await stored(f.page, f.actor.id, f.item.id);
     expect(checkpoint?.outbox).toBeDefined();
     const initialCookie = (await f.context.cookies()).find(
@@ -227,11 +232,15 @@ test('offline exit locks both tabs, keeps exact Space changes, drains before an 
     expect(await stored(profile, f.actor.id, f.item.id)).toEqual(checkpoint);
     await expect(profile.getByText(f.item.name, { exact: true })).toHaveCount(0);
     // A fresh server-verified original account reclaims only its own unchanged queue.
+    f.network.holdResume();
     await f.context.addCookies([f.cookie(f.actor.id)]);
     await profile.goto('/');
     await expect(
       profile.getByRole('link', { name: `Recover ${f.item.name}`, exact: true }),
     ).toBeVisible();
+    await expect.poll(() => f.network.resumeHeld()).toBe(true);
+    expect(await stored(profile, f.actor.id, f.item.id)).toEqual(checkpoint);
+    expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toEqual([]);
     await f.network.setOffline(true);
     await profile.goto(f.href);
     await usableCanvas(profile);

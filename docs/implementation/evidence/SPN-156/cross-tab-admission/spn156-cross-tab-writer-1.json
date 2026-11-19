@@ -1,0 +1,17 @@
+{
+  "name": "spn156-cross-tab-writer-1",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/offlineWriterHandoff.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn156-cross-tab-cache"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 7463,
+  "peakKiB": 1059680
+}

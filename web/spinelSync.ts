@@ -72,7 +72,6 @@ export async function loadSpinelDocument(options: Options) {
   const { univer, unitId, itemId, spaceId, kind, signal, isCurrent } = options;
   const current = () => isCurrent() && !signal.aborted && (options.offline?.current ?? true);
   const path = documentSyncPath(itemId, spaceId);
-  if (options.offline) options.offline.diagnostics = options.diagnostics;
   const local = options.offline?.initial();
   const response = local
     ? undefined
@@ -123,13 +122,26 @@ export async function loadSpinelDocument(options: Options) {
   // canvas can take input or native capture can record a local mutation.
   await options.initializeAccess?.();
   if (!current()) throw closed();
+  attachSpinelSync(options, data.snapshot, data.revision, data.epoch ?? '');
+}
+
+/** Attach the existing authority/transport owner to a unit the native host created. */
+export function attachSpinelSync(
+  options: Options,
+  snapshot: IWorkbookData | IDocumentData,
+  revision: number,
+  epoch = '',
+) {
+  if (options.offline) options.offline.diagnostics = options.diagnostics;
   const binding = bind(
     options,
-    data.snapshot,
-    data.revision,
-    options.offline?.bundle ? (options.offline.bundle.maintenanceEpoch ?? '') : (data.epoch ?? ''),
+    snapshot,
+    revision,
+    options.offline?.bundle?.maintenanceEpoch ?? epoch,
   );
+  const { univer } = options;
   bindings.set(univer, binding);
+  return binding;
 }
 
 export function getSpinelSync(univer: Univer) {
@@ -157,6 +169,8 @@ function bind(
     options.offline.bundle.access === 'viewer';
   const path = documentSyncPath(itemId, spaceId);
   let disposed = false;
+  let quiet = false;
+  let stopping: Promise<void> | undefined;
   let denied = false;
   let started = false;
   let watcher: Watch | undefined;
@@ -225,7 +239,7 @@ function bind(
   const presenceListeners = new Set<(state: SyncPresenceState) => void>();
   const abort = new AbortController();
   const active = () =>
-    !disposed && !signal.aborted && isCurrent() && (options.offline?.current ?? true);
+    !disposed && !quiet && !signal.aborted && isCurrent() && (options.offline?.current ?? true);
   const request = (path: string, init?: RequestInit) =>
     options.offline ? options.offline.fetch(path, init) : fetch(path, init);
   const publishPresence = (next: SyncPresenceState) => {
@@ -1292,6 +1306,17 @@ function bind(
     if (bindings.get(univer) === binding) bindings.delete(univer);
   }
   const binding = {
+    /** Stop producers, join the durable checkpoint, then relinquish the writer. */
+    stop() {
+      if (stopping) return stopping;
+      quiet = true;
+      abort.abort();
+      endConnection();
+      clearTimeout(reconnectTimer);
+      clearInterval(accessTimer);
+      stopping = (disposed ? Promise.resolve() : client.persistNow()).finally(dispose);
+      return stopping;
+    },
     watch(next: Watch) {
       watcher = next;
       if (evidence && !state.pending)

@@ -72,13 +72,13 @@ sequence and [#90](implementation/SPN-039.md#legacy-decision-90-public-pro-recov
 
 After an initial online setup in the app context they will use:
 
-| Layer          | Local contents and behavior                                                                                                                                                                                                                                                                                        |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Application    | Shell, theme preference, icons and the code/assets needed by selected editors load without a server dependency.                                                                                                                                                                                                    |
-| Catalog        | Last-synchronized authorized folder/file metadata, personal tags and visible paths remain browsable; freshness and offline availability are clear. A failed refresh never becomes an apparently empty workspace.                                                                                                   |
-| Selected items | An explicit **Available offline on this device** action stores a complete existing Sheet/Doc and its required assets/images. Known undownloaded items remain identifiable but need a connection to open.                                                                                                           |
-| Changes        | Committed edits save locally, survive ordinary termination/reopen while offline, and sync while their document is open and connected. Reopen a retained file to resume its upload. If the live document changed meanwhile, edits become a conflicted copy rather than a merge. Local-save failure remains visible. |
-| Entry points   | Stable item links support direct launch; offline downloads and home-screen shortcuts remain distinct actions.                                                                                                                                                                                                      |
+| Layer          | Local contents and behavior                                                                                                                                                                                                                                                                                                                                       |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Application    | Shell, theme preference, icons and the code/assets needed by selected editors load without a server dependency.                                                                                                                                                                                                                                                   |
+| Catalog        | Last-synchronized authorized folder/file metadata, personal tags and visible paths remain browsable; freshness and offline availability are clear. A failed refresh never becomes an apparently empty workspace.                                                                                                                                                  |
+| Selected items | An explicit **Available offline on this device** action stores a complete existing Sheet/Doc and its required assets/images. Known undownloaded items remain identifiable but need a connection to open.                                                                                                                                                          |
+| Changes        | Committed edits save locally and survive ordinary termination/reopen while offline. Eligible downloaded Doc/Sheet edits sync when the running app reconnects in the editor or file list; pending clears only after acknowledgement and durable checkpoint cleanup. Incompatible work remains available for explicit recovery. Local-save failure remains visible. |
+| Entry points   | Stable item links support direct launch; offline downloads and home-screen shortcuts remain distinct actions.                                                                                                                                                                                                                                                     |
 
 The catalog is Spinel metadata, not the server's physical filesystem. Preserve
 personal filing and source permissions: never copy inaccessible owner ancestors,
@@ -625,15 +625,24 @@ SPN-058 semantics, independent of the server database; neither an open connectio
 nor a UI status alone proves them. A local-save failure stays visible until resolved.
 
 Sync is attempted on startup, on returning to the foreground and when the
-connection returns, while that document's editor is open. The file list currently does not
-sync pending edits: a document edited offline keeps its changes on the device until
-it is opened again while connected (own-phone run, 2026-11-13). This is a known
-pre-launch gap in the required app-running reconnect contract, tracked by
-[SPN-156](todo/SPN-156.md); SPN-090's closure does not complete it. Pending work stays
-visible until it actually succeeds. Background Sync may be an optional enhancement. It is not a
-requirement for Firefox/Android or Safari/iOS, and not a promise that the sync
-client runs while the app is closed. Follow the existing [history](history.md)
-and [collaboration](collaboration.md) contracts.
+connection returns. The file list shares one account-scoped replay owner for
+eligible downloaded Docs and Sheets, so each editor need not be reopened to
+deliver saved edits. It reuses the native sync client, exact account/item access
+checks and exclusive writer. Opening an editor or explicitly changing a device
+copy takes priority over replay and waits for its durable cleanup; another live
+editor is never displaced. A durable change arriving as a replay run releases its
+account lock remains scheduled, without polling a lock held by another tab.
+
+Read-only, incompatible, uncertain and recovery-required copies stay available
+through the existing attention/recovery flow. Replay cannot silently publish a
+recovery copy or upload new offline creations. Pending work stays visible until
+it actually succeeds. [SPN-156's implementation and evidence](implementation/SPN-156.md)
+retain the original 2026-11-13 phone failure, repaired-source verification and
+separate installed-phone acceptance obligation; SPN-090's closure does not fulfill
+that observation. This is running-app work, with no promise that a sync client
+runs after the app closes and no periodic polling or new OS Background Sync
+requirement. Follow the existing [history](history.md) and
+[collaboration](collaboration.md) contracts.
 
 ## Device data and storage lifecycle
 
@@ -717,8 +726,9 @@ Exact phone versions and tested build are unknown; the final known-offline sign-
 shortcut and every physical edit/reopen/replay/creation permutation are not proved.
 This method accepts lower integrated phone confidence without claiming emulation
 is an installed device. SPN-152 owns deferred real-iPhone verification; SPN-154
-image paste and SPN-156 file-list replay remain pre-launch work. SPN-156 keeps its
-separate bounded repaired-build installed reconnect observation. SPN-055 owns the
+image paste remains pre-launch work. SPN-156's file-list replay has its own
+separate bounded repaired-build installed reconnect observation, recorded in its
+[acceptance evidence](implementation/SPN-156.md). SPN-055 owns the
 shared lifecycle, and SPN-052 separately verifies ordinary macOS Chrome, Firefox
 and Safari tabs. Neither provider smoke nor later unrelated passes complete a
 missing product assertion.

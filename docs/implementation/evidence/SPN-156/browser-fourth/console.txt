@@ -1,0 +1,56 @@
+[WebServer] (node:52825) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)
+
+[WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+[WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+[WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+[WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+[WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+[WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+[WebServer] Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+[WebServer] Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+
+[WebServer] Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+Running 2 tests using 1 worker
+
+(node:52994) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+[1/2] [sync-production] › e2e/offline-editing.spec.ts:53:3 › downloaded native editors › the file list replays queued Doc and Sheet edits without reopening either editor
+serial: SIGTERM; killing the run.
+{"name":"spn156-browser-fourth","args":["/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node","node_modules/@playwright/test/cli.js","test","e2e/offline-editing.spec.ts","--project=sync-production","--grep","file.list replay","--workers=1","--retries=0","--max-failures=1"],"code":1,"signal":null,"reason":"Resource guard","elapsedMs":9746,"peakKiB":1798336}

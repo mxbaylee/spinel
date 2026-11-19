@@ -30,7 +30,10 @@ import {
   type PersistenceState,
 } from './deviceStorage.ts';
 import { createOfflineDocument, relocateOfflineCreation } from './creation.ts';
+import { watchOfflineReplay } from './replay.ts';
 import { answeredMessage, protectionDetail } from './protection.ts';
+import { useDiagnostics } from '../useDiagnostics.tsx';
+import { diagnosticSource } from '../operationDiagnostics.ts';
 
 export type OfflineMessage = {
   text: string;
@@ -43,14 +46,16 @@ export type OfflineMessage = {
 /**
  * This account's downloads on this device. Online, it downloads and removes
  * items, keeps the last-synced catalog once the device is prepared, and
- * refreshes each download in the background. In local mode it only reads.
+ * refreshes each download in the background. Local mode reads the retained
+ * catalog; account-scoped replay can commit queued edits after reconnecting.
  */
 export function useOfflineDownloads(
   user: OfflineUser,
   local: LocalStart | null | undefined,
   catalog: () => OfflineCatalog | null,
-  options: { spaceRoot?: SpaceFile } = {},
+  options: { spaceRoot?: SpaceFile; foregroundItemId?: string | null } = {},
 ) {
+  const diagnostics = useDiagnostics();
   const [downloads, setDownloads] = useState(
     () =>
       new Map(
@@ -91,6 +96,26 @@ export function useOfflineDownloads(
   latestCatalog.current = catalog;
   const latestRoot = useRef(options.spaceRoot);
   latestRoot.current = options.spaceRoot;
+  const replay = useRef<ReturnType<typeof watchOfflineReplay> | null>(null);
+  useLayoutEffect(() => {
+    const owner = watchOfflineReplay(user.id, options.foregroundItemId ?? null, (download) =>
+      diagnosticSource(diagnostics, {
+        component: 'dashboard',
+        fileId: download.itemId,
+        ...(download.spaceId
+          ? { spaceId: download.spaceId, route: '/spaces/:id' as const }
+          : { route: '/files' as const }),
+      }),
+    );
+    replay.current = owner;
+    return () => {
+      owner.dispose();
+      if (replay.current === owner) replay.current = null;
+    };
+  }, [user.id]);
+  useLayoutEffect(() => {
+    replay.current?.foreground(options.foregroundItemId ?? null);
+  }, [user.id, options.foregroundItemId]);
   // The server admits one transfer at a time; run refreshes and toggles in turn.
   const queue = useRef<Promise<unknown>>(Promise.resolve());
   function serially<T>(

@@ -20,6 +20,7 @@ import { comparable, pending } from '../../e2e/offline-fixture.ts';
 import { createDesktopBrowser } from './desktop-browser.ts';
 import type { DesktopBrowserKind, DesktopBrowserStart } from './desktop-browser.ts';
 import { createDesktopOfflineFixture } from './desktop-offline-fixture.ts';
+import { namedPointerTarget } from './desktop-pointer.ts';
 import { countOfflineImagePixels, offlineImagesPainted } from './offline-image-pixels.ts';
 
 const kind = process.argv[2] as DesktopBrowserKind;
@@ -75,12 +76,9 @@ async function until<T>(
 
 async function named(selector: string, name: string) {
   const index = await until(
-    () =>
-      browser.evaluate<number>(
-        `Array.from(document.querySelectorAll(${JSON.stringify(selector)})).findIndex(element => element.getClientRects().length && (element.getAttribute('aria-label') || element.textContent).trim().replace(/\\s+/g, ' ') === ${JSON.stringify(name)})`,
-      ),
+    () => browser.evaluate<number>(namedPointerTarget(selector, name)),
     (value) => value >= 0,
-    `Missing ${name}`,
+    `Named click target is missing, disabled or obscured: ${name}`,
   );
   await browser.click(selector, index);
 }

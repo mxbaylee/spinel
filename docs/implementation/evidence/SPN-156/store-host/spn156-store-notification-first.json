@@ -1,0 +1,17 @@
+{
+  "name": "spn156-store-notification-first",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/offlineTransactionErrors.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn156-vitest-store"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 1227,
+  "peakKiB": 515600
+}

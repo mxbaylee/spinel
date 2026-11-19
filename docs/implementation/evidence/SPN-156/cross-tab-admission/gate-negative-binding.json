@@ -1,0 +1,6 @@
+{
+  "positive": "f31be5442b1fc9406c86f63736eb3eb23a65f945a42bb5c3c3693287d5ff8d8c",
+  "mutant": "00d2144328e1df3cdbbb959f5bc45f56c5968882ceeaf1bc56fc74533a9a3b15",
+  "mutation": "Bypass replay shared admission gate; retain real item writer and foreground nonblocking acquisition.",
+  "restored": "f31be5442b1fc9406c86f63736eb3eb23a65f945a42bb5c3c3693287d5ff8d8c"
+}

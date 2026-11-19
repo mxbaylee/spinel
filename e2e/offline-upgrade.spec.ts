@@ -22,6 +22,7 @@ import { forwardUpgradeRequest } from './offline-upgrade-proxy.ts';
 import { verifyUpgradeResponseLifetime } from './offline-upgrade-lifetime.ts';
 import { startOfflineUpgradeObservation } from './offline-upgrade-observation.ts';
 import { syncNetwork } from './sync-network.ts';
+import { inflightReport, trackOldWorkers } from './worker-inflight.ts';
 
 // This project owns its sequential builds and its real server. No ordinary
 // smoke project should pay for another native editor or an extra app process.
@@ -611,11 +612,45 @@ async function updateWorker(page: Page) {
       };
       const timer = setTimeout(() => {
         record('timeout');
-        finish(
-          new Error(
-            `The emitted worker did not finish installing or activating. ${JSON.stringify(observations)}`,
-          ),
-        );
+        // SPN-166: a worker that installed but never activated is held by the
+        // old worker's in-flight event or by the shared runtime lock. Name the
+        // holders and waiters; the wait still fails exactly as before.
+        void (async () => {
+          // Lock names carry account and item ids and client ids are opaque, so
+          // keep only the name prefix before the first colon and number the clients. A 2 s race keeps
+          // a stuck query from replacing the 120 s error.
+          const ids = new Map<string, number>();
+          const ordinal = (clientId?: string) => {
+            if (!clientId) return null;
+            if (!ids.has(clientId)) ids.set(clientId, ids.size + 1);
+            return ids.get(clientId)!;
+          };
+          const shape = ({
+            name,
+            mode,
+            clientId,
+          }: {
+            name?: string;
+            mode?: string;
+            clientId?: string;
+          }) => ({
+            name: (name ?? '').split(':')[0],
+            mode,
+            client: ordinal(clientId),
+          });
+          const held = await Promise.race([
+            navigator.locks.query().then((snapshot) => ({
+              held: (snapshot.held ?? []).map(shape),
+              pending: (snapshot.pending ?? []).map(shape),
+            })),
+            new Promise<string>((resolve) => setTimeout(() => resolve('timed out'), 2_000)),
+          ]).catch(() => 'unavailable');
+          finish(
+            new Error(
+              `The emitted worker did not finish installing or activating. Locks ${JSON.stringify(held)}. ${JSON.stringify(observations)}`,
+            ),
+          );
+        })();
       }, 120_000);
       const controllerChanged = () => record('controllerchange');
       const finish = (value: Error | 'activated' | 'redundant') => {
@@ -857,6 +892,8 @@ test('interrupted emitted updates preserve exact native work, a live old client 
     expect(await stored(page, account.id, doc.id)).toEqual(retainedDoc);
     network.holdResume();
     await network.setOffline(false);
+    // SPN-167: follow the old worker's unfinished events so a stuck replacement names them.
+    await trackOldWorkers(context!);
     for (const fault of ['html-asset', 'wrong-html', 'redirect', 'interrupted-html'] as const) {
       server.fail(fault);
       expect(await updateWorker(page), fault).toBe('redundant');
@@ -897,7 +934,18 @@ test('interrupted emitted updates preserve exact native work, a live old client 
       .poll(async () => (await publicState(page)).clients[clientId])
       .toEqual([a.manifest.version]);
     server.fail();
-    expect(await updateWorker(page)).toBe('activated');
+    await trackOldWorkers(context!);
+    const activation = await updateWorker(page).catch(async (error: unknown) => {
+      // The wait fails exactly as before; the report only names what held it.
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(
+        `${message} Old worker unfinished events: ${await inflightReport(context!)}`,
+        {
+          cause: error,
+        },
+      );
+    });
+    expect(activation).toBe('activated');
     const complete = await publicState(page);
     expect(complete.builds.map((build) => build.version)).toEqual([
       a.manifest.version,
@@ -1034,6 +1082,11 @@ test('interrupted emitted updates preserve exact native work, a live old client 
     expect(await page.evaluate(() => localStorage.getItem('spinel.offline.account'))).toBeNull();
     await page.reload();
     await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
+    // SPN-167: the heading renders before the file list. The observer records private
+    // exposure only once a file name is in the DOM, so sample after both names show.
+    // The exact-equality assertion below is unchanged.
+    for (const name of [sheet.name, doc.name])
+      await expect(page.getByText(name, { exact: true }).first()).toBeVisible();
     expect(await page.evaluate(() => window.__spinelRuntimeHost?.manifest?.version)).toBe(
       a.manifest.version,
     );

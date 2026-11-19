@@ -1,0 +1,49 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-156
+
+stderr | src/ui/offlinePersistence.test.ts
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+stderr | src/ui/offlinePersistence.test.ts
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+stderr | src/ui/offlinePersistence.test.ts
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+ ❯ src/ui/offlinePersistence.test.ts (14 tests | 1 failed | 13 skipped) 14ms
+   × the actual background session drains before foreground admission, even when native cleanup throws (true) 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/ui/offlinePersistence.test.ts > the actual background session drains before foreground admission, even when native cleanup throws (true)
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/ui/offlinePersistence.test.ts:226:24
+    224|       committed.resolve();
+    225|       expect(await outcome).toBe(cleanupFails ? cleanupError : undefin…
+    226|       expect(released).toBe(true);
+       |                        ^
+    227|       await opening;
+    228|       expect(foreground.enabled).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 13 skipped (14)
+   Start at  21:04:20
+   Duration  617ms (import 73%, transform 24%, tests 2%)
+
+{"name":"spn156-host-old-cleanup-negative","args":["/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node","node_modules/vitest/vitest.mjs","run","src/ui/offlinePersistence.test.ts","-t","actual background session.*true","--cache=false","--fsModuleCachePath","/tmp/spn156-vitest-host"],"code":1,"signal":null,"reason":null,"elapsedMs":849,"peakKiB":746976}
