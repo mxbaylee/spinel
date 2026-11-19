@@ -28,13 +28,20 @@ const input = (databasePath: string, image: Image): ClosedRestoreInput => ({
   databaseSha256: image.sha256,
 });
 
+/** The validator guarantees a sealed image from `original-prepared` on; fail
+ * closed rather than assume it if a record ever reaches here without one. */
+function sealedFingerprint(image: Pick<RestorePreparedImage, 'fingerprint'> | undefined): string {
+  if (!image) throw new Error('Cold recovery evidence lacks a sealed image.');
+  return image.fingerprint;
+}
+
 /** A granted opening can have produced a WAL, but cannot accept public work.
  * Freeze only against an already sealed fingerprint. A mixed replacement is
  * never opened as SQLite, and a changed private trial remains unresolved. */
 function interruptedTrialFingerprint(record: RestoreJobRecord): string | undefined {
   for (const attempt of (record.recovery?.attempts.slice(0, -1) ?? []).toReversed()) {
     if (['original-trial-opening', 'original-trial-ready'].includes(attempt.phase))
-      return attempt.image!.fingerprint;
+      return sealedFingerprint(attempt.image);
     if (
       ['original-replacing', 'original-activated', 'original-trial-planned'].includes(attempt.phase)
     )
@@ -43,7 +50,7 @@ function interruptedTrialFingerprint(record: RestoreJobRecord): string | undefin
   if (record.phase === 'candidate-replacing' || record.phase === 'original-replacing')
     return undefined;
   if (['original-trial-opening', 'original-trial-ready'].includes(record.phase))
-    return record.execution!.rollback!.image!.fingerprint;
+    return sealedFingerprint(record.execution?.rollback?.image);
   if (['original-activated', 'original-trial-planned'].includes(record.phase)) return undefined;
   if (record.execution!.failure?.stop.fingerprint)
     return record.execution!.failure.stop.fingerprint;
