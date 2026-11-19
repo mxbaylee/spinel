@@ -42,3 +42,19 @@ export async function beginWriting(page: Page) {
   await page.touchscreen.tap(point.x, point.y);
   await expect(page.locator('[contenteditable="true"][data-u-comp="editor"]')).toBeFocused();
 }
+
+export async function selectFirstWord(page: Page) {
+  const point = await textPoint(page);
+  const touch = await page.context().newCDPSession(page);
+  try {
+    await touch.send('Input.dispatchTouchEvent', {
+      type: 'touchStart',
+      touchPoints: [{ x: point.centerX, y: point.y }],
+    });
+    // This duration is the native held-touch gesture, not a readiness sleep.
+    await page.waitForTimeout(650);
+    await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  } finally {
+    await touch.detach();
+  }
+}

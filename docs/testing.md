@@ -176,6 +176,54 @@ do not put a shorter default `expect` deadline ahead of it. These diagnostics ar
 
 ## Keep coverage routing complete
 
+### ⌨️ Request mobile Doc editing explicitly
+
+SPN-170's new editing matrix is **default off**. The existing phone, access,
+offline and performance owners keep their automatic coverage. Desktop editing
+is automatic in `e2e/documents.spec.ts` under `development` and `production`;
+both test builds enable the existing read-only selection observer.
+
+- **PR request:** add exactly `ci-doc-editing-mobile` to a same-repository PR.
+  The `labeled` event requests one run on the immutable head recorded in that
+  event. A later push, reopen or metadata edit with the label still present does
+  not request another run. Removing and re-adding it is a new explicit request;
+  preserve the earlier result and diagnose any failure before requesting again.
+- **Manual request:** run **💎 CI**, choose the intended branch/revision, and
+  explicitly select `run_doc_editing_mobile=true` (default `false`). The plan
+  records the resolved SHA. An unrelated manual/full run leaves this suite off.
+- **Local request**, using the pinned Node version and the shared serial/RSS
+  watchdog described in the [runbook](run-backlog.md#2-implement-one-ticket):
+
+  ```bash
+  VITE_SYNC_EVIDENCE=0 VITE_DOC_SELECTION_EVIDENCE=1 npm run build
+  SPINEL_DOC_EDITING_MOBILE=1 SPINEL_E2E_PROJECT=doc-editing-mobile npx playwright test --project=doc-editing-mobile
+  ```
+
+`@doc-editing-mobile` is excluded from every existing automatic owner. Only the
+exact runtime flag `SPINEL_DOC_EDITING_MOBILE=1` makes the dedicated project
+available. `ci-full`, `ci-performance`, schedules, main pushes, unknown diffs and
+full-plan fallbacks never enable it. Desktop editing is not behind this flag.
+
+The selected owner uses the production build with Chromium 390×844 touch/mobile
+emulation. It records native body/caret observations after real input, saved and
+reopened content, and separately labeled synthetic deletion events. It does not
+open a phone OS keyboard. The [bounded own-device checklist](implementation/SPN-170.md#-bounded-own-device-check)
+remains separate evidence.
+
+Inspect `ci-plan.json`, `doc-editing-mobile-result.json`, the exact collection
+and Playwright JSON reports, and each `doc-editing-evidence.json`. The worker
+checks out the requested source, permits no retries, and requires every selected
+case to pass on its first attempt. Missing cases, skips, cancellations, failed
+workers and source mismatches cannot pass the **Playwright smoke** aggregate.
+Unrequested work is explicitly inapplicable, never a mobile pass.
+
+The `doc-editing-mobile-evidence` artifact retains reports and first-failure
+traces. The separate `doc-editing-mobile-build` artifact contains the successful
+build's `dist/` and `doc-editing-mobile-build-revision.txt`, even if later editing
+tests fail. Both have 30-day retention; retain essential results and exact
+identities in the PR/implementation record before expiry. Neither artifact
+contains databases or authorizes deploying to production.
+
 Most new tests belong to an existing suite and need no new CI job. Check that
 their source and shared dependencies select that suite automatically. The
 maintained routing interfaces are:

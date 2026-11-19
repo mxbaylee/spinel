@@ -69,6 +69,7 @@ if (import.meta.main) {
       `mode=${plan.mode}`,
       `plan=${json}`,
       `plan_sha256=${digest}`,
+      `doc_editing_mobile_sha=${plan.docEditingMobileRequest?.sha ?? ''}`,
       ...Object.entries(plan.suites).map(
         ([id, suite]) => `${id.replaceAll('-', '_')}=${suite.selected}`,
       ),

@@ -742,6 +742,7 @@ export function DocEditor({
           render,
           univer.__getInjector().get(IContextMenuService),
           () => phoneInputLocked,
+          univer.__getInjector(),
         );
       if (
         render &&
@@ -797,7 +798,7 @@ export function DocEditor({
           });
           if (commands.length > 20) commands.shift();
         });
-        const observeSelection = () => {
+        const observeSelection = (event: Event) => {
           const range = selection.getActiveTextRange();
           const logical = logicalSelection.getSelectionInfo({
             unitId: data.unitId,
@@ -809,6 +810,26 @@ export function DocEditor({
           const viewport = selection.activeViewPort;
           const skeleton = render.with(DocSkeletonManagerService).getSkeleton();
           const progress = skeleton.getLayoutProgress();
+          const body = document.getDocumentDataModel().getSnapshot().body;
+          // The editing fixture can read a caret target before a real click or
+          // touch. This observer never sets a range or changes document content.
+          const request = (event as CustomEvent<{ offset?: number; includeBody?: boolean }>).detail;
+          const queryOffset = request?.offset;
+          const queryBounds =
+            Number.isSafeInteger(queryOffset) &&
+            queryOffset! >= 0 &&
+            queryOffset! <= (body?.dataStream.length ?? 0) - 2
+              ? calcDocRangePositions(
+                  {
+                    startOffset: queryOffset!,
+                    endOffset: queryOffset!,
+                    collapsed: true,
+                    segmentId: '',
+                    segmentPage: -1,
+                  },
+                  render,
+                )?.[0]
+              : undefined;
           window.dispatchEvent(
             new CustomEvent('spinel-doc-selection-evidence', {
               detail: {
@@ -893,7 +914,9 @@ export function DocEditor({
                       )?.[0]
                     : undefined,
                 scroll: render.scene.getViewport('viewMain')?.viewportScrollY ?? 0,
-                text: document.getDocumentDataModel().getSnapshot().body?.dataStream,
+                text: body?.dataStream,
+                body: request?.includeBody === true ? structuredClone(body) : undefined,
+                queryBounds,
               },
             }),
           );

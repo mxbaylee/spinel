@@ -1,0 +1,26 @@
+{
+  "startedAt": "2026-11-19T18:59:39.763Z",
+  "finishedAt": "2026-11-19T18:59:43.655Z",
+  "node": "v26.13.0",
+  "source": "19ca1f985c6431aacf08ee9155ff4d455d972f4c",
+  "cwd": "/workspace/scratch/3b49aaf47fc3/spinel",
+  "command": "node",
+  "args": [
+    "scripts/serial.ts",
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/docPhoneView.test.ts",
+    "-t",
+    "native key"
+  ],
+  "elapsedMs": 3891,
+  "initialAvailableKiB": 8902572,
+  "finalAvailableKiB": 8741824,
+  "samples": 39,
+  "peakKiB": 717068,
+  "memoryLimitKiB": 2097152,
+  "code": 0,
+  "signal": null,
+  "aborted": null
+}

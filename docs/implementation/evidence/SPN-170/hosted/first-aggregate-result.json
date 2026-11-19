@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "evidence": {
+    "planSha256": "e63850af52b86092dab197cd96ae7a8cacd9f59c1bee091edd2f406e47cd11cb",
+    "error": "Error: Incomplete coverage playwright-run: selected=true, result=failure",
+    "results": "{\"backlog\":\"success\",\"pull-request\":\"success\",\"lint\":\"success\",\"typecheck\":\"success\",\"unit-tests\":\"success\",\"lib-test-run\":\"success\",\"playwright-run\":\"failure\",\"container-smoke\":\"success\",\"restore-timing\":\"success\",\"sync-transition\":\"success\",\"doc-responsiveness\":\"success\",\"doc-callback-lifetimes\":\"success\",\"doc-editing-mobile\":\"failure\"}"
+  }
+}

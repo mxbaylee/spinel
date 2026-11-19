@@ -2,12 +2,15 @@ import { existsSync } from 'node:fs';
 import { defineConfig, devices } from '@playwright/test';
 
 const project = process.env.SPINEL_E2E_PROJECT;
+const docEditingMobile = process.env.SPINEL_DOC_EDITING_MOBILE === '1';
+if (project === 'doc-editing-mobile' && !docEditingMobile)
+  throw new Error('doc-editing-mobile requires SPINEL_DOC_EDITING_MOBILE=1.');
 // Only an explicit routine CI plan reduces duplicate phone executions. Local,
 // manual/full compatibility and unknown settings keep every combination.
 const syncExclusions =
   process.env.SPINEL_CI_FULL_COMPATIBILITY === 'false'
-    ? /@sync-soak|@phone-ordinary/
-    : /@sync-soak/;
+    ? /@sync-soak|@phone-ordinary|@doc-editing-mobile/
+    : /@sync-soak|@doc-editing-mobile/;
 const shard = process.env.SHARD?.replaceAll('/', '-of-');
 if (
   project &&
@@ -23,6 +26,7 @@ if (
     'supervised-restore',
     'doc-responsiveness',
     'doc-callback-lifetimes',
+    'doc-editing-mobile',
   ].includes(project)
 )
   throw new Error('SPINEL_E2E_PROJECT must name a configured browser project.');
@@ -46,6 +50,7 @@ export default defineConfig({
     project !== 'production' &&
     project !== 'doc-responsiveness' &&
     project !== 'doc-callback-lifetimes' &&
+    project !== 'doc-editing-mobile' &&
     project !== 'supervised-restore' &&
     !project?.startsWith('sync-')
       ? 1
@@ -73,6 +78,7 @@ export default defineConfig({
   projects: [
     {
       name: 'development',
+      grepInvert: /@doc-editing-mobile/,
       // Offline downloads need the production build's app-shell manifest.
       testIgnore: [
         '**/pwa.spec.ts',
@@ -91,6 +97,7 @@ export default defineConfig({
     },
     {
       name: 'production',
+      grepInvert: /@doc-editing-mobile/,
       testIgnore: [
         '**/pwa.spec.ts',
         '**/offline-editing.spec.ts',
@@ -176,6 +183,7 @@ export default defineConfig({
     },
     {
       name: 'mobile-https',
+      grepInvert: /@doc-editing-mobile/,
       testMatch: ['**/pwa.spec.ts', '**/doc-mobile.spec.ts'],
       use: {
         ...devices['Pixel 7'],
@@ -184,6 +192,27 @@ export default defineConfig({
         launchOptions: { args: ['--ignore-certificate-errors'] },
       },
     },
+    ...(docEditingMobile
+      ? [
+          {
+            name: 'doc-editing-mobile',
+            testMatch: '**/doc-mobile.spec.ts',
+            grep: /@doc-editing-mobile/,
+            // First failures stay failures; this opt-in suite is not a retry of
+            // ordinary phone coverage and never stands in for a physical keyboard.
+            retries: 0,
+            use: {
+              browserName: 'chromium' as const,
+              viewport: { width: 390, height: 844 },
+              deviceScaleFactor: 1,
+              isMobile: true,
+              hasTouch: true,
+              baseURL: 'http://localhost:3110',
+              trace: 'retain-on-failure' as const,
+            },
+          },
+        ]
+      : []),
   ],
   webServer: [
     {
@@ -199,7 +228,7 @@ export default defineConfig({
         HOST: '127.0.0.1',
         DATABASE_PATH: 'test-results/development/app.sqlite',
         VITE_SYNC_EVIDENCE: '0',
-        VITE_DOC_SELECTION_EVIDENCE: process.env.VITE_DOC_SELECTION_EVIDENCE ?? '0',
+        VITE_DOC_SELECTION_EVIDENCE: process.env.VITE_DOC_SELECTION_EVIDENCE ?? '1',
         VITE_DOC_RESPONSIVENESS_EVIDENCE: '0',
       },
       reuseExistingServer: false,
@@ -212,7 +241,7 @@ export default defineConfig({
         HOST: '127.0.0.1',
         DATABASE_PATH: 'test-results/production/app.sqlite',
         VITE_SYNC_EVIDENCE: '0',
-        VITE_DOC_SELECTION_EVIDENCE: process.env.VITE_DOC_SELECTION_EVIDENCE ?? '0',
+        VITE_DOC_SELECTION_EVIDENCE: process.env.VITE_DOC_SELECTION_EVIDENCE ?? '1',
         VITE_DOC_RESPONSIVENESS_EVIDENCE: '0',
       },
       reuseExistingServer: false,
@@ -290,6 +319,23 @@ export default defineConfig({
       ignoreHTTPSErrors: true,
       reuseExistingServer: false,
     },
+    ...(docEditingMobile
+      ? [
+          {
+            command: 'node --max-old-space-size=256 --max-semi-space-size=8 server/index.ts',
+            url: 'http://localhost:3110/sign-in',
+            env: {
+              PORT: '3110',
+              HOST: '127.0.0.1',
+              DATABASE_PATH: 'test-results/doc-editing-mobile/app.sqlite',
+              VITE_SYNC_EVIDENCE: '0',
+              VITE_DOC_SELECTION_EVIDENCE: '1',
+              VITE_DOC_RESPONSIVENESS_EVIDENCE: '0',
+            },
+            reuseExistingServer: false,
+          },
+        ]
+      : []),
   ]
     .filter(
       (server) =>
@@ -311,9 +357,11 @@ export default defineConfig({
                         ? ':3107/'
                         : project === 'doc-responsiveness'
                           ? ':3108/'
-                          : project === 'doc-callback-lifetimes'
-                            ? ':3109/'
-                            : ':3103/',
+                          : project === 'doc-editing-mobile'
+                            ? ':3110/'
+                            : project === 'doc-callback-lifetimes'
+                              ? ':3109/'
+                              : ':3103/',
           )),
     )
     .map((server) => {

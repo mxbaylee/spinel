@@ -1,0 +1,134 @@
+{
+  "run": 44591950167,
+  "job": 135800440968,
+  "requestedHead": "19ca1f985c6431aacf08ee9155ff4d455d972f4c",
+  "testedMerge": "5e3f7d9549300db863d9fe43446e4325252e8393",
+  "artifact": 14565526107,
+  "artifactSha256": "80a358b80fd08d0ab9e87a891ef11dac73088b41adff78f1a6ed0edbf8d1753f",
+  "suiteStats": {
+    "startTime": "2026-11-19T18:58:36.359Z",
+    "duration": 676281.609,
+    "expected": 54,
+    "skipped": 29,
+    "unexpected": 1,
+    "flaky": 1
+  },
+  "errors": [
+    {
+      "message": "Testing stopped early after 1 maximum allowed failures."
+    }
+  ],
+  "editingFirstAttempts": [
+    {
+      "title": "Doc editing inserts at start, middle and end and preserves Unicode and surrounding formatting",
+      "overallOutcome": "flaky",
+      "firstStatus": "failed",
+      "retry": 0,
+      "attempts": 2,
+      "startTime": "2026-11-19T19:08:54.030Z",
+      "duration": 9936,
+      "errors": [
+        "Error: expect(received).toEqual(expected) // deep equality\n\n- Expected  - 2\n+ Received  + 2\n\n  Array [\n-   23,\n-   23,\n+   20,\n+   27,\n  ]\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  337 |       return [range?.start, range?.end];\n  338 |     })\n> 339 |     .toEqual([offset, offset]);\n      |      ^\n  340 | }\n  341 |\n  342 | async function content(f: EditingFixture, text: string, caret?: number, keepBold = true) {\n    at placeCaret (/home/runner/work/spinel/spinel/e2e/doc-editing.ts:339:6)\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:465:7\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:231:7\n    at withFixtureCleanup (/home/runner/work/spinel/spinel/e2e/owned-process.ts:129:13)\n    at withEditingDoc (/home/runner/work/spinel/spinel/e2e/doc-editing.ts:140:3)\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:449:5"
+      ],
+      "attachments": [
+        {
+          "name": "doc-editing-evidence",
+          "contentType": "application/json",
+          "path": "/home/runner/work/spinel/spinel/test-results/development/documents-desktop-native-D-c5ba3--and-surrounding-formatting-development/attachments/doc-editing-evidence-0cb54e0d69c006ec0480c0d232b2d4c58001878b.json"
+        },
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "path": "/home/runner/work/spinel/spinel/test-results/development/documents-desktop-native-D-c5ba3--and-surrounding-formatting-development/test-failed-1.png"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "path": "/home/runner/work/spinel/spinel/test-results/development/documents-desktop-native-D-c5ba3--and-surrounding-formatting-development/error-context.md"
+        }
+      ]
+    },
+    {
+      "title": "Doc editing deletes and replaces a native selection with exact undo and redo",
+      "overallOutcome": "unexpected",
+      "firstStatus": "failed",
+      "retry": 0,
+      "attempts": 3,
+      "startTime": "2026-11-19T19:09:19.560Z",
+      "duration": 9150,
+      "errors": [
+        "Error: expect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 1\n\n  Array [\n    0,\n-   0,\n+   5,\n  ]\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  337 |       return [range?.start, range?.end];\n  338 |     })\n> 339 |     .toEqual([offset, offset]);\n      |      ^\n  340 | }\n  341 |\n  342 | async function content(f: EditingFixture, text: string, caret?: number, keepBold = true) {\n    at placeCaret (/home/runner/work/spinel/spinel/e2e/doc-editing.ts:339:6)\n    at selectWord (/home/runner/work/spinel/spinel/e2e/doc-editing.ts:409:5)\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:489:7\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:231:7\n    at withFixtureCleanup (/home/runner/work/spinel/spinel/e2e/owned-process.ts:129:13)\n    at withEditingDoc (/home/runner/work/spinel/spinel/e2e/doc-editing.ts:140:3)\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:487:5"
+      ],
+      "attachments": [
+        {
+          "name": "doc-editing-evidence",
+          "contentType": "application/json",
+          "path": "/home/runner/work/spinel/spinel/test-results/development/documents-desktop-native-D-952dd-on-with-exact-undo-and-redo-development/attachments/doc-editing-evidence-a3e253e12d257ac9a20c4042ec13681cf778a8e8.json"
+        },
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "path": "/home/runner/work/spinel/spinel/test-results/development/documents-desktop-native-D-952dd-on-with-exact-undo-and-redo-development/test-failed-1.png"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "path": "/home/runner/work/spinel/spinel/test-results/development/documents-desktop-native-D-952dd-on-with-exact-undo-and-redo-development/error-context.md"
+        }
+      ]
+    },
+    {
+      "title": "Doc editing inserts and joins paragraphs without deleting beyond document boundaries",
+      "overallOutcome": "skipped",
+      "firstStatus": null,
+      "retry": null,
+      "attempts": 0,
+      "startTime": null,
+      "duration": null,
+      "errors": [],
+      "attachments": []
+    },
+    {
+      "title": "Doc editing can delete all text and type again in an empty document",
+      "overallOutcome": "skipped",
+      "firstStatus": null,
+      "retry": null,
+      "attempts": 0,
+      "startTime": null,
+      "duration": null,
+      "errors": [],
+      "attachments": []
+    },
+    {
+      "title": "Doc editing respects viewer mutation denial",
+      "overallOutcome": "skipped",
+      "firstStatus": null,
+      "retry": null,
+      "attempts": 0,
+      "startTime": null,
+      "duration": null,
+      "errors": [],
+      "attachments": []
+    }
+  ],
+  "evidenceLimit": "Ordinary artifact configuration did not upload doc-editing-evidence JSON receipts; report attachment paths alone are not available receipts.",
+  "retainedFiles": {
+    "first-desktop-development-report.json.gz": {
+      "bytes": 370974,
+      "sha256": "5e5d671b8f696e1f1260f4db307668257c8f2ff63916840bfa91eb1304187cac",
+      "uncompressedBytes": 1495085,
+      "uncompressedSha256": "2347685db88a9f1a48db717646860ee606e12819461d51c1cfa6216799fe24fa"
+    },
+    "first-desktop-development-job.log.gz": {
+      "bytes": 19648,
+      "sha256": "85d4b53b2644910a19fc618bb39d556ce5183e4c8ceec84732e2d9189197c0ec",
+      "uncompressedBytes": 95922,
+      "uncompressedSha256": "8027f06f1f5f5a9ee9d8b6c4a004a03c9e1fc2331a477831abed48b11fa6858e"
+    }
+  },
+  "evidenceLimits": [
+    "Original detailed native/saved/event receipt JSON files were omitted from the ordinary artifact allowlist; report attachment paths do not supply the missing original bytes.",
+    "Retry-zero failures are preserved. Existing inherited retries were automatic and are not repaired passes; available retry traces are not first-attempt traces.",
+    "These results are on the detecting source and do not validate the product or fixture repair, a real software keyboard, or physical-phone acceptance."
+  ]
+}

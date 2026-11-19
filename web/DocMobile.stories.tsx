@@ -171,7 +171,12 @@ function MobileCanvas({
       const skeletons = render.with(DocSkeletonManagerService);
       const selections = render.with(DocSelectionRenderService);
       const contextMenus = univer.__getInjector().get(IContextMenuService);
-      const phoneInput = guardPhoneDocInput(render, contextMenus, () => readOnly);
+      const phoneInput = guardPhoneDocInput(
+        render,
+        contextMenus,
+        () => readOnly,
+        univer.__getInjector(),
+      );
       cleanups.push(() => phoneInput.dispose());
       const layout = JSON.stringify([data.documentStyle, data.settings]);
       const fixtureHost = host.current!;

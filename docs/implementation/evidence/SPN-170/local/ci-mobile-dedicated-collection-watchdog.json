@@ -1,0 +1,26 @@
+{
+  "startedAt": "2026-11-19T18:31:26.789Z",
+  "finishedAt": "2026-11-19T18:31:28.741Z",
+  "node": "v26.13.0",
+  "source": "dfd50502f456e0d02d2f0a36b0bfeff1db10fac6",
+  "cwd": "/workspace/scratch/3b49aaf47fc3/spinel",
+  "command": "node",
+  "args": [
+    "scripts/serial.ts",
+    "node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "--project=doc-editing-mobile",
+    "--list",
+    "--reporter=json"
+  ],
+  "elapsedMs": 1952,
+  "initialAvailableKiB": 9262380,
+  "finalAvailableKiB": 9245388,
+  "samples": 20,
+  "peakKiB": 422540,
+  "memoryLimitKiB": 2097152,
+  "code": 0,
+  "signal": null,
+  "aborted": null
+}

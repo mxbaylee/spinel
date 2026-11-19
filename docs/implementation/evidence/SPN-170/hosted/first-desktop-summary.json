@@ -1,0 +1,165 @@
+{
+  "run": 44591950167,
+  "job": 135800440624,
+  "requestedHead": "19ca1f985c6431aacf08ee9155ff4d455d972f4c",
+  "testedMerge": "5e3f7d9549300db863d9fe43446e4325252e8393",
+  "artifact": 14564797603,
+  "artifactSha256": "e3bb5d4ecf94a0378c9da983f942b995b05c4b3bb021bf0fa4d938d47aea252d",
+  "suiteStats": {
+    "startTime": "2026-11-19T18:52:27.885Z",
+    "duration": 801894.041,
+    "expected": 87,
+    "skipped": 3,
+    "unexpected": 4,
+    "flaky": 0
+  },
+  "editingFirstAttempts": [
+    {
+      "title": "Doc editing inserts at start, middle and end and preserves Unicode and surrounding formatting",
+      "status": "failed",
+      "retry": 0,
+      "attempts": 3,
+      "startTime": "2026-11-19T19:00:49.442Z",
+      "duration": 7554,
+      "errors": [
+        "Error: expect(received).toEqual(expected) // deep equality\n\n- Expected  - 2\n+ Received  + 2\n\n  Array [\n-   23,\n-   23,\n+   20,\n+   27,\n  ]\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  337 |       return [range?.start, range?.end];\n  338 |     })\n> 339 |     .toEqual([offset, offset]);\n      |      ^\n  340 | }\n  341 |\n  342 | async function content(f: EditingFixture, text: string, caret?: number, keepBold = true) {\n    at placeCaret (/home/runner/work/spinel/spinel/e2e/doc-editing.ts:339:6)\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:465:7\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:231:7\n    at withFixtureCleanup (/home/runner/work/spinel/spinel/e2e/owned-process.ts:129:13)\n    at withEditingDoc (/home/runner/work/spinel/spinel/e2e/doc-editing.ts:140:3)\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:449:5"
+      ],
+      "attachments": [
+        {
+          "name": "doc-editing-evidence",
+          "contentType": "application/json",
+          "path": "/home/runner/work/spinel/spinel/test-results/production/documents-desktop-native-D-c5ba3--and-surrounding-formatting-production/attachments/doc-editing-evidence-3db4a21e8d0fd562f2928e9991593f7c9df4a37b.json"
+        },
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "path": "/home/runner/work/spinel/spinel/test-results/production/documents-desktop-native-D-c5ba3--and-surrounding-formatting-production/test-failed-1.png"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "path": "/home/runner/work/spinel/spinel/test-results/production/documents-desktop-native-D-c5ba3--and-surrounding-formatting-production/error-context.md"
+        }
+      ]
+    },
+    {
+      "title": "Doc editing deletes and replaces a native selection with exact undo and redo",
+      "status": "failed",
+      "retry": 0,
+      "attempts": 3,
+      "startTime": "2026-11-19T19:01:17.389Z",
+      "duration": 7569,
+      "errors": [
+        "Error: expect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 1\n\n  Array [\n    0,\n-   0,\n+   5,\n  ]\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  337 |       return [range?.start, range?.end];\n  338 |     })\n> 339 |     .toEqual([offset, offset]);\n      |      ^\n  340 | }\n  341 |\n  342 | async function content(f: EditingFixture, text: string, caret?: number, keepBold = true) {\n    at placeCaret (/home/runner/work/spinel/spinel/e2e/doc-editing.ts:339:6)\n    at selectWord (/home/runner/work/spinel/spinel/e2e/doc-editing.ts:409:5)\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:489:7\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:231:7\n    at withFixtureCleanup (/home/runner/work/spinel/spinel/e2e/owned-process.ts:129:13)\n    at withEditingDoc (/home/runner/work/spinel/spinel/e2e/doc-editing.ts:140:3)\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:487:5"
+      ],
+      "attachments": [
+        {
+          "name": "doc-editing-evidence",
+          "contentType": "application/json",
+          "path": "/home/runner/work/spinel/spinel/test-results/production/documents-desktop-native-D-952dd-on-with-exact-undo-and-redo-production/attachments/doc-editing-evidence-d6379e56ff4f16d4298ab27bd023d3fd1857d6da.json"
+        },
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "path": "/home/runner/work/spinel/spinel/test-results/production/documents-desktop-native-D-952dd-on-with-exact-undo-and-redo-production/test-failed-1.png"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "path": "/home/runner/work/spinel/spinel/test-results/production/documents-desktop-native-D-952dd-on-with-exact-undo-and-redo-production/error-context.md"
+        }
+      ]
+    },
+    {
+      "title": "Doc editing inserts and joins paragraphs without deleting beyond document boundaries",
+      "status": "failed",
+      "retry": 0,
+      "attempts": 3,
+      "startTime": "2026-11-19T19:01:43.887Z",
+      "duration": 3193,
+      "errors": [
+        "Error: expect(received).toBe(expected) // Object.is equality\n\nExpected: \"journal\"\nReceived: \"journal\r\"\n\n  369 |         .map((run) => text.slice(run.st, run.ed))\n  370 |         .join(''),\n> 371 |     ).toBe('journal');\n      |       ^\n  372 |   }\n  373 |   return saved;\n  374 | }\n    at content (/home/runner/work/spinel/spinel/e2e/doc-editing.ts:371:7)\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:538:25\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:231:7\n    at withFixtureCleanup (/home/runner/work/spinel/spinel/e2e/owned-process.ts:129:13)\n    at withEditingDoc (/home/runner/work/spinel/spinel/e2e/doc-editing.ts:140:3)\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:520:5"
+      ],
+      "attachments": [
+        {
+          "name": "doc-editing-evidence",
+          "contentType": "application/json",
+          "path": "/home/runner/work/spinel/spinel/test-results/production/documents-desktop-native-D-0c8c4--beyond-document-boundaries-production/attachments/doc-editing-evidence-7ca0ce1435a3a51666adeb48aed9d25ca8fd56d0.json"
+        },
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "path": "/home/runner/work/spinel/spinel/test-results/production/documents-desktop-native-D-0c8c4--beyond-document-boundaries-production/test-failed-1.png"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "path": "/home/runner/work/spinel/spinel/test-results/production/documents-desktop-native-D-0c8c4--beyond-document-boundaries-production/error-context.md"
+        }
+      ]
+    },
+    {
+      "title": "Doc editing can delete all text and type again in an empty document",
+      "status": "failed",
+      "retry": 0,
+      "attempts": 3,
+      "startTime": "2026-11-19T19:01:57.825Z",
+      "duration": 7643,
+      "errors": [
+        "Error: expect(received).toEqual(expected) // deep equality\n\n- Expected  - 1\n+ Received  + 1\n\n  Array [\n    0,\n-   0,\n+   5,\n  ]\n\nCall Log:\n- Timeout 5000ms exceeded while waiting on the predicate\n\n  337 |       return [range?.start, range?.end];\n  338 |     })\n> 339 |     .toEqual([offset, offset]);\n      |      ^\n  340 | }\n  341 |\n  342 | async function content(f: EditingFixture, text: string, caret?: number, keepBold = true) {\n    at placeCaret (/home/runner/work/spinel/spinel/e2e/doc-editing.ts:339:6)\n    at selectWord (/home/runner/work/spinel/spinel/e2e/doc-editing.ts:409:5)\n    at withEditingDoc.singleParagraph (/home/runner/work/spinel/spinel/e2e/doc-editing.ts:555:9)\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:231:7\n    at withFixtureCleanup (/home/runner/work/spinel/spinel/e2e/owned-process.ts:129:13)\n    at withEditingDoc (/home/runner/work/spinel/spinel/e2e/doc-editing.ts:140:3)\n    at /home/runner/work/spinel/spinel/e2e/doc-editing.ts:548:5"
+      ],
+      "attachments": [
+        {
+          "name": "doc-editing-evidence",
+          "contentType": "application/json",
+          "path": "/home/runner/work/spinel/spinel/test-results/production/documents-desktop-native-D-2b919--again-in-an-empty-document-production/attachments/doc-editing-evidence-f5cf43e29e3e03d9a90a74738318b0b970d25047.json"
+        },
+        {
+          "name": "screenshot",
+          "contentType": "image/png",
+          "path": "/home/runner/work/spinel/spinel/test-results/production/documents-desktop-native-D-2b919--again-in-an-empty-document-production/test-failed-1.png"
+        },
+        {
+          "name": "error-context",
+          "contentType": "text/markdown",
+          "path": "/home/runner/work/spinel/spinel/test-results/production/documents-desktop-native-D-2b919--again-in-an-empty-document-production/error-context.md"
+        }
+      ]
+    },
+    {
+      "title": "Doc editing respects viewer mutation denial",
+      "status": "passed",
+      "retry": 0,
+      "attempts": 1,
+      "startTime": "2026-11-19T19:02:24.320Z",
+      "duration": 3462,
+      "errors": [],
+      "attachments": [
+        {
+          "name": "doc-editing-evidence",
+          "contentType": "application/json",
+          "path": "/home/runner/work/spinel/spinel/test-results/production/documents-desktop-native-D-fbdca-ects-viewer-mutation-denial-production/attachments/doc-editing-evidence-e44ece46c8f572c2a251907c9487421bf0573950.json"
+        }
+      ]
+    }
+  ],
+  "retainedFiles": {
+    "first-desktop-report.json.gz": {
+      "bytes": 373589,
+      "sha256": "9902ec2c71f1f2e0ec4d4f945da8b5fb232b24b36e0d4f5c3832b5b4b48d56cd",
+      "uncompressedBytes": 1563005,
+      "uncompressedSha256": "8e4dc4db00ad7fe852bca1e0b47d3405bca3997b19c03a61be9950535da8daf7"
+    },
+    "first-desktop-job.log.gz": {
+      "bytes": 25048,
+      "sha256": "9b59ef7430a923c980d89246e16b5b747320b23442f53d0104f4dc96175931e2",
+      "uncompressedBytes": 143347,
+      "uncompressedSha256": "1415f50ed729a0e5b2a19a8e87d7c5851adf519dc6b91d60f5679dbb0aa50491"
+    }
+  },
+  "evidenceLimits": [
+    "Original detailed native/saved/event receipt JSON files were omitted from the ordinary artifact allowlist; report attachment paths do not supply the missing original bytes.",
+    "Retry-zero failures are preserved. Existing inherited retries were automatic and are not repaired passes; available retry traces are not first-attempt traces.",
+    "These results are on the detecting source and do not validate the product or fixture repair, a real software keyboard, or physical-phone acceptance."
+  ]
+}

@@ -4,6 +4,9 @@ import { interruptibleNetwork } from './live-network.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
+import { registerDocEditingTests } from './doc-editing.ts';
+
+test.describe('desktop native Doc editing', () => registerDocEditingTests(false));
 
 test('document UI preserves rich text and embedded images through reload and offline recovery', async ({
   page,

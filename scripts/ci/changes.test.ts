@@ -6,6 +6,7 @@ import { join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import { changedPaths, documentationOnly } from './changes.ts';
+import { createHash } from 'node:crypto';
 
 test('only known documentation paths qualify, including the exact backlog JSON', () => {
   assert.equal(
@@ -25,6 +26,44 @@ test('only known documentation paths qualify, including the exact backlog JSON',
     assert.equal(documentationOnly(['docs/todo/SPN-035.md', path]), false, path);
   }
   assert.equal(documentationOnly([]), false);
+});
+
+test('manual CLI classification retains explicit mobile request through unknown-range fallback', () => {
+  const cwd = mkdtempSync(join(tmpdir(), 'spinel-ci-mobile-request-'));
+  const head = 'b'.repeat(40);
+  try {
+    for (const value of ['true', 'false']) {
+      const eventPath = join(cwd, `event-${value}.json`);
+      const outputPath = join(cwd, `output-${value}`);
+      writeFileSync(eventPath, JSON.stringify({ inputs: { run_doc_editing_mobile: value } }));
+      execFileSync(process.execPath, [fileURLToPath(new URL('./changes.ts', import.meta.url))], {
+        cwd,
+        env: {
+          ...process.env,
+          GITHUB_EVENT_NAME: 'workflow_dispatch',
+          GITHUB_EVENT_PATH: eventPath,
+          GITHUB_OUTPUT: outputPath,
+          GITHUB_SHA: head,
+        },
+      });
+      const planRaw = readFileSync(join(cwd, 'ci-plan.json'), 'utf8').trim();
+      const plan = JSON.parse(planRaw);
+      const output = readFileSync(outputPath, 'utf8');
+      assert.equal(plan.mode, 'full');
+      assert.equal(plan.paths, null);
+      assert.equal(plan.suites['doc-editing-mobile'].selected, value === 'true');
+      assert.equal(plan.docEditingMobileRequest?.sha ?? '', value === 'true' ? head : '');
+      assert.ok(output.split('\n').includes(`doc_editing_mobile=${value}`));
+      assert.ok(
+        output.split('\n').includes(`doc_editing_mobile_sha=${value === 'true' ? head : ''}`),
+      );
+      assert.ok(
+        output.includes(`plan_sha256=${createHash('sha256').update(planRaw).digest('hex')}`),
+      );
+    }
+  } finally {
+    rmSync(cwd, { recursive: true, force: true });
+  }
 });
 
 test('unavailable or unsupported event ranges require full validation', () => {

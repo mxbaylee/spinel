@@ -1,0 +1,24 @@
+{
+  "startedAt": "2026-11-19T18:24:48.591Z",
+  "finishedAt": "2026-11-19T18:24:51.867Z",
+  "node": "v26.13.0",
+  "source": "dfd50502f456e0d02d2f0a36b0bfeff1db10fac6",
+  "cwd": "/workspace/scratch/3b49aaf47fc3/spinel",
+  "command": "node",
+  "args": [
+    "scripts/serial.ts",
+    "node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "--config=playwright.spn170.local.config.ts"
+  ],
+  "elapsedMs": 3275,
+  "initialAvailableKiB": 9279212,
+  "finalAvailableKiB": 9191136,
+  "samples": 33,
+  "peakKiB": 558636,
+  "memoryLimitKiB": 2097152,
+  "code": 1,
+  "signal": null,
+  "aborted": null
+}

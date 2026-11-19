@@ -1,0 +1,24 @@
+{
+  "startedAt": "2026-11-19T18:25:36.143Z",
+  "finishedAt": "2026-11-19T18:25:37.151Z",
+  "node": "v26.13.0",
+  "source": "dfd50502f456e0d02d2f0a36b0bfeff1db10fac6",
+  "cwd": "/workspace/scratch/3b49aaf47fc3/spinel",
+  "command": "node",
+  "args": [
+    "scripts/serial.ts",
+    "node",
+    "--input-type=module",
+    "-e",
+    "import { chromium } from \"playwright\"; const browser = await chromium.launch({executablePath:\"/usr/bin/chromium\"}); try { const page=await browser.newPage(); await page.setContent(\"<input aria-label=probe>\"); await page.getByRole(\"textbox\").fill(\"abc\"); console.log(JSON.stringify({browser:browser.version(),input:await page.getByRole(\"textbox\").inputValue()})); } finally {await browser.close();}"
+  ],
+  "elapsedMs": 1008,
+  "initialAvailableKiB": 9266224,
+  "finalAvailableKiB": 9243328,
+  "samples": 10,
+  "peakKiB": 304500,
+  "memoryLimitKiB": 2097152,
+  "code": 1,
+  "signal": null,
+  "aborted": null
+}
