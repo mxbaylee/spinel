@@ -19,13 +19,14 @@ import {
   validRestoreJobRecord,
 } from './restore-jobs.ts';
 import type { RestoreJobRecord } from './restore-jobs.ts';
+import { coldRecoveryPriorGenerations, validRestoreColdRecovery } from './restore-cold-state.ts';
 import type { ColdRecoveryGrant, ColdRecoveryPhase } from './restore-cold-state.ts';
 import type { ColdRestoreCustody } from './restore-files.ts';
 import { restoreJobIntentFixture } from './restore-job-fixture.ts';
 import { restoreIntentHash } from './restore-job-intent.ts';
 import { restoreTrialReference } from './restore-trial.ts';
 import type { RestoreTrialPermit } from './restore-trial.ts';
-import { prepareColdRestoreOriginal } from './restore-cold.ts';
+import { interruptedTrialFingerprint, prepareColdRestoreOriginal } from './restore-cold.ts';
 import * as restoreFiles from './restore-files.ts';
 import {
   cleanupPlannedRestoreTrial,
@@ -668,3 +669,180 @@ linux(
     expect(f.jobs.read(record.intent.id)).toEqual(record);
   },
 );
+
+/** Pure records: no journal, process or platform, so these run on every host. */
+function pureRecords() {
+  const time = Date.now() - 120_000;
+  const intent = restoreJobIntentFixture(time);
+  intent.target = {
+    instanceId: randomUUID(),
+    generationId: randomUUID(),
+    epoch: randomUUID(),
+    databasePath: '/srv/spinel/data/workspace.sqlite',
+    identity: { device: '1', inode: '2' },
+  };
+  const image = (kind: string, char: string) => ({
+    directory: `.restore-${kind}-ABC123`,
+    bytes: 4096,
+    sha256: char.repeat(64),
+    fingerprint: char.repeat(64),
+  });
+  const source: RestoreJobRecord = {
+    version: 1,
+    revision: 20,
+    intent,
+    intentHash: restoreIntentHash(intent),
+    phase: 'candidate-replacing',
+    updatedAt: time + 4,
+    execution: {
+      epoch: randomUUID(),
+      child: { pid: 1234, start: '100', boot: randomUUID(), token: randomUUID() },
+      requestedAt: time,
+      stop: {} as never,
+      originals: {
+        id: intent.id,
+        identity: intent.target.identity,
+        original: {
+          'spinel.sqlite': { bytes: 4096, sha256: 'b'.repeat(64) },
+          'spinel.sqlite-wal': null,
+          'spinel.sqlite-shm': null,
+        },
+      },
+      freezeSlot: randomUUID(),
+      frozen: image('frozen', 'c'),
+      preparation: {
+        slot: randomUUID(),
+        preparedAt: time + 2,
+        candidate: image('reconciled', 'd'),
+        rollback: image('rollback', 'f'),
+      },
+      attempt: attemptIds(),
+    },
+  };
+  const attempt = (grantedAt: number) => ({
+    slot: randomUUID(),
+    grantedAt,
+    deadline: grantedAt + 60_000,
+    bootEpoch: randomUUID(),
+    priorGenerationId: intent.target.generationId,
+    phase: 'original-capture-planned' as ColdRecoveryPhase,
+    attempt: attemptIds(),
+    updatedAt: grantedAt + 1,
+  });
+  const recovered = (count: number): RestoreJobRecord => {
+    const attempts = [];
+    let at = source.updatedAt + 10;
+    for (let index = 0; index < count; index++, at += 10) attempts.push(attempt(at));
+    return {
+      ...structuredClone(source),
+      revision: source.revision + count,
+      updatedAt: attempts.at(-1)!.updatedAt,
+      recovery: {
+        sourceRevision: source.revision,
+        sourceUpdatedAt: source.updatedAt,
+        attempts,
+      },
+    };
+  };
+  return { source, recovered };
+}
+
+test('cold recovery history validation accepts exact histories and rejects each tamper', () => {
+  const { recovered } = pureRecords();
+  for (const count of [1, 2, 8]) expect(validRestoreColdRecovery(recovered(count))).toBe(true);
+  expect(validRestoreColdRecovery(recovered(9))).toBe(false);
+  const rejects = (change: (record: RestoreJobRecord) => void, count = 1) => {
+    const record = recovered(count);
+    change(record);
+    return validRestoreColdRecovery(record);
+  };
+  const last = (record: RestoreJobRecord) => record.recovery!.attempts.at(-1)!;
+  expect(rejects((record) => ((last(record) as { phase: string }).phase = 'unknown'))).toBe(false);
+  // A committed winner has no generation to replace and cannot be followed by a grant.
+  expect(rejects((record) => (last(record).phase = 'original-committed'))).toBe(false);
+  expect(rejects((record) => (record.recovery!.attempts[0]!.phase = 'original-committed'), 2)).toBe(
+    false,
+  );
+  expect(rejects((record) => (last(record).priorGenerationId = randomUUID()))).toBe(false);
+  expect(rejects((record) => (last(record).deadline = last(record).grantedAt + 600_001))).toBe(
+    false,
+  );
+  expect(rejects((record) => (last(record).grantedAt = record.recovery!.sourceUpdatedAt - 1))).toBe(
+    false,
+  );
+  expect(rejects((record) => (record.recovery!.sourceRevision = record.revision))).toBe(false);
+  expect(rejects((record) => (record.revision += 1))).toBe(false);
+  expect(rejects((record) => (record.updatedAt += 1))).toBe(false);
+  expect(
+    rejects((record) => {
+      (last(record) as unknown as Record<string, unknown>).extra = true;
+    }),
+  ).toBe(false);
+  // A reused slot or nonce from the source record is refused.
+  expect(rejects((record) => (last(record).slot = record.intent.id))).toBe(false);
+  expect(rejects((record) => (last(record).attempt.nonce = record.execution!.attempt!.nonce))).toBe(
+    false,
+  );
+  // No source plan to recover from: nothing is eligible.
+  expect(rejects((record) => delete record.execution!.originals)).toBe(false);
+});
+
+test('prior generations never include a committed winner or an unknown stage', () => {
+  const { source, recovered } = pureRecords();
+  const target = source.intent.target.generationId;
+  const planned = source.execution!.attempt!.generationId;
+  expect(coldRecoveryPriorGenerations(source)).toEqual([target]);
+  for (const phase of ['candidate-committed', 'original-committed', 'failed'])
+    expect(coldRecoveryPriorGenerations({ ...source, phase } as never)).toEqual([]);
+  expect(coldRecoveryPriorGenerations({ ...source, phase: 'trial-planned' })).toEqual([
+    target,
+    planned,
+  ]);
+  const record = recovered(1);
+  const previous = record.recovery!.attempts[0]!;
+  const prior = (phase: string) =>
+    coldRecoveryPriorGenerations(record, [{ ...previous, phase } as never]);
+  expect(prior('original-capture-planned')).toEqual([previous.priorGenerationId]);
+  expect(prior('original-trial-planned')).toEqual([
+    previous.priorGenerationId,
+    previous.attempt.generationId,
+  ]);
+  // Before the trial is planned only the prior generation could have opened.
+  expect(prior('original-activated')).toEqual([previous.priorGenerationId]);
+  for (const phase of ['original-trial-opening', 'original-trial-ready'])
+    expect(prior(phase)).toEqual([previous.attempt.generationId]);
+  expect(prior('original-committed')).toEqual([]);
+  expect(prior('original-unknown')).toEqual([]);
+});
+
+test('an interrupted trial is frozen only against an already sealed fingerprint', () => {
+  const { recovered } = pureRecords();
+  const sealed = { fingerprint: '7'.repeat(64) };
+  const withAttempts = (...phases: string[]) => {
+    const record = recovered(phases.length + 1);
+    phases.forEach((phase, index) => {
+      Object.assign(record.recovery!.attempts[index]!, { phase, image: sealed });
+    });
+    return record;
+  };
+  // A trial that opened privately froze its own image; a mixed or replacing
+  // history is never opened as SQLite, and a changed trial stays unresolved.
+  expect(interruptedTrialFingerprint(withAttempts('original-trial-opening'))).toBe(
+    sealed.fingerprint,
+  );
+  expect(interruptedTrialFingerprint(withAttempts('original-trial-ready'))).toBe(
+    sealed.fingerprint,
+  );
+  for (const phase of ['original-replacing', 'original-activated', 'original-trial-planned'])
+    expect(interruptedTrialFingerprint(withAttempts(phase))).toBeUndefined();
+  const missing = withAttempts('original-trial-opening');
+  delete missing.recovery!.attempts[0]!.image;
+  expect(() => interruptedTrialFingerprint(missing)).toThrow(/sealed image/);
+  const bare = recovered(1);
+  bare.recovery = undefined;
+  for (const phase of ['candidate-replacing', 'original-replacing'] as const)
+    expect(interruptedTrialFingerprint({ ...bare, phase })).toBeUndefined();
+  const rollback = { ...structuredClone(bare), phase: 'original-trial-opening' as const };
+  rollback.execution!.rollback = { image: sealed } as never;
+  expect(interruptedTrialFingerprint(rollback)).toBe(sealed.fingerprint);
+});

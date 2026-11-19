@@ -38,7 +38,7 @@ function sealedFingerprint(image: Pick<RestorePreparedImage, 'fingerprint'> | un
 /** A granted opening can have produced a WAL, but cannot accept public work.
  * Freeze only against an already sealed fingerprint. A mixed replacement is
  * never opened as SQLite, and a changed private trial remains unresolved. */
-function interruptedTrialFingerprint(record: RestoreJobRecord): string | undefined {
+export function interruptedTrialFingerprint(record: RestoreJobRecord): string | undefined {
   for (const attempt of (record.recovery?.attempts.slice(0, -1) ?? []).toReversed()) {
     if (['original-trial-opening', 'original-trial-ready'].includes(attempt.phase))
       return sealedFingerprint(attempt.image);

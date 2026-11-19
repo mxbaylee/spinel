@@ -7,6 +7,36 @@ import type { MaintenanceControlResult } from '../../src/shared/maintenance.ts';
 import type { ColdMaintenanceCommand } from '../../src/server/maintenance/supervisor.ts';
 import { uuidPattern } from '../../src/server/maintenance/journal.ts';
 
+const usage =
+  'Usage: node scripts/deploy/maintenance.ts status|pause|stop|verify|start|resume|recover-original [--operation UUID]';
+const actions = ['status', 'pause', 'stop', 'start', 'verify', 'resume', 'recover-original'];
+
+/** The supervisor serializes commands, so a recovery holds the control socket
+ * for up to its 600 s grant; its client waits slightly longer. */
+export const controlTimeoutMs = (action: ColdMaintenanceCommand['action']) =>
+  action === 'recover-original' ? 610_000 : 65_000;
+
+/** Validate argv (after the script name) into the exact control command. */
+export function parseControlArguments(args: string[]): ColdMaintenanceCommand {
+  const [action, option, value, ...extra] = args;
+  if (
+    !action ||
+    !actions.includes(action) ||
+    extra.length ||
+    (option !== undefined && (option !== '--operation' || !value || !uuidPattern.test(value))) ||
+    (action === 'status' && option !== undefined)
+  )
+    throw new Error(usage);
+  if (action !== 'status' && !value && !['pause', 'verify'].includes(action))
+    throw new Error('Use --operation with the exact operation ID from status.');
+  return action === 'status'
+    ? { action }
+    : {
+        action: action as Exclude<ColdMaintenanceCommand['action'], 'status'>,
+        operationId: value ?? randomUUID(),
+      };
+}
+
 export async function maintenanceControl(
   root: string,
   command: ColdMaintenanceCommand,
@@ -43,7 +73,7 @@ export async function maintenanceControl(
           'Content-Type': 'application/json',
           'Content-Length': Buffer.byteLength(payload),
         },
-        signal: AbortSignal.timeout(command.action === 'recover-original' ? 610_000 : 65_000),
+        signal: AbortSignal.timeout(controlTimeoutMs(command.action)),
       },
       (response) => {
         let bytes = 0;
@@ -75,31 +105,10 @@ export async function maintenanceControl(
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
-  const [action, option, value, ...extra] = process.argv.slice(2);
-  if (
-    !action ||
-    !['status', 'pause', 'stop', 'start', 'verify', 'resume', 'recover-original'].includes(
-      action,
-    ) ||
-    extra.length ||
-    (option !== undefined && (option !== '--operation' || !value || !uuidPattern.test(value))) ||
-    (action === 'status' && option !== undefined)
-  )
-    throw new Error(
-      'Usage: node scripts/deploy/maintenance.ts status|pause|stop|verify|start|resume|recover-original [--operation UUID]',
-    );
+  const command = parseControlArguments(process.argv.slice(2));
   const root = process.env.SPINEL_MAINTENANCE_ROOT;
   if (!root)
     throw new Error('Set SPINEL_MAINTENANCE_ROOT to the configured private recovery directory.');
-  if (action !== 'status' && !value && !['pause', 'verify'].includes(action))
-    throw new Error('Use --operation with the exact operation ID from status.');
-  const command =
-    action === 'status'
-      ? ({ action } as const)
-      : {
-          action: action as Exclude<ColdMaintenanceCommand['action'], 'status'>,
-          operationId: value ?? randomUUID(),
-        };
   const result = await maintenanceControl(root, command);
   console.log(JSON.stringify(result.status, null, 2));
 }

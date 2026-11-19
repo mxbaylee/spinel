@@ -240,7 +240,10 @@ cannot prove which generation is intended, so recovery is deliberate:
 
    Each command has a fixed time budget (two minutes in the standard supervisor)
    and its own immutable grant and output slot. A failed or disconnected command
-   is not completion: inspect status and restart the supervisor before retrying
+   is not completion: while a recovery runs, `status` and every other command
+   wait behind it (up to ten minutes), so a `status` that times out during a
+   recovery means it is still running, not that it failed. Inspect status and
+   restart the supervisor before retrying
    the same command/operation ID. Each retry retains earlier evidence and uses a
    new grant; at most eight attempts are retained for this operation. If the
    original already committed, the command only verifies/opens that selected
@@ -257,7 +260,6 @@ cannot prove which generation is intended, so recovery is deliberate:
    after the backup; tell the Owner and Collaborators before reopening and retain
    the evidence until recovery is checked. [SPN-128's decision](implementation/SPN-128.md)
    describes the authority and fingerprint boundary.
-
 
 ## Notices and time zones
 
