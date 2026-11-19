@@ -1,0 +1,25 @@
+{
+  "startedAt": "2026-11-19T18:32:11.062Z",
+  "finishedAt": "2026-11-19T18:32:21.302Z",
+  "node": "v26.13.0",
+  "source": "dfd50502f456e0d02d2f0a36b0bfeff1db10fac6",
+  "cwd": "/workspace/scratch/3b49aaf47fc3/spinel",
+  "command": "node",
+  "args": [
+    "scripts/serial.ts",
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "scripts/ci/doc-editing-mobile-result.test.ts",
+    "scripts/ci/doc-editing-mobile-collection.test.ts"
+  ],
+  "elapsedMs": 10240,
+  "initialAvailableKiB": 9267768,
+  "finalAvailableKiB": 9060676,
+  "samples": 103,
+  "peakKiB": 580576,
+  "memoryLimitKiB": 2097152,
+  "code": 0,
+  "signal": null,
+  "aborted": null
+}

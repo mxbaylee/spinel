@@ -1,0 +1,24 @@
+{
+  "startedAt": "2026-11-19T18:34:06.276Z",
+  "finishedAt": "2026-11-19T18:34:06.867Z",
+  "node": "v26.13.0",
+  "source": "dfd50502f456e0d02d2f0a36b0bfeff1db10fac6",
+  "cwd": "/workspace/scratch/3b49aaf47fc3/spinel",
+  "command": "node",
+  "args": [
+    "scripts/serial.ts",
+    "node",
+    "--test",
+    "--test-name-pattern=mobile worker wiring",
+    "scripts/ci/plan.test.ts"
+  ],
+  "elapsedMs": 590,
+  "initialAvailableKiB": 9258068,
+  "finalAvailableKiB": 9202168,
+  "samples": 6,
+  "peakKiB": 311452,
+  "memoryLimitKiB": 2097152,
+  "code": 0,
+  "signal": null,
+  "aborted": null
+}

@@ -18,7 +18,13 @@ import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { DocumentStore } from '../src/server/workspace/documents.ts';
 import { recordNativeSnapshots } from './sync-snapshot.ts';
-import { beginWriting, textPoint } from './doc-touch.ts';
+import { beginWriting, selectFirstWord, textPoint } from './doc-touch.ts';
+import { registerDocEditingTests } from './doc-editing.ts';
+
+if (process.env.SPINEL_DOC_EDITING_MOBILE === '1')
+  test.describe('on-demand native Doc editing', { tag: '@doc-editing-mobile' }, () => {
+    registerDocEditingTests(true);
+  });
 
 const tableExpression = `={${Array.from({ length: 30 }, (_, row) => `${row + 1},${row + 101},${row + 201}`).join(';')}}`;
 const saved = (page: Page) =>
@@ -69,23 +75,6 @@ interface DocSelectionEvidence {
   bounds?: { left: number; right: number; top: number; bottom: number };
   scroll: number;
   text: string;
-}
-
-async function selectFirstWord(page: Page) {
-  const point = await textPoint(page);
-  const touch = await page.context().newCDPSession(page);
-  try {
-    await touch.send('Input.dispatchTouchEvent', {
-      type: 'touchStart',
-      touchPoints: [{ x: point.centerX, y: point.y }],
-    });
-    // A genuine held touch crosses the native long-press threshold; do not
-    // substitute a programmatic text range for this selection interaction.
-    await page.waitForTimeout(650);
-    await touch.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
-  } finally {
-    await touch.detach();
-  }
 }
 
 // Chromium desktop automation does not open an OS keyboard. Drive the browser
