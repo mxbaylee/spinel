@@ -22,6 +22,7 @@ import { forwardUpgradeRequest } from './offline-upgrade-proxy.ts';
 import { verifyUpgradeResponseLifetime } from './offline-upgrade-lifetime.ts';
 import { startOfflineUpgradeObservation } from './offline-upgrade-observation.ts';
 import { syncNetwork } from './sync-network.ts';
+import { inflightReport, trackOldWorkers } from './worker-inflight.ts';
 
 // This project owns its sequential builds and its real server. No ordinary
 // smoke project should pay for another native editor or an extra app process.
@@ -891,6 +892,8 @@ test('interrupted emitted updates preserve exact native work, a live old client 
     expect(await stored(page, account.id, doc.id)).toEqual(retainedDoc);
     network.holdResume();
     await network.setOffline(false);
+    // SPN-167: follow the old worker's unfinished events so a stuck replacement names them.
+    await trackOldWorkers(context!);
     for (const fault of ['html-asset', 'wrong-html', 'redirect', 'interrupted-html'] as const) {
       server.fail(fault);
       expect(await updateWorker(page), fault).toBe('redundant');
@@ -931,7 +934,18 @@ test('interrupted emitted updates preserve exact native work, a live old client 
       .poll(async () => (await publicState(page)).clients[clientId])
       .toEqual([a.manifest.version]);
     server.fail();
-    expect(await updateWorker(page)).toBe('activated');
+    await trackOldWorkers(context!);
+    const activation = await updateWorker(page).catch(async (error: unknown) => {
+      // The wait fails exactly as before; the report only names what held it.
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(
+        `${message} Old worker unfinished events: ${await inflightReport(context!)}`,
+        {
+          cause: error,
+        },
+      );
+    });
+    expect(activation).toBe('activated');
     const complete = await publicState(page);
     expect(complete.builds.map((build) => build.version)).toEqual([
       a.manifest.version,
@@ -1068,6 +1082,11 @@ test('interrupted emitted updates preserve exact native work, a live old client 
     expect(await page.evaluate(() => localStorage.getItem('spinel.offline.account'))).toBeNull();
     await page.reload();
     await expect(page.getByRole('heading', { name: 'My files', exact: true })).toBeVisible();
+    // SPN-167: the heading renders before the file list. The observer records private
+    // exposure only once a file name is in the DOM, so sample after both names show.
+    // The exact-equality assertion below is unchanged.
+    for (const name of [sheet.name, doc.name])
+      await expect(page.getByText(name, { exact: true }).first()).toBeVisible();
     expect(await page.evaluate(() => window.__spinelRuntimeHost?.manifest?.version)).toBe(
       a.manifest.version,
     );
