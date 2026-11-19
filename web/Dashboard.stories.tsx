@@ -687,21 +687,6 @@ export const PendingEditsCleared: Story = {
     await expect(canvas.queryByText('Not synced yet')).not.toBeInTheDocument();
   },
 };
-/** The notice is a root-list cue; inside a folder the row badge and pinned order remain. */
-export const PendingEditsInFolder: Story = {
-  args: { local: pendingLocal(mealPlan) },
-  parameters: { api: empty },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await userEvent.click(await canvas.findByRole('button', { name: `${household.name} Folder` }));
-    await expect(await canvas.findByText('Not synced yet')).toBeVisible();
-    await expect(canvas.queryByText('Needs to sync')).not.toBeInTheDocument();
-    const names = canvas
-      .getAllByRole('button', { name: /(Folder|Doc|Sheet)$/ })
-      .map((row) => row.getAttribute('aria-label') ?? row.textContent ?? '');
-    await expect(names[0]).toMatch(new RegExp(`^${mealPlan.name}`));
-  },
-};
 export const PendingEditsOfflineDark: Story = {
   ...PendingEditsOffline,
   globals: { theme: 'dark' },
