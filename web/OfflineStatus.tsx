@@ -1,13 +1,27 @@
 import { AccessState } from './AccessState.tsx';
 import type { OfflineDownload } from './offline/offlineStore.ts';
+import { spaceCopies } from './offline/spaceCopies.ts';
 
 /** Saved edits that deliver by themselves; creations and retained work have their own states. */
 export const needsSync = (download?: OfflineDownload) =>
   Boolean(download?.pending && !download.retained && !download.creation);
 
+/** A Space has no edits of its own: its pages carry them, so any pending page copy counts. */
+export function itemNeedsSync(
+  item: { id: string; kind: string },
+  downloads: ReadonlyMap<string, OfflineDownload>,
+) {
+  return (
+    needsSync(downloads.get(item.id)) ||
+    (item.kind === 'space' &&
+      spaceCopies(downloads.values(), item.id).some((copy) => needsSync(copy)))
+  );
+}
+
 /** Pins files that still need to sync above everything else; the sort is stable. */
 export function pendingFirst<T>(items: readonly T[], needs: (item: T) => boolean): T[] {
-  return [...items].sort((a, b) => Number(needs(b)) - Number(needs(a)));
+  const pinned = new Map(items.map((item) => [item, Number(needs(item))]));
+  return [...items].sort((a, b) => pinned.get(b)! - pinned.get(a)!);
 }
 
 /** Informational only: ordinary unsynced edits ask nothing of the person. */

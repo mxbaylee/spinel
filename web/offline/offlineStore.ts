@@ -193,11 +193,13 @@ function storedCreationKnown(item: Record<string, unknown>, bundle: Record<strin
   );
 }
 
-/** Applies a pending-change notice to a known row. Delivery ends retained work, except for
- * unverifiable data, which stays pending and retained until a fresh summary says otherwise. */
+/** Applies a pending-change notice to a known row. New work starts ordinary, so it drops a stale
+ * retained mark until the summary is re-read; delivery leaves the mark alone (inert once nothing is
+ * pending), so a recovery record that outlives delivery never loses its Recover link. Unverifiable data
+ * stays pending and retained until a fresh summary says otherwise. */
 export function applyPendingChange(item: OfflineDownload, pending: boolean): OfflineDownload {
   const next = { ...item, pending: item.uncertain || pending };
-  if (!pending && !item.uncertain) delete next.retained;
+  if (pending && !item.pending && !item.uncertain) delete next.retained;
   return next;
 }
 
@@ -398,6 +400,12 @@ export function watchOfflineChanges(accountId: string, changed: (change: Offline
   };
 }
 
+/** A checkpoint that failed or awaits recovery needs a deliberate choice, not a silent retry. */
+export const retainsWork = (checkpoint: ClientCheckpoint) =>
+  checkpoint.failure !== undefined ||
+  checkpoint.recoverySnapshot !== undefined ||
+  Boolean(checkpoint.recoveryMissing);
+
 /** Validate identity before exposing a stored title; damaged records stay visible generically. */
 export function downloadSummary(
   value: unknown,
@@ -432,14 +440,7 @@ export function downloadSummary(
     (item.recovery !== undefined && item.outbox === undefined);
   const checkpoint = !uncertain && outbox ? (outbox.checkpoint as ClientCheckpoint) : undefined;
   const retained =
-    uncertain ||
-    item.recovery !== undefined ||
-    Boolean(
-      checkpoint &&
-      (checkpoint.failure !== undefined ||
-        checkpoint.recoverySnapshot !== undefined ||
-        checkpoint.recoveryMissing),
-    );
+    uncertain || item.recovery !== undefined || Boolean(checkpoint && retainsWork(checkpoint));
   return {
     ...(valid && object(bundle.appearance)
       ? { appearance: bundle.appearance as unknown as ItemAppearance }
@@ -1528,6 +1529,7 @@ export class OfflineStore {
     const completion = done(transaction);
     const items = transaction.objectStore('items');
     let pendingChanged = false;
+    let retainedChanged = false;
     let pending = false;
     try {
       const item = (await request(items.get(scope.item))) as StoredItem | undefined;
@@ -1559,6 +1561,10 @@ export class OfflineStore {
         !storedSnapshotShape(checkpoint.snapshot, item.bundle.kind, scope.unitId) ||
         hasOfflineEdits(item.outbox);
       pendingChanged = Boolean(previous.pending) !== pending;
+      // A failure or recovery written while already pending changes no pending flag,
+      // yet it moves the file from "sends by itself" to "needs a choice".
+      retainedChanged =
+        Boolean(previous.retained) !== (item.recovery !== undefined || retainsWork(checkpoint));
       if (imageFiles) {
         item.bundle.images = imageFiles.images;
         const images = transaction.objectStore('images');
@@ -1581,6 +1587,7 @@ export class OfflineStore {
     await completion;
     verifyCurrent();
     if (pendingChanged) offlineChanged(this.accountId, scope.item, pending);
+    else if (retainedChanged) offlineChanged(this.accountId, scope.item);
   }
   /** Fix retry identity, title and bytes before any request can publish a copy. */
   async beginRecovery(

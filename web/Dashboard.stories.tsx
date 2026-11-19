@@ -687,6 +687,28 @@ export const PendingEditsCleared: Story = {
     await expect(canvas.queryByText('Not synced yet')).not.toBeInTheDocument();
   },
 };
+/** Ordinary pending work and genuine recovery side by side: the notice counts only the first. */
+export const PendingEditsBesideRecovery: Story = {
+  args: {
+    local: {
+      ...pendingLocal(trip),
+      downloads: pendingLocal(trip).downloads.map((download) =>
+        download.itemId === roadmap.id ? { ...download, pending: true, retained: true } : download,
+      ),
+    },
+  },
+  parameters: { api: empty },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText('Needs to sync')).toBeVisible();
+    await expect(canvas.getByText(/1 file has changes saved on this device/)).toBeVisible();
+    await expect(canvas.getByText('Offline changes on this device')).toBeVisible();
+    await expect(canvas.getByRole('link', { name: `Recover ${roadmap.name}` })).toBeVisible();
+    await expect(
+      canvas.queryByRole('link', { name: `Recover ${trip.name}` }),
+    ).not.toBeInTheDocument();
+  },
+};
 export const PendingEditsOfflineDark: Story = {
   ...PendingEditsOffline,
   globals: { theme: 'dark' },

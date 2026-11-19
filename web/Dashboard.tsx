@@ -57,7 +57,7 @@ import type { OfflineCatalog, OfflineDownload, OfflineUser } from './offline/off
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
 import { OfflineAvailability, OfflineAvailabilityActions } from './offline/OfflineAvailability.tsx';
 import { OfflineRecoveryList } from './OfflineRecoveryEntry.tsx';
-import { needsSync, OfflineSyncNotice, pendingFirst } from './OfflineStatus.tsx';
+import { itemNeedsSync, OfflineSyncNotice, pendingFirst } from './OfflineStatus.tsx';
 import { spaceCopies } from './offline/spaceCopies.ts';
 import type { ItemAppearance } from '../src/shared/appearance.ts';
 import { CopyFileForm } from './CopyFile.tsx';
@@ -799,18 +799,11 @@ export function Dashboard({
       setBusy(false);
     }
   }
-  // A Space has no edits of its own: its pages carry them.
-  function itemNeedsSync(item: FileItem) {
-    return (
-      needsSync(offline.downloads.get(item.id)) ||
-      (item.kind === 'space' &&
-        spaceCopies(offline.downloads.values(), item.id).some((copy) => needsSync(copy)))
-    );
-  }
+  const needsSyncFor = (item: FileItem) => itemNeedsSync(item, offline.downloads);
   function offlineState(item: FileItem) {
     const creation = offline.downloads.get(item.id)?.creation;
     if (creation) return creation.problem ? 'needs-attention' : 'not-synced';
-    if (itemNeedsSync(item)) return 'not-synced';
+    if (needsSyncFor(item)) return 'not-synced';
     if (
       item.kind === 'space' &&
       spaceCopies(offline.downloads.values(), item.id).some((copy) => copy.available !== false)
@@ -997,7 +990,8 @@ export function Dashboard({
   const newKinds = FILE_KINDS.filter((kind) =>
     localCreation ? kind === 'sheet' || kind === 'doc' : kind !== 'space' || spacesEnabled,
   );
-  // Shared is already ordered by latest grant; alphabetizing would hide recent shares.
+  // Shared is ordered by latest grant, not alphabetized, so recent shares stay visible; files that
+  // still need to sync are then pinned above that order by pendingFirst.
   const orderedItems = sharedOpen
     ? [
         ...new Map(
@@ -1012,7 +1006,7 @@ export function Dashboard({
           a.name.localeCompare(b.name) ||
           a.id.localeCompare(b.id),
       );
-  const listedItems = pendingFirst(orderedItems, itemNeedsSync);
+  const listedItems = pendingFirst(orderedItems, needsSyncFor);
   return (
     <section ref={dropTarget} className="dashboard-content" aria-label="Your files">
       {!onPlaces && !framedEditor && (
