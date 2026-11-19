@@ -9,18 +9,21 @@ const copy = (
   name: string,
   pending: boolean,
   spaceId?: string,
+  retained = false,
 ): OfflineDownload => ({
   itemId: id(value),
   name,
   kind: spaceId ? 'sheet' : 'doc',
   ...(spaceId ? { spaceId } : {}),
   pending,
+  ...(retained ? { retained: true } : {}),
   readOnly: false,
   revision: 7,
   downloadedAt: Date.UTC(2026, 9, 27, 14, 35),
 });
-const ordinary = copy(1, 'Autumn travel plans', true);
-const child = copy(2, 'Workshop budget', true, id(10));
+const ordinary = copy(1, 'Autumn travel plans', true, undefined, true);
+const syncing = copy(5, 'Weekend packing list', true);
+const child = copy(2, 'Workshop budget', true, id(10), true);
 const clean = copy(3, 'Saved research notes', false);
 
 const meta = {
@@ -59,6 +62,16 @@ const checkCopies: NonNullable<Story['play']> = async ({ canvasElement }) => {
 };
 
 export const PendingOrdinaryAndSpace: Story = { play: checkCopies };
+export const OrdinaryPendingOffersNoRecovery: Story = {
+  args: { downloads: [syncing, clean] },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.queryByRole('region', { name: 'Offline changes on this device' }),
+    ).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('link')).not.toBeInTheDocument();
+  },
+};
 export const Dark: Story = { ...PendingOrdinaryAndSpace, globals: { theme: 'dark' } };
 export const CleanDownloads: Story = {
   args: { downloads: [clean] },
@@ -92,6 +105,7 @@ export const LongTitlePhone: Story = {
         'Workshop planning — travel, accessibility, accommodation and shared research notes for the October gathering',
         true,
         id(10),
+        true,
       ),
     ],
   },

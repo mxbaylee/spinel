@@ -27,3 +27,15 @@
 .offline-recovery-entry {
   padding: 24px;
 }
+
+.offline-sync-notice {
+  margin-block: 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  background: var(--sp-panel);
+  color: var(--sp-muted);
+}
+.offline-sync-notice strong {
+  color: var(--sp-accent);
+}

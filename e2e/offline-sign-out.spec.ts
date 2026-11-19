@@ -235,9 +235,12 @@ test('offline exit locks both tabs, keeps exact Space changes, drains before an 
     f.network.holdResume();
     await f.context.addCookies([f.cookie(f.actor.id)]);
     await profile.goto('/');
+    // Ordinary saved edits are informational: the file is listed as not yet
+    // synced, and no recovery action is offered.
+    await expect(profile.getByRole('status').filter({ hasText: 'Needs to sync' })).toBeVisible();
     await expect(
       profile.getByRole('link', { name: `Recover ${f.item.name}`, exact: true }),
-    ).toBeVisible();
+    ).toHaveCount(0);
     await expect.poll(() => f.network.resumeHeld()).toBe(true);
     expect(await stored(profile, f.actor.id, f.item.id)).toEqual(checkpoint);
     expect(f.network.outgoing.filter((frame) => frame.type === 'submit')).toEqual([]);

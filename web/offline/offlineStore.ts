@@ -44,6 +44,10 @@ export type OfflineDownload = {
   revision: number;
   downloadedAt: number;
   pending?: boolean;
+  /** Saved work that needs a deliberate choice (recover, export or discard) rather
+   * than ordinary delivery on reconnect: unverifiable data, an in-progress copy,
+   * a failed replay or retained recovery state. Pending work without it syncs by itself. */
+  retained?: boolean;
   /** A record alone is not proof that its images and public runtime still exist. */
   available?: boolean;
   problem?: string;
@@ -187,6 +191,14 @@ function storedCreationKnown(item: Record<string, unknown>, bundle: Record<strin
     object(item.outbox) &&
     item.outbox.creation === true
   );
+}
+
+/** Applies a pending-change notice to a known row. Delivery ends retained work, except for
+ * unverifiable data, which stays pending and retained until a fresh summary says otherwise. */
+export function applyPendingChange(item: OfflineDownload, pending: boolean): OfflineDownload {
+  const next = { ...item, pending: item.uncertain || pending };
+  if (!pending && !item.uncertain) delete next.retained;
+  return next;
 }
 
 export function isKnownOfflineOutbox(value: unknown): value is OfflineOutbox {
@@ -418,6 +430,16 @@ export function downloadSummary(
     Boolean(scopeMismatch) ||
     (item.outbox !== undefined && !isKnownOfflineOutbox(item.outbox)) ||
     (item.recovery !== undefined && item.outbox === undefined);
+  const checkpoint = !uncertain && outbox ? (outbox.checkpoint as ClientCheckpoint) : undefined;
+  const retained =
+    uncertain ||
+    item.recovery !== undefined ||
+    Boolean(
+      checkpoint &&
+      (checkpoint.failure !== undefined ||
+        checkpoint.recoverySnapshot !== undefined ||
+        checkpoint.recoveryMissing),
+    );
   return {
     ...(valid && object(bundle.appearance)
       ? { appearance: bundle.appearance as unknown as ItemAppearance }
@@ -436,6 +458,7 @@ export function downloadSummary(
       item.recovery !== undefined ||
       item.creation !== undefined ||
       Boolean(outbox && checkpointHasEdits(outbox.checkpoint as ClientCheckpoint)),
+    ...(retained ? { retained: true } : {}),
     ...(!uncertain && item.creation !== undefined
       ? {
           creation: {

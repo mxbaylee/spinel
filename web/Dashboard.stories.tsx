@@ -646,6 +646,70 @@ export const CreatedOffline: Story = {
     ).not.toBeInTheDocument();
   },
 };
+// A copy of the first download for another item, so any listed file can carry saved edits.
+const downloadFor = (item: { id: string; name: string }, pending: boolean) => ({
+  ...local.downloads[0]!,
+  itemId: item.id,
+  name: item.name,
+  kind: 'doc' as const,
+  pending,
+});
+const pendingLocal = (item: { id: string; name: string }, pending = true): LocalStart => ({
+  ...local,
+  downloads: [...local.downloads, downloadFor(item, pending)],
+});
+export const PendingEditsOffline: Story = {
+  args: { local: pendingLocal(trip) },
+  parameters: { api: empty },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByText('Needs to sync')).toBeVisible();
+    await expect(canvas.getByText(/changes saved on this device/)).toBeVisible();
+    await expect(canvas.getByText('Not synced yet')).toBeVisible();
+    // Ordinary pending work offers no recovery action; it sends on its own.
+    await expect(canvas.queryByRole('link', { name: /^Recover / })).not.toBeInTheDocument();
+    // Pinned above folders, not only above other files.
+    const names = canvas
+      .getAllByRole('button', { name: /(Folder|Doc|Sheet)$/ })
+      .map((row) => row.getAttribute('aria-label') ?? row.textContent ?? '');
+    await expect(names.findIndex((name) => name.startsWith(trip.name))).toBe(0);
+    await expect(names.findIndex((name) => name.startsWith(household.name))).toBeGreaterThan(0);
+  },
+};
+/** Delivery acknowledged: the badge and the notice are gone and the file sorts normally. */
+export const PendingEditsCleared: Story = {
+  args: { local: pendingLocal(trip, false) },
+  parameters: { api: empty },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('button', { name: `${trip.name} Doc` })).toBeVisible();
+    await expect(canvas.queryByText('Needs to sync')).not.toBeInTheDocument();
+    await expect(canvas.queryByText('Not synced yet')).not.toBeInTheDocument();
+  },
+};
+/** The notice is a root-list cue; inside a folder the row badge and pinned order remain. */
+export const PendingEditsInFolder: Story = {
+  args: { local: pendingLocal(mealPlan) },
+  parameters: { api: empty },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: `${household.name} Folder` }));
+    await expect(await canvas.findByText('Not synced yet')).toBeVisible();
+    await expect(canvas.queryByText('Needs to sync')).not.toBeInTheDocument();
+    const names = canvas
+      .getAllByRole('button', { name: /(Folder|Doc|Sheet)$/ })
+      .map((row) => row.getAttribute('aria-label') ?? row.textContent ?? '');
+    await expect(names[0]).toMatch(new RegExp(`^${mealPlan.name}`));
+  },
+};
+export const PendingEditsOfflineDark: Story = {
+  ...PendingEditsOffline,
+  globals: { theme: 'dark' },
+};
+export const PendingEditsOfflinePhone: Story = {
+  ...PendingEditsOffline,
+  globals: { viewport: { value: 'phone', isRotated: false } },
+};
 const sharedLocal: LocalStart = {
   ...local,
   catalog: {

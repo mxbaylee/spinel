@@ -57,6 +57,7 @@ import type { OfflineCatalog, OfflineDownload, OfflineUser } from './offline/off
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
 import { OfflineAvailability, OfflineAvailabilityActions } from './offline/OfflineAvailability.tsx';
 import { OfflineRecoveryList } from './OfflineRecoveryEntry.tsx';
+import { needsSync, OfflineSyncNotice, pendingFirst } from './OfflineStatus.tsx';
 import { spaceCopies } from './offline/spaceCopies.ts';
 import type { ItemAppearance } from '../src/shared/appearance.ts';
 import { CopyFileForm } from './CopyFile.tsx';
@@ -798,9 +799,18 @@ export function Dashboard({
       setBusy(false);
     }
   }
+  // A Space has no edits of its own: its pages carry them.
+  function itemNeedsSync(item: FileItem) {
+    return (
+      needsSync(offline.downloads.get(item.id)) ||
+      (item.kind === 'space' &&
+        spaceCopies(offline.downloads.values(), item.id).some((copy) => needsSync(copy)))
+    );
+  }
   function offlineState(item: FileItem) {
     const creation = offline.downloads.get(item.id)?.creation;
     if (creation) return creation.problem ? 'needs-attention' : 'not-synced';
+    if (itemNeedsSync(item)) return 'not-synced';
     if (
       item.kind === 'space' &&
       spaceCopies(offline.downloads.values(), item.id).some((copy) => copy.available !== false)
@@ -988,7 +998,7 @@ export function Dashboard({
     localCreation ? kind === 'sheet' || kind === 'doc' : kind !== 'space' || spacesEnabled,
   );
   // Shared is already ordered by latest grant; alphabetizing would hide recent shares.
-  const listedItems = sharedOpen
+  const orderedItems = sharedOpen
     ? [
         ...new Map(
           [...deviceCreatedFiles.filter((item) => item.access !== 'owner'), ...shared.items].map(
@@ -1002,6 +1012,7 @@ export function Dashboard({
           a.name.localeCompare(b.name) ||
           a.id.localeCompare(b.id),
       );
+  const listedItems = pendingFirst(orderedItems, itemNeedsSync);
   return (
     <section ref={dropTarget} className="dashboard-content" aria-label="Your files">
       {!onPlaces && !framedEditor && (
@@ -1108,7 +1119,10 @@ export function Dashboard({
           {shareMessage && <p role="status">{shareMessage}</p>}
 
           {!currentId && (
-            <OfflineRecoveryList downloads={offline.downloads.values()} navigation={navigation} />
+            <>
+              <OfflineSyncNotice downloads={offline.downloads.values()} />
+              <OfflineRecoveryList downloads={offline.downloads.values()} navigation={navigation} />
+            </>
           )}
 
           {local && (

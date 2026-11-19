@@ -1,12 +1,14 @@
 import { emptyAppearance } from '../shared/appearance.ts';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import {
+  applyPendingChange,
   downloadSummary,
   hasOfflineEdits,
   hasStoredEdits,
   isKnownOfflineOutbox,
   OfflineStore,
 } from '../../web/offline/offlineStore.ts';
+import { needsSync, pendingFirst } from '../../web/OfflineStatus.tsx';
 import type { OfflineOutbox, StoredItem } from '../../web/offline/offlineStore.ts';
 
 const account = 'protected-account';
@@ -159,6 +161,44 @@ test('only a known empty queue is clean; in-flight native work is retained even 
     uncertain: true,
     available: false,
   });
+});
+
+test('ordinary pending edits are not retained; unverifiable, failed or recovery state is', () => {
+  const ordinary = pendingCopy();
+  const summary = downloadSummary(ordinary, account, itemId);
+  expect(summary.pending).toBe(true);
+  expect(summary.retained).toBeUndefined();
+  expect(downloadSummary(cleanCopy(), account, itemId).retained).toBeUndefined();
+
+  const unknown = { ...cleanCopy(), outbox: { ...cleanOutbox(), version: 2 } as never };
+  expect(downloadSummary(unknown, account, itemId)).toMatchObject({
+    pending: true,
+    retained: true,
+  });
+
+  for (const recovery of ['recoverySnapshot', 'recoveryMissing'] as const) {
+    const failed = pendingCopy();
+    Object.assign(failed.outbox.checkpoint, {
+      failure: 'refused',
+      ...(recovery === 'recoveryMissing'
+        ? { recoveryMissing: true }
+        : { recoverySnapshot: failed.outbox.checkpoint.snapshot }),
+    });
+    const failedSummary = downloadSummary(failed, account, itemId);
+    expect(failedSummary).toMatchObject({ pending: true, retained: true });
+    expect(failedSummary.uncertain).toBeFalsy();
+  }
+
+  const withRecovery = {
+    ...pendingCopy(),
+    recovery: {
+      recoveryId: '11111111-1111-4111-8111-111111111111',
+      filename: 'Recovered notes.univer.json',
+      snapshot: cleanCopy().bundle.snapshot,
+      possibleReplayCrash: false,
+    },
+  };
+  expect(downloadSummary(withRecovery, account, itemId).retained).toBe(true);
 });
 
 const unknownQueues = [
@@ -560,4 +600,65 @@ test('download summaries retain appearance only within the verified account and 
   expect(downloadSummary(copy, account, itemId).appearance).toEqual(copy.bundle.appearance);
   expect(downloadSummary(copy, 'another-account', itemId).appearance).toBeUndefined();
   expect(downloadSummary(copy, account, 'another-item').appearance).toBeUndefined();
+});
+
+test('a pending notice clears retained on delivery, except for unverifiable data', () => {
+  const row = (extra: object) =>
+    ({
+      itemId,
+      name: 'Doc',
+      kind: 'doc',
+      readOnly: false,
+      revision: 1,
+      downloadedAt: 0,
+      pending: true,
+      ...extra,
+    }) as never;
+  expect(applyPendingChange(row({ retained: true }), false)).toMatchObject({ pending: false });
+  expect(applyPendingChange(row({ retained: true }), false).retained).toBeUndefined();
+  expect(applyPendingChange(row({}), true)).toMatchObject({ pending: true });
+  expect(applyPendingChange(row({ retained: true, uncertain: true }), false)).toMatchObject({
+    pending: true,
+    retained: true,
+  });
+});
+
+test('only ordinary pending files need to sync, and they are pinned first in a stable order', () => {
+  const row = (name: string, extra: object = {}) =>
+    ({
+      itemId: name,
+      name,
+      kind: 'doc',
+      readOnly: false,
+      revision: 1,
+      downloadedAt: 0,
+      pending: false,
+      ...extra,
+    }) as never;
+  const downloads = new Map(
+    [
+      row('folder-sibling'),
+      row('ordinary', { pending: true }),
+      row('retained', { pending: true, retained: true }),
+      row('creation', { pending: true, creation: { parentId: null, createdAt: 0 } }),
+      row('also-ordinary', { pending: true }),
+    ].map((download) => [(download as { itemId: string }).itemId, download] as const),
+  );
+  const listed = ['folder-sibling', 'ordinary', 'retained', 'creation', 'also-ordinary'].map(
+    (id) => ({ id }),
+  );
+  expect(listed.map((item) => needsSync(downloads.get(item.id)))).toEqual([
+    false,
+    true,
+    false,
+    false,
+    true,
+  ]);
+  expect(needsSync(undefined)).toBe(false);
+  expect(
+    pendingFirst(listed, (item) => needsSync(downloads.get(item.id))).map((item) => item.id),
+  ).toEqual(['ordinary', 'also-ordinary', 'folder-sibling', 'retained', 'creation']);
+  expect(
+    pendingFirst([{ id: 'unknown' }, ...listed], (item) => needsSync(downloads.get(item.id)))[0],
+  ).toEqual({ id: 'ordinary' });
 });

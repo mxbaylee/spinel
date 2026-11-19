@@ -118,7 +118,7 @@ export function OfflineRecoveryList({
   navigation: NavigationGuard;
 }) {
   const pending = [...downloads]
-    .filter((item) => item.pending && !item.creation)
+    .filter((item) => item.pending && item.retained && !item.creation)
     .sort((a, b) => a.name.localeCompare(b.name));
   if (!pending.length) return null;
   return (

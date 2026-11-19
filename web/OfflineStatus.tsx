@@ -1,4 +1,29 @@
 import { AccessState } from './AccessState.tsx';
+import type { OfflineDownload } from './offline/offlineStore.ts';
+
+/** Saved edits that deliver by themselves; creations and retained work have their own states. */
+export const needsSync = (download?: OfflineDownload) =>
+  Boolean(download?.pending && !download.retained && !download.creation);
+
+/** Pins files that still need to sync above everything else; the sort is stable. */
+export function pendingFirst<T>(items: readonly T[], needs: (item: T) => boolean): T[] {
+  return [...items].sort((a, b) => Number(needs(b)) - Number(needs(a)));
+}
+
+/** Informational only: ordinary unsynced edits ask nothing of the person. */
+export function OfflineSyncNotice({ downloads }: { downloads: Iterable<OfflineDownload> }) {
+  const count = [...downloads].filter(needsSync).length;
+  if (!count) return null;
+  return (
+    <p className="offline-sync-notice" role="status">
+      <strong>
+        <span aria-hidden="true">↥</span> Needs to sync
+      </strong>{' '}
+      {count === 1 ? '1 file has' : `${count} files have`} changes saved on this device. They send
+      on their own when you are online. Nothing to do.
+    </p>
+  );
+}
 
 /** Row badge for an item kept on this device, or one that can't open offline. */
 export function OfflineBadge({

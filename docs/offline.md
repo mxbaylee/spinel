@@ -80,6 +80,9 @@ After an initial online setup in the app context they will use:
 | Changes        | Committed edits save locally and survive ordinary termination/reopen while offline. Eligible downloaded Doc/Sheet edits sync when the running app reconnects in the editor or file list; pending clears only after acknowledgement and durable checkpoint cleanup. Incompatible work remains available for explicit recovery. Local-save failure remains visible. |
 | Entry points   | Stable item links support direct launch; offline downloads and home-screen shortcuts remain distinct actions.                                                                                                                                                                                                                                                     |
 
+📤 Ordinary pending files show **Not synced yet** and a **Needs to sync** notice with no action; only retained
+work offers recovery ([SPN-163](implementation/SPN-163.md)).
+
 The catalog is Spinel metadata, not the server's physical filesystem. Preserve
 personal filing and source permissions: never copy inaccessible owner ancestors,
 another person's tags, or unrelated documents. Owners and signed-in Collaborators
