@@ -1,0 +1,76 @@
+{
+  "head": "c898d24b1506a8536964c5194f20dab03e7ea007",
+  "testedMerge": "8525b762d2636a558a33661b8953a27319638f46",
+  "run": 44598172433,
+  "runAttempt": 1,
+  "job": 135823040623,
+  "url": "https://github.com/mxbaylee/spinel/actions/runs/44598172433/job/135823040623",
+  "artifact": {
+    "id": 14567802648,
+    "sha256": "9aec8009aaf3f0ea9fde0e0b7a6407fe5ee4d8ca6b4bb090fe76813d487d143a",
+    "verification": "Downloaded ZIP digest checked by Reviewer A; original ZIP retained adjacent to extracted root."
+  },
+  "test": "phone Doc dark native pan, zoom and guest-viewer behavior preserve the document",
+  "overallCaseClassification": "flaky",
+  "attempts": [
+    {
+      "retry": 0,
+      "status": "failed",
+      "duration": 13021,
+      "startTime": "2026-11-19T19:29:39.472Z",
+      "workerIndex": 0,
+      "parallelIndex": 0
+    },
+    {
+      "retry": 1,
+      "status": "passed",
+      "duration": 17619,
+      "startTime": "2026-11-19T19:29:53.258Z",
+      "workerIndex": 1,
+      "parallelIndex": 0
+    }
+  ],
+  "firstFailure": {
+    "primary": "withFixtureServer health-evidence poll threw Owned fixture server is unavailable (ready=true, exited=false, code=null, signal=null).",
+    "secondary": "After the guard deliberately closed browser contexts, the pending Exit theatre mode click rejected with Target page, context or browser has been closed.",
+    "precedingUi": "The click was obstructed by the native warning toast: This content is protected. This action is not allowed.",
+    "cleanup": "First-attempt inner resource-cleanup receipt records errors=0 and contexts=1. No independent DB/context cleanup failure is shown.",
+    "causeClassification": "Unresolved harness evidence. The exact rejected poll snapshot and its time/age were not retained; no specific health predicate or server-exit cause is established."
+  },
+  "serverEvidence": {
+    "ownerPid": 3079,
+    "pid": 3090,
+    "runId": "ddae3ae9-1dea-4320-adc9-fad934bc9dcb",
+    "observed": "Same identity at first ready, first failure-final snapshot, retry ready and retry completion. These snapshots show ready=true, exited=false, closed=false, unexpectedExit=false and firstFailure=null. The final whole-job server receipt records expectedClose=true, exitCode=0."
+  },
+  "scope": {
+    "mobileAdapter": "Not mounted: first-attempt seed and guest contexts record isMobile=false/hasTouch=false and native data-mobile=false. useMobileDocControls requires a coarse pointer and max-width 900px.",
+    "traceFixture": "The failing spec already uses retain-on-failure at file scope. The new editing module extends its own test type. New editing cases first execute after this failure and the automatic retry, so earlier new-case browser-state leakage is unsupported.",
+    "timingCaveat": "Added tests and trace-fixture grouping changed shard placement/execution order. Indirect timing or resource effects cannot be excluded by this single attempt; unchanged fixture source is not evidence that the failure predates this change.",
+    "newEditing": "The five new production editing cases are separate first-attempt passes verified by Reviewer A; they do not erase this fixture failure."
+  },
+  "receipts": {
+    "first": {
+      "path": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-b-c898d24b-navigation-first-fixture.json",
+      "sha256": "5087eb0ce1d5b172562be7eaa97fbdeb528ff24e5ed6b99558d3941a396528b9",
+      "sourcePath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-production2-run44598172433-attempt1/test-results/production/doc-phone-navigation-phone-cf057-avior-preserve-the-document-production/fixture-evidence.json"
+    },
+    "retry1": {
+      "path": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-b-c898d24b-navigation-retry1-fixture.json",
+      "sha256": "1628da840ca9976493d0e5050a541173f0d4e7bbf35c9eb1cfa165f873ae5bdf",
+      "sourcePath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-production2-run44598172433-attempt1/test-results/production/doc-phone-navigation-phone-cf057-avior-preserve-the-document-production-retry1/fixture-evidence.json"
+    }
+  },
+  "reportSubset": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-b-c898d24b-navigation-report-subset.json",
+  "originalReport": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-production2-run44598172433-attempt1/playwright-report/production-2-of-2.json",
+  "firstTrace": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-production2-run44598172433-attempt1/test-results/production/doc-phone-navigation-phone-cf057-avior-preserve-the-document-production/trace.zip",
+  "fullLog": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-production2-run44598172433-job135823040623.log",
+  "actions": "Read-only inspection and receipt preservation. No retry, fix, workflow mutation, browser launch or local test workload. Existing automatic retry remains separately identified.",
+  "sourceReferences": [
+    "e2e/fixture-evidence.ts:85-103,188-278",
+    "e2e/doc-phone-navigation.spec.ts:18-19,214-225,511-542,569-574",
+    "scripts/e2e-server.ts:42-87",
+    "web/docPreset.ts:24-25,83",
+    "web/DocEditor.tsx:138,740-746"
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "completed_at": "2026-11-19T20:14:42.951452+00:00",
+  "original_local_commit": "112e710480c30419aae7318844d2066bde8bd457",
+  "canonical_commit_at_completion": "276ba783752c69574357f62431ffecb7a630a80f",
+  "tested_tree": "70b21a866ac40db044ac10011caeaaf74f297976",
+  "worktree_status": "",
+  "checks": [
+    {
+      "name": "typecheck",
+      "command": "npm run typecheck",
+      "outcome": "failed",
+      "elapsed_ms": 9550.66905,
+      "peak_rss_kib": 2109716,
+      "resource_failure": "Owned RSS exceeded2GiB",
+      "watchdog_path": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/local-validation-112e7104/typecheck-watchdog.json",
+      "watchdog_sha256": "c4517d73f4adc1006476b8301766f2b4b2f7b16fa7b7499d02b1bd43057280f4",
+      "log_path": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/local-validation-112e7104/typecheck.log",
+      "log_sha256": "5cd87695ac5f2e551e519b12cc8578213938fbb7c9ad46708703311deb1295d4"
+    },
+    {
+      "name": "helper-lint",
+      "command": "node node_modules/oxlint/bin/oxlint --deny-warnings e2e/doc-editing.ts",
+      "outcome": "passed",
+      "elapsed_ms": 705.7867289999999,
+      "peak_rss_kib": 225560,
+      "resource_failure": null,
+      "watchdog_path": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/local-validation-112e7104/helper-lint-watchdog.json",
+      "watchdog_sha256": "673fd239b85d2250372e3d5691e22a087728e19006e0e44cc3157202119dd279",
+      "log_path": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/local-validation-112e7104/helper-lint.log",
+      "log_sha256": "0ce16c0735598a2acca958ca0daead92902d9ec7a2917896799bb0f46e3bc8b6"
+    },
+    {
+      "name": "helper-format",
+      "command": "node node_modules/prettier/bin/prettier.cjs --check e2e/doc-editing.ts",
+      "outcome": "passed",
+      "elapsed_ms": 839.056089,
+      "peak_rss_kib": 298752,
+      "resource_failure": null,
+      "watchdog_path": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/local-validation-112e7104/helper-format-watchdog.json",
+      "watchdog_sha256": "3e5ec18a602025416b1deacc8ea01af830b1865b3f67ed6f79fc1f62b8a212e0",
+      "log_path": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/local-validation-112e7104/helper-format.log",
+      "log_sha256": "d4ac026151aec110e76c19b23437962e682bc27a1b5aec39ba1be52d4eb49567"
+    },
+    {
+      "name": "collection",
+      "command": "node --test scripts/ci/doc-editing-mobile-collection.test.ts",
+      "outcome": "passed",
+      "elapsed_ms": 13521.174783,
+      "peak_rss_kib": 586100,
+      "resource_failure": null,
+      "watchdog_path": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/local-validation-112e7104/collection-watchdog.json",
+      "watchdog_sha256": "ff61e6ad3da3c15dc05b1b8a7a3158c9e1d0adc9396ccf6fdafd6a1177c1523f",
+      "log_path": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/local-validation-112e7104/collection.log",
+      "log_sha256": "825909b89761e87cf3c2594fa3d1de923c6c91ce1c0fa42dbfcdab43dc24985b"
+    },
+    {
+      "name": "backlog",
+      "command": "npm run backlog:check",
+      "outcome": "passed",
+      "elapsed_ms": 1036.054406,
+      "peak_rss_kib": 334540,
+      "resource_failure": null,
+      "watchdog_path": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/local-validation-112e7104/backlog-watchdog.json",
+      "watchdog_sha256": "a6b4b7a1f969f684e095491ed245b2baf2707b41feb4c715104b3db28c06dcd8",
+      "log_path": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/local-validation-112e7104/backlog.log",
+      "log_sha256": "310dbfee8d17473306ca10f3e672f458a6c9cd98e79fb421455f6195a7dfb1fd"
+    },
+    {
+      "name": "pr",
+      "command": "npm run backlog:pr -- --base dfd50502f456e0d02d2f0a36b0bfeff1db10fac6 --title '\u2328\ufe0f SPN-170 Edit and delete Doc text on desktop and mobile'",
+      "outcome": "passed",
+      "elapsed_ms": 1389.953363,
+      "peak_rss_kib": 350644,
+      "resource_failure": null,
+      "watchdog_path": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/local-validation-112e7104/pr-watchdog.json",
+      "watchdog_sha256": "98e8875cb10ae96e68d523cd55b252b85adea834417a565f8996e4ff0e72df0c",
+      "log_path": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/local-validation-112e7104/pr.log",
+      "log_sha256": "937c6f0b45b8b022e9d5c073438c7a2af45fb7d77bea386f0efcad0209293f65"
+    },
+    {
+      "name": "typecheck-lower-heap",
+      "command": "node --max-old-space-size=1408 --max-semi-space-size=8 node_modules/typescript/bin/tsc -p .",
+      "outcome": "passed",
+      "elapsed_ms": 13228.513783,
+      "peak_rss_kib": 2050696,
+      "resource_failure": null,
+      "watchdog_path": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/local-validation-112e7104/typecheck-lower-heap-watchdog.json",
+      "watchdog_sha256": "710a4080183b52609eb6131f490c7ded8dbd476c3f758adca3378510f8f3bb32",
+      "log_path": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/local-validation-112e7104/typecheck-lower-heap.log",
+      "log_sha256": "1df87cfb07f7a28b8d11beceaebd80ee2fed26b54ef4c3b9ff6b4549cfc6e3b4"
+    }
+  ],
+  "collection_counts": {
+    "tests": 2,
+    "passed": 2,
+    "failed": 0,
+    "cancelled": 0,
+    "skipped": 0
+  },
+  "first_failure_retained": true,
+  "no_browser_execution": true,
+  "no_source_edits": true
+}

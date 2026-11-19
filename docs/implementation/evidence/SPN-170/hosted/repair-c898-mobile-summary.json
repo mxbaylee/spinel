@@ -1,0 +1,561 @@
+{
+  "reviewer": "A",
+  "head": "c898d24b1506a8536964c5194f20dab03e7ea007",
+  "runId": 44598732094,
+  "jobId": 135827903056,
+  "artifactId": 14570421041,
+  "artifact": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/spn170-mobile-evidence-c898d24b.zip",
+  "artifactSha256": "9956440e597d0db645897f08d4e0e6a9a129bf57f8cc379409398e058f9ed195",
+  "jobLog": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/spn170-mobile-job135827903056.log",
+  "jobLogSha256": "27b37170ecd4dc99d4fcda7562b05109f05edcb276de6454553c9c6df2bc6614",
+  "collectionSha256": "a80c3bf70922c69f37231886e1b64a964a30179002c49fe700090b3aacb1163c",
+  "reportSha256": "4bb33a0e1452c90438245948f124bfd6ef10c9389716aeaca1c9a761c6830766",
+  "resultSha256": "0b1b34460954078e9dd38bdb1188e83f48ee8943b88134d8f02c490d13bf3448",
+  "collectionMatchesExecutionAndStrictResult": true,
+  "strictResult": {
+    "passed": true,
+    "requested": "c898d24b1506a8536964c5194f20dab03e7ea007",
+    "actual": "c898d24b1506a8536964c5194f20dab03e7ea007",
+    "project": "doc-editing-mobile",
+    "testIds": [
+      "75807847b20dafea27b4-0561014a81f2a73a6eb4",
+      "75807847b20dafea27b4-2975a55cbf8de2ca7070",
+      "75807847b20dafea27b4-8c43e8ae2f24af94b5fb",
+      "75807847b20dafea27b4-95f3cb53f2a4365c00ef",
+      "75807847b20dafea27b4-b3034e24b2145ab12c0b",
+      "75807847b20dafea27b4-b7f43be7b3492c9dcd4a",
+      "75807847b20dafea27b4-e57b3ce25bd273b2b629",
+      "75807847b20dafea27b4-ff095935b983ee8eec9a"
+    ],
+    "tests": 8,
+    "collectionSha256": "a80c3bf70922c69f37231886e1b64a964a30179002c49fe700090b3aacb1163c",
+    "reportSha256": "4bb33a0e1452c90438245948f124bfd6ef10c9389716aeaca1c9a761c6830766",
+    "evidence": "Chromium phone emulation and browser/synthetic input; no physical software keyboard."
+  },
+  "reportStats": {
+    "startTime": "2026-11-19T19:59:23.326Z",
+    "duration": 38960.959,
+    "expected": 8,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "reportErrors": [],
+  "gitMetadataHash": "c898d24b1506a8536964c5194f20dab03e7ea007",
+  "githubEventMergeMetadataHash": "8525b762d2636a558a33661b8953a27319638f46",
+  "sourceAttribution": "The worker explicitly checked out/verified requested c898 head, used SOURCE_SHA=c898, and gitCommit plus all receipts agree; the generic CI event metadata carries merge8525 and is not the mobile checkout source.",
+  "cases": [
+    {
+      "id": "75807847b20dafea27b4-b3034e24b2145ab12c0b",
+      "title": "Doc editing inserts at start, middle and end and preserves Unicode and surrounding formatting",
+      "outcome": "expected",
+      "attempts": 1,
+      "firstAttemptStatus": "passed",
+      "retry": 0,
+      "durationMs": 4335,
+      "startTime": "2026-11-19T19:59:28.024Z",
+      "project": "doc-editing-mobile",
+      "source": "c898d24b1506a8536964c5194f20dab03e7ea007",
+      "browser": "156.0.8078.4",
+      "mobile": true,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+      "online": true,
+      "receipt": "spn170-mobile-evidence-c898d24b/test-results/doc-editing-mobile/doc-mobile-on-demand-nativ-893b3--and-surrounding-formatting-doc-editing-mobile/doc-editing-evidence.json",
+      "receiptSha256": "b3013aa95f9b439aebc70051e4b613e3b3568050adc6bfef41a943d0f36e8943",
+      "attachment": "test-results/doc-editing-mobile/doc-mobile-on-demand-nativ-893b3--and-surrounding-formatting-doc-editing-mobile/attachments/doc-editing-evidence-bcbfb18d0d202ef4cf02f1136b6b1d5a11bafb0a.json",
+      "attachmentMatchesReceipt": true,
+      "finalNativeEqualsPersistedBody": true,
+      "finalText": "Start Phone journal\rSecond line \r\n",
+      "finalBoldProjection": "journal",
+      "capturedNavigations": 2,
+      "finalRangeAfterReload": [
+        0,
+        0
+      ],
+      "eventsRetained": 30,
+      "eventTypeCounts": {
+        "keydown": 12,
+        "beforeinput": 9,
+        "input": 9
+      },
+      "deletionAndEnterEvents": [
+        {
+          "type": "keydown",
+          "key": "Backspace",
+          "composing": false,
+          "cancelable": true,
+          "defaultPreventedAtCapture": true,
+          "trusted": true
+        },
+        {
+          "type": "keydown",
+          "key": "Delete",
+          "composing": false,
+          "cancelable": true,
+          "defaultPreventedAtCapture": true,
+          "trusted": true
+        },
+        {
+          "type": "keydown",
+          "key": "Backspace",
+          "composing": false,
+          "cancelable": true,
+          "defaultPreventedAtCapture": true,
+          "trusted": true
+        },
+        {
+          "type": "keydown",
+          "key": "Backspace",
+          "composing": false,
+          "cancelable": true,
+          "defaultPreventedAtCapture": true,
+          "trusted": true
+        }
+      ],
+      "pageErrors": [],
+      "testErrors": [],
+      "noTraceExpectedForPassedRetainOnFailureCase": true
+    },
+    {
+      "id": "75807847b20dafea27b4-e57b3ce25bd273b2b629",
+      "title": "Doc editing deletes and replaces a native selection with exact undo and redo",
+      "outcome": "expected",
+      "attempts": 1,
+      "firstAttemptStatus": "passed",
+      "retry": 0,
+      "durationMs": 5267,
+      "startTime": "2026-11-19T19:59:35.929Z",
+      "project": "doc-editing-mobile",
+      "source": "c898d24b1506a8536964c5194f20dab03e7ea007",
+      "browser": "156.0.8078.4",
+      "mobile": true,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+      "online": true,
+      "receipt": "spn170-mobile-evidence-c898d24b/test-results/doc-editing-mobile/doc-mobile-on-demand-nativ-15a52-on-with-exact-undo-and-redo-doc-editing-mobile/doc-editing-evidence.json",
+      "receiptSha256": "98e05767e6de02767fd443eaac75788eae58479a7f89c41aeb037ec34b828fed",
+      "attachment": "test-results/doc-editing-mobile/doc-mobile-on-demand-nativ-15a52-on-with-exact-undo-and-redo-doc-editing-mobile/attachments/doc-editing-evidence-ac55235d7a99b30e322993987a60c15dcb30f92c.json",
+      "attachmentMatchesReceipt": true,
+      "finalNativeEqualsPersistedBody": true,
+      "finalText": "Garden journal\rSecond line\r\n",
+      "finalBoldProjection": "journal",
+      "capturedNavigations": 2,
+      "finalRangeAfterReload": [
+        0,
+        0
+      ],
+      "eventsRetained": 13,
+      "eventTypeCounts": {
+        "keydown": 11,
+        "beforeinput": 1,
+        "input": 1
+      },
+      "deletionAndEnterEvents": [
+        {
+          "type": "keydown",
+          "key": "Backspace",
+          "composing": false,
+          "cancelable": true,
+          "defaultPreventedAtCapture": true,
+          "trusted": true
+        }
+      ],
+      "pageErrors": [],
+      "testErrors": [],
+      "noTraceExpectedForPassedRetainOnFailureCase": true
+    },
+    {
+      "id": "75807847b20dafea27b4-0561014a81f2a73a6eb4",
+      "title": "Doc editing inserts and joins paragraphs without deleting beyond document boundaries",
+      "outcome": "expected",
+      "attempts": 1,
+      "firstAttemptStatus": "passed",
+      "retry": 0,
+      "durationMs": 3892,
+      "startTime": "2026-11-19T19:59:41.205Z",
+      "project": "doc-editing-mobile",
+      "source": "c898d24b1506a8536964c5194f20dab03e7ea007",
+      "browser": "156.0.8078.4",
+      "mobile": true,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+      "online": true,
+      "receipt": "spn170-mobile-evidence-c898d24b/test-results/doc-editing-mobile/doc-mobile-on-demand-nativ-c1e04--beyond-document-boundaries-doc-editing-mobile/doc-editing-evidence.json",
+      "receiptSha256": "59d8f0aa8e5b0a6460ebd79bafd78628ed0bcdae843b6ea38ba760315eff9887",
+      "attachment": "test-results/doc-editing-mobile/doc-mobile-on-demand-nativ-c1e04--beyond-document-boundaries-doc-editing-mobile/attachments/doc-editing-evidence-4dcd201865af81ed27454d817a4f8609fc222ad6.json",
+      "attachmentMatchesReceipt": true,
+      "finalNativeEqualsPersistedBody": true,
+      "finalText": "Phone journal\rSecond line\r\n",
+      "finalBoldProjection": "journal\r",
+      "capturedNavigations": 2,
+      "finalRangeAfterReload": [
+        0,
+        0
+      ],
+      "eventsRetained": 8,
+      "eventTypeCounts": {
+        "keydown": 8
+      },
+      "deletionAndEnterEvents": [
+        {
+          "type": "keydown",
+          "key": "Backspace",
+          "composing": false,
+          "cancelable": true,
+          "defaultPreventedAtCapture": true,
+          "trusted": true
+        },
+        {
+          "type": "keydown",
+          "key": "Delete",
+          "composing": false,
+          "cancelable": true,
+          "defaultPreventedAtCapture": true,
+          "trusted": true
+        },
+        {
+          "type": "keydown",
+          "key": "Backspace",
+          "composing": false,
+          "cancelable": true,
+          "defaultPreventedAtCapture": true,
+          "trusted": true
+        },
+        {
+          "type": "keydown",
+          "key": "Enter",
+          "composing": false,
+          "cancelable": true,
+          "defaultPreventedAtCapture": true,
+          "trusted": true
+        }
+      ],
+      "pageErrors": [],
+      "testErrors": [],
+      "noTraceExpectedForPassedRetainOnFailureCase": true
+    },
+    {
+      "id": "75807847b20dafea27b4-8c43e8ae2f24af94b5fb",
+      "title": "Doc editing can delete all text and type again in an empty document",
+      "outcome": "expected",
+      "attempts": 1,
+      "firstAttemptStatus": "passed",
+      "retry": 0,
+      "durationMs": 4393,
+      "startTime": "2026-11-19T19:59:45.103Z",
+      "project": "doc-editing-mobile",
+      "source": "c898d24b1506a8536964c5194f20dab03e7ea007",
+      "browser": "156.0.8078.4",
+      "mobile": true,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+      "online": true,
+      "receipt": "spn170-mobile-evidence-c898d24b/test-results/doc-editing-mobile/doc-mobile-on-demand-nativ-e9cd1--again-in-an-empty-document-doc-editing-mobile/doc-editing-evidence.json",
+      "receiptSha256": "3a6c9283ede7eae212bdab4bddfad3199192a21729dc1228491a54aea3a63644",
+      "attachment": "test-results/doc-editing-mobile/doc-mobile-on-demand-nativ-e9cd1--again-in-an-empty-document-doc-editing-mobile/attachments/doc-editing-evidence-4d0b4ea24281b00ca8a7720659b95e836d9f4438.json",
+      "attachmentMatchesReceipt": true,
+      "finalNativeEqualsPersistedBody": true,
+      "finalText": "New\r\n",
+      "finalBoldProjection": "",
+      "capturedNavigations": 2,
+      "finalRangeAfterReload": [
+        0,
+        0
+      ],
+      "eventsRetained": 12,
+      "eventTypeCounts": {
+        "keydown": 6,
+        "beforeinput": 3,
+        "input": 3
+      },
+      "deletionAndEnterEvents": [
+        {
+          "type": "keydown",
+          "key": "Backspace",
+          "composing": false,
+          "cancelable": true,
+          "defaultPreventedAtCapture": true,
+          "trusted": true
+        },
+        {
+          "type": "keydown",
+          "key": "Backspace",
+          "composing": false,
+          "cancelable": true,
+          "defaultPreventedAtCapture": true,
+          "trusted": true
+        },
+        {
+          "type": "keydown",
+          "key": "Delete",
+          "composing": false,
+          "cancelable": true,
+          "defaultPreventedAtCapture": true,
+          "trusted": true
+        }
+      ],
+      "pageErrors": [],
+      "testErrors": [],
+      "noTraceExpectedForPassedRetainOnFailureCase": true
+    },
+    {
+      "id": "75807847b20dafea27b4-2975a55cbf8de2ca7070",
+      "title": "Doc editing synthetic deleteContentBackward without a Backspace or Delete keydown",
+      "outcome": "expected",
+      "attempts": 1,
+      "firstAttemptStatus": "passed",
+      "retry": 0,
+      "durationMs": 3290,
+      "startTime": "2026-11-19T19:59:49.504Z",
+      "project": "doc-editing-mobile",
+      "source": "c898d24b1506a8536964c5194f20dab03e7ea007",
+      "browser": "156.0.8078.4",
+      "mobile": true,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+      "online": true,
+      "receipt": "spn170-mobile-evidence-c898d24b/test-results/doc-editing-mobile/doc-mobile-on-demand-nativ-3f9af-Backspace-or-Delete-keydown-doc-editing-mobile/doc-editing-evidence.json",
+      "receiptSha256": "abab0a07c39a46eb0a39a895db899f8c2b89c8f1f87517c20c552b1d5d2ba76a",
+      "attachment": "test-results/doc-editing-mobile/doc-mobile-on-demand-nativ-3f9af-Backspace-or-Delete-keydown-doc-editing-mobile/attachments/doc-editing-evidence-5e9252ff9be0c1be7270b4966e51c4b68e4e556d.json",
+      "attachmentMatchesReceipt": true,
+      "finalNativeEqualsPersistedBody": true,
+      "finalText": "abPhone journal\rSecond line\r\n",
+      "finalBoldProjection": "journal",
+      "capturedNavigations": 2,
+      "finalRangeAfterReload": [
+        0,
+        0
+      ],
+      "eventsRetained": 10,
+      "eventTypeCounts": {
+        "keydown": 3,
+        "beforeinput": 4,
+        "input": 3
+      },
+      "deletionAndEnterEvents": [
+        {
+          "type": "beforeinput",
+          "inputType": "deleteContentBackward",
+          "composing": false,
+          "cancelable": true,
+          "defaultPreventedAtCapture": false,
+          "trusted": false
+        }
+      ],
+      "pageErrors": [],
+      "testErrors": [],
+      "noTraceExpectedForPassedRetainOnFailureCase": true,
+      "interpretation": "Exactly one untrusted, cancelable beforeinput with the named deletion inputType, no Backspace/Delete keydown and no deletion input event. The passing source assertion checks dispatch cancellation after all handlers; defaultPreventedAtCapture=false is from earlier document capture."
+    },
+    {
+      "id": "75807847b20dafea27b4-ff095935b983ee8eec9a",
+      "title": "Doc editing synthetic deleteContentForward without a Backspace or Delete keydown",
+      "outcome": "expected",
+      "attempts": 1,
+      "firstAttemptStatus": "passed",
+      "retry": 0,
+      "durationMs": 3293,
+      "startTime": "2026-11-19T19:59:52.802Z",
+      "project": "doc-editing-mobile",
+      "source": "c898d24b1506a8536964c5194f20dab03e7ea007",
+      "browser": "156.0.8078.4",
+      "mobile": true,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+      "online": true,
+      "receipt": "spn170-mobile-evidence-c898d24b/test-results/doc-editing-mobile/doc-mobile-on-demand-nativ-e71c6-Backspace-or-Delete-keydown-doc-editing-mobile/doc-editing-evidence.json",
+      "receiptSha256": "f6e84f0a9dfccbac4213c43436837a2530f99d9934cfc5be33d1f43a5640d4a3",
+      "attachment": "test-results/doc-editing-mobile/doc-mobile-on-demand-nativ-e71c6-Backspace-or-Delete-keydown-doc-editing-mobile/attachments/doc-editing-evidence-b7cb13a3eedf3af2515c34f58b78a9e42cb9e2be.json",
+      "attachmentMatchesReceipt": true,
+      "finalNativeEqualsPersistedBody": true,
+      "finalText": "acPhone journal\rSecond line\r\n",
+      "finalBoldProjection": "journal",
+      "capturedNavigations": 2,
+      "finalRangeAfterReload": [
+        0,
+        0
+      ],
+      "eventsRetained": 10,
+      "eventTypeCounts": {
+        "keydown": 3,
+        "beforeinput": 4,
+        "input": 3
+      },
+      "deletionAndEnterEvents": [
+        {
+          "type": "beforeinput",
+          "inputType": "deleteContentForward",
+          "composing": false,
+          "cancelable": true,
+          "defaultPreventedAtCapture": false,
+          "trusted": false
+        }
+      ],
+      "pageErrors": [],
+      "testErrors": [],
+      "noTraceExpectedForPassedRetainOnFailureCase": true,
+      "interpretation": "Exactly one untrusted, cancelable beforeinput with the named deletion inputType, no Backspace/Delete keydown and no deletion input event. The passing source assertion checks dispatch cancellation after all handlers; defaultPreventedAtCapture=false is from earlier document capture."
+    },
+    {
+      "id": "75807847b20dafea27b4-95f3cb53f2a4365c00ef",
+      "title": "Doc editing respects viewer mutation denial",
+      "outcome": "expected",
+      "attempts": 1,
+      "firstAttemptStatus": "passed",
+      "retry": 0,
+      "durationMs": 3047,
+      "startTime": "2026-11-19T19:59:56.103Z",
+      "project": "doc-editing-mobile",
+      "source": "c898d24b1506a8536964c5194f20dab03e7ea007",
+      "browser": "156.0.8078.4",
+      "mobile": true,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+      "online": true,
+      "receipt": "spn170-mobile-evidence-c898d24b/test-results/doc-editing-mobile/doc-mobile-on-demand-nativ-32de2-ects-viewer-mutation-denial-doc-editing-mobile/doc-editing-evidence.json",
+      "receiptSha256": "d4c3f641a31d9ceab35cf2cb310cffe028a9ac6cd8ea4b62053d60230a93aa20",
+      "attachment": "test-results/doc-editing-mobile/doc-mobile-on-demand-nativ-32de2-ects-viewer-mutation-denial-doc-editing-mobile/attachments/doc-editing-evidence-44edbfb63071658b19dba6cb1f410a874b4d32b8.json",
+      "attachmentMatchesReceipt": true,
+      "finalNativeEqualsPersistedBody": true,
+      "finalText": "Phone journal\rSecond line\r\n",
+      "finalBoldProjection": "journal",
+      "capturedNavigations": 2,
+      "finalRangeAfterReload": [
+        0,
+        0
+      ],
+      "eventsRetained": 2,
+      "eventTypeCounts": {
+        "beforeinput": 1,
+        "input": 1
+      },
+      "deletionAndEnterEvents": [],
+      "pageErrors": [],
+      "testErrors": [],
+      "noTraceExpectedForPassedRetainOnFailureCase": true,
+      "genericDenialEvents": [
+        {
+          "type": "beforeinput",
+          "cancelable": true,
+          "defaultPreventedAtCapture": false,
+          "trusted": false
+        },
+        {
+          "type": "input",
+          "cancelable": true,
+          "defaultPreventedAtCapture": false,
+          "trusted": false
+        }
+      ],
+      "interpretation": "Keyboard/tap/focus denial and unchanged native/persisted/reopened data passed. The synthetic events lack inputType because locator.dispatchEvent constructed Event, so these do not prove denial of a classified synthetic deletion."
+    },
+    {
+      "id": "75807847b20dafea27b4-b7f43be7b3492c9dcd4a",
+      "title": "Doc editing respects traditional mutation denial",
+      "outcome": "expected",
+      "attempts": 1,
+      "firstAttemptStatus": "passed",
+      "retry": 0,
+      "durationMs": 3053,
+      "startTime": "2026-11-19T19:59:59.158Z",
+      "project": "doc-editing-mobile",
+      "source": "c898d24b1506a8536964c5194f20dab03e7ea007",
+      "browser": "156.0.8078.4",
+      "mobile": true,
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.8078.4 Safari/537.36",
+      "online": true,
+      "receipt": "spn170-mobile-evidence-c898d24b/test-results/doc-editing-mobile/doc-mobile-on-demand-nativ-d90f2-traditional-mutation-denial-doc-editing-mobile/doc-editing-evidence.json",
+      "receiptSha256": "467af4552f8880a957ad4bbeca7c33a5bfcc036f321e60d42ed969e25eaf3ce4",
+      "attachment": "test-results/doc-editing-mobile/doc-mobile-on-demand-nativ-d90f2-traditional-mutation-denial-doc-editing-mobile/attachments/doc-editing-evidence-f7418fa49c9389380035fb7e9cf710028d95587e.json",
+      "attachmentMatchesReceipt": true,
+      "finalNativeEqualsPersistedBody": true,
+      "finalText": "Phone journal\rSecond line\r\n",
+      "finalBoldProjection": "journal",
+      "capturedNavigations": 2,
+      "finalRangeAfterReload": [
+        0,
+        0
+      ],
+      "eventsRetained": 2,
+      "eventTypeCounts": {
+        "beforeinput": 1,
+        "input": 1
+      },
+      "deletionAndEnterEvents": [],
+      "pageErrors": [],
+      "testErrors": [],
+      "noTraceExpectedForPassedRetainOnFailureCase": true,
+      "genericDenialEvents": [
+        {
+          "type": "beforeinput",
+          "cancelable": true,
+          "defaultPreventedAtCapture": false,
+          "trusted": false
+        },
+        {
+          "type": "input",
+          "cancelable": true,
+          "defaultPreventedAtCapture": false,
+          "trusted": false
+        }
+      ],
+      "interpretation": "Keyboard/tap/focus denial and unchanged native/persisted/reopened data passed. The synthetic events lack inputType because locator.dispatchEvent constructed Event, so these do not prove denial of a classified synthetic deletion."
+    }
+  ],
+  "limits": [
+    "Chromium156.0.8078.4 Linux browser automation with390x844 touch/mobile emulation; no actual Android/iOS device or OS software keyboard.",
+    "Keyboard.type and keyboard.insertText do not establish IME composition, autocorrect, predictive text, software Backspace, or physical keyboard behavior.",
+    "The two named synthetic cases are untrusted real InputEvent dispatches without deletion keydown. They exercise the adapter and native/saved/reopened effects, not OS event fidelity.",
+    "Exact caret assertions during editing and history are verified by the passing source tests; final receipts describe the post-reload[0,0] range, not every prior caret.",
+    "Two denial cases passed with keyboard and unchanged bodies but generic synthetic Event payloads did not test classified beforeinput deletion (A7).",
+    "All cases passed, so no failing-case trace retention was exercised. Other required workflow gates and own-phone/manual acceptance remain separate."
+  ],
+  "postHostedReview": {
+    "score": 98,
+    "rubric": {
+      "scope": 35,
+      "correctnessDataAccess": 25,
+      "meaningfulRegressionEvidence": 18,
+      "deliveredCIOperationalUsability": 10,
+      "maintainabilityDocsProcess": 10
+    },
+    "priorPrePushReview": "100/100 was historical source review before hosted evidence exposed A7; it is not erased or relabeled.",
+    "finding": {
+      "id": "A7",
+      "severity": "P2",
+      "deduction": 2,
+      "category": "meaningfulRegressionEvidence",
+      "source": "e2e/doc-editing.ts:646-656",
+      "scope": "Shared desktop/mobile viewer denial and mobile traditional denial only. Editable synthetic cases already use real InputEvent.",
+      "evidence": "Both c898 mobile denial receipts contain beforeinput/input without inputType/composing. Installed matching Playwright event map has no beforeinput/input constructor and default dispatches new Event, so bridge command classification exits before permission predicates.",
+      "actionTo100": "Reuse softDelete with genuine deletion InputEvent fields in denial cases, preserve keyboard/native/persisted/reopen assertions without imposing cancellation expectations, retain evidence qualification, re-review exact complete candidate and validate affected hosted cases.",
+      "execution": "Local fixture/source repair and collection; hosted browser evidence for meaningful denial events; no product defect inferred."
+    }
+  }
+}

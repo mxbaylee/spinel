@@ -643,17 +643,11 @@ export function registerDocEditingTests(mobile: boolean) {
           await f.page.keyboard.press('Backspace');
           await f.page.keyboard.press('Delete');
           await f.page.keyboard.press('Enter');
-          await editorInput(f.page).dispatchEvent('beforeinput', {
-            inputType: 'deleteContentBackward',
-            data: null,
-            bubbles: true,
-            cancelable: true,
-          });
-          await editorInput(f.page).dispatchEvent('input', {
-            inputType: 'deleteContentBackward',
-            data: null,
-            bubbles: true,
-          });
+          // Playwright's generic dispatchEvent drops InputEvent-only fields.
+          // Use the same genuine deletion payload as the editable cases; a
+          // denied operation need not have a particular cancellation outcome.
+          const delivered = await softDelete(f.page, 'deleteContentBackward');
+          expect(delivered.trusted).toBe(false);
           expect((await readEditingSelection(f.page))?.body).toEqual(nativeBefore);
           expect((await f.read()).body).toEqual(original.body);
           if (mobile) await expect(editorInput(f.page)).not.toBeFocused();

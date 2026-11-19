@@ -1,0 +1,63 @@
+{
+  "observedAt": "2026-11-19T20:08:54.170Z",
+  "repository": "mxbaylee/spinel",
+  "head": "c898d24b1506a8536964c5194f20dab03e7ea007",
+  "testedMerge": "8525b762d2636a558a33661b8953a27319638f46",
+  "runId": 44598172433,
+  "runAttempt": 1,
+  "job": {
+    "id": 135846936265,
+    "name": "Playwright smoke",
+    "status": "completed",
+    "conclusion": "failure",
+    "startedAt": "2026-11-19T20:07:05Z",
+    "completedAt": "2026-11-19T20:07:18Z",
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/44598172433/job/135846936265"
+  },
+  "event": "pull_request",
+  "action": "synchronize",
+  "planSha256": "23e51e10a80359f10ffcaab39453c65f12d01fb77f7f72a482e11e85eb9f803a",
+  "classification": "success",
+  "gateResults": {
+    "typecheck": "success",
+    "unit-tests": "success",
+    "lib-tests": "success"
+  },
+  "workerResults": {
+    "backlog": "success",
+    "pull-request": "success",
+    "lint": "success",
+    "typecheck": "success",
+    "unit-tests": "success",
+    "lib-test-run": "success",
+    "playwright-run": "failure",
+    "container-smoke": "success",
+    "restore-timing": "success",
+    "sync-transition": "success",
+    "doc-responsiveness": "success",
+    "doc-callback-lifetimes": "success",
+    "doc-editing-mobile": "skipped"
+  },
+  "mobileRequest": null,
+  "mobileSelected": false,
+  "firstReportedError": "Error: Incomplete coverage playwright-run: selected=true, result=failure",
+  "exitCode": 1,
+  "checkoutEvidence": [
+    "2026-11-19T20:07:11.0744943Z [command]/usr/bin/git log -1 --format=%H",
+    "2026-11-19T20:07:11.0774838Z 8525b762d2636a558a33661b8953a27319638f46"
+  ],
+  "originalWorkerFailure": {
+    "jobId": 135823040623,
+    "name": "Playwright smoke (production 2/2)",
+    "evidence": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-b-c898d24b-navigation-first-failure-summary.json",
+    "causeStatus": "Unresolved harness health rejection; original rejected poll snapshot was not retained. No server-exit or stale-heartbeat cause established."
+  },
+  "limits": [
+    "This is the synchronize run; the later labeled run and its successful mobile worker are separate observations.",
+    "The aggregate preserves the selected ordinary browser worker failure; it does not diagnose that worker's root cause.",
+    "The new mobile suite was inapplicable in this run: no request, selected=false, worker skipped."
+  ],
+  "logPath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-b-c898d24b-synchronize-aggregate-run44598172433-job135846936265.log",
+  "logSha256": "cc12be7f01ff441501c2b6b745c86c9e8c1bc7c693de1049c9d2aba717599d7a",
+  "aggregatePlanEqualsRetainedClassifierPlan": true
+}
