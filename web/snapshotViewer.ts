@@ -155,6 +155,7 @@ export async function openSnapshotViewer({
           render,
           univer.__getInjector().get(IContextMenuService),
           () => true,
+          univer.__getInjector(),
         );
       formulas = await installDocFormulas({
         univer,

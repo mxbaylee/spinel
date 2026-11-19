@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { writeFile } from 'node:fs/promises';
-import { expect, test } from '@playwright/test';
+import { expect, test as baseTest } from '@playwright/test';
 import type { Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
 import {
   createParagraphId,
@@ -19,6 +19,10 @@ import { DocumentStore } from '../src/server/workspace/documents.ts';
 import { withFixtureCleanup } from './owned-process.ts';
 import { recordNativeSnapshots } from './sync-snapshot.ts';
 import { beginWriting, selectFirstWord, textPoint } from './doc-touch.ts';
+
+// A trace override is worker-scoped in Playwright. Extend the test type, as the
+// existing recorded native suites do, without changing unrelated ordinary cases.
+const test = baseTest.extend({ trace: 'retain-on-failure' });
 
 export interface EditingSelection {
   unitId: string;
@@ -90,6 +94,8 @@ async function recordEditingEvents(context: BrowserContext) {
               event instanceof InputEvent || event instanceof KeyboardEvent
                 ? event.isComposing
                 : undefined,
+            cancelable: event.cancelable,
+            defaultPreventedAtCapture: event.defaultPrevented,
             trusted: event.isTrusted,
           });
           if (events.length > 128) events.shift();
@@ -317,19 +323,34 @@ export async function withEditingDoc(
 
 const editorInput = (page: Page) => page.locator('[contenteditable="true"][data-u-comp="editor"]');
 const redo = process.platform === 'darwin' ? 'Meta+Shift+z' : 'Control+y';
+const documentStart = process.platform === 'darwin' ? 'Meta+ArrowUp' : 'Control+Home';
 
-/** Read geometry only, then let the real canvas pointer/touch path set the range. */
+/** Use real desktop navigation or mobile touch; never write a native range. */
 async function placeCaret(f: EditingFixture, offset: number) {
-  await expect
-    .poll(async () => Boolean((await readEditingSelection(f.page, offset))?.queryBounds))
-    .toBe(true);
-  const bounds = (await readEditingSelection(f.page, offset))!.queryBounds!;
-  const x = (bounds.left + bounds.right) / 2;
-  const y = (bounds.top + bounds.bottom) / 2;
   if (f.mobile) {
+    await expect
+      .poll(async () => Boolean((await readEditingSelection(f.page, offset))?.queryBounds))
+      .toBe(true);
+    const bounds = (await readEditingSelection(f.page, offset))!.queryBounds!;
+    const x = (bounds.left + bounds.right) / 2;
+    const y = (bounds.top + bounds.bottom) / 2;
     await f.page.touchscreen.tap(x, y);
     await f.page.touchscreen.tap(x, y);
-  } else await f.page.mouse.click(x, y);
+  } else {
+    // Nearby programmatic clicks participate in the SDK's real double/triple
+    // click accumulator. Navigate with native keys instead of timing sleeps.
+    await expect(editorInput(f.page)).toBeFocused();
+    const prefix = (await readEditingSelection(f.page))!.text.slice(0, offset);
+    await f.page.keyboard.press(documentStart);
+    await expect
+      .poll(async () => {
+        const range = await readEditingSelection(f.page);
+        return [range?.start, range?.end];
+      })
+      .toEqual([0, 0]);
+    const steps = Array.from(new Intl.Segmenter('en', { granularity: 'grapheme' }).segment(prefix));
+    for (let index = 0; index < steps.length; index++) await f.page.keyboard.press('ArrowRight');
+  }
   await expect(editorInput(f.page)).toBeFocused();
   await expect
     .poll(async () => {
@@ -339,7 +360,12 @@ async function placeCaret(f: EditingFixture, offset: number) {
     .toEqual([offset, offset]);
 }
 
-async function content(f: EditingFixture, text: string, caret?: number, keepBold = true) {
+async function content(
+  f: EditingFixture,
+  text: string,
+  caret?: number,
+  expectedBold: string | null = 'journal',
+) {
   await expect.poll(async () => (await readEditingSelection(f.page))?.text).toBe(text);
   if (caret !== undefined) {
     await expect
@@ -362,13 +388,13 @@ async function content(f: EditingFixture, text: string, caret?: number, keepBold
   expect(validateDocumentStructure(saved)).toEqual([]);
   expect(saved.documentStyle).toEqual(f.initial.documentStyle);
   expect(saved.settings).toEqual(f.initial.settings);
-  if (keepBold) {
+  if (expectedBold !== null) {
     expect(
       saved
         .body!.textRuns!.filter((run) => run.ts?.bl === 1)
         .map((run) => text.slice(run.st, run.ed))
         .join(''),
-    ).toBe('journal');
+    ).toBe(expectedBold);
   }
   return saved;
 }
@@ -408,10 +434,7 @@ async function selectWord(f: EditingFixture, all = false) {
   } else {
     await placeCaret(f, 0);
     if (all) await f.page.keyboard.press('ControlOrMeta+A');
-    else {
-      const point = await textPoint(f.page);
-      await f.page.mouse.dblclick(point.centerX, point.y);
-    }
+    else for (let index = 0; index < 5; index++) await f.page.keyboard.press('Shift+ArrowRight');
   }
   const end = all ? f.initial.body!.dataStream.length - 2 : 5;
   await expect
@@ -441,6 +464,9 @@ async function softDelete(page: Page, inputType: 'deleteContentBackward' | 'dele
 }
 
 export function registerDocEditingTests(mobile: boolean) {
+  // These detecting cases retain the first attempt in both owners; an inherited
+  // ordinary-project retry must not repeat a known input-path failure.
+  test.describe.configure({ retries: 0 });
   test('Doc editing inserts at start, middle and end and preserves Unicode and surrounding formatting', async ({
     browser,
     baseURL,
@@ -535,7 +561,9 @@ export function registerDocEditingTests(mobile: boolean) {
       await f.page.keyboard.press(redo);
       await content(f, joined, boundary);
       await f.page.keyboard.press('Enter');
-      const separated = await content(f, original, boundary + 1);
+      // Native BreakLineCommand gives the inserted paragraph token the style
+      // at this bold boundary. Keep the exact expected run, including that token.
+      const separated = await content(f, original, boundary + 1, 'journal\r');
       await reopen(f, separated);
     });
   });
@@ -554,12 +582,12 @@ export function registerDocEditingTests(mobile: boolean) {
         await f.focus();
         await selectWord(f, true);
         await f.page.keyboard.press('Backspace');
-        await content(f, '\r\n', 0, false);
+        await content(f, '\r\n', 0, null);
         await f.page.keyboard.press('Backspace');
         await f.page.keyboard.press('Delete');
-        await content(f, '\r\n', 0, false);
+        await content(f, '\r\n', 0, null);
         await f.page.keyboard.type('New');
-        const result = await content(f, 'New\r\n', 3, false);
+        const result = await content(f, 'New\r\n', 3, null);
         await reopen(f, result);
       },
       { singleParagraph: true },
@@ -580,6 +608,9 @@ export function registerDocEditingTests(mobile: boolean) {
           if (inputType === 'deleteContentForward') await placeCaret(f, 1);
           const delivered = await softDelete(f.page, inputType);
           expect(delivered.trusted).toBe(false);
+          // The hosted failure also delivered beforeinput without input. A
+          // handled deletion must therefore complete without the fallback event.
+          expect(delivered.prevented).toBe(true);
           const expected =
             (inputType === 'deleteContentBackward' ? 'ab' : 'ac') + f.initial.body!.dataStream;
           const result = await content(f, expected, inputType === 'deleteContentBackward' ? 2 : 1);

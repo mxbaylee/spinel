@@ -742,6 +742,7 @@ export function DocEditor({
           render,
           univer.__getInjector().get(IContextMenuService),
           () => phoneInputLocked,
+          univer.__getInjector(),
         );
       if (
         render &&
