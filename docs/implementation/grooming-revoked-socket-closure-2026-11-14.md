@@ -23,7 +23,7 @@ retains exact source, base, tested merge, run/job, first failure and passing ret
 limits. Unchanged direct/shared inputs establish ownership, not physical closure
 or a leak. Durable original failure archive publication is pending.
 
-[SPN-128](../todo/SPN-128.md) gains SPN-161 as an actual verification prerequisite,
+[SPN-128](SPN-128.md) gains SPN-161 as an actual verification prerequisite,
 with its full **L** product scope and prior requirements intact. These remain two separately estimated outcomes: the complete **M** observation
 investigation and the retained **L** recovery outcome. This is not a product
 dependency or a scope waiver.

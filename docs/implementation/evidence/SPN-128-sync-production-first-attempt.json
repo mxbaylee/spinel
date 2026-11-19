@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "repository": "mxbaylee/spinel",
+  "pullRequest": 229,
+  "source": {
+    "headSha": "f3bdf95e1355de5bebf8ee64332b31201555b9c5",
+    "baseSha": "e63956c7ec214af03c825104a81f63517eb87d0b",
+    "testedMergeSha": "de4914329eaadfb0e7c948cf8efd37d70872f871",
+    "unchangedPathsInSPN128": [
+      "e2e/offline-creation.spec.ts",
+      "e2e/offline-fixture.ts",
+      "e2e/offline-creation-network.ts",
+      "web/Dashboard.tsx",
+      "playwright.config.ts"
+    ]
+  },
+  "ci": {
+    "workflowRunId": 41344876558,
+    "runAttempt": 1,
+    "jobId": 124963417224,
+    "jobName": "Playwright smoke (sync-production)",
+    "jobUrl": "https://github.com/mxbaylee/spinel/actions/runs/41344876558/job/124963417224",
+    "stepConclusion": "failure"
+  },
+  "environment": {
+    "node": "26.12.1",
+    "npm": "11.20.0",
+    "playwright": "1.64.1",
+    "browser": "Chrome Headless Shell",
+    "browserVersion": "156.0.8078.4",
+    "playwrightChromiumRevision": "1248",
+    "platform": "linux",
+    "runnerImage": "ubuntu-24.04",
+    "runnerImageVersion": "20261025.353.1",
+    "runnerCloud": "Azure",
+    "versionEvidence": "Original job installation log; Playwright version also in retained retry trace"
+  },
+  "artifact": {
+    "id": 13100236508,
+    "name": "theme-screenshots-sync-production",
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41344876558/artifacts/13100236508",
+    "bytes": 14853377,
+    "sha256": "40bee811d07d682add00956e8a6a7a0ad81fa8d99c8ca3a3ba14d191c4a5fc17",
+    "checksumEvidence": "Matches original job upload log at 2026-11-01T20:37:44.4338706Z",
+    "retentionDays": 7,
+    "supplementaryRawEvidenceExpires": true
+  },
+  "suite": {
+    "passed": 91,
+    "flaky": 1,
+    "failed": 0,
+    "failOnFlakyTests": true,
+    "workers": 1
+  },
+  "test": {
+    "file": "offline-creation.spec.ts",
+    "line": 359,
+    "column": 7,
+    "title": "sheet: create in a cached shared folder, edit, reload twice offline and upload once",
+    "project": "sync-production",
+    "timeoutMs": 180000
+  },
+  "firstAttempt": {
+    "retry": 0,
+    "startTime": "2026-11-01T20:24:04.446Z",
+    "status": "timedOut",
+    "durationMs": 180048,
+    "reportedErrors": [
+      "Test timeout of 180000ms exceeded.",
+      "browserContext.close: Test ended."
+    ],
+    "reportedStack": [
+      "e2e/offline-fixture.ts:564",
+      "e2e/offline-creation.spec.ts:715"
+    ],
+    "traceRetained": false,
+    "observedPageCount": 0,
+    "applicationErrorCount": 0,
+    "consoleErrorCounts": {
+      "Failed to load resource: net::ERR_EMPTY_RESPONSE": 1,
+      "Failed to load resource: net::ERR_INTERNET_DISCONNECTED": 70
+    },
+    "offlineCreatePostCounts": {
+      "blocked": 1
+    },
+    "screenshotState": [
+      "Failed to fetch",
+      "Refresh shared items",
+      "This item isn\u2019t available"
+    ],
+    "evidencePrefix": "test-results/sync-production/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production"
+  },
+  "automaticRetry": {
+    "retry": 1,
+    "startTime": "2026-11-01T20:27:05.593Z",
+    "status": "passed",
+    "durationMs": 21713,
+    "traceRetained": true,
+    "offlineCreatePostCounts": {
+      "blocked": 1,
+      "forwarded": 1
+    },
+    "evidencePrefix": "test-results/sync-production/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production-retry1"
+  },
+  "disposition": {
+    "classification": "Actual flaky test failure; not an environment-setup failure",
+    "acceptance": "Automatic retry pass does not satisfy failOnFlakyTests; original failure retained",
+    "supportedInference": "openPreparedFolder waits heading and New controls that can render from shared.items before folder-detail request populates views.current. Disconnecting can abort that request before the cached-folder precondition exists. The screenshot and absence of forwarded creation are consistent with this race.",
+    "limitations": [
+      "No first-attempt trace was retained.",
+      "The teardown stack alone does not prove the test body completed.",
+      "Exact first blocked action cannot be recovered from retained evidence.",
+      "Controlled readiness proof is needed before selecting a repair."
+    ],
+    "noCodeChangesOrRerunsByInvestigator": true
+  }
+}

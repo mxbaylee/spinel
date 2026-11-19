@@ -1,7 +1,7 @@
 import { validFailedRestoreCustody } from './restore-failed-custody.ts';
 import type { FailedRestoreCustody } from './restore-failed-custody.ts';
 import { createHash } from 'node:crypto';
-import { constants, createReadStream } from 'node:fs';
+import { constants } from 'node:fs';
 import {
   chmod,
   copyFile,
@@ -15,9 +15,15 @@ import {
   statfs,
 } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
+import { isDeepStrictEqual } from 'node:util';
 import type { FileIdentity } from './journal.ts';
 import { assertNoPendingRestore, restoreBarrierPath } from './restore-barrier.ts';
-import { copyClosedRestoreInput, copyRestoreInputFile } from '../backup/restore-input.ts';
+import {
+  authenticateRestoreInputFile,
+  copyClosedRestoreInput,
+  copyRestoreInputFile,
+} from '../backup/restore-input.ts';
+import type { RestoreInputFile } from '../backup/restore-input.ts';
 import type { PreparedRestoreSource } from '../backup/verification.ts';
 import { MAX_ARCHIVE_BYTES } from '../backup/transfer.ts';
 
@@ -36,6 +42,28 @@ export interface RestoreFiles {
   candidate: RestoreFileEvidence;
 }
 export type RestoreOriginals = Omit<RestoreFiles, 'candidate'>;
+/** Exact bytes of an interrupted, closed attempt. This is not an independent
+ * logical witness, an authoritative source or permission to open SQLite. */
+export interface ColdRestoreCustody {
+  version: 1;
+  kind: 'cold-original';
+  jobId: string;
+  captureId: string;
+  identity: FileIdentity;
+  files: RestoreOriginals['original'];
+}
+export interface ColdRestoreCustodyOptions {
+  root: string;
+  databasePath: string;
+  id: string;
+  captureId: string;
+  identity: FileIdentity;
+  signal?: AbortSignal;
+  deadline?: number;
+  assertAuthorized?(): void;
+  /** The supervisor owns the journal, dataset leases and process inventory. */
+  assertClosed(): void;
+}
 /** Trusted verifier output needed for custody; never accepted from HTTP. */
 export type RestoreSourceInput = Pick<
   PreparedRestoreSource,
@@ -81,12 +109,6 @@ const identity = (info: { dev: number; ino: number }): FileIdentity => ({
 });
 const same = (a: FileIdentity, b: FileIdentity) => a.device === b.device && a.inode === b.inode;
 
-async function digest(path: string, signal?: AbortSignal) {
-  const hash = createHash('sha256');
-  for await (const chunk of createReadStream(path, { signal })) hash.update(chunk);
-  return hash.digest('hex');
-}
-
 async function privateDirectory(path: string) {
   const info = await lstat(path);
   if (
@@ -123,17 +145,55 @@ async function syncDirectory(path: string) {
     await handle.close();
   }
 }
-async function evidence(path: string, signal?: AbortSignal): Promise<RestoreFileEvidence> {
+async function evidence(
+  path: string,
+  signal?: AbortSignal,
+  assertActive?: () => void,
+): Promise<RestoreFileEvidence> {
+  const active = () => {
+    signal?.throwIfAborted();
+    assertActive?.();
+  };
+  active();
   const before = await ownedFile(path);
-  const sha256 = await digest(path, signal);
-  const after = await ownedFile(path);
-  if (
-    !same(identity(before), identity(after)) ||
-    before.size !== after.size ||
-    before.mtimeMs !== after.mtimeMs
-  )
-    throw unavailable();
-  return { bytes: after.size, sha256 };
+  const file = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW | constants.O_NONBLOCK);
+  try {
+    const unchanged = async () => {
+      for (const after of [await file.stat(), await ownedFile(path)]) {
+        if (
+          !after.isFile() ||
+          !same(identity(before), identity(after)) ||
+          ['size', 'mtimeMs', 'ctimeMs', 'mode', 'uid', 'nlink'].some(
+            (key) => before[key as keyof typeof before] !== after[key as keyof typeof after],
+          )
+        )
+          throw unavailable();
+      }
+    };
+    await unchanged();
+    const hash = createHash('sha256'),
+      buffer = Buffer.alloc(64 * 1024);
+    let offset = 0;
+    for (;;) {
+      active();
+      const { bytesRead } = await file.read(
+        buffer,
+        0,
+        Math.min(buffer.length, before.size + 1 - offset),
+        offset,
+      );
+      if (!bytesRead) break;
+      offset += bytesRead;
+      if (offset > before.size) throw unavailable();
+      hash.update(buffer.subarray(0, bytesRead));
+    }
+    await unchanged();
+    active();
+    if (offset !== before.size) throw unavailable();
+    return { bytes: offset, sha256: hash.digest('hex') };
+  } finally {
+    await file.close();
+  }
 }
 async function requireEvidence(path: string, expected: RestoreFileEvidence, signal?: AbortSignal) {
   const actual = await evidence(path, signal);
@@ -420,6 +480,180 @@ export function validRestoreOriginals(value: unknown): value is RestoreOriginals
       /^[a-f0-9]{64}$/.test(file.sha256)
     );
   });
+}
+
+export function validColdRestoreCustody(value: unknown): value is ColdRestoreCustody {
+  return (
+    sourceShape(value, ['version', 'kind', 'jobId', 'captureId', 'identity', 'files']) &&
+    value.version === 1 &&
+    value.kind === 'cold-original' &&
+    typeof value.jobId === 'string' &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(value.jobId) &&
+    value.captureId !== value.jobId &&
+    validRestoreOriginals({
+      id: value.captureId,
+      identity: value.identity,
+      original: value.files,
+    })
+  );
+}
+
+function coldCustodyPaths(root: string, manifest: ColdRestoreCustody) {
+  const job = directory(root, manifest.jobId),
+    capture = join(job, `cold-${manifest.captureId}`);
+  return { job, capture, raw: join(capture, 'raw') };
+}
+
+async function coldCustodyBoundary(options: ColdRestoreCustodyOptions) {
+  assertMutationActive(options);
+  options.assertClosed();
+  const job = directory(options.root, options.id);
+  directory(options.root, options.captureId);
+  if (options.id === options.captureId) throw unavailable();
+  await privateDirectory(options.root);
+  await privateDirectory(job);
+  await privateDirectory(dirname(options.databasePath));
+  const current = await ownedFile(options.databasePath);
+  if (!same(options.identity, identity(current))) throw unavailable();
+  await noRollbackJournal(options.databasePath);
+  await barrier(options, { id: options.id, identity: options.identity });
+  assertMutationActive(options);
+  options.assertClosed();
+}
+
+/** Capture after physical closure without opening a potentially partial SQLite
+ * image. The caller journals the complete returned manifest before preserving. */
+export async function captureColdRestoreCustody(
+  options: ColdRestoreCustodyOptions,
+): Promise<ColdRestoreCustody> {
+  await coldCustodyBoundary(options);
+  const files = {} as ColdRestoreCustody['files'];
+  for (const name of names) {
+    const path = options.databasePath + name.slice('spinel.sqlite'.length);
+    try {
+      files[name] = await evidence(path, options.signal, () => assertMutationActive(options));
+    } catch (error) {
+      if (name === 'spinel.sqlite' || (error as NodeJS.ErrnoException).code !== 'ENOENT')
+        throw error;
+      files[name] = null;
+    }
+  }
+  const manifest: ColdRestoreCustody = {
+    version: 1,
+    kind: 'cold-original',
+    jobId: options.id,
+    captureId: options.captureId,
+    identity: { ...options.identity },
+    files,
+  };
+  if (!validColdRestoreCustody(manifest)) throw unavailable();
+  await verifyColdCustodyTuple(options, manifest);
+  return manifest;
+}
+
+async function verifyColdCustodyTuple(
+  options: ColdRestoreCustodyOptions,
+  manifest: ColdRestoreCustody,
+) {
+  await coldCustodyBoundary(options);
+  for (const name of names) {
+    const path = options.databasePath + name.slice('spinel.sqlite'.length),
+      file = manifest.files[name];
+    if (file)
+      requireSameEvidence(
+        await evidence(path, options.signal, () => assertMutationActive(options)),
+        file,
+      );
+    else if (await sourceFileExists(path)) throw unavailable();
+  }
+  await coldCustodyBoundary(options);
+}
+
+/** A repeated, exact manifest may resync complete copies and fill missing ones.
+ * Partial or differing evidence is retained and refused, never overwritten. */
+export async function preserveColdRestoreCustody(
+  options: ColdRestoreCustodyOptions,
+  expected: ColdRestoreCustody,
+): Promise<ColdRestoreCustody> {
+  if (!validColdRestoreCustody(expected)) throw unavailable();
+  const manifest = structuredClone(expected);
+  if (!isDeepStrictEqual(await captureColdRestoreCustody(options), manifest)) throw unavailable();
+  const location = coldCustodyPaths(options.root, manifest),
+    active = () => assertMutationActive(options);
+  for (const path of [location.capture, location.raw]) {
+    await coldCustodyBoundary(options);
+    try {
+      await mkdir(path, { mode: 0o700 });
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
+    }
+    await privateDirectory(path);
+  }
+  for await (const entry of await opendir(location.capture, { bufferSize: 2 }))
+    if (entry.name !== 'raw') throw unavailable();
+  const present = new Set<string>();
+  for await (const entry of await opendir(location.raw, { bufferSize: 4 })) {
+    if (!names.includes(entry.name as Name) || !manifest.files[entry.name as Name])
+      throw unavailable();
+    present.add(entry.name);
+  }
+  let missingBytes = 0;
+  for (const name of names) {
+    const file = manifest.files[name];
+    if (!file) continue;
+    await coldCustodyBoundary(options);
+    if (present.has(name))
+      await authenticateRestoreInputFile(
+        { path: join(location.raw, name), ...file },
+        true,
+        options.signal,
+        active,
+      );
+    else missingBytes += file.bytes;
+  }
+  if ((await availableBytes(options.root)) < BigInt(missingBytes + RESERVE)) throw unavailable();
+  for (const name of names) {
+    const file = manifest.files[name];
+    if (!file || present.has(name)) continue;
+    await coldCustodyBoundary(options);
+    // A partial activation can still have the original application's file mode;
+    // its containing directory is private. Copies always get their own 0600 mode.
+    await copyStagedCandidate(
+      options.databasePath + name.slice('spinel.sqlite'.length),
+      join(location.raw, name),
+      active,
+    );
+    await authenticateRestoreInputFile(
+      { path: join(location.raw, name), ...file },
+      true,
+      options.signal,
+      active,
+    );
+    await coldCustodyBoundary(options);
+  }
+  for (const path of [location.raw, location.capture, location.job, options.root]) {
+    await coldCustodyBoundary(options);
+    await syncDirectory(path);
+    await coldCustodyBoundary(options);
+  }
+  await verifyColdCustodyTuple(options, manifest);
+  return manifest;
+}
+
+/** No logical fingerprint is synthesized here. SQLite use requires the caller's
+ * independently recorded expected image and an appropriate restricted worker. */
+export function coldRestoreCustodyInputs(
+  root: string,
+  manifest: ColdRestoreCustody,
+): { database: RestoreInputFile; wal?: RestoreInputFile } {
+  if (!validColdRestoreCustody(manifest)) throw unavailable();
+  const raw = coldCustodyPaths(root, manifest).raw;
+  return {
+    database: { path: join(raw, 'spinel.sqlite'), ...manifest.files['spinel.sqlite']! },
+    ...(manifest.files['spinel.sqlite-wal'] && {
+      wal: { path: join(raw, 'spinel.sqlite-wal'), ...manifest.files['spinel.sqlite-wal'] },
+    }),
+  };
 }
 
 /** Read only, under exclusive closure. Persist this manifest before copying when
@@ -755,7 +989,11 @@ async function unchangedOriginal(
   }
 }
 
-async function barrier(control: RestoreFileControl, files: RestoreFiles, create = false) {
+async function barrier(
+  control: Pick<RestoreFileControl, 'databasePath'>,
+  files: Pick<RestoreFiles, 'id' | 'identity'>,
+  create = false,
+) {
   const path = restoreBarrierPath(control.databasePath);
   const pending = `${path}.${files.id}.pending`;
   const expected =
@@ -999,27 +1237,33 @@ function assertUncommitted(control: RestoreFileControl) {
 async function preparedOriginalBoundary(
   control: RestoreFileControl,
   files: RestoreFiles,
-  failed: FailedRestoreCustody,
+  failed: FailedRestoreCustody | ColdRestoreCustody,
   attemptId: string,
 ) {
   assertMutationActive(control);
   assertUncommitted(control);
+  const cold = validColdRestoreCustody(failed);
   if (
     !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/.test(attemptId) ||
-    !validFailedRestoreCustody(failed) ||
-    failed.stop.reference.jobId !== files.id ||
+    (cold
+      ? failed.jobId !== files.id
+      : !validFailedRestoreCustody(failed) || failed.stop.reference.jobId !== files.id) ||
     !same(failed.identity, files.identity)
   )
     throw unavailable();
   const root = await retained(control, files);
   await barrier(control, files);
-  const captured = join(root, `failed-${failed.captureId}`, 'raw');
-  await privateDirectory(join(root, `failed-${failed.captureId}`));
+  const custody = join(root, `${cold ? 'cold' : 'failed'}-${failed.captureId}`),
+    captured = join(custody, 'raw');
+  await privateDirectory(custody);
   await privateDirectory(captured);
   for (const name of names) {
     const path = join(captured, name),
       evidence = failed.files[name];
-    if (evidence) await requireEvidence(path, evidence, control.signal);
+    if (evidence)
+      await authenticateRestoreInputFile({ path, ...evidence }, false, control.signal, () =>
+        assertMutationActive(control),
+      );
     else {
       try {
         await lstat(path);
@@ -1041,7 +1285,7 @@ async function preparedOriginalBoundary(
 export async function stagePreparedRestoreOriginal(
   control: RestoreFileControl,
   files: RestoreFiles,
-  failed: FailedRestoreCustody,
+  failed: FailedRestoreCustody | ColdRestoreCustody,
   attemptId: string,
   source: string,
 ) {
@@ -1084,7 +1328,7 @@ export async function stagePreparedRestoreOriginal(
 export async function activatePreparedRestoreOriginal(
   control: RestoreFileControl,
   files: RestoreFiles,
-  failed: FailedRestoreCustody,
+  failed: FailedRestoreCustody | ColdRestoreCustody,
   attemptId: string,
 ) {
   const active = () => assertMutationActive(control);

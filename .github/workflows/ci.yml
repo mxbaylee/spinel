@@ -165,6 +165,9 @@ jobs:
   # ~260s, so one serial job could not finish within its hosted cap (SPN-112).
   unit-test-run:
     name: Unit tests (${{ matrix.suite }})
+    env:
+      SPINEL_CRASH_EVIDENCE_DIR: test-results/restore-crash
+      SPINEL_CRASH_EVIDENCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     needs: changes
     if: needs.changes.outputs.unit_tests == 'true'
     runs-on: ubuntu-latest
@@ -188,6 +191,9 @@ jobs:
           node scripts/ci/prefer-ubuntu-archive.ts
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends tini
+      - name: Prepare distinct recovery crash receipts
+        if: matrix.suite == 'recovery'
+        run: node scripts/ci/restore-crash-evidence.ts begin
       # lib/ runs in its own partitions below.
       - name: Unit tests
         env:
@@ -213,6 +219,17 @@ jobs:
               exit 1
               ;;
           esac
+      - name: Require all recovery crash receipts
+        if: always() && matrix.suite == 'recovery'
+        run: node scripts/ci/restore-crash-evidence.ts verify
+      - name: Preserve safe recovery crash receipts
+        if: always() && matrix.suite == 'recovery'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: restore-crash-evidence
+          path: test-results/restore-crash/*.json
+          retention-days: 30
+          if-no-files-found: error
       - name: PDF collaboration overlap evidence
         if: always() && matrix.suite == 'remaining'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -501,6 +518,7 @@ jobs:
           # Server-only provider credential; never passed to the Vite build.
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY || vars.UNSPLASH_ACCESS_KEY }}
           SPINEL_E2E_PROJECT: ${{ matrix.project }}
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           SPINEL_CI_FULL_COMPATIBILITY: ${{ needs.changes.outputs.phone_compatibility }}
           SHARD: ${{ matrix.shard }}
           SPINEL_CAPTURE_SCREENSHOTS: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'visual-review') && '1' || '0' }}
@@ -541,6 +559,12 @@ jobs:
             test-results/**/spn-059-*-soak.json
             test-results/**/error-context.md
             test-results/**/trace.zip
+            test-results/**/restore-first-failure-*.zip
+            test-results/**/restore-startup-*.json
+            test-results/**/restore-diagnostic-collection-failures*.json
+            test-results/**/restore-failure-*.png
+            test-results/**/restore-state-*.txt
+            test-results/**/supervised-restore-first-attempt*.json
             playwright-report/*.json
           retention-days: 7
           if-no-files-found: warn
