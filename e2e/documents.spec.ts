@@ -327,6 +327,8 @@ clipboardTest.describe('native Doc image clipboard', () => {
                   expect(await page.evaluate(() => performance.timeOrigin)).toBe(origin);
                   expect(topLevelNavigations).toBe(navigationCount);
                   await capture('after-undo-redo');
+                  expect(droppedSyncFrames, 'Native sync observations must be complete').toBe(0);
+                  expect(observationFailures, 'Native sync observations must be readable').toBe(0);
                   await reopen(f, pasted);
                   const reopened = await f.read();
                   for (const key of ['body', 'drawings', 'drawingsOrder', 'resources'] as const)
