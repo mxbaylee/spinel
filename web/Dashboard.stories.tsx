@@ -257,7 +257,33 @@ function LocalDeviceFixture({ local, children }: { local: LocalStart; children: 
               },
               () => {},
             );
-          } else await store.saveDownload(bundle, new Map());
+          } else {
+            await store.saveDownload(bundle, new Map());
+            // The hook rereads this store, so saved edits must be real queue records here.
+            // Summaries carry no pending flag of their own; a refresh would wipe it.
+            if (copy.pending || copy.retained)
+              await store.saveCheckpoint(
+                {
+                  account: local.user.id,
+                  item: copy.itemId,
+                  spaceId: copy.spaceId,
+                  unitId: bundle.unitId,
+                  revisionOffset: 0,
+                },
+                {
+                  version: 1,
+                  unitId: bundle.unitId,
+                  revision: copy.revision,
+                  snapshot: bundle.snapshot,
+                  sent: null,
+                  inflight: [],
+                  buffer: [[{ id: 'story.edit', params: { unitId: bundle.unitId } }]],
+                  // A record that could not be saved is the smallest state that needs a choice.
+                  ...(copy.retained ? { recoveryMissing: true } : {}),
+                } as never,
+                () => {},
+              );
+          }
         }
         await store.saveCatalog(local.user, local.catalog);
       } finally {
