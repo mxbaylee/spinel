@@ -80,9 +80,10 @@ After an initial online setup in the app context they will use:
 | Changes        | Committed edits save locally and survive ordinary termination/reopen while offline. Eligible downloaded Doc/Sheet edits sync when the running app reconnects in the editor or file list; pending clears only after acknowledgement and durable checkpoint cleanup. Ordinary saved edits are informational and send on their own; only incompatible or failed work remains available for explicit recovery. Local-save failure remains visible. |
 | Entry points   | Stable item links support direct launch; offline downloads and home-screen shortcuts remain distinct actions.                                                                                                                                                                                                                                                                                                                                  |
 
-📤 Ordinary pending files are pinned above everything else in the list and show **Not synced yet**. A **Needs to
-sync** notice on the root list only, with no action, counts them; only retained work offers recovery
-([SPN-163](implementation/SPN-163.md)).
+📤 One **Sync status** banner on the root list shows every phase that applies: **Waiting to sync** (offline, with a
+**Try now** button that rechecks the connection), **Syncing now** (online, nothing to do) and **Needs attention**
+(retained work, one **Recover** button per file). Rows show the same word as a text badge, with pending files pinned
+first ([SPN-163](implementation/SPN-163.md)).
 
 The catalog is Spinel metadata, not the server's physical filesystem. Preserve
 personal filing and source permissions: never copy inaccessible owner ancestors,
@@ -503,7 +504,7 @@ response or failed local cleanup retries that exact request and returns the same
 copy. A changed request or a subsequently removed/transferred copy does not
 silently create another. The original document is never written.
 
-**Offline changes on this device** in My files lists retained work, including
+The **Needs attention** line of the sync status in My files lists retained work, including
 prepared Space children whose original is no longer accessible. Its
 `/?offlineRecovery=<item id>` link opens only the current account's exact stored
 bundle, without requiring original-item or Space-tree access. The stored Space

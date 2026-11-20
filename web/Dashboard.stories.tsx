@@ -689,10 +689,13 @@ export const PendingEditsOffline: Story = {
   parameters: { api: empty },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(await canvas.findByText('Needs to sync')).toBeVisible();
-    await expect(canvas.getByText(/changes saved on this device/)).toBeVisible();
-    await expect(canvas.getByText('Not synced yet')).toBeVisible();
-    // Ordinary pending work offers no recovery action; it sends on its own.
+    const status = await canvas.findByRole('status', { name: 'Sync status' });
+    await expect(status).toHaveTextContent('Waiting to sync');
+    await expect(status).toHaveTextContent(/changes saved on this device/);
+    // The banner word and the row badge use the same words.
+    await expect(canvas.getAllByText('Waiting to sync')).toHaveLength(2);
+    // The only action is rechecking the connection; there is nothing to recover.
+    await expect(within(status).getByRole('button', { name: 'Try now' })).toBeVisible();
     await expect(canvas.queryByRole('link', { name: /^Recover / })).not.toBeInTheDocument();
     // Pinned above folders, not only above other files.
     const names = canvas
@@ -709,11 +712,11 @@ export const PendingEditsCleared: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(await canvas.findByRole('button', { name: `${trip.name} Doc` })).toBeVisible();
-    await expect(canvas.queryByText('Needs to sync')).not.toBeInTheDocument();
-    await expect(canvas.queryByText('Not synced yet')).not.toBeInTheDocument();
+    await expect(canvas.queryByRole('status', { name: 'Sync status' })).not.toBeInTheDocument();
+    await expect(canvas.queryByText('Waiting to sync')).not.toBeInTheDocument();
   },
 };
-/** Ordinary pending work and genuine recovery side by side: the notice counts only the first. */
+/** Ordinary pending work beside genuine recovery: one banner with both lines and every action. */
 export const PendingEditsBesideRecovery: Story = {
   args: {
     local: {
@@ -726,10 +729,14 @@ export const PendingEditsBesideRecovery: Story = {
   parameters: { api: empty },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(await canvas.findByText('Needs to sync')).toBeVisible();
-    await expect(canvas.getByText(/1 file has changes saved on this device/)).toBeVisible();
-    await expect(canvas.getByText('Offline changes on this device')).toBeVisible();
-    await expect(canvas.getByRole('link', { name: `Recover ${roadmap.name}` })).toBeVisible();
+    const status = await canvas.findByRole('alert', { name: 'Sync status' });
+    await expect(status).toHaveTextContent('Needs attention');
+    await expect(status).toHaveTextContent(/1 file has changes saved on this device/);
+    await expect(canvas.getAllByRole('alert')).toHaveLength(1);
+    await expect(
+      within(status).getByRole('link', { name: `Recover ${roadmap.name}` }),
+    ).toBeVisible();
+    await expect(within(status).getByRole('button', { name: 'Try now' })).toBeVisible();
     await expect(
       canvas.queryByRole('link', { name: `Recover ${trip.name}` }),
     ).not.toBeInTheDocument();

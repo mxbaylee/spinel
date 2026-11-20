@@ -151,8 +151,10 @@ Drive puts its per-file offline toggle in the same place. Once downloaded, the
 same menu item reads **Remove from device**; with pending changes it opens the
 recovery choices from the contract instead of removing. A downloaded row shows
 an "Available offline" badge (icon plus label); a row with pending local edits
-shows the save state from the contract instead ("Saved on this device — waiting
-to sync", "Needs attention"). Known items that aren't downloaded stay listed and
+shows the save state instead: "Waiting to sync" offline, "Syncing now" online,
+"Needs attention" for work that needs a choice. The root list adds one sync
+status banner with a line for each phase that applies and one row of actions
+("Try now", "Recover <name>"; SPN-163). Known items that aren't downloaded stay listed and
 say "Needs a connection" when offline. While offline or after a failed refresh,
 the sidebar's connection indicator popover says when the list was last updated
 ("Files as of 14:05"), so a stale catalog never looks like an empty one. Items

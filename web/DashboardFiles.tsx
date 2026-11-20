@@ -12,7 +12,14 @@ import './DashboardFiles.css';
 
 export type DashboardFileLayout = 'list' | 'grid';
 export type DashboardOfflineState =
-  'available' | 'pages-available' | 'needs-connection' | 'not-synced' | 'needs-attention' | null;
+  | 'available'
+  | 'pages-available'
+  | 'needs-connection'
+  | 'not-synced'
+  | 'waiting'
+  | 'syncing'
+  | 'needs-attention'
+  | null;
 
 export { filenameEmoji } from '../src/shared/appearance.ts';
 

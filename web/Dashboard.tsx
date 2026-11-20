@@ -45,6 +45,7 @@ import type { SpaceRootActionMode } from './SpaceRootActions.tsx';
 import { EditorFrame } from './EditorFrame.tsx';
 import { AccessState } from './AccessState.tsx';
 import { AccessDetails } from './AccessDetails.tsx';
+import { CONNECTION_CHECK_EVENT, CONNECTION_CHECKED_EVENT } from './connectionState.ts';
 import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import { ITEM_REQUEST_DEADLINE_MS } from './offline/deadlines.ts';
@@ -56,8 +57,8 @@ import { preparedAccount } from './offline/offlineStore.ts';
 import type { OfflineCatalog, OfflineDownload, OfflineUser } from './offline/offlineStore.ts';
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
 import { OfflineAvailability, OfflineAvailabilityActions } from './offline/OfflineAvailability.tsx';
-import { OfflineRecoveryList } from './OfflineRecoveryEntry.tsx';
-import { itemNeedsSync, OfflineSyncNotice, pendingFirst } from './OfflineStatus.tsx';
+import { itemNeedsSync, pendingBadge, pendingFirst, syncSummary } from './OfflineStatus.tsx';
+import { SyncStatus } from './SyncStatus.tsx';
 import { spaceCopies } from './offline/spaceCopies.ts';
 import type { ItemAppearance } from '../src/shared/appearance.ts';
 import { CopyFileForm } from './CopyFile.tsx';
@@ -800,10 +801,28 @@ export function Dashboard({
     }
   }
   const needsSyncFor = (item: FileItem) => itemNeedsSync(item, offline.downloads);
+  // Try now asks the connection probe and the replay owner to look again; the probe answers
+  // within its 2 s timeout, so the button never stays busy longer than that.
+  const [checking, setChecking] = useState(false);
+  const checkNow = () => {
+    setChecking(true);
+    window.dispatchEvent(new Event(CONNECTION_CHECK_EVENT));
+  };
+  useEffect(() => {
+    if (!checking) return;
+    const done = () => setChecking(false);
+    // The probe's answer ends the check; the timer only covers one that never arrives.
+    window.addEventListener(CONNECTION_CHECKED_EVENT, done, { once: true });
+    const fallback = setTimeout(done, 2500);
+    return () => {
+      window.removeEventListener(CONNECTION_CHECKED_EVENT, done);
+      clearTimeout(fallback);
+    };
+  }, [checking]);
   function offlineState(item: FileItem) {
-    const creation = offline.downloads.get(item.id)?.creation;
-    if (creation) return creation.problem ? 'needs-attention' : 'not-synced';
-    if (needsSyncFor(item)) return 'not-synced';
+    const download = offline.downloads.get(item.id);
+    const pending = pendingBadge(download, needsSyncFor(item), connection);
+    if (pending) return pending;
     if (
       item.kind === 'space' &&
       spaceCopies(offline.downloads.values(), item.id).some((copy) => copy.available !== false)
@@ -1113,10 +1132,12 @@ export function Dashboard({
           {shareMessage && <p role="status">{shareMessage}</p>}
 
           {!currentId && (
-            <>
-              <OfflineSyncNotice downloads={offline.downloads.values()} />
-              <OfflineRecoveryList downloads={offline.downloads.values()} navigation={navigation} />
-            </>
+            <SyncStatus
+              {...syncSummary(offline.downloads.values(), connection)}
+              onTryNow={checkNow}
+              checking={checking}
+              allowNavigation={() => navigation.allow()}
+            />
           )}
 
           {local && (

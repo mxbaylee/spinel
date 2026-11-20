@@ -2,7 +2,6 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { EditorFrame } from './EditorFrame.tsx';
 import type { ConnectionState } from './connectionState.ts';
 import type { NavigationGuard } from './navigation.ts';
-import type { OfflineDownload } from './offline/offlineStore.ts';
 import {
   hasOfflineEdits,
   offlineAccountEvent,
@@ -91,7 +90,7 @@ export function OfflineRecoveryEntry({
   return (
     <EditorFrame
       name={item.name}
-      contextLabel="Offline changes on this device"
+      contextLabel="Needs attention: changes saved on this device"
       connection={connection}
       documentKey={itemId}
       onBack={back}
@@ -107,38 +106,5 @@ export function OfflineRecoveryEntry({
         />
       </Suspense>
     </EditorFrame>
-  );
-}
-
-export function OfflineRecoveryList({
-  downloads,
-  navigation,
-}: {
-  downloads: Iterable<OfflineDownload>;
-  navigation: NavigationGuard;
-}) {
-  const pending = [...downloads]
-    .filter((item) => item.pending && item.retained && !item.creation)
-    .sort((a, b) => a.name.localeCompare(b.name));
-  if (!pending.length) return null;
-  return (
-    <section className="offline-recovery-list" aria-labelledby="offline-recovery-heading">
-      <h2 id="offline-recovery-heading">Offline changes on this device</h2>
-      <p>Open these device copies to recover, export, or discard saved changes.</p>
-      <ul>
-        {pending.map((item) => (
-          <li key={item.itemId}>
-            <a
-              href={`/?offlineRecovery=${encodeURIComponent(item.itemId)}`}
-              onClick={(event) => {
-                if (!navigation.allow()) event.preventDefault();
-              }}
-            >
-              Recover {item.name}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
   );
 }

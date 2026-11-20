@@ -9,7 +9,14 @@ import {
   OfflineStore,
   retainsWork,
 } from '../../web/offline/offlineStore.ts';
-import { itemNeedsSync, needsSync, pendingFirst } from '../../web/OfflineStatus.tsx';
+import {
+  itemNeedsSync,
+  needsSync,
+  pendingBadge,
+  pendingFirst,
+  syncPhase,
+  syncSummary,
+} from '../../web/OfflineStatus.tsx';
 import type { OfflineOutbox, StoredItem } from '../../web/offline/offlineStore.ts';
 
 const account = 'protected-account';
@@ -749,4 +756,78 @@ test('a Space needs to sync when any of its page copies does, and a plain file o
   expect(itemNeedsSync({ id: 'edited', kind: 'sheet' }, downloads)).toBe(true);
   // A folder is never a Space, even if an id matches a page's space.
   expect(itemNeedsSync({ id: 'space-a', kind: 'folder' }, downloads)).toBe(false);
+});
+
+test('the sync summary separates files needing a choice from the queue, and phases follow the connection', () => {
+  const row = (name: string, extra: object = {}) =>
+    ({
+      itemId: name,
+      name,
+      kind: 'doc',
+      readOnly: false,
+      revision: 1,
+      downloadedAt: 0,
+      pending: true,
+      ...extra,
+    }) as never;
+  const downloads = [
+    row('zebra', { retained: true }),
+    row('ordinary'),
+    row('apple', { retained: true }),
+    row('also-ordinary'),
+    row('creation', { creation: { parentId: null, createdAt: 0 } }),
+    row('clean', { pending: false }),
+  ];
+  // Recover entries are sorted by name; creations, clean and ordinary files are not among them.
+  expect(syncSummary(downloads, 'offline').recover.map((entry) => entry.name)).toEqual([
+    'apple',
+    'zebra',
+  ]);
+  // Both lines can apply together; the queue counts ordinary pending files only.
+  expect(syncSummary(downloads, 'offline').queued).toEqual({ phase: 'waiting', count: 2 });
+  expect(syncSummary(downloads, 'reconnecting').queued?.phase).toBe('waiting');
+  expect(syncSummary(downloads, 'online').queued).toEqual({ phase: 'syncing', count: 2 });
+  expect(syncPhase('online')).toBe('syncing');
+  // Nothing saved: neither line.
+  expect(syncSummary([row('clean', { pending: false })], 'online')).toEqual({
+    recover: [],
+    queued: undefined,
+  });
+});
+
+test('the row badge follows creation, retained and ordinary pending work, and the connection', () => {
+  const copy = (extra: object = {}) =>
+    ({ itemId: 'x', name: 'x', kind: 'doc', readOnly: false, pending: true, ...extra }) as never;
+  expect(pendingBadge(undefined, false, 'online')).toBeNull();
+  expect(pendingBadge(copy({ creation: { parentId: null, createdAt: 0 } }), false, 'online')).toBe(
+    'not-synced',
+  );
+  expect(
+    pendingBadge(
+      copy({ creation: { parentId: null, createdAt: 0, problem: 'folder-missing' } }),
+      false,
+      'online',
+    ),
+  ).toBe('needs-attention');
+  expect(pendingBadge(copy({ retained: true }), false, 'online')).toBe('needs-attention');
+  expect(pendingBadge(copy(), true, 'offline')).toBe('waiting');
+  expect(pendingBadge(copy(), true, 'reconnecting')).toBe('waiting');
+  expect(pendingBadge(copy(), true, 'online')).toBe('syncing');
+  expect(pendingBadge(copy({ pending: false }), false, 'online')).toBeNull();
+});
+
+test('a read-only pending copy that is not retained still reads as waiting or syncing (recorded edge)', () => {
+  const readOnly = {
+    itemId: 'r',
+    name: 'r',
+    kind: 'doc',
+    readOnly: true,
+    revision: 1,
+    downloadedAt: 0,
+    pending: true,
+  } as never;
+  expect(syncSummary([readOnly], 'offline')).toEqual({
+    recover: [],
+    queued: { phase: 'waiting', count: 1 },
+  });
 });
