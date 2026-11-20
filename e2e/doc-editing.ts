@@ -112,7 +112,12 @@ export async function withEditingDoc(
   info: TestInfo,
   mobile: boolean,
   work: (fixture: EditingFixture) => Promise<void>,
-  options: { viewer?: boolean; traditional?: boolean; singleParagraph?: boolean } = {},
+  options: {
+    viewer?: boolean;
+    traditional?: boolean;
+    singleParagraph?: boolean;
+    beforeOpen?: (page: Page) => Promise<void>;
+  } = {},
 ) {
   const source = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
@@ -224,6 +229,7 @@ export async function withEditingDoc(
       await recordEditingEvents(guest ?? context);
       page = await (guest ?? context).newPage();
       page.on('pageerror', (error) => errors.push(error.message));
+      await options.beforeOpen?.(page);
       await page.goto(url);
       await expect(page.getByRole('status', { name: 'Save status' })).toHaveText(
         options.viewer || (mobile && options.traditional) ? /View only/ : 'All changes saved.',
@@ -326,7 +332,7 @@ const redo = process.platform === 'darwin' ? 'Meta+Shift+z' : 'Control+y';
 const documentStart = process.platform === 'darwin' ? 'Meta+ArrowUp' : 'Control+Home';
 
 /** Use real desktop navigation or mobile touch; never write a native range. */
-async function placeCaret(f: EditingFixture, offset: number) {
+export async function placeCaret(f: EditingFixture, offset: number) {
   if (f.mobile) {
     await expect
       .poll(async () => Boolean((await readEditingSelection(f.page, offset))?.queryBounds))
@@ -360,7 +366,7 @@ async function placeCaret(f: EditingFixture, offset: number) {
     .toEqual([offset, offset]);
 }
 
-async function content(
+export async function content(
   f: EditingFixture,
   text: string,
   caret?: number,
@@ -399,7 +405,7 @@ async function content(
   return saved;
 }
 
-async function reopen(f: EditingFixture, expected: IDocumentData) {
+export async function reopen(f: EditingFixture, expected: IDocumentData) {
   await f.reload();
   await expect
     .poll(async () => (await readEditingSelection(f.page))?.text, { timeout: 30_000 })

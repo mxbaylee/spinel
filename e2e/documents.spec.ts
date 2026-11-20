@@ -1,12 +1,359 @@
+import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import sharp from 'sharp';
 import { expect, test } from '@playwright/test';
+import type { Page, Request } from '@playwright/test';
+import type { IDocumentData } from '@univerjs/core';
 import { interruptibleNetwork } from './live-network.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
-import { registerDocEditingTests } from './doc-editing.ts';
+import {
+  content,
+  placeCaret,
+  readEditingSelection,
+  registerDocEditingTests,
+  reopen,
+  withEditingDoc,
+} from './doc-editing.ts';
+import { withFixtureCleanup } from './owned-process.ts';
 
 test.describe('desktop native Doc editing', () => registerDocEditingTests(false));
+
+const clipboardTest = test.extend({ trace: 'retain-on-failure' });
+type ImagePasteWindow = Window & {
+  imagePasteEvents?: {
+    trusted: boolean;
+    types: string[];
+    files: { mime: string; bytes: number }[];
+  }[];
+};
+const sha256 = (value: Buffer) => createHash('sha256').update(value).digest('hex');
+
+clipboardTest.describe('native Doc image clipboard', () => {
+  clipboardTest.describe.configure({ retries: 0 });
+
+  clipboardTest(
+    'native PNG paste keeps the editor, exact content and stored image through undo and reopen',
+    async ({ browser, baseURL }, info) => {
+      clipboardTest.setTimeout(90_000);
+      expect(info.retry).toBe(0);
+      const png = await sharp({
+        create: { width: 80, height: 60, channels: 3, background: { r: 23, g: 201, b: 151 } },
+      })
+        .png()
+        .toBuffer();
+      const pixels = await sharp(png).removeAlpha().raw().toBuffer();
+      const posts: { mime: string; bytes: number; sha256: string; status?: number }[] = [];
+      const postRequests = new Map<Request, (typeof posts)[number]>();
+      const sync: Record<string, unknown>[] = [];
+      const stages: Record<string, unknown>[] = [];
+      const evidence: Record<string, unknown> = {
+        source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
+        project: info.project.name,
+        attempt: info.retry,
+        browser: browser.version(),
+        viewport: { width: 1440, height: 1100 },
+        fixture: {
+          mime: 'image/png',
+          width: 80,
+          height: 60,
+          bytes: png.length,
+          sha256: sha256(png),
+        },
+        posts,
+        sync,
+        stages,
+      };
+      let topLevelNavigations = 0;
+      let totalImagePosts = 0;
+      let droppedSyncFrames = 0;
+      let observationFailures = 0;
+      const observeSync = (direction: 'sent' | 'received', payload: string | Buffer) => {
+        try {
+          const serialized = payload.toString();
+          const frame = JSON.parse(serialized) as Record<string, unknown>;
+          if (
+            !['submit', 'ack', 'resync', 'edit', 'snapshot', 'resume', 'verified'].includes(
+              String(frame.type),
+            )
+          )
+            return;
+          if (sync.length === 64) {
+            droppedSyncFrames++;
+            return;
+          }
+          sync.push({
+            direction,
+            type: frame.type,
+            reason: [
+              'unsupported',
+              'refused',
+              'stale',
+              'divergence',
+              'unavailable',
+              'malformed',
+              'capacity',
+              'retry-conflict',
+              'invariant',
+            ].includes(String(frame.reason))
+              ? frame.reason
+              : undefined,
+            revision: typeof frame.revision === 'number' ? frame.revision : undefined,
+            mutations: Array.isArray(frame.mutations) ? frame.mutations.length : undefined,
+            inlineImageReferences: (serialized.match(/data:image\//g) ?? []).length,
+            storedImageReferences: (serialized.match(/\/images\/[a-f0-9]{64}/g) ?? []).length,
+          });
+        } catch {
+          observationFailures++;
+        }
+      };
+      const beforeOpen = async (page: Page) => {
+        page.on('framenavigated', (frame) => {
+          if (frame === page.mainFrame()) topLevelNavigations++;
+        });
+        page.on('request', (request) => {
+          if (
+            request.method() !== 'POST' ||
+            !/^\/api\/items\/[^/]+\/images$/.test(new URL(request.url()).pathname)
+          )
+            return;
+          totalImagePosts++;
+          if (posts.length === 8) return;
+          const body = request.postDataBuffer() ?? Buffer.alloc(0);
+          const post = {
+            mime: request.headers()['content-type'] ?? '',
+            bytes: body.length,
+            sha256: sha256(body),
+          };
+          posts.push(post);
+          postRequests.set(request, post);
+        });
+        page.on('response', (response) => {
+          const post = postRequests.get(response.request());
+          if (post) post.status = response.status();
+        });
+        page.on('websocket', (socket) => {
+          if (!new URL(socket.url()).pathname.startsWith('/sync-api/')) return;
+          socket.on('framesent', ({ payload }) => observeSync('sent', payload));
+          socket.on('framereceived', ({ payload }) => observeSync('received', payload));
+        });
+        await page.addInitScript(() => {
+          const events: NonNullable<ImagePasteWindow['imagePasteEvents']> = [];
+          (window as ImagePasteWindow).imagePasteEvents = events;
+          document.addEventListener(
+            'paste',
+            (event) => {
+              if (events.length === 8) return;
+              events.push({
+                trusted: event.isTrusted,
+                types: Array.from(event.clipboardData?.types ?? []),
+                files: Array.from(event.clipboardData?.files ?? []).map((file) => ({
+                  mime: file.type,
+                  bytes: file.size,
+                })),
+              });
+            },
+            true,
+          );
+        });
+      };
+      await withFixtureCleanup(
+        () =>
+          withEditingDoc(
+            browser,
+            baseURL!,
+            info,
+            false,
+            async (f) => {
+              const { page } = f;
+              const canvas = page
+                .getByRole('region', { name: 'Doc document', exact: true })
+                .getByLabel('Document canvas', { exact: true });
+              await f.context.grantPermissions(['clipboard-read', 'clipboard-write']);
+              await f.focus();
+              await placeCaret(f, 0);
+              const initialText = 'Phone journal\rSecond line\r\n';
+              const before = await content(f, initialText, 0);
+              const originalCanvas = await canvas.elementHandle();
+              expect(originalCanvas).not.toBeNull();
+              const origin = await page.evaluate(() => performance.timeOrigin);
+              const navigationCount = topLevelNavigations;
+              const mounted = () =>
+                originalCanvas!.evaluate((node) => node.isConnected).catch(() => false);
+              const capture = async (stage: string) => {
+                stages.push({
+                  stage,
+                  native: await readEditingSelection(page).catch(() => undefined),
+                  saved: await f.read().catch(() => undefined),
+                  originalCanvasMounted: await mounted(),
+                  topLevelNavigations,
+                  environment: await page
+                    .evaluate(() => ({
+                      timeOrigin: performance.timeOrigin,
+                      online: navigator.onLine,
+                      userAgent: navigator.userAgent,
+                      pasteEvents: (window as ImagePasteWindow).imagePasteEvents,
+                    }))
+                    .catch(() => undefined),
+                });
+              };
+              const renderedPixels = async () => {
+                const { data, info: raster } = await sharp(await canvas.screenshot())
+                  .removeAlpha()
+                  .raw()
+                  .toBuffer({ resolveWithObject: true });
+                let matching = 0;
+                for (let i = 0; i < data.length; i += raster.channels)
+                  if (
+                    Math.abs(data[i] - 23) <= 8 &&
+                    Math.abs(data[i + 1] - 201) <= 8 &&
+                    Math.abs(data[i + 2] - 151) <= 8
+                  )
+                    matching++;
+                return matching;
+              };
+              const storedImage = async (snapshot: IDocumentData) => {
+                expect(snapshot.drawingsOrder).toHaveLength(1);
+                const drawing = snapshot.drawings?.[snapshot.drawingsOrder![0]];
+                expect(drawing).toBeDefined();
+                // The core drawing type omits the image plugin fields; narrow the
+                // actual stored source without treating the entire snapshot as an image.
+                if (!drawing || !('source' in drawing) || typeof drawing.source !== 'string')
+                  throw new Error('The persisted drawing must contain an image source.');
+                expect(drawing.source).toMatch(
+                  new RegExp(`^/api/items/${f.id}/images/[a-f0-9]{64}$`),
+                );
+                const response = await f.context.request.get(drawing.source);
+                expect(response.status()).toBe(200);
+                expect(response.headers()['content-type']).toContain('image/png');
+                const stored = await response.body();
+                expect(drawing.source.endsWith(sha256(stored))).toBe(true);
+                const metadata = await sharp(stored).metadata();
+                expect([metadata.width, metadata.height]).toEqual([80, 60]);
+                expect(await sharp(stored).removeAlpha().raw().toBuffer()).toEqual(pixels);
+                return {
+                  source: drawing.source,
+                  bytes: stored.length,
+                  sha256: sha256(stored),
+                  width: metadata.width,
+                  height: metadata.height,
+                };
+              };
+              await withFixtureCleanup(
+                async () => {
+                  expect(await page.evaluate(() => navigator.onLine)).toBe(true);
+                  expect(await renderedPixels()).toBeLessThan(100);
+                  await capture('before-paste');
+                  await page.evaluate(async (bytes) => {
+                    await navigator.clipboard.write([
+                      new ClipboardItem({
+                        'image/png': new Blob([new Uint8Array(bytes)], { type: 'image/png' }),
+                      }),
+                    ]);
+                  }, Array.from(png));
+                  const clipboard = await page.evaluate(async () => {
+                    const item = (await navigator.clipboard.read()).find((item) =>
+                      item.types.includes('image/png'),
+                    );
+                    if (!item) throw new Error('The native clipboard has no PNG item.');
+                    const image = await item.getType('image/png');
+                    return {
+                      mime: image.type,
+                      bytes: Array.from(new Uint8Array(await image.arrayBuffer())),
+                    };
+                  });
+                  const clipboardBytes = Buffer.from(clipboard.bytes);
+                  evidence.clipboard = {
+                    mime: clipboard.mime,
+                    bytes: clipboardBytes.length,
+                    sha256: sha256(clipboardBytes),
+                  };
+                  expect(clipboard.mime).toBe('image/png');
+                  expect(await sharp(clipboardBytes).removeAlpha().raw().toBuffer()).toEqual(
+                    pixels,
+                  );
+                  // This is the sole paste action. The listener only observes the real
+                  // event; fixture seeding is confined to unrelated initial content.
+                  const syncBeforePaste = sync.length;
+                  await page.keyboard.press('ControlOrMeta+v');
+                  await expect
+                    .poll(() => page.evaluate(() => (window as ImagePasteWindow).imagePasteEvents))
+                    .toEqual([
+                      {
+                        trusted: true,
+                        types: expect.arrayContaining(['Files']),
+                        files: [{ mime: 'image/png', bytes: expect.any(Number) }],
+                      },
+                    ]);
+                  await capture('after-native-paste-delivery');
+                  await expect.poll(() => posts.map((post) => post.status)).toEqual([201]);
+                  expect(totalImagePosts).toBe(1);
+                  expect(posts[0].mime).toBe('image/png');
+                  // The pinned SDK converts a clipboard file through an HTML image
+                  // paragraph. Its exact stream/caret expectation remains an assertion
+                  // for the first native run, not a claimed source-only reproduction.
+                  const pastedText = '\b\r' + initialText;
+                  const pasted = await content(f, pastedText, 2);
+                  evidence.storedImage = await storedImage(pasted);
+                  await expect.poll(renderedPixels).toBeGreaterThan(1000);
+                  expect(await mounted()).toBe(true);
+                  expect(await page.evaluate(() => performance.timeOrigin)).toBe(origin);
+                  expect(topLevelNavigations).toBe(navigationCount);
+                  const pasteFrames = sync.slice(syncBeforePaste);
+                  expect(pasteFrames.some((frame) => frame.type === 'ack')).toBe(true);
+                  expect(
+                    pasteFrames.some(
+                      (frame) => frame.type === 'submit' && Number(frame.storedImageReferences) > 0,
+                    ),
+                  ).toBe(true);
+                  expect(
+                    pasteFrames.filter(
+                      (frame) => frame.type === 'resync' || Number(frame.inlineImageReferences) > 0,
+                    ),
+                  ).toEqual([]);
+                  await capture('after-paste');
+                  await page.getByRole('button', { name: 'Undo', exact: true }).click();
+                  const undone = await content(f, initialText);
+                  expect(undone.body).toEqual(before.body);
+                  expect(undone.drawingsOrder ?? []).toHaveLength(0);
+                  await page.getByRole('button', { name: 'Redo', exact: true }).click();
+                  const redone = await content(f, pastedText);
+                  for (const key of ['body', 'drawings', 'drawingsOrder', 'resources'] as const)
+                    expect(redone[key]).toEqual(pasted[key]);
+                  expect(posts).toHaveLength(1);
+                  expect(totalImagePosts).toBe(1);
+                  expect(await mounted()).toBe(true);
+                  expect(await page.evaluate(() => performance.timeOrigin)).toBe(origin);
+                  expect(topLevelNavigations).toBe(navigationCount);
+                  await capture('after-undo-redo');
+                  await reopen(f, pasted);
+                  const reopened = await f.read();
+                  for (const key of ['body', 'drawings', 'drawingsOrder', 'resources'] as const)
+                    expect(reopened[key]).toEqual(pasted[key]);
+                  expect(await storedImage(reopened)).toEqual(evidence.storedImage);
+                  await expect.poll(renderedPixels).toBeGreaterThan(1000);
+                  await capture('after-intentional-reopen');
+                },
+                () => capture('final-before-cleanup'),
+              );
+            },
+            { beforeOpen },
+          ),
+        async () => {
+          evidence.observationFailures = observationFailures;
+          evidence.droppedSyncFrames = droppedSyncFrames;
+          evidence.topLevelNavigations = topLevelNavigations;
+          evidence.totalImagePosts = totalImagePosts;
+          await info.attach('doc-image-paste-evidence', {
+            body: JSON.stringify(evidence, null, 2),
+            contentType: 'application/json',
+          });
+        },
+      );
+    },
+  );
+});
 
 test('document UI preserves rich text and embedded images through reload and offline recovery', async ({
   page,
