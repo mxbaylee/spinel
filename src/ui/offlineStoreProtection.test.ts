@@ -666,7 +666,7 @@ test('saving a checkpoint announces a change only when work moves into or out of
   };
   // Already pending, then failed: pending is unchanged, retained flips, so a plain notice follows.
   expect(await save(pendingCopy(), { failure: { message: 'refused' } })).toEqual([
-    { accountId: account, itemId },
+    { accountId: account, itemId, checkpoint: true },
   ]);
   // An ordinary keystroke save while pending changes neither flag and announces nothing.
   expect(await save(pendingCopy(), {})).toEqual([]);

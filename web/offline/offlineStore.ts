@@ -343,7 +343,8 @@ export function hasStoredEdits(item: unknown) {
 
 const CHANGE_KEY = 'spinel.offline.changed';
 
-export type OfflineChange = { itemId: string; pending?: boolean };
+/** `checkpoint` marks a notice from the editor's own checkpoint write; its sync binding ignores it. */
+export type OfflineChange = { itemId: string; pending?: boolean; checkpoint?: true };
 type AccountOfflineChange = OfflineChange & { accountId: string };
 const itemWriterChanges = new Map<string, AccountOfflineChange[]>();
 const itemWriterKey = (accountId: string, itemId: string) => JSON.stringify([accountId, itemId]);
@@ -371,8 +372,18 @@ function publishOfflineChange(detail: AccountOfflineChange) {
   }
 }
 
-export const offlineChanged = (accountId: string, itemId: string, pending?: boolean) => {
-  const detail = { accountId, itemId, ...(pending === undefined ? {} : { pending }) };
+export const offlineChanged = (
+  accountId: string,
+  itemId: string,
+  pending?: boolean,
+  checkpoint?: true,
+) => {
+  const detail = {
+    accountId,
+    itemId,
+    ...(pending === undefined ? {} : { pending }),
+    ...(checkpoint ? { checkpoint } : {}),
+  };
   const deferred = itemWriterChanges.get(itemWriterKey(accountId, itemId));
   if (deferred) deferred.push(detail);
   else publishOfflineChange(detail);
@@ -1587,7 +1598,7 @@ export class OfflineStore {
     await completion;
     verifyCurrent();
     if (pendingChanged) offlineChanged(this.accountId, scope.item, pending);
-    else if (retainedChanged) offlineChanged(this.accountId, scope.item);
+    else if (retainedChanged) offlineChanged(this.accountId, scope.item, undefined, true);
   }
   /** Fix retry identity, title and bytes before any request can publish a copy. */
   async beginRecovery(
