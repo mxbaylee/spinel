@@ -1,8 +1,9 @@
 # 📱 SPN-154 physical-phone check
 
 **Status: not run.** This is the remaining physical clipboard check for
-[SPN-154](SPN-154.md), separate from the passing desktop native regression and
-SPN-170's waiver. Use the concrete build and exact source identity supplied in
+[SPN-154](SPN-154.md), separate from the passing desktop native regression.
+SPN-170's phone waiver and SPN-163's own-phone/Recover waiver apply only to their
+own tickets. Use the concrete build and exact source identity supplied in
 [PR #301](https://github.com/mxbaylee/spinel/pull/301) and the handoff's build
 manifest. A new controlled result does not identify the original phone incident.
 

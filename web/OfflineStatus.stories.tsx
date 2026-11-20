@@ -17,6 +17,10 @@ export const PagesAvailable: Story = { args: { state: 'pages-available' } };
 export const NeedsConnection: Story = { args: { state: 'needs-connection' } };
 /** New documents are not uploaded, even when their blank device copy has no edits. */
 export const NotSynced: Story = { args: { state: 'not-synced' } };
+/** Saved edits with no connection: they send on their own once it returns. */
+export const Waiting: Story = { args: { state: 'waiting' } };
+/** Saved edits on a connected device: being sent now. */
+export const Syncing: Story = { args: { state: 'syncing' } };
 /** Recovery choices belong to this file's menu, not the connection indicator. */
 export const NeedsAttention: Story = { args: { state: 'needs-attention' } };
 /** Renders nothing: online, an item that isn't downloaded carries no badge. */

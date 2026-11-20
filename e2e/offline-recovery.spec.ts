@@ -1008,7 +1008,9 @@ test.describe('offline recovery copies', () => {
           await expect(f.page).toHaveURL(new URL('/', baseURL!).href);
         }
         await expect(
-          f.page.getByRole('heading', { name: 'Offline changes on this device', exact: true }),
+          f.page
+            .getByRole('alert', { name: 'Sync status', exact: true })
+            .filter({ hasText: 'Needs attention' }),
         ).toBeVisible();
         const entry = f.page.getByRole('link', { name: `Recover ${f.item.name}`, exact: true });
         await expect(entry).toHaveAttribute('href', `/?offlineRecovery=${f.item.id}`);

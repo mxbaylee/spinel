@@ -1,0 +1,176 @@
+{
+  "audit": "/workspace/scratch/d34e20ab0f1b/evidence/hosted-d91c9ad3-audit.json",
+  "audit_sha256": "28f3f1de58b31a51b1139a97c63ab08bcdf00eaa8a10698ed546c855a9cfcb43",
+  "completed_at_utc": "2026-11-20T23:42:49.826738Z",
+  "head": "d91c9ad30fc7c5067a76bd23166b810be59de552",
+  "base": "aeed0f4799950dced609bee497aa94aa43fc3465",
+  "tested_merge": "061b3fc6d8b71c2af164e65baa14db9dac56788d",
+  "latest_main": {
+    "sha": "9717f55f892013867a8ca597f2ae9f74ffc6405b",
+    "commit_date": "2026-11-20T23:35:36Z",
+    "message": "\ud83d\udd14 SPN-163 Show which files still need to sync without asking for action (#298)",
+    "parents": [
+      "aeed0f4799950dced609bee497aa94aa43fc3465"
+    ]
+  },
+  "runs": [
+    {
+      "id": 44832332102,
+      "action": "edited",
+      "name": "\ud83d\udc8e CI",
+      "attempt": 1,
+      "conclusion": "failure",
+      "jobs": 34,
+      "counts": {
+        "success": 30,
+        "failure": 2,
+        "cancelled": 1,
+        "skipped": 1
+      },
+      "coverage_plan_sha256": "fa2d4358644790a451bf3d3f4569075f8e2c1d22ba72eb70bb754748df2be953",
+      "plan_file_sha256": "556fc0e583542937f0533461714349280bf9c67be731baf1a1c82f7973d99f8d"
+    },
+    {
+      "id": 44832329309,
+      "action": "synchronize",
+      "name": "\ud83d\udc8e CI",
+      "attempt": 1,
+      "conclusion": "failure",
+      "jobs": 34,
+      "counts": {
+        "success": 30,
+        "failure": 3,
+        "skipped": 1
+      },
+      "coverage_plan_sha256": "008daac93462e8b00e012543e6d13a0fde32002f3c031f4612e3fe1dc01baa47",
+      "plan_file_sha256": "e43ac4d8ba3c99a0d36b20fe7356349f3dacbfb5c0f7994c365b173326182bbd"
+    },
+    {
+      "id": 44832329113,
+      "action": null,
+      "name": "\ud83d\udcbb Desktop offline",
+      "attempt": 1,
+      "conclusion": "success",
+      "jobs": 3,
+      "counts": {
+        "success": 3
+      },
+      "coverage_plan_sha256": null,
+      "plan_file_sha256": null
+    },
+    {
+      "id": 44832329084,
+      "action": "synchronize",
+      "name": "\ud83d\udcda Storybook",
+      "attempt": 1,
+      "conclusion": "success",
+      "jobs": 10,
+      "counts": {
+        "success": 8,
+        "skipped": 2
+      },
+      "coverage_plan_sha256": null,
+      "plan_file_sha256": null
+    }
+  ],
+  "first_native_clipboard_cases": 12,
+  "first_toolbar_cases": 2,
+  "all_executed_job_sources_verified": true,
+  "executed_jobs": 77,
+  "finalized_ordinary_reports": 7,
+  "missing_ordinary_report": [
+    {
+      "run_id": 44832332102,
+      "job_id": 136621272330,
+      "project": "development",
+      "shard": 2,
+      "job_conclusion": "cancelled",
+      "reason": "No finalized report in the uploaded partial artifact."
+    }
+  ],
+  "required_checks": [
+    {
+      "run_id": 44832332102,
+      "action": "edited",
+      "checks": [
+        {
+          "name": "Backlog",
+          "job_id": 136621271895,
+          "conclusion": "success"
+        },
+        {
+          "name": "Pull request",
+          "job_id": 136620095121,
+          "conclusion": "failure"
+        },
+        {
+          "name": "Lint",
+          "job_id": 136621271966,
+          "conclusion": "success"
+        },
+        {
+          "name": "Typecheck",
+          "job_id": 136621271927,
+          "conclusion": "success"
+        },
+        {
+          "name": "Unit tests",
+          "job_id": 136631051427,
+          "conclusion": "success"
+        },
+        {
+          "name": "Lib tests",
+          "job_id": 136632299580,
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke",
+          "job_id": 136639784975,
+          "conclusion": "failure"
+        }
+      ]
+    },
+    {
+      "run_id": 44832329309,
+      "action": "synchronize",
+      "checks": [
+        {
+          "name": "Backlog",
+          "job_id": 136620512671,
+          "conclusion": "success"
+        },
+        {
+          "name": "Pull request",
+          "job_id": 136620086008,
+          "conclusion": "failure"
+        },
+        {
+          "name": "Lint",
+          "job_id": 136620512654,
+          "conclusion": "success"
+        },
+        {
+          "name": "Typecheck",
+          "job_id": 136620512660,
+          "conclusion": "success"
+        },
+        {
+          "name": "Unit tests",
+          "job_id": 136629123425,
+          "conclusion": "success"
+        },
+        {
+          "name": "Lib tests",
+          "job_id": 136628891705,
+          "conclusion": "success"
+        },
+        {
+          "name": "Playwright smoke",
+          "job_id": 136636269123,
+          "conclusion": "failure"
+        }
+      ]
+    }
+  ],
+  "prior_ledger_sha256": "2c2d60c4bf89a34606209d1491bbf9ecd1b5882f22b8a4c60f048fd7dd818132"
+}

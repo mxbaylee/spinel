@@ -129,6 +129,9 @@ section places them.
 - **Downloads that were cleared** (SPN-052): the row loses its "Available
   offline" badge and, offline, says "Needs a connection"; a missing store is
   never shown as still available.
+- **Pending local edits** (SPN-163): the row badge reads "Waiting to sync",
+  "Syncing now" or "Needs attention"; the root list's single sync status banner
+  shows every phase that applies, with all actions in one row.
 - **Created offline** (SPN-051): "Not synced yet" badge until accepted. If the
   folder was deleted or access was lost meanwhile, the row says "Needs
   attention" and offers **Choose another folder…**; nothing is written where the

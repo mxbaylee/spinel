@@ -1,0 +1,65 @@
+.sync-status {
+  margin-block: 16px;
+  padding: 12px 16px;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  background: var(--sp-panel);
+  color: var(--sp-muted);
+}
+.sync-status p {
+  margin: 0;
+}
+.sync-status-line + .sync-status-line {
+  margin-top: 8px;
+}
+/* The accent sits on the icon and the status word only. */
+.sync-status-word {
+  color: var(--sp-accent);
+  white-space: nowrap;
+}
+.sync-status-icon {
+  flex: none;
+  vertical-align: -3px;
+  margin-right: 2px;
+}
+.sync-status-line[data-phase='syncing'] .sync-status-icon {
+  animation: sync-status-spin 1.6s linear infinite;
+}
+@keyframes sync-status-spin {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sync-status-line[data-phase='syncing'] .sync-status-icon {
+    animation: none;
+  }
+}
+/* Actions and nothing else: one wrapping row of buttons under the status lines. */
+.sync-status-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.sync-status-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 16px;
+  text-align: center;
+  border: 1px solid var(--sp-border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--sp-text);
+  font: inherit;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.sync-status-button:disabled {
+  color: var(--sp-muted);
+  cursor: default;
+}

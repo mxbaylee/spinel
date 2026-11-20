@@ -130,3 +130,35 @@ Original hosted ZIPs, full reports and traces remain supplementary artifacts
 with their workflow's retention period. Physical-phone SPN-154 confirmation is
 still a separate acceptance item, and the original phone incident remains
 unconfirmed. No SPN-170 waiver or mobile opt-in is inherited.
+
+## 🔎 Additional native confirmation and separate admin failure
+
+[validation-d91c9ad3-native-summary.json](validation-d91c9ad3-native-summary.json)
+retains all 12 clipboard and two toolbar first-attempt passes on `d91c9ad3` /
+merge `061b3fc6`, including the corrected request-body availability fields.
+It explicitly does not claim whole-event acceptance.
+
+The same synchronize event's development 1/2 worker failed because an existing
+Sheet admin revocation case was flaky. Its [raw first-failure/retry summary](admin-revocation-first-failure.json)
+retains both attempts, source, artifact hash and original error; the first
+attempt has no trace. The successful retry-1 trace is not first-attempt evidence.
+The [original error context](admin-revocation-first-error-context.md.gz) and these
+unaltered retry-0 screenshots preserve the observation boundary:
+
+![Operator after the lost passkey was removed; source d91c9ad3, development retry 0](admin-revocation-first-failure-operator.png)
+
+![Revoked editor already at sign-in; source d91c9ad3, development retry 0](admin-revocation-first-failure-sign-in.png)
+
+These images support the documented navigation-related observer gap, but do not
+prove physical socket closure for that attempt. The [implementation record](../../SPN-154.md)
+explains the bounded reuse of the existing relay witness, with unchanged
+physical-closure, authority, content and time-limit assertions. Original fixture
+typecheck failure and corrected checks remain separate receipts.
+
+The [terminal d91 summary](validation-d91c9ad3-terminal-summary.json) and
+[complete audit archive](validation-d91c9ad3-audit.json.gz) preserve both CI events,
+Storybook and Desktop offline. The edited development-2 cancellation has
+[partial Doc observations](validation-d91c9ad3-cancelled-partial-observations.json),
+not a finalized report or certified pass. That source tested base `aeed0f47`;
+main later advanced to `9717f55f`. New integrated-source validation must retain
+its own identity and cannot inherit these outcomes.

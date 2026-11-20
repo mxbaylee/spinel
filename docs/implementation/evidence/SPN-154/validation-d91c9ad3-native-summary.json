@@ -1,0 +1,1094 @@
+{
+  "scope": "Final-head synchronized event clipboard and toolbar case results only. The broader development1 admin flake keeps that selected job failed; whole-event acceptance remains separate. Original phone incident and physical-phone confirmation are separate.",
+  "head": "d91c9ad30fc7c5067a76bd23166b810be59de552",
+  "base": "aeed0f4799950dced609bee497aa94aa43fc3465",
+  "tested_merge": "061b3fc6d8b71c2af164e65baa14db9dac56788d",
+  "run_id": 44832329309,
+  "run_attempt": 1,
+  "action": "synchronize",
+  "plan_sha256": "e43ac4d8ba3c99a0d36b20fe7356349f3dacbfb5c0f7994c365b173326182bbd",
+  "all_six_clipboard_cases_each_project_passed_retry0": true,
+  "toolbar_each_project_passed_retry0": true,
+  "chronology": "Development clipboard cases executed first. The production shard artifact became available first.",
+  "post_body_limit": "Current successful POST request API returned null, so bodyExposed=false and bytes/sha256=null. Canonical stored GET bytes and pixel/rendering/save/reopen assertions independently establish the image outcome. These receipts do not reclassify prior-head ambiguous fallback values.",
+  "cases": [
+    {
+      "title": "native PNG paste keeps the editor, exact content and stored image through undo and reopen",
+      "category": "clipboard",
+      "project": "development",
+      "status": "passed",
+      "retry": 0,
+      "startTime": "2026-11-20T23:06:57.042Z",
+      "duration_ms": 10683,
+      "artifact_id": 14679000891,
+      "artifact_sha256": "6fc139c43b8f59ea2cc83c56be195346ad720d484f6c58b53896344971ce1085",
+      "evidence_summary": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-development-2/development-01-png-retained-retry0-summary.json",
+      "image_posts": [
+        {
+          "mime": "image/png",
+          "bodyExposed": false,
+          "bytes": null,
+          "sha256": null,
+          "status": 201
+        }
+      ],
+      "screenshots": []
+    },
+    {
+      "title": "HTML image upload failure keeps the edit and allows a later native paste",
+      "category": "clipboard",
+      "project": "development",
+      "status": "passed",
+      "retry": 0,
+      "startTime": "2026-11-20T23:07:07.737Z",
+      "duration_ms": 12919,
+      "artifact_id": 14679000891,
+      "artifact_sha256": "6fc139c43b8f59ea2cc83c56be195346ad720d484f6c58b53896344971ce1085",
+      "evidence_summary": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-development-2/development-02-html-failure-recovery-retry0-summary.json",
+      "image_posts": [
+        {
+          "mime": "image/png",
+          "bodyExposed": true,
+          "bytes": 247,
+          "sha256": "3b5a98d5f358349c7e8e6cf77a4c4a3398c2530cfbc209b75da9668dca54e4c2",
+          "status": 503
+        },
+        {
+          "mime": "image/png",
+          "bodyExposed": true,
+          "bytes": 247,
+          "sha256": "3b5a98d5f358349c7e8e6cf77a4c4a3398c2530cfbc209b75da9668dca54e4c2",
+          "status": 503
+        },
+        {
+          "mime": "image/png",
+          "bodyExposed": false,
+          "bytes": null,
+          "sha256": null,
+          "status": 201
+        }
+      ],
+      "screenshots": [
+        {
+          "name": "spn154-html-upload-failure-light",
+          "mime": "image/png",
+          "path": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-development-2/development-02-html-failure-recovery-retry0-spn154-html-upload-failure-light.png",
+          "bytes": 37659,
+          "sha256": "fe74e57d5f7bdb98b1a7f78ca72d358cba0fb8ee101fb71d43af55df2d1886fd",
+          "source_member": null,
+          "dimensions": [
+            1440,
+            1100
+          ]
+        },
+        {
+          "name": "spn154-html-upload-failure-dark",
+          "mime": "image/png",
+          "path": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-development-2/development-02-html-failure-recovery-retry0-spn154-html-upload-failure-dark.png",
+          "bytes": 37491,
+          "sha256": "5d99d8304c15c955d68ad65e95472d36c6a962fac968e16cce0fc64102964eb0",
+          "source_member": null,
+          "dimensions": [
+            1440,
+            1100
+          ]
+        },
+        {
+          "name": "spn154-html-paste-success-light",
+          "mime": "image/png",
+          "path": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-development-2/development-02-html-failure-recovery-retry0-spn154-html-paste-success-light.png",
+          "bytes": 37746,
+          "sha256": "06385e78c1a91d9fe8c9cdfdaaca97b0dc4e44b627ce76311b06243bda522b8f",
+          "source_member": null,
+          "dimensions": [
+            1440,
+            1100
+          ]
+        }
+      ]
+    },
+    {
+      "title": "native PNG preparation cancels after a selection change",
+      "category": "clipboard",
+      "project": "development",
+      "status": "passed",
+      "retry": 0,
+      "startTime": "2026-11-20T23:07:20.668Z",
+      "duration_ms": 10174,
+      "artifact_id": 14679000891,
+      "artifact_sha256": "6fc139c43b8f59ea2cc83c56be195346ad720d484f6c58b53896344971ce1085",
+      "evidence_summary": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-development-2/development-03-selection-cancellation-retry0-summary.json",
+      "image_posts": [
+        {
+          "mime": "image/png",
+          "bodyExposed": true,
+          "bytes": 255,
+          "sha256": "8d17b960c9ae5e7ee45ad341b09286d851521d3cc0c765048f6259f5ef3583cc",
+          "status": 201
+        }
+      ],
+      "screenshots": []
+    },
+    {
+      "title": "native PNG preparation cancels after a content change",
+      "category": "clipboard",
+      "project": "development",
+      "status": "passed",
+      "retry": 0,
+      "startTime": "2026-11-20T23:07:30.853Z",
+      "duration_ms": 10240,
+      "artifact_id": 14679000891,
+      "artifact_sha256": "6fc139c43b8f59ea2cc83c56be195346ad720d484f6c58b53896344971ce1085",
+      "evidence_summary": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-development-2/development-04-content-cancellation-retry0-summary.json",
+      "image_posts": [
+        {
+          "mime": "image/png",
+          "bodyExposed": true,
+          "bytes": 255,
+          "sha256": "8d17b960c9ae5e7ee45ad341b09286d851521d3cc0c765048f6259f5ef3583cc",
+          "status": 201
+        }
+      ],
+      "screenshots": []
+    },
+    {
+      "title": "a viewer cannot paste a native clipboard image",
+      "category": "clipboard",
+      "project": "development",
+      "status": "passed",
+      "retry": 0,
+      "startTime": "2026-11-20T23:07:41.102Z",
+      "duration_ms": 9185,
+      "artifact_id": 14679000891,
+      "artifact_sha256": "6fc139c43b8f59ea2cc83c56be195346ad720d484f6c58b53896344971ce1085",
+      "evidence_summary": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-development-2/development-05-viewer-denial-retry0-summary.json",
+      "image_posts": [],
+      "screenshots": []
+    },
+    {
+      "title": "ordinary native text paste keeps formatting and undo history",
+      "category": "clipboard",
+      "project": "development",
+      "status": "passed",
+      "retry": 0,
+      "startTime": "2026-11-20T23:07:50.297Z",
+      "duration_ms": 10325,
+      "artifact_id": 14679000891,
+      "artifact_sha256": "6fc139c43b8f59ea2cc83c56be195346ad720d484f6c58b53896344971ce1085",
+      "evidence_summary": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-development-2/development-06-ordinary-text-retry0-summary.json",
+      "image_posts": [],
+      "screenshots": []
+    },
+    {
+      "title": "native PNG paste keeps the editor, exact content and stored image through undo and reopen",
+      "category": "clipboard",
+      "project": "production",
+      "status": "passed",
+      "retry": 0,
+      "startTime": "2026-11-20T23:09:04.650Z",
+      "duration_ms": 5179,
+      "artifact_id": 14678506296,
+      "artifact_sha256": "f6c5a0662b139ce9d3a26f269f72470d365b93e84cb15a026ca20dc49f70e9b1",
+      "evidence_summary": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-production-2/production-01-png-retained-retry0-summary.json",
+      "image_posts": [
+        {
+          "mime": "image/png",
+          "bodyExposed": false,
+          "bytes": null,
+          "sha256": null,
+          "status": 201
+        }
+      ],
+      "screenshots": []
+    },
+    {
+      "title": "HTML image upload failure keeps the edit and allows a later native paste",
+      "category": "clipboard",
+      "project": "production",
+      "status": "passed",
+      "retry": 0,
+      "startTime": "2026-11-20T23:09:09.837Z",
+      "duration_ms": 7130,
+      "artifact_id": 14678506296,
+      "artifact_sha256": "f6c5a0662b139ce9d3a26f269f72470d365b93e84cb15a026ca20dc49f70e9b1",
+      "evidence_summary": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-production-2/production-02-html-failure-recovery-retry0-summary.json",
+      "image_posts": [
+        {
+          "mime": "image/png",
+          "bodyExposed": true,
+          "bytes": 247,
+          "sha256": "3b5a98d5f358349c7e8e6cf77a4c4a3398c2530cfbc209b75da9668dca54e4c2",
+          "status": 503
+        },
+        {
+          "mime": "image/png",
+          "bodyExposed": true,
+          "bytes": 247,
+          "sha256": "3b5a98d5f358349c7e8e6cf77a4c4a3398c2530cfbc209b75da9668dca54e4c2",
+          "status": 503
+        },
+        {
+          "mime": "image/png",
+          "bodyExposed": false,
+          "bytes": null,
+          "sha256": null,
+          "status": 201
+        }
+      ],
+      "screenshots": [
+        {
+          "name": "spn154-html-upload-failure-light",
+          "mime": "image/png",
+          "path": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-production-2/production-02-html-failure-recovery-retry0-spn154-html-upload-failure-light.png",
+          "bytes": 37760,
+          "sha256": "1629aabea5d77072ca09dfd3aefc6af7ce97de2413ea81395ef65701d9fe0a71",
+          "source_member": null,
+          "dimensions": [
+            1440,
+            1100
+          ]
+        },
+        {
+          "name": "spn154-html-upload-failure-dark",
+          "mime": "image/png",
+          "path": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-production-2/production-02-html-failure-recovery-retry0-spn154-html-upload-failure-dark.png",
+          "bytes": 37491,
+          "sha256": "5d99d8304c15c955d68ad65e95472d36c6a962fac968e16cce0fc64102964eb0",
+          "source_member": null,
+          "dimensions": [
+            1440,
+            1100
+          ]
+        },
+        {
+          "name": "spn154-html-paste-success-light",
+          "mime": "image/png",
+          "path": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-production-2/production-02-html-failure-recovery-retry0-spn154-html-paste-success-light.png",
+          "bytes": 37708,
+          "sha256": "5296f2fa7e9b0f92158f07ae726ce723c687c227260f96d8244ab7d52b50015c",
+          "source_member": null,
+          "dimensions": [
+            1440,
+            1100
+          ]
+        }
+      ]
+    },
+    {
+      "title": "native PNG preparation cancels after a selection change",
+      "category": "clipboard",
+      "project": "production",
+      "status": "passed",
+      "retry": 0,
+      "startTime": "2026-11-20T23:09:16.974Z",
+      "duration_ms": 4574,
+      "artifact_id": 14678506296,
+      "artifact_sha256": "f6c5a0662b139ce9d3a26f269f72470d365b93e84cb15a026ca20dc49f70e9b1",
+      "evidence_summary": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-production-2/production-03-selection-cancellation-retry0-summary.json",
+      "image_posts": [
+        {
+          "mime": "image/png",
+          "bodyExposed": true,
+          "bytes": 255,
+          "sha256": "8d17b960c9ae5e7ee45ad341b09286d851521d3cc0c765048f6259f5ef3583cc",
+          "status": 201
+        }
+      ],
+      "screenshots": []
+    },
+    {
+      "title": "native PNG preparation cancels after a content change",
+      "category": "clipboard",
+      "project": "production",
+      "status": "passed",
+      "retry": 0,
+      "startTime": "2026-11-20T23:09:21.556Z",
+      "duration_ms": 4605,
+      "artifact_id": 14678506296,
+      "artifact_sha256": "f6c5a0662b139ce9d3a26f269f72470d365b93e84cb15a026ca20dc49f70e9b1",
+      "evidence_summary": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-production-2/production-04-content-cancellation-retry0-summary.json",
+      "image_posts": [
+        {
+          "mime": "image/png",
+          "bodyExposed": true,
+          "bytes": 255,
+          "sha256": "8d17b960c9ae5e7ee45ad341b09286d851521d3cc0c765048f6259f5ef3583cc",
+          "status": 201
+        }
+      ],
+      "screenshots": []
+    },
+    {
+      "title": "a viewer cannot paste a native clipboard image",
+      "category": "clipboard",
+      "project": "production",
+      "status": "passed",
+      "retry": 0,
+      "startTime": "2026-11-20T23:09:26.178Z",
+      "duration_ms": 4099,
+      "artifact_id": 14678506296,
+      "artifact_sha256": "f6c5a0662b139ce9d3a26f269f72470d365b93e84cb15a026ca20dc49f70e9b1",
+      "evidence_summary": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-production-2/production-05-viewer-denial-retry0-summary.json",
+      "image_posts": [],
+      "screenshots": []
+    },
+    {
+      "title": "ordinary native text paste keeps formatting and undo history",
+      "category": "clipboard",
+      "project": "production",
+      "status": "passed",
+      "retry": 0,
+      "startTime": "2026-11-20T23:09:30.288Z",
+      "duration_ms": 4783,
+      "artifact_id": 14678506296,
+      "artifact_sha256": "f6c5a0662b139ce9d3a26f269f72470d365b93e84cb15a026ca20dc49f70e9b1",
+      "evidence_summary": "/workspace/scratch/d34e20ab0f1b/evidence/d91c9ad3/44832329309-attempt1-production-2/production-06-ordinary-text-retry0-summary.json",
+      "image_posts": [],
+      "screenshots": []
+    },
+    {
+      "title": "document UI preserves rich text and embedded images through reload and offline recovery",
+      "category": "toolbar",
+      "project": "production",
+      "status": "passed",
+      "retry": 0,
+      "startTime": "2026-11-20T23:13:49.304Z",
+      "duration_ms": 10093,
+      "artifact_id": 14678520918,
+      "artifact_sha256": "607dc83942ffd6abbafa4d3ee52db72ae1f6cf6c83b352d8126ecb04c81aef78",
+      "evidence_summary": null,
+      "image_posts": null,
+      "screenshots": []
+    },
+    {
+      "title": "document UI preserves rich text and embedded images through reload and offline recovery",
+      "category": "toolbar",
+      "project": "development",
+      "status": "passed",
+      "retry": 0,
+      "startTime": "2026-11-20T23:14:29.664Z",
+      "duration_ms": 15972,
+      "artifact_id": 14678188090,
+      "artifact_sha256": "99d2d4cbcc93185caad320eb8d35eeb3e9f8da547ca4178d2ad5eb5081ed2815",
+      "evidence_summary": null,
+      "image_posts": null,
+      "screenshots": []
+    }
+  ],
+  "primary_evidence": [
+    {
+      "project": "production",
+      "source": "061b3fc6d8b71c2af164e65baa14db9dac56788d",
+      "browser": "156.0.8078.4",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "fixture": {
+        "mime": "image/png",
+        "width": 80,
+        "height": 60,
+        "bytes": 247,
+        "sha256": "3b5a98d5f358349c7e8e6cf77a4c4a3398c2530cfbc209b75da9668dca54e4c2"
+      },
+      "clipboard": {
+        "mime": "image/png",
+        "bytes": 255,
+        "sha256": "8d17b960c9ae5e7ee45ad341b09286d851521d3cc0c765048f6259f5ef3583cc"
+      },
+      "posts": [
+        {
+          "mime": "image/png",
+          "bodyExposed": false,
+          "bytes": null,
+          "sha256": null,
+          "status": 201
+        }
+      ],
+      "storedImage": {
+        "source": "/api/items/de4af6ee-83d0-418d-8a26-c7c7eee035c2/images/200958817bd65e95e722ab8bb5beb3ef4999a577bb9885db67f67d3090d6e3c3",
+        "bytes": 247,
+        "sha256": "200958817bd65e95e722ab8bb5beb3ef4999a577bb9885db67f67d3090d6e3c3",
+        "width": 80,
+        "height": 60
+      },
+      "sync": [
+        {
+          "direction": "received",
+          "type": "resume",
+          "revision": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 0
+        },
+        {
+          "direction": "sent",
+          "type": "submit",
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "edit",
+          "revision": 2,
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "ack",
+          "revision": 2,
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "verified",
+          "revision": 2,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 0
+        },
+        {
+          "direction": "sent",
+          "type": "submit",
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "edit",
+          "revision": 3,
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "ack",
+          "revision": 3,
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "verified",
+          "revision": 3,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 0
+        },
+        {
+          "direction": "sent",
+          "type": "submit",
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "edit",
+          "revision": 4,
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "ack",
+          "revision": 4,
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "verified",
+          "revision": 4,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 0
+        },
+        {
+          "direction": "received",
+          "type": "resume",
+          "revision": 4,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 0
+        }
+      ],
+      "observationFailures": 0,
+      "droppedSyncFrames": 0,
+      "stages": [
+        {
+          "stage": "before-paste",
+          "nativeText": "Phone journal\rSecond line\r\n",
+          "nativeTextRuns": [
+            {
+              "st": 6,
+              "ed": 13,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "nativeRange": {
+            "start": 0,
+            "end": 0,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "savedText": "Phone journal\rSecond line\r\n",
+          "savedTextRuns": [
+            {
+              "st": 6,
+              "ed": 13,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "savedRevision": 1,
+          "originalCanvasMounted": true,
+          "topLevelNavigations": 1,
+          "timeOrigin": 1795216144718.3,
+          "online": true
+        },
+        {
+          "stage": "after-native-paste-delivery",
+          "nativeText": "\b\rPhone journal\rSecond line\r\n",
+          "nativeTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "nativeRange": {
+            "start": 2,
+            "end": 2,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "savedText": "\b\rPhone journal\rSecond line\r\n",
+          "savedTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "savedRevision": 2,
+          "originalCanvasMounted": true,
+          "topLevelNavigations": 1,
+          "timeOrigin": 1795216144718.3,
+          "online": true
+        },
+        {
+          "stage": "after-paste",
+          "nativeText": "\b\rPhone journal\rSecond line\r\n",
+          "nativeTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "nativeRange": {
+            "start": 2,
+            "end": 2,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "savedText": "\b\rPhone journal\rSecond line\r\n",
+          "savedTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "savedRevision": 2,
+          "originalCanvasMounted": true,
+          "topLevelNavigations": 1,
+          "timeOrigin": 1795216144718.3,
+          "online": true
+        },
+        {
+          "stage": "after-undo-redo",
+          "nativeText": "\b\rPhone journal\rSecond line\r\n",
+          "nativeTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "nativeRange": {
+            "start": 2,
+            "end": 2,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "savedText": "\b\rPhone journal\rSecond line\r\n",
+          "savedTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "savedRevision": 4,
+          "originalCanvasMounted": true,
+          "topLevelNavigations": 1,
+          "timeOrigin": 1795216144718.3,
+          "online": true
+        },
+        {
+          "stage": "after-intentional-reopen",
+          "nativeText": "\b\rPhone journal\rSecond line\r\n",
+          "nativeTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "nativeRange": {
+            "start": 0,
+            "end": 0,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "savedText": "\b\rPhone journal\rSecond line\r\n",
+          "savedTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "savedRevision": 4,
+          "originalCanvasMounted": false,
+          "topLevelNavigations": 2,
+          "timeOrigin": 1795216148047.6,
+          "online": true
+        },
+        {
+          "stage": "final-before-cleanup",
+          "nativeText": "\b\rPhone journal\rSecond line\r\n",
+          "nativeTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "nativeRange": {
+            "start": 0,
+            "end": 0,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "savedText": "\b\rPhone journal\rSecond line\r\n",
+          "savedTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "savedRevision": 4,
+          "originalCanvasMounted": false,
+          "topLevelNavigations": 2,
+          "timeOrigin": 1795216148047.6,
+          "online": true
+        }
+      ]
+    },
+    {
+      "project": "development",
+      "source": "061b3fc6d8b71c2af164e65baa14db9dac56788d",
+      "browser": "156.0.8078.4",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "fixture": {
+        "mime": "image/png",
+        "width": 80,
+        "height": 60,
+        "bytes": 247,
+        "sha256": "3b5a98d5f358349c7e8e6cf77a4c4a3398c2530cfbc209b75da9668dca54e4c2"
+      },
+      "clipboard": {
+        "mime": "image/png",
+        "bytes": 255,
+        "sha256": "8d17b960c9ae5e7ee45ad341b09286d851521d3cc0c765048f6259f5ef3583cc"
+      },
+      "posts": [
+        {
+          "mime": "image/png",
+          "bodyExposed": false,
+          "bytes": null,
+          "sha256": null,
+          "status": 201
+        }
+      ],
+      "storedImage": {
+        "source": "/api/items/1a526acb-87f1-421f-a524-2c0306db10bc/images/200958817bd65e95e722ab8bb5beb3ef4999a577bb9885db67f67d3090d6e3c3",
+        "bytes": 247,
+        "sha256": "200958817bd65e95e722ab8bb5beb3ef4999a577bb9885db67f67d3090d6e3c3",
+        "width": 80,
+        "height": 60
+      },
+      "sync": [
+        {
+          "direction": "received",
+          "type": "resume",
+          "revision": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 0
+        },
+        {
+          "direction": "sent",
+          "type": "submit",
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "edit",
+          "revision": 2,
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "ack",
+          "revision": 2,
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "verified",
+          "revision": 2,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 0
+        },
+        {
+          "direction": "sent",
+          "type": "submit",
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "edit",
+          "revision": 3,
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "ack",
+          "revision": 3,
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "verified",
+          "revision": 3,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 0
+        },
+        {
+          "direction": "sent",
+          "type": "submit",
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "edit",
+          "revision": 4,
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "ack",
+          "revision": 4,
+          "mutations": 1,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 1
+        },
+        {
+          "direction": "received",
+          "type": "verified",
+          "revision": 4,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 0
+        },
+        {
+          "direction": "received",
+          "type": "resume",
+          "revision": 4,
+          "inlineImageReferences": 0,
+          "storedImageReferences": 0
+        }
+      ],
+      "observationFailures": 0,
+      "droppedSyncFrames": 0,
+      "stages": [
+        {
+          "stage": "before-paste",
+          "nativeText": "Phone journal\rSecond line\r\n",
+          "nativeTextRuns": [
+            {
+              "st": 6,
+              "ed": 13,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "nativeRange": {
+            "start": 0,
+            "end": 0,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "savedText": "Phone journal\rSecond line\r\n",
+          "savedTextRuns": [
+            {
+              "st": 6,
+              "ed": 13,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "savedRevision": 1,
+          "originalCanvasMounted": true,
+          "topLevelNavigations": 1,
+          "timeOrigin": 1795216017123.3,
+          "online": true
+        },
+        {
+          "stage": "after-native-paste-delivery",
+          "nativeText": "Phone journal\rSecond line\r\n",
+          "nativeTextRuns": [
+            {
+              "st": 6,
+              "ed": 13,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "nativeRange": {
+            "start": 0,
+            "end": 0,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "savedText": "Phone journal\rSecond line\r\n",
+          "savedTextRuns": [
+            {
+              "st": 6,
+              "ed": 13,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "savedRevision": 1,
+          "originalCanvasMounted": true,
+          "topLevelNavigations": 1,
+          "timeOrigin": 1795216017123.3,
+          "online": true
+        },
+        {
+          "stage": "after-paste",
+          "nativeText": "\b\rPhone journal\rSecond line\r\n",
+          "nativeTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "nativeRange": {
+            "start": 2,
+            "end": 2,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "savedText": "\b\rPhone journal\rSecond line\r\n",
+          "savedTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "savedRevision": 2,
+          "originalCanvasMounted": true,
+          "topLevelNavigations": 1,
+          "timeOrigin": 1795216017123.3,
+          "online": true
+        },
+        {
+          "stage": "after-undo-redo",
+          "nativeText": "\b\rPhone journal\rSecond line\r\n",
+          "nativeTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "nativeRange": {
+            "start": 2,
+            "end": 2,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "savedText": "\b\rPhone journal\rSecond line\r\n",
+          "savedTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "savedRevision": 4,
+          "originalCanvasMounted": true,
+          "topLevelNavigations": 1,
+          "timeOrigin": 1795216017123.3,
+          "online": true
+        },
+        {
+          "stage": "after-intentional-reopen",
+          "nativeText": "\b\rPhone journal\rSecond line\r\n",
+          "nativeTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "nativeRange": {
+            "start": 0,
+            "end": 0,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "savedText": "\b\rPhone journal\rSecond line\r\n",
+          "savedTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "savedRevision": 4,
+          "originalCanvasMounted": false,
+          "topLevelNavigations": 2,
+          "timeOrigin": 1795216023246.8,
+          "online": true
+        },
+        {
+          "stage": "final-before-cleanup",
+          "nativeText": "\b\rPhone journal\rSecond line\r\n",
+          "nativeTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "nativeRange": {
+            "start": 0,
+            "end": 0,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          },
+          "savedText": "\b\rPhone journal\rSecond line\r\n",
+          "savedTextRuns": [
+            {
+              "st": 8,
+              "ed": 15,
+              "ts": {
+                "bl": 1
+              }
+            }
+          ],
+          "savedRevision": 4,
+          "originalCanvasMounted": false,
+          "topLevelNavigations": 2,
+          "timeOrigin": 1795216023246.8,
+          "online": true
+        }
+      ]
+    }
+  ]
+}

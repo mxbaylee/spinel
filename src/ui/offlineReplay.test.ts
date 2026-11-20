@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { locks } from 'node:worker_threads';
+import { CONNECTION_CHECK_EVENT } from '../../web/connectionState.ts';
 import { watchOfflineReplay } from '../../web/offline/replay.ts';
 import { replayOfflineItem } from '../../web/offline/replayHost.ts';
 import * as storage from '../../web/offline/offlineStore.ts';
@@ -178,6 +179,20 @@ test('offline pauses replay without polling and reconnect processes pending item
   jobs[1].finish();
   await turns();
   expect(replayOfflineItem).toHaveBeenCalledTimes(2);
+});
+
+test('Try now wakes replay like a reconnect, but only while the browser reports online', async () => {
+  vi.stubGlobal('navigator', { onLine: false, locks });
+  const owner = watchOfflineReplay(account, null);
+  cleanups.push(owner.dispose);
+  await turns();
+  window.dispatchEvent(new Event(CONNECTION_CHECK_EVENT));
+  await turns();
+  expect(replayOfflineItem).not.toHaveBeenCalled();
+  vi.stubGlobal('navigator', { onLine: true, locks });
+  window.dispatchEvent(new Event(CONNECTION_CHECK_EVENT));
+  await turns();
+  expect(replayOfflineItem).toHaveBeenCalledTimes(1);
 });
 
 test('another tab owning account replay is skipped until a later foreground event', async () => {
