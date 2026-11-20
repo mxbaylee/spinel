@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import sharp from 'sharp';
 import { expect, test } from '@playwright/test';
-import type { Page, Request } from '@playwright/test';
+import type { Browser, Page, Request, TestInfo } from '@playwright/test';
 import type { IDocumentData } from '@univerjs/core';
 import { interruptibleNetwork } from './live-network.ts';
 import { openDatabase } from '../server/database.ts';
@@ -16,6 +16,9 @@ import {
   reopen,
   withEditingDoc,
 } from './doc-editing.ts';
+import type { EditingFixture } from './doc-editing.ts';
+import { textPoint } from './doc-touch.ts';
+import { nativeTheme } from './native-theme.ts';
 import { withFixtureCleanup } from './owned-process.ts';
 
 test.describe('desktop native Doc editing', () => registerDocEditingTests(false));
@@ -29,6 +32,219 @@ type ImagePasteWindow = Window & {
   }[];
 };
 const sha256 = (value: Buffer) => createHash('sha256').update(value).digest('hex');
+
+type ClipboardDoc = EditingFixture & {
+  png: Buffer;
+  posts: { mime: string; bytes: number; sha256: string; status?: number }[];
+  paste(format: 'png' | 'html' | 'text', text?: string): Promise<void>;
+  capture(stage: string): Promise<void>;
+  assertMounted(): Promise<void>;
+};
+
+/** The negative cases use the same real native Doc fixture and clipboard boundary. */
+async function withClipboardDoc(
+  browser: Browser,
+  baseURL: string,
+  info: TestInfo,
+  work: (f: ClipboardDoc) => Promise<void>,
+  viewer = false,
+) {
+  expect(info.retry).toBe(0);
+  const png = await sharp({
+    create: { width: 80, height: 60, channels: 3, background: { r: 23, g: 201, b: 151 } },
+  })
+    .png()
+    .toBuffer();
+  const posts: ClipboardDoc['posts'] = [];
+  const requests = new Map<Request, (typeof posts)[number]>();
+  const stages: Record<string, unknown>[] = [];
+  const clipboard: Record<string, unknown>[] = [];
+  let navigations = 0;
+  let imagePostCount = 0;
+  const evidence = {
+    source: execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(),
+    project: info.project.name,
+    attempt: info.retry,
+    browser: browser.version(),
+    viewport: { width: 1440, height: 1100 },
+    fixture: { mime: 'image/png', width: 80, height: 60, bytes: png.length, sha256: sha256(png) },
+    viewer,
+    posts,
+    clipboard,
+    stages,
+  };
+  const beforeOpen = async (page: Page) => {
+    page.on('framenavigated', (frame) => {
+      if (frame === page.mainFrame()) navigations++;
+    });
+    page.on('request', (request) => {
+      if (
+        request.method() !== 'POST' ||
+        !/^\/api\/items\/[^/]+\/images$/.test(new URL(request.url()).pathname)
+      )
+        return;
+      imagePostCount++;
+      if (posts.length === 8) return;
+      const body = request.postDataBuffer() ?? Buffer.alloc(0);
+      const post = {
+        mime: request.headers()['content-type'] ?? '',
+        bytes: body.length,
+        sha256: sha256(body),
+      };
+      posts.push(post);
+      requests.set(request, post);
+    });
+    page.on('response', (response) => {
+      const post = requests.get(response.request());
+      if (post) post.status = response.status();
+    });
+    await page.addInitScript(() => {
+      const events: NonNullable<ImagePasteWindow['imagePasteEvents']> = [];
+      (window as ImagePasteWindow).imagePasteEvents = events;
+      document.addEventListener(
+        'paste',
+        (event) => {
+          if (events.length === 8) return;
+          events.push({
+            trusted: event.isTrusted,
+            types: Array.from(event.clipboardData?.types ?? []),
+            files: Array.from(event.clipboardData?.files ?? []).map((file) => ({
+              mime: file.type,
+              bytes: file.size,
+            })),
+          });
+        },
+        true,
+      );
+    });
+  };
+  await withFixtureCleanup(
+    () =>
+      withEditingDoc(
+        browser,
+        baseURL,
+        info,
+        false,
+        async (f) => {
+          const { page } = f;
+          await f.context.grantPermissions(['clipboard-read', 'clipboard-write']);
+          const canvas = page
+            .getByRole('region', { name: 'Doc document', exact: true })
+            .getByLabel('Document canvas', { exact: true });
+          const originalCanvas = await canvas.elementHandle();
+          expect(originalCanvas).not.toBeNull();
+          const origin = await page.evaluate(() => performance.timeOrigin);
+          const initialNavigations = navigations;
+          const mounted = () =>
+            originalCanvas!.evaluate((node) => node.isConnected).catch(() => false);
+          const capture = async (stage: string) => {
+            stages.push({
+              stage,
+              native: await readEditingSelection(page).catch(() => undefined),
+              saved: await f.read().catch(() => undefined),
+              originalCanvasMounted: await mounted(),
+              navigations,
+              imagePostCount,
+              environment: await page
+                .evaluate(() => ({
+                  timeOrigin: performance.timeOrigin,
+                  online: navigator.onLine,
+                  userAgent: navigator.userAgent,
+                  pasteEvents: (window as ImagePasteWindow).imagePasteEvents,
+                }))
+                .catch(() => undefined),
+            });
+          };
+          const paste: ClipboardDoc['paste'] = async (format, text = '') => {
+            const mime =
+              format === 'png' ? 'image/png' : format === 'html' ? 'text/html' : 'text/plain';
+            const html = `<p><img src="data:image/png;base64,${png.toString('base64')}" width="80" height="60"></p>`;
+            const value = format === 'png' ? Array.from(png) : format === 'html' ? html : text;
+            const before = await page.evaluate(
+              () => (window as ImagePasteWindow).imagePasteEvents!.length,
+            );
+            const readback = await page.evaluate(
+              async ({ mime, value }) => {
+                const blob = new Blob([Array.isArray(value) ? new Uint8Array(value) : value], {
+                  type: mime,
+                });
+                await navigator.clipboard.write([new ClipboardItem({ [mime]: blob })]);
+                const item = (await navigator.clipboard.read()).find((item) =>
+                  item.types.includes(mime),
+                );
+                if (!item) throw new Error('The native clipboard is missing its expected format.');
+                return Array.from(new Uint8Array(await (await item.getType(mime)).arrayBuffer()));
+              },
+              { mime, value },
+            );
+            const bytes = Buffer.from(readback);
+            clipboard.push({ format, mime, bytes: bytes.length, sha256: sha256(bytes) });
+            if (format === 'png') {
+              expect(await sharp(bytes).removeAlpha().raw().toBuffer()).toEqual(
+                await sharp(png).removeAlpha().raw().toBuffer(),
+              );
+            } else if (format === 'html') {
+              // Browser sanitization can wrap HTML; it must retain this exact image.
+              expect(bytes.toString()).toContain(
+                `src="data:image/png;base64,${png.toString('base64')}"`,
+              );
+            } else expect(bytes.toString()).toBe(text);
+            await page.keyboard.press('ControlOrMeta+v');
+            await expect
+              .poll(() =>
+                page.evaluate(() => (window as ImagePasteWindow).imagePasteEvents!.length),
+              )
+              .toBe(before + 1);
+            const observed = await page.evaluate(() =>
+              (window as ImagePasteWindow).imagePasteEvents!.at(-1),
+            );
+            expect(observed?.trusted).toBe(true);
+            expect(observed?.types).toContain(format === 'png' ? 'Files' : mime);
+            expect(observed?.files).toEqual(
+              format === 'png' ? [{ mime: 'image/png', bytes: expect.any(Number) }] : [],
+            );
+          };
+          await withFixtureCleanup(
+            async () => {
+              expect(await page.evaluate(() => navigator.onLine)).toBe(true);
+              if (!viewer) {
+                await f.focus();
+                await placeCaret(f, 0);
+                await content(f, f.initial.body!.dataStream, 0);
+              }
+              await capture('before-paste');
+              await work({
+                ...f,
+                png,
+                posts,
+                paste,
+                capture,
+                async assertMounted() {
+                  expect(await mounted()).toBe(true);
+                  expect(await page.evaluate(() => performance.timeOrigin)).toBe(origin);
+                  expect(navigations).toBe(initialNavigations);
+                  expect(imagePostCount).toBe(posts.length);
+                },
+              });
+            },
+            () => capture('final-before-cleanup'),
+          );
+        },
+        { viewer, beforeOpen },
+      ),
+    () =>
+      info.attach('doc-image-paste-negative-evidence', {
+        body: JSON.stringify(evidence, null, 2),
+        contentType: 'application/json',
+      }),
+  );
+}
+
+function expectNoImages(snapshot: IDocumentData) {
+  expect(snapshot.drawingsOrder ?? []).toEqual([]);
+  expect(Object.keys(snapshot.drawings ?? {})).toEqual([]);
+  expect(JSON.stringify(snapshot)).not.toContain('data:image/');
+}
 
 clipboardTest.describe('native Doc image clipboard', () => {
   clipboardTest.describe.configure({ retries: 0 });
@@ -353,6 +569,266 @@ clipboardTest.describe('native Doc image clipboard', () => {
           });
         },
       );
+    },
+  );
+  clipboardTest(
+    'HTML image upload failure keeps the edit and allows a later native paste',
+    async ({ browser, baseURL }, info) => {
+      clipboardTest.setTimeout(90_000);
+      await withClipboardDoc(browser, baseURL!, info, async (f) => {
+        const { page } = f;
+        const before = await f.read();
+        const initialText = before.body!.dataStream;
+        const status = page.getByRole('status', { name: 'Save status' });
+        const editor = page.getByRole('region', { name: 'Doc document', exact: true });
+        for (const navigate of [false, true]) {
+          await f.focus();
+          await placeCaret(f, 0);
+          let release!: () => void;
+          const held = new Promise<void>((resolve) => {
+            release = resolve;
+          });
+          let intercepted = false;
+          await page.route(`**/api/items/${f.id}/images`, async (route) => {
+            intercepted = true;
+            await held;
+            await route.fulfill({
+              status: 503,
+              contentType: 'text/html',
+              body: '<p>private upstream parser detail</p>',
+            });
+          });
+          await withFixtureCleanup(
+            async () => {
+              await f.paste('html');
+              await expect.poll(() => intercepted).toBe(true);
+              await expect(status).toHaveText('Inserting image — keep this tab open.');
+              expect((await readEditingSelection(page))?.text).toBe(initialText);
+              // First prove HTML failure with the selection untouched: navigation
+              // could itself cancel native paste and hide a null-hook/base64 fallback.
+              if (navigate) {
+                const warning = page.waitForEvent('dialog');
+                page.once('dialog', (dialog) => dialog.dismiss());
+                await page.getByRole('button', { name: 'Back to files', exact: true }).click();
+                expect((await warning).type()).toBe('confirm');
+              }
+              await f.assertMounted();
+              await expect(status).toHaveText('Inserting image — keep this tab open.');
+              await f.capture(navigate ? 'held-html-upload-navigation-guard' : 'held-html-upload');
+              release();
+              await expect
+                .poll(() => f.posts.map((post) => post.status))
+                .toEqual(navigate ? [503, 503] : [503]);
+              await expect(editor.getByRole('alert')).toHaveText(
+                'Image upload failed. Check your connection and retry.',
+              );
+              const unchanged = await content(f, initialText, navigate ? undefined : 0);
+              expect(unchanged.body).toEqual(before.body);
+              expectNoImages(unchanged);
+              await f.assertMounted();
+              await f.capture(
+                navigate ? 'failed-html-upload-after-navigation-guard' : 'failed-html-upload',
+              );
+            },
+            async () => {
+              release();
+              await page.unrouteAll({ behavior: 'wait' });
+            },
+          );
+        }
+        // These are actual application feedback views, not a second clipboard run.
+        const canvas = editor.getByLabel('Document canvas', { exact: true });
+        for (const theme of ['light', 'dark'] as const) {
+          await page.emulateMedia({ colorScheme: theme });
+          await nativeTheme(page, canvas, theme);
+          await info.attach(`spn154-html-upload-failure-${theme}`, {
+            body: await page.screenshot({ animations: 'disabled' }),
+            contentType: 'image/png',
+          });
+        }
+        await page.emulateMedia({ colorScheme: 'light' });
+        await nativeTheme(page, canvas, 'light');
+        await f.focus();
+        await placeCaret(f, 0);
+        // A distinct successful action after the injected failure was removed.
+        // Never retry the failed user action without retaining its first outcome.
+        await f.paste('html');
+        await expect.poll(() => f.posts.map((post) => post.status)).toEqual([503, 503, 201]);
+        expect(f.posts.map((post) => post.mime)).toEqual(['image/png', 'image/png', 'image/png']);
+        const pasted = await content(f, '\b\r' + initialText, 2);
+        expect(pasted.drawingsOrder).toHaveLength(1);
+        const drawing = pasted.drawings?.[pasted.drawingsOrder![0]];
+        if (!drawing || !('source' in drawing) || typeof drawing.source !== 'string')
+          throw new Error('The pasted HTML image has no stored source.');
+        expect(drawing.source).toMatch(new RegExp(`^/api/items/${f.id}/images/[a-f0-9]{64}$`));
+        const response = await f.context.request.get(drawing.source);
+        expect(response.status()).toBe(200);
+        expect(response.headers()['content-type']).toContain('image/png');
+        const stored = await response.body();
+        expect(drawing.source.endsWith(sha256(stored))).toBe(true);
+        expect(await sharp(stored).removeAlpha().raw().toBuffer()).toEqual(
+          await sharp(f.png).removeAlpha().raw().toBuffer(),
+        );
+        await expect
+          .poll(async () => {
+            const { data, info: raster } = await sharp(await canvas.screenshot())
+              .removeAlpha()
+              .raw()
+              .toBuffer({ resolveWithObject: true });
+            let matching = 0;
+            for (let i = 0; i < data.length; i += raster.channels)
+              if (
+                Math.abs(data[i] - 23) <= 8 &&
+                Math.abs(data[i + 1] - 201) <= 8 &&
+                Math.abs(data[i + 2] - 151) <= 8
+              )
+                matching++;
+            return matching;
+          })
+          .toBeGreaterThan(1000);
+        await expect(editor.getByRole('alert')).toHaveCount(0);
+        await f.assertMounted();
+        await f.capture('successful-html-paste');
+        await info.attach('spn154-html-paste-success-light', {
+          body: await page.screenshot({ animations: 'disabled' }),
+          contentType: 'image/png',
+        });
+        await reopen(f, pasted);
+        const reopened = await f.read();
+        for (const key of ['body', 'drawings', 'drawingsOrder', 'resources'] as const)
+          expect(reopened[key]).toEqual(pasted[key]);
+        expect(await (await f.context.request.get(drawing.source)).body()).toEqual(stored);
+        await f.capture('reopened-html-paste');
+      });
+    },
+  );
+
+  for (const change of ['selection', 'content'] as const) {
+    clipboardTest(
+      `native PNG preparation cancels after a ${change} change`,
+      async ({ browser, baseURL }, info) => {
+        clipboardTest.setTimeout(60_000);
+        await withClipboardDoc(browser, baseURL!, info, async (f) => {
+          const { page } = f;
+          const before = await f.read();
+          let release!: () => void;
+          const held = new Promise<void>((resolve) => {
+            release = resolve;
+          });
+          let uploadedStatus: number | undefined;
+          await page.route(`**/api/items/${f.id}/images`, async (route) => {
+            // Use the real authenticated upload; hold only its response while the
+            // native selection/mutation generation changes underneath preparation.
+            const response = await route.fetch();
+            uploadedStatus = response.status();
+            await held;
+            await route.fulfill({ response });
+          });
+          await withFixtureCleanup(
+            async () => {
+              await f.paste('png');
+              await expect.poll(() => uploadedStatus).toBe(201);
+              await expect(page.getByRole('status', { name: 'Save status' })).toHaveText(
+                'Inserting image — keep this tab open.',
+              );
+              if (change === 'selection') await page.keyboard.press('ArrowRight');
+              // Delete changes content while retaining caret 0, separately proving
+              // mutation cancellation instead of repeating selection cancellation.
+              else await page.keyboard.press('Delete');
+              const text =
+                change === 'content' ? before.body!.dataStream.slice(1) : before.body!.dataStream;
+              const caret = change === 'selection' ? 1 : 0;
+              await expect
+                .poll(async () => {
+                  const current = await readEditingSelection(page);
+                  return { text: current?.text, start: current?.start, end: current?.end };
+                })
+                .toEqual({ text, start: caret, end: caret });
+              await f.capture(`held-upload-after-${change}`);
+              release();
+              await expect.poll(() => f.posts.map((post) => post.status)).toEqual([201]);
+              const retained = await content(f, text, caret);
+              expectNoImages(retained);
+              if (change === 'selection') expect(retained.body).toEqual(before.body);
+              await expect(
+                page.getByRole('region', { name: 'Doc document', exact: true }).getByRole('alert'),
+              ).toHaveCount(0);
+              await f.assertMounted();
+              await f.capture('preparation-cancelled');
+              await reopen(f, retained);
+              expectNoImages(await f.read());
+              await f.capture('after-intentional-reopen');
+            },
+            async () => {
+              release();
+              await page.unrouteAll({ behavior: 'wait' });
+            },
+          );
+        });
+      },
+    );
+  }
+
+  clipboardTest(
+    'a viewer cannot paste a native clipboard image',
+    async ({ browser, baseURL }, info) => {
+      clipboardTest.setTimeout(60_000);
+      await withClipboardDoc(
+        browser,
+        baseURL!,
+        info,
+        async (f) => {
+          const before = await f.read();
+          const nativeBefore = (await readEditingSelection(f.page))!.body;
+          const point = await textPoint(f.page);
+          await f.page.mouse.click(point.x, point.y);
+          await f.paste('png');
+          await expect(f.page.getByRole('status', { name: 'Save status' })).toHaveText(
+            'View only.',
+          );
+          expect((await readEditingSelection(f.page))?.body).toEqual(nativeBefore);
+          expect((await f.read()).body).toEqual(before.body);
+          expectNoImages(await f.read());
+          expect(f.posts).toEqual([]);
+          await f.assertMounted();
+          await f.capture('viewer-paste-denied');
+          await f.reload();
+          await expect
+            .poll(async () => (await readEditingSelection(f.page))?.text)
+            .toBe(before.body!.dataStream);
+          expect((await readEditingSelection(f.page))?.body).toEqual(nativeBefore);
+          expectNoImages(await f.read());
+          expect(f.posts).toEqual([]);
+          await f.capture('after-intentional-reopen');
+        },
+        true,
+      );
+    },
+  );
+
+  clipboardTest(
+    'ordinary native text paste keeps formatting and undo history',
+    async ({ browser, baseURL }, info) => {
+      clipboardTest.setTimeout(60_000);
+      await withClipboardDoc(browser, baseURL!, info, async (f) => {
+        const before = await f.read();
+        const text = 'Clipboard ';
+        await f.paste('text', text);
+        const pasted = await content(f, text + before.body!.dataStream, text.length);
+        expectNoImages(pasted);
+        expect(f.posts).toEqual([]);
+        await f.assertMounted();
+        await f.page.getByRole('button', { name: 'Undo', exact: true }).click();
+        const undone = await content(f, before.body!.dataStream);
+        expect(undone.body).toEqual(before.body);
+        await f.page.getByRole('button', { name: 'Redo', exact: true }).click();
+        expect((await content(f, text + before.body!.dataStream)).body).toEqual(pasted.body);
+        await f.assertMounted();
+        await f.capture('after-text-paste-undo-redo');
+        await reopen(f, pasted);
+        expect(f.posts).toEqual([]);
+        await f.capture('after-intentional-reopen');
+      });
     },
   );
 });

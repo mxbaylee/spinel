@@ -1,5 +1,6 @@
 import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
 import { SaveStatus } from './SaveStatus.tsx';
+import { DocEditorHelp } from './DocEditorHelp.tsx';
 import { recordNativeMutationInventory } from './nativeMutationInventory.ts';
 import {
   installDocFormulas,
@@ -37,7 +38,9 @@ import {
   calcDocRangePositions,
   DocBackScrollRenderController,
   DocSelectionRenderService,
+  IDocClipboardService,
 } from '@univerjs/docs-ui';
+import { docImageErrorMessage, installDocImagePaste, uploadDocImage } from './docImages.ts';
 import { watchPresence } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
 import { useEffect, useRef, useState } from 'react';
@@ -228,6 +231,12 @@ export function DocEditor({
     let compositionText = '';
     let heldComposition = false;
     let inputFrozen = false;
+    let imagePreparation = new AbortController();
+    let clipboardImages: ReturnType<typeof installDocImagePaste> | undefined;
+    const cancelImages = () => {
+      imagePreparation.abort();
+      clipboardImages?.cancel();
+    };
     let finishReadonly: (() => void) | undefined;
     let uploaded = 0;
     let disposeEditor: (() => void) | undefined;
@@ -345,46 +354,39 @@ export function DocEditor({
       });
       class StoredImages extends ImageIoService {
         override async saveImage(file: File) {
+          const image = await this.store(file);
+          uploaded++;
+          return image;
+        }
+        saveClipboardImage(file: File) {
+          return this.store(file);
+        }
+        private async store(file: File) {
+          const lifetime = imagePreparation.signal;
+          const signal = AbortSignal.any([lifetime, AbortSignal.timeout(30_000)]);
           uploads++;
           this.setWaitCount(uploads);
           setUploadError('');
           publish(lastState);
           try {
-            if (data.offline?.enabled && !data.offline.online)
-              throw new Error(
-                'Connect before inserting a new image. Existing images remain available offline.',
-              );
-            if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type))
-              throw new Error('Choose a PNG, JPEG or WebP image.');
-            const response = await (data.offline?.fetch.bind(data.offline) ?? fetch)(
-              `${documentPath(id, spaceId)}/images`,
-              {
-                method: 'POST',
-                headers: { 'Content-Type': file.type },
-                body: file,
-                signal: AbortSignal.timeout(30_000),
-              },
-            );
-            const image = await response.json();
-            data.offline?.verifyRemote();
-            if (!response.ok) throw new Error(image.error ?? 'Image upload failed.');
-            await data.offline?.prepareImages(image.url);
-            data.offline?.verifyRemote();
-            uploaded++;
+            const source = await uploadDocImage(file, {
+              itemId: id,
+              path: documentPath(id, spaceId),
+              request: data.offline?.fetch.bind(data.offline) ?? fetch,
+              signal,
+              canEdit: () => !disposed && !inputFrozen,
+              offline: data.offline,
+            });
             return {
               imageId: crypto.randomUUID(),
               imageSourceType: ImageSourceType.URL,
-              source: data.offline?.toVisible(image.url) ?? (image.url as string),
-              base64Cache: data.offline?.toVisible(image.url) ?? (image.url as string),
+              source,
+              base64Cache: source,
               status: ImageUploadStatusType.SUCCUSS,
             };
           } catch (error) {
-            if (!disposed)
-              setUploadError(
-                error instanceof Error
-                  ? error.message
-                  : 'Image upload failed. Try inserting the file again.',
-              );
+            if (!disposed && !inputFrozen && !lifetime.aborted)
+              setUploadError(docImageErrorMessage(error));
             throw new Error(ImageUploadStatusType.ERROR_IMAGE);
           } finally {
             uploads--;
@@ -403,6 +405,23 @@ export function DocEditor({
         }
         override onRendered() {
           const commands = this._injector.get(ICommandService);
+          const images = this._injector.get(IImageIoService) as StoredImages;
+          clipboardImages = installDocImagePaste(this._injector.get(IDocClipboardService), {
+            itemId: id,
+            unitId: data.unitId,
+            origin: location.origin,
+            canEdit: () => !disposed && !inputFrozen,
+            saveImage: (file) => images.saveClipboardImage(file),
+            toCanonical: (source) => data.offline?.toCanonical(source) ?? source,
+            busy: (value) => {
+              insertions += value ? 1 : -1;
+              publish(lastState);
+            },
+            failed: (message) => {
+              setUploadError((previous) => previous || message);
+            },
+          });
+          this.disposeWithMe(clipboardImages);
           commands.unregisterCommand(InsertDocImageCommand.id);
           this.disposeWithMe(
             commands.registerCommand({
@@ -418,10 +437,13 @@ export function DocEditor({
                     options,
                   );
                   if (!result && uploaded > before && !disposed)
-                    setUploadError('The image was uploaded but could not be inserted.');
+                    setUploadError(
+                      'The image was uploaded but could not be inserted. Try inserting it again.',
+                    );
                   return result;
                 } catch {
-                  if (!disposed) setUploadError('The image could not be inserted.');
+                  if (!disposed)
+                    setUploadError('The image could not be inserted. Try inserting it again.');
                   return false;
                 } finally {
                   // Upload completion precedes dimension loading and the drawing mutation.
@@ -494,6 +516,9 @@ export function DocEditor({
       });
       const stopTheme = bindEditorTheme(univer);
       disposeEditor = () => {
+        cancelImages();
+        clipboardImages?.dispose();
+        clipboardImages = undefined;
         boundedHistory?.dispose();
         boundedHistory = undefined;
         responsivenessEvidence?.dispose();
@@ -533,6 +558,7 @@ export function DocEditor({
       ) => {
         if (disposed) return;
         inputFrozen = true;
+        cancelImages();
         // Fence owned deferred work before a preserved composition can return early.
         boundedHistory?.dispose();
         boundedHistory = undefined;
@@ -632,6 +658,7 @@ export function DocEditor({
           // Change local controls only; keep selection, scroll and the native unit.
           if (deviceReadOnly || layoutChanged) return;
           inputFrozen = false;
+          if (imagePreparation.signal.aborted) imagePreparation = new AbortController();
           phoneInputLocked = false;
           nativePermissions.setAccess(access);
           if (mobile)
@@ -1052,6 +1079,7 @@ export function DocEditor({
     return () => {
       opened('cancelled');
       disposed = true;
+      cancelImages();
       copyStatus.next('This document is closed.');
       copyStatus.complete();
       discardUnfinishedText.current = undefined;
@@ -1192,20 +1220,14 @@ export function DocEditor({
           }}
         />
       )}
-      <p className="editor-help" role={uploadError || formulaError ? 'alert' : undefined}>
-        {uploadError
-          ? `${uploadError} Try inserting the file again.`
-          : formulaError ||
-            (phoneLayoutChanged
-              ? 'This Doc’s page layout changed. Reopen it to continue.'
-              : phoneReadOnly
-                ? 'Edit on a larger screen. This Doc keeps its page layout.'
-                : editable
-                  ? mobile
-                    ? 'Tap Edit, then tap the text to write.'
-                    : 'Click the page to write. Type / for commands.'
-                  : '')}
-      </p>
+      <DocEditorHelp
+        uploadError={uploadError}
+        formulaError={formulaError}
+        phoneLayoutChanged={phoneLayoutChanged}
+        phoneReadOnly={phoneReadOnly}
+        editable={editable}
+        mobile={mobile}
+      />
       <div className="univer-container" ref={container} inert={mobile && !phoneReady} />
     </section>
   );
