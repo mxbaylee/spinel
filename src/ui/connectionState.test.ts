@@ -1,9 +1,11 @@
 import { afterEach, expect, test, vi } from 'vitest';
 import {
+  CONNECTION_CHECK_EVENT,
   createEditorConnection,
   reduceEditorConnection,
   watchServerConnection,
 } from '../../web/connectionState.ts';
+import { CONNECTION_CHECKED_EVENT } from '../../web/connectionState.ts';
 import type { ConnectionState, EditorConnectionEvent } from '../../web/connectionState.ts';
 
 vi.mock('../../web/maintenanceState.ts', () => import('./fixtures/unsupervisedMaintenance.ts'));
@@ -264,4 +266,47 @@ test('disposal aborts the request, removes listeners and timers, and ignores lat
   await vi.advanceTimersByTimeAsync(9000);
   expect(check.states).toEqual(['reconnecting']);
   expect(check.requests).toHaveLength(1);
+});
+
+test('Try now asks the server again at once, aborting the earlier probe, and stops on disposal', async () => {
+  const check = server(false);
+  expect(check.states).toEqual(['offline']);
+  expect(check.requests).toHaveLength(0);
+  // The browser has recovered since it last said so: the check reads it and probes immediately.
+  (navigator as { onLine: boolean }).onLine = true;
+  (window as unknown as EventTarget).dispatchEvent(new Event(CONNECTION_CHECK_EVENT));
+  expect(check.states).toEqual(['offline', 'reconnecting']);
+  expect(check.requests).toHaveLength(1);
+  check.requests[0].resolve(ok());
+  await settle();
+  expect(check.states.at(-1)).toBe('online');
+  // A second check cancels a probe still in flight instead of stacking another.
+  (window as unknown as EventTarget).dispatchEvent(new Event(CONNECTION_CHECK_EVENT));
+  (window as unknown as EventTarget).dispatchEvent(new Event(CONNECTION_CHECK_EVENT));
+  expect(check.requests[1].signal.aborted).toBe(true);
+  expect(check.requests).toHaveLength(3);
+  check.stop();
+  (window as unknown as EventTarget).dispatchEvent(new Event(CONNECTION_CHECK_EVENT));
+  expect(check.requests).toHaveLength(3);
+});
+
+test('Try now says when it has an answer, keeps syncing steady while online, and stays quiet when replaced', async () => {
+  const check = server(true);
+  check.requests[0].resolve(ok());
+  await settle();
+  expect(check.states).toEqual(['reconnecting', 'online']);
+  const answers = vi.fn();
+  (window as unknown as EventTarget).addEventListener(CONNECTION_CHECKED_EVENT, answers);
+  const ask = () =>
+    (window as unknown as EventTarget).dispatchEvent(new Event(CONNECTION_CHECK_EVENT));
+  ask();
+  // Already online: the banner is not dropped to waiting while the probe runs.
+  expect(check.states).toEqual(['reconnecting', 'online']);
+  // A second press replaces the first probe; only the last one answers.
+  ask();
+  await settle();
+  expect(answers).not.toHaveBeenCalled();
+  check.requests[2].resolve(ok());
+  await settle();
+  expect(answers).toHaveBeenCalledTimes(1);
 });

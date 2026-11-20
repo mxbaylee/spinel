@@ -4,6 +4,7 @@ import { offlineErrorMessage } from '../../src/shared/offlineError.ts';
 import { DownloadError, downloadForOffline } from './download.ts';
 import type { LocalStart } from './localStart.ts';
 import {
+  applyPendingChange,
   openOfflineStore,
   openExistingOfflineStore,
   offlinePreparation,
@@ -71,6 +72,7 @@ export function useOfflineDownloads(
   const latestAccount = useRef(user.id);
   const summaryRead = useRef(0);
   const noticeSequence = useRef(0);
+  const refreshTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const pendingNotices = useRef(new Map<string, { sequence: number; pending: boolean }>());
   latestAccount.current = user.id;
   function preparation(reportFailure = false) {
@@ -162,6 +164,12 @@ export function useOfflineDownloads(
     });
   }
 
+  // A reconnect can finish many files at once; one read after they settle is enough.
+  function refreshSoon() {
+    clearTimeout(refreshTimer.current);
+    refreshTimer.current = setTimeout(() => void refreshSummaries().catch(() => {}), 250);
+  }
+
   async function refreshSummaries() {
     const scope = preparation();
     if (!scope) return;
@@ -204,21 +212,24 @@ export function useOfflineDownloads(
       const scope = preparation();
       if (!scope?.isCurrent()) return;
       if (typeof change.pending === 'boolean') {
+        const pending = change.pending;
+        const wasPending = pendingNotices.current.get(change.itemId)?.pending;
         pendingNotices.current.set(change.itemId, {
           sequence: ++noticeSequence.current,
-          pending: change.pending,
+          pending,
         });
         // A checkpoint transition already committed. Keep verified availability
         // and update only this known row, without rehashing images per keystroke.
         setDownloads((previous) => {
           const item = previous.get(change.itemId);
           return item && scope.isCurrent()
-            ? new Map(previous).set(change.itemId, {
-                ...item,
-                pending: item.uncertain || change.pending,
-              })
+            ? new Map(previous).set(change.itemId, applyPendingChange(item, pending))
             : previous;
         });
+        // The row above is an optimistic update. Re-read the summary when work starts
+        // or finishes: it may arrive already failed, or a recovery record may remain.
+        // These are transitions, not keystrokes.
+        if (wasPending !== pending) refreshSoon();
       } else {
         pendingNotices.current.delete(change.itemId);
         void refreshSummaries().catch(() => {});
@@ -242,6 +253,7 @@ export function useOfflineDownloads(
     void refreshSummaries().catch(() => {});
     const close = () => {
       if (mounted.current === lifetime) mounted.current = null;
+      clearTimeout(refreshTimer.current);
       stopChanges();
       window.removeEventListener('focus', foreground);
       window.removeEventListener('pageshow', foreground);

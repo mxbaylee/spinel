@@ -1261,6 +1261,8 @@ function bind(
     const detail = (event as CustomEvent).detail;
     if (
       !options.offline ||
+      // This editor's own checkpoint write must not reconcile and persist again.
+      detail?.checkpoint ||
       detail?.accountId !== options.offline.accountId ||
       detail?.itemId !== itemId ||
       !active() ||

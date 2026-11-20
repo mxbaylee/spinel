@@ -5,6 +5,7 @@ import {
   watchOfflineChanges,
 } from './offlineStore.ts';
 import type { OfflineDownload } from './offlineStore.ts';
+import { CONNECTION_CHECK_EVENT } from '../connectionState.ts';
 import type { DiagnosticSource } from '@spinel/diagnostics';
 
 type Job = { stop(): Promise<void>; done: Promise<void> };
@@ -132,6 +133,7 @@ function createReplayOwner(accountId: string) {
     'storage',
     'spinel-offline-account-changed',
     'spinel-offline-prepared',
+    CONNECTION_CHECK_EVENT,
   ] as const;
   for (const event of events) window.addEventListener(event, wake);
   document.addEventListener('visibilitychange', wake);
