@@ -1,0 +1,63 @@
+{
+  "candidate": "d7a2a9b96d735d90cc4ff01258f9c370a641e3a4",
+  "tree": "15c40c65366343453f2a5e564c021598b8108d1b",
+  "base": "aeed0f4799950dced609bee497aa94aa43fc3465",
+  "role": "Two fresh independent nonimplementing agents; read-only reviews.",
+  "rubricMaximum": {
+    "scope": 35,
+    "correctness": 25,
+    "regression": 20,
+    "operations": 10,
+    "maintainability": 10
+  },
+  "reviews": [
+    {
+      "identity": "/root/repair_review_a",
+      "score": 100,
+      "rubric": {
+        "scope": 35,
+        "correctness": 25,
+        "regression": 20,
+        "operations": 10,
+        "maintainability": 10
+      },
+      "independentCheck": "30 image-helper tests passed",
+      "elapsedMs": 877.273784,
+      "peakKiB": 371180,
+      "receipt": "repair-review-a-feedback-units.log.gz",
+      "blockers": []
+    },
+    {
+      "identity": "/root/repair_review_b",
+      "score": 100,
+      "rubric": {
+        "scope": 35,
+        "correctness": 25,
+        "regression": 20,
+        "operations": 10,
+        "maintainability": 10
+      },
+      "independentCheck": "114 image-helper, prepared-image and authentication-lifecycle tests passed in three files",
+      "elapsedMs": 4635.826162,
+      "peakKiB": 684936,
+      "receipt": "repair-review-b-feedback-focused.log.gz",
+      "blockers": []
+    }
+  ],
+  "priorReview": {
+    "candidate": "37a2222b80cbf425442594d2bbfcf12990b9f975",
+    "scores": {
+      "/root/repair_review_a": 96,
+      "/root/repair_review_b": 96
+    },
+    "finding": "P2: a later unsupported-image paste could retain an older upload error, and a delayed older upload could overwrite a newer action explanation.",
+    "disposition": "Repaired with latest-action feedback ownership, controlled-error propagation preserving the toolbar SDK status contract, three new helper cases, and a real second unsupported-source clipboard action in the existing HTML case."
+  },
+  "ciResultDeductions": false,
+  "notEstablishedByGrade": [
+    "repaired hosted native execution",
+    "actual visual approval",
+    "physical-phone clipboard acceptance",
+    "merge readiness"
+  ]
+}

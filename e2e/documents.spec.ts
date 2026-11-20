@@ -33,9 +33,18 @@ type ImagePasteWindow = Window & {
 };
 const sha256 = (value: Buffer) => createHash('sha256').update(value).digest('hex');
 
+type ImagePostEvidence = {
+  mime: string;
+  // True means Playwright returned a Buffer, including an exposed empty Buffer.
+  bodyExposed: boolean;
+  bytes: number | null;
+  sha256: string | null;
+  status?: number;
+};
+
 type ClipboardDoc = EditingFixture & {
   png: Buffer;
-  posts: { mime: string; bytes: number; sha256: string; status?: number }[];
+  posts: ImagePostEvidence[];
   paste(format: 'png' | 'html' | 'text', text?: string, imageSource?: string): Promise<void>;
   capture(stage: string): Promise<void>;
   assertMounted(): Promise<void>;
@@ -85,11 +94,13 @@ async function withClipboardDoc(
         return;
       imagePostCount++;
       if (posts.length === 8) return;
-      const body = request.postDataBuffer() ?? Buffer.alloc(0);
+      // Playwright can omit Blob request bodies. Absence is not an empty upload.
+      const body = request.postDataBuffer();
       const post = {
         mime: request.headers()['content-type'] ?? '',
-        bytes: body.length,
-        sha256: sha256(body),
+        bodyExposed: body !== null,
+        bytes: body?.length ?? null,
+        sha256: body === null ? null : sha256(body),
       };
       posts.push(post);
       requests.set(request, post);
@@ -259,7 +270,7 @@ clipboardTest.describe('native Doc image clipboard', () => {
         .png()
         .toBuffer();
       const pixels = await sharp(png).removeAlpha().raw().toBuffer();
-      const posts: { mime: string; bytes: number; sha256: string; status?: number }[] = [];
+      const posts: ImagePostEvidence[] = [];
       const postRequests = new Map<Request, (typeof posts)[number]>();
       const sync: Record<string, unknown>[] = [];
       const stages: Record<string, unknown>[] = [];
@@ -335,11 +346,13 @@ clipboardTest.describe('native Doc image clipboard', () => {
             return;
           totalImagePosts++;
           if (posts.length === 8) return;
-          const body = request.postDataBuffer() ?? Buffer.alloc(0);
+          // Preserve whether Playwright exposed a body; never invent wire bytes.
+          const body = request.postDataBuffer();
           const post = {
             mime: request.headers()['content-type'] ?? '',
-            bytes: body.length,
-            sha256: sha256(body),
+            bodyExposed: body !== null,
+            bytes: body?.length ?? null,
+            sha256: body === null ? null : sha256(body),
           };
           posts.push(post);
           postRequests.set(request, post);

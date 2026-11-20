@@ -1,0 +1,281 @@
+{
+  "run_id": 44821917229,
+  "attempt": 1,
+  "development2_expected_skips": [
+    {
+      "title": "supervised maintenance keeps pending native work, fences old edits, and recovers through cold controls",
+      "file": "maintenance.spec.ts",
+      "line": 203,
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Closed-process verification uses the Linux production supervisor.",
+          "location": {
+            "file": "/home/runner/work/spinel/spinel/e2e/maintenance.spec.ts",
+            "line": 206,
+            "column": 8
+          }
+        }
+      ]
+    },
+    {
+      "title": "an aborted queued Web Lock cannot run or orphan subsequent exclusive admission",
+      "file": "offline-locks.spec.ts",
+      "line": 3,
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "One Chromium platform owner; no native app required.",
+          "location": {
+            "file": "/home/runner/work/spinel/spinel/e2e/offline-locks.spec.ts",
+            "line": 7,
+            "column": 8
+          }
+        }
+      ]
+    }
+  ],
+  "first_png_evidence": [
+    {
+      "project": "production",
+      "source": "d76d651884e467de5784bde3b916d598253b9c19",
+      "browser": "156.0.8078.4",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "posts": [
+        {
+          "mime": "image/png",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": 201
+        }
+      ],
+      "storedImage": {
+        "source": "/api/items/640dec99-306f-4626-a477-74188ad60960/images/200958817bd65e95e722ab8bb5beb3ef4999a577bb9885db67f67d3090d6e3c3",
+        "bytes": 247,
+        "sha256": "200958817bd65e95e722ab8bb5beb3ef4999a577bb9885db67f67d3090d6e3c3",
+        "width": 80,
+        "height": 60
+      },
+      "afterText": "\b\rPhone journal\rSecond line\r\n",
+      "savedText": "\b\rPhone journal\rSecond line\r\n",
+      "boldRuns": [
+        {
+          "st": 8,
+          "ed": 15,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "caret": {
+        "start": 2,
+        "end": 2,
+        "collapsed": true,
+        "segmentId": "",
+        "segmentPage": -1
+      },
+      "mountedThroughHistory": true,
+      "topLevelCountThroughHistory": [
+        1,
+        1,
+        1
+      ],
+      "timeOriginUnchangedThroughHistory": true,
+      "originalTimeOrigin": 1795211658110.3,
+      "reopenedText": "\b\rPhone journal\rSecond line\r\n",
+      "reopenedBoldRuns": [
+        {
+          "st": 8,
+          "ed": 15,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "reopenedStoredDrawings": [
+        {
+          "imageSourceType": "URL",
+          "source": "/api/items/640dec99-306f-4626-a477-74188ad60960/images/200958817bd65e95e722ab8bb5beb3ef4999a577bb9885db67f67d3090d6e3c3",
+          "transform": {
+            "width": 80,
+            "height": 60,
+            "left": 0
+          },
+          "docTransform": {
+            "size": {
+              "width": 80,
+              "height": 60
+            },
+            "positionH": {
+              "relativeFrom": 0,
+              "posOffset": 0
+            },
+            "positionV": {
+              "relativeFrom": 1,
+              "posOffset": 0
+            },
+            "angle": 0
+          }
+        }
+      ],
+      "syncTypes": [
+        "resume",
+        "submit",
+        "edit",
+        "ack",
+        "verified",
+        "submit",
+        "edit",
+        "ack",
+        "verified",
+        "submit",
+        "edit",
+        "ack",
+        "verified",
+        "resume"
+      ],
+      "inlineReferenceCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "observationFailures": 0,
+      "droppedSyncFrames": 0
+    },
+    {
+      "project": "development",
+      "source": "d76d651884e467de5784bde3b916d598253b9c19",
+      "browser": "156.0.8078.4",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "posts": [
+        {
+          "mime": "image/png",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": 201
+        }
+      ],
+      "storedImage": {
+        "source": "/api/items/6b21edb1-d162-4c72-98b7-08e1680db6b8/images/200958817bd65e95e722ab8bb5beb3ef4999a577bb9885db67f67d3090d6e3c3",
+        "bytes": 247,
+        "sha256": "200958817bd65e95e722ab8bb5beb3ef4999a577bb9885db67f67d3090d6e3c3",
+        "width": 80,
+        "height": 60
+      },
+      "afterText": "\b\rPhone journal\rSecond line\r\n",
+      "savedText": "\b\rPhone journal\rSecond line\r\n",
+      "boldRuns": [
+        {
+          "st": 8,
+          "ed": 15,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "caret": {
+        "start": 2,
+        "end": 2,
+        "collapsed": true,
+        "segmentId": "",
+        "segmentPage": -1
+      },
+      "mountedThroughHistory": true,
+      "topLevelCountThroughHistory": [
+        1,
+        1,
+        1
+      ],
+      "timeOriginUnchangedThroughHistory": true,
+      "originalTimeOrigin": 1795211964793.9,
+      "reopenedText": "\b\rPhone journal\rSecond line\r\n",
+      "reopenedBoldRuns": [
+        {
+          "st": 8,
+          "ed": 15,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "reopenedStoredDrawings": [
+        {
+          "imageSourceType": "URL",
+          "source": "/api/items/6b21edb1-d162-4c72-98b7-08e1680db6b8/images/200958817bd65e95e722ab8bb5beb3ef4999a577bb9885db67f67d3090d6e3c3",
+          "transform": {
+            "width": 80,
+            "height": 60,
+            "left": 0
+          },
+          "docTransform": {
+            "size": {
+              "width": 80,
+              "height": 60
+            },
+            "positionH": {
+              "relativeFrom": 0,
+              "posOffset": 0
+            },
+            "positionV": {
+              "relativeFrom": 1,
+              "posOffset": 0
+            },
+            "angle": 0
+          }
+        }
+      ],
+      "syncTypes": [
+        "resume",
+        "submit",
+        "edit",
+        "ack",
+        "verified",
+        "submit",
+        "edit",
+        "ack",
+        "verified",
+        "submit",
+        "edit",
+        "ack",
+        "verified",
+        "resume"
+      ],
+      "inlineReferenceCounts": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "observationFailures": 0,
+      "droppedSyncFrames": 0
+    }
+  ],
+  "scope": "Controlled hosted native paste. Historical phone incident and physical-phone clipboard acceptance remain separate."
+}
