@@ -9,6 +9,7 @@ import {
 } from '@univerjs/core';
 import type { IDocClipboardHook } from '@univerjs/docs-ui';
 import {
+  createDocImageFeedback,
   DocImageError,
   docImageErrorMessage,
   imageUploadFailed,
@@ -210,6 +211,8 @@ test('successful response must name this document and the exact stored hash', as
 function clipboardFixture() {
   let hook!: IDocClipboardHook;
   const removed = vi.fn();
+  const messages: string[] = [];
+  const failed = vi.fn();
   const clipboard: Parameters<typeof installDocImagePaste>[0] = {
     legacyPaste: vi.fn(async () => true),
     changePasteMode: vi.fn(async () => true),
@@ -227,9 +230,16 @@ function clipboardFixture() {
     toCanonical: (source: string) => source,
     saveImage: vi.fn(async () => image),
     busy: vi.fn(),
-    failed: vi.fn(),
+    failed,
+    beginFeedback: createDocImageFeedback(
+      (message) => {
+        messages.push(message);
+        if (message) failed(message);
+      },
+      (): boolean => options.canEdit(),
+    ),
   };
-  return { clipboard, options, removed, hook: () => hook };
+  return { clipboard, options, removed, messages, hook: () => hook };
 }
 
 test.each(['legacyPaste', 'changePasteMode'] as const)(
@@ -348,6 +358,63 @@ test('failed image preparation rejects the HTML hook instead of retaining inline
   expect(f.options.busy.mock.calls).toEqual([[true], [false]]);
   installed.dispose();
 });
+
+function pasteWithUnsupportedSource(f: ReturnType<typeof clipboardFixture>) {
+  const data = {
+    body: { dataStream: '\b\r' },
+    drawings: { image: drawing(`https://spinel.example/api/items/other/images/${hash}`) },
+  };
+  f.clipboard.legacyPaste = async (payload) => {
+    if (payload.files.length) await f.hook().onBeforePasteImage!(file);
+    else f.hook().onBeforePaste!(data.body, { documentData: data, targetUnitId: 'native-unit' });
+    return true;
+  };
+}
+
+test('a later unsupported paste replaces the previous upload failure with its own explanation', async () => {
+  const f = clipboardFixture();
+  pasteWithUnsupportedSource(f);
+  f.options.saveImage.mockRejectedValue(new DocImageError(imageUploadFailed));
+  const installed = installDocImagePaste(f.clipboard, f.options);
+  await expect(f.clipboard.legacyPaste({ files: [file] })).rejects.toThrow(imageUploadFailed);
+  expect(f.messages.at(-1)).toBe(imageUploadFailed);
+  await expect(f.clipboard.legacyPaste({ files: [], html: '<img>' })).rejects.toThrow(
+    'This image cannot be pasted. Insert it from a file instead.',
+  );
+  expect(f.messages.at(-1)).toBe('This image cannot be pasted. Insert it from a file instead.');
+  installed.dispose();
+});
+
+test.each(['clipboard', 'toolbar'] as const)(
+  'an older upload failure cannot overwrite newer %s feedback',
+  async (newer) => {
+    const f = clipboardFixture();
+    pasteWithUnsupportedSource(f);
+    const held = Promise.withResolvers<typeof image>();
+    f.options.saveImage.mockReturnValue(held.promise);
+    const installed = installDocImagePaste(f.clipboard, f.options);
+    const older = f.clipboard.legacyPaste({ files: [file] });
+    const refused = expect(older).rejects.toThrow(imageUploadFailed);
+    if (newer === 'clipboard')
+      await expect(f.clipboard.legacyPaste({ files: [], html: '<img>' })).rejects.toThrow(
+        'This image cannot be pasted. Insert it from a file instead.',
+      );
+    else {
+      // The toolbar begins feedback once for the whole native insertion,
+      // sharing this owner with clipboard actions, not its busy lifetime.
+      const report = f.options.beginFeedback();
+      report('The image was uploaded but could not be inserted. Try inserting it again.');
+    }
+    const current = f.messages.at(-1);
+    expect(f.options.busy.mock.calls).toEqual([[true]]);
+    held.reject(new DocImageError(imageUploadFailed));
+    await refused;
+    expect(f.messages.at(-1)).toBe(current);
+    expect(f.options.failed).toHaveBeenCalledOnce();
+    expect(f.options.busy.mock.calls).toEqual([[true], [false]]);
+    installed.dispose();
+  },
+);
 
 test('paste normalizes only scoped stored image fields and retains authored strings and offline blobs', () => {
   const f = clipboardFixture();

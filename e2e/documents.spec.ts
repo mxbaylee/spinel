@@ -36,7 +36,7 @@ const sha256 = (value: Buffer) => createHash('sha256').update(value).digest('hex
 type ClipboardDoc = EditingFixture & {
   png: Buffer;
   posts: { mime: string; bytes: number; sha256: string; status?: number }[];
-  paste(format: 'png' | 'html' | 'text', text?: string): Promise<void>;
+  paste(format: 'png' | 'html' | 'text', text?: string, imageSource?: string): Promise<void>;
   capture(stage: string): Promise<void>;
   assertMounted(): Promise<void>;
 };
@@ -155,10 +155,11 @@ async function withClipboardDoc(
                 .catch(() => undefined),
             });
           };
-          const paste: ClipboardDoc['paste'] = async (format, text = '') => {
+          const paste: ClipboardDoc['paste'] = async (format, text = '', imageSource) => {
             const mime =
               format === 'png' ? 'image/png' : format === 'html' ? 'text/html' : 'text/plain';
-            const html = `<p><img src="data:image/png;base64,${png.toString('base64')}" width="80" height="60"></p>`;
+            const source = imageSource ?? `data:image/png;base64,${png.toString('base64')}`;
+            const html = `<p><img src="${source}" width="80" height="60"></p>`;
             const value = format === 'png' ? Array.from(png) : format === 'html' ? html : text;
             const before = await page.evaluate(
               () => (window as ImagePasteWindow).imagePasteEvents!.length,
@@ -185,9 +186,7 @@ async function withClipboardDoc(
               );
             } else if (format === 'html') {
               // Browser sanitization can wrap HTML; it must retain this exact image.
-              expect(bytes.toString()).toContain(
-                `src="data:image/png;base64,${png.toString('base64')}"`,
-              );
+              expect(bytes.toString()).toContain(`src="${source}"`);
             } else expect(bytes.toString()).toBe(text);
             await page.keyboard.press('ControlOrMeta+v');
             await expect
@@ -635,6 +634,26 @@ clipboardTest.describe('native Doc image clipboard', () => {
               await page.unrouteAll({ behavior: 'wait' });
             },
           );
+          if (!navigate) {
+            // This separate native action follows a previous upload error. Its
+            // own source refusal must replace that stale feedback without upload.
+            const otherDocumentId = crypto.randomUUID();
+            expect(otherDocumentId).not.toBe(f.id);
+            const foreignSource = new URL(
+              `/api/items/${otherDocumentId}/images/${sha256(f.png)}`,
+              page.url(),
+            ).href;
+            await f.paste('html', undefined, foreignSource);
+            await expect(editor.getByRole('alert')).toHaveText(
+              'This image cannot be pasted. Insert it from a file instead.',
+            );
+            const refused = await content(f, initialText, 0);
+            expect(refused.body).toEqual(before.body);
+            expectNoImages(refused);
+            expect(f.posts.map((post) => post.status)).toEqual([503]);
+            await f.assertMounted();
+            await f.capture('foreign-document-html-source-refused');
+          }
         }
         // These are actual application feedback views, not a second clipboard run.
         const canvas = editor.getByLabel('Document canvas', { exact: true });

@@ -40,7 +40,13 @@ import {
   DocSelectionRenderService,
   IDocClipboardService,
 } from '@univerjs/docs-ui';
-import { docImageErrorMessage, installDocImagePaste, uploadDocImage } from './docImages.ts';
+import {
+  createDocImageFeedback,
+  DocImageError,
+  docImageErrorMessage,
+  installDocImagePaste,
+  uploadDocImage,
+} from './docImages.ts';
 import { watchPresence } from './Collaborators.tsx';
 import type { Collaborator } from './Collaborators.tsx';
 import { useEffect, useRef, useState } from 'react';
@@ -231,6 +237,11 @@ export function DocEditor({
     let compositionText = '';
     let heldComposition = false;
     let inputFrozen = false;
+    const beginImageFeedback = createDocImageFeedback(
+      setUploadError,
+      () => !disposed && !inputFrozen,
+    );
+    let toolbarFeedback: ((message: string) => void) | undefined;
     let imagePreparation = new AbortController();
     let clipboardImages: ReturnType<typeof installDocImagePaste> | undefined;
     const cancelImages = () => {
@@ -354,9 +365,17 @@ export function DocEditor({
       });
       class StoredImages extends ImageIoService {
         override async saveImage(file: File) {
-          const image = await this.store(file);
-          uploaded++;
-          return image;
+          const failed = toolbarFeedback ?? beginImageFeedback();
+          const lifetime = imagePreparation.signal;
+          try {
+            const image = await this.store(file);
+            uploaded++;
+            return image;
+          } catch (error) {
+            if (!lifetime.aborted) failed(docImageErrorMessage(error));
+            // The native toolbar interprets error.message as its upload status.
+            throw new Error(ImageUploadStatusType.ERROR_IMAGE);
+          }
         }
         saveClipboardImage(file: File) {
           return this.store(file);
@@ -366,7 +385,6 @@ export function DocEditor({
           const signal = AbortSignal.any([lifetime, AbortSignal.timeout(30_000)]);
           uploads++;
           this.setWaitCount(uploads);
-          setUploadError('');
           publish(lastState);
           try {
             const source = await uploadDocImage(file, {
@@ -385,9 +403,9 @@ export function DocEditor({
               status: ImageUploadStatusType.SUCCUSS,
             };
           } catch (error) {
-            if (!disposed && !inputFrozen && !lifetime.aborted)
-              setUploadError(docImageErrorMessage(error));
-            throw new Error(ImageUploadStatusType.ERROR_IMAGE);
+            // Clipboard callers retain this controlled explanation. Their owned
+            // native operation reports it only if no newer action superseded it.
+            throw new DocImageError(docImageErrorMessage(error));
           } finally {
             uploads--;
             this.setWaitCount(uploads);
@@ -417,9 +435,7 @@ export function DocEditor({
               insertions += value ? 1 : -1;
               publish(lastState);
             },
-            failed: (message) => {
-              setUploadError((previous) => previous || message);
-            },
+            beginFeedback: beginImageFeedback,
           });
           this.disposeWithMe(clipboardImages);
           commands.unregisterCommand(InsertDocImageCommand.id);
@@ -427,6 +443,8 @@ export function DocEditor({
             commands.registerCommand({
               ...InsertDocImageCommand,
               handler: async (accessor, params, options) => {
+                const failed = beginImageFeedback();
+                toolbarFeedback = failed;
                 insertions++;
                 const before = uploaded;
                 publish(lastState);
@@ -437,18 +455,18 @@ export function DocEditor({
                     options,
                   );
                   if (!result && uploaded > before && !disposed)
-                    setUploadError(
+                    failed(
                       'The image was uploaded but could not be inserted. Try inserting it again.',
                     );
                   return result;
                 } catch {
-                  if (!disposed)
-                    setUploadError('The image could not be inserted. Try inserting it again.');
+                  if (!disposed) failed('The image could not be inserted. Try inserting it again.');
                   return false;
                 } finally {
                   // Upload completion precedes dimension loading and the drawing mutation.
                   // Capture that mutation before allowing navigation to report a clean editor.
                   insertions--;
+                  if (toolbarFeedback === failed) toolbarFeedback = undefined;
                   publish(lastState);
                 }
               },

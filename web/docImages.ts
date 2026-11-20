@@ -11,6 +11,18 @@ export function docImageErrorMessage(error: unknown) {
   return error instanceof DocImageError ? error.message : imageUploadFailed;
 }
 
+/** Each new clipboard or toolbar action owns its feedback; older work cannot replace it. */
+export function createDocImageFeedback(write: (message: string) => void, current: () => boolean) {
+  let latest = 0;
+  return () => {
+    const attempt = ++latest;
+    if (current()) write('');
+    return (message: string) => {
+      if (attempt === latest && current()) write(message);
+    };
+  };
+}
+
 const imageLimits = new Set([
   'Choose an image no larger than 5 MiB.',
   'Choose a PNG, JPEG or WebP image.',
@@ -112,7 +124,7 @@ export function installDocImagePaste(
     saveImage: IImageIoService['saveImage'];
     toCanonical?: (source: string) => string;
     busy: (value: boolean) => void;
-    failed: (message: string) => void;
+    beginFeedback: () => (message: string) => void;
   },
 ) {
   let disposed = false;
@@ -130,12 +142,13 @@ export function installDocImagePaste(
   const run = async (action: () => Promise<boolean>) => {
     if (!current()) return false;
     const admitted = generation;
+    const failed = options.beginFeedback();
     pending++;
     try {
       return await action();
     } catch (error) {
       if (current() && admitted === generation)
-        options.failed(
+        failed(
           error instanceof DocImageError
             ? error.message
             : 'The clipboard content could not be pasted. Try copying it again.',
