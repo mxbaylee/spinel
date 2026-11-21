@@ -1,0 +1,53 @@
+{
+  "source": "54ce60f42985adf304e76e3eb3c0d97b538b8427",
+  "trace_resource": "resources/2cc6cacb2ad7fbce075d96f0b5371ae2.jsonl",
+  "baseRevision": 1,
+  "mutationId": "327f1cea-b051-4621-8f76-9e3a32c3ff19",
+  "mutation": "doc.mutation.rich-text-editing",
+  "trigger": "doc.command.inner-paste",
+  "insertedText": "\b\r",
+  "insertedLength": 2,
+  "customBlocks": [
+    {
+      "startIndex": 0,
+      "blockId": "i9idYE"
+    }
+  ],
+  "paragraphs": [
+    {
+      "startIndex": 1,
+      "paragraphId": "para_vvhwNHu8S5I3"
+    }
+  ],
+  "nativeTextRanges": [
+    {
+      "startOffset": 2,
+      "endOffset": 2,
+      "style": {
+        "strokeWidth": 1,
+        "stroke": "rgba(0, 0, 0, 0)",
+        "strokeActive": "spinel-info-strong.0",
+        "fill": "spinel-info-strong.3"
+      }
+    }
+  ],
+  "imageSourceType": "BASE64",
+  "imageBytes": 255,
+  "imageSha256": "8d17b960c9ae5e7ee45ad341b09286d851521d3cc0c765048f6259f5ef3583cc",
+  "imageDimensions": [
+    80,
+    60
+  ],
+  "clipboardSha256": "8d17b960c9ae5e7ee45ad341b09286d851521d3cc0c765048f6259f5ef3583cc",
+  "submittedAtUnixMs": 1795207889294.4473,
+  "resync": {
+    "type": "resync",
+    "reason": "unavailable",
+    "mutationId": "327f1cea-b051-4621-8f76-9e3a32c3ff19"
+  },
+  "resyncAfterMs": 14.344970703125,
+  "initialText": "Phone journal\rSecond line\r\n",
+  "derivedTextAfterInsertion": "\b\rPhone journal\rSecond line\r\n",
+  "fullTransientBodySampled": false,
+  "interpretation": "The raw transmitted native mutation inserts an image block and paragraph at the document start and carries the collapsed native text range at offset 2. Full text after insertion is derived by applying this insertion to the exact pre-paste body; a separate full transient snapshot was not sampled before resync."
+}

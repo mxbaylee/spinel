@@ -1,0 +1,207 @@
+{
+  "source": "d76d651884e467de5784bde3b916d598253b9c19",
+  "project": "production",
+  "attempt": 0,
+  "browser": "156.0.8078.4",
+  "viewport": {
+    "width": 1440,
+    "height": 1100
+  },
+  "fixture": {
+    "mime": "image/png",
+    "width": 80,
+    "height": 60,
+    "bytes": 247,
+    "sha256": "3b5a98d5f358349c7e8e6cf77a4c4a3398c2530cfbc209b75da9668dca54e4c2"
+  },
+  "viewer": true,
+  "clipboard": [
+    {
+      "format": "png",
+      "mime": "image/png",
+      "bytes": 255,
+      "sha256": "8d17b960c9ae5e7ee45ad341b09286d851521d3cc0c765048f6259f5ef3583cc"
+    }
+  ],
+  "posts": [],
+  "stages": [
+    {
+      "stage": "before-paste",
+      "nativeText": "Phone journal\rSecond line\r\n",
+      "nativeTextRuns": [
+        {
+          "st": 6,
+          "ed": 13,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "nativeRange": {
+        "start": 0,
+        "end": 0,
+        "collapsed": true,
+        "segmentId": "",
+        "segmentPage": -1
+      },
+      "inputConnected": true,
+      "inputFocused": true,
+      "savedText": "Phone journal\rSecond line\r\n",
+      "savedTextRuns": [
+        {
+          "st": 6,
+          "ed": 13,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "savedRevision": 1,
+      "savedDrawings": [],
+      "originalCanvasMounted": true,
+      "topLevelNavigations": 2,
+      "imagePostCount": 0,
+      "timeOrigin": 1795211679394.8,
+      "online": true,
+      "pasteEvents": [],
+      "nativeObservedAt": 2069.5999999999767
+    },
+    {
+      "stage": "viewer-paste-denied",
+      "nativeText": "Phone journal\rSecond line\r\n",
+      "nativeTextRuns": [
+        {
+          "st": 6,
+          "ed": 13,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "nativeRange": {
+        "start": 0,
+        "end": 0,
+        "collapsed": true,
+        "segmentId": "",
+        "segmentPage": -1
+      },
+      "inputConnected": true,
+      "inputFocused": true,
+      "savedText": "Phone journal\rSecond line\r\n",
+      "savedTextRuns": [
+        {
+          "st": 6,
+          "ed": 13,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "savedRevision": 1,
+      "savedDrawings": [],
+      "originalCanvasMounted": true,
+      "topLevelNavigations": 2,
+      "imagePostCount": 0,
+      "timeOrigin": 1795211679394.8,
+      "online": true,
+      "pasteEvents": [
+        {
+          "trusted": true,
+          "types": [
+            "Files"
+          ],
+          "files": [
+            {
+              "mime": "image/png",
+              "bytes": 255
+            }
+          ]
+        }
+      ],
+      "nativeObservedAt": 2493.0999999999767
+    },
+    {
+      "stage": "after-intentional-reopen",
+      "nativeText": "Phone journal\rSecond line\r\n",
+      "nativeTextRuns": [
+        {
+          "st": 6,
+          "ed": 13,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "nativeRange": {
+        "start": 0,
+        "end": 0,
+        "collapsed": true,
+        "segmentId": "",
+        "segmentPage": -1
+      },
+      "inputConnected": true,
+      "inputFocused": true,
+      "savedText": "Phone journal\rSecond line\r\n",
+      "savedTextRuns": [
+        {
+          "st": 6,
+          "ed": 13,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "savedRevision": 1,
+      "savedDrawings": [],
+      "originalCanvasMounted": false,
+      "topLevelNavigations": 3,
+      "imagePostCount": 0,
+      "timeOrigin": 1795211681909.8,
+      "online": true,
+      "pasteEvents": [],
+      "nativeObservedAt": 1257.0999999999767
+    },
+    {
+      "stage": "final-before-cleanup",
+      "nativeText": "Phone journal\rSecond line\r\n",
+      "nativeTextRuns": [
+        {
+          "st": 6,
+          "ed": 13,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "nativeRange": {
+        "start": 0,
+        "end": 0,
+        "collapsed": true,
+        "segmentId": "",
+        "segmentPage": -1
+      },
+      "inputConnected": true,
+      "inputFocused": true,
+      "savedText": "Phone journal\rSecond line\r\n",
+      "savedTextRuns": [
+        {
+          "st": 6,
+          "ed": 13,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "savedRevision": 1,
+      "savedDrawings": [],
+      "originalCanvasMounted": false,
+      "topLevelNavigations": 3,
+      "imagePostCount": 0,
+      "timeOrigin": 1795211681909.8,
+      "online": true,
+      "pasteEvents": [],
+      "nativeObservedAt": 1327
+    }
+  ],
+  "trustedPasteObserved": true
+}
