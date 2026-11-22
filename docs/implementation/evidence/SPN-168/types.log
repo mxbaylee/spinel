@@ -1,0 +1,1 @@
+scripts/dependencies/patch-univer-core.test.ts(31,3): error TS2353: Object literal may only specify known properties, and 'headingCollapsed' does not exist in type 'IParagraph'.
