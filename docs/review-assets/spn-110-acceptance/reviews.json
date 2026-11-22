@@ -1,0 +1,49 @@
+{
+  "commit": "5ba5e8998f4e78032c0a6bc26353b7a4532a5034",
+  "base": "9072a66a719cbf9bc8d4d4e814562950165026dc",
+  "reviews": [
+    {
+      "reviewer": "/root/review_a",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "testedSource": "58cbb3e327f81c0767dce0d3bf017ab76308a039",
+      "tests": 119,
+      "files": 11,
+      "elapsedMs": 8144,
+      "peakKiB": 1166416,
+      "unresolvedFindings": [],
+      "visualApproval": "All nine original PNGs inspected; repaired failure views reinspected; exact final commit approved, agent review only."
+    },
+    {
+      "reviewer": "/root/review_b",
+      "score": 100,
+      "rubric": [
+        35,
+        25,
+        20,
+        10,
+        10
+      ],
+      "testedSource": "58cbb3e327f81c0767dce0d3bf017ab76308a039",
+      "tests": 174,
+      "files": 19,
+      "elapsedMs": 11648,
+      "peakKiB": 1075904,
+      "unresolvedFindings": []
+    }
+  ],
+  "findingsRepaired": [
+    "Specific runtime.connections row and readiness replace arbitrary UUID selection; job outcomes ordered by rowid",
+    "Reuse seedCopies instead of duplicated fixture SQL",
+    "Restore unrelated historical deployment wrapping",
+    "Replace stale integration-checkout test comment",
+    "Failure-story lastSuccess precedes failedSince"
+  ],
+  "finalRevalidation": "Both reviewers verified complete committed diff and unchanged tested sources; corrected story separately executed in5variants; no pending CI result counted in grade."
+}

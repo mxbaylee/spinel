@@ -1,0 +1,201 @@
+{
+  "source": "5ba5e8998f4e78032c0a6bc26353b7a4532a5034",
+  "run": 44995244454,
+  "attempt": 1,
+  "job": 137124969970,
+  "artifactId": 14744110543,
+  "originalReportPath": "playwright-report/production-1-of-2.json",
+  "originalReportSha256": "c502d83aae72099c8669ba92254d259b4c85b63ac9693b2f2ba03395a1b9efc7",
+  "stats": {
+    "startTime": "2026-11-22T06:50:33.636Z",
+    "duration": 745044.487,
+    "expected": 93,
+    "skipped": 3,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "diagnostics": [
+    {
+      "title": "feedback survives a lost acknowledgment and paired user/system downloads preserve one complete snapshot",
+      "ok": true,
+      "tags": [],
+      "tests": [
+        {
+          "timeout": 180000,
+          "annotations": [],
+          "expectedStatus": "passed",
+          "projectId": "production",
+          "projectName": "production",
+          "results": [
+            {
+              "workerIndex": 0,
+              "parallelIndex": 0,
+              "status": "passed",
+              "duration": 6210,
+              "errors": [],
+              "stdout": [],
+              "stderr": [],
+              "retry": 0,
+              "startTime": "2026-11-22T06:55:22.880Z",
+              "annotations": [],
+              "attachments": []
+            }
+          ],
+          "status": "expected"
+        }
+      ],
+      "id": "80bb835772e7bc2f1ed9-9cfb180fd1bb2d15b5e7",
+      "file": "diagnostics.spec.ts",
+      "line": 208,
+      "column": 1
+    },
+    {
+      "title": "truncation clears feedback flags and an unconfirmed old report needs deliberate new submission",
+      "ok": true,
+      "tags": [],
+      "tests": [
+        {
+          "timeout": 120000,
+          "annotations": [],
+          "expectedStatus": "passed",
+          "projectId": "production",
+          "projectName": "production",
+          "results": [
+            {
+              "workerIndex": 0,
+              "parallelIndex": 0,
+              "status": "passed",
+              "duration": 3437,
+              "errors": [],
+              "stdout": [],
+              "stderr": [],
+              "retry": 0,
+              "startTime": "2026-11-22T06:55:29.107Z",
+              "annotations": [],
+              "attachments": []
+            }
+          ],
+          "status": "expected"
+        }
+      ],
+      "id": "80bb835772e7bc2f1ed9-6ba3a3a5463406dacfdd",
+      "file": "diagnostics.spec.ts",
+      "line": 438,
+      "column": 1
+    },
+    {
+      "title": "production open, search, local persistence and server acknowledgement remain distinct in the diagnostics export",
+      "ok": true,
+      "tags": [],
+      "tests": [
+        {
+          "timeout": 180000,
+          "annotations": [],
+          "expectedStatus": "passed",
+          "projectId": "production",
+          "projectName": "production",
+          "results": [
+            {
+              "workerIndex": 0,
+              "parallelIndex": 0,
+              "status": "passed",
+              "duration": 41693,
+              "errors": [],
+              "stdout": [],
+              "stderr": [],
+              "retry": 0,
+              "steps": [
+                {
+                  "title": "Cross the production diagnostic sampling interval",
+                  "duration": 30002
+                }
+              ],
+              "startTime": "2026-11-22T06:55:32.555Z",
+              "annotations": [],
+              "attachments": [
+                {
+                  "name": "diagnostic-admission",
+                  "contentType": "application/json",
+                  "body": "ewogICJzYW1wbGVJbnRlcnZhbE1zIjogMzAwMDAsCiAgIm5hdGl2ZUNhcGFjaXR5S2V5cyI6IDI0LAogICJjb2xsZWN0aW9uVmVyaWZpY2F0aW9ucyI6IDEsCiAgImZpcnN0V2luZG93QWNrbm93bGVkZ21lbnRzIjogMSwKICAibGF0ZXJXaW5kb3dBY2tub3dsZWRnbWVudHMiOiAxLAogICJiYXRjaGVzIjogWwogICAgewogICAgICAicmVjb3JkcyI6IDQsCiAgICAgICJzdGF0dXMiOiAyMDAKICAgIH0sCiAgICB7CiAgICAgICJyZWNvcmRzIjogMTMsCiAgICAgICJzdGF0dXMiOiAyMDAKICAgIH0sCiAgICB7CiAgICAgICJyZWNvcmRzIjogNSwKICAgICAgInN0YXR1cyI6IDIwMAogICAgfSwKICAgIHsKICAgICAgInJlY29yZHMiOiAxMSwKICAgICAgInN0YXR1cyI6IDIwMAogICAgfQogIF0KfQ=="
+                }
+              ]
+            }
+          ],
+          "status": "expected"
+        }
+      ],
+      "id": "80bb835772e7bc2f1ed9-e3350f47171c985afa86",
+      "file": "diagnostics.spec.ts",
+      "line": 506,
+      "column": 1
+    },
+    {
+      "title": "Operator downloads real correlated diagnostics without document data and clears only a freshly confirmed generation",
+      "ok": true,
+      "tags": [],
+      "tests": [
+        {
+          "timeout": 180000,
+          "annotations": [],
+          "expectedStatus": "passed",
+          "projectId": "production",
+          "projectName": "production",
+          "results": [
+            {
+              "workerIndex": 0,
+              "parallelIndex": 0,
+              "status": "passed",
+              "duration": 9408,
+              "errors": [],
+              "stdout": [],
+              "stderr": [],
+              "retry": 0,
+              "startTime": "2026-11-22T06:56:14.258Z",
+              "annotations": [],
+              "attachments": []
+            }
+          ],
+          "status": "expected"
+        }
+      ],
+      "id": "80bb835772e7bc2f1ed9-05be66af0ffe018c473c",
+      "file": "diagnostics.spec.ts",
+      "line": 755,
+      "column": 1
+    },
+    {
+      "title": "diagnostics failures, cancelled downloads, pending clear navigation and expired Operator sessions stay honest",
+      "ok": true,
+      "tags": [],
+      "tests": [
+        {
+          "timeout": 120000,
+          "annotations": [],
+          "expectedStatus": "passed",
+          "projectId": "production",
+          "projectName": "production",
+          "results": [
+            {
+              "workerIndex": 0,
+              "parallelIndex": 0,
+              "status": "passed",
+              "duration": 8706,
+              "errors": [],
+              "stdout": [],
+              "stderr": [],
+              "retry": 0,
+              "startTime": "2026-11-22T06:56:23.677Z",
+              "annotations": [],
+              "attachments": []
+            }
+          ],
+          "status": "expected"
+        }
+      ],
+      "id": "80bb835772e7bc2f1ed9-2b37bb025ba16897126f",
+      "file": "diagnostics.spec.ts",
+      "line": 1161,
+      "column": 1
+    }
+  ]
+}

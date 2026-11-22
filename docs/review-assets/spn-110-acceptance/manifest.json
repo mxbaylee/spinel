@@ -1,0 +1,36 @@
+{
+  "head": "5ba5e8998f4e78032c0a6bc26353b7a4532a5034",
+  "base": "9072a66a719cbf9bc8d4d4e814562950165026dc",
+  "tested": "c660d3c380433e5455346119620e6a2f431658d6",
+  "runAttempt": 1,
+  "runs": {
+    "ci": 44995244454,
+    "storybook": 44995244492,
+    "native": 44995244608,
+    "spaces": 44995244471
+  },
+  "sha256": {
+    "callback-desktop.log.gz": "a458ee7663c5a77dea79269ef8e17d43597de6ca48743b2b389295156648ab65",
+    "story-jobs-current.json": "16c9b5234c22f893fec52022bc133261b062b860a77f76d5abc3d62fb60a0e80",
+    "development-1.log.gz": "229d86dbb9a26141ca4c41e0f65413867d688b8c3aa6c710b5ea6c32810926cd",
+    "reviews.json": "c3a00554eafdac65789acb7534b0c955954f904224ce6eb8e9baf77f232aec85",
+    "ci-results-browser.zip": "51b4254a7e83260848915fb94f7dfcc3e0219f674f50026a0d2e0a6232149e58",
+    "diagnostics-browser-summary.json": "fb560c12a4417ec2f814f6e78d591a489fd655a9dcb842723efc6ec299dbb006",
+    "callback-mobile.log.gz": "37411ea78cb2cb37b593d3c24ed4afdc2e5169d4569818ad3f2535aed09d0ced",
+    "production-2.log.gz": "ada0a12f284414f2dfed8d14fce659aab24488a2f5bdb8e669178de0f41d529b",
+    "chrome.zip": "d505fc61d1acedeaf36b3655d1c516eae17a5e6c360676f421cd9c0a7271a3ba",
+    "firefox.zip": "0848b7707d948324ddd052077ad7663166be2f940736b653993519adb4fa339d",
+    "responsiveness-desktop.log.gz": "cfa0d5794c6082dbe0d12fdbf4f2c4e386929bcc6c73469303a8fbc3c2ba0916",
+    "ci-results-lib.zip": "ed053ec8493562be193f767bd60f533de2f15e9c8550d913f3f645602531c4ab",
+    "ci-artifacts-final.json": "a5641f08c4c7d696e65986deda9372633461bb0a6c6b6510b82a55474d44f21b",
+    "ci-results-unit.zip": "789d11ada0cb72b77e5b6adc0df9d928ef0fab0946aeeb07d20a081f25b7350e",
+    "ci-jobs-final.json": "8a85c5231e70bfd2ca24d0aca9cf9b606409a3d6823e77ffd3fe212aa0b3c745",
+    "ci-plan.zip": "6e650c5451729187b00cd4c7e5ffcc72f38abaeb17da94450fc5adbcf24310b0",
+    "native-jobs-current.json": "ad5b04a995c49b264df5421bddc49ce1d55fb5a08c6187929c24f64c5ecfba7d",
+    "ci-plan.json": "a25f574c54e9b788d9f35075194280239bc448fc01fa3f397c37258ea59bb838",
+    "safari.zip": "7f6d3b8eb4a85803df68273ef9bb673c36b613609a579de867674349141ad76e",
+    "spaces.zip": "90429ac0df3b5b29bbd154f7a89f4eba3579bce8c2f238c99f7268cbea3abfe9",
+    "production-1.log.gz": "bd15e08a431d3ecc947a694a317941fc366a4c461648a498bc82e7d194c83ed0",
+    "production-report.json": "c502d83aae72099c8669ba92254d259b4c85b63ac9693b2f2ba03395a1b9efc7"
+  }
+}
