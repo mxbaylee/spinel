@@ -41,6 +41,13 @@ hidden Space groups are retained. A failure keeps its first observed failure
 time until a successful run. Successful bounded work does not mean all expired
 content or every queued generation has already been removed.
 
+**Diagnostics expiry** runs at startup and every minute under the maintenance
+gate. Each successful pass scans at most 1,024 candidates plus one lookahead and
+removes only observations older than the configured server-receipt cutoff;
+retained feedback counts against the scan budget. A backlog needs further passes. Failures retain
+rows and byte accounting and retry on the next tick. Explicit feedback is excluded.
+See [deployment retention configuration](deployment.md#configure-and-start).
+
 Space cleanup scans an indexed page of at most 256 root metadata rows, validates
 at most 16 eligible graphs per pass and bounds each graph to 10,000 members.
 Collaboration cleanup processes at most 100 ordered queued generations per pass.
@@ -223,6 +230,16 @@ Metric names constrain kind/unit/value. See the
 
 ## Emitter maintenance inventory
 
+🔌 The test-only `e2e/reset-diagnostics-reporter.ts` preserves up to 50 reset
+failures per project with redacted request paths and owned-server snapshot facts.
+It does not alter results or retries. Snapshot age is explicit: old evidence
+cannot establish that a process died or was healthy at the failure instant.
+SPN-168 changes only the test API client's connection reuse; production operation,
+save, sync and runtime emitters retain their contracts. Its bounded transport
+regression records socket reuse and server timeout events without headers, cookies
+or document content; `scripts/ci/reset-diagnostics.test.ts` retains reporter
+redaction, capacity and failure-isolation coverage.
+
 Maintain this table when code moves or changes an observed boundary. The PR's
 **Diagnostic upkeep** section explains added, moved, retired or unchanged
 observations and the associated regression evidence. Preserve the actual
@@ -260,6 +277,8 @@ its retained rows and counters are observations, not a complete operation census
 | `maintenance.phase`, `maintenance.verification`                 | `src/server/maintenance/supervisor.ts`: distinct supervisor phases and actual closed-workspace verification success/failure/refusal. Supervisor remains observable while the application is stopped.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | `src/server/maintenance/supervisor.test.ts`                                                             |
 | `maintenance.drain`, `maintenance.refused`                      | `src/server/maintenance/gate.ts`: drain entry through permit settlement/deadline, with active permit count at entry; that count includes nested permits, not unique HTTP requests. Fixed paused/stale-epoch refusal codes.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | `src/server/maintenance/gate.test.ts`, `src/server/diagnostics/store.test.ts`                           |
 | `runtime.cpu`, `runtime.event-loop`                             | `src/server/diagnostics/runtime.ts` via existing minute health sampling: cumulative process user+system CPU delta in milliseconds; mean/max event-loop delay from a bounded 20 ms-resolution histogram, converted from nanoseconds to milliseconds. Each row states its actual monotonic window.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `src/server/diagnostics/runtime.test.ts`                                                                |
+| `diagnostics.writer-loss` | `src/server/diagnostics/supervisor.ts`: process-lifetime bounded loss counts now include `expired` queue observations, using the deployment receipt-age policy. The registry still reads older records without that field, rejects other dimensions/invalid counts and cannot change the operation outcome. | `src/server/diagnostics/supervisor.test.ts`, `lib/diagnostics/server.test.ts` |
+| `job.result` / `diagnostics-expiry` | `server/app.ts` and `HealthJobs`: startup and each admitted minute tick, exactly one success/failure with duration and run ID per bounded expiry attempt. Success follows committed deletion/accounting or an empty page, not a claim that the entire backlog is gone. Failure preserves first failure until a successful retry; private exception text never enters observations. | `server/app.test.ts` timer/failure/retry/close; diagnostics store rollback and `src/server/health/monitor.test.ts` observer isolation |
 | Existing Formula/job/memory/storage/server-sync observations    | Existing producers remain in place; registry changes retain schema-v1 names, units and exports. Legacy `document-save` remains readable; new producers use the two explicit save names.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | Existing diagnostics, Formula, health and sync suites                                                   |
 
 Cold original recovery (SPN-128) uses these existing maintenance boundaries:
@@ -406,18 +425,25 @@ The initial store has a 64 MiB logical/main-file limit and stops collection at a
 one event is at most 8 KiB, one batch 64 events/64 KiB. Ingest accepts at most
 120 events per actor/minute and 600 globally. Writes require 256 MiB free reserve;
 general-export staging requires 352 MiB; paired-export staging requires 454 MiB.
-At capacity, observations drop until space is
-available or the Operator clears records. There is no automatic age deletion.
+At capacity, observations drop until space is available, expiry frees logical
+capacity or the Operator clears records.
 Feedback bypasses that lossy queue: up to 2,000 UTF-16 code units / 8,000 UTF-8
 bytes per message and six new reports per member/minute, sixty globally. A retry
 of the exact persisted report is acknowledged without consuming a new-report
 allowance. Capacity or write failure returns an error and preserves the client's
-draft. Explicit feedback remains until truncation; future observation TTL work
-must exclude `name='feedback'`.
-The [SPN-063 backup-options proposal](implementation/SPN-063-backup-options.md#three-independent-retention-policies)
-discusses seven-day live-event expiry and independent optional archive retention;
-neither is implemented by that writeup.
-Loss counters reset with the process. Diagnostics initialization failure disables
+draft. Explicit feedback remains until truncation.
+
+⏳ SPN-110 expires observations by trusted server receipt time after seven days by
+default; deployment may configure a shorter whole-day policy. The exact cutoff
+is retained until it is older than the policy. Backward clock changes preserve
+future-receipt rows; forward changes make older observations eligible on the next
+bounded pass. Queue delays do not renew receipt time. Invalid clocks fail cleanup.
+Submitted feedback does not expire with observations, and captured exports and
+remote archives retain their independent lifetimes. The **Expired observations**
+counter records committed expiry and expired queue drops since server start;
+all loss counters reset with the process. They cannot establish historical
+completeness, including after restart. Automatic diagnostics backup remains off.
+Diagnostics initialization failure disables
 collection without preventing app startup. See the
 [implementation limits](implementation/SPN-032.md#concrete-bounds-and-lifecycle)
 for exact failure, cancellation and resource boundaries.

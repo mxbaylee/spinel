@@ -4,6 +4,14 @@ Code copied or adapted from other projects, with its source, license and what
 changed. Dependencies installed from npm are not listed here; their licenses
 ship with them.
 
+🔌 `scripts/dependencies/patch-playwright.ts` adapts the Apache-2.0
+[Playwright 1.64.1 API request agent](https://github.com/microsoft/playwright/blob/v1.64.1/packages/playwright-core/src/server/fetch.ts).
+Its version- and hash-checked patch disables idle HTTP(S) socket pooling only for
+`APIRequestContext`, preventing an idle-timeout race during a server event-loop
+stall. Browser networking and request retries are unchanged. The installed
+bundle retains its upstream license notices and the patch carries attribution.
+See [SPN-168](docs/implementation/SPN-168.md) for the negative control and limits.
+
 `scripts/dependencies/patch-univer-docs.ts`, its `.test.ts` and
 `scripts/dependencies/doc-flush-observation.ts` adapt the
 Apache-2.0 [Univer 1.3.1 native Doc state manager](https://github.com/dream-num/univer/blob/v1.3.1/packages/docs/src/services/doc-state-change-manager.service.ts).

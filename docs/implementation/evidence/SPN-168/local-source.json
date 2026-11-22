@@ -1,0 +1,26 @@
+{
+  "base": "9717f55f",
+  "node": "26.13.0",
+  "playwright": "1.64.1",
+  "sources": {
+    "scripts/dependencies/patch-playwright.ts": "d8049083632a86281adc9da8187afb8fc8e61f1073c009850ba065e4564c7327",
+    "scripts/dependencies/patch-playwright.test.ts": "c20c03bb4e0287e9fed6c135bada2dd9cb87b4942d3ca854e44fd83db5e78a8a",
+    "scripts/dependencies/playwright-transport-fixture.ts": "176a81b6a676498d6119a1bc36e97f5cf90500a875137068d414f5be102280e3",
+    "scripts/ci/plan.test.ts": "9486bf32063997ee1657b04713d4b01a911680310ad25c6a9e51edbbf7fdbb13",
+    "e2e/reset-diagnostics.ts": "869c6f282f4e4f3ba2cf0d387fff3f96bedfb3c2a495c8662300e7f42951afa2",
+    "e2e/owned-process.ts": "b97a250c2641d32a4d41641ee875a9b9344978c8402883dad8eb0a808299554c",
+    "server/http.ts": "7430dae6558e48c61e85fa385c84ef61dec960174d7472d9b3ebeffe87bdc207",
+    "package.json": "380abc309e45cb4aa2e6e5c2933521321c548f74c0478a99ec08a0225d8379a9",
+    "package-lock.json": "5c247ce8ca878599d97d5cc4f9dd6794dbbebc707d0d6d98355c789fce3d6be2",
+    "scripts/dependencies/playwright-test-client.ts": "fe225c84111062167dbe6d7222fd009178dec0b6763b037c93a781ec8c080572",
+    "scripts/ci/restore-snapshot.test.ts": "9cf41153517a7216815e6f1cf42de82513d366246126f69cf01fbf61ec9143e3",
+    "e2e/restore-snapshot.ts": "341bc4112bd312f2d0a1e4359017965ee85bf1004ef73c220c935637ce57a374"
+  },
+  "checks": {
+    "focused": "62/62 passed; restore-final-tests.log and restore-final-tests-watch.json",
+    "typecheck": "passed; restore-final-types-watch.json",
+    "lint": "changed code passed oxlint and Prettier; restore-final-lint-watch.json; full unchanged-source lint at579ea998 in lint.log"
+  },
+  "limitations": "Historical hosted reset has no socket trace. Server-stall experiment proves mechanism; hosted candidate acceptance remains pending.",
+  "previous": "local-source-cabfac7e.json"
+}

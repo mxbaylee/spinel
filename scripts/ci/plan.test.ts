@@ -237,6 +237,24 @@ test('dependency closure and unknown paths fail closed, including old rename/del
     assert.equal(coveragePlan('pull_request', pr(), [path]).suites['lib-test-run'].selected, true);
 });
 
+test('API transport repair and its server fixture retain Node and browser coverage', () => {
+  for (const path of [
+    'scripts/dependencies/patch-playwright.ts',
+    'scripts/dependencies/patch-playwright.test.ts',
+    'scripts/dependencies/playwright-transport-fixture.ts',
+    'scripts/dependencies/playwright-test-client.ts',
+    'scripts/ci/restore-snapshot.test.ts',
+    'e2e/restore-snapshot.ts',
+    'server/http.ts',
+    'e2e/reset-diagnostics.ts',
+    'package.json',
+  ]) {
+    const plan = coveragePlan('pull_request', pr(), [path]);
+    for (const suite of ['unit-tests', 'playwright-run'] as const)
+      assert.equal(plan.suites[suite].selected, true, `${path}: ${suite}`);
+  }
+});
+
 test('labels only add coverage; removal recomputes automatic requirements', () => {
   const paths = ['src/server/workspace/grants.ts'];
   const ordinary = coveragePlan('pull_request', pr('unlabeled'), paths);

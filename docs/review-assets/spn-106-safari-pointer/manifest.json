@@ -1,0 +1,36 @@
+{
+  "source": "b9e57e465727870542177170b9acdc56656584ab",
+  "tested": "36d7e3cada11b2e6bfb964267c723ec92278e93d",
+  "run": 41521489376,
+  "job": 125538619093,
+  "attempt": 1,
+  "artifact": 13179567908,
+  "artifactSha256": "eb435a1426160b5a98ccd73a1cfd8991b6651eb9ad0372c7af9103ba06033575",
+  "scope": "Selected original hosted Safari failure evidence; synthetic fixture data only. Other screenshots remain in the original expiring artifact. No repair or pass claimed.",
+  "files": [
+    {
+      "file": "acceptance.json",
+      "sha256": "17326e3e085eb66aa19085a79e94ca7fe7889f2ae3627c14f9af2ce833feefd8"
+    },
+    {
+      "file": "safari-render-state.jsonl",
+      "sha256": "f29903a000ef2103daca693ac8e5b2dccb9a89ec5f45a1b94dad80b9ad61b952"
+    },
+    {
+      "file": "versions.json",
+      "sha256": "f10ee7665aa65888da306e9278947fe4cc4d767195f8ab31e23e9a66d9a22644"
+    },
+    {
+      "file": "failure-screen.png",
+      "sha256": "c58a2537d1479dd690f9dfcb83a62d6070fb1d3221d8b7d7ba7e47bbd6571095"
+    },
+    {
+      "file": "safari-profile-probe.json",
+      "sha256": "14578bcd07b13040df24dfa04bd88f3d45a8486a45c1f723992c71df4f821102"
+    },
+    {
+      "file": "job.log",
+      "sha256": "3794c6c660af399cef8f7308983d92010583d7b880ad54e212ded10e80e5b41d"
+    }
+  ]
+}

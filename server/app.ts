@@ -70,6 +70,7 @@ export interface AppOptions {
   staticDirectory?: string;
   backupConfigPath?: string;
   image?: string;
+  diagnosticsRetentionDays?: number;
   /** Spaces are enabled by default; false explicitly closes every Space boundary. */
   spaceReview?: boolean;
   /** Only the deployment supervisor can provide live recovery control. */
@@ -215,7 +216,11 @@ export async function createApp(input: AppOptions) {
       unsubscribeTrialObservation = options.maintenance.subscribe(observeTrialAdmission);
     }
     diagnostics = new DiagnosticsStore(
-      diagnosticsConfiguration(options.databasePath, options.image),
+      diagnosticsConfiguration(
+        options.databasePath,
+        options.image,
+        options.diagnosticsRetentionDays,
+      ),
     );
     if (diagnostics.status().available) runtimeDiagnostics = new RuntimeDiagnostics();
     const jobs = new HealthJobs({
@@ -394,6 +399,13 @@ export async function createApp(input: AppOptions) {
     });
     app.use(healthRoutes(auth, health));
     const sampleHealth = async () => {
+      const finishExpiry = jobs.begin('diagnostics-expiry');
+      try {
+        diagnostics!.expire();
+        finishExpiry(true);
+      } catch {
+        finishExpiry(false);
+      }
       const sample = await health.sample();
       runtimeDiagnostics?.sample(diagnostics!.emit);
       for (const [scope, value] of [

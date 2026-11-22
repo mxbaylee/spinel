@@ -1,0 +1,110 @@
+[
+  {
+    "filename": "health-light.png",
+    "sha256": "b2490ea3e1a631410a0d90143317fb77b178d9d5f8d02017ace660e3d591c370",
+    "source": "664e84a44b1f5ca223aa71ea11cc633eb030d7fb",
+    "kind": "real production application",
+    "theme": "light",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "state": "maintenance job and expanded expiry counter"
+  },
+  {
+    "filename": "expiry-failed-light.png",
+    "sha256": "74c00f46d52eead4bb6497e396449b1b18b492637a210634ebfacc6347fd4adf",
+    "source": "0bc71b97bef16d54b56b2a1ce8d3edcb206f76f6",
+    "kind": "actual production component, controlled Storybook API fixture",
+    "theme": "light",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "state": "expiry-failed"
+  },
+  {
+    "filename": "losses-light.png",
+    "sha256": "5d99088cfabbc4c77aeaa344bcbd8b295b1d1dffe899cbc1c82d695c01ed23aa",
+    "source": "664e84a44b1f5ca223aa71ea11cc633eb030d7fb",
+    "kind": "actual production component, controlled Storybook API fixture",
+    "theme": "light",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "state": "losses"
+  },
+  {
+    "filename": "health-dark.png",
+    "sha256": "e3ee01f5566bdd59c0b7f2f360e7a30be9db82d1dd468960e289986c83bb731e",
+    "source": "664e84a44b1f5ca223aa71ea11cc633eb030d7fb",
+    "kind": "real production application",
+    "theme": "dark",
+    "viewport": {
+      "width": 1440,
+      "height": 1000
+    },
+    "state": "maintenance job and expanded expiry counter"
+  },
+  {
+    "filename": "expiry-failed-dark.png",
+    "sha256": "f64a0b77da5738c972bfa1803d2b6d3e5138a057c7f2d510df584619e9719a7a",
+    "source": "0bc71b97bef16d54b56b2a1ce8d3edcb206f76f6",
+    "kind": "actual production component, controlled Storybook API fixture",
+    "theme": "dark",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "state": "expiry-failed"
+  },
+  {
+    "filename": "losses-dark.png",
+    "sha256": "b9972aeab2a7ad33fdd34bcb74a3c58b308562233b8751bc98f49cb4ed6bbcf4",
+    "source": "664e84a44b1f5ca223aa71ea11cc633eb030d7fb",
+    "kind": "actual production component, controlled Storybook API fixture",
+    "theme": "dark",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "state": "losses"
+  },
+  {
+    "filename": "health-phone.png",
+    "sha256": "200ec190317d4c7eb9ff0fff9d79331990249fa916799a6b9ef9f88c33774fad",
+    "source": "664e84a44b1f5ca223aa71ea11cc633eb030d7fb",
+    "kind": "real production application",
+    "theme": "light",
+    "viewport": {
+      "width": 390,
+      "height": 1000
+    },
+    "state": "maintenance job and expanded expiry counter"
+  },
+  {
+    "filename": "expiry-failed-phone.png",
+    "sha256": "bc1686f34804425097ae3f2101d2f999c08b2ac020c543001b28ac09fd9c3eb5",
+    "source": "0bc71b97bef16d54b56b2a1ce8d3edcb206f76f6",
+    "kind": "actual production component, controlled Storybook API fixture",
+    "theme": "light",
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "state": "expiry-failed"
+  },
+  {
+    "filename": "losses-phone.png",
+    "sha256": "0cb7430cf5fd347675ef98ebc08bfdc88b58229b5160fa51fe742e3414d75ba8",
+    "source": "664e84a44b1f5ca223aa71ea11cc633eb030d7fb",
+    "kind": "actual production component, controlled Storybook API fixture",
+    "theme": "light",
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "state": "losses"
+  }
+]

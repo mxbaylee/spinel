@@ -1,0 +1,9 @@
+{
+  "command": "/Users/mxbaylee/.nvm/versions/node/v26.13.0/bin/node",
+  "args": ["/tmp/spn168/probe.ts"],
+  "code": 0,
+  "signal": null,
+  "failure": null,
+  "peakKiB": 263920,
+  "elapsedMs": 13073
+}

@@ -1,0 +1,74 @@
+{
+  "reviewedAt": "2026-11-22T06:42:35.588Z",
+  "durationMs": 3231,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "all",
+  "theme": "all",
+  "variants": [
+    "light",
+    "dark",
+    "phone",
+    "phone-dark",
+    "tablet"
+  ],
+  "requested": [
+    "current-production-admin-serverhealth--diagnostics-expiry-failed"
+  ],
+  "checked": [
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "dark"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "phone"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "tablet"
+    }
+  ],
+  "captures": [
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "light",
+      "filename": "current-production-admin-serverhealth--diagnostics-expiry-failed-light.png",
+      "title": "Current production/Admin/ServerHealth / Diagnostics Expiry Failed"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "dark",
+      "filename": "current-production-admin-serverhealth--diagnostics-expiry-failed-dark.png",
+      "title": "Current production/Admin/ServerHealth / Diagnostics Expiry Failed"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "phone",
+      "filename": "current-production-admin-serverhealth--diagnostics-expiry-failed-phone.png",
+      "title": "Current production/Admin/ServerHealth / Diagnostics Expiry Failed"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "phone-dark",
+      "filename": "current-production-admin-serverhealth--diagnostics-expiry-failed-phone-dark.png",
+      "title": "Current production/Admin/ServerHealth / Diagnostics Expiry Failed"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "tablet",
+      "filename": "current-production-admin-serverhealth--diagnostics-expiry-failed-tablet.png",
+      "title": "Current production/Admin/ServerHealth / Diagnostics Expiry Failed"
+    }
+  ],
+  "verifications": [],
+  "failures": []
+}

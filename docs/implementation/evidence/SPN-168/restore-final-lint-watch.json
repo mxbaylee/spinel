@@ -1,0 +1,16 @@
+{
+  "command": "node",
+  "args": [
+    "node_modules/oxlint/bin/oxlint",
+    "--deny-warnings",
+    "scripts/dependencies/patch-playwright.test.ts",
+    "scripts/dependencies/playwright-test-client.ts",
+    "scripts/ci/restore-snapshot.test.ts",
+    "scripts/ci/plan.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "failure": null,
+  "peakKiB": 0,
+  "elapsedMs": 85
+}

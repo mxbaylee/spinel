@@ -1,0 +1,42 @@
+✔ a reset names the call without ids, queries or server output (1.610584ms)
+✔ other failures and passing text produce no diagnostic (0.216291ms)
+✔ a recorded failure is a flag, its text is not kept (0.146417ms)
+✔ a missing server evidence file is reported, not hidden (0.104708ms)
+✔ an exited server and the browser-side reset form are both recognised (0.125833ms)
+✔ long and absolute-URL requests are normalized and capped (0.223875ms)
+✔ saved diagnostics keep the newest 50 and tolerate a damaged file (0.150958ms)
+✔ the reporter writes only for resets, caps the file and never throws (14.048042ms)
+✔ Playwright patch is idempotent and refuses altered upstream code (44.742125ms)
+✔ Playwright install rejects an upgrade or corrupted build before writing (54.028584ms)
+✖ real API client reproduces the server idle-timeout race and fixes it without retrying (21904.11025ms)
+ℹ {"name":"original","clientEvents":[{"reused":false,"at":1795319810305},{"reused":true,"at":1795319810315}],"serverEvents":[{"kind":"ready","at":1795319810271,"port":60747,"keepAliveTimeout":5000,"keepAliveTimeoutBuffer":1000},{"kind":"connection","at":1795319810306,"connection":1},{"kind":"request","at":1795319810308,"connection":1,"requests":1,"method":"GET"},{"kind":"stall-start","at":1795319810314},{"kind":"stall-end","at":1795319816519},{"kind":"idle-timeout","at":1795319816521,"connection":1},{"kind":"connection-closed","at":1795319816522,"connection":1,"hadError":false},{"kind":"flushed","at":1795319816527}]}
+✔ HTTPS API requests also use distinct connections (461.900166ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 11
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 22600.966875
+
+✖ failing tests:
+
+test at scripts/dependencies/patch-playwright.test.ts:107:1
+✖ real API client reproduces the server idle-timeout race and fixes it without retrying (21904.11025ms)
+  Error [AbortError]: The operation was aborted
+      at AbortSignal.abortListener (node:events:1036:14)
+      at [nodejs.internal.kHybridDispatch] (node:internal/event_target:872:20)
+      at AbortSignal.dispatchEvent (node:internal/event_target:813:26)
+      at runAbort (node:internal/abort_controller:563:10)
+      at abortSignal (node:internal/abort_controller:527:3)
+      at Timeout._onTimeout (node:internal/abort_controller:210:7)
+      at listOnTimeout (node:internal/timers:685:17)
+      at process.processTimers (node:internal/timers:618:7) {
+    code: 'ABORT_ERR',
+    [cause]: TimeoutError: The operation was aborted due to timeout
+        at new DOMException (node:internal/per_context/domexception:79:18)
+        at Timeout._onTimeout (node:internal/abort_controller:212:9)
+        at listOnTimeout (node:internal/timers:685:17)
+        at process.processTimers (node:internal/timers:618:7)
+  }

@@ -19,8 +19,11 @@ function fixture() {
   const operator = { actorId: randomUUID(), sessionHash: 'operator-session' };
   const generation = store.status().generation!;
   const db = new DatabaseSync(path);
-  const feedback = (actorId = actor, message = 'Deliberately submitted text', id = randomUUID()) =>
-    store.feedback({ id, message, context: { route: '/files' } }, actorId, generation);
+  const feedback = (
+    actorId = actor,
+    message = 'Deliberately submitted text',
+    id: string = randomUUID(),
+  ) => store.feedback({ id, message, context: { route: '/files' } }, actorId, generation);
   const observation = (
     actorId: string | undefined,
     source: 'frontend' | 'backend' = 'frontend',
@@ -85,6 +88,85 @@ function fixture() {
     },
   };
 }
+
+test('SPN-110 expiry preserves actual paired snapshots and old feedback while new metadata reports missing observations', async () => {
+  const f = fixture();
+  try {
+    const report = f.feedback();
+    const observation = f.observation(f.actor);
+    f.observation(undefined, 'backend');
+    const originalRows = f.db.prepare('SELECT * FROM events ORDER BY id').all();
+    expect(originalRows).toHaveLength(3);
+    // Capture already-old rows before the first bounded maintenance pass.
+    // Pair age stays within its own five-minute lease throughout this test.
+    f.time(8 * 86_400_000);
+    const pair = await f.store.prepareFeedback(f.actor, f.operator);
+    if (pair.state !== 'ready') throw new Error('Expected captured pair');
+    const before = {
+      user: await f.artifact(pair, 'user'),
+      system: await f.artifact(pair, 'system'),
+    };
+    expect(before.user.rows.map((row) => row.id).sort()).toEqual(
+      [report.id, observation.id].sort(),
+    );
+    expect(before.system.rows).toEqual(originalRows);
+    expect(f.store.expire()).toEqual({ deleted: 2, remaining: false });
+    expect(f.store.status()).toMatchObject({
+      generation: f.generation,
+      recordCount: 1,
+      retentionDays: 7,
+      dropped: { expired: 2 },
+    });
+    expect(f.db.prepare('SELECT id FROM events').all()).toEqual([{ id: report.id }]);
+    expect(f.store.feedbackFlags().actors).toEqual([f.actor]);
+    for (const scope of ['user', 'system'] as const) {
+      const after = await f.artifact(pair, scope);
+      expect(after.bytes).toEqual(before[scope].bytes);
+      expect(after.manifest).toEqual(before[scope].manifest);
+      expect(after.manifest.retention.observationAgeTargetDays).toBe(7);
+    }
+    expect(f.feedback(f.actor, 'Deliberately submitted text', report.id)).toEqual(report);
+    expect(f.db.prepare('SELECT logical_bytes FROM diagnostics_state').get()!.logical_bytes).toBe(
+      f.db.prepare('SELECT coalesce(sum(byte_size),0) AS bytes FROM events').get()!.bytes,
+    );
+    f.observation(f.other); // Old feedback must not authorize unrelated live context.
+    await f.store.cancelFeedback(pair.id, f.operator);
+    const fresh = await f.store.prepareFeedback(f.actor, f.operator);
+    if (fresh.state !== 'ready') throw new Error('Expected feedback-only pair');
+    expect(fresh).toMatchObject({
+      context: 'feedback-only',
+      counts: { user: 1, system: 1, userObservations: 0, systemObservations: 0 },
+    });
+    const retained = {
+      user: await f.artifact(fresh, 'user'),
+      system: await f.artifact(fresh, 'system'),
+    };
+    for (const artifact of Object.values(retained)) {
+      expect(artifact.rows.map((row) => row.id)).toEqual([report.id]);
+      expect(artifact.manifest).toMatchObject({
+        context: 'feedback-only',
+        historicalCompleteness: 'unknown',
+        retention: { observationAgeTargetDays: 7 },
+        dropped: { values: { expired: 2 } },
+      });
+      expect(artifact.manifest.retention.observations).not.toContain(
+        'no automatic expiry configured',
+      );
+      expect(artifact.manifest.limitations.join(' ')).toContain('expiry');
+    }
+    const cleared = f.store.truncate();
+    expect(cleared.generation).not.toBe(f.generation);
+    expect(() => f.store.feedbackDownload(fresh.id, f.operator, 'user')).toThrow(
+      'expired or were cleared',
+    );
+    expect(() => f.store.feedbackDownload(fresh.id, f.operator, 'system')).toThrow(
+      'expired or were cleared',
+    );
+    expect(f.store.ingest([observation], f.actor, f.generation).accepted).toBe(0);
+  } finally {
+    await f.close();
+  }
+});
 
 test('feedback commits synchronously, preserves exact intentional text and retries only the same payload/actor', async () => {
   const f = fixture();
@@ -290,6 +372,7 @@ test('paired exports contain exact complete receipt-time selections, including t
     const systemRows = rows.filter(
       (row) => Number(row.received_at) >= 100 && Number(row.received_at) <= 200,
     );
+    f.time(8 * 86_400_000);
     const prepared = await f.store.prepareFeedback(f.actor, f.operator);
     expect(prepared.state).toBe('ready');
     if (prepared.state !== 'ready') throw new Error('Expected complete pair.');
@@ -305,10 +388,8 @@ test('paired exports contain exact complete receipt-time selections, including t
     f.time(175);
     f.feedback(f.other, 'NEW-AFTER-SNAPSHOT');
     f.observation(f.actor);
-    // Model future observation TTL without changing the explicit truncate generation.
-    f.db.exec(
-      "DELETE FROM events WHERE name!='feedback'; UPDATE diagnostics_state SET logical_bytes=(SELECT coalesce(sum(byte_size),0) FROM events);",
-    );
+    f.time(8 * 86_400_000);
+    expect(f.store.expire()).toEqual({ deleted: 6, remaining: false });
     const system = await f.artifact(prepared, 'system');
     expect(system.rows).toEqual(systemRows);
     for (const text of [

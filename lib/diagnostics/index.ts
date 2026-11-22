@@ -45,6 +45,7 @@ export const JOBS = [
   'history-prune',
   'trash-expiry',
   'space-trash-expiry',
+  'diagnostics-expiry',
   'collaboration-purge',
   'backup',
 ] as const;

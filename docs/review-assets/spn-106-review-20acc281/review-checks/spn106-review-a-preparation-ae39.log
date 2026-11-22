@@ -1,0 +1,24 @@
+failed to load config from /Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/node_modules/.cache/spn106-review-a-ae39/vitest.config.ts
+
+⎯⎯⎯⎯⎯⎯⎯ Startup Error ⎯⎯⎯⎯⎯⎯⎯⎯
+Error: Build failed with 1 error:
+
+[31m[UNRESOLVED_IMPORT] [0mCould not resolve '../../../../vitest.config.ts' in node_modules/.cache/spn106-review-a-ae39/vitest.config.ts
+ - Module not found. in node_modules/.cache/spn106-review-a-ae39/vitest.config.ts at 505..535
+
+    at aggregateBindingErrorsIntoJsError (file:///Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/node_modules/rolldown/dist/shared/error-BJ9uQLIS.mjs:50:18)
+    at unwrapBindingResult (file:///Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/node_modules/rolldown/dist/shared/error-BJ9uQLIS.mjs:20:128)
+    at #build (file:///Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/node_modules/rolldown/dist/shared/rolldown-DWd2aEL4.mjs:146:34)
+    at async bundleConfigFile (file:///Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/node_modules/vite/dist/node/chunks/node.js:38097:12)
+    at async bundleAndLoadConfigFile (file:///Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/node_modules/vite/dist/node/chunks/node.js:37993:18)
+    at async loadConfigFromFile (file:///Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/node_modules/vite/dist/node/chunks/node.js:37954:42)
+    at async resolveConfig (file:///Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/node_modules/vite/dist/node/chunks/node.js:37555:22)
+    at async resolveConfig (file:///Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/node_modules/vitest/dist/chunks/index.Di8au7q4.js:9300:25)
+    at async createVitest (file:///Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/node_modules/vitest/dist/chunks/cli-api.COfZo8lK.js:13938:17)
+    at async prepareVitest (file:///Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/node_modules/vitest/dist/chunks/cli-api.COfZo8lK.js:14625:14) {
+  errors: [Getter/Setter]
+}
+
+
+
+{"name":"spn106-review-a-preparation-ae39","args":["/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node","node_modules/vitest/vitest.mjs","run","--config","node_modules/.cache/spn106-review-a-ae39/vitest.config.ts","src/server/collaboration/service.test.ts","-t","Doc preparation preserves saved content and viewer authority"],"code":1,"signal":null,"reason":null,"elapsedMs":350,"peakKiB":171840}

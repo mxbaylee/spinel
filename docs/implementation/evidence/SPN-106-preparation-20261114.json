@@ -1,0 +1,98 @@
+{
+  "source": "4052c791e1beb801a427edb57bb43c1cdf546bfc",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "originalSource": "b9e57e465727870542177170b9acdc56656584ab",
+  "dependencyDonor": {
+    "path": "/Users/mxbaylee/projects/spinel-spn-098-production",
+    "source": "7a0451917ef38524138fa2eac432d4520fbed008",
+    "installedCore": "1.3.1",
+    "postinstallScriptsDiff": "none against candidate",
+    "unchangedAfterUse": true
+  },
+  "node": "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+  "watchdog": "/tmp/spinel-dependabot-2026-11-11/watch.ts",
+  "watchdogSha256": "203c67c3a455f630bd6b79156834cdfc18b4f9c5bb78591fffbe7214057e9dba",
+  "inputs": {
+    "package.json": "a4bdf9bbbd4046d2d80b8a025e8e8aefb785e3481b691b5526e59473bd8bb4d6",
+    "package-lock.json": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+    "src/server/collaboration/service.test.ts": "471d45ed772a6da7c892143dd2953dcbd89cfd21a5e3596229c28cfc3fd51960",
+    "src/ui/nativeSyncPermissions.test.ts": "61afb35a08d720c1a77076d6640d2bd1f2e4e25e69161a050b1be407ea2314b1",
+    "web/nativeSyncPermissions.ts": "376001af8e8ea39d91d81a78f3e5e4e7bb324cde7be420875149a3c59ace598c"
+  },
+  "dependencyOwnership": {
+    "privateAPFSClone": true,
+    "workspaceLinksResolveToCandidateLib": true,
+    "cacheDirectoriesResolveToCandidateNodeModules": true,
+    "absoluteUserSymlinks": []
+  },
+  "attempts": [
+    {
+      "name": "spn106-dependency-clone-20261114",
+      "args": [
+        "/bin/cp",
+        "-cR",
+        "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules",
+        "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/node_modules"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 7331,
+      "peakKiB": 83568,
+      "log": "{\"name\":\"spn106-dependency-clone-20261114\",\"args\":[\"/bin/cp\",\"-cR\",\"/Users/mxbaylee/projects/spinel-spn-098-production/node_modules\",\"/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/node_modules\"],\"code\":0,\"signal\":null,\"reason\":null,\"elapsedMs\":7331,\"peakKiB\":83568}\n"
+    },
+    {
+      "name": "spn106-service-format-20261114",
+      "args": [
+        "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        "src/server/collaboration/service.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 367,
+      "peakKiB": 183440,
+      "log": "src/server/collaboration/service.test.ts 167ms\n{\"name\":\"spn106-service-format-20261114\",\"args\":[\"/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node\",\"node_modules/prettier/bin/prettier.cjs\",\"--write\",\"src/server/collaboration/service.test.ts\"],\"code\":0,\"signal\":null,\"reason\":null,\"elapsedMs\":367,\"peakKiB\":183440}\n"
+    },
+    {
+      "name": "spn106-preparation-first-20261114",
+      "args": [
+        "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "src/server/collaboration/service.test.ts",
+        "-t",
+        "Doc preparation preserves saved content and viewer authority"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 4534,
+      "peakKiB": 976640,
+      "log": "\n RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-106-current-main-20261114\n\n\n Test Files  1 passed (1)\n      Tests  6 passed | 24 skipped (30)\n   Start at  12:35:33\n   Duration  3.47s (import 47%, transform 45%, tests 8%)\n\n{\"name\":\"spn106-preparation-first-20261114\",\"args\":[\"/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node\",\"node_modules/vitest/vitest.mjs\",\"run\",\"src/server/collaboration/service.test.ts\",\"-t\",\"Doc preparation preserves saved content and viewer authority\"],\"code\":0,\"signal\":null,\"reason\":null,\"elapsedMs\":4534,\"peakKiB\":976640}\n"
+    },
+    {
+      "name": "spn106-native-permissions-first-20261114",
+      "args": [
+        "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "src/ui/nativeSyncPermissions.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 1048,
+      "peakKiB": 815600,
+      "log": "\n RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-106-current-main-20261114\n\n\n Test Files  1 passed (1)\n      Tests  13 passed (13)\n   Start at  12:35:46\n   Duration  805ms (import 64%, transform 19%, tests 17%)\n\n{\"name\":\"spn106-native-permissions-first-20261114\",\"args\":[\"/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node\",\"node_modules/vitest/vitest.mjs\",\"run\",\"src/ui/nativeSyncPermissions.test.ts\"],\"code\":0,\"signal\":null,\"reason\":null,\"elapsedMs\":1048,\"peakKiB\":815600}\n"
+    }
+  ],
+  "result": "Six focused preparation cases and all thirteen native permission tests passed on first attempts. Twenty-four unrelated service cases filtered, not counted as passing.",
+  "limitations": [
+    "No browser, Storybook, build or hosted check executed.",
+    "Historical browser failure attribution remains source-supported; original durable database rows were not retained.",
+    "Current UI startup, screenshots, independent reviews, full selected CI and Safari acceptance remain pending."
+  ]
+}

@@ -1,0 +1,46 @@
+✔ CLI binds same-run immutable plan digest/source and publishes all selected results (124.832167ms)
+✔ required browser aggregate rejects missing, skipped, failed or cancelled requested mobile work (643.298583ms)
+✔ CLI failure records survive wrong identity, cancelled gate and missing selected evidence (497.336458ms)
+✔ browser aggregate cannot pass missing, skipped or failed selected sized restore evidence (396.481667ms)
+✔ unit aggregate requires every selected partition to succeed, retaining failed evidence (559.539125ms)
+✔ unit partitions may skip only with proven documentation inapplicability (280.077584ms)
+✔ every PR edit runs full validation, including title/body, base and ambiguous payloads (7.557916ms)
+✔ service changes keep candidate correctness and all existing broad checks without historical comparisons (0.350125ms)
+✔ the opt-in SPN-146 A/B stays tested without widening to full or performance coverage (1.101375ms)
+✔ sized restore participates in the immutable plan and fails closed (1.908125ms)
+✔ the extracted Doc touch raster keeps every browser owner and the sized restore dependency (0.421542ms)
+✔ shared offline image assertions retain ordinary CI and native desktop coverage (1.2205ms)
+✔ dependency closure and unknown paths fail closed, including old rename/deleted sides (0.453458ms)
+✔ API transport repair and its server fixture retain Node and browser coverage (0.200416ms)
+✔ labels only add coverage; removal recomputes automatic requirements (0.276291ms)
+✔ main ranges, scheduled/manual backstops, unknown events and missing ranges (0.339042ms)
+✔ mobile editing requests are one-shot label additions on the recorded same-repository head (1.883167ms)
+✔ full, fallback, scheduled, push and unrelated manual coverage never request new mobile editing (0.482167ms)
+✔ malformed explicit mobile requests and altered request evidence fail closed (0.269292ms)
+✔ mobile worker wiring preserves automatic owners and the required aggregate (1.258792ms)
+✔ aggregates require selected success and explicit inapplicable skipped; known regression remains red (0.334625ms)
+✔ workflow keeps seven static code names and protected edit concurrency (0.377458ms)
+✔ phone ownership removes only eight ordinary cases from instrumented duplicate runs (1.284625ms)
+✔ a reset names the call without ids, queries or server output (1.965541ms)
+✔ other failures and passing text produce no diagnostic (0.235834ms)
+✔ a recorded failure is a flag, its text is not kept (0.164417ms)
+✔ a missing server evidence file is reported, not hidden (0.162458ms)
+✔ an exited server and the browser-side reset form are both recognised (0.170291ms)
+✔ long and absolute-URL requests are normalized and capped (0.26325ms)
+✔ saved diagnostics keep the newest 50 and tolerate a damaged file (0.172583ms)
+✔ the reporter writes only for resets, caps the file and never throws (16.894958ms)
+✔ Playwright patch is idempotent and refuses altered upstream code (52.917875ms)
+✔ Playwright install rejects an upgrade or corrupted build before writing (67.926125ms)
+✔ fixture startup failure retains safe cause and exit evidence (204.640042ms)
+✔ real API client reproduces the server idle-timeout race and fixes it without retrying (13408.835208ms)
+ℹ {"name":"original","clientEvents":[{"reused":false,"at":1795320414242},{"reused":true,"at":1795320414253}],"serverEvents":[{"kind":"ready","at":1795320414205,"port":60974,"keepAliveTimeout":5000,"keepAliveTimeoutBuffer":1000},{"kind":"connection","at":1795320414243,"connection":1},{"kind":"request","at":1795320414245,"connection":1,"requests":1,"method":"GET"},{"kind":"stall-start","at":1795320414252},{"kind":"stall-end","at":1795320420462},{"kind":"idle-timeout","at":1795320420463,"connection":1},{"kind":"connection-closed","at":1795320420463,"connection":1,"hadError":false},{"kind":"flushed","at":1795320420468}]}
+ℹ {"name":"patched","clientEvents":[{"reused":false,"at":1795320420865},{"reused":false,"at":1795320420873},{"reused":false,"at":1795320427089},{"reused":false,"at":1795320427094}],"serverEvents":[{"kind":"ready","at":1795320420838,"port":60979,"keepAliveTimeout":5000,"keepAliveTimeoutBuffer":1000},{"kind":"connection","at":1795320420866,"connection":1},{"kind":"request","at":1795320420868,"connection":1,"requests":1,"method":"GET"},{"kind":"connection-closed","at":1795320420872,"connection":1,"hadError":false},{"kind":"stall-start","at":1795320420873},{"kind":"stall-end","at":1795320427083},{"kind":"connection","at":1795320427084,"connection":2},{"kind":"request","at":1795320427084,"connection":2,"requests":2,"method":"GET"},{"kind":"connection-closed","at":1795320427085,"connection":2,"hadError":false},{"kind":"flushed","at":1795320427086},{"kind":"connection","at":1795320427089,"connection":3},{"kind":"request","at":1795320427090,"connection":3,"requests":3,"method":"POST"},{"kind":"connection-closed","at":1795320427091,"connection":3,"hadError":false},{"kind":"flushed","at":1795320427092},{"kind":"connection","at":1795320427094,"connection":4},{"kind":"request","at":1795320427095,"connection":4,"requests":4,"method":"GET"}]}
+✔ HTTPS API requests also use distinct connections (494.911542ms)
+ℹ tests 36
+ℹ suites 0
+ℹ pass 36
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 14400.784167

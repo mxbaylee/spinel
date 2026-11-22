@@ -1,0 +1,9 @@
+{
+  "command": "node",
+  "args": ["--test", "scripts/ci/plan.test.ts", "scripts/ci/coverage-result.test.ts"],
+  "code": 0,
+  "signal": null,
+  "failure": null,
+  "peakKiB": 232960,
+  "elapsedMs": 2575
+}

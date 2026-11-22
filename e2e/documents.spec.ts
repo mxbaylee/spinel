@@ -2,8 +2,9 @@ import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import sharp from 'sharp';
 import { expect, test } from '@playwright/test';
-import type { Browser, Page, Request, TestInfo } from '@playwright/test';
-import type { IDocumentData } from '@univerjs/core';
+import type { Browser, BrowserContext, Page, Request, TestInfo } from '@playwright/test';
+import { CustomRangeType, getDocsEmptySnapshot, validateDocumentStructure } from '@univerjs/core';
+import type { IDocumentBody, IDocumentData } from '@univerjs/core';
 import { interruptibleNetwork } from './live-network.ts';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
@@ -20,7 +21,247 @@ import type { EditingFixture } from './doc-editing.ts';
 import { textPoint } from './doc-touch.ts';
 import { nativeTheme } from './native-theme.ts';
 import { withFixtureCleanup } from './owned-process.ts';
+import { DocumentStore } from '../src/server/workspace/documents.ts';
+import {
+  permissionNotices,
+  protectionMessage,
+  recordPermissionNotices,
+} from './permission-notices.ts';
 
+function storedDateField(id: string): IDocumentBody {
+  const cached = '2000-01-01';
+  const dataStream = `\x1f${cached}\x1e\r\n`;
+  return {
+    dataStream,
+    paragraphs: [{ startIndex: dataStream.length - 2, paragraphId: `${id}-paragraph` }],
+    customRanges: [
+      {
+        rangeId: id,
+        rangeType: CustomRangeType.FIELD,
+        startIndex: 0,
+        endIndex: cached.length + 1,
+        wholeEntity: false,
+        properties: {
+          fieldType: 'DATE',
+          instruction: 'DATE \\@ "yyyy-MM-dd"',
+          cachedResult: cached,
+        },
+      },
+    ],
+  };
+}
+
+for (const phone of [false, true])
+  for (const role of ['account', 'guest'] as const)
+    test(`${phone ? 'phone' : 'desktop'} ${role} Doc viewer opens plain and dated documents without a protection warning`, async ({
+      browser,
+      baseURL,
+    }, info) => {
+      test.setTimeout(150_000);
+      const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
+      const auth = new AuthStore(db),
+        workspace = new WorkspaceStore(auth);
+      const owner = auth.createUser(`Startup owner ${info.testId}`);
+      const viewer = auth.createUser(`Startup viewer ${info.testId}`);
+      const contexts: BrowserContext[] = [];
+      const failures: string[] = [];
+      const cookie = (userId: string) => ({
+        name: COOKIE_NAME,
+        value: auth.createSession(userId).token,
+        url: baseURL!.replace('http:', 'https:'),
+        secure: true,
+        httpOnly: true,
+        sameSite: 'Strict' as const,
+      });
+      try {
+        const ownerContext = await browser.newContext({
+          baseURL,
+          viewport: { width: 1280, height: 960 },
+        });
+        contexts.push(ownerContext);
+        await ownerContext.addCookies([cookie(owner.id)]);
+        for (const fields of [true, false]) {
+          const item = workspace.create(owner.id, {
+            name: fields ? 'Saved date fields' : 'Plain reading',
+            kind: 'doc',
+            parentId: null,
+          });
+          const snapshot = getDocsEmptySnapshot(item.id);
+          snapshot.body = {
+            dataStream: 'Phone journal\r\n',
+            paragraphs: [{ startIndex: 13, paragraphId: 'body-paragraph' }],
+            sectionBreaks: [{ startIndex: 14, sectionId: 'body-section' }],
+          };
+          if (fields) {
+            snapshot.headers = { top: { headerId: 'top', body: storedDateField('header-date') } };
+            snapshot.footers = {
+              bottom: { footerId: 'bottom', body: storedDateField('footer-date') },
+            };
+            snapshot.documentStyle.defaultHeaderId = 'top';
+            snapshot.documentStyle.defaultFooterId = 'bottom';
+          }
+          expect(validateDocumentStructure(snapshot)).toEqual([]);
+          new DocumentStore(workspace).save(owner.id, item.id, {
+            snapshot,
+            revision: 0,
+            writeId: crypto.randomUUID(),
+          });
+          workspace.share(owner.id, item.id, viewer.id, 'viewer');
+          const context = await browser.newContext({
+            baseURL,
+            viewport: phone ? { width: 390, height: 844 } : { width: 1280, height: 960 },
+            isMobile: phone,
+            hasTouch: phone,
+            deviceScaleFactor: 1,
+            colorScheme: 'light',
+            reducedMotion: 'reduce',
+          });
+          contexts.push(context);
+          await recordPermissionNotices(context);
+          let path = `/?item=${item.id}`;
+          if (role === 'account') await context.addCookies([cookie(viewer.id)]);
+          else {
+            const link = workspace.links.begin(item.id, 'viewer');
+            workspace.links.finish(item.id, link.epoch, true);
+            path = `/share/${item.id}#${link.token}`;
+          }
+          const legacy = () =>
+            db.prepare('SELECT * FROM doc_snapshots WHERE item_id=?').get(item.id);
+          const grants = () => ({
+            account: db
+              .prepare('SELECT * FROM workspace_grants WHERE item_id=? ORDER BY user_id')
+              .all(item.id),
+            link: db.prepare('SELECT * FROM workspace_links WHERE item_id=?').get(item.id),
+          });
+          const originalLegacy = legacy();
+          const originalGrants = grants();
+          // Prepare as the owner before the viewer can navigate. The service
+          // controls separately prove first-viewer preparation; this baseline
+          // must include native resources/revision without normalizing them away.
+          const prepared = await ownerContext.request.post(`/api/items/${item.id}/collaboration`, {
+            headers: { Origin: baseURL! },
+            data: {},
+          });
+          const preparation = await prepared.json().catch(() => null);
+          const safeErrors = [
+            'Open Spinel at its configured address and try again.',
+            'Sign in to continue.',
+            'Collaboration is not available.',
+          ];
+          expect(
+            prepared.ok(),
+            JSON.stringify({
+              status: prepared.status(),
+              error: safeErrors.includes(preparation?.error)
+                ? preparation.error
+                : 'No allowlisted preparation error',
+            }),
+          ).toBe(true);
+          const { unitId } = preparation;
+          expect(unitId).toBe(item.id);
+          const head = () =>
+            db.prepare('SELECT * FROM spinel_sync_units WHERE unit_id=?').get(unitId);
+          const receipts = () =>
+            db.prepare('SELECT * FROM spinel_sync_revisions WHERE unit_id=?').all(unitId);
+          const read = async () => {
+            const response = await ownerContext.request.get(`/api/items/${item.id}/doc`);
+            expect(response.ok()).toBe(true);
+            return (await response.json()).snapshot as IDocumentData;
+          };
+          const original = await read();
+          const originalHead = head();
+          expect(originalHead?.revision).toBe(1);
+          expect(original.rev).toBe(1);
+          expect(JSON.parse(String(originalHead?.snapshot))).toEqual(original);
+          expect(original.body).toEqual(snapshot.body);
+          expect(original.headers).toEqual(snapshot.headers);
+          expect(original.footers).toEqual(snapshot.footers);
+          expect(original.documentStyle).toEqual(snapshot.documentStyle);
+          const unchanged = async () => {
+            expect(await read()).toEqual(original);
+            expect(head()).toEqual(originalHead);
+            expect(head()?.revision).toBe(1);
+            expect(receipts()).toEqual([]);
+            expect(legacy()).toEqual(originalLegacy);
+            expect(grants()).toEqual(originalGrants);
+          };
+          await unchanged();
+          const page = await context.newPage();
+          page.on('pageerror', (error) => failures.push(error.message));
+          const status = page.getByRole('status', { name: 'Save status' });
+          await page.goto(path);
+          for (const reload of [false, true]) {
+            if (reload) await page.reload();
+            await expect(status).toContainText('View only', { timeout: 30_000 });
+            await expect(page.getByLabel('Document canvas', { exact: true })).toBeVisible();
+            expect(await permissionNotices(page)).toEqual([]);
+            await expect(page.getByText(protectionMessage, { exact: true })).toHaveCount(0);
+            await unchanged();
+          }
+          if (fields && ((role === 'account' && !phone) || (role === 'guest' && phone))) {
+            for (const theme of ['light', 'dark'] as const) {
+              await page.emulateMedia({ colorScheme: theme });
+              await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+              await page.screenshot({
+                path: info.outputPath(
+                  `spn-106-${role}-${phone ? '390px' : 'desktop'}-${theme}.png`,
+                ),
+                fullPage: true,
+              });
+            }
+          }
+          // This journey owns startup/persistence and the actual HTTP fence.
+          // Native mutation refusal and its visible warning are exercised by
+          // the ViewerDeniedEdit story through the mounted public Doc API.
+          if (role === 'account') {
+            const denied = await context.request.put(`/api/items/${item.id}/doc`, {
+              headers: { Origin: baseURL! },
+              data: { snapshot: original, revision: 1, writeId: crypto.randomUUID() },
+            });
+            expect(denied.status()).toBe(403);
+          } else expect((await context.request.get('/api/items')).status()).toBe(401);
+          await unchanged();
+
+          if (!fields) {
+            // Keep an authorized native editor alongside the reader; its real
+            // edit must persist while the viewer grant remains unchanged.
+            const editor = await ownerContext.newPage();
+            editor.on('pageerror', (error) => failures.push(error.message));
+            await editor.goto(`/?item=${item.id}`);
+            await expect(editor.getByRole('status', { name: 'Save status' })).toHaveText(
+              'All changes saved.',
+              { timeout: 30_000 },
+            );
+            const point = await textPoint(editor);
+            await editor.mouse.click(point.x, point.y);
+            await editor.keyboard.type('Authorized ');
+            await expect.poll(async () => (await read()).body?.dataStream).toContain('Authorized ');
+            await expect(status).toContainText('View only');
+            if (role === 'guest') {
+              const revoke = await ownerContext.request.put(`/api/items/${item.id}/link`, {
+                headers: { Origin: baseURL! },
+                data: { role: null },
+              });
+              expect(revoke.ok()).toBe(true);
+              await expect(
+                page.getByText('This link no longer works.', { exact: true }),
+              ).toBeVisible({ timeout: 30_000 });
+              await expect(page.getByLabel('Document canvas', { exact: true })).toHaveCount(0);
+            }
+            await editor.close();
+          }
+          await page.close();
+          await context.close();
+        }
+        expect(failures).toEqual([]);
+      } finally {
+        for (const context of contexts) await context.close();
+        db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(owner.id);
+        for (const user of [owner, viewer])
+          db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
+        db.close();
+      }
+    });
 test.describe('desktop native Doc editing', () => registerDocEditingTests(false));
 
 const clipboardTest = test.extend({ trace: 'retain-on-failure' });
@@ -45,7 +286,12 @@ type ImagePostEvidence = {
 type ClipboardDoc = EditingFixture & {
   png: Buffer;
   posts: ImagePostEvidence[];
-  paste(format: 'png' | 'html' | 'text', text?: string, imageSource?: string): Promise<void>;
+  paste(
+    format: 'png' | 'html' | 'text',
+    text?: string,
+    imageSource?: string,
+    entry?: 'source-menu' | 'text-menu',
+  ): Promise<void>;
   capture(stage: string): Promise<void>;
   assertMounted(): Promise<void>;
 };
@@ -166,7 +412,7 @@ async function withClipboardDoc(
                 .catch(() => undefined),
             });
           };
-          const paste: ClipboardDoc['paste'] = async (format, text = '', imageSource) => {
+          const paste: ClipboardDoc['paste'] = async (format, text = '', imageSource, entry) => {
             const mime =
               format === 'png' ? 'image/png' : format === 'html' ? 'text/html' : 'text/plain';
             const source = imageSource ?? `data:image/png;base64,${png.toString('base64')}`;
@@ -176,18 +422,25 @@ async function withClipboardDoc(
               () => (window as ImagePasteWindow).imagePasteEvents!.length,
             );
             const readback = await page.evaluate(
-              async ({ mime, value }) => {
+              async ({ mime, value, text }) => {
                 const blob = new Blob([Array.isArray(value) ? new Uint8Array(value) : value], {
                   type: mime,
                 });
-                await navigator.clipboard.write([new ClipboardItem({ [mime]: blob })]);
+                await navigator.clipboard.write([
+                  new ClipboardItem({
+                    [mime]: blob,
+                    ...(mime === 'text/html' && text
+                      ? { 'text/plain': new Blob([text], { type: 'text/plain' }) }
+                      : {}),
+                  }),
+                ]);
                 const item = (await navigator.clipboard.read()).find((item) =>
                   item.types.includes(mime),
                 );
                 if (!item) throw new Error('The native clipboard is missing its expected format.');
                 return Array.from(new Uint8Array(await (await item.getType(mime)).arrayBuffer()));
               },
-              { mime, value },
+              { mime, value, text },
             );
             const bytes = Buffer.from(readback);
             clipboard.push({ format, mime, bytes: bytes.length, sha256: sha256(bytes) });
@@ -199,6 +452,19 @@ async function withClipboardDoc(
               // Browser sanitization can wrap HTML; it must retain this exact image.
               expect(bytes.toString()).toContain(`src="${source}"`);
             } else expect(bytes.toString()).toBe(text);
+            if (entry) {
+              await page
+                .getByRole('region', { name: 'Doc document', exact: true })
+                .getByRole('button', { name: 'Paste special', exact: true })
+                .click();
+              await page
+                .getByText(entry === 'text-menu' ? 'Keep text only' : 'Keep source formatting', {
+                  exact: true,
+                })
+                .click();
+              // Native menu reads ClipboardItems directly; no ClipboardEvent is expected.
+              return;
+            }
             await page.keyboard.press('ControlOrMeta+v');
             await expect
               .poll(() =>
@@ -800,6 +1066,45 @@ clipboardTest.describe('native Doc image clipboard', () => {
       },
     );
   }
+
+  clipboardTest(
+    'native image menu and cached formatting replay retain content and history',
+    async ({ browser, baseURL }, info) => {
+      clipboardTest.setTimeout(60_000);
+      await withClipboardDoc(browser, baseURL!, info, async (f) => {
+        const before = await f.read();
+        await f.paste('png', undefined, undefined, 'source-menu');
+        const pasted = await content(f, '\b\r' + before.body!.dataStream, 2);
+        expect(pasted.drawingsOrder).toHaveLength(1);
+        expect(f.posts.map((post) => post.status)).toEqual([201]);
+        await f.assertMounted();
+        await f.capture('native-menu-paste');
+        for (const mode of ['Match destination formatting', 'Keep source formatting']) {
+          await f.page.getByRole('button', { name: 'Paste options', exact: true }).click();
+          await f.page.getByRole('menuitemcheckbox', { name: mode, exact: true }).click();
+          await expect(f.page.getByRole('status', { name: 'Save status' })).toHaveText(
+            'All changes saved.',
+          );
+          const replayed = await content(f, pasted.body!.dataStream);
+          for (const key of ['body', 'drawings', 'drawingsOrder', 'resources'] as const)
+            expect(replayed[key]).toEqual(pasted[key]);
+          expect(f.posts.map((post) => post.status)).toEqual([201]);
+          await f.assertMounted();
+          await f.capture(mode);
+        }
+        await f.page.getByRole('button', { name: 'Undo', exact: true }).click();
+        expect((await content(f, before.body!.dataStream)).body).toEqual(before.body);
+        await f.page.getByRole('button', { name: 'Redo', exact: true }).click();
+        const redone = await content(f, pasted.body!.dataStream);
+        expect(redone.drawings).toEqual(pasted.drawings);
+        await f.assertMounted();
+        await reopen(f, redone);
+        expect((await f.read()).drawings).toEqual(redone.drawings);
+        expect(f.posts.map((post) => post.status)).toEqual([201]);
+        await f.capture('menu-replay-history-reopened');
+      });
+    },
+  );
 
   clipboardTest(
     'a viewer cannot paste a native clipboard image',

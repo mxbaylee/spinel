@@ -1,10 +1,15 @@
 import assert from 'node:assert/strict';
+import { mkdtemp, rm } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import type { RequestListener } from 'node:http';
 import type { AddressInfo, Socket } from 'node:net';
+import { tmpdir } from 'node:os';
+import { resolve } from 'node:path';
 import { test } from 'node:test';
 import { request } from '@playwright/test';
+import type { APIRequest } from '@playwright/test';
 import { readRestoreSnapshot } from '../../e2e/restore-snapshot.ts';
+import { copyPlaywrightClient } from '../dependencies/playwright-test-client.ts';
 
 async function fixture(handle: RequestListener) {
   const server = createServer(handle);
@@ -25,8 +30,8 @@ async function fixture(handle: RequestListener) {
   };
 }
 
-const client = (baseURL: string) =>
-  request.newContext({
+const client = (baseURL: string, api: APIRequest = request) =>
+  api.newContext({
     baseURL,
     storageState: {
       cookies: [
@@ -46,6 +51,11 @@ const client = (baseURL: string) =>
   });
 
 test('restore observation avoids a reused-connection reset and preserves authenticated snapshots', async (t) => {
+  const directory = await mkdtemp(resolve(tmpdir(), 'spinel-restore-original-client-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  // SPN-168 fixes the installed client too. Preserve this regression's original
+  // pooled negative control instead of expecting the repaired client to reset.
+  const originalRequest = await copyPlaywrightClient(directory, 'original');
   const seen = new Set<Socket>();
   const calls: Array<{
     socket: Socket;
@@ -71,9 +81,9 @@ test('restore observation avoids a reused-connection reset and preserves authent
     response.end(JSON.stringify(snapshot));
   });
   t.after(() => app.close());
-  const pooled = await client(app.url);
+  const pooled = await client(app.url, originalRequest);
   t.after(() => pooled.dispose());
-  const observer = await client(app.url);
+  const observer = await client(app.url, originalRequest);
   t.after(() => observer.dispose());
   assert.deepEqual(await (await pooled.get('/snapshot?kind=sheet')).json(), snapshot);
   await assert.rejects(pooled.get('/snapshot?kind=sheet'), /ECONNRESET/);

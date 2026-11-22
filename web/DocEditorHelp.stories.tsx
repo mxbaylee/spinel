@@ -60,3 +60,14 @@ export const ImageLimit: Story = {
 export const UnsupportedImage: Story = {
   args: { uploadError: 'This image cannot be pasted. Insert it from a file instead.' },
 };
+export const ClipboardFailure: Story = {
+  args: { uploadError: 'The clipboard content could not be pasted. Try copying it again.' },
+};
+export const UploadedNotInserted: Story = {
+  args: {
+    uploadError: 'The image was uploaded but could not be inserted. Try inserting it again.',
+  },
+};
+export const InsertionFailure: Story = {
+  args: { uploadError: 'The image could not be inserted. Try inserting it again.' },
+};

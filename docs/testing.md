@@ -101,6 +101,25 @@ tool or passing a small retained-data probe does not establish native acceptance
 
 ## Give each browser execution a reason
 
+### 🔌 Test HTTP client connection lifetime
+
+Spinel's pinned Playwright API request client uses a fresh HTTP(S) connection for
+each request. A server event-loop stall can otherwise let its idle timeout close
+a pooled socket before it reads the client's queued request. The narrow,
+version/hash-checked `scripts/dependencies/patch-playwright.ts` patch runs in
+postinstall; it does not change native browser connections, server timeouts,
+assertions or retries. Production-only installs may omit Playwright entirely.
+
+`scripts/dependencies/patch-playwright.test.ts` runs the real original and patched
+clients against a separate process using Spinel's HTTP server factory. It injects
+a bounded server stall across the unchanged idle deadline, requires the original
+reset and the patched success, and proves a reset POST is not replayed and HTTP
+503 still reaches the test. HTTPS independently checks the second agent branch.
+On a Playwright upgrade, review this patch and its negative control; do not
+silently drop the version/hash guard. The original hosted incident has no socket
+trace, so the reproduced mechanism must not be presented as packet-level proof
+of that historical event. See [SPN-168](implementation/SPN-168.md).
+
 ### 🔄 Offline-upgrade worker ownership
 
 The existing Chromium `offline-upgrade` project owns emitted-worker activation.
