@@ -1,0 +1,15 @@
+{
+  "command": "/Users/mxbaylee/.nvm/versions/node/v26.13.0/bin/node",
+  "args": [
+    "--test",
+    "scripts/dependencies/patch-playwright.test.ts",
+    "scripts/ci/reset-diagnostics.test.ts",
+    "scripts/ci/plan.test.ts",
+    "scripts/ci/coverage-result.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "failure": null,
+  "peakKiB": 639200,
+  "elapsedMs": 14275
+}

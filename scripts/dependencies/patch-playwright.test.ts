@@ -60,9 +60,15 @@ async function fixture(protocol: 'http' | 'https', directory: string) {
   );
   const events: Event[] = [];
   child.on('message', (event: Event) => events.push(event));
-  const exited = once(child, 'exit');
-  // Consume stderr so a failing child cannot block on its output pipe.
-  child.stderr!.resume();
+  const exited = once(child, 'close');
+  // Drain bounded startup evidence, but expose only known codes and byte counts.
+  // Paths, arbitrary exception text and any other child output stay private.
+  let stderr = Buffer.alloc(0);
+  let stderrBytes = 0;
+  child.stderr!.on('data', (chunk: Buffer) => {
+    stderrBytes += chunk.length;
+    stderr = Buffer.concat([stderr, chunk]).subarray(-4096);
+  });
   const deadline = AbortSignal.timeout(15_000);
   const next = async (kind: string, after = 0): Promise<Event> => {
     while (true) {
@@ -72,8 +78,14 @@ async function fixture(protocol: 'http' | 'https', directory: string) {
       if (existing) return existing;
       await Promise.race([
         once(child, 'message', { signal: deadline }),
-        exited.then(() => {
-          throw new Error('HTTP fixture exited before ' + kind);
+        exited.then(([code, signal]) => {
+          const errorCode =
+            /\b(ENOENT|EACCES|EINVAL|EADDRINUSE|ERR_MODULE_NOT_FOUND|ERR_OSSL_PEM_NO_START_LINE)\b/.exec(
+              stderr.toString('utf8'),
+            )?.[1] ?? 'unclassified';
+          throw new Error(
+            `HTTP fixture exited before ${kind}: code=${code}, signal=${signal}, error=${errorCode}, stderrBytes=${stderrBytes}`,
+          );
         }),
       ]);
     }
@@ -84,7 +96,10 @@ async function fixture(protocol: 'http' | 'https', directory: string) {
     await next('flushed', after);
   };
   const close = async () => {
-    if (child.exitCode !== null || child.signalCode !== null) return;
+    if (child.exitCode !== null || child.signalCode !== null) {
+      await exited;
+      return;
+    }
     child.send('stop');
     const kill = setTimeout(() => child.kill('SIGKILL'), 8_000);
     try {
@@ -101,10 +116,24 @@ async function fixture(protocol: 'http' | 'https', directory: string) {
     assert.equal(ready.keepAliveTimeoutBuffer, 1_000);
     return { child, events, next, close, flush, origin: `${protocol}://127.0.0.1:${ready.port}` };
   } catch (error) {
-    await close();
-    throw error;
+    return withFixtureCleanup(async () => {
+      throw error;
+    }, close);
   }
 }
+
+test('fixture startup failure retains safe cause and exit evidence', async (t) => {
+  const root = await mkdtemp(resolve(tmpdir(), 'spinel-private-startup-path-'));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  await assert.rejects(fixture('https', root), (error: Error) => {
+    assert.match(
+      error.message,
+      /exited before ready: code=1, signal=null, error=ENOENT, stderrBytes=\d+/,
+    );
+    assert.ok(!error.message.includes(root), 'startup paths and raw stderr are not exposed');
+    return true;
+  });
+});
 
 test(
   'real API client reproduces the server idle-timeout race and fixes it without retrying',
