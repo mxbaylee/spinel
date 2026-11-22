@@ -1,0 +1,141 @@
+{
+  "sourceBeforeConsolidation": "45b3277f484c09cfd4fb69a05531a7e8b75e2172",
+  "files": [
+    {
+      "path": "clipboard-d933/spn154-html-upload-failure-light.png",
+      "sha256": "fe74e57d5f7bdb98b1a7f78ca72d358cba0fb8ee101fb71d43af55df2d1886fd",
+      "width": 1440,
+      "height": 1100
+    },
+    {
+      "path": "clipboard-d933/spn154-html-upload-failure-dark.png",
+      "sha256": "5d99d8304c15c955d68ad65e95472d36c6a962fac968e16cce0fc64102964eb0",
+      "width": 1440,
+      "height": 1100
+    },
+    {
+      "path": "clipboard-d933/spn154-html-paste-success-light.png",
+      "sha256": "5296f2fa7e9b0f92158f07ae726ce723c687c227260f96d8244ab7d52b50015c",
+      "width": 1440,
+      "height": 1100
+    },
+    {
+      "path": "clipboard-d933/spn154-phone-upload-failure-light.png",
+      "sha256": "a46209dd1fcb12760d7836888d553c1c5259a023f6d714aec4cf4670311a0fe0",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "path": "clipboard-d933/spn154-phone-upload-failure-dark.png",
+      "sha256": "d925a22d96e28c22558b01b0c9ce99f8555aa45505175eae4eba2d599a6a8a1f",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "path": "current-419773ed/feedback/editor-dochelp--sign-in-ended-phone.png",
+      "sha256": "6535ab13692f72bd0d86545589f277ece3297e43443e04ca146848594de2c366",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "path": "current-419773ed/feedback/editor-dochelp--access-denied-phone.png",
+      "sha256": "f533d0d4cbc9d5ffeac7ab7cd03c41e6b4a4ceb13cdc2640e437199b4c73c24a",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "path": "current-419773ed/feedback/editor-dochelp--prepared-offline-phone.png",
+      "sha256": "65e69de7bf0b9e8257d15682a659e3d0e017b3a1e4716d52896e9f76efb267b9",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "path": "current-419773ed/feedback/editor-dochelp--image-limit-phone.png",
+      "sha256": "1b54bcedc1ce56d862b872534a254eb260b2f0870eb36cc7bf4fe2739229cb10",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "path": "current-419773ed/feedback/editor-dochelp--unsupported-image-phone.png",
+      "sha256": "0f111fa79ce45d2dcaef37742cdfe4d6ee93a8e12b969d32b20853eb44cdaac0",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "path": "current-419773ed/feedback/editor-dochelp--clipboard-failure-phone.png",
+      "sha256": "3a9560ff1bc3d9b8d4ccb90b168b3512790cd3425a99786ca12772019c4308cb",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "path": "current-419773ed/feedback/editor-dochelp--insertion-failure-phone.png",
+      "sha256": "a5d6a852d30e310e5d57a2ae2ce4f79b4529b72cded2e6739450d634074af3e8",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "path": "current-419773ed/feedback/editor-dochelp--file-size-phone.png",
+      "sha256": "23bd72f6477e642421ad65cf2c8f713baff97d9f0dcd062d98a62f249bf298e7",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "path": "current-419773ed/feedback/editor-dochelp--image-format-phone.png",
+      "sha256": "21c9bb10f16f2efb3e56ec14ce206a6a2fe2ff05023e15c2a56d34d1f8601396",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "path": "current-419773ed/feedback/editor-dochelp--invalid-image-phone.png",
+      "sha256": "9348569d53705f54cd3ef61675426c37c473a22b0296251dfddbc645eeaed657",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "path": "current-419773ed/feedback/editor-dochelp--processed-size-phone.png",
+      "sha256": "fbf229e2161765646ae68ff540b86ad1eef0e4dac0aed7cefb3022fafc957f65",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "path": "current-419773ed/feedback/editor-dochelp--upload-busy-phone.png",
+      "sha256": "68ab942c9330b36787e4d2251bf6e6dc5d9138cff649ae6dabd67640626c1720",
+      "width": 390,
+      "height": 900
+    },
+    {
+      "path": "first-native-production-failure.png",
+      "sha256": "fef93d364412a94559299f1213dcbc67b5dca739d12a0a4c11fd0d583beedea8",
+      "width": 1440,
+      "height": 1100
+    },
+    {
+      "path": "local-reproduction-0e9cf7ff/observed-paste.png",
+      "sha256": "a30343d252e5f06c1ffaa10385d0e3e276d4b8e1d9a940ca5190723e0f1e9e68",
+      "width": 1440,
+      "height": 1100
+    },
+    {
+      "path": "clipboard-source.png",
+      "sha256": "3b5a98d5f358349c7e8e6cf77a4c4a3398c2530cfbc209b75da9668dca54e4c2",
+      "width": 80,
+      "height": 60
+    },
+    {
+      "path": "first-native-production.json",
+      "sha256": "a185bb5a1abd48fff1f3d6ebc918056325ef27ed467ee9bd323e90c64a9d1742"
+    },
+    {
+      "path": "first-native-wire-summary.json",
+      "sha256": "047a59b53d388a373fa584b62cc59ae721f08d64a55cd065f55938c986e187a4"
+    },
+    {
+      "path": "local-reproduction-0e9cf7ff/summary.json",
+      "sha256": "f980f682d528c512debe15d43a646621390a4f0ae6043ce91d8961538bfb642d"
+    },
+    {
+      "path": "validation-75a89e30/reopen-first-failure.json",
+      "sha256": "eb49ec6971654e6d36aa3f615ef243180434556971d3a8c058df6c837e9264fc"
+    }
+  ]
+}
