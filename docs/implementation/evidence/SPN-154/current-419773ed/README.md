@@ -49,8 +49,8 @@ for the real alert. The manifest records the actual viewports. Useful examples:
 
 The desktop original failure/repair receipts elsewhere in SPN-154 remain
 historical evidence and do not establish the original physical-phone incident's
-cause. Current selected acceptance and final application visual review remain
-pending. `manifest.json` hashes retained files; logs are compressed originals,
+cause. Application visual approval for `419773ed` is recorded below; full selected
+acceptance and exact repaired-head review remain pending. `manifest.json` hashes retained files; logs are compressed originals,
 not pass-only excerpts. Source-specific limits above take precedence over the
 directory's candidate label.
 
