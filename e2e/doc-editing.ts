@@ -452,14 +452,22 @@ export async function content(
   return saved;
 }
 
-export async function reopen(f: EditingFixture, expected: IDocumentData) {
+export async function reopen(
+  f: EditingFixture,
+  expected: IDocumentData,
+  status: 'All changes saved.' | 'View only.' = 'All changes saved.',
+) {
   await f.reload();
+  // Native content and permission/save status share the existing load budget.
   await expect
-    .poll(async () => (await readEditingSelection(f.page))?.text, { timeout: 30_000 })
-    .toBe(expected.body!.dataStream);
-  await expect(f.page.getByRole('status', { name: 'Save status' })).toHaveText(
-    'All changes saved.',
-  );
+    .poll(
+      async () => ({
+        text: (await readEditingSelection(f.page))?.text,
+        status: await f.page.getByRole('status', { name: 'Save status' }).allTextContents(),
+      }),
+      { timeout: 30_000 },
+    )
+    .toEqual({ text: expected.body!.dataStream, status: [status] });
   const native = (await readEditingSelection(f.page))!;
   const saved = await f.read();
   expect(canonical(normalizedDocBody(native.body))).toBe(

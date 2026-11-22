@@ -1309,10 +1309,8 @@ clipboardTest.describe('native Doc image clipboard', () => {
               expectNoImages(await f.read());
               await f.assertMounted();
               await f.capture('late-success-refused');
-              await f.reload();
-              await expect(f.page.getByRole('status', { name: 'Save status' })).toHaveText(
-                'View only.',
-              );
+              await reopen(f, before, 'View only.');
+              expect((await readEditingSelection(f.page))?.body).toEqual(nativeBefore);
               expect(await f.read()).toEqual(before);
               expect(await f.revision()).toBe(beforeRevision);
               expectNoImages(await f.read());
@@ -1479,10 +1477,7 @@ clipboardTest.describe('native Doc image clipboard', () => {
           expect(f.posts).toEqual([]);
           await f.assertMounted();
           await f.capture('viewer-paste-denied');
-          await f.reload();
-          await expect
-            .poll(async () => (await readEditingSelection(f.page))?.text)
-            .toBe(before.body!.dataStream);
+          await reopen(f, before, 'View only.');
           expect((await readEditingSelection(f.page))?.body).toEqual(nativeBefore);
           expectNoImages(await f.read());
           expect(f.posts).toEqual([]);
