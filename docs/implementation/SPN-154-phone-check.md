@@ -1,9 +1,12 @@
 # 📱 SPN-154 physical-phone check
 
-**Status: not run.** This is the remaining physical clipboard check for
-[SPN-154](SPN-154.md), separate from the passing desktop native regression.
-SPN-170's phone waiver and SPN-163's own-phone/Recover waiver apply only to their
-own tickets. Use the concrete build and exact source identity supplied in
+**Status: not run; merge gate explicitly waived by the owner, chat 2026-11-22.**
+The [SPN-154 acceptance decision](SPN-154.md#-physical-phone-acceptance-waiver)
+accepts verified native desktop and emulated-phone evidence without claiming a
+physical-phone pass or the cause of the original incident. This checklist remains
+available for an optional later check. SPN-170 and SPN-163 waivers are unrelated.
+The first temporary tunnel expired after a watchdog abort; obtain fresh verified
+fixture links before using this checklist. Use the concrete build and exact source identity supplied in
 [PR #301](https://github.com/mxbaylee/spinel/pull/301) and the handoff's build
 manifest. A new controlled result does not identify the original phone incident.
 
