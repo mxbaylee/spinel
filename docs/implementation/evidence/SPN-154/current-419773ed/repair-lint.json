@@ -1,0 +1,13 @@
+{
+  "label": "repair-lint",
+  "command": "npm",
+  "args": [
+    "run",
+    "lint"
+  ],
+  "code": 0,
+  "signal": null,
+  "aborted": null,
+  "elapsedMs": 19130,
+  "peakKiB": 651088
+}

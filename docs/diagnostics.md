@@ -240,6 +240,19 @@ regression records socket reuse and server timeout events without headers, cooki
 or document content; `scripts/ci/reset-diagnostics.test.ts` retains reporter
 redaction, capacity and failure-isolation coverage.
 
+🧪 SPN-154's `scripts/ci/desktop-transfer-observation.ts` is a native-test-fixture
+observer, not a production emitter. It retains at most 256 transfer requests by
+ordinal and finite route class, with response status, relative start/finish/close
+times and the already-admitted observed request ordinals at each new request.
+It reads the existing transfer admission map without changing it. A close event
+can precede production admission release; `admittedAtClose` alone is not proof of
+a leak. No URL, query, header, body or document identity is retained. Dropped and
+unreadable observations are counted; observer failures cannot change the request.
+`desktop-transfer-observation.test.ts` covers overlapping admission after a close,
+429 status, redaction, bounds and thrown-observer isolation. The desktop report
+also records a failure-time recovery-receipt count, while its existing UI/content
+and persistence assertions remain unchanged. No retry or larger budget is added.
+
 Maintain this table when code moves or changes an observed boundary. The PR's
 **Diagnostic upkeep** section explains added, moved, retired or unchanged
 observations and the associated regression evidence. Preserve the actual

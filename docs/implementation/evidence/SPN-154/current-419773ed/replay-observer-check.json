@@ -1,0 +1,12 @@
+{
+  "label": "replay-observer-check",
+  "command": "node",
+  "args": [
+    "/private/tmp/spn154-completion/replay-observer-check.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "aborted": null,
+  "elapsedMs": 424,
+  "peakKiB": 128464
+}

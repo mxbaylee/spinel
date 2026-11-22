@@ -1,0 +1,12 @@
+{
+  "label": "clipboard-permission-check",
+  "command": "node",
+  "args": [
+    "/private/tmp/spn154-completion/clipboard-permission-check.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "aborted": null,
+  "elapsedMs": 1246,
+  "peakKiB": 378512
+}

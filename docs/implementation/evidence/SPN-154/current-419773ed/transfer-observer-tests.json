@@ -1,0 +1,13 @@
+{
+  "label": "transfer-observer-tests",
+  "command": "node",
+  "args": [
+    "--test",
+    "scripts/ci/desktop-transfer-observation.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "aborted": null,
+  "elapsedMs": 250,
+  "peakKiB": 0
+}

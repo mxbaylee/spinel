@@ -1,0 +1,830 @@
+{
+  "productionAndComponentSource": "419773edb69b57bc96ba7ddbdb6d99eccc44e59f",
+  "hostedMerge": "c3b1b66980f93770539f3edfaffcd7a2fe76b2f1",
+  "observerRepair": {
+    "scope": "replay/permission/transfer checks and repair lint/types receipts belong to the later test-only repair, not unchanged 419773ed; no native application pass is inferred",
+    "replayObserverFunctionSha256": "789935c935e02cd670f73fda8a56c65acbe5d739374dc8f9e9440bb70454f2ef"
+  },
+  "files": [
+    {
+      "file": "review-a-419773ed.log.gz",
+      "source": "review-a-419773ed.log",
+      "sha256": "025f1e6acfc68824dcb3ea77d3de297471e9288e7150bb62948ac487afbe0659"
+    },
+    {
+      "file": "review-a-419773ed.json",
+      "source": "review-a-419773ed.json",
+      "sha256": "2209a50953da3c7e10c381335cf6ef878de27d483f6666037a347594ceacb11a"
+    },
+    {
+      "file": "review-b.log.gz",
+      "source": "review-b.log",
+      "sha256": "51d2abb97835a015b2095e7e22f96e62fe9f56bd38fe7515828c9e3b8cafe2f5"
+    },
+    {
+      "file": "review-b.json",
+      "source": "review-b.json",
+      "sha256": "c65abcea88e850cd04b1285ed03b7ce6df43f2cd6830fb08377acb85d098d386"
+    },
+    {
+      "file": "feedback-build-corrected.log.gz",
+      "source": "feedback-build-corrected.log",
+      "sha256": "6fc222190152a62690233047d3f91259c39f1aa47e31d4e3b966152a6ee2eb6b"
+    },
+    {
+      "file": "feedback-build-corrected.json",
+      "source": "feedback-build-corrected.json",
+      "sha256": "010a9813576917a399971759a413394c5411c4be9e94b326d9516045587a2b08"
+    },
+    {
+      "file": "feedback-capture.log.gz",
+      "source": "feedback-capture.log",
+      "sha256": "46a1f9e8f04bb536ab8cb81b9137381eef6e4e5ce4429793c136c1f9cd6b1309"
+    },
+    {
+      "file": "feedback-capture.json",
+      "source": "feedback-capture.json",
+      "sha256": "de28dbd5cf72426137d97d4dd015bf19d43d6b8f5e435ab7db23591588ae269c"
+    },
+    {
+      "file": "current-production-build.log.gz",
+      "source": "current-production-build.log",
+      "sha256": "d6795c63dd865c34b41607fee34b7af52019574c7bf1e5b8e1036954210b5a4c"
+    },
+    {
+      "file": "current-production-build.json",
+      "source": "current-production-build.json",
+      "sha256": "341b8f211306be9cecd53b83051441d87590421723001f03698ac717f92f1e25"
+    },
+    {
+      "file": "phone-window.log.gz",
+      "source": "phone-window.log",
+      "sha256": "e32c8f13574eebc240239fa4930ee45f38bc56aee7193b281e3249e9d8a11a92"
+    },
+    {
+      "file": "phone-window.json",
+      "source": "phone-window.json",
+      "sha256": "e1b8589a14cb45117d18c5a2ba4839db7742205a16c7b5d23990b9deef779a5b"
+    },
+    {
+      "file": "current-native-menu.log.gz",
+      "source": "current-native-menu.log",
+      "sha256": "eba389d7cdf9e1c0fdaecc5bdc9bcd8d30abc7dd73ef77b8124274d1619ea296"
+    },
+    {
+      "file": "current-native-menu.json",
+      "source": "current-native-menu.json",
+      "sha256": "2ca3a788d9347f266c3bfcca6cc9f002156622953919578460671d4bff4a7526"
+    },
+    {
+      "file": "replay-format.log.gz",
+      "source": "replay-format.log",
+      "sha256": "bff538892ba50eda6171a765814d64f164e758e0033aa36bdff46f03b9f0e64a"
+    },
+    {
+      "file": "replay-format.json",
+      "source": "replay-format.json",
+      "sha256": "807e2cc351027f7e11dc2bf223b97905cbdef593084dd20e2092033ac346449c"
+    },
+    {
+      "file": "replay-observer-check.log.gz",
+      "source": "replay-observer-check.log",
+      "sha256": "3a6855feb45b83ba4408862abda49bf3d1cb48414b548fe315257ff6e5474538"
+    },
+    {
+      "file": "replay-observer-check.json",
+      "source": "replay-observer-check.json",
+      "sha256": "0f1bacb5075591ce42837cfc31f32219aa212ee71bb0ea57556c04d95c0eba89"
+    },
+    {
+      "file": "clipboard-permission-check.log.gz",
+      "source": "clipboard-permission-check.log",
+      "sha256": "9e7d5b662f90c2b53ebfa06241c469cb4f5ba901894a1d41d6694fea074cf9fa"
+    },
+    {
+      "file": "clipboard-permission-check.json",
+      "source": "clipboard-permission-check.json",
+      "sha256": "310ea6de0b67b24d7c24fcb985b4d718cec7882ff283a31bbbaec8f692bd1e9a"
+    },
+    {
+      "file": "transfer-observer-tests.log.gz",
+      "source": "transfer-observer-tests.log",
+      "sha256": "2f2c1f51c5b4cb00c70415fe0d2bfbe06cdb605d6e083a25eae4286b2c10db58"
+    },
+    {
+      "file": "transfer-observer-tests.json",
+      "source": "transfer-observer-tests.json",
+      "sha256": "e8f0e0c96e2763938ee3c900f3b9f43c799353413a0eccd1766edd61510fd974"
+    },
+    {
+      "file": "repair-lint.log.gz",
+      "source": "repair-lint.log",
+      "sha256": "896432f5fdc6ab3f43a6dc3a383e79a6cba8521faac85dcd8616b5fc24ff2cc2"
+    },
+    {
+      "file": "repair-lint.json",
+      "source": "repair-lint.json",
+      "sha256": "9d914cba50cb55be9259853dcfd59f8d269339e3a51834ecff40a464288de1ed"
+    },
+    {
+      "file": "repair-types.log.gz",
+      "source": "repair-types.log",
+      "sha256": "d540b57954f3489d013ca316843988102b9a797224e3b13ad557e2076d11064c"
+    },
+    {
+      "file": "repair-types.json",
+      "source": "repair-types.json",
+      "sha256": "e2ce3e0cccafc39b6f0bd938d47f88390678172ff6b8b71a70874cca6a553563"
+    },
+    {
+      "file": "final-repair-lint.log.gz",
+      "source": "final-repair-lint.log",
+      "sha256": "6e8fca638bbe52439be3e851b460994594f47667d0e4fd55189df55d1a127960"
+    },
+    {
+      "file": "final-repair-lint.json",
+      "source": "final-repair-lint.json",
+      "sha256": "03923449acc074a61c9c3ec6e02fbe5fbc0da1a05daba134ced29fbb64a978d8"
+    },
+    {
+      "file": "final-targeted-oxlint.log.gz",
+      "source": "final-targeted-oxlint.log",
+      "sha256": "b4d49337f244264ceeb85493495b2e60688f945ef65d417fb52c54d6b0709173"
+    },
+    {
+      "file": "final-targeted-oxlint.json",
+      "source": "final-targeted-oxlint.json",
+      "sha256": "876e764b982de1984fbbcbd1d8ed4a8b0792260fa14a940251ffea87b7775f5b"
+    },
+    {
+      "file": "final-targeted-prettier.log.gz",
+      "source": "final-targeted-prettier.log",
+      "sha256": "63f0c7fa720e7ea9e00fd35bb7cb6fb84e0f53419024b9fd3095ba7fdeb22816"
+    },
+    {
+      "file": "final-targeted-prettier.json",
+      "source": "final-targeted-prettier.json",
+      "sha256": "1e45b6a4b62d9c5b45debd3f171b5c78a38dc0bc5b95e20ee94dc7ac5beea610"
+    },
+    {
+      "file": "review-a-419.md",
+      "source": "review-a-419.md",
+      "sha256": "89b5417e5f1934d452d82bdbff7b4e076bd53f04a46f66cc718c3273bf4ed7cd"
+    },
+    {
+      "file": "review-b-419.md",
+      "source": "review-b-419.md",
+      "sha256": "78234443cca055a2ee6b2fc69e1f2e8ab8fea778dfd7759885a7afbbf344eed3"
+    },
+    {
+      "file": "visual-review-a-419.md",
+      "source": "visual-review-a-419.md",
+      "sha256": "2ae972199cde840aed3b0ab4a994ebaaa88f533b935ceaff7e4d705692e8188b"
+    },
+    {
+      "file": "app-visual-review-a-419.md",
+      "source": "app-visual-review-a-419.md",
+      "sha256": "ca0a928ccd7171385df04cb0d2be4d70d552d68f9dd9f48bd44b4c56633d643e"
+    },
+    {
+      "file": "replay-observer-check.ts.gz",
+      "source": "replay-observer-check.ts",
+      "sha256": "b9a7320946c9d0956b07c56ad3d9d5d50eef4d81231f986c35004eca1580e45c"
+    },
+    {
+      "file": "clipboard-permission-check.ts.gz",
+      "source": "clipboard-permission-check.ts",
+      "sha256": "6935dddeba09ecf88f4e329bb310354919de363cbfcd567605b4882fda284a05"
+    },
+    {
+      "file": "first-pr-gate-419.log.gz",
+      "source": "first-pr-gate-419.log",
+      "sha256": "90d5592c7909872014691809eee5c461a922c03a62d45a7f9cf89e560b3e1de0"
+    },
+    {
+      "file": "first-dev2-419.log.gz",
+      "source": "first-dev2-419.log",
+      "sha256": "acf2113f6ca172b54c594cc9301dd61045a7c380ef3cd5f3cb0ce7c7a9572fe7"
+    },
+    {
+      "file": "first-prod2-419.log.gz",
+      "source": "first-prod2-419.log",
+      "sha256": "e583e3c0359a6601b224df3863047318ca7c1931ec739357888b908f23f254a6"
+    },
+    {
+      "file": "menu-first-failure-evidence.json.gz",
+      "source": "menu-first-failure-evidence.json",
+      "sha256": "62b0a5196c4e3a46c0187e2245e7ec3c17344d031643df53e2aa8512d313c969"
+    },
+    {
+      "file": "text-first-failure-evidence.json.gz",
+      "source": "text-first-failure-evidence.json",
+      "sha256": "7645a9f6677939af7f5bf8a1c9dcb9d34723a17370d6feaaf1dce7fc353a40b5"
+    },
+    {
+      "file": "phone-build-identity.json",
+      "source": "phone/build-identity.json",
+      "sha256": "7fa5b507d7fd3a1aee99d3f39728222ceafbe6d2446a11c807a1392da563660c"
+    },
+    {
+      "file": "feedback-manifest.json.gz",
+      "source": "feedback-captures/manifest.json",
+      "sha256": "2908eb33100075f3cc5b2c7bbd0cb51390400213557a32d9b98295bafa3a7f7d"
+    },
+    {
+      "file": "feedback/editor-dochelp--access-denied-dark.png",
+      "source": "feedback-captures/editor-dochelp--access-denied-dark.png",
+      "sha256": "0bd23327f22d20cb2dbaf464621ed228994f05ba681180ebe9be19a3f98c2d92"
+    },
+    {
+      "file": "feedback/editor-dochelp--access-denied-light.png",
+      "source": "feedback-captures/editor-dochelp--access-denied-light.png",
+      "sha256": "53add63981154a0db3458b569f7c1c8739dec64743506f8f35be9a0b6923da90"
+    },
+    {
+      "file": "feedback/editor-dochelp--access-denied-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--access-denied-phone-dark.png",
+      "sha256": "ee88c078498d620ef5d58d93f9b3d4e0abe9ac24c4a3e1319fe63a2562598ee6"
+    },
+    {
+      "file": "feedback/editor-dochelp--access-denied-phone.png",
+      "source": "feedback-captures/editor-dochelp--access-denied-phone.png",
+      "sha256": "f533d0d4cbc9d5ffeac7ab7cd03c41e6b4a4ceb13cdc2640e437199b4c73c24a"
+    },
+    {
+      "file": "feedback/editor-dochelp--access-denied-tablet.png",
+      "source": "feedback-captures/editor-dochelp--access-denied-tablet.png",
+      "sha256": "7c5c585a704567657847af098ad0fd4eda8374d7f1aa91f833cdc5869ccfbd26"
+    },
+    {
+      "file": "feedback/editor-dochelp--clipboard-failure-dark.png",
+      "source": "feedback-captures/editor-dochelp--clipboard-failure-dark.png",
+      "sha256": "6f28f3330088609d079d4a858ade3a59ae2b0104009f83ccee4f42a1387800d2"
+    },
+    {
+      "file": "feedback/editor-dochelp--clipboard-failure-light.png",
+      "source": "feedback-captures/editor-dochelp--clipboard-failure-light.png",
+      "sha256": "ee57265768f514c5c32ce06ef2fc0264e7db10804e2c459da32d05874a3cfefa"
+    },
+    {
+      "file": "feedback/editor-dochelp--clipboard-failure-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--clipboard-failure-phone-dark.png",
+      "sha256": "0bf35461181d4c70326f111bc83924a1773ae90146a0ed8673a7aa8afe2d8831"
+    },
+    {
+      "file": "feedback/editor-dochelp--clipboard-failure-phone.png",
+      "source": "feedback-captures/editor-dochelp--clipboard-failure-phone.png",
+      "sha256": "3a9560ff1bc3d9b8d4ccb90b168b3512790cd3425a99786ca12772019c4308cb"
+    },
+    {
+      "file": "feedback/editor-dochelp--clipboard-failure-tablet.png",
+      "source": "feedback-captures/editor-dochelp--clipboard-failure-tablet.png",
+      "sha256": "a6900cbc051dd87cfc4410e0765b1132a2bbc7cd10452737ecb1945fd33ab931"
+    },
+    {
+      "file": "feedback/editor-dochelp--editing-dark.png",
+      "source": "feedback-captures/editor-dochelp--editing-dark.png",
+      "sha256": "49a3cc35f732ff46a5d53cbf6bbd4d32423bf78f829388bc105da6b63e6f56f2"
+    },
+    {
+      "file": "feedback/editor-dochelp--editing-light.png",
+      "source": "feedback-captures/editor-dochelp--editing-light.png",
+      "sha256": "d9e56ebd6dbf01d3beb4e8a34fa3a01e45b5035825cce96dc7774c250ee670d7"
+    },
+    {
+      "file": "feedback/editor-dochelp--editing-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--editing-phone-dark.png",
+      "sha256": "a5e6ea0ac55204c1c9f51f60c3675a304058e746f56eef8cb824f4d0134e15ea"
+    },
+    {
+      "file": "feedback/editor-dochelp--editing-phone.png",
+      "source": "feedback-captures/editor-dochelp--editing-phone.png",
+      "sha256": "5c71374475d2ecca884f6b31771990d83e8f42e9b02afaa81bcdde9af0e81d49"
+    },
+    {
+      "file": "feedback/editor-dochelp--editing-tablet.png",
+      "source": "feedback-captures/editor-dochelp--editing-tablet.png",
+      "sha256": "6732312ae55d06cfaca5ea8b67ce8a4fb20747bf89dc2c3483844b086726f457"
+    },
+    {
+      "file": "feedback/editor-dochelp--file-size-dark.png",
+      "source": "feedback-captures/editor-dochelp--file-size-dark.png",
+      "sha256": "b3ae813c148bf8eb17abb9450eca4cd09f94fbec344fc9b054752ca970ccdb3d"
+    },
+    {
+      "file": "feedback/editor-dochelp--file-size-light.png",
+      "source": "feedback-captures/editor-dochelp--file-size-light.png",
+      "sha256": "928117eb74d6dcb7c2c260797508a5aa4495a5525e495c611fdba9ea6dad22ed"
+    },
+    {
+      "file": "feedback/editor-dochelp--file-size-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--file-size-phone-dark.png",
+      "sha256": "dc427a3d69fe4657afe69f20509eccc411d0814421ee1555a295dc0039dfa1e8"
+    },
+    {
+      "file": "feedback/editor-dochelp--file-size-phone.png",
+      "source": "feedback-captures/editor-dochelp--file-size-phone.png",
+      "sha256": "23bd72f6477e642421ad65cf2c8f713baff97d9f0dcd062d98a62f249bf298e7"
+    },
+    {
+      "file": "feedback/editor-dochelp--file-size-tablet.png",
+      "source": "feedback-captures/editor-dochelp--file-size-tablet.png",
+      "sha256": "cb69b2df40531a827340d8c1459677d223a0a427fb58be6f2265713fd1bd14e2"
+    },
+    {
+      "file": "feedback/editor-dochelp--formula-failure-dark.png",
+      "source": "feedback-captures/editor-dochelp--formula-failure-dark.png",
+      "sha256": "cfb990f443ba83286c018e8ff8f4d052a1a012a199767dba3cdab444b6ce86df"
+    },
+    {
+      "file": "feedback/editor-dochelp--formula-failure-light.png",
+      "source": "feedback-captures/editor-dochelp--formula-failure-light.png",
+      "sha256": "158bd22a62239f655491468fa232a0ad0a87cc80c09e7060dfce10b06cdc35ea"
+    },
+    {
+      "file": "feedback/editor-dochelp--formula-failure-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--formula-failure-phone-dark.png",
+      "sha256": "6bd9a3f73c491a7c6cff9458c47d2b8dbe9cd6f26c70f58f4b84c6425a73e956"
+    },
+    {
+      "file": "feedback/editor-dochelp--formula-failure-phone.png",
+      "source": "feedback-captures/editor-dochelp--formula-failure-phone.png",
+      "sha256": "a102ff3571a6d123bff183a47d7b31ff071b8999aee0e782e3b2275038d60b7d"
+    },
+    {
+      "file": "feedback/editor-dochelp--formula-failure-tablet.png",
+      "source": "feedback-captures/editor-dochelp--formula-failure-tablet.png",
+      "sha256": "3bad66d91ad909e769d789444867317d7eb4dcb51fea0d1b0d5c9e70d1022edf"
+    },
+    {
+      "file": "feedback/editor-dochelp--image-format-dark.png",
+      "source": "feedback-captures/editor-dochelp--image-format-dark.png",
+      "sha256": "ec71d041d3fd4ac4aaab42c55694d364950271e3e5a01d05ee07af2a08cd3b1c"
+    },
+    {
+      "file": "feedback/editor-dochelp--image-format-light.png",
+      "source": "feedback-captures/editor-dochelp--image-format-light.png",
+      "sha256": "44782b392b96ea95bc59c292b047151e77ba8b63ad5bb532771eb80cba6180a1"
+    },
+    {
+      "file": "feedback/editor-dochelp--image-format-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--image-format-phone-dark.png",
+      "sha256": "788d4e9ffced9434328ce7a077252c819597035f5dc17af470c73d616362f0ff"
+    },
+    {
+      "file": "feedback/editor-dochelp--image-format-phone.png",
+      "source": "feedback-captures/editor-dochelp--image-format-phone.png",
+      "sha256": "21c9bb10f16f2efb3e56ec14ce206a6a2fe2ff05023e15c2a56d34d1f8601396"
+    },
+    {
+      "file": "feedback/editor-dochelp--image-format-tablet.png",
+      "source": "feedback-captures/editor-dochelp--image-format-tablet.png",
+      "sha256": "e7f17f424fedb0748f8b99a02a5dfafa55f398bc93acdbf9ba4444f9c8edb80b"
+    },
+    {
+      "file": "feedback/editor-dochelp--image-limit-dark.png",
+      "source": "feedback-captures/editor-dochelp--image-limit-dark.png",
+      "sha256": "2a1af5420136fc03a08ce8784f69c468a5220a6b34cc8810c54a5875061a9aad"
+    },
+    {
+      "file": "feedback/editor-dochelp--image-limit-light.png",
+      "source": "feedback-captures/editor-dochelp--image-limit-light.png",
+      "sha256": "ca66d7fa4a78e7c8ef893b030d63600ccc0cbf72938b95310d8ff7553a0a6e1e"
+    },
+    {
+      "file": "feedback/editor-dochelp--image-limit-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--image-limit-phone-dark.png",
+      "sha256": "b1bce64ccf911495d2022747c05f3e7a992efb3ae89c44d4b6ba5674d89283fe"
+    },
+    {
+      "file": "feedback/editor-dochelp--image-limit-phone.png",
+      "source": "feedback-captures/editor-dochelp--image-limit-phone.png",
+      "sha256": "1b54bcedc1ce56d862b872534a254eb260b2f0870eb36cc7bf4fe2739229cb10"
+    },
+    {
+      "file": "feedback/editor-dochelp--image-limit-tablet.png",
+      "source": "feedback-captures/editor-dochelp--image-limit-tablet.png",
+      "sha256": "67150f6ff7cae1a1f121f5131dc22dc98fd5cbe98b3c29445a56b7afe6295999"
+    },
+    {
+      "file": "feedback/editor-dochelp--insertion-failure-dark.png",
+      "source": "feedback-captures/editor-dochelp--insertion-failure-dark.png",
+      "sha256": "e3f7076742621737d6738a9e34d73fbc9c0b9fc8f1f0566e6e9ac98d0eb603b3"
+    },
+    {
+      "file": "feedback/editor-dochelp--insertion-failure-light.png",
+      "source": "feedback-captures/editor-dochelp--insertion-failure-light.png",
+      "sha256": "33ba731d755ef8d205fc197d03b4141003f7875125237f4e312ebeae861a6b20"
+    },
+    {
+      "file": "feedback/editor-dochelp--insertion-failure-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--insertion-failure-phone-dark.png",
+      "sha256": "ed242aec6e628a217451555bddb629e2ee2008e14a080678027ede972b3c26e4"
+    },
+    {
+      "file": "feedback/editor-dochelp--insertion-failure-phone.png",
+      "source": "feedback-captures/editor-dochelp--insertion-failure-phone.png",
+      "sha256": "a5d6a852d30e310e5d57a2ae2ce4f79b4529b72cded2e6739450d634074af3e8"
+    },
+    {
+      "file": "feedback/editor-dochelp--insertion-failure-tablet.png",
+      "source": "feedback-captures/editor-dochelp--insertion-failure-tablet.png",
+      "sha256": "c9a1037ac4025f8de82b7baf02ddbfc8a361ad7891e11e2c67fc5085dfb297cc"
+    },
+    {
+      "file": "feedback/editor-dochelp--invalid-image-dark.png",
+      "source": "feedback-captures/editor-dochelp--invalid-image-dark.png",
+      "sha256": "96308e9baa86b0b4672e68c97e76d60fbeb2708f4ca9f247665b6a09e4d60447"
+    },
+    {
+      "file": "feedback/editor-dochelp--invalid-image-light.png",
+      "source": "feedback-captures/editor-dochelp--invalid-image-light.png",
+      "sha256": "f510b7665e0101333c0dec06bdffc739d8eeb54b3d8ea512a5a5594e86e79e45"
+    },
+    {
+      "file": "feedback/editor-dochelp--invalid-image-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--invalid-image-phone-dark.png",
+      "sha256": "6a48a06aa66c9824b33ab8e9d47bae1567029d9b5b146fbfc1dec859dd9eed5b"
+    },
+    {
+      "file": "feedback/editor-dochelp--invalid-image-phone.png",
+      "source": "feedback-captures/editor-dochelp--invalid-image-phone.png",
+      "sha256": "9348569d53705f54cd3ef61675426c37c473a22b0296251dfddbc645eeaed657"
+    },
+    {
+      "file": "feedback/editor-dochelp--invalid-image-tablet.png",
+      "source": "feedback-captures/editor-dochelp--invalid-image-tablet.png",
+      "sha256": "e73c8fff5dcd7083702995dff1e61f654b2a0ef25cb1e0763ee36a0373b711c1"
+    },
+    {
+      "file": "feedback/editor-dochelp--page-layout-changed-dark.png",
+      "source": "feedback-captures/editor-dochelp--page-layout-changed-dark.png",
+      "sha256": "7157ba846ee637e359bfc527d4a718113a71a2dadc4e53f57de5660c6afdfe47"
+    },
+    {
+      "file": "feedback/editor-dochelp--page-layout-changed-light.png",
+      "source": "feedback-captures/editor-dochelp--page-layout-changed-light.png",
+      "sha256": "7215e9d8ceb32aa93f5992701ea6509db4b7109b5f7a071dc5073f75eabc5578"
+    },
+    {
+      "file": "feedback/editor-dochelp--page-layout-changed-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--page-layout-changed-phone-dark.png",
+      "sha256": "f5b88bce54e94a3d36c9402a2f370733a79b78cbcb6fb998310d6844a3e7069c"
+    },
+    {
+      "file": "feedback/editor-dochelp--page-layout-changed-phone.png",
+      "source": "feedback-captures/editor-dochelp--page-layout-changed-phone.png",
+      "sha256": "703cf9ac8c84cd2f139da696a3a590ea8cb70cd1622d7474c150d3e9a650c2a3"
+    },
+    {
+      "file": "feedback/editor-dochelp--page-layout-changed-tablet.png",
+      "source": "feedback-captures/editor-dochelp--page-layout-changed-tablet.png",
+      "sha256": "2e63af1755732865ca6e808f4fa4c6774cfc35f531460aec05abf7960d16f14d"
+    },
+    {
+      "file": "feedback/editor-dochelp--phone-editing-dark.png",
+      "source": "feedback-captures/editor-dochelp--phone-editing-dark.png",
+      "sha256": "915a45370fafae6078be83e3a8601319f0e67680129d4926ad1ac69d6f5132a2"
+    },
+    {
+      "file": "feedback/editor-dochelp--phone-editing-light.png",
+      "source": "feedback-captures/editor-dochelp--phone-editing-light.png",
+      "sha256": "368d903e2f3f8240bcfa2a5a6cd63eac8517267ebfa1930c49b46293c8ab5266"
+    },
+    {
+      "file": "feedback/editor-dochelp--phone-editing-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--phone-editing-phone-dark.png",
+      "sha256": "caf520c5cca5cba6283be34ffc9bda57f83e752fe5d039128e55a25b2227c440"
+    },
+    {
+      "file": "feedback/editor-dochelp--phone-editing-phone.png",
+      "source": "feedback-captures/editor-dochelp--phone-editing-phone.png",
+      "sha256": "86754c195034b5ce14971eed0b62946927d396a37fccb2cf4790538722abfc11"
+    },
+    {
+      "file": "feedback/editor-dochelp--phone-editing-tablet.png",
+      "source": "feedback-captures/editor-dochelp--phone-editing-tablet.png",
+      "sha256": "1b828aed8009ffee71738017050376a395151060daf3222004578d0e133b971e"
+    },
+    {
+      "file": "feedback/editor-dochelp--phone-page-layout-dark.png",
+      "source": "feedback-captures/editor-dochelp--phone-page-layout-dark.png",
+      "sha256": "0956c5717d2ca21c1ad8aa43d93b74ffaf75f2ceda82322c895991c8d97fbd0f"
+    },
+    {
+      "file": "feedback/editor-dochelp--phone-page-layout-light.png",
+      "source": "feedback-captures/editor-dochelp--phone-page-layout-light.png",
+      "sha256": "85743bc4b3aaa0c5dbfed8b080b236a6e122ac5ad7090471eb44d1d2a5a1d507"
+    },
+    {
+      "file": "feedback/editor-dochelp--phone-page-layout-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--phone-page-layout-phone-dark.png",
+      "sha256": "e131f33ae26f85610ad11ffe5b48bb2f115c339909a84b1c6870e6ad709fc482"
+    },
+    {
+      "file": "feedback/editor-dochelp--phone-page-layout-phone.png",
+      "source": "feedback-captures/editor-dochelp--phone-page-layout-phone.png",
+      "sha256": "c1ab1acf8d7f4adc06378b70abcd384239c2e395ab63332fedd337594ee68150"
+    },
+    {
+      "file": "feedback/editor-dochelp--phone-page-layout-tablet.png",
+      "source": "feedback-captures/editor-dochelp--phone-page-layout-tablet.png",
+      "sha256": "dfb789716f4aba3a5e649438a67319b288db83efbe8b197428fc71a8ffb4aff8"
+    },
+    {
+      "file": "feedback/editor-dochelp--prepared-offline-dark.png",
+      "source": "feedback-captures/editor-dochelp--prepared-offline-dark.png",
+      "sha256": "ea19b1053df0e1a7d791611a1c35ef91905ef5fcd73bbcf1cb818b8a9d91444b"
+    },
+    {
+      "file": "feedback/editor-dochelp--prepared-offline-light.png",
+      "source": "feedback-captures/editor-dochelp--prepared-offline-light.png",
+      "sha256": "f1cbef1f51533b14e0bd6c887775467b33e75b2f84fdf05b3c357f0af8432f8c"
+    },
+    {
+      "file": "feedback/editor-dochelp--prepared-offline-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--prepared-offline-phone-dark.png",
+      "sha256": "659443ae90c4a4f43a1545eb2d87c6e0fae6a321009be16b31a82ffe492b24e8"
+    },
+    {
+      "file": "feedback/editor-dochelp--prepared-offline-phone.png",
+      "source": "feedback-captures/editor-dochelp--prepared-offline-phone.png",
+      "sha256": "65e69de7bf0b9e8257d15682a659e3d0e017b3a1e4716d52896e9f76efb267b9"
+    },
+    {
+      "file": "feedback/editor-dochelp--prepared-offline-tablet.png",
+      "source": "feedback-captures/editor-dochelp--prepared-offline-tablet.png",
+      "sha256": "3e9722d87311c85c73097d9028d50cbda53de19ab910a2ab33824090d72f021c"
+    },
+    {
+      "file": "feedback/editor-dochelp--processed-size-dark.png",
+      "source": "feedback-captures/editor-dochelp--processed-size-dark.png",
+      "sha256": "867b8cfd01898b21f463241538cba7ad257cce18503a77f5a8a4f97fc12c81af"
+    },
+    {
+      "file": "feedback/editor-dochelp--processed-size-light.png",
+      "source": "feedback-captures/editor-dochelp--processed-size-light.png",
+      "sha256": "ffcdf3c0489064c046e0c7c00e76c0fe1a9c6ff1f468c83b235e2e6d1dde23b6"
+    },
+    {
+      "file": "feedback/editor-dochelp--processed-size-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--processed-size-phone-dark.png",
+      "sha256": "942d29e79923e897128696431bb47d51e5b48963535ea69a808faf996d5ad0d4"
+    },
+    {
+      "file": "feedback/editor-dochelp--processed-size-phone.png",
+      "source": "feedback-captures/editor-dochelp--processed-size-phone.png",
+      "sha256": "fbf229e2161765646ae68ff540b86ad1eef0e4dac0aed7cefb3022fafc957f65"
+    },
+    {
+      "file": "feedback/editor-dochelp--processed-size-tablet.png",
+      "source": "feedback-captures/editor-dochelp--processed-size-tablet.png",
+      "sha256": "e5d10193ea8de6a6ad98825544b2750695057bbb7f49cc8b08d7518f386745dd"
+    },
+    {
+      "file": "feedback/editor-dochelp--sign-in-ended-dark.png",
+      "source": "feedback-captures/editor-dochelp--sign-in-ended-dark.png",
+      "sha256": "aca762f3e29973c6f49fbb68d8829c4127f9198b72723396708ea902f8cdc305"
+    },
+    {
+      "file": "feedback/editor-dochelp--sign-in-ended-light.png",
+      "source": "feedback-captures/editor-dochelp--sign-in-ended-light.png",
+      "sha256": "25130d9c5ef21dcecdf03baa0802d5d57ec68971c47ded3d976ef2e1b97f6f06"
+    },
+    {
+      "file": "feedback/editor-dochelp--sign-in-ended-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--sign-in-ended-phone-dark.png",
+      "sha256": "759854a19e3b2eab1ca835eeba41ea2f7c796ae575699ff58a5de9102f62e2af"
+    },
+    {
+      "file": "feedback/editor-dochelp--sign-in-ended-phone.png",
+      "source": "feedback-captures/editor-dochelp--sign-in-ended-phone.png",
+      "sha256": "6535ab13692f72bd0d86545589f277ece3297e43443e04ca146848594de2c366"
+    },
+    {
+      "file": "feedback/editor-dochelp--sign-in-ended-tablet.png",
+      "source": "feedback-captures/editor-dochelp--sign-in-ended-tablet.png",
+      "sha256": "338573217f35ee404c5d14e45fb8a2cc574604e3fb228af23b64e19681612e4c"
+    },
+    {
+      "file": "feedback/editor-dochelp--unsupported-image-dark.png",
+      "source": "feedback-captures/editor-dochelp--unsupported-image-dark.png",
+      "sha256": "8a6c99233e6bae93862fda4138a91dfeba41a887cb783176b0c3c2abd37dd95d"
+    },
+    {
+      "file": "feedback/editor-dochelp--unsupported-image-light.png",
+      "source": "feedback-captures/editor-dochelp--unsupported-image-light.png",
+      "sha256": "92ef689b20ace658ac4e282c4e189e9fc19b245e3d237b27c2d624b6b951230b"
+    },
+    {
+      "file": "feedback/editor-dochelp--unsupported-image-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--unsupported-image-phone-dark.png",
+      "sha256": "3c4fcf8290414589f8725311ea3d16c4d066210419a4d7425259203a512b5298"
+    },
+    {
+      "file": "feedback/editor-dochelp--unsupported-image-phone.png",
+      "source": "feedback-captures/editor-dochelp--unsupported-image-phone.png",
+      "sha256": "0f111fa79ce45d2dcaef37742cdfe4d6ee93a8e12b969d32b20853eb44cdaac0"
+    },
+    {
+      "file": "feedback/editor-dochelp--unsupported-image-tablet.png",
+      "source": "feedback-captures/editor-dochelp--unsupported-image-tablet.png",
+      "sha256": "01caf35f1649c397d4a54168217a83f22120cbe97434b6e6537d57f5c9debab0"
+    },
+    {
+      "file": "feedback/editor-dochelp--upload-busy-dark.png",
+      "source": "feedback-captures/editor-dochelp--upload-busy-dark.png",
+      "sha256": "94d24b80952f6d6ad54a3e3d12fc8a17028d6dbd19a8608e55517dea91c4ea1a"
+    },
+    {
+      "file": "feedback/editor-dochelp--upload-busy-light.png",
+      "source": "feedback-captures/editor-dochelp--upload-busy-light.png",
+      "sha256": "2c97bdbe2598906041899e85e3a4d95ddc2dac35ec35dd80c61c6a687798868f"
+    },
+    {
+      "file": "feedback/editor-dochelp--upload-busy-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--upload-busy-phone-dark.png",
+      "sha256": "bc839e9c596758eb916ca001432aaea0c1464ff438e23f4e79797a0500bb6927"
+    },
+    {
+      "file": "feedback/editor-dochelp--upload-busy-phone.png",
+      "source": "feedback-captures/editor-dochelp--upload-busy-phone.png",
+      "sha256": "68ab942c9330b36787e4d2251bf6e6dc5d9138cff649ae6dabd67640626c1720"
+    },
+    {
+      "file": "feedback/editor-dochelp--upload-busy-tablet.png",
+      "source": "feedback-captures/editor-dochelp--upload-busy-tablet.png",
+      "sha256": "257ca989ce21528855436b7c992ec9685ca18af24fd30ae955bb339ef1f19f4f"
+    },
+    {
+      "file": "feedback/editor-dochelp--upload-failed-dark.png",
+      "source": "feedback-captures/editor-dochelp--upload-failed-dark.png",
+      "sha256": "032f7a3815ff320a30cad81c58cb83f50a6867c3dbc1da74528d8390f85da3ae"
+    },
+    {
+      "file": "feedback/editor-dochelp--upload-failed-light.png",
+      "source": "feedback-captures/editor-dochelp--upload-failed-light.png",
+      "sha256": "cbba32620b4ceca63c5431469a450e1904eba5b44b6e338d6cb454d584b7bca2"
+    },
+    {
+      "file": "feedback/editor-dochelp--upload-failed-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--upload-failed-phone-dark.png",
+      "sha256": "fb8489dfe421c7785e371edbf10a3288493f0db9c60864fca9776c5667651602"
+    },
+    {
+      "file": "feedback/editor-dochelp--upload-failed-phone.png",
+      "source": "feedback-captures/editor-dochelp--upload-failed-phone.png",
+      "sha256": "c1a9d57eef207ce38eb95dda95bacd6b2e82ce6207b8718b06872775814760e1"
+    },
+    {
+      "file": "feedback/editor-dochelp--upload-failed-tablet.png",
+      "source": "feedback-captures/editor-dochelp--upload-failed-tablet.png",
+      "sha256": "1d2307b35e2d36a6f3c696fb345e887980786aa70d2c4b9d0b9d30567851bc8b"
+    },
+    {
+      "file": "feedback/editor-dochelp--view-only-dark.png",
+      "source": "feedback-captures/editor-dochelp--view-only-dark.png",
+      "sha256": "8b3dafe46774bdae337dc4cb34b91b55cb4a2efcc2d8f8b93a27dc9add1a1286"
+    },
+    {
+      "file": "feedback/editor-dochelp--view-only-light.png",
+      "source": "feedback-captures/editor-dochelp--view-only-light.png",
+      "sha256": "fad64bb01061d9224d7438012bec0cc248bf95540c8517d955884a0f36909c1d"
+    },
+    {
+      "file": "feedback/editor-dochelp--view-only-phone-dark.png",
+      "source": "feedback-captures/editor-dochelp--view-only-phone-dark.png",
+      "sha256": "f4328b1822ad3c6f0c98e9116e68debf20afa74b55d4612b3b8efb280f0b88cb"
+    },
+    {
+      "file": "feedback/editor-dochelp--view-only-phone.png",
+      "source": "feedback-captures/editor-dochelp--view-only-phone.png",
+      "sha256": "f3f95c14edc5a749b5b51e8dc0053b66d2cba5d156c897770a994f397971c577"
+    },
+    {
+      "file": "feedback/editor-dochelp--view-only-tablet.png",
+      "source": "feedback-captures/editor-dochelp--view-only-tablet.png",
+      "sha256": "b748c6155735e29a96087e8aabfef1bc969a74fd73742f73ae50883f69809328"
+    },
+    {
+      "file": "menu-first-failure.png",
+      "source": "ci419-development-2/test-results/development/documents-native-Doc-image-e2b99--retain-content-and-history-development/test-failed-1.png",
+      "sha256": "735f501911f11bd143a70fc2f0070397196f03588f493c944c9a487c9646ca14"
+    },
+    {
+      "file": "safari-first-failure.png",
+      "source": "ci419-safari/safari/failure.png",
+      "sha256": "fc12d2a42a8e2794b458ebad9dc710e0da234acb583ed4a51c79e94ca9082169"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-0bc3f5ef01a6a164948f-doc-image-paste-negative-evidence.json.gz",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-0bc3f5ef01a6a164948f-doc-image-paste-negative-evidence.json",
+      "sha256": "fe7252723f2caec276ea5add6499b08c83af9789750d27a244627421a3d96f58"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-12f595b4ec40c78f65a3-doc-image-paste-negative-evidence.json.gz",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-12f595b4ec40c78f65a3-doc-image-paste-negative-evidence.json",
+      "sha256": "ab39cfdff8774bf25747df4ef38dd700f7db45de729beedb4adbb4d6b5674dcd"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-5cb8344d386a2c4994eb-doc-image-paste-negative-evidence.json.gz",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-5cb8344d386a2c4994eb-doc-image-paste-negative-evidence.json",
+      "sha256": "3c32c135dd69135d925cd8aee1ae8f6414de377a183a7e3c6ce636141f908a30"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-5cb8344d386a2c4994eb-screenshot.png",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-5cb8344d386a2c4994eb-screenshot.png",
+      "sha256": "d4a3a5d1edaa17c61ca6271d0e0516840d39348cb57d0954be521ac25821504a"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-66da5790ea225fdf0e5a-doc-image-paste-negative-evidence.json.gz",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-66da5790ea225fdf0e5a-doc-image-paste-negative-evidence.json",
+      "sha256": "7645a9f6677939af7f5bf8a1c9dcb9d34723a17370d6feaaf1dce7fc353a40b5"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-66da5790ea225fdf0e5a-screenshot.png",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-66da5790ea225fdf0e5a-screenshot.png",
+      "sha256": "84de323f8f357bb00d735517ff012ac2dc20b03eaf5b5a9a8323eafc0f2edcf4"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-7f0808b59358d5e6ceca-doc-image-paste-negative-evidence.json.gz",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-7f0808b59358d5e6ceca-doc-image-paste-negative-evidence.json",
+      "sha256": "f8876c204cc072b445836fa712b74b8244a78ef287e1f9427964e32fe7774962"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-7f0808b59358d5e6ceca-screenshot.png",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-7f0808b59358d5e6ceca-screenshot.png",
+      "sha256": "6677f69663e4a5f213b81576fee875668e4f004603c22c03e9a8f48e894c0eab"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-865d5386d9e27bf529cf-doc-image-paste-negative-evidence.json.gz",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-865d5386d9e27bf529cf-doc-image-paste-negative-evidence.json",
+      "sha256": "605c184396a7438ea1a816d6c0b6c56014cc452778e4b2f2035c49df57176041"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-865d5386d9e27bf529cf-late-upload-authority-outcome.json.gz",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-865d5386d9e27bf529cf-late-upload-authority-outcome.json",
+      "sha256": "3a8aeaba37412caa3926fde99b4b7c9e51574110f7654e1070038ca37a33329b"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-a31a8b940f90c8c74081-doc-image-paste-negative-evidence.json.gz",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-a31a8b940f90c8c74081-doc-image-paste-negative-evidence.json",
+      "sha256": "10103b6db89ab7b3f149bf323d5e2683b10c32f3a6b6c0cb1c1de8eb044b333b"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-a9af379edaceacbb083c-doc-image-paste-negative-evidence.json.gz",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-a9af379edaceacbb083c-doc-image-paste-negative-evidence.json",
+      "sha256": "07fbb7f0cc4f31a4b9b98d866962bcc2a5e80c809ee9837a1e1d97e562f82b5c"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-b156bb230c40920b7465-doc-image-paste-negative-evidence.json.gz",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-b156bb230c40920b7465-doc-image-paste-negative-evidence.json",
+      "sha256": "8edc32eadf62d1816306d6bdd30f8e9b4808d6397b615343b08d8d1bf364f9d3"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-b156bb230c40920b7465-spn154-html-paste-success-light.png",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-b156bb230c40920b7465-spn154-html-paste-success-light.png",
+      "sha256": "5296f2fa7e9b0f92158f07ae726ce723c687c227260f96d8244ab7d52b50015c"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-b156bb230c40920b7465-spn154-html-upload-failure-dark.png",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-b156bb230c40920b7465-spn154-html-upload-failure-dark.png",
+      "sha256": "5d99d8304c15c955d68ad65e95472d36c6a962fac968e16cce0fc64102964eb0"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-b156bb230c40920b7465-spn154-html-upload-failure-light.png",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-b156bb230c40920b7465-spn154-html-upload-failure-light.png",
+      "sha256": "fe74e57d5f7bdb98b1a7f78ca72d358cba0fb8ee101fb71d43af55df2d1886fd"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-cedac28b3cd2fa493a52-doc-image-paste-negative-evidence.json.gz",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-cedac28b3cd2fa493a52-doc-image-paste-negative-evidence.json",
+      "sha256": "08883561772a89471e39395b4bc0d1422d0001d42cd3dfa045ab9320154cf732"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-d945effca6bad0bf9df4-doc-image-paste-evidence.json.gz",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-d945effca6bad0bf9df4-doc-image-paste-evidence.json",
+      "sha256": "8e0cb7b48c78072c75b2266c85168c0b73ed78df3cacac678afd9c273a239465"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-fb7134c9a3d94298d554-doc-image-paste-negative-evidence.json.gz",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-fb7134c9a3d94298d554-doc-image-paste-negative-evidence.json",
+      "sha256": "f55b4cc2b907a55e4cecf7ab98b49a7b3b110ab14bad453e6c60829637b8d9b6"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-fb7134c9a3d94298d554-spn154-phone-upload-failure-dark.png",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-fb7134c9a3d94298d554-spn154-phone-upload-failure-dark.png",
+      "sha256": "d925a22d96e28c22558b01b0c9ce99f8555aa45505175eae4eba2d599a6a8a1f"
+    },
+    {
+      "file": "application/9111b41e0f82b685c9ea-fb7134c9a3d94298d554-spn154-phone-upload-failure-light.png",
+      "source": "current-app-evidence/9111b41e0f82b685c9ea-fb7134c9a3d94298d554-spn154-phone-upload-failure-light.png",
+      "sha256": "a46209dd1fcb12760d7836888d553c1c5259a023f6d714aec4cf4670311a0fe0"
+    },
+    {
+      "file": "application/manifest.json.gz",
+      "source": "current-app-evidence/manifest.json",
+      "sha256": "140c84c7e256e5ec4c136b933d2529e5367fe3826c234abc5115e34ae190bb3b"
+    }
+  ]
+}

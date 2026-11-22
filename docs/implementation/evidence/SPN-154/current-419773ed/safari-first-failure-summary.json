@@ -1,0 +1,149 @@
+{
+  "sourceSha": "419773edb69b57bc96ba7ddbdb6d99eccc44e59f",
+  "testedSha": "c3b1b66980f93770539f3edfaffcd7a2fe76b2f1",
+  "run": "https://github.com/mxbaylee/spinel/actions/runs/45044614908",
+  "attempt": "1",
+  "browser": "safari",
+  "status": "failed",
+  "error": "Error: One published recovery copy: \"\"",
+  "stack": "Error: One published recovery copy: \"\"\n    at until (file:///Users/runner/work/spinel/spinel/scripts/ci/desktop-offline.ts:74:9)\n    at async main (file:///Users/runner/work/spinel/spinel/scripts/ci/desktop-offline.ts:612:22)\n    at async file:///Users/runner/work/spinel/spinel/scripts/ci/desktop-offline.ts:797:1",
+  "stages": [
+    {
+      "name": "browser-start",
+      "time": "2026-11-22T16:36:57.863Z"
+    },
+    {
+      "name": "safari-online-rendering-baseline",
+      "time": "2026-11-22T16:37:10.507Z",
+      "itemId": "213476d0-6cc5-41b9-8ded-e1d908cc4d41"
+    },
+    {
+      "name": "safari-online-rendering-baseline",
+      "time": "2026-11-22T16:38:06.109Z",
+      "itemId": "d342e988-7eba-4c75-a85a-4ed97686f736"
+    },
+    {
+      "name": "all-four-downloads-complete",
+      "time": "2026-11-22T16:38:50.972Z"
+    },
+    {
+      "name": "transport-disabled-before-quit",
+      "time": "2026-11-22T16:38:51.052Z"
+    },
+    {
+      "name": "exact-records-captured-before-quit",
+      "time": "2026-11-22T16:38:58.057Z"
+    },
+    {
+      "name": "browser-stop",
+      "time": "2026-11-22T16:38:58.603Z"
+    },
+    {
+      "name": "transport-disabled-before-relaunch",
+      "time": "2026-11-22T16:38:58.624Z"
+    },
+    {
+      "name": "browser-start",
+      "time": "2026-11-22T16:39:06.352Z"
+    },
+    {
+      "name": "offline-catalog-and-original-records-retained",
+      "time": "2026-11-22T16:39:12.738Z"
+    },
+    {
+      "name": "native-doc-input-caret",
+      "time": "2026-11-22T16:39:46.324Z",
+      "itemId": "d342e988-7eba-4c75-a85a-4ed97686f736"
+    },
+    {
+      "name": "native-doc-input-caret",
+      "time": "2026-11-22T16:40:03.090Z",
+      "itemId": "84c2ad53-4fa0-46bd-acba-427221e1f04e"
+    },
+    {
+      "name": "native-offline-edits-committed",
+      "time": "2026-11-22T16:40:05.919Z"
+    },
+    {
+      "name": "browser-stop",
+      "time": "2026-11-22T16:40:06.375Z"
+    },
+    {
+      "name": "transport-still-disabled-before-pending-relaunch",
+      "time": "2026-11-22T16:40:06.396Z"
+    },
+    {
+      "name": "browser-start",
+      "time": "2026-11-22T16:40:12.115Z"
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-22T16:40:23.299Z"
+    },
+    {
+      "name": "pending-restart-retained",
+      "time": "2026-11-22T16:40:23.300Z",
+      "itemId": "213476d0-6cc5-41b9-8ded-e1d908cc4d41"
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-22T16:40:34.508Z"
+    },
+    {
+      "name": "pending-restart-retained",
+      "time": "2026-11-22T16:40:34.509Z",
+      "itemId": "b7a6e39b-3d79-43f2-86a0-e5e00aec9272"
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-22T16:40:49.672Z"
+    },
+    {
+      "name": "pending-restart-retained",
+      "time": "2026-11-22T16:40:49.673Z",
+      "itemId": "d342e988-7eba-4c75-a85a-4ed97686f736"
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-22T16:41:04.953Z"
+    },
+    {
+      "name": "pending-restart-retained",
+      "time": "2026-11-22T16:41:04.954Z",
+      "itemId": "84c2ad53-4fa0-46bd-acba-427221e1f04e"
+    },
+    {
+      "name": "transport-restored",
+      "time": "2026-11-22T16:41:06.975Z"
+    },
+    {
+      "name": "normal-reconnect-exact-content-once",
+      "time": "2026-11-22T16:41:19.805Z",
+      "itemId": "213476d0-6cc5-41b9-8ded-e1d908cc4d41"
+    },
+    {
+      "name": "recovered-original-reconnect-outage",
+      "time": "2026-11-22T16:41:34.102Z",
+      "itemId": "b7a6e39b-3d79-43f2-86a0-e5e00aec9272"
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-22T16:41:50.652Z"
+    },
+    {
+      "name": "conflict-copy-preserves-original",
+      "time": "2026-11-22T16:41:50.653Z",
+      "itemId": "b7a6e39b-3d79-43f2-86a0-e5e00aec9272",
+      "copyId": "0687400e-8e4c-487f-9cd6-01803d9f2be4"
+    },
+    {
+      "name": "normal-reconnect-exact-content-once",
+      "time": "2026-11-22T16:42:01.289Z",
+      "itemId": "d342e988-7eba-4c75-a85a-4ed97686f736"
+    },
+    {
+      "name": "browser-stop",
+      "time": "2026-11-22T16:42:56.310Z"
+    }
+  ]
+}

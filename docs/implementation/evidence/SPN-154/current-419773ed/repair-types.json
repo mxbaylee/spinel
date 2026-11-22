@@ -1,0 +1,17 @@
+{
+  "label": "repair-types",
+  "command": "env",
+  "args": [
+    "GOMEMLIMIT=128MiB",
+    "GOGC=10",
+    "GOMAXPROCS=1",
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "code": null,
+  "signal": "SIGKILL",
+  "aborted": "pressure=2, rssKiB=1146256",
+  "elapsedMs": 25562,
+  "peakKiB": 1231424
+}

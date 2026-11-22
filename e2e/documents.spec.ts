@@ -274,6 +274,26 @@ type ImagePasteWindow = Window & {
 };
 const sha256 = (value: Buffer) => createHash('sha256').update(value).digest('hex');
 
+/** Replay replaces the inserted paragraph/drawing; the pre-existing body stays exact. */
+function expectOriginalBodyAfterImage(saved: IDocumentData, original: IDocumentData) {
+  const body = structuredClone(saved.body!);
+  expect(body.dataStream.slice(0, 2)).toBe('\b\r');
+  expect(body.customBlocks).toEqual([{ startIndex: 0, blockId: saved.drawingsOrder![0] }]);
+  body.dataStream = body.dataStream.slice(2);
+  body.textRuns = body
+    .textRuns!.filter((run) => run.ed > 2)
+    .map((run) => ({ ...run, st: Math.max(run.st, 2) - 2, ed: run.ed - 2 }));
+  body.paragraphs = body
+    .paragraphs!.filter((paragraph) => paragraph.startIndex >= 2)
+    .map((paragraph) => ({ ...paragraph, startIndex: paragraph.startIndex - 2 }));
+  body.sectionBreaks = body.sectionBreaks!.map((section) => ({
+    ...section,
+    startIndex: section.startIndex - 2,
+  }));
+  body.customBlocks = [];
+  expect(body).toEqual(original.body);
+}
+
 type ImagePostEvidence = {
   mime: string;
   // True means Playwright returned a Buffer, including an exposed empty Buffer.
@@ -1077,6 +1097,7 @@ clipboardTest.describe('native Doc image clipboard', () => {
         await f.paste('png', undefined, undefined, 'source-menu');
         const pasted = await content(f, '\b\r' + before.body!.dataStream, 2);
         expect(pasted.drawingsOrder).toHaveLength(1);
+        expectOriginalBodyAfterImage(pasted, before);
         expect(f.posts.map((post) => post.status)).toEqual([201]);
         await f.assertMounted();
         await f.capture('native-menu-paste');
@@ -1089,22 +1110,45 @@ clipboardTest.describe('native Doc image clipboard', () => {
           await expect(
             f.page.getByRole('menuitemcheckbox', { name: mode, exact: true }),
           ).toHaveAttribute('aria-checked', 'true');
-          await f.page.keyboard.press('Escape');
+          // Escape intentionally dismisses the native replay session, not just its menu.
+          await f.page.getByRole('button', { name: 'Paste options', exact: true }).click();
+          await expect(
+            f.page.getByRole('menuitemcheckbox', { name: mode, exact: true }),
+          ).toHaveCount(0);
+          await expect(
+            f.page.getByRole('button', { name: 'Paste options', exact: true }),
+          ).toBeVisible();
           await expect(f.page.getByRole('status', { name: 'Save status' })).toHaveText(
             'All changes saved.',
           );
           const replayed = await content(f, pasted.body!.dataStream);
-          for (const key of ['body', 'drawings', 'drawingsOrder', 'resources'] as const)
-            expect(replayed[key]).toEqual(pasted[key]);
+          expectOriginalBodyAfterImage(replayed, before);
+          expect(replayed.drawingsOrder).toHaveLength(1);
+          const drawingId = replayed.drawingsOrder![0];
+          expect(replayed.drawings).toEqual({
+            [drawingId]: { ...pasted.drawings![pasted.drawingsOrder![0]], drawingId },
+          });
+          expect(
+            replayed.resources?.filter((resource) => resource.name !== 'DOC_DRAWING_PLUGIN'),
+          ).toEqual(pasted.resources?.filter((resource) => resource.name !== 'DOC_DRAWING_PLUGIN'));
+          const drawingResource = replayed.resources?.find(
+            (resource) => resource.name === 'DOC_DRAWING_PLUGIN',
+          );
+          expect(JSON.parse(drawingResource!.data)).toEqual({
+            data: replayed.drawings,
+            order: replayed.drawingsOrder,
+          });
           expect(f.posts.map((post) => post.status)).toEqual([201]);
           await f.assertMounted();
           await f.capture(mode);
         }
+        const finalReplay = await f.read();
         await f.page.getByRole('button', { name: 'Undo', exact: true }).click();
         expect((await content(f, before.body!.dataStream)).body).toEqual(before.body);
         await f.page.getByRole('button', { name: 'Redo', exact: true }).click();
         const redone = await content(f, pasted.body!.dataStream);
-        expect(redone.drawings).toEqual(pasted.drawings);
+        expect(redone.body).toEqual(finalReplay.body);
+        expect(redone.drawings).toEqual(finalReplay.drawings);
         await f.assertMounted();
         await reopen(f, redone);
         expect((await f.read()).drawings).toEqual(redone.drawings);
@@ -1142,7 +1186,13 @@ clipboardTest.describe('native Doc image clipboard', () => {
           await expect(
             f.page.getByRole('menuitemcheckbox', { name: mode, exact: true }),
           ).toHaveAttribute('aria-checked', 'true');
-          await f.page.keyboard.press('Escape');
+          await f.page.getByRole('button', { name: 'Paste options', exact: true }).click();
+          await expect(
+            f.page.getByRole('menuitemcheckbox', { name: mode, exact: true }),
+          ).toHaveCount(0);
+          await expect(
+            f.page.getByRole('button', { name: 'Paste options', exact: true }),
+          ).toBeVisible();
           const text =
             mode === 'Keep text only'
               ? caption + before.body!.dataStream
@@ -1378,7 +1428,7 @@ clipboardTest.describe('native Doc image clipboard', () => {
           const { targetInfo } = await cdp.send('Target.getTargetInfo');
           expect(targetInfo.browserContextId).toBeTruthy();
           await cdp.send('Browser.setPermission', {
-            permission: { name: 'clipboardReadWrite' },
+            permission: { name: 'clipboard-read' },
             setting: 'denied',
             origin: new URL(baseURL!).origin,
             browserContextId: targetInfo.browserContextId,

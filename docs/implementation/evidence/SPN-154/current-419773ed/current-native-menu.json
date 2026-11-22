@@ -1,0 +1,21 @@
+{
+  "label": "current-native-menu",
+  "command": "env",
+  "args": [
+    "NODE_OPTIONS=--max-old-space-size=256",
+    "SPINEL_E2E_PROJECT=production",
+    "node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "--project=production",
+    "e2e/documents.spec.ts",
+    "--grep",
+    "native image menu and cached",
+    "--reporter=line,json"
+  ],
+  "code": null,
+  "signal": "SIGTERM",
+  "aborted": "pressure=2, rssKiB=1294528",
+  "elapsedMs": 7080,
+  "peakKiB": 1349296
+}

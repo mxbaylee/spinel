@@ -1,0 +1,12 @@
+{
+  "label": "phone-window",
+  "command": "node",
+  "args": [
+    "/private/tmp/spn154-completion/phone-run.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "aborted": "pressure=2, rssKiB=291920",
+  "elapsedMs": 32302,
+  "peakKiB": 353904
+}

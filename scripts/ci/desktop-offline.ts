@@ -609,15 +609,21 @@ async function main() {
         // The status region contains the detailed published-copy message; the
         // production save-details control carries the stable attention label.
         await named('button', 'Save details: Needs attention');
-        const href = await until(
+        const publication = await until(
           () =>
-            browser.evaluate<string>(
-              'Array.from(document.querySelectorAll(\'[role="dialog"] a\')).find(link=>link.textContent.trim()==="Open copy")?.getAttribute("href") || ""',
-            ),
-          Boolean,
+            browser.evaluate<{ href: string; failed: boolean; reason: string }>(`(() => {
+              const dialog = document.querySelector('[role="dialog"]');
+              return {
+                href: Array.from(dialog?.querySelectorAll('a') || []).find(link => link.textContent.trim() === 'Open copy')?.getAttribute('href') || '',
+                failed: Boolean(dialog?.textContent.includes('Another file transfer is running. Try again shortly.')) && Array.from(dialog?.querySelectorAll('button') || []).some(button => button.textContent.trim() === 'Retry creating copy'),
+                reason: dialog?.textContent.includes('Another file transfer is running. Try again shortly.') ? 'transfer-busy' : 'other-recovery-error',
+              };
+            })()`),
+          (value) => Boolean(value.href) || value.failed,
           'One published recovery copy',
         );
-        const copyId = new URL(href, f.origin).searchParams.get('item');
+        assert.ok(publication.href, `Recovery publication failed: ${publication.reason}`);
+        const copyId = new URL(publication.href, f.origin).searchParams.get('item');
         assert.ok(copyId && copyId !== item.id);
         assert.deepEqual(f.originalState(item), originals.get(item.id));
         recoveryIds.add(copyId);
@@ -774,6 +780,16 @@ async function main() {
     await browser.screenshot(resolve(output, 'failure-screen.png'), 'screen').catch(() => {});
     process.exitCode = 1;
   } finally {
+    if (fixture) {
+      report.transferEvidence = fixture.transferEvidence;
+      try {
+        report.recoveryReceiptCount = fixture.db
+          .prepare('SELECT count(*) AS count FROM workspace_offline_recoveries WHERE user_id=?')
+          .get(fixture.actor.id)?.count;
+      } catch (error) {
+        report.recoveryReceiptObservationError = String(error);
+      }
+    }
     try {
       stage('browser-stop', await browser.stop());
     } catch (error) {
