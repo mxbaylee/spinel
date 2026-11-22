@@ -257,7 +257,8 @@ statuses, missing/ambiguous evidence, repeated refusals and incomplete collectio
 `desktop-transfer-observation.test.ts` covers overlapping admission after a close,
 429 status, redaction, bounds and thrown-observer isolation. The desktop report
 also records a failure-time recovery-receipt count, while its existing UI/content
-and persistence assertions remain unchanged. No retry or larger budget is added.
+and persistence assertions remain unchanged. No test retry or larger budget is
+added; the one supported UI retry above is recorded separately.
 
 The fixture's `desktop-sync-observation.ts` reads the existing diagnostics store
 read-only after the journey, without changing production collection. It retains
