@@ -50,7 +50,11 @@ export const DiagnosticsExpiryFailed: Story = {
         ...healthStory,
         jobs: healthStory.jobs.map((job) =>
           job.name === 'diagnostics-expiry'
-            ? { ...job, failedSince: healthStoryTime - 600_000 }
+            ? {
+                ...job,
+                lastSuccess: healthStoryTime - 660_000,
+                failedSince: healthStoryTime - 600_000,
+              }
             : job,
         ),
       },
