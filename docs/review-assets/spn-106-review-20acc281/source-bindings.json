@@ -1,0 +1,162 @@
+{
+  "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+  "sourceTree": "550d290f7825069bbe35663fe496bf6f66aa133e",
+  "previousReviewedSource": "ae39bab3c1ba89460418f934765b67327cd601ec",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "baseTree": "d761b4562a11e876cb83a9cd0d951291192c71f6",
+  "archiveRule": "Archive-only direct child of reviewed source; no runtime or source qualification implied for a later integration. Manifest does not contain its own digest; final archive commit identifies manifest bytes.",
+  "reviewerInputs": "inputs/ contains original grade-free packets/spec/diffs/watchdog, separately from scored reports in reviews/.",
+  "reviewCheckLimit": "A initial relative config import failed before tests; original log/guard preserved. Only corrected A config bytes survive and are labeled corrected, never represented as the failed config.",
+  "images": [
+    {
+      "path": "docs/review-assets/spn-106-production-20261114/spn-106-account-desktop-light.png",
+      "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+      "sha256": "74bfc6803ce43ca3e3556f44c7ff8ca9ee1f6f77b11eba3745b8e4bc62fa53d4",
+      "bytes": 29516,
+      "url": "https://github.com/mxbaylee/spinel/blob/20acc281e1fb04e2a970b40c19dc9a6cbf671f11/docs/review-assets/spn-106-production-20261114/spn-106-account-desktop-light.png",
+      "width": 1280,
+      "height": 960,
+      "state": "Actual account viewer route, field-bearing branch",
+      "theme": "light",
+      "captureRunnerSource": "141fa3aca4b4fb3a127e4983a21e975fe9e333ec",
+      "renderBuildSource": "141fa3aca4b4fb3a127e4983a21e975fe9e333ec"
+    },
+    {
+      "path": "docs/review-assets/spn-106-production-20261114/spn-106-account-desktop-dark.png",
+      "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+      "sha256": "d1e90b9c321f2f5e7ac64e29c824969e363dfd8c2dd380bd076923b5c0fd3f98",
+      "bytes": 28616,
+      "url": "https://github.com/mxbaylee/spinel/blob/20acc281e1fb04e2a970b40c19dc9a6cbf671f11/docs/review-assets/spn-106-production-20261114/spn-106-account-desktop-dark.png",
+      "width": 1280,
+      "height": 960,
+      "state": "Actual account viewer route, field-bearing branch",
+      "theme": "dark",
+      "captureRunnerSource": "141fa3aca4b4fb3a127e4983a21e975fe9e333ec",
+      "renderBuildSource": "141fa3aca4b4fb3a127e4983a21e975fe9e333ec"
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/spn-106-guest-390px-light.png",
+      "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+      "sha256": "f004ebda1e74233483a148c0b94e0d66668bff25bd4b2f8126181b2c830c1db6",
+      "bytes": 16328,
+      "url": "https://github.com/mxbaylee/spinel/blob/20acc281e1fb04e2a970b40c19dc9a6cbf671f11/docs/review-assets/spn-106-guest-storybook-20261114/spn-106-guest-390px-light.png",
+      "width": 390,
+      "height": 844,
+      "state": "Actual guest viewer route, field-bearing branch",
+      "theme": "light",
+      "captureRunnerSource": "5afac055559e43cc06c0e399a0f61babd2864962",
+      "renderBuildSource": "141fa3aca4b4fb3a127e4983a21e975fe9e333ec"
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/spn-106-guest-390px-dark.png",
+      "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+      "sha256": "2206b4c0c9c850c95ce71b9f9ce56e11b5b2ca63dcba7f89caf66e2a07141a8c",
+      "bytes": 15720,
+      "url": "https://github.com/mxbaylee/spinel/blob/20acc281e1fb04e2a970b40c19dc9a6cbf671f11/docs/review-assets/spn-106-guest-storybook-20261114/spn-106-guest-390px-dark.png",
+      "width": 390,
+      "height": 844,
+      "state": "Actual guest viewer route, field-bearing branch",
+      "theme": "dark",
+      "captureRunnerSource": "5afac055559e43cc06c0e399a0f61babd2864962",
+      "renderBuildSource": "141fa3aca4b4fb3a127e4983a21e975fe9e333ec"
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-phone.png",
+      "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+      "sha256": "509e159d02827c3d843d76323a5bdf7662cbd20f151778ec3e273edd5e78d7c8",
+      "bytes": 48064,
+      "url": "https://github.com/mxbaylee/spinel/blob/20acc281e1fb04e2a970b40c19dc9a6cbf671f11/docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-phone.png",
+      "width": 390,
+      "height": 900,
+      "state": "Mounted native viewer without startup warning",
+      "theme": "light",
+      "captureRunnerSource": "5afac055559e43cc06c0e399a0f61babd2864962",
+      "renderBuildSource": "5afac055559e43cc06c0e399a0f61babd2864962"
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-denied-edit-phone.png",
+      "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+      "sha256": "3e199e2ce34a0db95dfbbc6a6a541daf5a9dac48a5faa73ef40e5c349d77511f",
+      "bytes": 46942,
+      "url": "https://github.com/mxbaylee/spinel/blob/20acc281e1fb04e2a970b40c19dc9a6cbf671f11/docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-denied-edit-phone.png",
+      "width": 390,
+      "height": 900,
+      "state": "Mounted native denied insertion with genuine warning",
+      "theme": "light",
+      "captureRunnerSource": "5afac055559e43cc06c0e399a0f61babd2864962",
+      "renderBuildSource": "5afac055559e43cc06c0e399a0f61babd2864962"
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-phone-dark.png",
+      "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+      "sha256": "e54cb5a1f51720db0fc07741fe38c61b4217338aa8e9b4980e01242a1cf2b62c",
+      "bytes": 47783,
+      "url": "https://github.com/mxbaylee/spinel/blob/20acc281e1fb04e2a970b40c19dc9a6cbf671f11/docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-phone-dark.png",
+      "width": 390,
+      "height": 900,
+      "state": "Mounted native viewer without startup warning",
+      "theme": "dark",
+      "captureRunnerSource": "5afac055559e43cc06c0e399a0f61babd2864962",
+      "renderBuildSource": "5afac055559e43cc06c0e399a0f61babd2864962"
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-denied-edit-phone-dark.png",
+      "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+      "sha256": "5e07692f4a8bd81cf10cd148176c4ae90d655476f20d1e685486c64b6a247fb4",
+      "bytes": 47518,
+      "url": "https://github.com/mxbaylee/spinel/blob/20acc281e1fb04e2a970b40c19dc9a6cbf671f11/docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-denied-edit-phone-dark.png",
+      "width": 390,
+      "height": 900,
+      "state": "Mounted native denied insertion with genuine warning",
+      "theme": "dark",
+      "captureRunnerSource": "5afac055559e43cc06c0e399a0f61babd2864962",
+      "renderBuildSource": "5afac055559e43cc06c0e399a0f61babd2864962"
+    }
+  ],
+  "maintainedReceipts": [
+    {
+      "path": "docs/implementation/evidence/SPN-106-preparation-20261114.json",
+      "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+      "sha256": "ad5fe027c25c3231e059836079eb9642da16e19ce896740b3f71bf3df755b8d2",
+      "bytes": 5458,
+      "url": "https://github.com/mxbaylee/spinel/blob/20acc281e1fb04e2a970b40c19dc9a6cbf671f11/docs/implementation/evidence/SPN-106-preparation-20261114.json"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-106-browser-setup-20261114.json",
+      "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+      "sha256": "7fe652b6e026404eb8ac322a82d9217a7b2db109d958855c6c3793f9bced35e9",
+      "bytes": 36951,
+      "url": "https://github.com/mxbaylee/spinel/blob/20acc281e1fb04e2a970b40c19dc9a6cbf671f11/docs/implementation/evidence/SPN-106-browser-setup-20261114.json"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-106-browser-abort-20261114.json",
+      "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+      "sha256": "b7d73cae85df29f9466491b5acf844c48cc899b1930b475c2fb32767f8c3dccf",
+      "bytes": 4199,
+      "url": "https://github.com/mxbaylee/spinel/blob/20acc281e1fb04e2a970b40c19dc9a6cbf671f11/docs/implementation/evidence/SPN-106-browser-abort-20261114.json"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-106-production-20261114/receipt.json",
+      "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+      "sha256": "bee97e98b9bb3115b01c1a329528d6e3fe67190071402716ee88de767b1c93f0",
+      "bytes": 4644,
+      "url": "https://github.com/mxbaylee/spinel/blob/20acc281e1fb04e2a970b40c19dc9a6cbf671f11/docs/implementation/evidence/SPN-106-production-20261114/receipt.json"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-106-guest-storybook-20261114/receipt.json",
+      "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+      "sha256": "babe25dc3bfe74f7ad88f13ee94504548eb8a989421cbc32c89b09c4c3842154",
+      "bytes": 12081,
+      "url": "https://github.com/mxbaylee/spinel/blob/20acc281e1fb04e2a970b40c19dc9a6cbf671f11/docs/implementation/evidence/SPN-106-guest-storybook-20261114/receipt.json"
+    },
+    {
+      "path": "docs/implementation/evidence/SPN-106-final-static-20261114/receipt.json",
+      "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+      "sha256": "67a476f35de3b638b0f3a288a1216b8ff700d30b96e95e12199829c91a4520e2",
+      "bytes": 5728,
+      "url": "https://github.com/mxbaylee/spinel/blob/20acc281e1fb04e2a970b40c19dc9a6cbf671f11/docs/implementation/evidence/SPN-106-final-static-20261114/receipt.json"
+    }
+  ],
+  "originalReviewReportsUnmodified": true,
+  "remoteActions": false
+}

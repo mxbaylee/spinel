@@ -1,0 +1,29 @@
+{
+  "source": "ae39bab3c1ba89460418f934765b67327cd601ec",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "clean": true,
+  "verifiedImages": [
+    "docs/review-assets/spn-106-production-20261114/spn-106-account-desktop-light.png",
+    "docs/review-assets/spn-106-production-20261114/spn-106-account-desktop-dark.png",
+    "docs/review-assets/spn-106-guest-storybook-20261114/spn-106-guest-390px-light.png",
+    "docs/review-assets/spn-106-guest-storybook-20261114/spn-106-guest-390px-dark.png",
+    "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-phone.png",
+    "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-denied-edit-phone.png",
+    "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-phone-dark.png",
+    "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-denied-edit-phone-dark.png"
+  ],
+  "staticSourceDelta": [
+    "docs/implementation/SPN-106.md",
+    "docs/implementation/evidence/SPN-106-final-static-20261114/backlog.log.gz",
+    "docs/implementation/evidence/SPN-106-final-static-20261114/dependencies.log.gz",
+    "docs/implementation/evidence/SPN-106-final-static-20261114/format.log.gz",
+    "docs/implementation/evidence/SPN-106-final-static-20261114/index.log.gz",
+    "docs/implementation/evidence/SPN-106-final-static-20261114/oxlint.log.gz",
+    "docs/implementation/evidence/SPN-106-final-static-20261114/receipt.json",
+    "docs/implementation/evidence/SPN-106-final-static-20261114/typecheck.log.gz",
+    "docs/implementation/evidence/SPN-106-original-ticket.md",
+    "docs/todo/backlog.json",
+    "docs/todo/readme.md"
+  ],
+  "originalSpecExact": true
+}
