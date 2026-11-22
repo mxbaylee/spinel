@@ -68,10 +68,11 @@ test('supervisor observations retain truncate fencing, preserve active export fi
       storage: 0,
       unavailable: 0,
       stale: 1,
+      expired: 0,
     });
     expect(warn).toHaveBeenCalledWith(
       'Supervisor diagnostics process-lifetime drops:',
-      JSON.stringify({ invalid: 0, queue: 0, storage: 0, unavailable: 0, stale: 1 }),
+      JSON.stringify({ invalid: 0, queue: 0, storage: 0, unavailable: 0, stale: 1, expired: 0 }),
     );
     expect(warn).toHaveBeenCalledWith(
       'Supervisor diagnostics could not close its observation store.',

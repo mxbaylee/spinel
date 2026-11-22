@@ -3,6 +3,7 @@ import type { AddressInfo } from 'node:net';
 import { resolve } from 'node:path';
 import { createApp, projectRoot } from './app.ts';
 import { applicationPolicy } from './application-policy.ts';
+import { diagnosticsRetentionDays } from '../src/server/diagnostics/configuration.ts';
 import { connectMaintenance } from '../src/server/maintenance/supervisor-client.ts';
 import {
   acquireColdWorkspaceLease,
@@ -16,6 +17,7 @@ import type { RestoreStopRequest } from '../src/shared/maintenance.ts';
 import type { RestoreTrialStopRequest } from '../src/server/maintenance/restore-trial-stop.ts';
 
 const development = process.argv.includes('--dev');
+const retentionDays = diagnosticsRetentionDays(process.env.DIAGNOSTICS_RETENTION_DAYS);
 const port = Number(process.env.PORT ?? 3000);
 if (!Number.isInteger(port) || port < 0 || port > 65535) {
   throw new Error('PORT must be an integer between 0 and 65535.');
@@ -67,6 +69,7 @@ const app = await (async () => {
       development,
       ...applicationPolicy(port),
       backupConfigPath: process.env.BACKUP_CONFIG_PATH,
+      diagnosticsRetentionDays: retentionDays,
       databasePath,
     });
     if (starting.restoreTrial) {

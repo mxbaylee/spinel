@@ -126,6 +126,24 @@ hashed random server-side tokens and need no signing secret; never invent an
 unused `SESSION_SECRET`. A future feature that needs one must read it from this
 runtime environment file.
 
+`DIAGNOSTICS_RETENTION_DAYS` in `runtime.env` optionally shortens diagnostic
+observation retention from seven days to a whole number from 1 through 7. Other
+values fail startup; omit it for seven days. Restart the application to apply a
+policy change. Server receipt time determines age, independent of client clocks.
+The existing one-minute maintenance callback removes at most 1,024 expired rows
+per pass, with startup catch-up and retries on subsequent ticks. Admin → Server
+health shows **Diagnostics expiry** failures; diagnostics reports expired counts
+since this process started. Clock changes, outages, capacity pressure or a backlog
+can delay removal: the age limit is a target, not a promise of complete history
+or immediate deletion. The 64 MiB logical / 96 MiB physical store limits, bounded
+queue and 256 MiB free-space reserve still apply. A full WAL or low free space
+must recover before cleanup can write; deleting rows reuses SQLite pages and
+does not imply the file shrinks. See the [retention decision](implementation/SPN-110.md).
+
+Expiry never deletes submitted feedback, workspace history, trash, backups or
+the recovery journal. Already captured diagnostics exports and retained remote
+archives keep their own retention. Diagnostics backup is not automatically enabled.
+
 Build with `docker build -t spinel:COMMIT .`, then use
 `docker image inspect --format '{{.Id}}' spinel:COMMIT` as `SPINEL_IMAGE`.
 The Compose configuration requires the immutable local image ID (or a registry
@@ -371,8 +389,7 @@ The owner then found and deleted the only inbound rule, SSH TCP 22, retaining th
 three outbound rules. A fresh targeted scan at 16:48 PDT used the same TCP command
 above with `--max-retries 2`. Ports 22, 80, 443 and 3000 were all `filtered`
 (`no-response`), completed in 2.10 seconds. Private SSH subsequently confirmed
-`systemctl is-active spinel` returned `active`, and private verified HTTPS returned
-200. The full TCP retry started before the correction was interrupted; the post-correction connect scan also stalled and was interrupted. The owner
+`systemctl is-active spinel` returned `active`, and private verified HTTPS returned 200. The full TCP retry started before the correction was interrupted; the post-correction connect scan also stalled and was interrupted. The owner
 has been given a privileged SYN scan command to complete the full IPv4 check.
 No full-port result is claimed yet.
 

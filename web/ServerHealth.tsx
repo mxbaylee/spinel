@@ -39,6 +39,7 @@ const jobs: Record<HealthJobName, string> = {
   'trash-expiry': 'Trash expiry',
   'collaboration-purge': 'Collaboration & restored-generation cleanup',
   'space-trash-expiry': 'Space trash expiry',
+  'diagnostics-expiry': 'Diagnostics expiry',
 };
 function DatabaseSize({ label, value }: { label: string; value: DatabaseHealth | null }) {
   return (

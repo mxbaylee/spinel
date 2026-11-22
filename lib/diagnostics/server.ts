@@ -42,6 +42,8 @@ export type SupervisorLossEvent = {
     storage: number;
     unavailable: number;
     stale: number;
+    /** Absent in records written before observation expiry shipped. */
+    expired?: number;
   };
 };
 export type HistoryDiagnosticEvent = {
@@ -107,7 +109,17 @@ export function isServerDiagnosticEvent(value: unknown): value is ServerDiagnost
         return keys(details, ['reason']) && member(details.reason, ['paused', 'stale-epoch']);
       case 'diagnostics.writer-loss':
         return (
-          keys(details, ['writer', 'invalid', 'queue', 'storage', 'unavailable', 'stale']) &&
+          keys(details, [
+            'writer',
+            'invalid',
+            'queue',
+            'storage',
+            'unavailable',
+            'stale',
+            ...(Object.hasOwn(details, 'expired') ? ['expired'] : []),
+          ]) &&
+          (!Object.hasOwn(details, 'expired') ||
+            (amount(details.expired) && Number.isSafeInteger(details.expired))) &&
           details.writer === 'supervisor' &&
           ['invalid', 'queue', 'storage', 'unavailable', 'stale'].every(
             (key) => amount(details[key]) && Number.isSafeInteger(details[key]),

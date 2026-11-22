@@ -97,8 +97,9 @@ restore controls can be developed locally; real-provider and target-host checks
 remain launch acceptance under SPN-038. The filesystem destination and recurring
 verifier are implemented by SPN-063. [SPN-109](implementation/SPN-109.md) adds
 deployment-owned local/Spaces policy and encrypted Admin downloads. SPN-111 adds
-the [maintenance supervisor](maintenance.md); diagnostics expiry and assisted
-dataset activation remain SPN-110 and SPN-112. AWS S3 is
+the [maintenance supervisor](maintenance.md); SPN-110 adds deployment-owned
+[diagnostics expiry](deployment.md#configure-and-start). Assisted dataset activation
+is covered by SPN-112. AWS S3 is
 sequenced after production in [SPN-114](todo/SPN-114.md). See the
 [local setup and verification runbook](backups.md#filesystem-destination-for-local-operation).
 The

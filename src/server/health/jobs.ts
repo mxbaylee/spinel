@@ -41,6 +41,7 @@ export class HealthJobs {
       'trash-expiry',
       'collaboration-purge',
       'space-trash-expiry',
+      'diagnostics-expiry',
     ] as const)
       this.states.set(name, {
         name,
