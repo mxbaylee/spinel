@@ -1,0 +1,9 @@
+{
+  "command": "npm",
+  "args": ["ci"],
+  "code": 0,
+  "signal": null,
+  "failure": null,
+  "peakKiB": 1026048,
+  "elapsedMs": 13491
+}

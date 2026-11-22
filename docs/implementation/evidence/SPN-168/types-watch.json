@@ -1,0 +1,9 @@
+{
+  "command": "/Users/mxbaylee/.nvm/versions/node/v26.13.0/bin/node",
+  "args": ["node_modules/typescript/bin/tsc", "-p", "."],
+  "code": 1,
+  "signal": null,
+  "failure": null,
+  "peakKiB": 1846272,
+  "elapsedMs": 5402
+}

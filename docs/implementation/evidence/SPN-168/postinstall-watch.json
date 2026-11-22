@@ -1,0 +1,13 @@
+{
+  "command": "/Users/mxbaylee/.nvm/versions/node/v26.13.0/bin/node",
+  "args": [
+    "/Users/mxbaylee/.nvm/versions/node/v26.13.0/lib/node_modules/npm/bin/npm-cli.js",
+    "run",
+    "postinstall"
+  ],
+  "code": 1,
+  "signal": null,
+  "failure": null,
+  "peakKiB": 0,
+  "elapsedMs": 484
+}

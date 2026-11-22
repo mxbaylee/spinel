@@ -1,0 +1,9 @@
+{
+  "command": "/Users/mxbaylee/.nvm/versions/node/v26.13.0/bin/node",
+  "args": ["--test", "scripts/dependencies/patch-playwright.test.ts"],
+  "code": 0,
+  "signal": null,
+  "failure": null,
+  "peakKiB": 461792,
+  "elapsedMs": 14278
+}

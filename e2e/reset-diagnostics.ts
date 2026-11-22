@@ -27,7 +27,7 @@ export type ResetServerFacts =
       signal: string | null;
       stderrBytes: number;
       stdoutBytes: number;
-      /** The wrapper writes every 250 ms; a large age means the owner stopped. */
+      /** The wrapper writes every 250 ms; stale evidence cannot prove process health. */
       evidenceAgeMs: number;
     };
 

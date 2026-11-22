@@ -1,0 +1,9 @@
+{
+  "command": "npm",
+  "args": ["run", "lint"],
+  "code": 0,
+  "signal": null,
+  "failure": null,
+  "peakKiB": 719520,
+  "elapsedMs": 22505
+}
