@@ -1,0 +1,14 @@
+{
+  "label": "review-a-fe5ac466-observers",
+  "command": "node",
+  "args": [
+    "--test",
+    "scripts/ci/desktop-transfer-observation.test.ts",
+    "scripts/ci/desktop-sync-observation.test.ts"
+  ],
+  "code": 1,
+  "signal": null,
+  "aborted": "pressure=1, rssKiB=264320",
+  "elapsedMs": 285,
+  "peakKiB": 264320
+}

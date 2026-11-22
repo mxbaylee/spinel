@@ -1,0 +1,17 @@
+{
+  "label": "clean-readiness-lint",
+  "command": "node_modules/.bin/oxlint",
+  "args": [
+    "--config",
+    "/private/tmp/spn154-completion/oxlint-node-globals.json",
+    "--deny-warnings",
+    "--deny",
+    "no-undef",
+    "scripts/ci/desktop-offline.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "aborted": null,
+  "elapsedMs": 113,
+  "peakKiB": 0
+}

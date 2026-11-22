@@ -1,0 +1,19 @@
+{
+  "label": "review-b-fe5-no-undef-corrected",
+  "command": "node",
+  "args": [
+    "node_modules/oxlint/bin/oxlint",
+    "--config",
+    "/private/tmp/spn154-completion/review-b-node-globals.json",
+    "--deny",
+    "no-undef",
+    "scripts/ci/desktop-offline.ts",
+    "scripts/ci/desktop-sync-observation.ts",
+    "scripts/ci/desktop-transfer-observation.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "aborted": null,
+  "elapsedMs": 631,
+  "peakKiB": 63520
+}

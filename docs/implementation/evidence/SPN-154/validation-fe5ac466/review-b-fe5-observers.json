@@ -1,0 +1,15 @@
+{
+  "label": "review-b-fe5-observers",
+  "command": "node",
+  "args": [
+    "--test",
+    "--test-concurrency=1",
+    "scripts/ci/desktop-transfer-observation.test.ts",
+    "scripts/ci/desktop-sync-observation.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "aborted": null,
+  "elapsedMs": 7124,
+  "peakKiB": 156544
+}

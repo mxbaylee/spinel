@@ -1,0 +1,12 @@
+{
+  "label": "clean-readiness-check",
+  "command": "node",
+  "args": [
+    "/private/tmp/spn154-completion/clean-readiness-check.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "aborted": null,
+  "elapsedMs": 590,
+  "peakKiB": 126960
+}

@@ -15,7 +15,7 @@ import type { NativeSnapshot } from '@spinel/sync-client';
 import { mapNativeImageSources } from '../../src/shared/nativeImageSources.ts';
 import { snapshotIdentity } from '../../src/shared/snapshotIdentity.ts';
 import { reconstructOffline } from '../../web/offline/recovery.ts';
-import type { StoredItem } from '../../web/offline/offlineStore.ts';
+import { hasStoredEdits, type StoredItem } from '../../web/offline/offlineStore.ts';
 import { comparable, pending } from '../../e2e/offline-fixture.ts';
 import { createDesktopBrowser } from './desktop-browser.ts';
 import type { DesktopBrowserKind, DesktopBrowserStart } from './desktop-browser.ts';
@@ -676,8 +676,10 @@ async function main() {
     // then exercise the original/copy outage assertions with no pending edits.
     for (const item of f.items.filter((item) => item.outcome === 'normal')) {
       const clean = await local(f.actor.id, item.id);
-      assert.ok(clean.item?.outbox);
-      assert.equal(pending(clean.item.outbox.checkpoint), false);
+      assert.ok(clean.item);
+      // A clean refresh may remove an empty outbox. Reject pending, malformed
+      // and recovery records, while accepting either valid clean representation.
+      assert.equal(hasStoredEdits(clean.item), false);
     }
     stage('all-reconnect-outcomes-verified-before-outage');
     for (const { item, href, copyId, copied } of recovered) {
