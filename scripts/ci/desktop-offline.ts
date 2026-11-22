@@ -676,7 +676,7 @@ async function main() {
           });
           await browser.screenshot(resolve(output, `${item.kind}-transfer-busy-first.png`));
           const ready = await until(
-            () => desktopRecoveryRetry(f.transferEvidence, transferStart),
+            async () => desktopRecoveryRetry(f.transferEvidence, transferStart),
             (value) => value?.ready === true,
             'Observed competing transfer completed and released admission',
             remaining(),

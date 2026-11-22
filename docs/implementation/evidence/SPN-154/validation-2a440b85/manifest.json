@@ -1,0 +1,86 @@
+[
+  {
+    "path": "final-2a-code-terminal.json.gz",
+    "sha256": "61e6bfebd1dfd1ee42bff752bbc19e995d0b747a95ee5c161f3ee7a659882447"
+  },
+  {
+    "path": "final-2a-metadata-terminal.json.gz",
+    "sha256": "d04863988b3784b77db0b48b376773f74ee041f93ad1075e53a0a4a5a7753927"
+  },
+  {
+    "path": "final-2a-safari-first.log.gz",
+    "sha256": "b95ad074d7cbfdf04cbce53954b1da1ac2e7b64b0f86eb186fba49f6bb934247"
+  },
+  {
+    "path": "final-2a-typecheck-first.log.gz",
+    "sha256": "27651399e8fc47e95ee04ba3990ee186292bab3d64d7575f247d6db92a6f7103"
+  },
+  {
+    "path": "promise-repair-format.json.gz",
+    "sha256": "567d71d9cca91e44298f7de778adb4a7033ff1f2767129eca0b1cd86859e4559"
+  },
+  {
+    "path": "promise-repair-format.log.gz",
+    "sha256": "c4136a8c7c7a2d0e81e635485f7720378527163370ccc7e7f5b6056894067816"
+  },
+  {
+    "path": "promise-repair-tests.json.gz",
+    "sha256": "201fcde3886163c6c3458995db05dda042021e859bda6d131353479e08a35ef1"
+  },
+  {
+    "path": "promise-repair-tests.log.gz",
+    "sha256": "8f18964cbee70d867d1b857c31d14ca0c7f302747c54b22441fe92b29baacc80"
+  },
+  {
+    "path": "review-a-2a440b85-backlog.json.gz",
+    "sha256": "2b0b641eae052b44c601c3de175ec01d94a26c3fff0d3355955e6bf3d20334c8"
+  },
+  {
+    "path": "review-a-2a440b85-backlog.log.gz",
+    "sha256": "012583caa9526946a4b3ef0d0aafb6d2f478341adf016466ac78739bb5c361f2"
+  },
+  {
+    "path": "review-a-2a440b85-tests.json.gz",
+    "sha256": "f2ce0ea4808fd91e0f162bf67bd33f67da0aa5e1f22937b54a22da2a2cba4999"
+  },
+  {
+    "path": "review-a-2a440b85-tests.log.gz",
+    "sha256": "7b83ebf6b0b7875a56b17c78903b0c0f3c8302f014b8d7ca90c0918e50f92222"
+  },
+  {
+    "path": "review-a-2a440b85.md",
+    "sha256": "1a3ea2a55b28e6b2f4392d79bd6764ff71f18d179cd15b4dd99f5925c5312275"
+  },
+  {
+    "path": "review-b-2a-backlog.json.gz",
+    "sha256": "1edcc9f9a89d11472e0867dde73e47d4a276b3886ea9951e051f4b4d658b5e0f"
+  },
+  {
+    "path": "review-b-2a-backlog.log.gz",
+    "sha256": "3f17624387be8b90831ce78a78bf57ce80c6e90b72b9be30fe0ed94a104a70b2"
+  },
+  {
+    "path": "review-b-2a-tests.json.gz",
+    "sha256": "debb0185f839a903fd5e8d8bd5c4968a19770e878fa2fc50767a7b3363512579"
+  },
+  {
+    "path": "review-b-2a-tests.log.gz",
+    "sha256": "4f14d6eb82ff6cc6abd1e6b03e341997f49241782e37b7b52f1a89b6fdfe6265"
+  },
+  {
+    "path": "review-b-2a440b85.md",
+    "sha256": "ccd304fdac860b1d9930b5bddf53b080a07da7130126118f8df6d3578e0e5689"
+  },
+  {
+    "path": "safari-capability-failure.png",
+    "sha256": "ee19ecb6915d9bebab71832fe154e32e48bcf95e27a0df5f04949c21e5942f50"
+  },
+  {
+    "path": "safari-profile-probe.json.gz",
+    "sha256": "13d74a472e30516f4cdda90ea273dd4e56fb02bed2b4a8ff5731306792ed1d30"
+  },
+  {
+    "path": "versions.json.gz",
+    "sha256": "15b160d9e30074168ca4921213386c82cce8f58826dd6ed43fcf89e29a8c350f"
+  }
+]
