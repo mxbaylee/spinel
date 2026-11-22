@@ -1,0 +1,12 @@
+{
+  "label": "review-b-525-readiness",
+  "command": "node",
+  "args": [
+    "/private/tmp/spn154-completion/clean-readiness-check.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "aborted": null,
+  "elapsedMs": 524,
+  "peakKiB": 118464
+}

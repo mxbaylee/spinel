@@ -248,6 +248,12 @@ It reads the existing transfer admission map without changing it. A close event
 can precede production admission release; `admittedAtClose` alone is not proof of
 a leak. No URL, query, header, body or document identity is retained. Dropped and
 unreadable observations are counted; observer failures cannot change the request.
+Snapshots also report currently admitted observed ordinals; closure alone does
+not authorize a retry. The native fixture permits one explicit recovery retry
+only for an observed 429 with the exact busy UI, an overlapping successful bundle
+that completed, and no observed admitted transfer. It preserves the first refusal
+and uses the original deadline. `desktop-recovery-retry.test.ts` rejects other
+statuses, missing/ambiguous evidence, repeated refusals and incomplete collection.
 `desktop-transfer-observation.test.ts` covers overlapping admission after a close,
 429 status, redaction, bounds and thrown-observer isolation. The desktop report
 also records a failure-time recovery-receipt count, while its existing UI/content

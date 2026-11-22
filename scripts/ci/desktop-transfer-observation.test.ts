@@ -25,6 +25,9 @@ test('transfer observation identifies admitted overlap without content or creden
     evidence.requests.map((row) => row.admittedAtStart),
     [[], [1]],
   );
+  assert.deepEqual(evidence.admittedOrdinals, [1]);
+  holders.delete(bundle);
+  assert.deepEqual(observer.snapshot().admittedOrdinals, []);
   assert.equal(evidence.requests[0].admittedAtClose, true);
   assert.equal(evidence.requests[0].status, undefined);
   assert.equal(evidence.requests[1].status, 429);
@@ -59,5 +62,5 @@ test('observation failures cannot throw into request or response handling', () =
   observer.observe({ url: '/api/items/private-id/export' }, first);
   assert.doesNotThrow(() => first.emit('close'));
   assert.doesNotThrow(() => observer.observe({ url: '/api/items/offline-recovery' }, response()));
-  assert.equal(observer.snapshot().unreadable, 2);
+  assert.equal(observer.snapshot().unreadable, 3);
 });

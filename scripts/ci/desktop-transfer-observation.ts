@@ -67,7 +67,16 @@ export function desktopTransferObservation(admitted: (response: ServerResponse) 
       });
     },
     snapshot() {
-      return { total, dropped, unreadable, requests: structuredClone(requests) };
+      const admittedOrdinals: number[] = [];
+      safely(() => {
+        for (const [response, ordinal] of tracked)
+          if (admitted(response)) admittedOrdinals.push(ordinal);
+      });
+      return { total, dropped, unreadable, admittedOrdinals, requests: structuredClone(requests) };
     },
   };
 }
+
+export type DesktopTransferEvidence = ReturnType<
+  ReturnType<typeof desktopTransferObservation>['snapshot']
+>;

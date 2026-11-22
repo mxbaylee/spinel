@@ -1,0 +1,86 @@
+[
+  {
+    "path": "dev2-d933.log.gz",
+    "sha256": "258b9c4900d7dcbc626d3098c126cf4814de6ead5b1bda52f1f36b863ca421c5"
+  },
+  {
+    "path": "development-summary.json",
+    "sha256": "cafc76f539256d7841824894c2c77806ea3d7c4e1513f5f0907c988288239b1b"
+  },
+  {
+    "path": "documents-native-Doc-image-0e17b-ls-after-a-selection-change-production.json.gz",
+    "sha256": "4a19ba8844dcb459d4a358ae8adbdc9fbeb53207e0a35d67c258f3b6498f625c"
+  },
+  {
+    "path": "documents-native-Doc-image-122ad-itching-to-image-formatting-production.json.gz",
+    "sha256": "ae54fc387709180d6040a66f79489154a6629a69627740345d7c58b0e650aa0a"
+  },
+  {
+    "path": "documents-native-Doc-image-1cbfe-age-through-undo-and-reopen-production.json.gz",
+    "sha256": "287697a106da381c7039626e9f6988e946f2573387cd05646dcf95e090483ace"
+  },
+  {
+    "path": "documents-native-Doc-image-32927-ers-the-system-paste-action-production.json.gz",
+    "sha256": "1c547ce1c16500bc708f292d3700bb5f996a91a7b7d099c937ad1da35c7049c4"
+  },
+  {
+    "path": "documents-native-Doc-image-3735f-cels-after-a-content-change-production.json.gz",
+    "sha256": "57bf09631d652a1c6ff773956395e4083ba6d32d76668aea1a82450b3ac6a885"
+  },
+  {
+    "path": "documents-native-Doc-image-5a697-formatting-and-undo-history-production.json.gz",
+    "sha256": "1c418b3e4c0cd92847b02ee402cfa333bec17d5aca9aa78f9fdf12ce57dc9b07"
+  },
+  {
+    "path": "documents-native-Doc-image-5c4fd-te-a-native-clipboard-image-production.json.gz",
+    "sha256": "374d5db04ac2000ba3d042875d0926072ba5585e09af4108867a5fd7d8824b4e"
+  },
+  {
+    "path": "documents-native-Doc-image-68b6a-re-without-changing-content-production.json.gz",
+    "sha256": "7fd88c22b33f0993a45a5ebc322359105b839e5252e41feb4ff6effcd3786a7c"
+  },
+  {
+    "path": "documents-native-Doc-image-940cc-e-edit-authority-is-removed-production.json.gz",
+    "sha256": "828cc07817c31e8ce7148bac3977f95fc43bd35972ffa5225664d6655ea5f733"
+  },
+  {
+    "path": "documents-native-Doc-image-a8613-ete-feedback-in-both-themes-production.json.gz",
+    "sha256": "408a94fb53ca5b71d905ec70fc9cec294e9e9096fd94c88152e1cd9a0ef527fa"
+  },
+  {
+    "path": "documents-native-Doc-image-da9bb-allows-a-later-native-paste-production.json.gz",
+    "sha256": "e2b71a50d24405237d31e20f3f712152fcf64715a5af9f048d3daa283d846899"
+  },
+  {
+    "path": "documents-native-Doc-image-e2b99--retain-content-and-history-production.json.gz",
+    "sha256": "89f7207292e89ce064c338c37e321510ecb0078618075fc7442c5cf68cf735ee"
+  },
+  {
+    "path": "prod2-d933.log.gz",
+    "sha256": "615c3fefad701a711f9d27a62b433716861c516ffe6e2c195086253908751654"
+  },
+  {
+    "path": "spn154-html-paste-success-light.png",
+    "sha256": "5296f2fa7e9b0f92158f07ae726ce723c687c227260f96d8244ab7d52b50015c"
+  },
+  {
+    "path": "spn154-html-upload-failure-dark.png",
+    "sha256": "5d99d8304c15c955d68ad65e95472d36c6a962fac968e16cce0fc64102964eb0"
+  },
+  {
+    "path": "spn154-html-upload-failure-light.png",
+    "sha256": "fe74e57d5f7bdb98b1a7f78ca72d358cba0fb8ee101fb71d43af55df2d1886fd"
+  },
+  {
+    "path": "spn154-phone-upload-failure-dark.png",
+    "sha256": "d925a22d96e28c22558b01b0c9ce99f8555aa45505175eae4eba2d599a6a8a1f"
+  },
+  {
+    "path": "spn154-phone-upload-failure-light.png",
+    "sha256": "a46209dd1fcb12760d7836888d553c1c5259a023f6d714aec4cf4670311a0fe0"
+  },
+  {
+    "path": "summary.json",
+    "sha256": "a103d3dde872075a44a606bf4a70e34dbf756b8cd2560a0da11440e2d08922e9"
+  }
+]

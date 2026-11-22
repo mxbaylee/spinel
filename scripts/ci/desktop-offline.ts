@@ -21,6 +21,7 @@ import { createDesktopBrowser } from './desktop-browser.ts';
 import type { DesktopBrowserKind, DesktopBrowserStart } from './desktop-browser.ts';
 import { createDesktopOfflineFixture } from './desktop-offline-fixture.ts';
 import { desktopSyncObservation } from './desktop-sync-observation.ts';
+import { desktopRecoveryRetry } from './desktop-recovery-retry.ts';
 import { namedPointerTarget } from './desktop-pointer.ts';
 import { countOfflineImagePixels, offlineImagesPainted } from './offline-image-pixels.ts';
 
@@ -75,11 +76,12 @@ async function until<T>(
   throw new Error(`${label}: ${JSON.stringify(last)?.slice(0, 1800)}`);
 }
 
-async function named(selector: string, name: string) {
+async function named(selector: string, name: string, timeout = 45_000) {
   const index = await until(
     () => browser.evaluate<number>(namedPointerTarget(selector, name)),
     (value) => value >= 0,
     `Named click target is missing, disabled or obscured: ${name}`,
+    timeout,
   );
   await browser.click(selector, index);
 }
@@ -585,6 +587,8 @@ async function main() {
     await f.setOffline(false);
     stage('transport-restored');
     for (const item of f.items) {
+      const transferStart = f.transferEvidence.total;
+      const receiptsBefore = receipts();
       await browser.goto(`${f.origin}/?item=${item.id}`);
       await canvas();
       if (item.outcome === 'normal') {
@@ -616,24 +620,98 @@ async function main() {
         // The status region contains the detailed published-copy message; the
         // production save-details control carries the stable attention label.
         await named('button', 'Save details: Needs attention');
-        const publication = await until(
-          () =>
-            browser.evaluate<{ href: string; failed: boolean; reason: string }>(`(() => {
-              const dialog = document.querySelector('[role="dialog"]');
-              return {
-                href: Array.from(dialog?.querySelectorAll('a') || []).find(link => link.textContent.trim() === 'Open copy')?.getAttribute('href') || '',
-                failed: Boolean(dialog?.textContent.includes('Another file transfer is running. Try again shortly.')) && Array.from(dialog?.querySelectorAll('button') || []).some(button => button.textContent.trim() === 'Retry creating copy'),
-                reason: dialog?.textContent.includes('Another file transfer is running. Try again shortly.') ? 'transfer-busy' : 'other-recovery-error',
-              };
-            })()`),
-          (value) => Boolean(value.href) || value.failed,
-          'One published recovery copy',
-        );
+        const deadline = Date.now() + 45_000;
+        const remaining = () => {
+          assert.ok(Date.now() < deadline, 'Recovery publication exceeded its original deadline');
+          return Math.max(1, deadline - Date.now());
+        };
+        const readPublication = () =>
+          browser.evaluate<{ href: string; failed: boolean; reason: string }>(`(() => {
+            const dialog = document.querySelector('[role="dialog"]');
+            return {
+              href: Array.from(dialog?.querySelectorAll('a') || []).find(link => link.textContent.trim() === 'Open copy')?.getAttribute('href') || '',
+              failed: Array.from(dialog?.querySelectorAll('button') || []).some(button => button.textContent.trim() === 'Retry creating copy'),
+              reason: dialog?.textContent.includes('Another file transfer is running. Try again shortly.') ? 'transfer-busy' : 'other-recovery-error',
+            };
+          })()`);
+        const observePublication = () =>
+          until(
+            readPublication,
+            (value) => Boolean(value.href) || value.failed,
+            'One published recovery copy',
+            remaining(),
+          );
+        let publication = await observePublication();
+        let retriedRequest: { recoveryId: string; requestHash: string } | undefined;
+        if (publication.failed && publication.reason === 'transfer-busy') {
+          const firstTransfers = f.transferEvidence;
+          assert.ok(
+            desktopRecoveryRetry(firstTransfers, transferStart),
+            'Busy UI needs a matching recovery 429 and overlapping bundle',
+          );
+          const saved = await local(f.actor.id, item.id);
+          assert.ok(saved.item?.outbox && saved.item.recovery);
+          assert.deepEqual(receipts(), receiptsBefore);
+          assert.deepEqual(f.originalState(item), originals.get(item.id));
+          const request = saved.item.recovery;
+          retriedRequest = {
+            recoveryId: request.recoveryId,
+            requestHash: hash([
+              request.filename,
+              request.possibleReplayCrash,
+              JSON.stringify(request.snapshot),
+            ]),
+          };
+          stage('recovery-transfer-busy-first-result', {
+            itemId: item.id,
+            ...retriedRequest,
+            checkpointSha256: hash(saved.item.outbox.checkpoint),
+            recoverySha256: hash(request),
+            receipts: receiptsBefore,
+            transfers: firstTransfers,
+          });
+          await browser.screenshot(resolve(output, `${item.kind}-transfer-busy-first.png`));
+          const ready = await until(
+            () => desktopRecoveryRetry(f.transferEvidence, transferStart),
+            (value) => value?.ready === true,
+            'Observed competing transfer completed and released admission',
+            remaining(),
+          );
+          const beforeRetry = await local(f.actor.id, item.id);
+          assert.deepEqual(beforeRetry.item?.outbox, saved.item.outbox);
+          assert.deepEqual(beforeRetry.item?.recovery, request);
+          assert.deepEqual(beforeRetry.images, saved.images);
+          assert.deepEqual(receipts(), receiptsBefore);
+          assert.deepEqual(f.originalState(item), originals.get(item.id));
+          assert.equal(desktopRecoveryRetry(f.transferEvidence, transferStart)?.ready, true);
+          // One documented UI retry of a refused, immutable recovery request.
+          // No test retry, other-error retry or fresh deadline is permitted.
+          await named('button', 'Retry creating copy', remaining());
+          stage('recovery-transfer-busy-native-retry', {
+            itemId: item.id,
+            ...ready,
+            ...retriedRequest,
+          });
+          // The physical click may return before the async preparation redraws.
+          // Do not mistake the retained first error for a second refusal.
+          await until(
+            readPublication,
+            (value) => Boolean(value.href) || !value.failed,
+            'Native retry leaves its retained first error',
+            remaining(),
+          );
+          publication = await observePublication();
+        }
         assert.ok(publication.href, `Recovery publication failed: ${publication.reason}`);
         const href = publication.href;
         const copyId = new URL(href, f.origin).searchParams.get('item');
         assert.ok(copyId && copyId !== item.id);
         assert.deepEqual(f.originalState(item), originals.get(item.id));
+        if (retriedRequest) {
+          const receipt = receipts().find((row) => row.item_id === copyId);
+          assert.equal(receipt?.recovery_id, retriedRequest.recoveryId);
+          assert.equal(receipt?.request_hash, retriedRequest.requestHash);
+        }
         recoveryIds.add(copyId);
         assert.deepEqual(
           receipts()
