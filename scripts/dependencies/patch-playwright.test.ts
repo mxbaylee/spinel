@@ -1,16 +1,16 @@
 import assert from 'node:assert/strict';
 import { execFileSync, fork } from 'node:child_process';
 import { once } from 'node:events';
-import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import http from 'node:http';
 import type { ClientRequest } from 'node:http';
-import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { resolve } from 'node:path';
 import { test } from 'node:test';
-import type { APIRequest, APIRequestContext } from '@playwright/test';
+import type { APIRequestContext } from '@playwright/test';
 import { withFixtureCleanup } from '../../e2e/owned-process.ts';
 import { patchInstalledPlaywright, preparePlaywrightPatch } from './patch-playwright.ts';
+import { copyPlaywrightClient } from './playwright-test-client.ts';
 
 const installedDirectory = resolve(import.meta.dirname, '../../node_modules/playwright-core');
 const readBuild = () => readFile(resolve(installedDirectory, 'lib/coreBundle.js'), 'utf8');
@@ -141,17 +141,9 @@ test(
   async (t) => {
     const root = await mkdtemp(resolve(tmpdir(), 'spinel-api-transport-'));
     t.after(() => rm(root, { recursive: true, force: true }));
-    const { original, patched } = preparePlaywrightPatch(await readBuild());
-    for (const [name, source] of [
-      ['original', original],
-      ['patched', patched],
-    ]) {
+    for (const name of ['original', 'patched'] as const) {
       const directory = resolve(root, name);
-      await cp(installedDirectory, directory, { recursive: true });
-      await writeFile(resolve(directory, 'lib/coreBundle.js'), source);
-      const { request } = createRequire(import.meta.url)(resolve(directory, 'index.js')) as {
-        request: APIRequest;
-      };
+      const request = await copyPlaywrightClient(directory, name);
       const server = await fixture('http', root);
       let context: APIRequestContext | undefined;
       const clientEvents: { reused: boolean; at: number }[] = [];
