@@ -4,6 +4,7 @@ import { mkdir, open, readFile } from 'node:fs/promises';
 import { createServer, request as tlsRequest } from 'node:https';
 import type { Server as HttpsServer } from 'node:https';
 import type { AddressInfo, Socket } from 'node:net';
+import type { Response } from 'express';
 import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { JSONX, TextX, TextXActionType } from '@univerjs/core';
@@ -19,6 +20,8 @@ import { WorkspaceStore } from '../../src/server/workspace/store.ts';
 import { docImageSnapshot } from '../../e2e/doc-image-fixture.ts';
 import { offlineSheetImages } from '../../e2e/offline-fixture.ts';
 import { parseFixtureOrigin } from './desktop-fixture-origin.ts';
+import { desktopTransferObservation } from './desktop-transfer-observation.ts';
+import { transfers } from '../../src/server/workspace/transfers.ts';
 
 export type DesktopSnapshot = { unitId: string; revision: number; snapshot: NativeSnapshot };
 export type DesktopItem = {
@@ -67,6 +70,9 @@ export async function createDesktopOfflineFixture(options: {
   let tls: HttpsServer | undefined;
   let closing: Promise<void> | undefined;
   let offline = false;
+  const transferObservation = desktopTransferObservation((response) =>
+    transfers.has(response as Response),
+  );
   const sockets = new Set<Socket>();
   const controls = new Set<WebSocket>();
   const counts = {
@@ -305,6 +311,7 @@ export async function createDesktopOfflineFixture(options: {
         return;
       }
       counts.forwardedRequests++;
+      transferObservation.observe(request, response);
       app!.server.emit('request', request, response);
     });
     tls.on('upgrade', (request, socket, head) => {
@@ -540,6 +547,9 @@ export async function createDesktopOfflineFixture(options: {
       verifyDisconnected,
       remoteEdit,
       close,
+      get transferEvidence() {
+        return transferObservation.snapshot();
+      },
       get transport() {
         return { ...counts, offline, activeBrowserSockets: sockets.size };
       },

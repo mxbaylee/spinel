@@ -58,9 +58,12 @@ export interface EditingFixture {
   id: string;
   initial: IDocumentData;
   read(): Promise<IDocumentData>;
+  revision(): Promise<number>;
+  image(source: string): Promise<Buffer>;
   focus(): Promise<void>;
   reload(): Promise<void>;
   mobile: boolean;
+  downgrade?(): Promise<void>;
 }
 
 async function recordEditingEvents(context: BrowserContext) {
@@ -112,7 +115,13 @@ export async function withEditingDoc(
   info: TestInfo,
   mobile: boolean,
   work: (fixture: EditingFixture) => Promise<void>,
-  options: { viewer?: boolean; traditional?: boolean; singleParagraph?: boolean } = {},
+  options: {
+    viewer?: boolean;
+    collaborator?: boolean;
+    traditional?: boolean;
+    singleParagraph?: boolean;
+    beforeOpen?: (page: Page) => Promise<void>;
+  } = {},
 ) {
   const source = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
   const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
@@ -221,9 +230,42 @@ export async function withEditingDoc(
           ignoreHTTPSErrors: true,
         });
       }
+      let downgrade: (() => Promise<void>) | undefined;
+      if (options.collaborator) {
+        const collaborator = auth.createUser(`Image collaborator ${info.testId}`);
+        workspace.share(owner.id, item.id, collaborator.id, 'editor');
+        guest = await browser.newContext({
+          baseURL,
+          viewport: mobile ? { width: 390, height: 844 } : { width: 1440, height: 1100 },
+          isMobile: mobile,
+          hasTouch: mobile,
+          deviceScaleFactor: 1,
+          colorScheme: 'light',
+          reducedMotion: 'reduce',
+          ignoreHTTPSErrors: true,
+        });
+        await guest.addCookies([
+          {
+            name: COOKIE_NAME,
+            value: auth.createSession(collaborator.id).token,
+            url: baseURL.replace('http:', 'https:'),
+            secure: true,
+            httpOnly: true,
+            sameSite: 'Strict',
+          },
+        ]);
+        downgrade = async () => {
+          const response = await context!.request.put(`/api/items/${item.id}/sharing`, {
+            headers: { Origin: baseURL },
+            data: { userId: collaborator.id, role: 'viewer' },
+          });
+          expect(response.ok()).toBe(true);
+        };
+      }
       await recordEditingEvents(guest ?? context);
       page = await (guest ?? context).newPage();
       page.on('pageerror', (error) => errors.push(error.message));
+      await options.beforeOpen?.(page);
       await page.goto(url);
       await expect(page.getByRole('status', { name: 'Save status' })).toHaveText(
         options.viewer || (mobile && options.traditional) ? /View only/ : 'All changes saved.',
@@ -240,7 +282,18 @@ export async function withEditingDoc(
         id: item.id,
         initial,
         read,
+        async revision() {
+          const response = await context!.request.get(`/api/items/${item.id}/doc`);
+          expect(response.ok()).toBe(true);
+          return (await response.json()).revision as number;
+        },
+        async image(source) {
+          const response = await context!.request.get(source);
+          expect(response.ok()).toBe(true);
+          return response.body();
+        },
         mobile,
+        downgrade,
         async reload() {
           await captureEvents();
           await page!.reload();
@@ -326,7 +379,7 @@ const redo = process.platform === 'darwin' ? 'Meta+Shift+z' : 'Control+y';
 const documentStart = process.platform === 'darwin' ? 'Meta+ArrowUp' : 'Control+Home';
 
 /** Use real desktop navigation or mobile touch; never write a native range. */
-async function placeCaret(f: EditingFixture, offset: number) {
+export async function placeCaret(f: EditingFixture, offset: number) {
   if (f.mobile) {
     await expect
       .poll(async () => Boolean((await readEditingSelection(f.page, offset))?.queryBounds))
@@ -360,7 +413,7 @@ async function placeCaret(f: EditingFixture, offset: number) {
     .toEqual([offset, offset]);
 }
 
-async function content(
+export async function content(
   f: EditingFixture,
   text: string,
   caret?: number,
@@ -399,14 +452,22 @@ async function content(
   return saved;
 }
 
-async function reopen(f: EditingFixture, expected: IDocumentData) {
+export async function reopen(
+  f: EditingFixture,
+  expected: IDocumentData,
+  status: 'All changes saved.' | 'View only.' = 'All changes saved.',
+) {
   await f.reload();
+  // Native content and permission/save status share the existing load budget.
   await expect
-    .poll(async () => (await readEditingSelection(f.page))?.text, { timeout: 30_000 })
-    .toBe(expected.body!.dataStream);
-  await expect(f.page.getByRole('status', { name: 'Save status' })).toHaveText(
-    'All changes saved.',
-  );
+    .poll(
+      async () => ({
+        text: (await readEditingSelection(f.page))?.text,
+        status: await f.page.getByRole('status', { name: 'Save status' }).allTextContents(),
+      }),
+      { timeout: 30_000 },
+    )
+    .toEqual({ text: expected.body!.dataStream, status: [status] });
   const native = (await readEditingSelection(f.page))!;
   const saved = await f.read();
   expect(canonical(normalizedDocBody(native.body))).toBe(

@@ -1,0 +1,49 @@
+{
+  "kind": "Original deadline failures and collection-based capacity sizing; projections are not passing runtime evidence",
+  "correction": "The earlier supersession explanation for source45 metadata was wrong. Both jobs explicitly exceeded the existing20-minute deadline.",
+  "failures": [
+    {
+      "source": "45b3277f484c09cfd4fb69a05531a7e8b75e2172",
+      "testedMerge": "9da120bc10f00c2583fb3427c000410c8d41df5d",
+      "run": 45067844639,
+      "attempt": 1,
+      "job": 137350364971,
+      "runConclusion": "cancelled",
+      "failedClosedAggregate": 137363355964,
+      "artifact": 14773043585,
+      "artifactSha256": "8b1542df1803f40b453ddc353dfd737f190cc01954d660508f97ec848b4950f1",
+      "lastStartedCase": "83/93",
+      "setupSeconds": 55,
+      "interruptedSmokeSeconds": 1158,
+      "finalizedDevelopmentReport": false
+    },
+    {
+      "source": "0b4f4ca2899d2f06bc0d7433433a473e152958c1",
+      "testedMerge": "2abf0bb29c678d8686ea56b95cc8df56920edaf6",
+      "run": 45071409419,
+      "attempt": 1,
+      "job": 137361154977,
+      "runConclusion": "cancelled",
+      "failedClosedAggregate": 137374222727,
+      "artifact": 14774957350,
+      "artifactSha256": "a66c23678d77d2a860510593e46e5f85aafc4efc6eaa745c317e142f965ec228",
+      "lastStartedCase": "84/93",
+      "setupSeconds": 47,
+      "interruptedSmokeSeconds": 1166,
+      "finalizedDevelopmentReport": false
+    }
+  ],
+  "githubAnnotation": "The job has exceeded the maximum execution time of 20m0s",
+  "observedMedianInterStartRatioToPassingCaseDuration": 1.405,
+  "ratioLimit": "Interrupted log intervals include transition overhead; they are not finalized case durations or a host-contention diagnosis.",
+  "collectionSource": "0b4f4ca2899d2f06bc0d7433433a473e152958c1",
+  "completeCaseCount": 186,
+  "threeShards": [
+    { "shard": "1/3", "cases": 62, "recordedCaseSumMs": 657875, "scaledPlusGapAndSetupMs": 1003908 },
+    { "shard": "2/3", "cases": 62, "recordedCaseSumMs": 565528, "scaledPlusGapAndSetupMs": 874160 },
+    { "shard": "3/3", "cases": 62, "recordedCaseSumMs": 649516, "scaledPlusGapAndSetupMs": 992163 }
+  ],
+  "projectionInputs": "Recorded passing0b per-case durations; multiply1.405, add largest report gap9593.159ms and70000ms setup allowance (observed setup42–64s).",
+  "coverage": "Actual full-project collection equals the disjoint union of all three shards. All12 clipboard cases remain in shard3; no case/assertion/retry/trace/worker/deadline changes.",
+  "archiveDirectory": "/Users/mxbaylee/.codex/archives/spinel/SPN-154-20261122/"
+}

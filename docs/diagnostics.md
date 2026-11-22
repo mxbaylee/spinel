@@ -240,6 +240,36 @@ regression records socket reuse and server timeout events without headers, cooki
 or document content; `scripts/ci/reset-diagnostics.test.ts` retains reporter
 redaction, capacity and failure-isolation coverage.
 
+🧪 SPN-154's `scripts/ci/desktop-transfer-observation.ts` is a native-test-fixture
+observer, not a production emitter. It retains at most 256 transfer requests by
+ordinal and finite route class, with response status, relative start/finish/close
+times and the already-admitted observed request ordinals at each new request.
+It reads the existing transfer admission map without changing it. A close event
+can precede production admission release; `admittedAtClose` alone is not proof of
+a leak. No URL, query, header, body or document identity is retained. Dropped and
+unreadable observations are counted; observer failures cannot change the request.
+Snapshots also report currently admitted observed ordinals; closure alone does
+not authorize a retry. The native fixture permits one explicit recovery retry
+only for an observed 429 with the exact busy UI, an overlapping successful bundle
+that completed, and no observed admitted transfer. It preserves the first refusal
+and uses the original deadline. `desktop-recovery-retry.test.ts` rejects other
+statuses, missing/ambiguous evidence, repeated refusals and incomplete collection.
+`desktop-transfer-observation.test.ts` covers overlapping admission after a close,
+429 status, redaction, bounds and thrown-observer isolation. The desktop report
+also records a failure-time recovery-receipt count, while its existing UI/content
+and persistence assertions remain unchanged. No test retry or larger budget is
+added; the one supported UI retry above is recorded separately.
+
+The fixture's `desktop-sync-observation.ts` reads the existing diagnostics store
+read-only after the journey, without changing production collection. It retains
+at most 256 schema-validated connection/resync/refresh/recovery records, reducing
+file identity to the fixture item ordinal. Counts distinguish dropped and invalid
+rows. A missing, locked or malformed store cannot change acceptance. The existing
+collection remains lossy: `available` means the read succeeded, not completeness;
+`receivedAt` is batch-arrival time, not event time. Browser-queued events may still
+be absent before teardown; absence cannot establish causality. Tests cover bounds,
+unknown/content-bearing records, immutable storage and unavailable-store isolation.
+
 Maintain this table when code moves or changes an observed boundary. The PR's
 **Diagnostic upkeep** section explains added, moved, retired or unchanged
 observations and the associated regression evidence. Preserve the actual

@@ -1,0 +1,33 @@
+{
+  "source": "75a89e30ea7874c9a5bbb750221c8fd98fba7107",
+  "testedMerge": "2073701a8c476a78cbc7bc3f2eb04936707986a4",
+  "run": 45065553874,
+  "attempt": 1,
+  "job": 137340985250,
+  "artifact": 14770914442,
+  "artifactSha256": "76c8a07b8dd7dc1bc35c70379d059e1ddc4984ab6395e785b5f7acff8975c0ed",
+  "traceSha256": "4ebf3470185e0dd9ad429bb3341130cde65331591dc451a85e0276ff421aa015",
+  "retry": 0,
+  "failedAssertion": "final intentional reload: View only. vs Loading document\u2026 at default5000ms",
+  "reloadStart": 275113.551,
+  "reloadEnd": 275185.726,
+  "assertionStart": 275189.765,
+  "assertionFailure": 280193.107,
+  "postFailureSnapshotTime": 280213.633,
+  "postFailureStatusNode": [
+    [
+      "SPAN",
+      {
+        "__playwright_target__": "",
+        "class": "save-announcement",
+        "role": "status",
+        "aria-label": "Save status",
+        "aria-live": "polite",
+        "aria-atomic": "true"
+      },
+      "View only."
+    ]
+  ],
+  "nativeReadComplete": 280235.192,
+  "disposition": "First attempt remains failed; post-failure snapshot confirms exact viewer status 20.526ms later. Native body is present in cleanup, not a passing reopen assertion. Repair shares established30s readiness budget across native text and exact status;60s journey/retries0 unchanged."
+}
