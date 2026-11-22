@@ -1,0 +1,294 @@
+{
+  "source": "5afac055559e43cc06c0e399a0f61babd2864962",
+  "tree": "44615d505134a930b2d70d4fbff3fc116a4e3e6e",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "phoneBuildSource": "141fa3aca4b4fb3a127e4983a21e975fe9e333ec",
+  "phoneBuildEquivalence": {
+    "buildSource": "141fa3aca4b4fb3a127e4983a21e975fe9e333ec",
+    "runnerSource": "5afac055559e43cc06c0e399a0f61babd2864962",
+    "unchangedInputs": [
+      "package.json",
+      "package-lock.json",
+      "vite.config.ts",
+      "src/build/rendererChunks.ts",
+      "web/nativeSyncPermissions.ts",
+      "e2e/documents.spec.ts",
+      "playwright.config.ts",
+      "scripts/dependencies/doc-flush-observation.ts",
+      "scripts/dependencies/no-univer-pro.ts",
+      "scripts/dependencies/patch-univer-core.ts",
+      "scripts/dependencies/patch-univer-docs-ui.ts",
+      "scripts/dependencies/patch-univer-docs.ts",
+      "scripts/dependencies/patch-univer-drawing.ts",
+      "scripts/dependencies/patch-univer-ui.ts",
+      "node_modules/@univerjs/core/lib/es/index.js",
+      "node_modules/@univerjs/docs/lib/es/index.js",
+      "node_modules/@univerjs/docs-ui/lib/es/index.js"
+    ],
+    "unchangedOutputs": 48,
+    "documentationOnlyChanges": [
+      "docs/implementation/SPN-106.md",
+      "docs/implementation/evidence/SPN-106-production-20261114/browser-results.json.gz",
+      "docs/implementation/evidence/SPN-106-production-20261114/browser.log.gz",
+      "docs/implementation/evidence/SPN-106-production-20261114/build-receipt.json.gz",
+      "docs/implementation/evidence/SPN-106-production-20261114/receipt.json",
+      "docs/implementation/evidence/SPN-106-production-20261114/selection.log.gz",
+      "docs/review-assets/spn-106-production-20261114/README.md",
+      "docs/review-assets/spn-106-production-20261114/spn-106-account-desktop-dark.png",
+      "docs/review-assets/spn-106-production-20261114/spn-106-account-desktop-light.png",
+      "docs/todo/SPN-106.md"
+    ]
+  },
+  "environment": {
+    "node": "26.13.0",
+    "privateDependencies": true,
+    "guard": {
+      "maxKiB": 2097152,
+      "maxMs": 480000,
+      "startingPressure": 1
+    },
+    "phoneFlags": {
+      "VITE_SYNC_EVIDENCE": "0",
+      "VITE_DOC_SELECTION_EVIDENCE": "1",
+      "VITE_DOC_RESPONSIVENESS_EVIDENCE": "0"
+    },
+    "storybookBuild": {
+      "maxOldSpaceMiB": 1024,
+      "GOMEMLIMIT": "640MiB",
+      "GOGC": "50",
+      "GOMAXPROCS": "2"
+    }
+  },
+  "phoneSelection": {
+    "name": "spn106-production-phone-selection-20261114",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--project=production",
+      "e2e/documents.spec.ts",
+      "--grep",
+      "phone guest Doc viewer opens plain and dated documents without a protection warning$",
+      "--list"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 723,
+    "peakKiB": 306672
+  },
+  "phoneBrowser": {
+    "name": "spn106-production-phone-guest-first-20261114",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+      "node_modules/@playwright/test/cli.js",
+      "test",
+      "--project=production",
+      "e2e/documents.spec.ts",
+      "--grep",
+      "phone guest Doc viewer opens plain and dated documents without a protection warning$",
+      "--reporter=line,json"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 9670,
+    "peakKiB": 1666976
+  },
+  "phoneStats": {
+    "startTime": "2026-11-14T21:06:47.821Z",
+    "duration": 9350.101,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "storybookBuild": {
+    "name": "spn106-focused-storybook-build-first-20261114",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+      "--max-old-space-size=1024",
+      "--import",
+      "./.storybook/typescript-api.ts",
+      "node_modules/storybook/dist/bin/dispatcher.js",
+      "build",
+      "--config-dir",
+      "test-results/spn106-storybook-config",
+      "--output-dir",
+      "storybook-static",
+      "--disable-telemetry"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 6809,
+    "peakKiB": 1584320
+  },
+  "storybookCapture": {
+    "name": "spn106-focused-storybook-capture-first-20261114",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+      "scripts/screenshots.ts",
+      "--viewport",
+      "mobile",
+      "docs-mobile--viewer",
+      "docs-mobile--viewer-denied-edit"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 4492,
+    "peakKiB": 896112
+  },
+  "storybookVisualResult": "Both denied-edit images show the complete Autumn notes body and the genuine native warning. Both viewer images show the complete body without warning. Implementer inspection only; independent visual approval remains pending.",
+  "storybookIndexSha256": "0e1d304ca4aa3f9a658c52e1a264966cfb102a92b1f07819011e32d67e67f475",
+  "storybookIdentitySha256": "a7c50fed123555dbf988eab5e293326b02ebdd7667631a063535b71d860d0dc4",
+  "artifacts": [
+    {
+      "file": "phone-build-equivalence.json.gz",
+      "encoding": "gzip",
+      "decodedBytes": 1629,
+      "decodedSha256": "02b5423fb57011cecfd52ededdd1048923ebcd33910835516c209016aabe908a",
+      "storedBytes": 526,
+      "storedSha256": "a91a8261432023d2a8aba45ad4ae332aacc2c8e78cb0704298fd7b835079845c"
+    },
+    {
+      "file": "phone-selection.log.gz",
+      "encoding": "gzip",
+      "decodedBytes": 572,
+      "decodedSha256": "379114ff362616e197312ae286b614adfc64b93162bc782e9e5151e1c1604c6b",
+      "storedBytes": 355,
+      "storedSha256": "9fd8a962b62a8a70bfef51daf1286e0ac1f1a4874ea1796aaaf9526ac06987d7"
+    },
+    {
+      "file": "phone-browser.log.gz",
+      "encoding": "gzip",
+      "decodedBytes": 1949,
+      "decodedSha256": "038403474d66e4c3556e2c90bf57d12150bdd3b85b29d5e6f813b22f61ef9103",
+      "storedBytes": 610,
+      "storedSha256": "0420dfa02a347f3b94b3453f3d3dc702a9f602c7012b552a36e3c82134281093"
+    },
+    {
+      "file": "phone-browser-results.json.gz",
+      "encoding": "gzip",
+      "decodedBytes": 11074,
+      "decodedSha256": "1254621e8e5c620910ad652bdc06e82843c0b8f1eec3f789bebb8a6f5f52423f",
+      "storedBytes": 1732,
+      "storedSha256": "9b8c5b664a656e1b0a0b11d14b201434aceac759201c3efc6625b756f93c6790"
+    },
+    {
+      "file": "storybook-build.log.gz",
+      "encoding": "gzip",
+      "decodedBytes": 194149,
+      "decodedSha256": "71d05255acd4abcaa85e95aeecb80742caf1fc6e0e0e25e438d9a2f17ec73e5e",
+      "storedBytes": 8771,
+      "storedSha256": "f593efd126d3387091bbe063b88beac93af7daa3e24e1402b457843ecea0e8d4"
+    },
+    {
+      "file": "storybook-build-binding.json.gz",
+      "encoding": "gzip",
+      "decodedBytes": 27360,
+      "decodedSha256": "79d27b43202eca6213667ae11525559c56542b868a01a5aac6c77aea0c3ba86e",
+      "storedBytes": 8414,
+      "storedSha256": "6b07fbb4441fe3625017c8f920c5aa149d3d2b5ccfcbb68bd4be048885bc13cc"
+    },
+    {
+      "file": "storybook-capture.log.gz",
+      "encoding": "gzip",
+      "decodedBytes": 843,
+      "decodedSha256": "d4ab4773a31cf4144d272fdf649763ca541f7cbe63ac8d8c853921bc899745b0",
+      "storedBytes": 461,
+      "storedSha256": "7dfd4352b04756f9af0ea1f5edc0c2b24a6edc9da09a1d9cf29ffc2e0e31f8ca"
+    },
+    {
+      "file": "storybook-capture-manifest.json.gz",
+      "encoding": "gzip",
+      "decodedBytes": 1545,
+      "decodedSha256": "b8700fbae7859c201d41a5d989be1c376d4ca8de56bb7bc325610ffabbfb7c92",
+      "storedBytes": 376,
+      "storedSha256": "baadf257be010e016688772c69afd0c467215059cc1ad3cce4394face6a62092"
+    },
+    {
+      "file": "focused-main.ts.gz",
+      "encoding": "gzip",
+      "decodedBytes": 123,
+      "decodedSha256": "89d1aed2a3f195e9191ed2cb9cf27641fbfd48328b63e904d81ea1a586b24f3f",
+      "storedBytes": 121,
+      "storedSha256": "c25ac548465f66558357801c13c3b5f2f0f796893f6b94e4687fd2032ebeb4bf"
+    },
+    {
+      "file": "focused-preview.tsx.gz",
+      "encoding": "gzip",
+      "decodedBytes": 56,
+      "decodedSha256": "68778022becb3aa253cdc27ccc40ee69ac0d2b6487ac67b66ee6bf700769ee2a",
+      "storedBytes": 73,
+      "storedSha256": "d3a3a88eabb16ece4056e635ba123faf09f062dd955b392c2acaba166ae458f8"
+    }
+  ],
+  "images": [
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/spn-106-guest-390px-light.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 16328,
+      "sha256": "f004ebda1e74233483a148c0b94e0d66668bff25bd4b2f8126181b2c830c1db6",
+      "description": "Actual production guest, Chromium touch/mobile emulation; plain and stale-field case passed; image is field-bearing branch"
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/spn-106-guest-390px-dark.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 15720,
+      "sha256": "2206b4c0c9c850c95ce71b9f9ce56e11b5b2ca63dcba7f89caf66e2a07141a8c",
+      "description": "Actual production guest, Chromium touch/mobile emulation; plain and stale-field case passed; image is field-bearing branch"
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-phone.png",
+      "width": 390,
+      "height": 900,
+      "bytes": 48064,
+      "sha256": "509e159d02827c3d843d76323a5bdf7662cbd20f151778ec3e273edd5e78d7c8",
+      "description": "Mounted native Storybook fixture at390×900; full text visible in all images, genuine permission warning visible only in denied-edit states."
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-denied-edit-phone.png",
+      "width": 390,
+      "height": 900,
+      "bytes": 46942,
+      "sha256": "3e199e2ce34a0db95dfbbc6a6a541daf5a9dac48a5faa73ef40e5c349d77511f",
+      "description": "Mounted native Storybook fixture at390×900; full text visible in all images, genuine permission warning visible only in denied-edit states."
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-phone-dark.png",
+      "width": 390,
+      "height": 900,
+      "bytes": 47783,
+      "sha256": "e54cb5a1f51720db0fc07741fe38c61b4217338aa8e9b4980e01242a1cf2b62c",
+      "description": "Mounted native Storybook fixture at390×900; full text visible in all images, genuine permission warning visible only in denied-edit states."
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-denied-edit-phone-dark.png",
+      "width": 390,
+      "height": 900,
+      "bytes": 47518,
+      "sha256": "5e07692f4a8bd81cf10cd148176c4ae90d655476f20d1e685486c64b6a247fb4",
+      "description": "Mounted native Storybook fixture at390×900; full text visible in all images, genuine permission warning visible only in denied-edit states."
+    }
+  ],
+  "cleanup": {
+    "phone": "Port3101, logged applicationPID67043, workerPID67180 absent; candidate-path processes absent. No corrective signal.",
+    "storybook": "Port6007 and candidate-path processes absent after successful runner exit. Pressure1. No corrective signal.",
+    "slot": "Released to manager before read-only diagnosis and evidence preservation."
+  },
+  "limits": [
+    "Phone guest case is emulation, not physical phone acceptance.",
+    "Focused Storybook catalogue (nine DocMobile stories) does not replace full catalogue/selected CI owners. Four selected mounted states ran.",
+    "Development resource abort, historical Safari cause and uncovered acceptance/reviews/CI remain pending."
+  ],
+  "interpretationCorrection": {
+    "initial": "Implementer misread batch image display as blank body and proposed an unproven selection/viewport explanation.",
+    "correction": "Manager and implementer separately reopened exact original files and observed the complete text. Matching original SHA256 values prove same bytes. No blank-body product or fixture failure exists in these images; speculative causal attribution withdrawn.",
+    "runtimeRepeated": false,
+    "sourceRepair": false
+  }
+}

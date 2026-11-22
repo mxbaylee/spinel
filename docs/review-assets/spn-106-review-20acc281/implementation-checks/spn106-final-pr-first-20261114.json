@@ -1,0 +1,17 @@
+{
+  "name": "spn106-final-pr-first-20261114",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "scripts/backlog/cli.ts",
+    "pr",
+    "--base",
+    "origin/main",
+    "--title",
+    "🔕 SPN-106 Avoid a protection warning when opening view-only Docs"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 424,
+  "peakKiB": 185280
+}

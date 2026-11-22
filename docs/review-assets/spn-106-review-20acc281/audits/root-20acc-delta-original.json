@@ -1,0 +1,20 @@
+{
+  "at": "2026-11-14T21:39:50.172Z",
+  "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "previous": "ae39bab3c1ba89460418f934765b67327cd601ec",
+  "clean": true,
+  "exactChangedPaths": [
+    "docs/implementation/SPN-106.md",
+    "docs/review-assets/spn-106-guest-storybook-20261114/README.md",
+    "docs/review-assets/spn-106-production-20261114/README.md"
+  ],
+  "rootReadCompleteDelta": true,
+  "allEightImageGitHashesAndPreviousBytesVerified": true,
+  "noExecutableTestConfigurationOrRawEvidenceChanges": true,
+  "rootReadBothOriginalAndFinalFullReports": true,
+  "finalReviewPaths": [
+    "/tmp/spn106-review-20acc281-a.md",
+    "/tmp/spn106-review-20acc281-b.md"
+  ]
+}

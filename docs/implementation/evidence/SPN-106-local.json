@@ -1,0 +1,20 @@
+{
+  "base": "18a8759c498574a1d9cc24a969a558cd97a798ed",
+  "status": "Draft; runtime acceptance unverified.",
+  "dependencySource": "/Users/mxbaylee/projects/spinel-spn-129/node_modules",
+  "manifests": {
+    "packageJsonSha256": "a817f6510747557eeaaab490fb70d209bedb0a646ade837f87018a244ffcbe53",
+    "lockfileSha256": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf"
+  },
+  "logs": {
+    "install": "WATCHDOG ABORT: pressure=2, RSS=681.578125MiB, elapsed=3049ms\nserial: waiting for remaining workers.\n",
+    "install-normal-pressure": "WATCHDOG ABORT: pressure=2, RSS=530.640625MiB, elapsed=3033ms\nserial: waiting for remaining workers.\n",
+    "dependency-clone": "WATCHDOG: exit=0, signal=null, elapsed=10871ms, peak=91.3MiB\n",
+    "native-permissions-first": "\n RUN  v5.0.5 /Users/mxbaylee/projects/spinel-spn-106\n\nWATCHDOG ABORT: pressure=2, RSS=953.75MiB, elapsed=4038ms\nserial: waiting for remaining workers.\n",
+    "format": "web/nativeSyncPermissions.ts 91ms (unchanged)\nsrc/ui/nativeSyncPermissions.test.ts 67ms\nWATCHDOG: exit=0, signal=null, elapsed=356ms, peak=193.6MiB\n",
+    "format-final": "web/nativeSyncPermissions.ts 77ms (unchanged)\nsrc/ui/nativeSyncPermissions.test.ts 69ms\nweb/DocMobile.stories.tsx 79ms\ne2e/documents.spec.ts 41ms\ne2e/pdf-export.spec.ts 26ms (unchanged)\ne2e/permission-notices.ts 3ms\nWATCHDOG: exit=0, signal=null, elapsed=425ms, peak=191.3MiB\n",
+    "format-review": "e2e/documents.spec.ts 105ms\nsrc/ui/nativeSyncPermissions.test.ts 54ms (unchanged)\nWATCHDOG: exit=0, signal=null, elapsed=276ms, peak=79.3MiB\n",
+    "lint": "WATCHDOG: exit=0, signal=null, elapsed=1001ms, peak=132.7MiB\n",
+    "backlog": "warning: SPN-038.md: 70 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-068.md: 66 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-087.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-089.md: 63 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-090.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-093.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-094.md: 64 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-098.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-099.md: 69 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-106.md: 62 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-110.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-114.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-119.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-120.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-122.md: 57 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-123.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: Grooming reminder: 11 tickets completed since 2026-10-29; review with the owner when they choose. Work may continue.\nbacklog ok: 22 open tickets\nWATCHDOG: exit=0, signal=null, elapsed=157ms, peak=0.0MiB\n"
+  }
+}

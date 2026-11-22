@@ -1,0 +1,177 @@
+{
+  "checkedExecutableSource": "0320e521b606f0f0b6eab224ea762897f93351fe",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "sourceEquivalence": "Tracked changes during these checks and final preparation are documentation/evidence/prospective bookkeeping only; no executable source, dependency or output changes.",
+  "checks": [
+    {
+      "step": "dependencies",
+      "guard": {
+        "name": "spn106-final-dependencies-first-20261114",
+        "args": [
+          "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+          "scripts/dependencies/no-univer-pro.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 125,
+        "peakKiB": 0
+      },
+      "log": {
+        "file": "dependencies.log.gz",
+        "decodedBytes": 306,
+        "decodedSha256": "9f41742179e855e8ad3dee540116ed5d51d0f1bf1c2c783273ef95609967a1cb",
+        "storedBytes": 236,
+        "storedSha256": "1c7ca72dd0266e0e9f1084872ed296683f96be470dce0d7bccdc492b12c13a05"
+      }
+    },
+    {
+      "step": "typecheck",
+      "guard": {
+        "name": "spn106-final-typecheck-first-20261114",
+        "args": [
+          "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+          "node_modules/typescript/bin/tsc",
+          "-p",
+          "."
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 9787,
+        "peakKiB": 1754016
+      },
+      "log": {
+        "file": "typecheck.log.gz",
+        "decodedBytes": 245,
+        "decodedSha256": "6c88b831d5a2ada3a3b2a801c8d09dba92af47f25e853f1f26ba29325d87c164",
+        "storedBytes": 207,
+        "storedSha256": "9b244d37c0061f6dd84701289a505b6d44d31fc1590617efab7ead3893d1ed23"
+      }
+    },
+    {
+      "step": "oxlint",
+      "guard": {
+        "name": "spn106-final-oxlint-first-20261114",
+        "args": [
+          "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+          "node_modules/oxlint/bin/oxlint",
+          "--deny-warnings",
+          "."
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 3554,
+        "peakKiB": 133728
+      },
+      "log": {
+        "file": "oxlint.log.gz",
+        "decodedBytes": 253,
+        "decodedSha256": "c042ea343c1c7d27c41bdc1e40209cf70ade0c9a9d97c30c27c4bb6efd5b68fa",
+        "storedBytes": 207,
+        "storedSha256": "49c7313a9288d86ff2387e686a3cfcb8f8e105bad26aaea4447479cb3b51f642"
+      }
+    },
+    {
+      "step": "format",
+      "guard": {
+        "name": "spn106-final-format-first-20261114",
+        "args": [
+          "npm",
+          "run",
+          "format:check"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 10792,
+        "peakKiB": 655424
+      },
+      "log": {
+        "file": "format.log.gz",
+        "decodedBytes": 548,
+        "decodedSha256": "6be848dff04289948062dd9b593c47d1d5bdce767fbf13b9fe93ac7e73d20cf2",
+        "storedBytes": 334,
+        "storedSha256": "e5732bc9b831b5d74823b4ad8f566d480ef5e44ebb6d1aeb6541ab0a3f6f0226"
+      }
+    },
+    {
+      "step": "index",
+      "guard": {
+        "name": "spn106-final-index-first-20261114",
+        "args": [
+          "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+          "scripts/backlog/cli.ts",
+          "index"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 145,
+        "peakKiB": 0
+      },
+      "log": {
+        "file": "index.log.gz",
+        "decodedBytes": 1706,
+        "decodedSha256": "8d0f1c98f041edf99008364414e2d6fc368a42da0bb05cc5daaa6e7b06fecd6c",
+        "storedBytes": 370,
+        "storedSha256": "d17df0bca545748323869bd1ae62b0afeb5bd0397284f85ae7fef94709f44c03"
+      }
+    },
+    {
+      "step": "backlog",
+      "guard": {
+        "name": "spn106-final-backlog-first-20261114",
+        "args": [
+          "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+          "scripts/backlog/cli.ts",
+          "check"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 151,
+        "peakKiB": 0
+      },
+      "log": {
+        "file": "backlog.log.gz",
+        "decodedBytes": 1710,
+        "decodedSha256": "2be997556474685bfcd303991461bdd7de782895edac88c8aee1af8803fb864f",
+        "storedBytes": 365,
+        "storedSha256": "924e9d290e96dd3ca5f8b1a898e10dfa45494b52bfda4e5731123f4ceb85b80b"
+      }
+    }
+  ],
+  "limits": {
+    "maxKiB": 2097152,
+    "maxMs": 480000,
+    "normalPressureRequired": 1,
+    "postChecksPressure": 1,
+    "typecheckGo": {
+      "GOMEMLIMIT": "640MiB",
+      "GOGC": "50",
+      "GOMAXPROCS": "2"
+    },
+    "zeroPeak": "Checks completing before the first 200 ms sampling tick report0 KiB; this is no RSS sample, not zero memory usage."
+  },
+  "originalTicket": {
+    "basePath": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423:docs/todo/SPN-106.md",
+    "path": "docs/implementation/evidence/SPN-106-original-ticket.md",
+    "bytes": 4711,
+    "sha256": "5e6160aea426af3e7a513e7b22d57b44de9b49d5b51e710e5b5f592430cbc06a"
+  },
+  "prospectiveBookkeeping": {
+    "completedSince": [
+      "SPN-098",
+      "SPN-090",
+      "SPN-106"
+    ],
+    "nextId": 161,
+    "groomingDate": "2026-11-14",
+    "index": "Generated only through scripts/backlog/cli.ts index",
+    "dependents": "No base ticket depends on SPN-106; no dependency removals needed",
+    "mergeClaim": false
+  },
+  "pending": "Fresh hosted acceptance, independent visual approval and two final exact-head reviews remain pending. Exact committed PR checker evidence is provided separately after creating the complete candidate."
+}

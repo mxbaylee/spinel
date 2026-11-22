@@ -1,0 +1,104 @@
+{
+  "source": "ae39bab3c1ba89460418f934765b67327cd601ec",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "tree": "fad5a8c16c54e110c92df098c45b41159e5d8990",
+  "clean": true,
+  "prCheck": {
+    "name": "spn106-final-pr-first-20261114",
+    "args": [
+      "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+      "scripts/backlog/cli.ts",
+      "pr",
+      "--base",
+      "origin/main",
+      "--title",
+      "🔕 SPN-106 Avoid a protection warning when opening view-only Docs"
+    ],
+    "code": 0,
+    "signal": null,
+    "reason": null,
+    "elapsedMs": 424,
+    "peakKiB": 185280
+  },
+  "log": "pull request ok\n{\"name\":\"spn106-final-pr-first-20261114\",\"args\":[\"/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node\",\"scripts/backlog/cli.ts\",\"pr\",\"--base\",\"origin/main\",\"--title\",\"🔕 SPN-106 Avoid a protection warning when opening view-only Docs\"],\"code\":0,\"signal\":null,\"reason\":null,\"elapsedMs\":424,\"peakKiB\":185280}\n",
+  "documentationOnlySinceStaticSource": [
+    "docs/implementation/SPN-106.md",
+    "docs/implementation/evidence/SPN-106-final-static-20261114/backlog.log.gz",
+    "docs/implementation/evidence/SPN-106-final-static-20261114/dependencies.log.gz",
+    "docs/implementation/evidence/SPN-106-final-static-20261114/format.log.gz",
+    "docs/implementation/evidence/SPN-106-final-static-20261114/index.log.gz",
+    "docs/implementation/evidence/SPN-106-final-static-20261114/oxlint.log.gz",
+    "docs/implementation/evidence/SPN-106-final-static-20261114/receipt.json",
+    "docs/implementation/evidence/SPN-106-final-static-20261114/typecheck.log.gz",
+    "docs/implementation/evidence/SPN-106-original-ticket.md",
+    "docs/todo/backlog.json",
+    "docs/todo/readme.md"
+  ],
+  "verifiedOriginalImages": [
+    {
+      "path": "docs/review-assets/spn-106-production-20261114/spn-106-account-desktop-light.png",
+      "theme": "light",
+      "width": 1280,
+      "height": 960,
+      "sha256": "74bfc6803ce43ca3e3556f44c7ff8ca9ee1f6f77b11eba3745b8e4bc62fa53d4",
+      "bytes": 29516
+    },
+    {
+      "path": "docs/review-assets/spn-106-production-20261114/spn-106-account-desktop-dark.png",
+      "theme": "dark",
+      "width": 1280,
+      "height": 960,
+      "sha256": "d1e90b9c321f2f5e7ac64e29c824969e363dfd8c2dd380bd076923b5c0fd3f98",
+      "bytes": 28616
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/spn-106-guest-390px-light.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 16328,
+      "sha256": "f004ebda1e74233483a148c0b94e0d66668bff25bd4b2f8126181b2c830c1db6",
+      "description": "Actual production guest, Chromium touch/mobile emulation; plain and stale-field case passed; image is field-bearing branch"
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/spn-106-guest-390px-dark.png",
+      "width": 390,
+      "height": 844,
+      "bytes": 15720,
+      "sha256": "2206b4c0c9c850c95ce71b9f9ce56e11b5b2ca63dcba7f89caf66e2a07141a8c",
+      "description": "Actual production guest, Chromium touch/mobile emulation; plain and stale-field case passed; image is field-bearing branch"
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-phone.png",
+      "width": 390,
+      "height": 900,
+      "bytes": 48064,
+      "sha256": "509e159d02827c3d843d76323a5bdf7662cbd20f151778ec3e273edd5e78d7c8",
+      "description": "Mounted native Storybook fixture at390×900; full text visible in all images, genuine permission warning visible only in denied-edit states."
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-denied-edit-phone.png",
+      "width": 390,
+      "height": 900,
+      "bytes": 46942,
+      "sha256": "3e199e2ce34a0db95dfbbc6a6a541daf5a9dac48a5faa73ef40e5c349d77511f",
+      "description": "Mounted native Storybook fixture at390×900; full text visible in all images, genuine permission warning visible only in denied-edit states."
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-phone-dark.png",
+      "width": 390,
+      "height": 900,
+      "bytes": 47783,
+      "sha256": "e54cb5a1f51720db0fc07741fe38c61b4217338aa8e9b4980e01242a1cf2b62c",
+      "description": "Mounted native Storybook fixture at390×900; full text visible in all images, genuine permission warning visible only in denied-edit states."
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-denied-edit-phone-dark.png",
+      "width": 390,
+      "height": 900,
+      "bytes": 47518,
+      "sha256": "5e07692f4a8bd81cf10cd148176c4ae90d655476f20d1e685486c64b6a247fb4",
+      "description": "Mounted native Storybook fixture at390×900; full text visible in all images, genuine permission warning visible only in denied-edit states."
+    }
+  ],
+  "pending": "Both independent nonimplementing exact-head grades, independent visual approval and fresh selected hosted acceptance. No remote actions."
+}

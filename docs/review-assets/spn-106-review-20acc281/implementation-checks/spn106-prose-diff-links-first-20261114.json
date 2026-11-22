@@ -1,0 +1,13 @@
+{
+  "name": "spn106-prose-diff-links-first-20261114",
+  "args": [
+    "/bin/zsh",
+    "-c",
+    "git diff --check && test -f docs/review-assets/spn-106-guest-storybook-20261114/README.md && test -f docs/implementation/evidence/SPN-106-production-20261114/receipt.json && test -f docs/implementation/evidence/SPN-106-guest-storybook-20261114/receipt.json && test -f e2e/documents.spec.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 73,
+  "peakKiB": 0
+}

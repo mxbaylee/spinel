@@ -1,0 +1,18 @@
+{
+  "name": "spn106-review-a-preparation-ae39",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--config",
+    "node_modules/.cache/spn106-review-a-ae39/vitest.config.ts",
+    "src/server/collaboration/service.test.ts",
+    "-t",
+    "Doc preparation preserves saved content and viewer authority"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 350,
+  "peakKiB": 171840
+}
