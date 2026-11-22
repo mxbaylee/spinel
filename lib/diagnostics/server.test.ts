@@ -82,3 +82,35 @@ test('server registry accepts only its fixed content-free dimensions and exact u
     }),
   ).toBe(false);
 });
+
+// Old archived writer-loss rows remain readable; current expiry losses stay bounded.
+test('writer loss accepts optional expiry counts while rejecting invalid counts and extra content', () => {
+  const details = {
+    writer: 'supervisor',
+    invalid: 0,
+    queue: 0,
+    storage: 0,
+    unavailable: 0,
+    stale: 0,
+  };
+  for (const expired of [0, 3, Number.MAX_SAFE_INTEGER])
+    expect(
+      isServerDiagnosticEvent({
+        name: 'diagnostics.writer-loss',
+        details: { ...details, expired },
+      }),
+    ).toBe(true);
+  for (const expired of [-1, 0.5, NaN, Infinity, Number.MAX_SAFE_INTEGER + 1, '3', undefined])
+    expect(
+      isServerDiagnosticEvent({
+        name: 'diagnostics.writer-loss',
+        details: { ...details, expired },
+      }),
+    ).toBe(false);
+  expect(
+    isServerDiagnosticEvent({
+      name: 'diagnostics.writer-loss',
+      details: { ...details, expired: 1, error: 'private' },
+    }),
+  ).toBe(false);
+});

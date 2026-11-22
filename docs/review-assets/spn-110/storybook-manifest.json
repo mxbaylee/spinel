@@ -1,0 +1,176 @@
+{
+  "reviewedAt": "2026-11-22T06:40:19.265Z",
+  "durationMs": 6252,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "all",
+  "theme": "all",
+  "variants": [
+    "light",
+    "dark",
+    "phone",
+    "phone-dark",
+    "tablet"
+  ],
+  "requested": [
+    "current-production-admin-serverhealth--healthy",
+    "current-production-admin-serverhealth--diagnostics-expiry-failed",
+    "current-production-admin-diagnostics--losses"
+  ],
+  "checked": [
+    {
+      "id": "current-production-admin-serverhealth--healthy",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-admin-diagnostics--losses",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-admin-serverhealth--healthy",
+      "variant": "dark"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--losses",
+      "variant": "dark"
+    },
+    {
+      "id": "current-production-admin-serverhealth--healthy",
+      "variant": "phone"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "phone"
+    },
+    {
+      "id": "current-production-admin-diagnostics--losses",
+      "variant": "phone"
+    },
+    {
+      "id": "current-production-admin-serverhealth--healthy",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-diagnostics--losses",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-admin-serverhealth--healthy",
+      "variant": "tablet"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "tablet"
+    },
+    {
+      "id": "current-production-admin-diagnostics--losses",
+      "variant": "tablet"
+    }
+  ],
+  "captures": [
+    {
+      "id": "current-production-admin-serverhealth--healthy",
+      "variant": "light",
+      "filename": "current-production-admin-serverhealth--healthy-light.png",
+      "title": "Current production/Admin/ServerHealth / Healthy"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "light",
+      "filename": "current-production-admin-serverhealth--diagnostics-expiry-failed-light.png",
+      "title": "Current production/Admin/ServerHealth / Diagnostics Expiry Failed"
+    },
+    {
+      "id": "current-production-admin-diagnostics--losses",
+      "variant": "light",
+      "filename": "current-production-admin-diagnostics--losses-light.png",
+      "title": "Current production/Admin/Diagnostics / Losses"
+    },
+    {
+      "id": "current-production-admin-serverhealth--healthy",
+      "variant": "dark",
+      "filename": "current-production-admin-serverhealth--healthy-dark.png",
+      "title": "Current production/Admin/ServerHealth / Healthy"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "dark",
+      "filename": "current-production-admin-serverhealth--diagnostics-expiry-failed-dark.png",
+      "title": "Current production/Admin/ServerHealth / Diagnostics Expiry Failed"
+    },
+    {
+      "id": "current-production-admin-diagnostics--losses",
+      "variant": "dark",
+      "filename": "current-production-admin-diagnostics--losses-dark.png",
+      "title": "Current production/Admin/Diagnostics / Losses"
+    },
+    {
+      "id": "current-production-admin-serverhealth--healthy",
+      "variant": "phone",
+      "filename": "current-production-admin-serverhealth--healthy-phone.png",
+      "title": "Current production/Admin/ServerHealth / Healthy"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "phone",
+      "filename": "current-production-admin-serverhealth--diagnostics-expiry-failed-phone.png",
+      "title": "Current production/Admin/ServerHealth / Diagnostics Expiry Failed"
+    },
+    {
+      "id": "current-production-admin-diagnostics--losses",
+      "variant": "phone",
+      "filename": "current-production-admin-diagnostics--losses-phone.png",
+      "title": "Current production/Admin/Diagnostics / Losses"
+    },
+    {
+      "id": "current-production-admin-serverhealth--healthy",
+      "variant": "phone-dark",
+      "filename": "current-production-admin-serverhealth--healthy-phone-dark.png",
+      "title": "Current production/Admin/ServerHealth / Healthy"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "phone-dark",
+      "filename": "current-production-admin-serverhealth--diagnostics-expiry-failed-phone-dark.png",
+      "title": "Current production/Admin/ServerHealth / Diagnostics Expiry Failed"
+    },
+    {
+      "id": "current-production-admin-diagnostics--losses",
+      "variant": "phone-dark",
+      "filename": "current-production-admin-diagnostics--losses-phone-dark.png",
+      "title": "Current production/Admin/Diagnostics / Losses"
+    },
+    {
+      "id": "current-production-admin-serverhealth--healthy",
+      "variant": "tablet",
+      "filename": "current-production-admin-serverhealth--healthy-tablet.png",
+      "title": "Current production/Admin/ServerHealth / Healthy"
+    },
+    {
+      "id": "current-production-admin-serverhealth--diagnostics-expiry-failed",
+      "variant": "tablet",
+      "filename": "current-production-admin-serverhealth--diagnostics-expiry-failed-tablet.png",
+      "title": "Current production/Admin/ServerHealth / Diagnostics Expiry Failed"
+    },
+    {
+      "id": "current-production-admin-diagnostics--losses",
+      "variant": "tablet",
+      "filename": "current-production-admin-diagnostics--losses-tablet.png",
+      "title": "Current production/Admin/Diagnostics / Losses"
+    }
+  ],
+  "verifications": [],
+  "failures": []
+}

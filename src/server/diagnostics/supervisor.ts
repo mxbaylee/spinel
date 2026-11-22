@@ -1,12 +1,16 @@
 import { randomUUID } from 'node:crypto';
 import type { DiagnosticSink } from '@spinel/diagnostics';
-import { diagnosticsConfiguration } from './configuration.ts';
+import { diagnosticsConfiguration, diagnosticsRetentionDays } from './configuration.ts';
 import { DiagnosticsStore } from './store.ts';
 
 /** Same bounded diagnostics store, independent of the child that maintenance can stop. */
 export function supervisorDiagnostics(databasePath: string, image?: string) {
   const store = new DiagnosticsStore({
-    ...diagnosticsConfiguration(databasePath, image),
+    ...diagnosticsConfiguration(
+      databasePath,
+      image,
+      diagnosticsRetentionDays(process.env.DIAGNOSTICS_RETENTION_DAYS),
+    ),
     secondaryWriter: true,
   });
   const runId = randomUUID();
