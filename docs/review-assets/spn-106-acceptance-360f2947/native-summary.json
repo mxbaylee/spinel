@@ -1,0 +1,38 @@
+[
+  {
+    "browser": "firefox",
+    "file": "native-firefox.zip",
+    "sha256": "5f2e4b413ea5819070c28185b86d93dec6fcce7059518e7941e6f719b5e937da",
+    "source": "360f2947269309b472cce569f194994c43fa0d95",
+    "tested": "ea02b08dcbd149c5f7eae18e5cc43b9eaa48975e",
+    "run": "https://github.com/mxbaylee/spinel/actions/runs/44988661516",
+    "attempt": "1",
+    "stages": 44,
+    "launches": 4,
+    "status": "passed"
+  },
+  {
+    "browser": "chrome",
+    "file": "native-chrome.zip",
+    "sha256": "35c751439c98620778e3a50815509559efd33d51405bafa96ac3db47143c8be0",
+    "source": "360f2947269309b472cce569f194994c43fa0d95",
+    "tested": "ea02b08dcbd149c5f7eae18e5cc43b9eaa48975e",
+    "run": "https://github.com/mxbaylee/spinel/actions/runs/44988661516",
+    "attempt": "1",
+    "stages": 44,
+    "launches": 4,
+    "status": "passed"
+  },
+  {
+    "browser": "safari",
+    "file": "native-safari.zip",
+    "sha256": "8cb24bbc889d7aee8c5fe3be959c757b3db7c703cb7b4bfb2a19d49768fe8788",
+    "source": "360f2947269309b472cce569f194994c43fa0d95",
+    "tested": "ea02b08dcbd149c5f7eae18e5cc43b9eaa48975e",
+    "run": "https://github.com/mxbaylee/spinel/actions/runs/44988661516",
+    "attempt": "1",
+    "stages": 46,
+    "launches": 4,
+    "status": "passed"
+  }
+]

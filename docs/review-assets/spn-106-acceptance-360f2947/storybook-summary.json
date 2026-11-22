@@ -1,0 +1,48 @@
+{
+  "run": 44988661630,
+  "attempt": 1,
+  "source": "360f2947269309b472cce569f194994c43fa0d95",
+  "tested": "ea02b08dcbd149c5f7eae18e5cc43b9eaa48975e",
+  "variants": [
+    {
+      "variant": "desktop-light",
+      "summary": [
+        "2026-11-22T05:27:44.4770372Z Checked 1097 story states; captured 1097 catalog/error screenshots in /home/runner/work/spinel/spinel/test-results/design-review; 13 additional interaction passes."
+      ],
+      "nativeViewer": true,
+      "nativeDeniedEdit": true
+    },
+    {
+      "variant": "desktop-dark",
+      "summary": [
+        "2026-11-22T05:33:27.6954250Z Checked 1097 story states; captured 1097 catalog/error screenshots in /home/runner/work/spinel/spinel/test-results/design-review; 9 additional interaction passes."
+      ],
+      "nativeViewer": true,
+      "nativeDeniedEdit": true
+    },
+    {
+      "variant": "mobile-light",
+      "summary": [
+        "2026-11-22T05:26:51.3479696Z Checked 1097 story states; captured 1097 catalog/error screenshots in /home/runner/work/spinel/spinel/test-results/design-review; 9 additional interaction passes."
+      ],
+      "nativeViewer": true,
+      "nativeDeniedEdit": true
+    },
+    {
+      "variant": "mobile-dark",
+      "summary": [
+        "2026-11-22T05:33:50.0480200Z Checked 1097 story states; captured 1097 catalog/error screenshots in /home/runner/work/spinel/spinel/test-results/design-review; 9 additional interaction passes."
+      ],
+      "nativeViewer": true,
+      "nativeDeniedEdit": true
+    },
+    {
+      "variant": "tablet",
+      "summary": [
+        "2026-11-22T05:28:36.4280978Z Checked 1097 story states; captured 1097 catalog/error screenshots in /home/runner/work/spinel/spinel/test-results/design-review; 9 additional interaction passes."
+      ],
+      "nativeViewer": true,
+      "nativeDeniedEdit": true
+    }
+  ]
+}

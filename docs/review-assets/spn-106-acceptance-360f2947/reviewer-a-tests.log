@@ -1,0 +1,10 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-106-completion-20261121
+
+
+ Test Files  2 passed (2)
+      Tests  43 passed (43)
+   Start at  21:12:22
+   Duration  4.00s (tests 51%, import 41%, transform 7%)
+
+Guard: peak process-tree RSS 823.3 MiB; completed

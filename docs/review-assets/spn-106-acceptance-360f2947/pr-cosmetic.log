@@ -1,0 +1,6 @@
+
+> backlog:pr
+> node scripts/backlog/cli.ts pr --base origin/main --title 🔕 SPN-106 Avoid a protection warning when opening view-only Docs
+
+pull request ok
+Guard: peak process-tree RSS 179.5 MiB; completed

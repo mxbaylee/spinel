@@ -1,0 +1,494 @@
+{
+  "source": "360f2947269309b472cce569f194994c43fa0d95",
+  "tested": "ea02b08dcbd149c5f7eae18e5cc43b9eaa48975e",
+  "run": 44988661544,
+  "attempt": 1,
+  "stats": {
+    "production-1-of-2": {
+      "startTime": "2026-11-22T05:23:19.062Z",
+      "duration": 608054.2969999999,
+      "expected": 93,
+      "skipped": 3,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "production-2-of-2": {
+      "startTime": "2026-11-22T05:26:01.899Z",
+      "duration": 790288.201,
+      "expected": 96,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "development-1-of-2": {
+      "startTime": "2026-11-22T05:29:05.549Z",
+      "duration": 764268.492,
+      "expected": 83,
+      "skipped": 4,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "development-2-of-2": {
+      "startTime": "2026-11-22T05:27:21.276Z",
+      "duration": 939324.01,
+      "expected": 85,
+      "skipped": 2,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "sync-production": {
+      "startTime": "2026-11-22T05:23:10.306Z",
+      "duration": 687663.718,
+      "expected": 100,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    }
+  },
+  "ticketCases": [
+    {
+      "report": "production-1-of-2",
+      "title": "doc viewer gains editing at the same native position, then downgrade still locks it",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "production-1-of-2",
+      "title": "desktop account Doc viewer opens plain and dated documents without a protection warning",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "production-1-of-2",
+      "title": "desktop guest Doc viewer opens plain and dated documents without a protection warning",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "production-1-of-2",
+      "title": "phone account Doc viewer opens plain and dated documents without a protection warning",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "production-1-of-2",
+      "title": "phone guest Doc viewer opens plain and dated documents without a protection warning",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "production-1-of-2",
+      "title": "sheet guest links isolate visitors, preserve tab identities and revoke open editors",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "production-1-of-2",
+      "title": "doc guest links isolate visitors, preserve tab identities and revoke open editors",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "production-2-of-2",
+      "title": "sheet PDF downloads for every current reader with worksheet selection and guest privacy",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "production-2-of-2",
+      "title": "doc PDF downloads for every current reader with worksheet selection and guest privacy",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "development-1-of-2",
+      "title": "doc viewer gains editing at the same native position, then downgrade still locks it",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "development-1-of-2",
+      "title": "desktop account Doc viewer opens plain and dated documents without a protection warning",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "development-1-of-2",
+      "title": "desktop guest Doc viewer opens plain and dated documents without a protection warning",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "development-1-of-2",
+      "title": "phone account Doc viewer opens plain and dated documents without a protection warning",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "development-1-of-2",
+      "title": "phone guest Doc viewer opens plain and dated documents without a protection warning",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "development-1-of-2",
+      "title": "sheet guest links isolate visitors, preserve tab identities and revoke open editors",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "development-1-of-2",
+      "title": "doc guest links isolate visitors, preserve tab identities and revoke open editors",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "development-2-of-2",
+      "title": "sheet PDF downloads for every current reader with worksheet selection and guest privacy",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    },
+    {
+      "report": "development-2-of-2",
+      "title": "doc PDF downloads for every current reader with worksheet selection and guest privacy",
+      "status": "expected",
+      "results": [
+        [
+          "passed",
+          0
+        ]
+      ],
+      "annotations": []
+    }
+  ],
+  "existingEnvironmentSkips": [
+    {
+      "report": "production-1-of-2",
+      "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+      "status": "skipped",
+      "results": [
+        [
+          "skipped",
+          0
+        ]
+      ],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+          "location": {
+            "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+            "line": 494,
+            "column": 8
+          }
+        }
+      ],
+      "passedOwners": [
+        "sync-production"
+      ]
+    },
+    {
+      "report": "production-1-of-2",
+      "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+      "status": "skipped",
+      "results": [
+        [
+          "skipped",
+          0
+        ]
+      ],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+          "location": {
+            "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+            "line": 973,
+            "column": 10
+          }
+        }
+      ],
+      "passedOwners": [
+        "sync-production"
+      ]
+    },
+    {
+      "report": "production-1-of-2",
+      "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+      "status": "skipped",
+      "results": [
+        [
+          "skipped",
+          0
+        ]
+      ],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+          "location": {
+            "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+            "line": 973,
+            "column": 10
+          }
+        }
+      ],
+      "passedOwners": [
+        "sync-production"
+      ]
+    },
+    {
+      "report": "development-1-of-2",
+      "title": "production open, search, local persistence and server acknowledgement remain distinct in the diagnostics export",
+      "status": "skipped",
+      "results": [
+        [
+          "skipped",
+          0
+        ]
+      ],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Prepared offline copies require the production runtime manifest.",
+          "location": {
+            "file": "/home/runner/work/spinel/spinel/e2e/diagnostics.spec.ts",
+            "line": 511,
+            "column": 8
+          }
+        }
+      ],
+      "passedOwners": [
+        "production-1-of-2"
+      ]
+    },
+    {
+      "report": "development-1-of-2",
+      "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+      "status": "skipped",
+      "results": [
+        [
+          "skipped",
+          0
+        ]
+      ],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+          "location": {
+            "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+            "line": 494,
+            "column": 8
+          }
+        }
+      ],
+      "passedOwners": [
+        "sync-production"
+      ]
+    },
+    {
+      "report": "development-1-of-2",
+      "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+      "status": "skipped",
+      "results": [
+        [
+          "skipped",
+          0
+        ]
+      ],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+          "location": {
+            "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+            "line": 973,
+            "column": 10
+          }
+        }
+      ],
+      "passedOwners": [
+        "sync-production"
+      ]
+    },
+    {
+      "report": "development-1-of-2",
+      "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+      "status": "skipped",
+      "results": [
+        [
+          "skipped",
+          0
+        ]
+      ],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+          "location": {
+            "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+            "line": 973,
+            "column": 10
+          }
+        }
+      ],
+      "passedOwners": [
+        "sync-production"
+      ]
+    },
+    {
+      "report": "development-2-of-2",
+      "title": "supervised maintenance keeps pending native work, fences old edits, and recovers through cold controls",
+      "status": "skipped",
+      "results": [
+        [
+          "skipped",
+          0
+        ]
+      ],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "Closed-process verification uses the Linux production supervisor.",
+          "location": {
+            "file": "/home/runner/work/spinel/spinel/e2e/maintenance.spec.ts",
+            "line": 206,
+            "column": 8
+          }
+        }
+      ],
+      "passedOwners": [
+        "production-2-of-2"
+      ]
+    },
+    {
+      "report": "development-2-of-2",
+      "title": "an aborted queued Web Lock cannot run or orphan subsequent exclusive admission",
+      "status": "skipped",
+      "results": [
+        [
+          "skipped",
+          0
+        ]
+      ],
+      "annotations": [
+        {
+          "type": "skip",
+          "description": "One Chromium platform owner; no native app required.",
+          "location": {
+            "file": "/home/runner/work/spinel/spinel/e2e/offline-locks.spec.ts",
+            "line": 7,
+            "column": 8
+          }
+        }
+      ],
+      "passedOwners": [
+        "production-2-of-2"
+      ]
+    }
+  ],
+  "pdfNoticeRecords": "20 records,10 in each build; five roles x Doc/Sheet. Every startupProtectionNotice false and Export/download notices empty."
+}

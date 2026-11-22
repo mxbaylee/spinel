@@ -1,0 +1,45 @@
+{
+  "source": "360f2947269309b472cce569f194994c43fa0d95",
+  "base": "aeed459c7828a46d66e0054399eff0f00f1c506e",
+  "tested": "ea02b08dcbd149c5f7eae18e5cc43b9eaa48975e",
+  "sourceAndTestedTree": "ffd0fb4e76a988142c691f8674344e7d47fd7fd9",
+  "runAttempts": {
+    "ci": "44988661544/1",
+    "storybook": "44988661630/1",
+    "native": "44988661516/1"
+  },
+  "status": "all selected acceptance and seven required gates passed",
+  "gates": [
+    {
+      "name": "Backlog",
+      "job": 137104934477
+    },
+    {
+      "name": "Pull request",
+      "job": 137104701142
+    },
+    {
+      "name": "Lint",
+      "job": 137104934490
+    },
+    {
+      "name": "Typecheck",
+      "job": 137104934488
+    },
+    {
+      "name": "Unit tests",
+      "job": 137108580005
+    },
+    {
+      "name": "Lib tests",
+      "job": 137107885858
+    },
+    {
+      "name": "Playwright smoke",
+      "job": 137112592500
+    }
+  ],
+  "planSha256": "d3927fa4c7448a928cd6cee85da69d2738506886420a731d49fcbbaf7abd2dd0",
+  "firstAttempts": "All ticket browser cases passed at retry0; report unexpected/flaky0. No current hosted rerun. Historical failures and local resource/setup failures remain separately preserved.",
+  "explicitInapplicability": "doc-editing-mobile not requested, Storybook PR preview/deployment not requested; no selected test job skipped. Existing ordinary-build runtime skips have passing designated owners in browser-summary."
+}

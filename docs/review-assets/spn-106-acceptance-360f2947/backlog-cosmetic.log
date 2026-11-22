@@ -1,0 +1,20 @@
+
+> backlog:check
+> node scripts/backlog/cli.ts check
+
+warning: SPN-038.md: 70 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-068.md: 66 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-087.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-089.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-093.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-094.md: 64 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-099.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-110.md: 55 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-114.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-119.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-122.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-147.md: 59 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: SPN-154.md: 54 lines; tickets aim for 50 or fewer, consider splitting or trimming
+warning: Grooming reminder: 13 tickets completed since 2026-11-14; review with the owner when they choose. Work may continue.
+backlog ok: 24 open tickets
+Guard: peak process-tree RSS 0.0 MiB; completed
