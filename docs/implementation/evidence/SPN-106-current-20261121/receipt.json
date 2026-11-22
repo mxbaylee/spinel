@@ -20,7 +20,10 @@
     "storybookInitial": "setup failure: wrong legacy CLI path; zero build/tests executed; retained first failure",
     "storybookCorrected": "actual installed bin used; build passed5.66s,peak1320.0MiB",
     "storybookCapture": "4 states passed first attempt,peak763.7MiB",
-    "typecheck": "full repository pass,peak1800.2MiB"
+    "typecheck": "full repository pass,peak1800.2MiB",
+    "lint": "full dependency boundary, Oxlint deny-warnings and formatting passed; peak546.7MiB",
+    "backlog": "passed; generated index preserves current counters",
+    "pr": "passed at55c50069; final evidence-only commit receives separate exact-head PR check"
   },
   "logs": [
     {
@@ -92,6 +95,21 @@
       "file": "index.log.gz",
       "decodedSha256": "342ff15991de7038e27a766200c35d1db87434289313fad7a915620538fa5e12",
       "decodedBytes": 1389
+    },
+    {
+      "file": "lint.log.gz",
+      "decodedSha256": "164c0a7db0a2bb38413ea421d1332edb2c00d8d3fa3d650378ccd094504bd78e",
+      "decodedBytes": 692
+    },
+    {
+      "file": "backlog.log.gz",
+      "decodedSha256": "f9acfd50f8ec66212499ba8df9da533725214ded92319318f6977c233bbc5d7d",
+      "decodedBytes": 1439
+    },
+    {
+      "file": "pr-check.log.gz",
+      "decodedSha256": "3348441f59615326212a91d02c8f82658947b5d21ae7bd18238836ba4b7efe82",
+      "decodedBytes": 209
     }
   ],
   "productionBuild": [
