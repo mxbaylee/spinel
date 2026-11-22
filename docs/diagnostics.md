@@ -230,6 +230,19 @@ Metric names constrain kind/unit/value. See the
 
 ## Emitter maintenance inventory
 
+📱 SPN-164's explicit `scripts/ci/startup-phone.config.ts` diagnostic build injects
+stage, session request/header/body/verification/settlement, account admission and
+browser connectivity observations. Normal builds do not import the observer.
+It retains the latest 128 fixed-name/numeric events in fixture sessionStorage,
+counts dropped rows, separates page time origins and request ordinals, and reports
+unavailable storage/clocks. Relative times use milliseconds; cross-page absolute
+times are `page + at`, subject to browser clock behavior. No content, identity,
+URL, credential or error message is collected. The owner explicitly sends the
+report after the run; no probe races the session request. Storage writes add
+observer overhead, and lost process/storage evidence cannot establish causality.
+`startup-phone.test.ts` covers bounds, redaction, isolation and fail-closed source
+seams. Existing production emitters and all session/timeout behavior are unchanged.
+
 🔌 The test-only `e2e/reset-diagnostics-reporter.ts` preserves up to 50 reset
 failures per project with redacted request paths and owned-server snapshot facts.
 It does not alter results or retries. Snapshot age is explicit: old evidence
