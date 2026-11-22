@@ -3,7 +3,9 @@
 The [implementation record](../../SPN-154.md) maintains decisions, acceptance,
 first-failure dispositions, diagnostic limits and exact source/check identities.
 This directory keeps useful originals rather than every intermediate report.
-The [manifest](manifest.json) binds each retained file's exact bytes and PNG dimensions.
+The [manifest](manifest.json) binds the24 retained originals' exact bytes and PNG dimensions.
+The subsequently authored [development budget record](development-shard-budget.json)
+retains the proven20-minute deadline failures and complete three-shard collection model.
 
 ## 📦 Full preservation
 
