@@ -302,8 +302,9 @@ async function withClipboardDoc(
   baseURL: string,
   info: TestInfo,
   work: (f: ClipboardDoc) => Promise<void>,
-  viewer = false,
+  options: { viewer?: boolean; collaborator?: boolean; mobile?: boolean } = {},
 ) {
+  const { viewer = false, collaborator = false, mobile = false } = options;
   expect(info.retry).toBe(0);
   const png = await sharp({
     create: { width: 80, height: 60, channels: 3, background: { r: 23, g: 201, b: 151 } },
@@ -321,7 +322,7 @@ async function withClipboardDoc(
     project: info.project.name,
     attempt: info.retry,
     browser: browser.version(),
-    viewport: { width: 1440, height: 1100 },
+    viewport: mobile ? { width: 390, height: 844 } : { width: 1440, height: 1100 },
     fixture: { mime: 'image/png', width: 80, height: 60, bytes: png.length, sha256: sha256(png) },
     viewer,
     posts,
@@ -381,7 +382,7 @@ async function withClipboardDoc(
         browser,
         baseURL,
         info,
-        false,
+        mobile,
         async (f) => {
           const { page } = f;
           await f.context.grantPermissions(['clipboard-read', 'clipboard-write']);
@@ -506,7 +507,7 @@ async function withClipboardDoc(
             () => capture('final-before-cleanup'),
           );
         },
-        { viewer, beforeOpen },
+        { viewer, collaborator, beforeOpen },
       ),
     () =>
       info.attach('doc-image-paste-negative-evidence', {
@@ -1080,8 +1081,15 @@ clipboardTest.describe('native Doc image clipboard', () => {
         await f.assertMounted();
         await f.capture('native-menu-paste');
         for (const mode of ['Match destination formatting', 'Keep source formatting']) {
+          const previousRevision = await f.revision();
           await f.page.getByRole('button', { name: 'Paste options', exact: true }).click();
           await f.page.getByRole('menuitemcheckbox', { name: mode, exact: true }).click();
+          await expect.poll(() => f.revision()).toBeGreaterThan(previousRevision);
+          await f.page.getByRole('button', { name: 'Paste options', exact: true }).click();
+          await expect(
+            f.page.getByRole('menuitemcheckbox', { name: mode, exact: true }),
+          ).toHaveAttribute('aria-checked', 'true');
+          await f.page.keyboard.press('Escape');
           await expect(f.page.getByRole('status', { name: 'Save status' })).toHaveText(
             'All changes saved.',
           );
@@ -1102,6 +1110,298 @@ clipboardTest.describe('native Doc image clipboard', () => {
         expect((await f.read()).drawings).toEqual(redone.drawings);
         expect(f.posts.map((post) => post.status)).toEqual([201]);
         await f.capture('menu-replay-history-reopened');
+      });
+    },
+  );
+
+  clipboardTest(
+    'text-first native paste uploads only when switching to image formatting',
+    async ({ browser, baseURL }, info) => {
+      clipboardTest.setTimeout(60_000);
+      await withClipboardDoc(browser, baseURL!, info, async (f) => {
+        const before = await f.read();
+        const caption = 'Clipboard ';
+        await f.paste('html', caption, undefined, 'text-menu');
+        const textOnly = await content(f, caption + before.body!.dataStream);
+        expectNoImages(textOnly);
+        expect(f.posts).toEqual([]);
+        await f.assertMounted();
+        await f.capture('text-first-no-upload');
+        let imageSource: unknown;
+        for (const mode of [
+          'Keep source formatting',
+          'Match destination formatting',
+          'Keep text only',
+          'Keep source formatting',
+        ]) {
+          const previousRevision = await f.revision();
+          await f.page.getByRole('button', { name: 'Paste options', exact: true }).click();
+          await f.page.getByRole('menuitemcheckbox', { name: mode, exact: true }).click();
+          await expect.poll(() => f.revision()).toBeGreaterThan(previousRevision);
+          await f.page.getByRole('button', { name: 'Paste options', exact: true }).click();
+          await expect(
+            f.page.getByRole('menuitemcheckbox', { name: mode, exact: true }),
+          ).toHaveAttribute('aria-checked', 'true');
+          await f.page.keyboard.press('Escape');
+          const text =
+            mode === 'Keep text only'
+              ? caption + before.body!.dataStream
+              : '\b\r' + before.body!.dataStream;
+          const saved = await content(f, text);
+          if (mode === 'Keep text only') expectNoImages(saved);
+          else {
+            expect(saved.drawingsOrder).toHaveLength(1);
+            const drawing = saved.drawings?.[saved.drawingsOrder![0]];
+            expect(drawing).toBeDefined();
+            const source = drawing && 'source' in drawing ? drawing.source : undefined;
+            expect(source).toMatch(new RegExp(`^/api/items/${f.id}/images/[a-f0-9]{64}$`));
+            imageSource ??= source;
+            expect(source).toBe(imageSource);
+          }
+          expect(f.posts.map((post) => post.status)).toEqual([201]);
+          await f.assertMounted();
+          await f.capture(mode);
+        }
+        const saved = await f.read();
+        await reopen(f, saved);
+        expect((await f.read()).drawings).toEqual(saved.drawings);
+        await f.capture('text-first-source-reopened');
+      });
+    },
+  );
+
+  clipboardTest(
+    'a completed image upload cannot publish after live edit authority is removed',
+    async ({ browser, baseURL }, info) => {
+      clipboardTest.setTimeout(60_000);
+      await withClipboardDoc(
+        browser,
+        baseURL!,
+        info,
+        async (f) => {
+          const before = await f.read();
+          const beforeRevision = await f.revision();
+          const nativeBefore = (await readEditingSelection(f.page))?.body;
+          let release!: () => void;
+          const held = new Promise<void>((resolve) => {
+            release = resolve;
+          });
+          let uploaded: number | undefined;
+          let storedSource: string | undefined;
+          let delivered = false;
+          let deliveryFailed = false;
+          let clientOutcome: 'finished' | 'failed' | undefined;
+          const imageRequest = (request: Request) =>
+            request.method() === 'POST' &&
+            new URL(request.url()).pathname === `/api/items/${f.id}/images`;
+          f.page.on('requestfinished', (request) => {
+            if (imageRequest(request)) clientOutcome = 'finished';
+          });
+          f.page.on('requestfailed', (request) => {
+            if (imageRequest(request)) clientOutcome = 'failed';
+          });
+          let finished = false;
+          await f.page.route(`**/api/items/${f.id}/images`, async (route) => {
+            const response = await route.fetch();
+            uploaded = response.status();
+            storedSource = (await response.json()).url;
+            await held;
+            try {
+              await route.fulfill({ response });
+              delivered = true;
+            } catch {
+              deliveryFailed = true;
+            } finally {
+              finished = true;
+              await response.dispose();
+            }
+          });
+          await withFixtureCleanup(
+            async () => {
+              await f.paste('png');
+              await expect.poll(() => uploaded).toBe(201);
+              expect(storedSource).toMatch(new RegExp(`^/api/items/${f.id}/images/[a-f0-9]{64}$`));
+              const stored = await f.image(storedSource!);
+              expect(storedSource!.endsWith(sha256(stored))).toBe(true);
+              expect(await sharp(stored).removeAlpha().raw().toBuffer()).toEqual(
+                await sharp(f.png).removeAlpha().raw().toBuffer(),
+              );
+              await f.downgrade!();
+              await expect(
+                f.page.getByRole('button', { name: 'Bold', exact: true }),
+              ).toBeDisabled();
+              await f.capture('live-edit-fence-before-upload-release');
+              release();
+              await expect.poll(() => finished).toBe(true);
+              await expect.poll(() => clientOutcome).toBeDefined();
+              if (clientOutcome === 'finished') {
+                expect(delivered).toBe(true);
+                expect(f.posts.map((post) => post.status)).toEqual([201]);
+              }
+              await info.attach('late-upload-authority-outcome', {
+                body: JSON.stringify({
+                  serverStatus: uploaded,
+                  delivered,
+                  deliveryFailed,
+                  clientOutcome,
+                  storedSource,
+                  storedSha256: sha256(stored),
+                }),
+                contentType: 'application/json',
+              });
+              expect(await f.image(storedSource!)).toEqual(stored);
+              await expect(f.page.getByRole('status', { name: 'Save status' })).toHaveText(
+                /Access changed|View only/,
+              );
+              expect(await f.read()).toEqual(before);
+              expect(await f.revision()).toBe(beforeRevision);
+              expect((await readEditingSelection(f.page))?.body).toEqual(nativeBefore);
+              expectNoImages(await f.read());
+              await f.assertMounted();
+              await f.capture('late-success-refused');
+              await f.reload();
+              await expect(f.page.getByRole('status', { name: 'Save status' })).toHaveText(
+                'View only.',
+              );
+              expect(await f.read()).toEqual(before);
+              expect(await f.revision()).toBe(beforeRevision);
+              expectNoImages(await f.read());
+              await f.capture('revoked-edit-reopened');
+            },
+            async () => {
+              release();
+              await f.page.unrouteAll({ behavior: 'wait' });
+            },
+          );
+        },
+        { collaborator: true },
+      );
+    },
+  );
+
+  clipboardTest(
+    'phone-width native image failure retains the edit and complete feedback in both themes',
+    async ({ browser, baseURL }, info) => {
+      clipboardTest.setTimeout(60_000);
+      await withClipboardDoc(
+        browser,
+        baseURL!,
+        info,
+        async (f) => {
+          const before = await f.read();
+          await f.page.route(`**/api/items/${f.id}/images`, (route) =>
+            route.fulfill({ status: 503, body: 'private failure' }),
+          );
+          await f.paste('png');
+          await expect.poll(() => f.posts.map((post) => post.status)).toEqual([503]);
+          const editor = f.page.getByRole('region', { name: 'Doc document', exact: true });
+          const alert = editor.getByRole('alert');
+          await expect(alert).toHaveText('Image upload failed. Check your connection and retry.');
+          expect((await content(f, before.body!.dataStream)).body).toEqual(before.body);
+          expectNoImages(await f.read());
+          await f.assertMounted();
+          for (const theme of ['light', 'dark'] as const) {
+            await f.page.emulateMedia({ colorScheme: theme });
+            await nativeTheme(f.page, editor.getByLabel('Document canvas', { exact: true }), theme);
+            expect(
+              await alert.evaluate(
+                (node) =>
+                  node.scrollWidth <= node.clientWidth && node.scrollHeight <= node.clientHeight,
+              ),
+            ).toBe(true);
+            await info.attach(`spn154-phone-upload-failure-${theme}`, {
+              body: await f.page.screenshot({ animations: 'disabled' }),
+              contentType: 'image/png',
+            });
+          }
+          await f.capture('phone-emulation-failure');
+        },
+        { mobile: true },
+      );
+    },
+  );
+
+  clipboardTest(
+    'native image denial and malformed HTML explain failure without changing content',
+    async ({ browser, baseURL }, info) => {
+      clipboardTest.setTimeout(60_000);
+      await withClipboardDoc(browser, baseURL!, info, async (f) => {
+        const before = await f.read();
+        const editor = f.page.getByRole('region', { name: 'Doc document', exact: true });
+        for (const [status, message] of [
+          [401, 'Your sign-in ended. Sign in again to add an image.'],
+          [403, 'Image not added. Check your edit access.'],
+        ] as const) {
+          // These are controlled HTTP denial responses. Live authority loss has
+          // a separate real server grant-change case above.
+          await f.page.route(`**/api/items/${f.id}/images`, (route) =>
+            route.fulfill({ status, body: 'private proxy detail' }),
+          );
+          await f.paste('png');
+          await expect(editor.getByRole('alert')).toHaveText(message);
+          expect((await content(f, before.body!.dataStream, 0)).body).toEqual(before.body);
+          expectNoImages(await f.read());
+          await f.assertMounted();
+          await f.capture(`http-${status}-refused`);
+          await f.page.unrouteAll({ behavior: 'wait' });
+        }
+        expect(f.posts.map((post) => post.status)).toEqual([401, 403]);
+        await f.paste('html', undefined, 'data:image/png;base64,!');
+        await expect(editor.getByRole('alert')).toHaveText(
+          'Could not paste. Copy the content and try again.',
+        );
+        expect((await content(f, before.body!.dataStream, 0)).body).toEqual(before.body);
+        expectNoImages(await f.read());
+        expect(f.posts.map((post) => post.status)).toEqual([401, 403]);
+        await f.assertMounted();
+        await f.capture('malformed-image-refused-before-upload');
+      });
+    },
+  );
+
+  clipboardTest(
+    'denied native clipboard read keeps the edit and offers the system paste action',
+    async ({ browser, baseURL }, info) => {
+      clipboardTest.setTimeout(60_000);
+      await withClipboardDoc(browser, baseURL!, info, async (f) => {
+        const before = await f.read();
+        const revision = await f.revision();
+        await f.page.evaluate(async (bytes) => {
+          await navigator.clipboard.write([
+            new ClipboardItem({
+              'image/png': new Blob([new Uint8Array(bytes)], { type: 'image/png' }),
+            }),
+          ]);
+        }, Array.from(f.png));
+        const cdp = await f.context.newCDPSession(f.page);
+        try {
+          const { targetInfo } = await cdp.send('Target.getTargetInfo');
+          expect(targetInfo.browserContextId).toBeTruthy();
+          await cdp.send('Browser.setPermission', {
+            permission: { name: 'clipboardReadWrite' },
+            setting: 'denied',
+            origin: new URL(baseURL!).origin,
+            browserContextId: targetInfo.browserContextId,
+          });
+          expect(
+            await f.page.evaluate(
+              async () =>
+                (await navigator.permissions.query({ name: 'clipboard-read' as PermissionName }))
+                  .state,
+            ),
+          ).toBe('denied');
+          await f.page.getByRole('button', { name: 'Paste special', exact: true }).click();
+          await f.page.getByText('Keep source formatting', { exact: true }).click();
+          await expect(f.page.getByText(/Clipboard access is unavailable\. Press/)).toBeVisible();
+          expect((await content(f, before.body!.dataStream)).body).toEqual(before.body);
+          expect(await f.revision()).toBe(revision);
+          expectNoImages(await f.read());
+          expect(f.posts).toEqual([]);
+          await f.assertMounted();
+          await f.capture('native-clipboard-permission-denied');
+        } finally {
+          await cdp.detach();
+        }
       });
     },
   );
@@ -1138,7 +1438,7 @@ clipboardTest.describe('native Doc image clipboard', () => {
           expect(f.posts).toEqual([]);
           await f.capture('after-intentional-reopen');
         },
-        true,
+        { viewer: true },
       );
     },
   );

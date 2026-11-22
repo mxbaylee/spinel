@@ -23,13 +23,25 @@ export function createDocImageFeedback(write: (message: string) => void, current
   };
 }
 
-const imageLimits = new Set([
-  'Choose an image no larger than 5 MiB.',
-  'Choose a PNG, JPEG or WebP image.',
-  'Choose a valid static PNG, JPEG or WebP image up to 16 megapixels.',
-  'The processed image exceeds 5 MiB. Choose a smaller image.',
-  'This document has reached its 50 MiB image limit.',
-  'Images are still uploading. Try again shortly.',
+const imageLimits = new Map([
+  ['Choose an image no larger than 5 MiB.', 'Choose an image no larger than 5 MiB.'],
+  ['Choose a PNG, JPEG or WebP image.', 'Choose a PNG, JPEG or WebP image.'],
+  [
+    'Choose a valid static PNG, JPEG or WebP image up to 16 megapixels.',
+    'Use a static PNG, JPEG or WebP up to 16 megapixels.',
+  ],
+  [
+    'The processed image exceeds 5 MiB. Choose a smaller image.',
+    'Image exceeds 5 MiB. Choose a smaller image.',
+  ],
+  [
+    'This document has reached its 50 MiB image limit.',
+    'Doc image limit reached. Try a smaller image.',
+  ],
+  [
+    'Images are still uploading. Try again shortly.',
+    'Images are still uploading. Try again shortly.',
+  ],
 ]);
 
 /** Keep server limits actionable without displaying transport/parser or arbitrary server errors. */
@@ -48,7 +60,9 @@ export async function uploadedImageSource(response: Response, itemId: string) {
   if (!response.ok) {
     const message = 'error' in image ? image.error : undefined;
     throw new DocImageError(
-      typeof message === 'string' && imageLimits.has(message) ? message : imageUploadFailed,
+      typeof message === 'string'
+        ? (imageLimits.get(message) ?? imageUploadFailed)
+        : imageUploadFailed,
     );
   }
   if (
@@ -85,9 +99,7 @@ export async function uploadDocImage(
   };
   verify();
   if (options.offline?.enabled && !options.offline.online)
-    throw new DocImageError(
-      'Connect before inserting a new image. Existing images remain available offline.',
-    );
+    throw new DocImageError('Connect before inserting a new image.');
   if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type))
     throw new DocImageError('Choose a PNG, JPEG or WebP image.');
   if (!file.size || file.size > 5 * 1024 * 1024)
@@ -151,7 +163,7 @@ export function installDocImagePaste(
         failed(
           error instanceof DocImageError
             ? error.message
-            : 'The clipboard content could not be pasted. Try copying it again.',
+            : 'Could not paste. Copy the content and try again.',
         );
       throw error;
     } finally {

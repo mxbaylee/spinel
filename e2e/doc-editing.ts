@@ -58,9 +58,12 @@ export interface EditingFixture {
   id: string;
   initial: IDocumentData;
   read(): Promise<IDocumentData>;
+  revision(): Promise<number>;
+  image(source: string): Promise<Buffer>;
   focus(): Promise<void>;
   reload(): Promise<void>;
   mobile: boolean;
+  downgrade?(): Promise<void>;
 }
 
 async function recordEditingEvents(context: BrowserContext) {
@@ -114,6 +117,7 @@ export async function withEditingDoc(
   work: (fixture: EditingFixture) => Promise<void>,
   options: {
     viewer?: boolean;
+    collaborator?: boolean;
     traditional?: boolean;
     singleParagraph?: boolean;
     beforeOpen?: (page: Page) => Promise<void>;
@@ -226,6 +230,38 @@ export async function withEditingDoc(
           ignoreHTTPSErrors: true,
         });
       }
+      let downgrade: (() => Promise<void>) | undefined;
+      if (options.collaborator) {
+        const collaborator = auth.createUser(`Image collaborator ${info.testId}`);
+        workspace.share(owner.id, item.id, collaborator.id, 'editor');
+        guest = await browser.newContext({
+          baseURL,
+          viewport: mobile ? { width: 390, height: 844 } : { width: 1440, height: 1100 },
+          isMobile: mobile,
+          hasTouch: mobile,
+          deviceScaleFactor: 1,
+          colorScheme: 'light',
+          reducedMotion: 'reduce',
+          ignoreHTTPSErrors: true,
+        });
+        await guest.addCookies([
+          {
+            name: COOKIE_NAME,
+            value: auth.createSession(collaborator.id).token,
+            url: baseURL.replace('http:', 'https:'),
+            secure: true,
+            httpOnly: true,
+            sameSite: 'Strict',
+          },
+        ]);
+        downgrade = async () => {
+          const response = await context!.request.put(`/api/items/${item.id}/sharing`, {
+            headers: { Origin: baseURL },
+            data: { userId: collaborator.id, role: 'viewer' },
+          });
+          expect(response.ok()).toBe(true);
+        };
+      }
       await recordEditingEvents(guest ?? context);
       page = await (guest ?? context).newPage();
       page.on('pageerror', (error) => errors.push(error.message));
@@ -246,7 +282,18 @@ export async function withEditingDoc(
         id: item.id,
         initial,
         read,
+        async revision() {
+          const response = await context!.request.get(`/api/items/${item.id}/doc`);
+          expect(response.ok()).toBe(true);
+          return (await response.json()).revision as number;
+        },
+        async image(source) {
+          const response = await context!.request.get(source);
+          expect(response.ok()).toBe(true);
+          return response.body();
+        },
         mobile,
+        downgrade,
         async reload() {
           await captureEvents();
           await page!.reload();

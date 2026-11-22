@@ -455,12 +455,10 @@ export function DocEditor({
                     options,
                   );
                   if (!result && uploaded > before && !disposed)
-                    failed(
-                      'The image was uploaded but could not be inserted. Try inserting it again.',
-                    );
+                    failed('Image not inserted. Place the cursor and try again.');
                   return result;
                 } catch {
-                  if (!disposed) failed('The image could not be inserted. Try inserting it again.');
+                  if (!disposed) failed('Image not inserted. Place the cursor and try again.');
                   return false;
                 } finally {
                   // Upload completion precedes dimension loading and the drawing mutation.

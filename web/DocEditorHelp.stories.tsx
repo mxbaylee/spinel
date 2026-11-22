@@ -14,6 +14,13 @@ const meta = {
       <DocEditorHelp {...args} />
     </section>
   ),
+  play: async ({ canvasElement, args }) => {
+    if (!args.uploadError) return;
+    const alert = within(canvasElement).getByRole('alert');
+    await expect(alert).toHaveTextContent(args.uploadError);
+    await expect(alert.scrollWidth).toBeLessThanOrEqual(alert.clientWidth);
+    await expect(alert.scrollHeight).toBeLessThanOrEqual(alert.clientHeight);
+  },
   parameters: {
     shell: 'none',
     docs: {
@@ -37,9 +44,6 @@ export const FormulaFailure: Story = {
 };
 export const UploadFailed: Story = {
   args: { uploadError: imageUploadFailed },
-  play: async ({ canvasElement }) => {
-    await expect(within(canvasElement).getByRole('alert')).toHaveTextContent(imageUploadFailed);
-  },
 };
 export const SignInEnded: Story = {
   args: { uploadError: 'Your sign-in ended. Sign in again to add an image.' },
@@ -51,23 +55,30 @@ export const AccessDenied: Story = {
 };
 export const PreparedOffline: Story = {
   args: {
-    uploadError: 'Connect before inserting a new image. Existing images remain available offline.',
+    uploadError: 'Connect before inserting a new image.',
   },
 };
 export const ImageLimit: Story = {
-  args: { uploadError: 'This document has reached its 50 MiB image limit.' },
+  args: { uploadError: 'Doc image limit reached. Try a smaller image.' },
 };
 export const UnsupportedImage: Story = {
   args: { uploadError: 'This image cannot be pasted. Insert it from a file instead.' },
 };
 export const ClipboardFailure: Story = {
-  args: { uploadError: 'The clipboard content could not be pasted. Try copying it again.' },
-};
-export const UploadedNotInserted: Story = {
-  args: {
-    uploadError: 'The image was uploaded but could not be inserted. Try inserting it again.',
-  },
+  args: { uploadError: 'Could not paste. Copy the content and try again.' },
 };
 export const InsertionFailure: Story = {
-  args: { uploadError: 'The image could not be inserted. Try inserting it again.' },
+  args: { uploadError: 'Image not inserted. Place the cursor and try again.' },
+};
+
+export const FileSize: Story = { args: { uploadError: 'Choose an image no larger than 5 MiB.' } };
+export const ImageFormat: Story = { args: { uploadError: 'Choose a PNG, JPEG or WebP image.' } };
+export const InvalidImage: Story = {
+  args: { uploadError: 'Use a static PNG, JPEG or WebP up to 16 megapixels.' },
+};
+export const ProcessedSize: Story = {
+  args: { uploadError: 'Image exceeds 5 MiB. Choose a smaller image.' },
+};
+export const UploadBusy: Story = {
+  args: { uploadError: 'Images are still uploading. Try again shortly.' },
 };

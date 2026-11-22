@@ -97,7 +97,7 @@ test('prepared-offline refusal and unsupported or oversized images do not issue 
   const f = uploadOptions();
   f.options.offline!.online = false;
   await expect(uploadDocImage(file, f.options)).rejects.toThrow(
-    'Connect before inserting a new image. Existing images remain available offline.',
+    'Connect before inserting a new image.',
   );
   f.options.offline!.online = true;
   await expect(
@@ -179,7 +179,7 @@ test('only the known image-limit messages are displayed; transport and parser er
   const message = 'This document has reached its 50 MiB image limit.';
   await expect(
     uploadedImageSource(Response.json({ error: message }, { status: 413 }), itemId),
-  ).rejects.toThrow(message);
+  ).rejects.toThrow('Doc image limit reached. Try a smaller image.');
   for (const result of [
     new Response('<html>private proxy detail</html>', { status: 503 }),
     Response.json({ error: 'private backend detail' }, { status: 500 }),
@@ -403,7 +403,7 @@ test.each(['clipboard', 'toolbar'] as const)(
       // The toolbar begins feedback once for the whole native insertion,
       // sharing this owner with clipboard actions, not its busy lifetime.
       const report = f.options.beginFeedback();
-      report('The image was uploaded but could not be inserted. Try inserting it again.');
+      report('Image not inserted. Place the cursor and try again.');
     }
     const current = f.messages.at(-1);
     expect(f.options.busy.mock.calls).toEqual([[true]]);
