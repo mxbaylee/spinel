@@ -315,7 +315,7 @@ test('expiry uses server receipt time, keeps the exact cutoff and feedback, and 
     const feedback = record();
     expect(f.store.ingest([expired, feedback], actor, generation).accepted).toBe(2);
     // Seed SPN-098's reserved row name; its actual paired exporter is verified
-    // separately in the integration checkout, not replaced by this fixture.
+    // separately in feedback.test.ts, not replaced by this fixture.
     db.prepare("UPDATE events SET name='feedback' WHERE id=?").run(feedback.id);
     now++;
     expect(f.store.ingest([cutoff], actor, generation).accepted).toBe(1);
@@ -398,16 +398,7 @@ test('bounded expiry continues across restart and clock changes without changing
     const original = record();
     expect(f.store.ingest([original], actor, generation).accepted).toBe(1);
     // Real rows and accounting, bounded fixture independent of ingestion timing.
-    db.prepare(
-      `WITH RECURSIVE sequence(n) AS (
-      VALUES(1) UNION ALL SELECT n+1 FROM sequence WHERE n < ?
-    ) INSERT INTO events SELECT
-      '00000000-0000-4000-8000-' || printf('%012x',n),
-      schema_version,generation,occurred_at,received_at,name,kind,source,component,build,
-      actor_id,file_id,space_id,route,run_id,level,message,metric_kind,metric_unit,metric_value,details,byte_size
-      FROM sequence CROSS JOIN events WHERE events.id=?`,
-    ).run(DIAGNOSTICS_LIMITS.expiryEvents + 3, original.id);
-    db.exec('UPDATE diagnostics_state SET logical_bytes=(SELECT sum(byte_size) FROM events)');
+    seedCopies(db, original.id, DIAGNOSTICS_LIMITS.expiryEvents + 3);
     now = 0;
     expect(f.store.expire()).toEqual({ deleted: 0, remaining: false });
     now = 9 * day;

@@ -78,11 +78,14 @@ test('the existing maintenance timer expires observations, exposes failure, retr
   cleanups.push(async () => diagnostics.close());
   // Existing health instrumentation supplies real rows; make one older than
   // the configured one-day policy but younger than the seven-day default.
-  const row = diagnostics.prepare('SELECT id FROM events LIMIT 1').get();
-  expect(row).toBeDefined();
+  const observation = diagnostics.prepare(
+    "SELECT id FROM events WHERE name='runtime.connections' ORDER BY rowid LIMIT 1",
+  );
+  await vi.waitFor(() => expect(observation.get()).toBeDefined());
+  const row = observation.get()!;
   diagnostics
     .prepare('UPDATE events SET received_at=? WHERE id=?')
-    .run(Date.now() - 2 * 86_400_000, row!.id);
+    .run(Date.now() - 2 * 86_400_000, row.id);
   await vi.advanceTimersByTimeAsync(60_000);
   expect(expire).toHaveBeenCalledTimes(2);
   expect(await health()).toMatchObject({
@@ -91,7 +94,7 @@ test('the existing maintenance timer expires observations, exposes failure, retr
     failedSince: null,
     lastSuccess: expect.any(Number),
   });
-  expect(diagnostics.prepare('SELECT id FROM events WHERE id=?').get(row!.id)).toBeUndefined();
+  expect(diagnostics.prepare('SELECT id FROM events WHERE id=?').get(row.id)).toBeUndefined();
   const accounting = diagnostics.prepare('SELECT logical_bytes FROM diagnostics_state').get()!;
   expect(accounting.logical_bytes).toBe(
     diagnostics.prepare('SELECT coalesce(sum(byte_size),0) AS bytes FROM events').get()!.bytes,
@@ -100,7 +103,7 @@ test('the existing maintenance timer expires observations, exposes failure, retr
   // and successful retry each produce one content-free job result.
   await vi.waitFor(() => {
     const results = diagnostics
-      .prepare("SELECT details FROM events WHERE name='job.result'")
+      .prepare("SELECT details FROM events WHERE name='job.result' ORDER BY rowid")
       .all()
       .map((item) => JSON.parse(String(item.details)))
       .filter((item) => item.job === 'diagnostics-expiry');

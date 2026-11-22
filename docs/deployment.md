@@ -126,7 +126,7 @@ hashed random server-side tokens and need no signing secret; never invent an
 unused `SESSION_SECRET`. A future feature that needs one must read it from this
 runtime environment file.
 
-`DIAGNOSTICS_RETENTION_DAYS` in `runtime.env` optionally shortens diagnostic
+⏳ `DIAGNOSTICS_RETENTION_DAYS` in `runtime.env` optionally shortens diagnostic
 observation retention from seven days to a whole number from 1 through 7. Other
 values fail startup; omit it for seven days. Restart the application to apply a
 policy change. Server receipt time determines age, independent of client clocks.
@@ -389,7 +389,8 @@ The owner then found and deleted the only inbound rule, SSH TCP 22, retaining th
 three outbound rules. A fresh targeted scan at 16:48 PDT used the same TCP command
 above with `--max-retries 2`. Ports 22, 80, 443 and 3000 were all `filtered`
 (`no-response`), completed in 2.10 seconds. Private SSH subsequently confirmed
-`systemctl is-active spinel` returned `active`, and private verified HTTPS returned 200. The full TCP retry started before the correction was interrupted; the post-correction connect scan also stalled and was interrupted. The owner
+`systemctl is-active spinel` returned `active`, and private verified HTTPS returned
+200. The full TCP retry started before the correction was interrupted; the post-correction connect scan also stalled and was interrupted. The owner
 has been given a privileged SYN scan command to complete the full IPv4 check.
 No full-port result is claimed yet.
 
