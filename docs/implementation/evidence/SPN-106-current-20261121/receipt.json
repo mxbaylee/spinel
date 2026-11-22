@@ -1,0 +1,401 @@
+{
+  "base": "aeed459c7828a46d66e0054399eff0f00f1c506e",
+  "runtimeSource": "499edf373a256bebe851bf0e3449f6f56cfdecd5",
+  "node": "26.13.0",
+  "date": "2026-11-21 America/Los_Angeles",
+  "environment": "Production test build, Chromium desktop and 390x844 touch/mobile emulation; VITE_SYNC_EVIDENCE=0,VITE_DOC_SELECTION_EVIDENCE=1,VITE_DOC_RESPONSIVENESS_EVIDENCE=0. Focused native Storybook viewer and denial at 390x900. No physical-phone claim.",
+  "checks": {
+    "nativeAndService": "43 passed first attempt, 7.46s, peak973.3MiB; executed complete runtime diff before checkpoint commit",
+    "build": "passed first attempt,2.29s,peak1104.4MiB",
+    "viewers": {
+      "startTime": "2026-11-22T05:08:19.099Z",
+      "duration": 36891.535,
+      "expected": 4,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "viewerPeakMiB": 1839.6,
+    "pdfAndRevocation": "RESOURCE ABORT on first Sheet guest case,peak2057.4MiB; no completed result. Hosted acceptance pending. All task-owned processes and port3101 absent after termination.",
+    "storybookInitial": "setup failure: wrong legacy CLI path; zero build/tests executed; retained first failure",
+    "storybookCorrected": "actual installed bin used; build passed5.66s,peak1320.0MiB",
+    "storybookCapture": "4 states passed first attempt,peak763.7MiB",
+    "typecheck": "full repository pass,peak1800.2MiB"
+  },
+  "logs": [
+    {
+      "file": "dependencies-clone.log.gz",
+      "decodedSha256": "c2e6a69b1e496ed97dff80d69546fab6a53ee82e91f9ede821d4e156e6651dd1",
+      "decodedBytes": 48
+    },
+    {
+      "file": "postinstall.log.gz",
+      "decodedSha256": "634b6c88083b161471554f75d0386d7a401b5a8aba1dd5122fe72b283c987af7",
+      "decodedBytes": 368
+    },
+    {
+      "file": "focused-tests.log.gz",
+      "decodedSha256": "3d16b8e0fab0956717c7753e37fc939867fc75c7847a77ec7741baa0c2c48727",
+      "decodedBytes": 261
+    },
+    {
+      "file": "build.log.gz",
+      "decodedSha256": "8f693604ab14b746ec0733de8b9b52023099754369c1c8e0e9eeff7244ef012c",
+      "decodedBytes": 8072
+    },
+    {
+      "file": "viewer.log.gz",
+      "decodedSha256": "7c657b9287de3d7219f46f009d2391fdc9ad74c5bc2e446af497ba0d05ba58ac",
+      "decodedBytes": 1412
+    },
+    {
+      "file": "viewer-results.json.gz",
+      "decodedSha256": "625542b69931a8bf86bd54c053cedd4df4c04c20e0de104166b287f6b48c8af7",
+      "decodedBytes": 14249
+    },
+    {
+      "file": "pdf-revocation.log.gz",
+      "decodedSha256": "88d2130f52f7a5fddf1b0616a21eff51922be213c5b5ea18a1f04136441e0ccf",
+      "decodedBytes": 456
+    },
+    {
+      "file": "storybook-build.log.gz",
+      "decodedSha256": "73bd7a83b206aeca851f5b08241ccb14adfd5d2298844f859e2344ac85bad9ff",
+      "decodedBytes": 1281
+    },
+    {
+      "file": "storybook-build-corrected.log.gz",
+      "decodedSha256": "c17f0c53075654e0756ee5e7ef9e585513ed5cdd76b45f91c06b5bd15e83496e",
+      "decodedBytes": 10949
+    },
+    {
+      "file": "storybook-capture.log.gz",
+      "decodedSha256": "ba73814a3181df6a566055bfde9f654303714a7dd6e4a90ef03ee0cb61a5546d",
+      "decodedBytes": 519
+    },
+    {
+      "file": "storybook-main.ts.gz",
+      "decodedSha256": "ddc4cb412efd5bbfa8b37aaeb2469a8e21f1dcf6d61ff047964967a064c9cb55",
+      "decodedBytes": 117
+    },
+    {
+      "file": "storybook-preview.tsx.gz",
+      "decodedSha256": "4696183ca51362c836d3027b79c766d57f53f1ea45a29194b1ccc5b1f55e6922",
+      "decodedBytes": 53
+    },
+    {
+      "file": "typecheck.log.gz",
+      "decodedSha256": "650284267d8a2afa0b54553b400d3737b6b71b962f48947462151f46f727f151",
+      "decodedBytes": 76
+    },
+    {
+      "file": "index.log.gz",
+      "decodedSha256": "342ff15991de7038e27a766200c35d1db87434289313fad7a915620538fa5e12",
+      "decodedBytes": 1389
+    }
+  ],
+  "productionBuild": [
+    {
+      "path": "dist/assets/CopyFile-BqWjcshk.js",
+      "sha256": "09c42aabcfbb354e906f7377162b0e3028041c5f7a5e4aa0db5e79593953d919",
+      "bytes": 642088
+    },
+    {
+      "path": "dist/assets/CopyFile-CV-aWjJq.css",
+      "sha256": "ae0cdd7ebc38e0ef8d9d66580891c3609e1a6248cf21ccd923a7951a32b1c5c6",
+      "bytes": 18706
+    },
+    {
+      "path": "dist/assets/DocEditor-BfwMgLtQ.js",
+      "sha256": "441c588aa4e221983a0bb4233981ab07bacc3d9d442fca2273a41359213b94b1",
+      "bytes": 18108
+    },
+    {
+      "path": "dist/assets/HistoryBrowser-D9Z9OhM7.css",
+      "sha256": "a7536c0ab0d79dc700d82be8632e86dd9cbd365dd8698f94983cf6a073eb662c",
+      "bytes": 3361
+    },
+    {
+      "path": "dist/assets/HistoryBrowser-kmBXT0f2.js",
+      "sha256": "ec7ff1d810d3d94b3d60d05cf5181ceb1f8a7a6c370e529324aa3718ac965333",
+      "bytes": 16897
+    },
+    {
+      "path": "dist/assets/OfflineAccess-D-Qbrktz.js",
+      "sha256": "9455499996b5ec5d297a8484969c17bc036b498450cbba31128b395c774e5101",
+      "bytes": 3192
+    },
+    {
+      "path": "dist/assets/OfflineViewer-BssqCekt.js",
+      "sha256": "b905444192cc8e7120e7e6f45834580b2cb14d9a21cb9adac6d9e18ff02f68c3",
+      "bytes": 2049
+    },
+    {
+      "path": "dist/assets/PreparedImages-Dkfkz5yC.js",
+      "sha256": "21ac0afcc53a55d1b8cdeecec63befaaf4318c15f5a0e555be44d87a77541475",
+      "bytes": 6755
+    },
+    {
+      "path": "dist/assets/SheetEditor-DahTgB_I.js",
+      "sha256": "73f443c69fd9c7ef41745c6bc593f0674f068bbb4fc9d3d4fdf1f2930895b442",
+      "bytes": 6884
+    },
+    {
+      "path": "dist/assets/application-BLCo5ll3.css",
+      "sha256": "04d58caf856cc53683552f862aba624ed3006655ae32c4be4a2a77dca524a4a5",
+      "bytes": 59580
+    },
+    {
+      "path": "dist/assets/application-P6TAZAHH.js",
+      "sha256": "1d28cc5ec93d03b72f24393c60778d03d17fd3c41a79d217a9cb0edc9067640e",
+      "bytes": 369789
+    },
+    {
+      "path": "dist/assets/checkpoint-J5L26ZDd.js",
+      "sha256": "69362f163cfc11ea3f44571a54b1e1814299c95eccb48caeeae215441b6284f4",
+      "bytes": 5693
+    },
+    {
+      "path": "dist/assets/deadlines-Dj8sTYN1.js",
+      "sha256": "825ab926ebbeabe181a485d59e7da6f6fc8545b884182b21746a50b5e0c060e1",
+      "bytes": 1512
+    },
+    {
+      "path": "dist/assets/diagnostics-C_p-lv7a.js",
+      "sha256": "f6a1788e7c7cc7205f2ff718e0a492d73a1335bc67b4db47bfe79177bc59e351",
+      "bytes": 13273
+    },
+    {
+      "path": "dist/assets/documentAccess-qDV8-2fK.js",
+      "sha256": "e825c002269a95180c2a9217cbe0eb68ca3fb109eeb90d5010c3b6e34880d968",
+      "bytes": 3681
+    },
+    {
+      "path": "dist/assets/documentReady-DxwdCcMl.css",
+      "sha256": "2b707cda425af18626d2dcebeb80fc8f4ce5ebd315252d0265dcc65429350f8e",
+      "bytes": 115772
+    },
+    {
+      "path": "dist/assets/documentReady-eOgawpxt.js",
+      "sha256": "5196e57e4f808a55d71e35bb12d93c84094587d3d3261532830b03e1bf2446e4",
+      "bytes": 185071
+    },
+    {
+      "path": "dist/assets/download-DYm-kg3h.js",
+      "sha256": "7b353e88346ba54cbc1f935f4fa6850a2a2f477c3c94cd542be23dee31ef14d2",
+      "bytes": 3591
+    },
+    {
+      "path": "dist/assets/es-BIO-t1xb.js",
+      "sha256": "a018915c6d41e2268cc2a8a7287ca5375164e37ec660d0448d7f7bfcc6755956",
+      "bytes": 499338
+    },
+    {
+      "path": "dist/assets/es-BpXnFo8A.js",
+      "sha256": "7752f5dff0f15f0195f48415d10f63d347ee8faca5ef337f395c58329b24dce0",
+      "bytes": 1536341
+    },
+    {
+      "path": "dist/assets/es-CeqC16gg.js",
+      "sha256": "cfdd612792a1acd3ba40405f62072cd66f27963f0a8899c27cfb42620ba94092",
+      "bytes": 726066
+    },
+    {
+      "path": "dist/assets/es-QP97_786.js",
+      "sha256": "14f3a1c66758e9a3c89f8f3ddacef214fad625ae8d30661d119b5d5b91b12d7a",
+      "bytes": 1173699
+    },
+    {
+      "path": "dist/assets/floating-ui.dom-BN-MIWOs.js",
+      "sha256": "0caa0f2cb2fdab79c3c261046924763d944cdeb033aa6c67426b1f05363e4a9c",
+      "bytes": 18839
+    },
+    {
+      "path": "dist/assets/floating-ui.react-dom-Cu3TIp2r.js",
+      "sha256": "d94e5dcf65e6c7d95d600980331a78875e42abe6c590746256ac532200794899",
+      "bytes": 214408
+    },
+    {
+      "path": "dist/assets/install-app-icon-180-9dea7deb5692a69cb28a259b1a0538d34e201a89df9a3ac8a006afbf739a6858.png",
+      "sha256": "9dea7deb5692a69cb28a259b1a0538d34e201a89df9a3ac8a006afbf739a6858",
+      "bytes": 6994
+    },
+    {
+      "path": "dist/assets/install-app-icon-192-57468f0dbc8885a3e54cc4583301ba11b5077136b240c81b6c5700d962b24276.png",
+      "sha256": "57468f0dbc8885a3e54cc4583301ba11b5077136b240c81b6c5700d962b24276",
+      "bytes": 7544
+    },
+    {
+      "path": "dist/assets/install-app-icon-512-4683043e1f9a52b85f6374ab1a4127000b081adea0d77b1b082b70f409d74489.png",
+      "sha256": "4683043e1f9a52b85f6374ab1a4127000b081adea0d77b1b082b70f409d74489",
+      "bytes": 23147
+    },
+    {
+      "path": "dist/assets/install-manifest-35bfcd9ed1f6ee86af868e4fb114921c4fae2eb465de73ff90025fa8df1ced34.webmanifest",
+      "sha256": "35bfcd9ed1f6ee86af868e4fb114921c4fae2eb465de73ff90025fa8df1ced34",
+      "bytes": 413
+    },
+    {
+      "path": "dist/assets/lib-B2Inqbei.css",
+      "sha256": "1037c0dd415f6e2ec2efaad32f6deacd8e122e30de59b4c9ddb86c78a84a6778",
+      "bytes": 125558
+    },
+    {
+      "path": "dist/assets/lib-YjMVT8R1.js",
+      "sha256": "c30decf58e6aa2cfdf026fa24375068417ab43b220fb13e2aad460404efd6a17",
+      "bytes": 396796
+    },
+    {
+      "path": "dist/assets/main-DPzq8S7H.js",
+      "sha256": "fb108a5e8333798cf71e41a2cd4a5f8db5f66530eba7e4e119b2e3d2df0cf2cf",
+      "bytes": 4430
+    },
+    {
+      "path": "dist/assets/module-preload-DaOqYLuo.js",
+      "sha256": "3b74c3ba21944b5d35e183c7f94613503025089dca052fb62698468254ef6403",
+      "bytes": 1725
+    },
+    {
+      "path": "dist/assets/native-Di7kzYyL.js",
+      "sha256": "49bacff00e4a868124db81cfa8e89110dc4a2cb0fbd6ff63776b716cb8394f58",
+      "bytes": 7261
+    },
+    {
+      "path": "dist/assets/nativeCopy-BjAOiK2X.js",
+      "sha256": "d988e91b7182c0786de59709cc35cc143f1ebb6b5e4ec7f069938c592df18805",
+      "bytes": 32905
+    },
+    {
+      "path": "dist/assets/nativeCopy-mVcC3r32.css",
+      "sha256": "5635f05c18a0d88e35f62260fb18c1fd81c064d1da2421738ffd260d77bb400b",
+      "bytes": 2533
+    },
+    {
+      "path": "dist/assets/nativeSyncPermissions-BGuoqLwB.js",
+      "sha256": "9376687803aded582848de01b37514be6ae812e7bcad104ec7a041afaa3f5367",
+      "bytes": 1883514
+    },
+    {
+      "path": "dist/assets/offlineError-BMzT11US.js",
+      "sha256": "bfe22808335609f56f9f91c4103d7bf7b9dfbc298f38638572f191ac04d017db",
+      "bytes": 10803
+    },
+    {
+      "path": "dist/assets/offlineStore-BPS614BW.js",
+      "sha256": "d68c9cd947a79352c434fae19e28c6a5c77a66834e55db7090abe5f94a4ab8d0",
+      "bytes": 33399
+    },
+    {
+      "path": "dist/assets/portable-B8Yc-TyR.js",
+      "sha256": "8b62da180242ee9f3a09540a2fa195884dd78308b27a8b26ea2758042fa67bbc",
+      "bytes": 9367
+    },
+    {
+      "path": "dist/assets/profile-CWPuQQA6.js",
+      "sha256": "d69c11d02e87e55efabeebbc05d60d86ba6f1ab4009287e5a5d95d48f439f976",
+      "bytes": 433430
+    },
+    {
+      "path": "dist/assets/react-CdlCbvX4.js",
+      "sha256": "c0b09e2658b16b835135bd3cbc0ca5b291e3128221504fc47c1af7887652db84",
+      "bytes": 7876
+    },
+    {
+      "path": "dist/assets/replayHost-C0opLBWc.js",
+      "sha256": "cdc4b3485ba7326f9a89f29d7a1f61562c9785c2ee94694b2ff649254d54ef3a",
+      "bytes": 1321
+    },
+    {
+      "path": "dist/assets/rolldown-runtime-CNOWq4Kh.js",
+      "sha256": "2d8d100f1a8f491dcf0b1adcd5d5f59a48dfd1683b8123c97785039b0e72e99d",
+      "bytes": 817
+    },
+    {
+      "path": "dist/assets/snapshotIdentity-B7XsrmCK.js",
+      "sha256": "f495e98ca3b5d82963ebe0fc54c0a6fda80071ff9d6d5d93bdbf9d5fabac825a",
+      "bytes": 1775
+    },
+    {
+      "path": "dist/assets/spaceNavigation-D2YpFhMm.js",
+      "sha256": "ffea9258e439bb856ee46416a297efd3933e77a38e6dbf7b6de298dd63e032db",
+      "bytes": 4033
+    },
+    {
+      "path": "dist/assets/spinelSync-KUD0hTvY.js",
+      "sha256": "5262e90a0c0b915a5396a9270945667daea7fb771710ed8419e573d9f6a65e4c",
+      "bytes": 103116
+    },
+    {
+      "path": "dist/assets/startupStage-LrB-XkSu.js",
+      "sha256": "f25c64344525cba2e6b9d6b5c62c7ec1a726a2e65780adb57c4f998361365c69",
+      "bytes": 3461
+    },
+    {
+      "path": "dist/assets/univer-renderer-BCxJwnTI.js",
+      "sha256": "fe325832b3c814be39b8bb9ce3377cf35906313356bdf4cbb848913678226a5c",
+      "bytes": 5310210
+    },
+    {
+      "path": "dist/assets/useDiagnostics-6GPmlRwP.css",
+      "sha256": "b1ce606d54e4be707ff60cd461509642a1b9d60c75a2fb296ebfd37792207890",
+      "bytes": 5632
+    },
+    {
+      "path": "dist/assets/useDiagnostics-DxGTxtPP.js",
+      "sha256": "8c1579a476db0fcc57ebdbf8ee1ea12d24b4645694f5f6b1b961c35bdd6c70ee",
+      "bytes": 741498
+    },
+    {
+      "path": "dist/index.html",
+      "sha256": "31a66c6391128a3abcc16fbd0e6f8d967c0fef44b381fe4886bbde5e1aecd735",
+      "bytes": 4674
+    },
+    {
+      "path": "dist/service-worker.js",
+      "sha256": "cba1452ca076f2c14e27032e5cfe9e3767f249468ae982feea0f68e6d4277757",
+      "bytes": 18788
+    }
+  ],
+  "images": [
+    {
+      "path": "docs/review-assets/spn-106-current-20261121/docs-mobile--viewer-denied-edit-phone-dark.png",
+      "sha256": "5e07692f4a8bd81cf10cd148176c4ae90d655476f20d1e685486c64b6a247fb4",
+      "bytes": 47518
+    },
+    {
+      "path": "docs/review-assets/spn-106-current-20261121/docs-mobile--viewer-denied-edit-phone.png",
+      "sha256": "3e199e2ce34a0db95dfbbc6a6a541daf5a9dac48a5faa73ef40e5c349d77511f",
+      "bytes": 46942
+    },
+    {
+      "path": "docs/review-assets/spn-106-current-20261121/docs-mobile--viewer-phone-dark.png",
+      "sha256": "e54cb5a1f51720db0fc07741fe38c61b4217338aa8e9b4980e01242a1cf2b62c",
+      "bytes": 47783
+    },
+    {
+      "path": "docs/review-assets/spn-106-current-20261121/docs-mobile--viewer-phone.png",
+      "sha256": "509e159d02827c3d843d76323a5bdf7662cbd20f151778ec3e273edd5e78d7c8",
+      "bytes": 48064
+    },
+    {
+      "path": "docs/review-assets/spn-106-current-20261121/spn-106-account-desktop-dark.png",
+      "sha256": "122095233670f2f801d5bbcd2f4c4a64d928a599218a4228c5b1bcd0bd411921",
+      "bytes": 31061
+    },
+    {
+      "path": "docs/review-assets/spn-106-current-20261121/spn-106-account-desktop-light.png",
+      "sha256": "28a868a16b2c551f1a187df03d1cf92217a4a0078c6d06e62759be5e3744242f",
+      "bytes": 31435
+    },
+    {
+      "path": "docs/review-assets/spn-106-current-20261121/spn-106-guest-390px-dark.png",
+      "sha256": "2206b4c0c9c850c95ce71b9f9ce56e11b5b2ca63dcba7f89caf66e2a07141a8c",
+      "bytes": 15720
+    },
+    {
+      "path": "docs/review-assets/spn-106-current-20261121/spn-106-guest-390px-light.png",
+      "sha256": "f004ebda1e74233483a148c0b94e0d66668bff25bd4b2f8126181b2c830c1db6",
+      "bytes": 16328
+    }
+  ]
+}
