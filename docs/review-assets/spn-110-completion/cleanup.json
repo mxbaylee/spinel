@@ -1,0 +1,28 @@
+{
+  "deleted": [
+    {
+      "ref": "refs/heads/codex/spn-110-diagnostic-retention",
+      "guard": "09093eb64c08cd262acc8390c64581a7f82c5fc2"
+    },
+    {
+      "ref": "refs/heads/codex/spn-110-feedback-integration",
+      "guard": "f8c4b7461f7df5b9bc35459c0e6b5538c8161115"
+    },
+    {
+      "ref": "refs/heads/codex/spn-110-completion-20261121",
+      "guard": "5ba5e8998f4e78032c0a6bc26353b7a4532a5034"
+    },
+    {
+      "remote": "codex/spn-110-diagnostic-retention",
+      "status": "already deleted by GitHub after merge"
+    }
+  ],
+  "removedMissingWorktreeRegistrations": [
+    "/Users/mxbaylee/projects/spinel-spn-110",
+    "/Users/mxbaylee/projects/spinel-spn-110-feedback-integration"
+  ],
+  "remainingTicketBranches": [],
+  "unrelatedRefsAndWorktreesUnchanged": true,
+  "workingTree": "clean",
+  "main": "2dc7871db0a9b7f368cda5fe260af012c70fb6b7"
+}

@@ -1,0 +1,57 @@
+{
+  "completedAt": "2026-11-22T16:08:28.222695+00:00",
+  "ticket": "SPN-110",
+  "pr": "https://github.com/mxbaylee/spinel/pull/247",
+  "reviewedHead": "5ba5e8998f4e78032c0a6bc26353b7a4532a5034",
+  "squashCommit": "2dc7871db0a9b7f368cda5fe260af012c70fb6b7",
+  "reviewedAndMergedTree": "7f1a3ab96d1d2e5466fee6019b373ee0c292bc55",
+  "finalMetadataValidationRun": 45039133218,
+  "attempt": 1,
+  "finalPlanSha256": "33536d41f6bcf36ae77992d87a865c13b8ba86a644e797e35e98260beb55480b",
+  "allSevenRequiredGates": "passed",
+  "selectedAcceptance": "passed",
+  "reviews": {
+    "review_a": 100,
+    "review_b": 100,
+    "visual": "approved, agent review only"
+  },
+  "unresolvedReviewThreads": [],
+  "activePRsOwningDeletedBranches": [],
+  "preservedArchiveTags": [
+    "refs/tags/archive/spn-110-acceptance-5ba5e899 cc428945248b035979b022f918c5bae26bb2ccd1",
+    "refs/tags/archive/spn-110-desktop-09093eb6 05c4bcc289a43c13f434d00518f0c9687878d2c2",
+    "refs/tags/archive/spn-110-feedback-integration-f8c4b746 f8c4b7461f7df5b9bc35459c0e6b5538c8161115",
+    "refs/tags/archive/spn-110-implementation-09093eb6 09093eb64c08cd262acc8390c64581a7f82c5fc2"
+  ],
+  "historicalArchiveCorrection": "The old desktop tag is an orphan evidence tree, not an ancestor of original implementation 09093eb6. Added and pushed archive/spn-110-implementation-09093eb6 before guarded deletion.",
+  "cleanup": {
+    "deleted": [
+      {
+        "ref": "refs/heads/codex/spn-110-diagnostic-retention",
+        "guard": "09093eb64c08cd262acc8390c64581a7f82c5fc2"
+      },
+      {
+        "ref": "refs/heads/codex/spn-110-feedback-integration",
+        "guard": "f8c4b7461f7df5b9bc35459c0e6b5538c8161115"
+      },
+      {
+        "ref": "refs/heads/codex/spn-110-completion-20261121",
+        "guard": "5ba5e8998f4e78032c0a6bc26353b7a4532a5034"
+      },
+      {
+        "remote": "codex/spn-110-diagnostic-retention",
+        "status": "already deleted by GitHub after merge"
+      }
+    ],
+    "removedMissingWorktreeRegistrations": [
+      "/Users/mxbaylee/projects/spinel-spn-110",
+      "/Users/mxbaylee/projects/spinel-spn-110-feedback-integration"
+    ],
+    "remainingTicketBranches": [],
+    "unrelatedRefsAndWorktreesUnchanged": true,
+    "workingTree": "clean",
+    "main": "2dc7871db0a9b7f368cda5fe260af012c70fb6b7"
+  },
+  "postMergeCI": "Fresh main-push validation is independent; pre-merge acceptance is not claimed as a main-push run result.",
+  "scope": "SPN-110 only; grooming not performed."
+}
