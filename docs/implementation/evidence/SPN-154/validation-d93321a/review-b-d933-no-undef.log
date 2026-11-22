@@ -1,0 +1,1 @@
+WATCHDOG {"label":"review-b-d933-no-undef","command":"node","args":["node_modules/oxlint/bin/oxlint","--config","/private/tmp/spn154-completion/oxlint-node-globals.json","--deny","no-undef","scripts/ci/desktop-offline.ts"],"code":0,"signal":null,"aborted":null,"elapsedMs":112,"peakKiB":0}

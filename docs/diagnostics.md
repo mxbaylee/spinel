@@ -253,6 +253,16 @@ unreadable observations are counted; observer failures cannot change the request
 also records a failure-time recovery-receipt count, while its existing UI/content
 and persistence assertions remain unchanged. No retry or larger budget is added.
 
+The fixture's `desktop-sync-observation.ts` reads the existing diagnostics store
+read-only after the journey, without changing production collection. It retains
+at most 256 schema-validated connection/resync/refresh/recovery records, reducing
+file identity to the fixture item ordinal. Counts distinguish dropped and invalid
+rows. A missing, locked or malformed store cannot change acceptance. The existing
+collection remains lossy: `available` means the read succeeded, not completeness;
+`receivedAt` is batch-arrival time, not event time. Browser-queued events may still
+be absent before teardown; absence cannot establish causality. Tests cover bounds,
+unknown/content-bearing records, immutable storage and unavailable-store isolation.
+
 Maintain this table when code moves or changes an observed boundary. The PR's
 **Diagnostic upkeep** section explains added, moved, retired or unchanged
 observations and the associated regression evidence. Preserve the actual

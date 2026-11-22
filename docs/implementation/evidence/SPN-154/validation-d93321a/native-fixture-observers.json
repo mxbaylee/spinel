@@ -1,0 +1,14 @@
+{
+  "label": "native-fixture-observers",
+  "command": "node",
+  "args": [
+    "--test",
+    "scripts/ci/desktop-sync-observation.test.ts",
+    "scripts/ci/desktop-transfer-observation.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "aborted": null,
+  "elapsedMs": 364,
+  "peakKiB": 163776
+}

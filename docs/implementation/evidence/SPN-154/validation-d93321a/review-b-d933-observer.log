@@ -1,0 +1,12 @@
+✔ transfer observation identifies admitted overlap without content or credentials (11.216875ms)
+✔ unrelated requests stay absent and observations are bounded with truthful losses (13.941792ms)
+✔ observation failures cannot throw into request or response handling (0.3395ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 172.515333
+WATCHDOG {"label":"review-b-d933-observer","command":"node","args":["--test","scripts/ci/desktop-transfer-observation.test.ts"],"code":0,"signal":null,"aborted":null,"elapsedMs":237,"peakKiB":0}

@@ -1,0 +1,13 @@
+{
+  "label": "review-b-d933-observer",
+  "command": "node",
+  "args": [
+    "--test",
+    "scripts/ci/desktop-transfer-observation.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "aborted": null,
+  "elapsedMs": 237,
+  "peakKiB": 0
+}

@@ -20,6 +20,7 @@ import { comparable, pending } from '../../e2e/offline-fixture.ts';
 import { createDesktopBrowser } from './desktop-browser.ts';
 import type { DesktopBrowserKind, DesktopBrowserStart } from './desktop-browser.ts';
 import { createDesktopOfflineFixture } from './desktop-offline-fixture.ts';
+import { desktopSyncObservation } from './desktop-sync-observation.ts';
 import { namedPointerTarget } from './desktop-pointer.ts';
 import { countOfflineImagePixels, offlineImagesPainted } from './offline-image-pixels.ts';
 
@@ -574,6 +575,12 @@ async function main() {
         .prepare('SELECT * FROM workspace_offline_recoveries WHERE user_id=? ORDER BY recovery_id')
         .all(f.actor.id);
     const recoveryIds = new Set<string>();
+    const recovered: {
+      item: (typeof f.items)[number];
+      href: string;
+      copyId: string;
+      copied: Awaited<ReturnType<typeof f.readRecovered>>;
+    }[] = [];
     assert.deepEqual(receipts(), []);
     await f.setOffline(false);
     stage('transport-restored');
@@ -658,39 +665,53 @@ async function main() {
         );
         assert.deepEqual(content(copied.snapshot), content(expected.get(item.id)!));
         assert.deepEqual(f.imageRows(copyId), f.imageRows(item.id));
-        const publishedReceipts = receipts();
-        await browser.goto(`${f.origin}/?item=${item.id}`);
-        await waitStatus('All changes saved.');
-        await f.setOffline(true);
-        stage('recovered-original-reconnect-outage', {
-          itemId: item.id,
-          ...(await f.verifyDisconnected()),
-        });
-        await f.setOffline(false);
-        await browser.goto(`${f.origin}/?item=${item.id}`);
-        await waitStatus('All changes saved.');
-        await browser.goto(`${f.origin}${href}`);
-        await waitStatus('All changes saved.');
-        await canvas();
-        const visual = await visibleImages(`${item.kind}-recovered-copy`, item.kind);
-        assert.ok(
-          (
-            await nativeText(item.kind, item.kind === 'sheet' ? '731' : 'Desktop offline 731 ')
-          ).includes(item.kind === 'sheet' ? '731' : 'Desktop offline 731 '),
-        );
-        assert.deepEqual(f.originalState(item), originals.get(item.id));
-        assert.deepEqual(receipts(), publishedReceipts);
-        stage('conflict-copy-preserves-original', {
-          itemId: item.id,
-          copyId,
-          receipts: publishedReceipts,
-          snapshotSha256: hash(copied.snapshot),
-          images: f.imageRows(copyId),
-          visual,
-        });
+        recovered.push({ item, href, copyId, copied });
+        stage('conflict-copy-published', { itemId: item.id, copyId });
       }
     }
     assert.equal(receipts().length, 2);
+    assert.equal(recovered.length, 2);
+    // A fixture-wide cut must not interrupt another document's background replay.
+    // First prove every normal queue clean and both conflict copies published;
+    // then exercise the original/copy outage assertions with no pending edits.
+    for (const item of f.items.filter((item) => item.outcome === 'normal')) {
+      const clean = await local(f.actor.id, item.id);
+      assert.ok(clean.item?.outbox);
+      assert.equal(pending(clean.item.outbox.checkpoint), false);
+    }
+    stage('all-reconnect-outcomes-verified-before-outage');
+    for (const { item, href, copyId, copied } of recovered) {
+      const publishedReceipts = receipts();
+      await browser.goto(`${f.origin}/?item=${item.id}`);
+      await waitStatus('All changes saved.');
+      await f.setOffline(true);
+      stage('recovered-original-reconnect-outage', {
+        itemId: item.id,
+        ...(await f.verifyDisconnected()),
+      });
+      await f.setOffline(false);
+      await browser.goto(`${f.origin}/?item=${item.id}`);
+      await waitStatus('All changes saved.');
+      await browser.goto(`${f.origin}${href}`);
+      await waitStatus('All changes saved.');
+      await canvas();
+      const visual = await visibleImages(`${item.kind}-recovered-copy`, item.kind);
+      assert.ok(
+        (
+          await nativeText(item.kind, item.kind === 'sheet' ? '731' : 'Desktop offline 731 ')
+        ).includes(item.kind === 'sheet' ? '731' : 'Desktop offline 731 '),
+      );
+      assert.deepEqual(f.originalState(item), originals.get(item.id));
+      assert.deepEqual(receipts(), publishedReceipts);
+      stage('conflict-copy-preserves-original', {
+        itemId: item.id,
+        copyId,
+        receipts: publishedReceipts,
+        snapshotSha256: hash(copied.snapshot),
+        images: f.imageRows(copyId),
+        visual,
+      });
+    }
     // Deliberate loss of private downloads uses real browser deletion APIs, with no
     // claim that filling a CI disk reproduces the browser's eviction heuristic.
     // Return online first so the server can supply catalog names after loss.
@@ -783,6 +804,10 @@ async function main() {
   } finally {
     if (fixture) {
       report.transferEvidence = fixture.transferEvidence;
+      report.syncEvidence = desktopSyncObservation(
+        resolve(directory, 'diagnostics.sqlite'),
+        fixture.items.map((item) => item.id),
+      );
       try {
         report.recoveryReceiptCount = fixture.db
           .prepare('SELECT count(*) AS count FROM workspace_offline_recoveries WHERE user_id=?')
