@@ -1,0 +1,129 @@
+[
+  {
+    "kind": "ready",
+    "port": 60702,
+    "keepAliveTimeout": 5000,
+    "buffer": 1000
+  },
+  {
+    "kind": "start",
+    "at": 1795319485036,
+    "close": false
+  },
+  {
+    "kind": "client-socket",
+    "at": 1795319485041,
+    "reused": false,
+    "port": 60703
+  },
+  {
+    "kind": "server-connection",
+    "at": 1795319485042,
+    "port": 60703
+  },
+  {
+    "kind": "server-request",
+    "at": 1795319485043,
+    "port": 60703
+  },
+  {
+    "kind": "server-block-start",
+    "at": 1795319485048
+  },
+  {
+    "kind": "client-socket",
+    "at": 1795319488053,
+    "reused": true,
+    "port": 60703
+  },
+  {
+    "kind": "server-block-end",
+    "at": 1795319491253
+  },
+  {
+    "kind": "server-timeout",
+    "at": 1795319491255,
+    "port": 60703
+  },
+  {
+    "kind": "server-close",
+    "at": 1795319491255,
+    "port": 60703,
+    "hadError": false
+  },
+  {
+    "kind": "client-error",
+    "at": 1795319491256,
+    "code": "ECONNRESET",
+    "reused": true
+  },
+  {
+    "kind": "result",
+    "at": 1795319491259,
+    "close": false,
+    "reset": true
+  },
+  {
+    "kind": "start",
+    "at": 1795319491264,
+    "close": true
+  },
+  {
+    "kind": "client-socket",
+    "at": 1795319491266,
+    "reused": false,
+    "port": 60704
+  },
+  {
+    "kind": "server-connection",
+    "at": 1795319491267,
+    "port": 60704
+  },
+  {
+    "kind": "server-request",
+    "at": 1795319491267,
+    "port": 60704
+  },
+  {
+    "kind": "server-close",
+    "at": 1795319491268,
+    "port": 60704,
+    "hadError": false
+  },
+  {
+    "kind": "server-block-start",
+    "at": 1795319491269
+  },
+  {
+    "kind": "client-socket",
+    "at": 1795319494272,
+    "reused": false,
+    "port": 60705
+  },
+  {
+    "kind": "server-block-end",
+    "at": 1795319497474
+  },
+  {
+    "kind": "server-connection",
+    "at": 1795319497475,
+    "port": 60705
+  },
+  {
+    "kind": "server-request",
+    "at": 1795319497475,
+    "port": 60705
+  },
+  {
+    "kind": "server-close",
+    "at": 1795319497476,
+    "port": 60705,
+    "hadError": false
+  },
+  {
+    "kind": "result",
+    "at": 1795319497477,
+    "close": true,
+    "status": 200
+  }
+]

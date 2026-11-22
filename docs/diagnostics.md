@@ -223,6 +223,16 @@ Metric names constrain kind/unit/value. See the
 
 ## Emitter maintenance inventory
 
+🔌 The test-only `e2e/reset-diagnostics-reporter.ts` preserves up to 50 reset
+failures per project with redacted request paths and owned-server snapshot facts.
+It does not alter results or retries. Snapshot age is explicit: old evidence
+cannot establish that a process died or was healthy at the failure instant.
+SPN-168 changes only the test API client's connection reuse; production operation,
+save, sync and runtime emitters retain their contracts. Its bounded transport
+regression records socket reuse and server timeout events without headers, cookies
+or document content; `scripts/ci/reset-diagnostics.test.ts` retains reporter
+redaction, capacity and failure-isolation coverage.
+
 Maintain this table when code moves or changes an observed boundary. The PR's
 **Diagnostic upkeep** section explains added, moved, retired or unchanged
 observations and the associated regression evidence. Preserve the actual

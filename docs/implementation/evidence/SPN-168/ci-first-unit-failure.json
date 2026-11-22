@@ -1,0 +1,32 @@
+{
+  "runId": 44983836062,
+  "jobId": 137090240983,
+  "attempt": 1,
+  "head": "cabfac7e24ab2138c4c8dd9e9f248994d6a10720",
+  "tested": "6cf5035e715a13cd6213d90c6ea879bdce3cee0a",
+  "failure": [
+    "2026-11-22T04:12:58.9079908Z test at scripts/ci/restore-snapshot.test.ts:48:1",
+    "2026-11-22T04:12:58.9080486Z ✖ restore observation avoids a reused-connection reset and preserves authenticated snapshots (38.986258ms)",
+    "2026-11-22T04:12:58.9080969Z   AssertionError [ERR_ASSERTION]: Missing expected rejection.",
+    "2026-11-22T04:12:58.9081541Z       at async TestContext.<anonymous> (file:///home/runner/work/spinel/spinel/scripts/ci/restore-snapshot.test.ts:79:3)",
+    "2026-11-22T04:12:58.9082101Z       at async Test.run (node:internal/test_runner/test:1409:7)",
+    "2026-11-22T04:12:58.9082515Z       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {",
+    "2026-11-22T04:12:58.9083089Z     generatedMessage: false,",
+    "2026-11-22T04:12:58.9083321Z     code: 'ERR_ASSERTION',",
+    "2026-11-22T04:12:58.9083516Z     actual: undefined,",
+    "2026-11-22T04:12:58.9083720Z     expected: /ECONNRESET/,",
+    "2026-11-22T04:12:58.9083913Z     operator: 'rejects',",
+    "2026-11-22T04:12:58.9084139Z     diff: 'simple'",
+    "2026-11-22T04:12:58.9084311Z   }",
+    "2026-11-22T04:12:58.9290049Z ##[error]Process completed with exit code 1.",
+    "2026-11-22T04:12:58.9427536Z ##[group]Run actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9",
+    "2026-11-22T04:12:58.9427866Z with:",
+    "2026-11-22T04:12:58.9428051Z   name: pdf-collaboration-overlap",
+    "2026-11-22T04:12:58.9428277Z   path: output/pdf/spn-075-overlap/"
+  ],
+  "transportControls": [
+    "2026-11-22T04:12:22.2484688Z ℹ {\"name\":\"original\",\"clientEvents\":[{\"reused\":false,\"at\":1795320729305},{\"reused\":true,\"at\":1795320729317}],\"serverEvents\":[{\"kind\":\"ready\",\"at\":1795320729291,\"port\":44543,\"keepAliveTimeout\":5000,\"keepAliveTimeoutBuffer\":1000},{\"kind\":\"connection\",\"at\":1795320729307,\"connection\":1},{\"kind\":\"request\",\"at\":1795320729309,\"connection\":1,\"requests\":1,\"method\":\"GET\"},{\"kind\":\"stall-start\",\"at\":1795320729316},{\"kind\":\"stall-end\",\"at\":1795320735516},{\"kind\":\"idle-timeout\",\"at\":1795320735516,\"connection\":1},{\"kind\":\"connection-closed\",\"at\":1795320735517,\"connection\":1,\"hadError\":false},{\"kind\":\"flushed\",\"at\":1795320735519}]}",
+    "2026-11-22T04:12:22.2493811Z ℹ {\"name\":\"patched\",\"clientEvents\":[{\"reused\":false,\"at\":1795320736010},{\"reused\":false,\"at\":1795320736019},{\"reused\":false,\"at\":1795320742223},{\"reused\":false,\"at\":1795320742226}],\"serverEvents\":[{\"kind\":\"ready\",\"at\":1795320735999,\"port\":33365,\"keepAliveTimeout\":5000,\"keepAliveTimeoutBuffer\":1000},{\"kind\":\"connection\",\"at\":1795320736011,\"connection\":1},{\"kind\":\"request\",\"at\":1795320736013,\"connection\":1,\"requests\":1,\"method\":\"GET\"},{\"kind\":\"connection-closed\",\"at\":1795320736018,\"connection\":1,\"hadError\":false},{\"kind\":\"stall-start\",\"at\":1795320736018},{\"kind\":\"stall-end\",\"at\":1795320742219},{\"kind\":\"connection\",\"at\":1795320742219,\"connection\":2},{\"kind\":\"request\",\"at\":1795320742219,\"connection\":2,\"requests\":2,\"method\":\"GET\"},{\"kind\":\"connection-closed\",\"at\":1795320742220,\"connection\":2,\"hadError\":false},{\"kind\":\"flushed\",\"at\":1795320742222},{\"kind\":\"connection\",\"at\":1795320742224,\"connection\":3},{\"kind\":\"request\",\"at\":1795320742224,\"connection\":3,\"requests\":3,\"method\":\"POST\"},{\"kind\":\"connection-closed\",\"at\":1795320742225,\"connection\":3,\"hadError\":false},{\"kind\":\"flushed\",\"at\":1795320742225},{\"kind\":\"connection\",\"at\":1795320742226,\"connection\":4},{\"kind\":\"request\",\"at\":1795320742226,\"connection\":4,\"requests\":4,\"method\":\"GET\"}]}"
+  ],
+  "disposition": "The existing restore negative control assumed the installed client pooled sockets. Preserve its reset and authenticated-snapshot assertions using the verified original bundle for both its pooled negative and explicit-close helper positive. The shared loader also supplies the new timeout A/B regression."
+}

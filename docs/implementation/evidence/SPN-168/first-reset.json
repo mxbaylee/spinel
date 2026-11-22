@@ -1,0 +1,146 @@
+{
+  "runId": 44447934232,
+  "jobId": 135304823685,
+  "sourceSha": "c673dfe53e0dcf22e8840d0cf5b96aacd1f7a0be",
+  "artifactId": 14495360463,
+  "artifactName": "theme-screenshots-production-2",
+  "artifactSha256": "17355410fe088bab99315019790a3e952e1906cfa7cf4c849aec05e61224b818",
+  "artifactExpiresAt": "2026-11-26T03:11:05Z",
+  "diagnostics": [
+    {
+      "kind": "econnreset-diagnostic",
+      "project": "production",
+      "file": "offline-device.spec.ts",
+      "line": 495,
+      "attempt": 1,
+      "status": "failed",
+      "request": "GET /sync-api/items/<id>/snapshot",
+      "server": {
+        "available": true,
+        "pid": 3057,
+        "ownerPid": 3046,
+        "ready": true,
+        "exited": false,
+        "unexpectedExit": false,
+        "closed": false,
+        "exitCode": null,
+        "signal": null,
+        "failed": false,
+        "stderrBytes": 870,
+        "stdoutBytes": 43,
+        "evidenceAgeMs": 8173
+      }
+    }
+  ],
+  "finalServer": {
+    "ownerPid": 3046,
+    "runId": "f73dc765-15e8-4d7b-a06b-9d3fa5fd1794",
+    "updatedAt": 1795057865109,
+    "pid": 3057,
+    "ready": true,
+    "expectedClose": true,
+    "exited": true,
+    "unexpectedExit": false,
+    "closed": true,
+    "firstFailure": null,
+    "exitCode": 0,
+    "signal": null,
+    "stdout": {
+      "bytes": 43
+    },
+    "stderr": {
+      "bytes": 1740
+    }
+  },
+  "fixtures": {
+    "first": {
+      "sourceSha": "c673dfe53e0dcf22e8840d0cf5b96aacd1f7a0be",
+      "testId": "ab2fe326f81a2e139708-9955a5de7218c0ac4a4f",
+      "project": "production",
+      "retry": 0,
+      "repeatEachIndex": 0,
+      "events": [
+        {
+          "elapsedMs": 0,
+          "phase": "authenticated-setup",
+          "attempt": 1,
+          "status": 200,
+          "identityMatch": true,
+          "result": "verified"
+        },
+        {
+          "elapsedMs": 60,
+          "phase": "authenticated-setup",
+          "attempt": 1,
+          "status": 200,
+          "identityMatch": true,
+          "result": "verified"
+        },
+        {
+          "elapsedMs": 91,
+          "phase": "offline-download"
+        },
+        {
+          "elapsedMs": 3035,
+          "phase": "snapshot-observation"
+        },
+        {
+          "elapsedMs": 10691,
+          "phase": "cleanup",
+          "errors": 0,
+          "contexts": 2
+        }
+      ],
+      "dropped": 0
+    },
+    "retry": {
+      "sourceSha": "c673dfe53e0dcf22e8840d0cf5b96aacd1f7a0be",
+      "testId": "ab2fe326f81a2e139708-9955a5de7218c0ac4a4f",
+      "project": "production",
+      "retry": 1,
+      "repeatEachIndex": 0,
+      "events": [
+        {
+          "elapsedMs": 0,
+          "phase": "authenticated-setup",
+          "attempt": 1,
+          "status": 200,
+          "identityMatch": true,
+          "result": "verified"
+        },
+        {
+          "elapsedMs": 76,
+          "phase": "authenticated-setup",
+          "attempt": 1,
+          "status": 200,
+          "identityMatch": true,
+          "result": "verified"
+        },
+        {
+          "elapsedMs": 115,
+          "phase": "offline-download"
+        },
+        {
+          "elapsedMs": 4096,
+          "phase": "snapshot-observation"
+        },
+        {
+          "elapsedMs": 33584,
+          "phase": "snapshot-observation"
+        },
+        {
+          "elapsedMs": 37863,
+          "phase": "snapshot-observation"
+        },
+        {
+          "elapsedMs": 38969,
+          "phase": "cleanup",
+          "errors": 0,
+          "contexts": 2
+        }
+      ],
+      "dropped": 0
+    }
+  },
+  "redactions": "Server stdout/stderr tails omitted; only byte counts retained. No request headers or raw job logs retained."
+}
