@@ -1,0 +1,16 @@
+{
+  "label": "review-a-d1d04ef6-tests",
+  "command": "node",
+  "args": [
+    "--test",
+    "--test-concurrency=1",
+    "scripts/ci/desktop-transfer-observation.test.ts",
+    "scripts/ci/desktop-sync-observation.test.ts",
+    "scripts/ci/desktop-recovery-retry.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "aborted": null,
+  "elapsedMs": 620,
+  "peakKiB": 135232
+}

@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { desktopRecoveryRetry } from './desktop-recovery-retry.ts';
+import {
+  desktopRecoveryRetry,
+  desktopRecoveryPublication,
+  desktopRecoveryRemaining,
+} from './desktop-recovery-retry.ts';
 import type { DesktopTransferEvidence } from './desktop-transfer-observation.ts';
 
 // Exact timing/status shape of the retained 52572987 Safari refusal; no content.
@@ -87,4 +91,43 @@ test('unrelated, incomplete, repeated or successful publication is never retry p
     assert.equal(desktopRecoveryRetry(value, 13), undefined);
   }
   assert.equal(desktopRecoveryRetry(evidence(), 15), undefined);
+});
+
+test('ready and creating are not failures; only the rendered recovery message distinguishes refusal', () => {
+  assert.deepEqual(desktopRecoveryPublication({ href: '', retry: true, message: '' }), {
+    href: '',
+    failed: false,
+    reason: 'other-recovery-error',
+  });
+  assert.equal(desktopRecoveryPublication({ href: '', retry: false, message: '' }).failed, false);
+  assert.deepEqual(desktopRecoveryPublication({ href: '/?item=copy', retry: false, message: '' }), {
+    href: '/?item=copy',
+    failed: false,
+    reason: 'other-recovery-error',
+  });
+  assert.deepEqual(
+    desktopRecoveryPublication({
+      href: '',
+      retry: true,
+      message: 'Another file transfer is running. Try again shortly.',
+    }),
+    { href: '', failed: true, reason: 'transfer-busy' },
+  );
+  assert.deepEqual(
+    desktopRecoveryPublication({
+      href: '',
+      retry: true,
+      message: 'The copy could not be created.',
+    }),
+    { href: '', failed: true, reason: 'other-recovery-error' },
+  );
+});
+
+test('a delayed read cannot renew or cross the one publication deadline', () => {
+  const deadline = 45000;
+  assert.equal(desktopRecoveryRemaining(deadline, 0), 45000);
+  assert.equal(desktopRecoveryRemaining(deadline, 44999), 1);
+  // A target/href may arrive, but neither click nor acceptance may follow late.
+  assert.throws(() => desktopRecoveryRemaining(deadline, 45000), /original deadline/);
+  assert.throws(() => desktopRecoveryRemaining(deadline, 45001), /original deadline/);
 });

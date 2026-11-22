@@ -21,7 +21,11 @@ import { createDesktopBrowser } from './desktop-browser.ts';
 import type { DesktopBrowserKind, DesktopBrowserStart } from './desktop-browser.ts';
 import { createDesktopOfflineFixture } from './desktop-offline-fixture.ts';
 import { desktopSyncObservation } from './desktop-sync-observation.ts';
-import { desktopRecoveryRetry } from './desktop-recovery-retry.ts';
+import {
+  desktopRecoveryRetry,
+  desktopRecoveryPublication,
+  desktopRecoveryRemaining,
+} from './desktop-recovery-retry.ts';
 import { namedPointerTarget } from './desktop-pointer.ts';
 import { countOfflineImagePixels, offlineImagesPainted } from './offline-image-pixels.ts';
 
@@ -76,13 +80,14 @@ async function until<T>(
   throw new Error(`${label}: ${JSON.stringify(last)?.slice(0, 1800)}`);
 }
 
-async function named(selector: string, name: string, timeout = 45_000) {
+async function named(selector: string, name: string, timeout = 45_000, deadline?: number) {
   const index = await until(
     () => browser.evaluate<number>(namedPointerTarget(selector, name)),
     (value) => value >= 0,
     `Named click target is missing, disabled or obscured: ${name}`,
     timeout,
   );
+  if (deadline !== undefined) desktopRecoveryRemaining(deadline);
   await browser.click(selector, index);
 }
 
@@ -621,19 +626,18 @@ async function main() {
         // production save-details control carries the stable attention label.
         await named('button', 'Save details: Needs attention');
         const deadline = Date.now() + 45_000;
-        const remaining = () => {
-          assert.ok(Date.now() < deadline, 'Recovery publication exceeded its original deadline');
-          return Math.max(1, deadline - Date.now());
-        };
-        const readPublication = () =>
-          browser.evaluate<{ href: string; failed: boolean; reason: string }>(`(() => {
-            const dialog = document.querySelector('[role="dialog"]');
+        const remaining = () => desktopRecoveryRemaining(deadline);
+        const readPublication = async () =>
+          desktopRecoveryPublication(
+            await browser.evaluate<{ href: string; retry: boolean; message: string }>(`(() => {
+            const recovery = document.querySelector('[role="dialog"] [aria-label="Offline recovery"]');
             return {
-              href: Array.from(dialog?.querySelectorAll('a') || []).find(link => link.textContent.trim() === 'Open copy')?.getAttribute('href') || '',
-              failed: Array.from(dialog?.querySelectorAll('button') || []).some(button => button.textContent.trim() === 'Retry creating copy'),
-              reason: dialog?.textContent.includes('Another file transfer is running. Try again shortly.') ? 'transfer-busy' : 'other-recovery-error',
+              href: Array.from(recovery?.querySelectorAll('a') || []).find(link => link.textContent.trim() === 'Open copy')?.getAttribute('href') || '',
+              retry: Array.from(recovery?.querySelectorAll('button') || []).some(button => button.textContent.trim() === 'Retry creating copy'),
+              message: recovery?.querySelector('[role="status"]')?.textContent.trim() || '',
             };
-          })()`);
+          })()`),
+          );
         const observePublication = () =>
           until(
             readPublication,
@@ -686,7 +690,7 @@ async function main() {
           assert.equal(desktopRecoveryRetry(f.transferEvidence, transferStart)?.ready, true);
           // One documented UI retry of a refused, immutable recovery request.
           // No test retry, other-error retry or fresh deadline is permitted.
-          await named('button', 'Retry creating copy', remaining());
+          await named('button', 'Retry creating copy', remaining(), deadline);
           stage('recovery-transfer-busy-native-retry', {
             itemId: item.id,
             ...ready,
@@ -703,6 +707,7 @@ async function main() {
           publication = await observePublication();
         }
         assert.ok(publication.href, `Recovery publication failed: ${publication.reason}`);
+        remaining();
         const href = publication.href;
         const copyId = new URL(href, f.origin).searchParams.get('item');
         assert.ok(copyId && copyId !== item.id);

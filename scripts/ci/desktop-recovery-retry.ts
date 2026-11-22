@@ -28,3 +28,25 @@ export function desktopRecoveryRetry(evidence: DesktopTransferEvidence, afterOrd
       evidence.admittedOrdinals.length === 0,
   };
 }
+
+/** SaveStatus shows the retry label in ready state too; only a message is failure. */
+export function desktopRecoveryPublication(value: {
+  href: string;
+  retry: boolean;
+  message: string;
+}) {
+  return {
+    href: value.href,
+    failed: value.retry && Boolean(value.message),
+    reason:
+      value.message === 'Another file transfer is running. Try again shortly.'
+        ? 'transfer-busy'
+        : 'other-recovery-error',
+  };
+}
+
+/** Recheck after browser reads and immediately before an explicit retry click. */
+export function desktopRecoveryRemaining(deadline: number, now = Date.now()) {
+  if (now >= deadline) throw new Error('Recovery publication exceeded its original deadline');
+  return deadline - now;
+}
