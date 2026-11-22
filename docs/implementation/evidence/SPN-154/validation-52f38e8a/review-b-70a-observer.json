@@ -1,0 +1,15 @@
+{
+  "label": "review-b-70a-observer",
+  "command": "env",
+  "args": [
+    "NODE_OPTIONS=--max-old-space-size=256",
+    "node",
+    "--test",
+    "scripts/ci/desktop-transfer-observation.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "aborted": null,
+  "elapsedMs": 274,
+  "peakKiB": 0
+}

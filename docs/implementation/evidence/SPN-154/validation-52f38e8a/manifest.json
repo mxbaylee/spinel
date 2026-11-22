@@ -1,0 +1,85 @@
+{
+  "scope": "52f38e8a type failure and later href-only repair; review/test identities retained per receipt",
+  "files": [
+    {
+      "file": "first-typecheck-52.log.gz",
+      "sha256": "de648756c8b304fcb5408c35ee277db278d65a000f6f7881e874c0fbabd44a1a"
+    },
+    {
+      "file": "superseded-metadata-45048238250.json",
+      "sha256": "16e0a45dd4635eea4b916eeca16f985a9520ff3aaef2936e67ec458193a6fb4b"
+    },
+    {
+      "file": "review-a-70a4bbb5.md",
+      "sha256": "fb7e2fe8eb2260e0b0a3f4c48c1850ab053f55459d002ed77511734d354025eb"
+    },
+    {
+      "file": "review-b-70a.md",
+      "sha256": "57c5a1c3762c371ba3e7d469b61effea117248cb678c44a28673ec145be8d1ba"
+    },
+    {
+      "file": "review-a-52f38e8a.md",
+      "sha256": "61f3e50cd724620d563caad265fe64136c0fd509f4db8c8538cca2fe03165778"
+    },
+    {
+      "file": "review-b-52f.md",
+      "sha256": "ba4120d8bb35b364d25202c2981d11c55ddb628bf83f1bf194647472c9cb434f"
+    },
+    {
+      "file": "review-a-70a4bbb5-observer.json",
+      "sha256": "b25a144ed5c33e380c927612f22640553b35576ba58e45ece2d17a7688770aee"
+    },
+    {
+      "file": "review-a-70a4bbb5-observer.log.gz",
+      "sha256": "0571db326f2ea551749d44aef6e19f9184b456ccdf74b8c3f62cc4333c4c6d3e"
+    },
+    {
+      "file": "review-b-70a-observer.json",
+      "sha256": "0e0de260d6a0f60dbafc8ef2dc617f1138f99600a57ab2a623faa3c71e2ade2a"
+    },
+    {
+      "file": "review-b-70a-observer.log.gz",
+      "sha256": "0cc15f9f2d25d0455ebe814241422ba7c989f0868b75e95971464aad64960706"
+    },
+    {
+      "file": "review-a-f5a3335-helper.json",
+      "sha256": "a9811c1d5c4c49678341b390e98585ca2798cdb34bb2a86bc80a0108a46c3125"
+    },
+    {
+      "file": "review-a-f5a3335-helper.log.gz",
+      "sha256": "1cdde8080038361d90774ad93f0cb931b6028feb77068b259a312ad8aeb683db"
+    },
+    {
+      "file": "recovery-href-lint.log.gz",
+      "sha256": "a2837a5ec279b94ccae68af51ae24fe6ebc4dff440f211bfcd7a0677e97e5145"
+    },
+    {
+      "file": "recovery-href-node-lint.log.gz",
+      "sha256": "316bd76d439864df47ff00369cea630ec2ee6a452c558071ddba421f80705c18"
+    },
+    {
+      "file": "recovery-href-before-node-lint.log.gz",
+      "sha256": "a9fc96faf9e3a42f63065f36d39e81c263e80ea507a4a37699b869b431e90da5"
+    },
+    {
+      "file": "recovery-href-format.log.gz",
+      "sha256": "386b3c57664db73e5fd8a0bf59318d5ce55bf520d4941a662cb559cf611715ba"
+    },
+    {
+      "file": "oxlint-node-globals.json",
+      "sha256": "797d685614c6b215ccda8ba923880e74ca2f6c5f5e2bed1ebeac26169f9e53c9"
+    },
+    {
+      "file": "terminal-ci-419.json.gz",
+      "sha256": "3527f81ad270b37268d5f7b63e177ab9124d36fb30234dab6be36b87d5ff4a7b"
+    },
+    {
+      "file": "terminal-storybook-419.json.gz",
+      "sha256": "c3acf8d70cffe6a8d63094960b003942a2991ef6e97337dac56bfff90239a1ba"
+    },
+    {
+      "file": "terminal-desktop-419.json.gz",
+      "sha256": "2a591d52c663936dad0d51ae9385de59e21c9be0819b34953dd6ad611d064725"
+    }
+  ]
+}

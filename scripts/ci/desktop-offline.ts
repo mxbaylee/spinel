@@ -623,7 +623,8 @@ async function main() {
           'One published recovery copy',
         );
         assert.ok(publication.href, `Recovery publication failed: ${publication.reason}`);
-        const copyId = new URL(publication.href, f.origin).searchParams.get('item');
+        const href = publication.href;
+        const copyId = new URL(href, f.origin).searchParams.get('item');
         assert.ok(copyId && copyId !== item.id);
         assert.deepEqual(f.originalState(item), originals.get(item.id));
         recoveryIds.add(copyId);
