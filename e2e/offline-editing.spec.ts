@@ -2,7 +2,12 @@ import { randomUUID } from 'node:crypto';
 import { expect, test } from '@playwright/test';
 import type { Page, Request } from '@playwright/test';
 import type { IDocumentData, IWorkbookData } from '@univerjs/core';
-import { DOCS_NORMAL_EDITOR_UNIT_ID_KEY, DocumentFlavor, LocaleType } from '@univerjs/core';
+import {
+  DOCS_FORMULA_BAR_EDITOR_UNIT_ID_KEY,
+  DOCS_NORMAL_EDITOR_UNIT_ID_KEY,
+  DocumentFlavor,
+  LocaleType,
+} from '@univerjs/core';
 import { docFormulas } from '@spinel/doc-formulas';
 import { SyncServer } from '@spinel/sync-server';
 import sharp from 'sharp';
@@ -103,12 +108,22 @@ test.describe('downloaded native editors', () => {
       await f.network.setOffline(true);
       await selectPhoneCell(2, 4);
       await region.getByRole('button', { name: 'Edit C5', exact: true }).click();
+      await expect(
+        f.page.locator(`[id="__editor_${DOCS_FORMULA_BAR_EDITOR_UNIT_ID_KEY}"]`),
+      ).toBeFocused();
       await f.page.keyboard.type('=SUM(A:B)');
       await region
         .locator('[data-u-comp="mobile-formula-bar"]')
         .getByRole('button', { name: 'OK', exact: true })
         .click();
       await savedLocally(f.page);
+      // Native OK advances one row; inspect the cell we just authored.
+      // Inspect B5 first so this is not a deliberate rapid double tap on C5.
+      await selectPhoneCell(1, 4);
+      await expect(region.getByRole('button', { name: 'Read B5', exact: true })).toHaveText(
+        '=SUM(A:A)',
+      );
+      await selectPhoneCell(2, 4);
       await expect(region.getByRole('button', { name: 'Read C5', exact: true })).toHaveText(
         '=SUM(A:B)',
       );

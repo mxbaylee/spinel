@@ -84,6 +84,14 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     await expect(sheet).toHaveAttribute('data-mobile', 'true');
     // The mobile SDK also renders an invisible embedded text-editor canvas.
     const canvas = sheet.getByLabel('Spreadsheet grid', { exact: true });
+    const selectFirstCell = async () => {
+      const box = (await canvas.boundingBox())!;
+      // Inspect another cell first. Two rapid canvas taps at the same location
+      // intentionally mean native double-tap editing, even across toolbar clicks.
+      await page.touchscreen.tap(box.x + 168, box.y + 40);
+      await expect(sheet.getByRole('button', { name: 'Read B1', exact: true })).toBeVisible();
+      await page.touchscreen.tap(box.x + 80, box.y + 40);
+    };
     async function startEdit(value: string, entry: 'pen' | 'double-tap' = 'double-tap') {
       await canvas.scrollIntoViewIfNeeded();
       const box = (await canvas.boundingBox())!;
@@ -130,6 +138,8 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
         async () => cells(await read()).find((cell) => cell.row === 0 && cell.column === 0)?.value,
       )
       .toBe(17);
+    // Native OK advances the selection. Read the authored cell after selecting it.
+    await selectFirstCell();
     await expect(sheet.getByRole('button', { name: 'Read A1', exact: true })).toHaveText('17');
     await sheet.getByRole('button', { name: 'Edit A1', exact: true }).tap();
     const nativeBar = sheet.locator('[data-u-comp="mobile-formula-bar"]');
@@ -190,11 +200,16 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
         .toBe(0);
       await expect(nativeInput).toBeFocused();
       expect(await formulaInput!.evaluate((node) => node.isConnected)).toBe(true);
-      await expect(nativeBar.getByRole('button', { name: '=', exact: true })).toBeVisible();
+      const operator = nativeBar.getByRole('button', { name: '=', exact: true });
+      await expect(operator).toBeVisible();
       const tools = (await sheet
         .getByRole('button', { name: 'Open sheet tools', exact: true })
         .boundingBox())!;
-      expect(tools.y + tools.height).toBeLessThanOrEqual((await nativeBar.boundingBox())!.y);
+      const operatorBounds = (await operator.boundingBox())!;
+      expect(tools.y + tools.height).toBeLessThanOrEqual(operatorBounds.y);
+      expect(tools.x).toBeGreaterThanOrEqual(0);
+      expect(tools.x + tools.width).toBeLessThanOrEqual(page.viewportSize()!.width);
+      expect(operatorBounds.y).toBeGreaterThanOrEqual(0);
       await page.keyboard.type('0');
     }
     await nativeBar.getByRole('button', { name: 'OK', exact: true }).tap();
@@ -203,6 +218,7 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     expect(formulaSnapshot.sheets[formulaSnapshot.sheetOrder[0]].cellData?.[0]?.[0]?.f).toBe(
       '=SUM(1,200)',
     );
+    await selectFirstCell();
     await expect(sheet.getByRole('button', { name: 'Read A1', exact: true })).toHaveText(
       '=SUM(1,200)',
     );

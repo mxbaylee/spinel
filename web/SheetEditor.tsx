@@ -472,7 +472,6 @@ export function SheetEditor({
       className="sheet-editor"
       data-mobile={mobile}
       data-cell-bar={Boolean(mobileCell)}
-      data-cell-editing={Boolean(mobileCell?.editing)}
       aria-label="Sheet document"
     >
       <SaveStatus

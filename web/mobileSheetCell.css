@@ -74,7 +74,7 @@ button.mobile-sheet-cell-text {
   ) {
   --sp-sheet-operators: 36px;
 }
-.sheet-editor[data-cell-bar='true'][data-cell-editing='true']
+.sheet-editor[data-cell-bar='true']:has([data-u-comp='mobile-formula-bar'][data-expanded='false'])
   button[aria-label='Open sheet tools'] {
   position: fixed;
   left: calc(var(--sp-sheet-left) + var(--sp-sheet-width) - 64px);
