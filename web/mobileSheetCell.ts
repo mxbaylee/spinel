@@ -2,6 +2,7 @@ import { IPermissionService } from '@univerjs/core';
 import type { Univer } from '@univerjs/core';
 import type { FUniver } from '@univerjs/core/facade';
 import { IEditorBridgeService } from '@univerjs/sheets-ui';
+import { RangeProtectionRuleModel, WorksheetProtectionRuleModel } from '@univerjs/sheets';
 
 export interface MobileSheetCell {
   identity: string;
@@ -37,7 +38,7 @@ export function readMobileSheetCell(api: FUniver, editing: boolean): MobileSheet
     const value = formula ? null : range.getValue(true);
     text =
       formula ||
-      (value === null ? '' : typeof value === 'object' ? value.toPlainText() : String(value));
+      (value == null ? '' : typeof value === 'object' ? value.toPlainText() : String(value));
   }
   return {
     identity: `${book.getId()}/${sheet.getSheetId()}/${row}/${column}`,
@@ -67,6 +68,12 @@ export function observeMobileSheetCell(
     .__getInjector()
     .get(IPermissionService)
     .permissionPointUpdate$.subscribe(refresh);
+  // Moving a protected range can change visibility without changing a permission
+  // point. Refresh the readout when protection bounds or worksheet rules change.
+  const protections = [
+    univer.__getInjector().get(RangeProtectionRuleModel).ruleChange$.subscribe(refresh),
+    univer.__getInjector().get(WorksheetProtectionRuleModel).ruleChange$.subscribe(refresh),
+  ];
   refresh();
   return {
     edit() {
@@ -78,6 +85,7 @@ export function observeMobileSheetCell(
       events.forEach((event) => event.dispose());
       visibility.unsubscribe();
       permission.unsubscribe();
+      protections.forEach((subscription) => subscription.unsubscribe());
     },
   };
 }

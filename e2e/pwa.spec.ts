@@ -103,10 +103,16 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
       if (entry === 'pen') {
         await expect(sheet.locator('[data-u-comp="mobile-formula-bar"]')).toBeHidden();
         await expect(sheet.getByRole('group', { name: 'Selected cell' })).toBeVisible();
+        await expect(sheet.getByRole('button', { name: 'Read A1', exact: true })).toHaveText(
+          'Empty cell',
+        );
         await sheet.getByRole('button', { name: /^Edit [A-Z]+\d+$/ }).tap();
       } else await page.touchscreen.tap(box.x + 80, box.y + 40);
       const bar = sheet.locator('[data-u-comp="mobile-formula-bar"]');
       await expect(bar).toBeVisible();
+      await expect(
+        page.locator(`[id="__editor_${DOCS_FORMULA_BAR_EDITOR_UNIT_ID_KEY}"]`),
+      ).toBeFocused();
       await page.keyboard.type(value);
       const confirm = bar.getByRole('button', { name: 'OK', exact: true });
       const button = (await confirm.boundingBox())!;
@@ -132,6 +138,12 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
       .elementHandle();
     await page.keyboard.type('-discarded');
     const unchangedCanvas = await canvas.elementHandle();
+    await cdp.send('Emulation.setSafeAreaInsetsOverride', {
+      insets: { bottom: 34, bottomMax: 34 },
+    });
+    await expect
+      .poll(() => nativeBar.evaluate((node) => getComputedStyle(node).paddingBottom))
+      .toBe('34px');
     for (const inset of [320, 240, 320, 0]) {
       await keyboardOcclusion(page, inset);
       await expect
@@ -155,14 +167,46 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     expect(cells(await read()).find((cell) => cell.row === 0 && cell.column === 0)?.value).toBe(17);
     await expect(sheet.getByRole('button', { name: 'Read A1', exact: true })).toHaveText('17');
     await sheet.getByRole('button', { name: 'Edit A1', exact: true }).tap();
-    await page.keyboard.type('7');
-    await keyboardOcclusion(page, 320);
-    await keyboardOcclusion(page, 0);
+    await expect(
+      page.locator(`[id="__editor_${DOCS_FORMULA_BAR_EDITOR_UNIT_ID_KEY}"]`),
+    ).toBeFocused();
+    await page.keyboard.press('ControlOrMeta+A');
+    await page.keyboard.type('=SUM(1,2)');
+    // The nonterminal native caret must stay before ')' across both viewport
+    // changes. Continued typing proves the draft and caret, not just DOM identity.
+    await page.keyboard.press('ArrowLeft');
+    const nativeInput = page.locator(`[id="__editor_${DOCS_FORMULA_BAR_EDITOR_UNIT_ID_KEY}"]`);
+    const formulaInput = await nativeInput.elementHandle();
+    for (const inset of [320, 0]) {
+      await keyboardOcclusion(page, inset);
+      await expect
+        .poll(async () => {
+          const box = (await nativeBar.boundingBox())!;
+          const bottom = await page.evaluate(
+            () => visualViewport!.offsetTop + visualViewport!.height,
+          );
+          return Math.round(box.y + box.height - bottom);
+        })
+        .toBe(0);
+      await expect(nativeInput).toBeFocused();
+      expect(await formulaInput!.evaluate((node) => node.isConnected)).toBe(true);
+      await expect(nativeBar.getByRole('button', { name: '=', exact: true })).toBeVisible();
+      const tools = (await sheet
+        .getByRole('button', { name: 'Open sheet tools', exact: true })
+        .boundingBox())!;
+      expect(tools.y + tools.height).toBeLessThanOrEqual((await nativeBar.boundingBox())!.y);
+      await page.keyboard.type('0');
+    }
     await nativeBar.getByRole('button', { name: 'OK', exact: true }).tap();
     await saved();
-    expect(cells(await read()).find((cell) => cell.row === 0 && cell.column === 0)?.value).toBe(
-      177,
+    const formulaSnapshot = await read();
+    expect(formulaSnapshot.sheets[formulaSnapshot.sheetOrder[0]].cellData?.[0]?.[0]?.f).toBe(
+      '=SUM(1,200)',
     );
+    await expect(sheet.getByRole('button', { name: 'Read A1', exact: true })).toHaveText(
+      '=SUM(1,200)',
+    );
+    await cdp.send('Emulation.setSafeAreaInsetsOverride', { insets: {} });
     await sheet.getByRole('button', { name: 'Undo', exact: true }).tap();
     await saved();
     expect(cells(await read()).find((cell) => cell.row === 0 && cell.column === 0)?.value).toBe(17);

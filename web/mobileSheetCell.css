@@ -79,11 +79,16 @@ button.mobile-sheet-cell-text {
   position: fixed;
   left: calc(var(--sp-sheet-left) + var(--sp-sheet-width) - 64px);
   right: auto;
-  bottom: calc(var(--sp-sheet-bottom) + 60px + var(--sp-sheet-operators)) !important;
+  bottom: calc(
+    var(--sp-sheet-bottom) + 60px + var(--sp-sheet-operators) + env(safe-area-inset-bottom, 0px)
+  ) !important;
   transition: none;
 }
 .sheet-editor[data-cell-bar='true'] [data-u-comp='formula-bar-actions'] {
   min-width: 132px;
+}
+.space-native-editor > .sheet-editor[data-cell-bar='true'] > .mobile-sheet-cell-slot {
+  margin-inline: 0;
 }
 .sheet-editor[data-cell-bar='true'] [data-u-comp='formula-bar-expand'] {
   min-width: 44px;
