@@ -29,8 +29,9 @@ function watch() {
 export function createStartupLine() {
   const element = document.createElement('p');
   element.setAttribute('role', 'status');
+  // Reserve the 84 px wrapped entry footer plus 12 px of separation.
   element.style.cssText =
-    'position:fixed;left:16px;right:16px;bottom:16px;margin:0;text-align:center;font:12px system-ui,sans-serif;color:var(--sp-muted,currentColor)';
+    'position:fixed;left:16px;right:16px;bottom:calc(96px + env(safe-area-inset-bottom,0px));margin:0;text-align:center;font:12px system-ui,sans-serif;color:var(--sp-muted,currentColor)';
   return element;
 }
 
