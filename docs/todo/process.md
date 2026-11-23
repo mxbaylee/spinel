@@ -248,6 +248,9 @@ place. Owner, chat 2026-10-26; [image-publication decision](../implementation/gr
    with actionable deductions for unnecessary abstractions, dependencies or
    speculative flexibility (owner, chat 2026-10-20,
    [#105](../implementation/backlog-workflow.md#legacy-decision-105-deduct-unnecessary-complexity)).
+   The same points cover 🧹 code removal; see the
+   [rubric](../run-backlog.md#3-get-two-independent-grades) (owner, chat 2026-11-23,
+   [decision](../implementation/SPN-087.md#decision-code-removal-in-the-review-rubric)).
    Weigh scope overlap before changed-line limits: fix acceptance gaps here;
    ticket separable work without hiding a blocker. Both reviewers revalidate
    repairs; put both scores, the shared reviewed SHA and every finding's

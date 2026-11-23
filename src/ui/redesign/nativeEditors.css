@@ -58,7 +58,7 @@
   pointer-events: none;
 }
 
-/* Isolated editor stories use the same bounded viewport as the walkthrough.
+/* Isolated editor stories use a bounded 100dvh viewport.
    The SDK owns document scrolling; the page must not scroll its toolbar away. */
 .rd-native-story {
   height: 100dvh;

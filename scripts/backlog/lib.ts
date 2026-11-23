@@ -225,16 +225,6 @@ export function parseTicket(file: string, text: string): Ticket {
 
 // ---------- loading ----------
 
-export function loadConfig(root: string): BacklogConfig {
-  const path = join(root, CONFIG_PATH);
-  if (!existsSync(path)) throw new Error(`${CONFIG_PATH} not found under ${root}`);
-  return JSON.parse(readFileSync(path, 'utf8'));
-}
-
-export function todoDir(root: string): string {
-  return join(root, dirname(CONFIG_PATH));
-}
-
 export function ticketFilePattern(prefix: string): RegExp {
   return new RegExp(`^${prefix}-(\\d{3,})\\.md$`);
 }

@@ -1,11 +1,7 @@
 import { maintenanceFetch as fetch } from '../maintenanceFetch.ts';
 import { captureDiagnostic, observe, observeOperation } from '@spinel/diagnostics';
 import type { ClientDiagnosticOutcome, DiagnosticSource } from '@spinel/diagnostics';
-import type {
-  ClientCheckpoint,
-  ClientCheckpointFactory,
-  NativeSnapshot,
-} from '@spinel/sync-client';
+import type { ClientCheckpoint, ClientCheckpointFactory } from '@spinel/sync-client';
 import { validateRecoverySnapshot } from '@spinel/sync-client';
 import type { IURLImageService } from '@univerjs/core';
 import type { OfflineBundleImage } from '../../src/shared/offlineBundle.ts';
@@ -790,5 +786,3 @@ export class OfflineSession implements IURLImageService {
     this.releaseWriter?.();
   }
 }
-
-export type OfflineInitial = { snapshot: NativeSnapshot; revision: number };
