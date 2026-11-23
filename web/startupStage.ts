@@ -29,8 +29,9 @@ function watch() {
 export function createStartupLine() {
   const element = document.createElement('p');
   element.setAttribute('role', 'status');
+  // Leave the entry footer (including its wrapped phone text) unobscured.
   element.style.cssText =
-    'position:fixed;left:16px;right:16px;bottom:16px;margin:0;text-align:center;font:12px system-ui,sans-serif;color:var(--sp-muted,currentColor)';
+    'position:fixed;left:16px;right:16px;bottom:calc(80px + env(safe-area-inset-bottom,0px));margin:0;text-align:center;font:12px system-ui,sans-serif;color:var(--sp-muted,currentColor)';
   return element;
 }
 
