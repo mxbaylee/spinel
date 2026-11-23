@@ -2,6 +2,7 @@ import { IPermissionService } from '@univerjs/core';
 import type { Univer } from '@univerjs/core';
 import type { FUniver } from '@univerjs/core/facade';
 import { IEditorBridgeService } from '@univerjs/sheets-ui';
+import { ILayoutService } from '@univerjs/ui';
 import { RangeProtectionRuleModel, WorksheetProtectionRuleModel } from '@univerjs/sheets';
 
 export interface MobileSheetCell {
@@ -80,8 +81,11 @@ export function observeMobileSheetCell(
   return {
     edit() {
       // Revalidate the current primary and grant at activation, never a stale render.
-      if (readMobileSheetCell(api, bridge.isVisible().visible).editable)
+      if (readMobileSheetCell(api, bridge.isVisible().visible).editable) {
+        // Match native mobile keyboard entry when focus comes from app chrome.
+        univer.__getInjector().get(ILayoutService).focus();
         api.getActiveWorkbook()?.startEditing();
+      }
     },
     dispose() {
       selection?.dispose();

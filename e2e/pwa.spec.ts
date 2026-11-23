@@ -180,7 +180,8 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     await expect(
       page.locator(`[id="__editor_${DOCS_FORMULA_BAR_EDITOR_UNIT_ID_KEY}"]`),
     ).toBeFocused();
-    await page.keyboard.press('ControlOrMeta+A');
+    // This project emulates Android; ControlOrMeta follows the Mac test host.
+    await page.keyboard.press('Control+A');
     await page.keyboard.type('=SUM(1,2)');
     // The nonterminal native caret must stay before ')' across both viewport
     // changes. Continued typing proves the draft and caret, not just DOM identity.

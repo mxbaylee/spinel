@@ -4,6 +4,7 @@ import { IPermissionService } from '@univerjs/core';
 import type { Univer } from '@univerjs/core';
 import type { FUniver } from '@univerjs/core/facade';
 import { IEditorBridgeService } from '@univerjs/sheets-ui';
+import { ILayoutService } from '@univerjs/ui';
 import { RangeProtectionRuleModel, WorksheetProtectionRuleModel } from '@univerjs/sheets';
 import { observeMobileSheetCell, readMobileSheetCell } from '../../web/mobileSheetCell.ts';
 
@@ -11,6 +12,7 @@ import { observeMobileSheetCell, readMobileSheetCell } from '../../web/mobileShe
 // renderer. Native API return values/notifications remain the integration boundary.
 vi.mock('@univerjs/core', () => ({ IPermissionService: Symbol('permission') }));
 vi.mock('@univerjs/sheets-ui', () => ({ IEditorBridgeService: Symbol('editor') }));
+vi.mock('@univerjs/ui', () => ({ ILayoutService: Symbol('layout') }));
 vi.mock('@univerjs/sheets', () => ({
   RangeProtectionRuleModel: Symbol('range protection'),
   WorksheetProtectionRuleModel: Symbol('worksheet protection'),
@@ -28,6 +30,7 @@ function fixture() {
   const value = vi.fn(() => state.value);
   const formula = vi.fn(() => state.formula);
   const startEditing = vi.fn();
+  const focus = vi.fn();
   const nativeEvents = new Map<string, () => void>();
   const visibility = new BehaviorSubject({ visible: false });
   const permissions = new Subject();
@@ -35,6 +38,7 @@ function fixture() {
   const worksheets = new Subject();
   const services = new Map<unknown, unknown>([
     [IEditorBridgeService, { visible$: visibility, isVisible: () => visibility.value }],
+    [ILayoutService, { focus }],
     [IPermissionService, { permissionPointUpdate$: permissions }],
     [RangeProtectionRuleModel, { ruleChange$: ranges }],
     [WorksheetProtectionRuleModel, { ruleChange$: worksheets }],
@@ -84,6 +88,7 @@ function fixture() {
     formula,
     startEditing,
     nativeEvents,
+    focus,
     visibility,
     permissions,
     ranges,
@@ -143,6 +148,7 @@ describe('mobile selected-cell readout', () => {
     f.state.edit = false; // Grant changed after render, before its notification.
     observer.edit();
     expect(f.startEditing).not.toHaveBeenCalled();
+    expect(f.focus).not.toHaveBeenCalled();
     f.permissions.next({});
     expect(update).toHaveBeenLastCalledWith(expect.objectContaining({ editable: false }));
     f.state.edit = true;
@@ -150,6 +156,9 @@ describe('mobile selected-cell readout', () => {
     f.nativeEvents.get('selection')!();
     observer.edit();
     expect(f.startEditing).toHaveBeenCalledTimes(1);
+    expect(f.focus.mock.invocationCallOrder[0]).toBeLessThan(
+      f.startEditing.mock.invocationCallOrder[0],
+    );
     f.visibility.next({ visible: true });
     expect(update).toHaveBeenLastCalledWith(
       expect.objectContaining({ address: 'C5', editing: true }),

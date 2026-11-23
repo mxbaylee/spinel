@@ -81,6 +81,15 @@ export const NativeEditing: Story = {
 export const LongText: Story = {
   args: { text: 'A long note stays readable without widening the Sheet. '.repeat(12) },
 };
+export const LongTextOpen: Story = {
+  args: LongText.args,
+  play: async ({ canvasElement }) => {
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Read B5' }));
+    const popup = within(canvasElement.ownerDocument.body);
+    await expect(popup.getByRole('heading', { name: 'B5' })).toBeVisible();
+    await expect(popup.getByRole('button', { name: 'Close' })).toBeVisible();
+  },
+};
 export const ViewOnly: Story = {
   args: { editable: false, text: 'A long view-only note remains available in full. '.repeat(8) },
   play: async ({ canvasElement }) => {

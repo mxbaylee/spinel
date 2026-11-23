@@ -27,8 +27,12 @@ After implementation, the bounded physical check must establish:
 
 Use the existing native/browser suites for independent access and writer checks;
 do not turn this into a blanket physical-device matrix. Actual light/dark/390px
-design review remains separate from real keyboard acceptance. No candidate UI
-has yet been implemented or passed this checklist.
+design review remains separate from real keyboard acceptance. The candidate UI
+is implemented locally; browser and component evidence is recorded in the
+[implementation checkpoint](SPN-165.md#-mobile-editor-implementation-checkpoint).
+It has **not passed this physical checklist**. While the owner is away, prepare
+and verify the final fixture without opening an invitation window that would
+expire before use. Start a fresh bounded window only when the phone is available.
 
 ## 🗃️ Historical formula baseline instructions
 
@@ -44,8 +48,7 @@ access or persistence behavior is repaired. This is a new throwaway account and
 Sheet, not the owner's original file. Preserve the original installation/data.
 
 The server seeds **SPN-165 SUM check** with A1:A4 = 10, 15, 20, 26 and
-B5 = `=SUM(A:A)`, without a calculated cache. Chromium desktop visibly showed
-71. The original historical offline edit is unknown; C1 below is a controlled
+B5 = `=SUM(A:A)`, without a calculated cache. Chromium desktop visibly showed 71. The original historical offline edit is unknown; C1 below is a controlled
 new edit that leaves the original inputs/formula unchanged.
 
 ## ✅ Required baseline actions

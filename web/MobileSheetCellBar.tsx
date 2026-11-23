@@ -1,6 +1,7 @@
 import { Popover } from '@base-ui/react/popover';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import type { MobileSheetCell } from './mobileSheetCell.ts';
+import '../src/ui/redesign/controls.css';
 import './mobileSheetCell.css';
 
 /** A readout and entry point; native Univer alone owns the mutable cell input. */
