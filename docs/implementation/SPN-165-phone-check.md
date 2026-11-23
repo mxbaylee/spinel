@@ -1,4 +1,39 @@
-# 📱 SPN-165 required phone observations
+# 📱 SPN-165 phone editing acceptance
+
+## 🎯 Current UI acceptance contract
+
+Owner retargeted SPN-165 on 2026-11-23 to stable, obvious phone Sheet editing.
+The historical blank formula value was not reproduced in the latest run; the
+formula-only before/after checklist below is retained as history and is no longer
+required. See the [scope decision](SPN-165.md#-retarget-to-stable-phone-sheet-editing).
+
+Prepare a fresh exact-candidate fixture and verify its source/build, worker and
+invitation before requesting device actions. All earlier invitations have expired.
+The old diagnostic button must not cover the cell editor or any required action;
+prefer an unobstructed production UI for this acceptance. Record Pixel model,
+OS/Chrome version, installed-app mode, source/runtime and first failures.
+
+After implementation, the bounded physical check must establish:
+
+1. With the keyboard closed, select a literal cell and a formula cell. The bottom
+   bar stays visible with the selected reference, exact text/formula and labeled
+   pen edit action. Selection alone leaves the keyboard closed.
+2. Open editing, type, dismiss/reopen the keyboard, commit and cancel. The editor
+   stays above the keyboard without repeated jumps or obscured text/actions;
+   draft, focus and selection remain intact until the chosen commit/cancel action.
+3. Commit an unrelated-cell edit offline in a prepared copy, return to files,
+   reconnect and reopen. Verify exact saved text/formula, unchanged other cells
+   and one accepted edit, with server/device evidence collected by the agent.
+
+Use the existing native/browser suites for independent access and writer checks;
+do not turn this into a blanket physical-device matrix. Actual light/dark/390px
+design review remains separate from real keyboard acceptance. No candidate UI
+has yet been implemented or passed this checklist.
+
+## 🗃️ Historical formula baseline instructions
+
+The following records the prior fixture and investigation, not current UI
+acceptance or an instruction to restart the obsolete formula-only handoff.
 
 ## 🔒 Exact disposable baseline
 

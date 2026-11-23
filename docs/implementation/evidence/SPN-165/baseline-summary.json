@@ -1,5 +1,5 @@
 {
-  "status": "investigation checkpoint; required physical handoff pending; not complete",
+  "status": "historical formula investigation; not reproduced in latest physical run; owner retargeted SPN-165 to phone editing UI on 2026-11-23",
   "productionSource": "cc9e9fd2222b12d87f0213e4d481409feb195ace",
   "runtime": "c2d1fcc9075a4fd4",
   "diagnosticBuild": true,
@@ -250,9 +250,9 @@
     "phone-preflight": "First two DNS lookups ENOTFOUND; bounded readiness then verified emitted runtime/worker and actual invitation. No phone failure inferred."
   },
   "phone": {
-    "required": true,
+    "required": false,
     "before": "physical run did not reproduce blank B5: initial native 71; owner confirms visible 71 after online reopen and file-list sync; server retained C5 formula. Prepared-state/native replay evidence remains incomplete.",
-    "after": "not observed",
+    "after": "formula-repair after observation retired by owner scope replacement; current UI keyboard acceptance remains required separately",
     "baselineReadiness": {
       "verified": true,
       "probes": [
@@ -448,6 +448,14 @@
     "jsonValid": true,
     "backlogCountersChanged": false,
     "productionFilesChanged": false,
-    "physicalAcceptance": "pending"
+    "physicalAcceptance": "historical formula checkpoint superseded; current UI keyboard acceptance pending"
+  },
+  "scopeDisposition": {
+    "date": "2026-11-23",
+    "source": "owner chat: cannot reproduce; turn this ticket into the UI fix ticket",
+    "formulaInvestigation": "retired from current ticket acceptance; not fixed or disproved",
+    "preserve": "original observations, first failures, exact source/runtime and archives",
+    "currentTicket": "Keep phone Sheet editing controls visible and stable",
+    "currentAcceptance": "UI/native editing and persistence/access regression checks, independent visual review and actual Pixel keyboard acceptance; not yet implemented"
   }
 }
