@@ -62,11 +62,14 @@ function fixture() {
     getActiveSheet: () => sheet,
     getWorkbookPermission: () => ({ canEdit: () => state.edit }),
     startEditing,
+    onSelectionChange: (callback: () => void) => {
+      nativeEvents.set('selection', callback);
+      return { dispose: () => nativeEvents.delete('selection') };
+    },
   };
   const api = {
     getActiveWorkbook: () => book,
     Event: {
-      SelectionChanged: 'selection',
       ActiveSheetChanged: 'sheet',
       SheetValueChanged: 'value',
     },

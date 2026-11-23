@@ -58,8 +58,10 @@ export function observeMobileSheetCell(
 ) {
   const bridge = univer.__getInjector().get(IEditorBridgeService);
   const refresh = () => update(readMobileSheetCell(api, bridge.isVisible().visible));
+  // The mobile render facade does not wire Event.SelectionChanged in Univer
+  // 1.3.1. The public workbook callback observes the native selection service.
+  const selection = api.getActiveWorkbook()?.onSelectionChange(refresh);
   const events = [
-    api.addEvent(api.Event.SelectionChanged, refresh),
     api.addEvent(api.Event.ActiveSheetChanged, refresh),
     api.addEvent(api.Event.SheetValueChanged, refresh),
   ];
@@ -82,6 +84,7 @@ export function observeMobileSheetCell(
         api.getActiveWorkbook()?.startEditing();
     },
     dispose() {
+      selection?.dispose();
       events.forEach((event) => event.dispose());
       visibility.unsubscribe();
       permission.unsubscribe();

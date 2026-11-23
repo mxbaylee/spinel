@@ -3,17 +3,20 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { useState } from 'react';
 import { MobileSheetCellBar } from './MobileSheetCellBar.tsx';
 import type { MobileSheetCell } from './mobileSheetCell.ts';
+import './space.css';
 
 function Example({
   text = '=SUM(A:A)',
   editable = true,
   viewable = true,
   editing = false,
+  space = false,
 }: {
   text?: string;
   editable?: boolean;
   viewable?: boolean;
   editing?: boolean;
+  space?: boolean;
 }) {
   const [activated, setActivated] = useState(false);
   const cell: MobileSheetCell = {
@@ -24,10 +27,15 @@ function Example({
     viewable,
     editing,
   };
-  return (
-    <div style={{ width: '100%', maxWidth: 390 }}>
+  const content = (
+    <section className="sheet-editor" data-cell-bar="true">
       <MobileSheetCellBar cell={cell} onEdit={() => setActivated(true)} />
       {activated && <p role="status">Native editing requested</p>}
+    </section>
+  );
+  return (
+    <div style={{ width: '100%', maxWidth: 390 }}>
+      {space ? <div className="space-native-editor">{content}</div> : content}
     </div>
   );
 }
@@ -49,6 +57,15 @@ export const Formula: Story = {
 };
 export const Empty: Story = { args: { text: '' } };
 export const Literal: Story = { args: { text: '71' } };
+export const Space: Story = {
+  args: { space: true },
+  play: async ({ canvasElement }) => {
+    const host = canvasElement.querySelector('.sheet-editor')!.getBoundingClientRect();
+    const bar = canvasElement.querySelector('.mobile-sheet-cell-slot')!.getBoundingClientRect();
+    await expect(bar.left).toBe(host.left);
+    await expect(bar.width).toBe(host.width);
+  },
+};
 export const NativeEditing: Story = {
   args: { editing: true },
   play: async ({ canvasElement }) => {
