@@ -1,0 +1,73 @@
+# 📱 SPN-165 required phone observations
+
+## 🔒 Exact disposable baseline
+
+Production source: `cc9e9fd2222b12d87f0213e4d481409feb195ace`; observation runtime
+`c2d1fcc9075a4fd4`, Node 26.13.0, Univer 1.3.1. The diagnostic build adds a
+read-only **Record formula state** button. No formula calculation, sync, retry,
+access or persistence behavior is repaired. This is a new throwaway account and
+Sheet, not the owner's original file. Preserve the original installation/data.
+
+The server seeds **SPN-165 SUM check** with A1:A4 = 10, 15, 20, 26 and
+B5 = `=SUM(A:A)`, without a calculated cache. Chromium desktop visibly showed
+71. The original historical offline edit is unknown; C1 below is a controlled
+new edit that leaves the original inputs/formula unchanged.
+
+## ✅ Required baseline actions
+
+Use the fresh verified invitation supplied in the chat. A tunnel/invitation is
+temporary; after its window closes, request a fresh window rather than reusing
+an expired link. The agent verifies build/invitation readiness before handoff.
+
+1. On the Pixel, open the invitation in Chrome and create the disposable test
+   passkey. Install this test origin, launch its icon, and close its Chrome tab
+   so there is only one test writer. Report the current Chrome version.
+2. Open **SPN-165 SUM check**, note B5, then tap **Record formula state**.
+   Wait for **Formula state recorded**. This is online/unprepared observation.
+3. Through **Document actions → Available offline on this device**, wait for
+   availability confirmation and tap **Done**. Return to files and reopen the
+   Sheet while still online. Note B5 and tap **Record formula state** again.
+4. Enable airplane mode and turn Wi-Fi off. Enter **phone edit** in C1, commit
+   it, and wait for **Saved on this device — waiting to sync**. Note B5; return
+   to files. Reconnect while staying on the list, then reopen after sync.
+   Confirm C1 and A1:A4, note B5, and tap **Record formula state** again.
+5. Reply with the B5 observations and whether all three reports were recorded.
+   If an action fails or the value is blank, preserve that first result; do not
+   repeatedly reload or re-enter the formula to turn the run green.
+
+The report button reads current native state and IndexedDB through read-only
+APIs; it does not force calculation or submit workbook edits. Reports are sent
+only when tapped online. Offline visual observation therefore comes from the
+owner. The agent separately reads authenticated server state. A native value
+does not establish visible canvas output: report what the grid actually shows.
+
+## 🛠️ Agent continuation
+
+The private fixture directory is `/private/tmp/spn165`; its immutable archive
+and hashes are recorded in the [evidence summary](evidence/SPN-165/baseline-summary.json).
+`build-identity.json` binds production source hashes, diagnostic observer/config
+and every output asset. `phone-window.ts` checks these before serving and refuses
+an existing run directory. It runs the real app with a fresh SQLite database,
+checks runtime/worker/invitation readiness, and owns only its own server/tunnel.
+
+From the repository, open a fresh window with the following command, replacing
+the run suffix with a never-used name. Inspect that directory's `ready.json`
+before giving its invitation to the owner; do not publish private account data
+in maintained evidence.
+
+```bash
+PATH=/Users/mxbaylee/.nvm/versions/node/v26.13.0/bin:$PATH \
+SPINEL_PHONE_RUN=/private/tmp/spn165/phone-next-window \
+node scripts/serial.ts node /private/tmp/spn165/guard.ts phone-next-window \
+node --max-old-space-size=128 /private/tmp/spn165/phone-window.ts
+```
+
+Use pinned Node and `scripts/serial.ts` with `guard.ts`; the existing eight-minute
+limit and 2 GiB/system-pressure boundaries apply. Never run another local
+test/build concurrently. After expiry, verify owned process cleanup and retain
+the first report/failure before preparing another window. No blanket device
+reruns, BrowserStack substitution, waiver or exception is authorized.
+
+After diagnosis and repair, repeat the relevant actions on the exact reviewed
+candidate and record that source/runtime separately. Physical before/after is
+pending; emulation, desktop/native probes and reviewer grades cannot satisfy it.

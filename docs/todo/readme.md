@@ -14,7 +14,7 @@ Complete each phase before the next. Within a phase, take the highest-ranked tic
 
 | # | Ticket | Effort | Impact | Score | Waiting on |
 | --- | --- | --- | --- | --- | --- |
-| 1 | 🧮 [SPN-165](SPN-165.md) Find why a phone Sheet shows no formula value | 🌿 M | 💜 M | 21 | — |
+| 1 | 🧮 [SPN-165](SPN-165.md) Find why a phone Sheet shows no formula value | 🌳 L | 💜 M | 22 | — |
 | 2 | 🖼️ [SPN-068](SPN-068.md) Insert images into a Sheet | 🌳 L | 🤍 S | 12 | — |
 | 3 | 🧩 [SPN-087](SPN-087.md) Remove obsolete layout CSS from Storybook examples | 🌿 M | 🤍 S | 11 | — |
 | 4 | 💬 [SPN-089](SPN-089.md) Check remaining dialogs for consistent title icons | 🌿 M | 🤍 S | 11 | — |

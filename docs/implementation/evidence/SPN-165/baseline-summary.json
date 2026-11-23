@@ -1,0 +1,340 @@
+{
+  "status": "investigation checkpoint; required physical handoff pending; not complete",
+  "productionSource": "cc9e9fd2222b12d87f0213e4d481409feb195ace",
+  "runtime": "c2d1fcc9075a4fd4",
+  "diagnosticBuild": true,
+  "productionBehaviorChanged": false,
+  "identityManifestSha256": "26ef9074ee2110b55438be2600a6b796890edfb6507f7ce5b20b52fceb2f5311",
+  "sourceSha256": {
+    "web/SheetEditor.tsx": "9a70c28f50cb6658b3d5df4bda0b0379ac1cf1bf485b0f31797b175fb79ca9fc",
+    "web/sheetPreset.ts": "a07cabfefad2d0c0548711256be71a177767b32f2b76ccc05acd0286becbc9ba",
+    "web/spinelSync.ts": "286c18563822b3ab07c9d8068f807998869c5c6f0027ba85d7c23b4496bfd260",
+    "web/offline/OfflineSession.ts": "59d5588f5eaf0292ed92ecc031e7c4fbc719ee114d1e1f5ce90f2c0e79c263ec",
+    "web/offline/offlineStore.ts": "43002d6568f654a9bf21bfa4e7148c5a80d1422836bb0b7df6d69f449f1f7280",
+    "web/offline/replayHost.ts": "1a17ff3dd4231f9f2fcb0c7ae12cdcdca50f7df8dd1bd92ea397a1aeb6125aff",
+    "lib/sync-client/src/native.ts": "b2bd700b7ffbcfcf370c504d5d56d4de73e91fffd12e4f74f8a91cc298aa4cc3",
+    "lib/sync-transform/src/native-values.ts": "3a96b566b357ae579dce101d33bb9b1821b6860fecc8e420e59d11cfa1ffa96a",
+    "lib/sync-transform/src/transform.ts": "9dbe116e6314d7353242c9c52348fa1b40d5176c3955ff849ff9de28aa68185a",
+    "lib/sync-server/src/native.ts": "641bb082c8603074cef540a1b1ae2943a6e034d66e0caaca8c010577c4635193",
+    "package-lock.json": "5c247ce8ca878599d97d5cc4f9dd6794dbbebc707d0d6d98355c789fce3d6be2",
+    "/private/tmp/spn165/observer.ts": "795570504b276bb3603038e4ae70c85ff6d18b94790ae1cffb09b9f1523dcd9c",
+    "/private/tmp/spn165/build-corrected.config.ts": "4bd9abb2c69e4c3f06d4c7c75249fb3cd517c315f403814e2a13612968c732fe"
+  },
+  "indexSha256": "38118dfbd823fa011a84122b8bcf32eeb5cdad1a34b400bdc1bfdcb34801786b",
+  "workerSha256": "11ad2f5e64f86d134eefdf1ae31ae6a2c7b4f5e11f1f7da99a78078db7c94edb",
+  "nativeComparison": {
+    "sourceSha256": "6b44a213617d24649af60f8f0a26bfe6b87a84b91f13f16866415025821b7dda",
+    "result": [
+      {
+        "initialFormulaComputing": 2,
+        "value": null,
+        "cell": {
+          "f": "=SUM(A:A)"
+        },
+        "commands": []
+      },
+      {
+        "initialFormulaComputing": 1,
+        "value": 71,
+        "cell": {
+          "f": "=SUM(A:A)",
+          "v": 71,
+          "t": 2
+        },
+        "commands": [
+          "formula.mutation.set-trigger-formula-calculation-start",
+          "formula.mutation.set-formula-calculation-start",
+          "formula.mutation.set-formula-calculation-notification",
+          "formula.mutation.set-formula-calculation-notification",
+          "formula.mutation.set-formula-calculation-notification",
+          "formula.mutation.set-formula-calculation-notification",
+          "formula.mutation.set-formula-calculation-notification",
+          "formula.mutation.set-array-formula-data",
+          "formula.mutation.set-formula-calculation-result",
+          "sheet.mutation.set-range-values",
+          "formula.mutation.set-formula-calculation-notification"
+        ]
+      }
+    ],
+    "limit": "Controlled native configuration comparison, not physical or application acceptance; bounded 250ms observation, no explicit recalculation."
+  },
+  "browser": {
+    "physicalPhone": false,
+    "observations": [
+      {
+        "stage": "online-unprepared",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "inputs": [
+          10,
+          15,
+          20,
+          26
+        ],
+        "nativeB5": {
+          "f": "=SUM(A:A)",
+          "v": 71,
+          "t": 2
+        },
+        "rangeValue": 71,
+        "rangeFormula": "=SUM(A:A)",
+        "serverB5": {
+          "f": "=SUM(A:A)"
+        },
+        "deviceB5": null,
+        "status": "All changes saved.",
+        "pageErrors": []
+      },
+      {
+        "stage": "prepared-current",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "inputs": [
+          10,
+          15,
+          20,
+          26
+        ],
+        "nativeB5": {
+          "f": "=SUM(A:A)",
+          "v": 71,
+          "t": 2
+        },
+        "rangeValue": 71,
+        "rangeFormula": "=SUM(A:A)",
+        "serverB5": {
+          "f": "=SUM(A:A)"
+        },
+        "deviceB5": {
+          "f": "=SUM(A:A)"
+        },
+        "status": "Synced. All changes are saved on the server and this device.",
+        "pageErrors": []
+      }
+    ],
+    "disposition": "Resource-aborted during prepared reopen. Partial observations only. No mobile/offline/reconnect pass."
+  },
+  "checks": {
+    "baseline-build": {
+      "label": "baseline-build",
+      "command": "env",
+      "args": [
+        "NODE_OPTIONS=--max-old-space-size=384",
+        "RAYON_NUM_THREADS=1",
+        "VITE_SYNC_EVIDENCE=1",
+        "node",
+        "node_modules/vite/bin/vite.js",
+        "build",
+        "--config",
+        "/private/tmp/spn165/build.config.ts"
+      ],
+      "code": null,
+      "signal": "SIGTERM",
+      "aborted": "pressure=2, rssKiB=885168",
+      "elapsedMs": 2570,
+      "peakKiB": 885168
+    },
+    "baseline-small-build": {
+      "label": "baseline-small-build",
+      "command": "env",
+      "args": [
+        "NODE_OPTIONS=--max-old-space-size=256 --max-semi-space-size=4",
+        "RAYON_NUM_THREADS=1",
+        "VITE_SYNC_EVIDENCE=1",
+        "node",
+        "node_modules/vite/bin/vite.js",
+        "build",
+        "--config",
+        "/private/tmp/spn165/build-small.config.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 4092,
+      "peakKiB": 928672
+    },
+    "corrected-build": {
+      "label": "corrected-build",
+      "command": "env",
+      "args": [
+        "NODE_OPTIONS=--max-old-space-size=256 --max-semi-space-size=4",
+        "RAYON_NUM_THREADS=1",
+        "VITE_SYNC_EVIDENCE=1",
+        "node",
+        "node_modules/vite/bin/vite.js",
+        "build",
+        "--config",
+        "/private/tmp/spn165/build-corrected.config.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 4050,
+      "peakKiB": 950128
+    },
+    "probe-first": {
+      "label": "probe-first",
+      "command": "node",
+      "args": [
+        "--max-old-space-size=192",
+        "/private/tmp/spn165/probe.ts"
+      ],
+      "code": 1,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 444,
+      "peakKiB": 141536
+    },
+    "probe-corrected": {
+      "label": "probe-corrected",
+      "command": "node",
+      "args": [
+        "--max-old-space-size=192",
+        "/private/tmp/spn165/probe-corrected.ts"
+      ],
+      "code": 1,
+      "signal": null,
+      "aborted": "pressure=2, rssKiB=1155104",
+      "elapsedMs": 5844,
+      "peakKiB": 1155104
+    },
+    "native-probe": {
+      "label": "native-probe",
+      "command": "node",
+      "args": [
+        "--max-old-space-size=192",
+        "/private/tmp/spn165/native-probe.ts"
+      ],
+      "code": 1,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 493,
+      "peakKiB": 123856
+    },
+    "native-probe-corrected": {
+      "label": "native-probe-corrected",
+      "command": "node",
+      "args": [
+        "--max-old-space-size=192",
+        "/private/tmp/spn165/native-probe.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 1028,
+      "peakKiB": 158688
+    },
+    "checkpoint-backlog": {
+      "label": "checkpoint-backlog",
+      "command": "node",
+      "args": [
+        "scripts/backlog/cli.ts",
+        "check"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 157,
+      "peakKiB": 0
+    }
+  },
+  "firstFailures": {
+    "baseline-build": "Watchdog aborted on pressure 2; no pass. Subsequent build reduced JS heap/semispace, retained same production source.",
+    "probe-first": "Fixture server snapshot literal had a syntax error; fixed before any app observation. Observer API inspection also corrected getSnapshot to public save before observation. First sources/logs archived.",
+    "probe-corrected": "Watchdog aborted on pressure 2 during prepared reload. Browser closure is caused by resource stop; neither startup failure nor successful acceptance inferred.",
+    "native-probe": "Fixture lacked initialized locale dictionary; corrected to explicit empty EN_US dictionary used by existing headless calculation fixture.",
+    "phone-preflight": "First two DNS lookups ENOTFOUND; bounded readiness then verified emitted runtime/worker and actual invitation. No phone failure inferred."
+  },
+  "phone": {
+    "required": true,
+    "before": "not observed",
+    "after": "not observed",
+    "baselineReadiness": {
+      "verified": true,
+      "probes": [
+        {
+          "attempt": 1,
+          "result": "transport-unavailable",
+          "code": "ENOTFOUND"
+        },
+        {
+          "attempt": 2,
+          "result": "transport-unavailable",
+          "code": "ENOTFOUND"
+        },
+        {
+          "attempt": 3,
+          "status": 200,
+          "sha256": "ce8660607fe109444e4e5fe98051d70c2103cdbafd7a2d9ae0ed2b2a95c67cb2"
+        },
+        {
+          "workerStatus": 200,
+          "workerSha256": "11ad2f5e64f86d134eefdf1ae31ae6a2c7b4f5e11f1f7da99a78078db7c94edb"
+        }
+      ],
+      "readinessResolver": "1.1.1.1 (client only; system DNS unchanged)",
+      "fixtureCommit": "cc9e9fd2222b12d87f0213e4d481409feb195ace",
+      "runtime": "c2d1fcc9075a4fd4"
+    },
+    "limits": "Fresh temporary invitation and installed Pixel required; no waiver, no BrowserStack substitution.",
+    "window": {
+      "status": "expired; all owned server/tunnel processes exited; no port-3165 listener",
+      "reports": 0,
+      "preExpiryAccountObservation": {
+        "passkeys": 0,
+        "sessions": 0
+      },
+      "watchdog": {
+        "label": "phone-preflight",
+        "command": "node",
+        "args": [
+          "--max-old-space-size=128",
+          "/private/tmp/spn165/phone-window.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "aborted": null,
+        "elapsedMs": 445132,
+        "peakKiB": 385200
+      },
+      "archive": {
+        "path": "/Users/mxbaylee/.local/share/spinel-evidence/SPN-165/20261122-baseline/phone-window.tar.gz",
+        "sha256": "1a8ab2cbca77bda525d05797354138a53d864eb979ac65738c9d01f2e42d06da",
+        "manifestPath": "/Users/mxbaylee/.local/share/spinel-evidence/SPN-165/20261122-baseline/phone-window-manifest.json",
+        "manifestSha256": "5b7060ca88eb99cfa089013011deef805ec53693a33dad76ff69516ee42acb85",
+        "verifiedMembers": 12,
+        "verification": "every extracted member matched SHA-256"
+      }
+    }
+  },
+  "independentDiagnosisReview": {
+    "identity": "/root/diagnosis_review",
+    "kind": "read-only, nonimplementing diagnosis audit; no test workload or completion grade",
+    "findings": "Supports prepared-copy NO_CALCULATION lead; normalization is comparison-only, caches may persist; preserve IMAGE guard and separate snapshotViewer suppression; require unrelated-cell replay and mixed SUM+IMAGE initial-load privacy coverage."
+  },
+  "archive": {
+    "path": "/Users/mxbaylee/.local/share/spinel-evidence/SPN-165/20261122-baseline/fixture-and-first-attempts.tar.gz",
+    "sha256": "553a4d9b1f38278bc0bfd310b8811fc4458da8456f12aa2fc18e61417f70a87c",
+    "manifestPath": "/Users/mxbaylee/.local/share/spinel-evidence/SPN-165/20261122-baseline/manifest.json",
+    "manifestSha256": "aeac2dcf7709152a1408abbb8020a8de55bfa9075de3808d085691edc789d1ea",
+    "verifiedMembers": 149,
+    "verification": "all extracted members matched SHA-256",
+    "excludes": "live phone window (separately retained after closure), node_modules symlink"
+  },
+  "screenshot": {
+    "path": "desktop-online-unprepared.png",
+    "sha256": "256ff08ea63c672e50fa7077d8ad3a8af0196ec032d04c5ff7a6baa50c76b308",
+    "caption": "Actual Chromium desktop, 1440×1000 light theme, unchanged production source with disposable observation button. B5 visibly 71. Not a physical phone."
+  },
+  "checkpoint": {
+    "localLinksChecked": 9,
+    "jsonValid": true,
+    "backlogCountersChanged": false,
+    "productionFilesChanged": false,
+    "physicalAcceptance": "pending"
+  }
+}
