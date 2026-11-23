@@ -242,6 +242,8 @@ stories, then verify actual native input and saved content. Independent review
 must inspect proposed/current light and dark 390px views and the real Pixel
 keyboard result, separately from emulated viewport geometry.
 
+### Phone Docs
+
 Docs select the corresponding public mobile UI once when opened with a coarse
 pointer at up to 900 px. Modern Doc text reflows locally; its native Edit control
 enters edit mode, and touching the text opens the keyboard and compact formatting
