@@ -183,6 +183,65 @@ Under 900 px with a coarse pointer, Sheets use Univer's mobile controls
 the second row. The compact people/count control stays available and opens the
 same collaborator dialog; authorized Share remains in More.
 
+### 📱 Persistent Sheet cell editor (SPN-165)
+
+Design prerequisite for [SPN-165](../todo/SPN-165.md), following the owner's
+2026-11-23 phone observations and retarget. This specifies the proposed UI;
+implementation and actual light/dark/390px and physical-keyboard acceptance
+remain pending. Native Sheet editing remains one session, with its existing
+formula, commit/cancel, undo/redo and permission semantics.
+
+```text
+Selected cell, keyboard closed         Editing, keyboard open
+┌──────────────────────────────────┐   ┌──────────────────────────────────┐
+│ Sheet tabs and grid              │   │ Sheet tabs and remaining grid    │
+│                                  │   │                                  │
+├─────┬───────────────────┬────────┤   ├────────┬──────────────────┬──────┤
+│ B5  │ =SUM(A:A)         │ ✎ Edit │   │ Cancel │ =SUM(A:A)▏       │  OK  │
+└─────┴───────────────────┴────────┘   ├────────┴──────────────────┴──────┤
+                                      │ Phone keyboard                   │
+                                      └──────────────────────────────────┘
+```
+
+- **Always visible while reading:** a bottom bar shows the selected cell address
+  and its literal edit text or formula. Empty cells have a quiet empty-state cue.
+  Long content stays within the bar and is available in full when inspected or
+  edited; it never widens the document. Use existing theme tokens and typography,
+  a border above the bar, and at least 44px touch targets. Do not add a toolbar
+  of formatting commands here; existing native tools remain reachable.
+- **Obvious editing:** use the existing `lucide:pencil` icon with the visible
+  label **Edit** and an accessible selected-cell name. Activating Edit opens
+  the existing native cell editor; selecting a cell merely updates the readout.
+  Replace the redundant floating keyboard entry point rather than showing two
+  competing edit controls. Native double-tap editing remains available.
+- **One stable bottom surface:** the native input takes the bottom bar's place
+  during editing. Keep its native Cancel/OK, formula selection and expansion
+  actions. Anchor the compact input immediately above the visible keyboard and
+  within the editor's horizontal bounds. Keyboard animation may move it with
+  the viewport; repeated jumps, scroll feedback and position transitions that
+  lag behind the viewport are failures. Do not remount the workbook or input
+  to reposition it, commit on a resize, or focus merely because geometry changed.
+- **Draft and focus:** closing the keyboard alone must not discard the draft.
+  Reopening restores the same native editing session. OK commits once and
+  Cancel discards only the current draft. Selection changes follow native
+  editing/formula-reference behavior; a preview update cannot replace live input.
+  Other overlays keep their normal focus and stacking ownership.
+- **View-only:** retain a readable selected-cell value/formula and a way to
+  inspect long text, but omit Edit. Never read protected content through an
+  unguarded model path or present editing after access is lost. Native and server
+  permissions remain authoritative; the visual affordance adds no access.
+- **Scope:** mobile Sheets only, using the existing coarse-pointer rule. Keep
+  desktop and Docs controls, safe-area support, theatre/Space layouts and offline
+  save semantics. Do not show diagnostic report controls over the native UI.
+
+Owner and Collaborator gain a predictable place to read and edit; Link guest
+retains scoped readable content without expanded mutation access; Operator gains
+no new service or storage requirement. The implementation must exercise blank,
+literal, formula, long-content, editing and view-only states in production
+stories, then verify actual native input and saved content. Independent review
+must inspect proposed/current light and dark 390px views and the real Pixel
+keyboard result, separately from emulated viewport geometry.
+
 Docs select the corresponding public mobile UI once when opened with a coarse
 pointer at up to 900 px. Modern Doc text reflows locally; its native Edit control
 enters edit mode, and touching the text opens the keyboard and compact formatting
