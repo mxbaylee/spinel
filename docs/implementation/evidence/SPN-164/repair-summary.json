@@ -1,0 +1,379 @@
+{
+  "status": "local reproduction/visual capture passed; hosted acceptance and independent reviews pending",
+  "physicalPhone": "not run; owner waived conditional on local reproduction, 2026-11-22",
+  "originalIncidentCause": "unconfirmed",
+  "deadlineMs": 3000,
+  "nativeAcceptanceMaxMs": 4000,
+  "before": {
+    "source": "40ed569161c85d008b0ad6ebc76de9ba5ba3533f",
+    "rawSha256": "83f703b99489455376bc60384f81c97f72a522525a51ac93b563a9d7b5fcc05d",
+    "physicalPhone": false,
+    "results": [
+      {
+        "mode": "hold-headers",
+        "requestMs": 15002.1,
+        "stageMs": 15002.3,
+        "checkToDoneMs": 15002.8,
+        "dropped": 0,
+        "unavailable": false,
+        "outcome": [
+          "You're offline"
+        ]
+      },
+      {
+        "mode": "hold-body",
+        "requestMs": 15002.1,
+        "stageMs": 15002.4,
+        "checkToDoneMs": 15002.7,
+        "dropped": 0,
+        "unavailable": false,
+        "outcome": [
+          "You're offline"
+        ]
+      }
+    ]
+  },
+  "after": {
+    "source": "373b0ef91103766cfe5fe0119205670adfdf5f5a",
+    "rawSha256": "df5eec8631de29af881d2bcb3aed9bf6ecc66775f69d8ec6afa7b8c5604b45f6",
+    "physicalPhone": false,
+    "results": [
+      {
+        "mode": "hold-headers",
+        "requestMs": 3004.3,
+        "stageMs": 3004.5,
+        "checkToDoneMs": 3004.7,
+        "dropped": 0,
+        "unavailable": false,
+        "outcome": [
+          "You're offline"
+        ]
+      },
+      {
+        "mode": "hold-body",
+        "requestMs": 3002.7,
+        "stageMs": 3003,
+        "checkToDoneMs": 3003.1,
+        "dropped": 0,
+        "unavailable": false,
+        "outcome": [
+          "You're offline"
+        ]
+      }
+    ]
+  },
+  "repairIdentity": {
+    "source": "373b0ef91103766cfe5fe0119205670adfdf5f5a",
+    "runtime": "d3d43ef66b6b032b",
+    "manifestSha256": "35e4ab91c99966de67fb4536cf83a49e36039de30bf76c7e6558855cea11adc7",
+    "sourceSha256": {
+      "web/api.ts": "33023c0adfcc7aa199787617045d58e25a7fd79070721babe9a5bf2fe4bc4ac3",
+      "web/App.tsx": "c572ec06c24bc4ab122673860ecaf5b20eb7df437f99136b73d42477a1f63187",
+      "web/startupStage.ts": "2403310d1e6b2683924c5a0c4b6973bd549896ae60b89414eca452973a8aac49",
+      "web/maintenanceFetch.ts": "7fff7fcda81ca2c9dfdb8ecd4a2e37975321562037e7a734a375c5063fd6acba",
+      "scripts/ci/startup-phone.config.ts": "d2a847842979757d8ad582dde9e6f51f03b3c211bd48c52a56eda354439a0c95",
+      "scripts/ci/startup-phone-observer.ts": "24442acdd5e8a89ab07f7d6f9b17a695755d99b4bff60304ca11e4a36bf4c210",
+      "scripts/ci/startup-phone-instrumentation.ts": "35d14dfaaecb838968cce42d96f89f9d9f85ff09f1dbb18b5639c920bfedc583"
+    }
+  },
+  "checks": {
+    "session-restored-controls": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 1134,
+      "peakKiB": 416304,
+      "receiptSha256": "8ade261172dd04c493dda4577071e4fa73d365fa7c60ed56b64ef184298c932a"
+    },
+    "session-negative": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 1060,
+      "peakKiB": 422944,
+      "receiptSha256": "aaca6e2c2785a1c4fa63158362d10211c49f50e5af5bd4e31a32d2d92bc6971b"
+    },
+    "final-observer": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 143,
+      "peakKiB": null,
+      "receiptSha256": "0dc83abac9fce1e503336e75c7cac7b98eb34239b5dda618a5c4c0ef77b22c3f"
+    },
+    "final-lint": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 498,
+      "peakKiB": 143264,
+      "receiptSha256": "aa00306a3109f895ab42b9b4789bedff20715f5149788311ced72c7b55d12744"
+    },
+    "routing": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 70,
+      "peakKiB": null,
+      "receiptSha256": "8267a1411a1016db4018d5695c22807463b0a4e5dc813ba984e9a9625b439ace"
+    },
+    "boundary-baseline": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 33042,
+      "peakKiB": 922384,
+      "receiptSha256": "fba92e45fef3c365298ca9ef7d0a7cf433b445700a5e220e001e5c724768ca9b"
+    },
+    "boundary-repaired": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 8659,
+      "peakKiB": 952576,
+      "receiptSha256": "773a7fecbb35f4802f6b13a4f28340d5a966c8b46dd3025ca3fa53f94ce71f14"
+    },
+    "repair-types": {
+      "code": 1,
+      "aborted": "pressure=2, rssKiB=1299904",
+      "elapsedMs": 10398,
+      "peakKiB": 1532976,
+      "receiptSha256": "2305a775a34df7e4a5db80d76e79e66a449d862bfdcf0def3a3f33ae59b3a80d"
+    },
+    "reconnect-browser-first": {
+      "code": null,
+      "aborted": "pressure=2, rssKiB=1336240",
+      "elapsedMs": 5062,
+      "peakKiB": 1336240,
+      "receiptSha256": "89f5173d9c49543a1fa286350eb304833fa20f51af7a134e6724bc8e2a6056a9"
+    },
+    "visual-capture": {
+      "code": 1,
+      "aborted": null,
+      "elapsedMs": 16908,
+      "peakKiB": 853152,
+      "receiptSha256": "ce6fc135db00b30d100f8f56279946b96ebd1065a912da9bb58a8204eb640574"
+    },
+    "visual-capture-locks": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 40382,
+      "peakKiB": 968560,
+      "receiptSha256": "ab829b750aa89564247be2d5cb13bbe6554a36745a7a232c1662e5dacaa1acde"
+    },
+    "visual-fixed-build": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 2252,
+      "peakKiB": 973632,
+      "receiptSha256": "9bd617221a12a8ac298512c80952975448ac845f284f512719bf265631abfb49"
+    },
+    "visual-final": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 40199,
+      "peakKiB": 972944,
+      "receiptSha256": "85445a72f30d899b01cc116452cde9cd0e5517877735c9987d080de30bcdf145"
+    },
+    "archive-repair": {
+      "code": 1,
+      "aborted": null,
+      "elapsedMs": 2508,
+      "peakKiB": 158512,
+      "receiptSha256": "aa9af72660866e4e7cb30cc8210a078d635f254582e1aa214f1d485fd6256e05"
+    },
+    "archive-repair-verified": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 2548,
+      "peakKiB": 158160,
+      "receiptSha256": "9408eee8debb56476927e89de0687df9b47ec6e7ab6b9957c3aa73dacb696ce7"
+    }
+  },
+  "negativeControls": {
+    "results": [
+      {
+        "label": "old-deadline",
+        "title": "a stalled session",
+        "code": 1,
+        "originalSha256": "33023c0adfcc7aa199787617045d58e25a7fd79070721babe9a5bf2fe4bc4ac3",
+        "mutantSha256": "e94b4f38ba47e3c6783abd941ade0b9ca3d879f6b0f7ca035a48577c7db8440d"
+      },
+      {
+        "label": "lost-denial",
+        "title": "actual 401.*timed-out",
+        "code": 1,
+        "originalSha256": "33023c0adfcc7aa199787617045d58e25a7fd79070721babe9a5bf2fe4bc4ac3",
+        "mutantSha256": "55e4bccd10f1eb7362c5b5230921b733c311ef21b24c781a38a46f9d5545cfa1"
+      }
+    ],
+    "restoredSha256": "33023c0adfcc7aa199787617045d58e25a7fd79070721babe9a5bf2fe4bc4ac3"
+  },
+  "routing": {
+    "rawSha256": "43bfd1ac99fccb25d2cfe183cc4199a3ab7ffcfadc17db6e26a54c99bbec4169",
+    "inputs": [
+      {
+        "path": "web/api.ts",
+        "mode": "targeted",
+        "negativeControls": 52
+      },
+      {
+        "path": "web/App.tsx",
+        "mode": "targeted",
+        "negativeControls": 52
+      },
+      {
+        "path": "web/startupStage.ts",
+        "mode": "targeted",
+        "negativeControls": 52
+      },
+      {
+        "path": "web/maintenanceFetch.ts",
+        "mode": "targeted",
+        "negativeControls": 52
+      },
+      {
+        "path": "web/offline/localStart.ts",
+        "mode": "targeted",
+        "negativeControls": 52
+      },
+      {
+        "path": "web/offline/deadlines.ts",
+        "mode": "targeted",
+        "negativeControls": 52
+      },
+      {
+        "path": "e2e/offline.spec.ts",
+        "mode": "targeted",
+        "negativeControls": 48
+      },
+      {
+        "path": "src/ui/sessionRequest.test.ts",
+        "mode": "full",
+        "negativeControls": 60
+      },
+      {
+        "path": "scripts/ci/startup-phone-observer.ts",
+        "mode": "full",
+        "negativeControls": 60
+      },
+      {
+        "path": "web/StartupStage.stories.tsx",
+        "mode": "targeted",
+        "negativeControls": 52
+      }
+    ]
+  },
+  "visuals": {
+    "status": "passed",
+    "captures": [
+      {
+        "name": "light",
+        "theme": "light",
+        "width": 1280,
+        "height": 900,
+        "status": "Still starting: saved files (9 s)",
+        "statusBox": {
+          "x": 16,
+          "y": 805,
+          "width": 1248,
+          "height": 15
+        },
+        "footerBox": {
+          "x": 0,
+          "y": 834,
+          "width": 1280,
+          "height": 66
+        },
+        "source": "694d8b49ff75ca584c298faae10bf2e14791b9df",
+        "runtime": "51bbb071cc4ced68",
+        "surface": "actual application route, controlled auth-transition and catalog locks",
+        "physicalPhone": false
+      },
+      {
+        "name": "dark",
+        "theme": "dark",
+        "width": 1280,
+        "height": 900,
+        "status": "Still starting: saved files (9 s)",
+        "statusBox": {
+          "x": 16,
+          "y": 805,
+          "width": 1248,
+          "height": 15
+        },
+        "footerBox": {
+          "x": 0,
+          "y": 834,
+          "width": 1280,
+          "height": 66
+        },
+        "source": "694d8b49ff75ca584c298faae10bf2e14791b9df",
+        "runtime": "51bbb071cc4ced68",
+        "surface": "actual application route, controlled auth-transition and catalog locks",
+        "physicalPhone": false
+      },
+      {
+        "name": "phone",
+        "theme": "light",
+        "width": 390,
+        "height": 844,
+        "status": "Still starting: saved files (9 s)",
+        "statusBox": {
+          "x": 16,
+          "y": 749,
+          "width": 358,
+          "height": 15
+        },
+        "footerBox": {
+          "x": 0,
+          "y": 778,
+          "width": 390,
+          "height": 66
+        },
+        "source": "694d8b49ff75ca584c298faae10bf2e14791b9df",
+        "runtime": "51bbb071cc4ced68",
+        "surface": "actual application route, controlled auth-transition and catalog locks",
+        "physicalPhone": false
+      }
+    ],
+    "images": [
+      {
+        "file": "before-saved-files-phone.png",
+        "sha256": "560b0b9311cb16ed40ed6c2aa5de5214eee7e3b30a0aae1f5e70f2ecf5846455"
+      },
+      {
+        "file": "saved-files-dark.png",
+        "sha256": "8695c1ad2178aa7a4dd62a3bd85f69fd3e6b090de5360e3d981589bfaa15d966"
+      },
+      {
+        "file": "saved-files-light.png",
+        "sha256": "698e535506816c8d0934a9be0141c5747d6b5d0ee0fb802024fe270688f1e904"
+      },
+      {
+        "file": "saved-files-phone.png",
+        "sha256": "be373e294ad20e8d3f2534204ddc9fe7dbf2b35999ddec134bd3eabd6adc16bd"
+      },
+      {
+        "file": "unreachable-dark.png",
+        "sha256": "2aa0b3cd318c7e7dec5fff0b8bc362cf6c29b020d6a70c5bdae4004a70f06b41"
+      },
+      {
+        "file": "unreachable-light.png",
+        "sha256": "77d43b34ba4d13f25454e53ad07d303b27aef3a210d7e0288b35613ae7a40539"
+      },
+      {
+        "file": "unreachable-phone.png",
+        "sha256": "1b46395a684da104beed43134b21619d6ba63ceafd2c78b2642cd8920bb6efa1"
+      }
+    ],
+    "review": "pending; captures are not independent approval"
+  },
+  "archival": {
+    "path": "/Users/mxbaylee/.local/share/spinel-evidence/SPN-164/20261122-repair-694d8b49-verified/raw-repair-evidence.tar.gz",
+    "sha256": "9b033c8ce70b854d0d80fd30903721ed50cad9dfb34d5b62b2bfec245c02b321",
+    "bytes": 16057243,
+    "memberCount": 461,
+    "verifiedEveryMember": true
+  },
+  "failureDispositions": {
+    "repair-types": "Doc/Sheet snapshot union access fixed by explicit kind narrowing; run also watchdog-aborted at pressure 2. Hosted full typecheck pending.",
+    "reconnect-browser-first": "Watchdog-aborted before acceptance, not a pass; hosted native integration pending.",
+    "visual-capture": "Fixture dispatch delay did not expose saved-files stage; replaced with actual auth/catalog Web Locks.",
+    "visual-capture-locks": "Capture passed but inspection found phone footer overlap. Before screenshot retained; fixed placement and final geometry/captures passed.",
+    "archive-repair": "First verification rejected archive: inventory excluded archive script while tar retained it. Exact log/receipt-only exclusions corrected; separate verified archive preserves first failure."
+  }
+}

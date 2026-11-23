@@ -26,7 +26,7 @@ retain the session's bounded trace; process termination/storage loss can lose it
 The fixture server separately records bounded session arrival/finish/close
 timings. Browser/server clocks are not assumed synchronized.
 
-## ✅ Required phone actions
+## ✅ Historical phone action checklist
 
 1. On the **Pixel 10**, open the fresh invitation in Chrome and create the test
    Owner's passkey. Install this test origin using Chrome **Add to Home screen →
@@ -49,8 +49,8 @@ timings. Browser/server clocks are not assumed synchronized.
 No manual stopwatch precision or developer-tools setup is needed. A run with no
 new sign-in check is useful evidence, not a reproduced stall. Do not repeat a
 failure into a pass; an additional cold/warm launch will be requested only if
-the first trace shows why it is necessary. The after-fix run remains separately
-required once the actual failing boundary and bound have been chosen.
+the first trace shows why it is necessary. The originally planned after-fix phone run is also waived by the
+ticket-specific owner decision above; local before/after evidence replaces it.
 
 ## 🛠️ Agent preparation and cleanup
 
