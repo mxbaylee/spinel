@@ -736,7 +736,8 @@ No new paid-device execution is required.
 Exact phone versions and tested build are unknown; the final known-offline sign-in
 shortcut and every physical edit/reopen/replay/creation permutation are not proved.
 This method accepts lower integrated phone confidence without claiming emulation
-is an installed device. SPN-152 owns deferred real-iPhone verification; SPN-154
+is an installed device. SPN-152’s optional real-iPhone verification was dropped on 2026-11-22
+([decision](implementation/SPN-152.md#-grooming-disposition)); SPN-154
 image paste remains pre-launch work. SPN-156's file-list replay has its own
 separate bounded repaired-build installed reconnect observation, recorded in its
 [acceptance evidence](implementation/SPN-156.md). SPN-055 owns the

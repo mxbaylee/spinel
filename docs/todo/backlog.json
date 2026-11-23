@@ -5,25 +5,8 @@
   "personas": "docs/product/personas.md",
   "grooming": {
     "every": 7,
-    "last": "2026-11-14",
-    "completed_since": [
-      "SPN-098",
-      "SPN-090",
-      "SPN-120",
-      "SPN-123",
-      "SPN-156",
-      "SPN-161",
-      "SPN-166",
-      "SPN-167",
-      "SPN-128",
-      "SPN-170",
-      "SPN-163",
-      "SPN-168",
-      "SPN-106",
-      "SPN-110",
-      "SPN-154",
-      "SPN-164"
-    ]
+    "last": "2026-11-22",
+    "completed_since": []
   },
   "size": {
     "soft": 10000,

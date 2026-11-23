@@ -34,8 +34,8 @@ Take the highest-ranked eligible ticket in the earliest remaining lifecycle
 phase: `pre_launch`, then `launch`, then `post_launch`. If that phase is blocked,
 record the blocker and wait; do not advance to a later phase. The generated index
 orders phases before scores, making SPN-038 the last launch prerequisite and
-keeping optional CSV import (SPN-093) and document-type/converter plugins
-(SPN-094) after it. Their explicit launch dependencies record owner sequencing,
+keeping optional CSV/TSV import (SPN-093) after it. Plugins (SPN-094) were
+dropped on 2026-11-22. The explicit launch dependency records owner sequencing,
 not a technical need for public HTTPS. Owner, chat 2026-10-21; fixed lifecycle
 phases recorded in [decision #129](implementation/backlog-workflow.md#legacy-decision-129-fixed-lifecycle-phases).
 After each merge, fetch main and pick again; do not preselect a fixed queue. An

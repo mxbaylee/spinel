@@ -25,7 +25,7 @@ Admin accounts can't view, edit or create documents.
   Agents choose the launch sequence under the [standing delegation](../implementation/grooming-2026-10-26.md#agent-decisions-and-visual-review),
   superseding the historical human timing gate in [#40](../implementation/SPN-038.md#legacy-decision-40-public-launch-timing).
 - Production begins with SPN-038 at `spinel.baylee.dev`, the last launch
-  prerequisite; optional CSV import (SPN-093) and document/format plugins (SPN-094) follow launch.
+  prerequisite; optional CSV/TSV import (SPN-093) follows launch; plugins were dropped on 2026-11-22.
   Before that, database choices can change without a live-production migration;
   keep operations simple and preserve any deliberately retained test data.
   Owner, chat 2026-10-21.
