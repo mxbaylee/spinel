@@ -159,9 +159,9 @@ follow-ups. Reuse proven shared work without counting it repeatedly. Owner, chat
 (`pre_launch`, the default), **Launch** (`launch`), then **After launch**
 (`post_launch`). Complete the current phase before advancing; if it is blocked,
 record the blocker rather than starting a later phase. SPN-038 is the launch
-milestone; optional CSV import (SPN-093) and document-type/converter plugins
-(SPN-094) follow it. Phase records this owner sequencing, without implying that
-CSV or plugins technically need public HTTPS. Owner, chat 2026-10-21. The fixed
+milestone; optional CSV/TSV import (SPN-093) follows it. SPN-094 plugins were dropped
+on 2026-11-22. Phase records this owner sequencing, without implying that
+delimited-text import technically needs public HTTPS. Owner, chat 2026-10-21. The fixed
 three-phase implementation and persona tradeoffs are recorded in
 [decision #129](../implementation/backlog-workflow.md#legacy-decision-129-fixed-lifecycle-phases).
 
@@ -173,9 +173,9 @@ Owner, chat 2026-10-27; [index decision](../implementation/grooming-2026-10-27.m
 Take the first ticket in the current phase that isn't waiting on an open
 `depends_on` or a listed `upstream_prs` prerequisite. Dependency inheritance is unchanged. A
 prerequisite must be in the same or an earlier phase; the checker rejects a
-dependency on later-phase work. SPN-093/094 also name SPN-038 as an explicit
+dependency on later-phase work. SPN-093 also names SPN-038 as an explicit
 launch sequencing dependency. These are timing constraints, not technical
-requirements for a converter or document-type plugin.
+requirements for delimited-text import.
 
 Agents decide; tickets have no `owner_input` field or human approval gate.
 Record a real external prerequisite (for example, device access, credentials or

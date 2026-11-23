@@ -56,16 +56,13 @@ Operator's backup for server recovery.
 
 Open an owned folder (or My files) and choose **Import file**, or drop one
 file anywhere in its file pane. A `.json` or `.univer` file becomes a new item owned
-by you in that folder. Import never replaces an existing item. PDF, Office and CSV
-uploads are refused. Optional CSV import is post-launch SPN-093; optional format
-and document-type plugins are post-launch SPN-094. The built-in Office import/export proposal
-SPN-035 was retired at the owner's request on 2026-10-21. An installer could add
-Office conversion through a plugin; core Office support is not promised.
-SPN-094 also covers extension points for new document kinds such as slides or
-kanban boards. It supplies a plugin foundation and reference examples, not those
-complete editors; core Sheets and Docs and native backup/import remain supported.
+by you in that folder. Import never replaces an existing item. PDF, Office, CSV and
+TSV uploads are currently refused. Optional CSV/TSV import is post-launch SPN-093. The built-in
+Office import/export proposal SPN-035 was retired on 2026-10-21, and document-type/
+converter plugins SPN-094 were dropped on 2026-11-22. No XLSX or other proprietary
+format support is planned. Core Sheets, Docs and native backup/import stay supported.
 
-**Planned CSV semantics (SPN-093):** preserve UTF-8 fields literally, including
+**Planned CSV/TSV semantics (SPN-093):** preserve UTF-8 fields literally, including
 leading zeros, empty values, quoted content and the first row as data. Do not
 infer formulas, dates, numbers or headers. Future typing options require a
 separate decision; the initial importer reuses existing creation/access/cleanup
@@ -224,8 +221,8 @@ production app's 512 MiB memory limit remains unchanged.
 A validation rejection adds no files. If the browser loses the final response,
 the import is reported as unconfirmed: refresh My files before trying again,
 because the transaction may already have committed. This archive is independent
-of Operator disaster-recovery backups and does not restore history. CSV, format
-plugins and PDF retain their separate ticket scopes. See the
+of Operator disaster-recovery backups and does not restore history. CSV/TSV import
+retains its separate SPN-093 scope; no plugin framework is planned. See the
 [SPN-067 decision record](implementation/SPN-067.md).
 
 ## Doc formulas in files
@@ -234,5 +231,4 @@ plugins and PDF retain their separate ticket scopes. See the
 results. Native imports detach source-bound formulas into ordinary expression
 text; source-free formulas remain active. PDF export renders freshly authorized
 values and complete tables, including the 30-row Formula result;
-SPN-094 retains the same source-access boundary for optional format plugins,
-and owned workspace archives use the deliberate reference remapping described above.
+owned workspace archives use the deliberate reference remapping described above.
