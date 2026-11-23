@@ -87,7 +87,8 @@ under the requesting reader's current permissions. An unavailable source replace
 the whole Formula with **Unavailable**, without its source name or expression.
 Source loss after rendering discards the old PDF bytes and rebuilds once with the
 Formula unavailable; another change fails. Host/session/link loss aborts generation.
-Optional format plugins (SPN-094) must preserve the same source-access boundary.
+Optional format plugins (SPN-094) were dropped on 2026-11-22; existing export
+and native import source-access boundaries remain unchanged.
 Social cards continue to show only the host title and document type.
 
 ## Bounds and layout

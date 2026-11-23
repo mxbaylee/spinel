@@ -44,8 +44,8 @@ locally. SPN-063 implements that destination and the recurring isolated verifier
 before deployment; selected-provider and target-host acceptance remain in SPN-038
 before public exposure. Admin separates publication, restore verification and
 offsite coverage. SPN-109 adds encrypted Admin downloads and deployment-owned
-backup policy for local storage and DigitalOcean Spaces. AWS S3 is a separate
-[post-production feature request](todo/SPN-114.md). SPN-111 implements
+backup policy for local storage and DigitalOcean Spaces. The AWS-specific request was
+[retired in favor of existing selected-provider support](implementation/SPN-114.md#-grooming-disposition); production qualification stays with SPN-038. SPN-111 implements
 [supervised maintenance](maintenance.md) for pause, drain and restart of the
 same dataset. SPN-112 adds [assisted workspace restore](#restore-through-admin)
 under that supervisor. Diagnostics expiry remains SPN-110; fresh-host CLI recovery

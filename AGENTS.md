@@ -5,8 +5,8 @@ the open-source [Univer](https://github.com/dream-num/univer) SDK, for about two
 people at a time. The product has no AI features.
 
 Spinel is pre-production until SPN-038 launches `spinel.baylee.dev`; that is the
-last launch prerequisite, with optional CSV import (SPN-093) and document/format plugins
-(SPN-094) after launch. SQLite is the current implementation, not a permanent
+last launch prerequisite, with optional CSV/TSV import (SPN-093) after launch. Document/format plugins
+(SPN-094) were dropped on 2026-11-22. SQLite is the current implementation, not a permanent
 storage constraint. Reconsider it before launch without inventing a live-data
 migration requirement. See [development](docs/development.md#deployment-stage).
 Owner, chat 2026-10-21.

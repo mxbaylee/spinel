@@ -260,8 +260,8 @@ rejects unfamiliar bytes. It does not read or modify Pro packages. Docker copies
 the installer before `npm ci`; the dependency's license stays with its package,
 and the patch's attribution is in `THIRD-PARTY-NOTICES.md`.
 
-The patch is temporary: SPN-099 removes it when Spinel upgrades to a Univer
-release with the fixes. The link fixes are upstream as
+The patch is temporary: the [Univer upgrade checklist](univer-upgrades.md) owns
+its removal when a released package satisfies the protected contracts. The link fixes are upstream as
 [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938). If
 upstream fixes any of them another way, Spinel follows upstream rather than
 re-patching. Never bypass the guard just to make an install pass.
@@ -291,7 +291,8 @@ Both full-file hashes and the pinned version are validated before either format
 is written. Tests execute the actual upstream resize/refresh methods in both
 formats, assert upstream rejection and repaired preservation, and exercise
 native queued delivery plus raw snapshot reopen. The installer touches no Pro
-package. SPN-099 independently reviews removal on upgrade; unfamiliar bytes
+package. The [upgrade checklist](univer-upgrades.md) separately qualifies drawing
+repair removal; unfamiliar bytes
 must be investigated instead of bypassing the guard. See the
 [decision and evidence](implementation/SPN-056.md#retain-collapsed-drawing-geometry-through-native-refresh).
 
