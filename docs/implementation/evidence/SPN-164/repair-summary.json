@@ -375,5 +375,38 @@
     "visual-capture": "Fixture dispatch delay did not expose saved-files stage; replaced with actual auth/catalog Web Locks.",
     "visual-capture-locks": "Capture passed but inspection found phone footer overlap. Before screenshot retained; fixed placement and final geometry/captures passed.",
     "archive-repair": "First verification rejected archive: inventory excluded archive script while tar retained it. Exact log/receipt-only exclusions corrected; separate verified archive preserves first failure."
+  },
+  "reviewRepairControls": {
+    "observerMutation": {
+      "code": 1,
+      "originalSha256": "35d14dfaaecb838968cce42d96f89f9d9f85ff09f1dbb18b5639c920bfedc583",
+      "mutantSha256": "93d19c0aee0715425a8f646687b9eca1b72f564f83d01438cd1a4b93855f94a1",
+      "restoredSha256": "35d14dfaaecb838968cce42d96f89f9d9f85ff09f1dbb18b5639c920bfedc583"
+    },
+    "observerRestored": {
+      "label": "observer-repaired",
+      "command": "node",
+      "args": [
+        "--test",
+        "scripts/ci/startup-phone.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 118,
+      "peakKiB": 0
+    },
+    "lint": {
+      "label": "review-repair-lint",
+      "command": "node",
+      "args": [
+        "/private/tmp/spn164/final-checks.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 451,
+      "peakKiB": 175712
+    }
   }
 }

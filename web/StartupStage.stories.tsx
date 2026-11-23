@@ -25,6 +25,7 @@ const meta = {
     );
     await expect(status).toHaveAttribute('role', 'status');
     const footer = canvasElement.querySelector('footer');
+    if (args.stage === 'saved files') await expect(footer).not.toBeNull();
     if (footer)
       await expect(status.getBoundingClientRect().bottom).toBeLessThanOrEqual(
         footer.getBoundingClientRect().top,

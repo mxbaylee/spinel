@@ -82,16 +82,21 @@ test('an invalid clock remains unavailable after later writes and navigation', (
 });
 
 test('source instrumentation requires every exact seam and retains original timeout/authority calls', () => {
-  for (const file of ['api.ts', 'App.tsx', 'startupStage.ts']) {
-    const source = readFileSync(new URL(`../../web/${file}`, import.meta.url), 'utf8');
-    const observed = instrumentPhoneSource(source, file, './observer.ts')!;
-    assert.ok(observed.includes('phoneMark'));
-    for (const call of [
-      'AbortSignal.timeout(15_000)',
+  const contracts = {
+    'api.ts': ['AbortSignal.timeout(checkingSession ? SESSION_REQUEST_DEADLINE_MS : 15_000)'],
+    'App.tsx': [
       'verifySession();',
       'expirePreparedAccount();',
       'requireBrowserOnline(globalThis.navigator);',
-    ]) {
+    ],
+    'startupStage.ts': ['export function startupStage(name: string) {'],
+  };
+  for (const [file, calls] of Object.entries(contracts)) {
+    const source = readFileSync(new URL(`../../web/${file}`, import.meta.url), 'utf8');
+    const observed = instrumentPhoneSource(source, file, './observer.ts')!;
+    assert.ok(observed.includes('phoneMark'));
+    for (const call of calls) {
+      assert.ok(source.includes(call), `Missing source contract: ${file}: ${call}`);
       assert.equal(observed.split(call).length, source.split(call).length);
     }
     assert.throws(() => instrumentPhoneSource('', file, './observer.ts'), /seam changed/);
