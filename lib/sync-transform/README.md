@@ -202,7 +202,8 @@ old one, and lets a concurrent bold survive on one screen only past a format
 painter's style that sets `bl: 0` and was accepted first. A copy of this lib
 published on its own needs the same patch, until upstream ships the fixes (the
 link fixes are [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938))
-and SPN-099 removes it.
+and [Spinel’s upgrade qualification](../../docs/univer-upgrades.md) proves it can
+be removed without losing the protected contracts.
 
 Capture the public `ICommandService.onMutationExecutedForCollab` stream and
 exclude events marked `onlyLocal`, `fromCollab` or `fromChangeset`. Keep

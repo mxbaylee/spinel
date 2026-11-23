@@ -1,0 +1,71 @@
+{
+  "date": "2026-11-22",
+  "repository": "mxbaylee/spinel",
+  "openPullRequestsRechecked": [
+    223,
+    230,
+    260,
+    281
+  ],
+  "deletions": [
+    {
+      "branch": "archive/spn-156-validation-ccc201ef-20261115",
+      "head": "425f942ee8e17edc80c9ba9ab8f6f0b68cd88b11",
+      "archiveTag": "archive/groom-2026-11-22/archive/spn-156-validation-ccc201ef-20261115",
+      "result": "deleted; archive tag verified at exact previous head"
+    },
+    {
+      "branch": "ci-baseline/doc-callback-canvas-excluded-2026-11-07",
+      "head": "f609961e4a2460bae0feedb62cedd722af270e86",
+      "archiveTag": "archive/groom-2026-11-22/ci-baseline/doc-callback-canvas-excluded-2026-11-07",
+      "result": "deleted; archive tag verified at exact previous head"
+    },
+    {
+      "branch": "ci-baseline/doc-callback-storybook-10.6.5",
+      "head": "48dc8d4698129d5c7748ff2dac3b5d18cb0bcd6b",
+      "archiveTag": "archive/groom-2026-11-22/ci-baseline/doc-callback-storybook-10.6.5",
+      "result": "deleted; archive tag verified at exact previous head"
+    },
+    {
+      "branch": "ci-baseline/doc-responsiveness-canvas-excluded-2026-11-07",
+      "head": "e4d361f0ce3c08d4a1e80b000e29f2c2f28f6670",
+      "archiveTag": "archive/groom-2026-11-22/ci-baseline/doc-responsiveness-canvas-excluded-2026-11-07",
+      "result": "deleted; archive tag verified at exact previous head"
+    },
+    {
+      "branch": "ci-baseline/doc-responsiveness-storybook-10.6.5",
+      "head": "6ee50161c9eeeb7296ffb282d7ae52abd9e61d1b",
+      "archiveTag": "archive/groom-2026-11-22/ci-baseline/doc-responsiveness-storybook-10.6.5",
+      "result": "deleted; archive tag verified at exact previous head"
+    },
+    {
+      "branch": "ci/browserstack-accounting",
+      "head": "48954214ebeb9183a64a2276a7e8095313c5d0cc",
+      "archiveTag": "archive/groom-2026-11-22/ci/browserstack-accounting",
+      "result": "deleted; archive tag verified at exact previous head"
+    },
+    {
+      "branch": "codex/pr251-final-evidence-e82257a",
+      "head": "421608b63f393d854351c94433b0fb4cbda027d7",
+      "archiveTag": "archive/groom-2026-11-22/codex/pr251-final-evidence-e82257a",
+      "result": "deleted; archive tag verified at exact previous head"
+    },
+    {
+      "branch": "codex/pr251-identity-prerequisite",
+      "head": "bcee551c13f9a756cda0e50adf81f95aca18feab",
+      "archiveTag": "archive/groom-2026-11-22/codex/pr251-identity-prerequisite",
+      "result": "deleted; archive tag verified at exact previous head"
+    }
+  ],
+  "retainedBranches": {
+    "refs/heads/codex/spn-068-sheet-images": "6f2d902e236a4070cf89b3c6cb16a6897b22f701",
+    "refs/heads/codex/spn-087-storybook-cleanup": "8ba0bd91c0105b0d1c767ee84ec554c50abc3890",
+    "refs/heads/codex/spn-087-storybook-layout-cleanup": "0ed9ef8b23bccbae4f24f4b608a6b55b54c47526",
+    "refs/heads/codex/spn-089-alignment-evidence-ee996e95": "4394e3a0080fffc3881c75260647f9f7a5340cb6",
+    "refs/heads/codex/spn-089-c-failure-evidence-472a130c": "e069cefc3be23102588e1d2f5815b18a23c3f542",
+    "refs/heads/codex/spn-089-dialog-title-icons": "472a130c4b6fdaf7b342b0ea3d2c180cd408067e",
+    "refs/heads/codex/spn-089-review-evidence-ef899b": "c1768232ad116063d240fea4d16bbc8db99b702b",
+    "refs/heads/codex/spn-099-stock-core": "f4e7db978a553a0dcc286937503de87b79ee9d06",
+    "refs/heads/main": "cc9e9fd2222b12d87f0213e4d481409feb195ace"
+  }
+}
