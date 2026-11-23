@@ -9,6 +9,7 @@ import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import type { OfflineBundle } from '../src/shared/offlineBundle.ts';
 import { copy, fixture, selectCell, stored, synced, usableCanvas } from './offline-fixture.ts';
+import { withFixtureCleanup } from './owned-process.ts';
 import {
   DOCS_NORMAL_EDITOR_UNIT_ID_KEY,
   DocumentFlavor,
@@ -17,6 +18,96 @@ import {
   createParagraphId,
   createSectionId,
 } from '@univerjs/core';
+
+test('reconnect session deadline preserves a prepared notebook and real session denial still locks it', async ({
+  browser,
+  baseURL,
+}, info) => {
+  test.setTimeout(120_000);
+  const f = await fixture(browser, baseURL!, info, 'doc', { flavor: DocumentFlavor.MODERN });
+  await withFixtureCleanup(
+    async () => {
+      await f.download();
+      const bundle = (await stored(f.page, f.actor.id, f.item.id))!.bundle;
+      if (bundle.kind !== 'doc') throw new Error('The reconnect fixture must contain a Doc.');
+      const original = bundle.snapshot;
+      expect(original.body!.dataStream).toBe(
+        'Phone journal\rOffline writing keeps the whole saved document.\r\n',
+      );
+      await f.page.goto('/');
+      let offlineRequests = 0;
+      const countSession = (request: import('@playwright/test').Request) => {
+        if (new URL(request.url()).pathname === '/api/auth/session') offlineRequests++;
+      };
+      f.page.on('request', countSession);
+      await f.context.setOffline(true);
+      await f.page.reload();
+      await expect(
+        f.page.getByRole('button', { name: `${f.item.name} Doc`, exact: true }),
+      ).toBeVisible();
+      expect(offlineRequests).toBe(0);
+      f.page.off('request', countSession);
+
+      // Browser connectivity returning is not proof that this request can answer.
+      // Hold only the session request; the real app, account and IndexedDB remain.
+      let began = 0;
+      await f.page.route('**/api/auth/session', () => {
+        began = performance.now();
+      });
+      await f.context.setOffline(false);
+      const failure = f.page
+        .waitForEvent('requestfailed', {
+          predicate: (request) => new URL(request.url()).pathname === '/api/auth/session',
+          timeout: 6000,
+        })
+        .then(() => performance.now() - began);
+      await f.page.reload();
+      const elapsedMs = await failure;
+      // The product deadline is 3 s. Allow 1 s of browser/CI scheduling overhead,
+      // while detecting the original full 15 s wait and premature cancellation.
+      expect(elapsedMs).toBeGreaterThanOrEqual(2500);
+      expect(elapsedMs).toBeLessThan(4000);
+      await expect(
+        f.page.getByRole('button', { name: `${f.item.name} Doc`, exact: true }),
+      ).toBeVisible();
+      expect(await f.page.evaluate(() => localStorage.getItem('spinel.offline.account'))).toBe(
+        f.actor.id,
+      );
+      expect((await stored(f.page, f.actor.id, f.item.id))!.bundle.snapshot).toEqual(original);
+      const cookie = (await f.context.cookies()).find((entry) => entry.name === COOKIE_NAME)!;
+      expect(f.auth.session(cookie.value)?.user_id).toBe(f.actor.id);
+      await info.attach('session-reconnect-timing', {
+        body: JSON.stringify({
+          elapsedMs,
+          deadlineMs: 3000,
+          schedulingAllowanceMs: 1000,
+          physicalPhone: false,
+        }),
+        contentType: 'application/json',
+      });
+
+      await f.page.unroute('**/api/auth/session');
+      await f.page.goto(f.href);
+      await usableCanvas(f.page);
+      expect((await stored(f.page, f.actor.id, f.item.id))!.bundle.snapshot).toEqual(original);
+      f.auth.revokeSession(f.auth.session(cookie.value)!.token_hash);
+      await f.page.goto('/');
+      await expect(f.page).toHaveURL(/\/sign-in/);
+      await expect
+        .poll(() => f.page.evaluate(() => localStorage.getItem('spinel.offline.account')))
+        .toBeNull();
+      await f.context.setOffline(true);
+      await f.page.goto('/');
+      await expect(f.page.getByRole('heading', { name: "You're offline" })).toBeVisible();
+      await expect(
+        f.page.getByRole('button', { name: `${f.item.name} Doc`, exact: true }),
+      ).toHaveCount(0);
+      // Expiry removes permission to open the copy; it does not silently erase it.
+      expect((await stored(f.page, f.actor.id, f.item.id))!.bundle.snapshot).toEqual(original);
+    },
+    () => f.close(),
+  );
+});
 
 test('hiding preserves a prepared share and its offline discovery preference without bypassing revoke or sign-out cleanup', async ({
   browser,

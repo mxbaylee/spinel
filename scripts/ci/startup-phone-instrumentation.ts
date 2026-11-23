@@ -17,8 +17,8 @@ export function instrumentPhoneSource(source: string, file: string, observer: st
     );
   } else if (file === 'api.ts') {
     replace(
-      '  verifyCurrent();\n  const headers:',
-      "  const phoneId = path === 'session' ? phoneRequest() : 0;\n  if (phoneId) phoneMark('request-start', phoneId);\n  try {\n  verifyCurrent();\n  const headers:",
+      '  verifyCurrent();\n  const checkingSession =',
+      "  const phoneId = path === 'session' ? phoneRequest() : 0;\n  if (phoneId) phoneMark('request-start', phoneId);\n  try {\n  verifyCurrent();\n  const checkingSession =",
     );
     replace(
       '  // Consume a dispatched response',

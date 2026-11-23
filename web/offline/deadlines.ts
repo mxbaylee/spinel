@@ -4,8 +4,15 @@
  * minutes, so each deadline lets the saved copy answer instead.
  */
 
-/** Server requests across the app use 15 s; an item view that misses it opens the device copy. */
+/** Item requests retain their longer transfer budget before opening the device copy. */
 export const ITEM_REQUEST_DEADLINE_MS = 15_000;
+
+/**
+ * A session read is a small readiness check, not a content transfer. After 3 s
+ * start from existing device data (or the unreachable screen), never sign out.
+ * SPN-164 records the measured stalled boundary and the slow-server tradeoff.
+ */
+export const SESSION_REQUEST_DEADLINE_MS = 3000;
 
 /**
  * A page load slower than this to first byte falls back to the saved app shell. A slow

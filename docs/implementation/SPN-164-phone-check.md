@@ -1,6 +1,9 @@
 # 📱 SPN-164 reconnect baseline
 
-**Pending physical execution.** This is an observation build, not a timeout fix.
+**Not run; owner waived this check conditional on local reproduction, chat
+2026-11-22.** See the [ticket-specific decision](SPN-164.md#-physical-phone-waiver-and-local-acceptance).
+This checklist is historical/optional; no phone action is currently requested.
+This is an observation build, not a timeout fix.
 Use only the fresh invitation/document links supplied with the current guarded
 test window. The ordinary Owner and notebook are disposable; no existing account,
 deployment, downloaded files or passkeys are replaced. A new tunnel hostname needs

@@ -360,7 +360,13 @@ lives in `web/offline/warmOpen.ts`.
 **⏱️ Deadlines.** A hang must never leave a start without an answer
 (`web/offline/deadlines.ts`). When the browser reports `onLine === false`, startup and
 page loads skip the wait and take the offline path at once; `onLine === true` proves
-nothing and never short-circuits. A page load slower than 8 s to first byte falls back to
+nothing and never short-circuits. The small sign-in/session request has a **3 s**
+deadline across headers and body; an unanswered check uses the existing prepared
+account or the unreachable screen, without clearing credentials or saved content.
+A received 401 remains a denial even if its error body stalls. Once the session
+answers, the startup line calls the separate device-admission wait **saved files**.
+See the [measured boundary and tradeoff](implementation/SPN-164.md).
+A page load slower than 8 s to first byte falls back to
 the saved app (server-only pages such as guest links, setup and invites have no saved copy, so they
 wait for the server), and an item request (the single `/api/items/<id>` fetch, not other Dashboard requests) slower than 15 s
 opens the device copy. On a slow but

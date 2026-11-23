@@ -241,7 +241,11 @@ URL, credential or error message is collected. The owner explicitly sends the
 report after the run; no probe races the session request. Storage writes add
 observer overhead, and lost process/storage evidence cannot establish causality.
 `startup-phone.test.ts` covers bounds, redaction, isolation and fail-closed source
-seams. Existing production emitters and all session/timeout behavior are unchanged.
+seams. Production operation/save/sync emitters remain unchanged: the 3-second
+session wait still uses the existing outage/denial paths and starts account
+diagnostics only after existing authority checks. The startup label switches to
+`saved files` after session verification, so subsequent device admission is not
+misreported as a sign-in request. No production telemetry or readiness probe is added.
 
 🔌 The test-only `e2e/reset-diagnostics-reporter.ts` preserves up to 50 reset
 failures per project with redacted request paths and owned-server snapshot facts.

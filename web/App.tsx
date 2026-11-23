@@ -243,6 +243,8 @@ function AccountApp() {
             restore?: RestoreNoticeDetails | null;
           }>('session', undefined, verifySession);
           verifySession();
+          // Session authority has answered; device admission is a separate wait.
+          startupStage('saved files');
           try {
             claimOnlineAccount(user.id);
           } catch {
