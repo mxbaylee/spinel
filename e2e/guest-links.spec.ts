@@ -19,7 +19,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       workspace = new WorkspaceStore(auth);
     const owner = auth.createUser('Private owner ' + info.testId),
       item = workspace.create(owner.id, { kind, name: `Guest ${kind}`, parentId: null });
-    const guest = await browser.newContext(),
+    const guest = await browser.newContext({ hasTouch: kind === 'sheet' }),
       first = await guest.newPage(),
       second = await guest.newPage();
     await recordPermissionNotices(guest);
@@ -31,6 +31,8 @@ for (const kind of ['sheet', 'doc'] as const) {
         ['light', 390, 'phone'],
       ] as const) {
         await first.setViewportSize({ width, height: 900 });
+        // Native Sheet controls choose their pointer/viewport mode at mount.
+        if (kind === 'sheet' && width === 390) await first.reload();
         await first.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
         await expect(first.locator('html')).toHaveAttribute('data-theme', theme);
         await expect(
@@ -44,6 +46,20 @@ for (const kind of ['sheet', 'doc'] as const) {
             exact: true,
           }),
         ).not.toBeVisible();
+        if (kind === 'sheet' && width === 390) {
+          const sheet = region(first);
+          await expect(sheet).toHaveAttribute('data-mobile', 'true');
+          await expect(sheet.getByRole('button', { name: 'Read A1', exact: true })).toBeVisible();
+          const editCell = sheet.getByRole('button', { name: 'Edit A1', exact: true });
+          if (role === 'viewer') await expect(editCell).toHaveCount(0);
+          else {
+            await editCell.click();
+            const nativeBar = sheet.locator('[data-u-comp="mobile-formula-bar"]');
+            await expect(nativeBar).toBeVisible();
+            await nativeBar.getByRole('button', { name: 'Cancel', exact: true }).click();
+            await saved(first);
+          }
+        }
         await first.screenshot({
           path: `test-results/theme-screenshots/spn-042-guest-${kind}-${role}-${variant}-${info.project.name}.png`,
           fullPage: true,
@@ -52,6 +68,13 @@ for (const kind of ['sheet', 'doc'] as const) {
       }
       await first.setViewportSize({ width: 1440, height: 1000 });
       await first.emulateMedia({ colorScheme: 'light' });
+      if (kind === 'sheet') {
+        await first.reload();
+        await expect(region(first).getByRole('status', { name: 'Save status' })).toHaveText(
+          role === 'viewer' ? 'View only.' : 'All changes saved.',
+          { timeout: 30_000 },
+        );
+      }
     };
     const diagnostics: string[] = [];
     for (const view of [page, first, second]) {

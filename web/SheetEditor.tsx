@@ -52,6 +52,9 @@ import { beginOperation, diagnosticSource } from './operationDiagnostics.ts';
 import { BehaviorSubject } from 'rxjs';
 import { copyUnavailable, NativeCopyPlugin } from './nativeCopy.tsx';
 import { guestItemId } from './documentAccess.ts';
+import { MobileSheetCellBar } from './MobileSheetCellBar.tsx';
+import { bindMobileSheetViewport, observeMobileSheetCell } from './mobileSheetCell.ts';
+import type { MobileSheetCell } from './mobileSheetCell.ts';
 
 export function SheetEditor({
   id,
@@ -77,6 +80,12 @@ export function SheetEditor({
   const chrome = useEditorChrome();
   const diagnostics = useDiagnostics();
   const mobile = useRef(useMobileSheetControls()).current;
+  const host = useRef<HTMLElement>(null);
+  const [mobileCell, setMobileCell] = useState<MobileSheetCell | null>(null);
+  const editMobileCell = useRef<() => void>(() => {});
+  useEffect(() => {
+    if (mobile && host.current) return bindMobileSheetViewport(host.current);
+  }, [mobile]);
   const [people, setPeople] = useState<Collaborator[]>([]);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
@@ -118,6 +127,9 @@ export function SheetEditor({
     };
     let stopPresence: (() => void) | undefined;
     let stopDrawingPermissions: (() => void) | undefined;
+    let stopMobileCell: (() => void) | undefined;
+    setMobileCell(null);
+    editMobileCell.current = () => {};
     setPeople([]);
     let editing = false;
     let freezeAfterEditing = false;
@@ -205,6 +217,7 @@ export function SheetEditor({
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.
       disposeEditor = () => {
+        stopMobileCell?.();
         stopDrawingPermissions?.();
         offlineImages?.dispose();
         disposeSpinelSync(univer);
@@ -384,6 +397,7 @@ export function SheetEditor({
         univerAPI.getActiveWorkbook()?.getActiveSheet()?.refreshCanvas();
       });
       disposeEditor = () => {
+        stopMobileCell?.();
         stopDrawingPermissions?.();
         disposeSpinelSync(univer);
         stopTheme();
@@ -392,6 +406,18 @@ export function SheetEditor({
         univer.dispose();
       };
       if (data.access === 'viewer') await readOnly();
+      if (disposed) return;
+      if (mobile) {
+        const cell = observeMobileSheetCell(univer, univerAPI, (value) => {
+          if (!disposed) setMobileCell(value);
+        });
+        editMobileCell.current = cell.edit;
+        stopMobileCell = () => {
+          cell.dispose();
+          editMobileCell.current = () => {};
+          if (!disposed) setMobileCell(null);
+        };
+      }
       stopPresence = await watchPresence(univer, univerAPI, data.unitId, setPeople);
       if (disposed) {
         stopPresence();
@@ -441,7 +467,14 @@ export function SheetEditor({
     // Name is folder metadata; a rename must not recreate an editor with pending edits.
   }, [id, spaceId, reloadGeneration]);
   return (
-    <section className="sheet-editor" data-mobile={mobile} aria-label="Sheet document">
+    <section
+      ref={host}
+      className="sheet-editor"
+      data-mobile={mobile}
+      data-cell-bar={Boolean(mobileCell)}
+      data-cell-editing={Boolean(mobileCell?.editing)}
+      aria-label="Sheet document"
+    >
       <SaveStatus
         state={status}
         target={chrome?.saveTarget ?? saveStatusTarget}
@@ -465,6 +498,9 @@ export function SheetEditor({
         />
       )}
       <div className="univer-container" ref={container} />
+      {mobileCell && (
+        <MobileSheetCellBar cell={mobileCell} onEdit={() => editMobileCell.current()} />
+      )}
     </section>
   );
 }
