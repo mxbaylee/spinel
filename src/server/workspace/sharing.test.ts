@@ -214,16 +214,20 @@ test('viewer reads snapshots/images; editor writes remain revision checked and r
   expect(() => f.docs.image(who, f.doc.id, image.id)).toThrow('not available');
   expect(f.docs.load(f.owner.id, f.doc.id).revision).toBe(1);
 });
-test('an in-flight image decode cannot commit after edit access is revoked', async () => {
-  const f = fixture();
-  f.grant(f.doc.id, 'editor');
-  const bytes = await sharp({
-    create: { width: 200, height: 200, channels: 3, background: '#366' },
-  })
-    .png()
-    .toBuffer();
-  const pending = f.docs.upload(f.collaborator.id, f.doc.id, bytes, 'image/png');
-  f.grant(f.doc.id, 'viewer');
-  await expect(pending).rejects.toThrow('cannot edit');
-  expect(f.db.prepare('SELECT count(*) AS n FROM doc_images').get()?.n).toBe(0);
-});
+test.each(['doc', 'sheet'] as const)(
+  'an in-flight %s image decode cannot commit after edit access is revoked',
+  async (kind) => {
+    const f = fixture();
+    const id = f[kind].id;
+    f.grant(id, 'editor');
+    const bytes = await sharp({
+      create: { width: 200, height: 200, channels: 3, background: '#366' },
+    })
+      .png()
+      .toBuffer();
+    const pending = f.docs.upload(f.collaborator.id, id, bytes, 'image/png');
+    f.grant(id, 'viewer');
+    await expect(pending).rejects.toThrow('cannot edit');
+    expect(f.db.prepare('SELECT count(*) AS n FROM doc_images').get()?.n).toBe(0);
+  },
+);
