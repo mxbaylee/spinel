@@ -251,7 +251,7 @@
   },
   "phone": {
     "required": true,
-    "before": "not observed",
+    "before": "partial physical baseline: initial native B5=71 and server C5 formula receipt; prepared/replay rendering remains pending",
     "after": "not observed",
     "baselineReadiness": {
       "verified": true,
@@ -307,6 +307,114 @@
         "manifestPath": "/Users/mxbaylee/.local/share/spinel-evidence/SPN-165/20261122-baseline/phone-window-manifest.json",
         "manifestSha256": "5b7060ca88eb99cfa089013011deef805ec53693a33dad76ff69516ee42acb85",
         "verifiedMembers": 12,
+        "verification": "every extracted member matched SHA-256"
+      }
+    },
+    "ownerReadyWindow": {
+      "productionSource": "cc9e9fd2222b12d87f0213e4d481409feb195ace",
+      "runtime": "c2d1fcc9075a4fd4",
+      "physicalDevice": "owner-reported Pixel; current Chrome version not yet provided",
+      "readiness": {
+        "verified": true,
+        "probes": [
+          {
+            "attempt": 1,
+            "status": 200,
+            "sha256": "334b05d3cdbcccd065ed2408332a0565993cf48e75c3b855d0159de2c7780655"
+          },
+          {
+            "workerStatus": 200,
+            "workerSha256": "11ad2f5e64f86d134eefdf1ae31ae6a2c7b4f5e11f1f7da99a78078db7c94edb"
+          }
+        ],
+        "readinessResolver": "1.1.1.1 (client only; system DNS unchanged)",
+        "fixtureCommit": "cc9e9fd2222b12d87f0213e4d481409feb195ace",
+        "runtime": "c2d1fcc9075a4fd4"
+      },
+      "status": "expired normally; owned server/tunnel processes absent",
+      "watchdog": {
+        "label": "phone-owner-ready-20261123",
+        "command": "node",
+        "args": [
+          "--max-old-space-size=128",
+          "/private/tmp/spn165/phone-window.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "aborted": null,
+        "elapsedMs": 445160,
+        "peakKiB": 409808
+      },
+      "reports": 1,
+      "initialOnline": {
+        "native": {
+          "unitId": "69656e0b-841c-4267-87ff-a33e7db83035",
+          "itemId": "69656e0b-841c-4267-87ff-a33e7db83035",
+          "online": true,
+          "prepared": false,
+          "native": [
+            {
+              "v": 10
+            },
+            {
+              "v": 15
+            },
+            {
+              "v": 20
+            },
+            {
+              "v": 26
+            }
+          ],
+          "b5": {
+            "f": "=SUM(A:A)",
+            "v": 71,
+            "t": 2
+          },
+          "rangeValue": 71,
+          "rangeFormula": "=SUM(A:A)",
+          "saveStatus": "All changes saved.",
+          "at": 61443
+        },
+        "stored": null
+      },
+      "serverAfterSync": {
+        "revision": 2,
+        "inputs": [
+          10,
+          15,
+          20,
+          26
+        ],
+        "b5": {
+          "f": "=SUM(A:A)"
+        },
+        "c5": {
+          "f": "=SUM(A:B)"
+        },
+        "acceptedRevisions": [
+          2
+        ],
+        "calculatedCachePresent": false
+      },
+      "ownerObservation": {
+        "editCell": "C5, not planned C1",
+        "sync": "owner reports synced from file list",
+        "editing": "formula visible when keyboard opened; value/edit banner missing or obscured; editor bounces during C-column editing",
+        "requestedUI": "stable always-visible bottom editor; consider existing edit pen icon"
+      },
+      "limits": [
+        "Only initial online native report received; no prepared reopen, offline or post-sync native/device report.",
+        "No explicit visible B5 numeric observation yet; native 71 is not canvas evidence.",
+        "Server receipt proves durable authored C5 formula, not local offline durability or replay path by itself.",
+        "Fixed bottom-right diagnostic button may obscure native controls; remove overlap before visual acceptance."
+      ],
+      "archive": {
+        "path": "/Users/mxbaylee/.local/share/spinel-evidence/SPN-165/phone-owner-ready-20261123/window.tar.gz",
+        "sha256": "e673f4012bfd436a8595fbd23909cf3a5dd555e40e24ff351b0fbf59a79bfd9f",
+        "manifestPath": "/Users/mxbaylee/.local/share/spinel-evidence/SPN-165/phone-owner-ready-20261123/manifest.json",
+        "manifestSha256": "c45b0e1ab78db919dca5f4958daf8600a28f0e92befc226c06efdbea6fcff355",
+        "verifiedMembers": 14,
         "verification": "every extracted member matched SHA-256"
       }
     }
