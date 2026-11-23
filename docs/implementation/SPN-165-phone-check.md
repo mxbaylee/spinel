@@ -34,6 +34,39 @@ It has **not passed this physical checklist**. While the owner is away, prepare
 and verify the final fixture without opening an invitation window that would
 expire before use. Start a fresh bounded window only when the phone is available.
 
+### 🛠️ Current UI fixture restart
+
+The unobstructed UI build is source `d27babb5773e722b76f6721262df76f35e2ac30c`,
+runtime `b91e7826b0926d5e`. Its verified private archive, source/output manifest
+and preflight are linked from [the UI evidence summary](evidence/SPN-165/ui-summary.json).
+The final reviewed candidate must retain the same runtime source hashes; rebuild
+and revalidate if it does not. The archive contains the current UI launcher,
+server, bundle, watchdog and identity file. It preserves synthetic credentials
+privately; do not publish them or the preflight invitation.
+
+From the repository, use a **new** directory suffix when the phone is available:
+
+```bash
+PATH=/Users/mxbaylee/.nvm/versions/node/v26.13.0/bin:$PATH \
+SPINEL_PHONE_RUN=/private/tmp/spn165/phone-ui-new-window \
+node scripts/serial.ts node /private/tmp/spn165/guard.ts phone-ui-new-window \
+node --max-old-space-size=128 /private/tmp/spn165/phone-ui-window.ts
+```
+
+The launcher verifies all 1,290 source hashes and 53 output hashes before
+starting; it verifies the public runtime, service worker and fresh invitation
+before writing `ready.json`. Check that file privately before sharing only the
+new invitation. It stops its own app/tunnel within 445 seconds. Reopen the fresh
+fixture in a local browser and verify the selected-cell bar and native input
+before requesting the three physical steps above. The successful preflight
+window has already stopped and contains **zero physical observations**.
+
+After the physical run, retain the first visible result and exact device/browser
+identity, read the synthetic server state/revision and accepted-write IDs, then
+archive/hash the run and verify owned processes stopped. Any failure remains a
+blocker to merge until diagnosed; do not retry edits or infer OS keyboard behavior
+from the synthetic viewport captures.
+
 ## 🗃️ Historical formula baseline instructions
 
 The following records the prior fixture and investigation, not current UI

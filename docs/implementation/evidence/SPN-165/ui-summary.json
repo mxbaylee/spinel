@@ -1,0 +1,171 @@
+{
+  "productionSource": "d27babb5773e722b76f6721262df76f35e2ac30c",
+  "runtime": "b91e7826b0926d5e",
+  "buildMode": "production, VITE_SYNC_EVIDENCE=1; no diagnostic overlay",
+  "identityManifest": {
+    "privatePath": "/private/tmp/spn165/ui-entry-identity.json",
+    "sha256": "9cad28daff557c3bac53b5ad3767f090c4bde1563927ae95dae208e2b8b71306",
+    "verifiedSourceFiles": 1290,
+    "verifiedOutputFiles": 53
+  },
+  "archive": {
+    "archive": "/Users/mxbaylee/.local/share/spinel-evidence/SPN-165/ui-entry-d27babb5.tar.gz",
+    "archiveSha256": "7848f7aa2dbf84084aef69117c0a64da784bc4be9e8c9d1d607c1fb8e00eba83",
+    "manifest": "/Users/mxbaylee/.local/share/spinel-evidence/SPN-165/ui-entry-d27babb5.sha256.json",
+    "manifestSha256": "71e39c9706c048c0d002ecfa6b8eb2efaa3f2423427cf414e69d9ef9bce6ccd2",
+    "verifiedMembers": 383,
+    "productionSource": "d27babb5773e722b76f6721262df76f35e2ac30c"
+  },
+  "checks": [
+    {
+      "label": "ui-build-entry",
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 2131,
+      "peakKiB": 905136
+    },
+    {
+      "label": "ui-native-entry",
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 4547,
+      "peakKiB": 1012672
+    },
+    {
+      "label": "ui-stories-styled-build",
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 3051,
+      "peakKiB": 837072
+    },
+    {
+      "label": "ui-stories-styled-check",
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 5026,
+      "peakKiB": 597568
+    },
+    {
+      "label": "ui-pwa-focus",
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 11756,
+      "peakKiB": 1281568
+    },
+    {
+      "label": "ui-offline-focus",
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 7807,
+      "peakKiB": 1207872
+    },
+    {
+      "label": "ui-focus-unit",
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 418,
+      "peakKiB": 144400
+    },
+    {
+      "label": "ui-guest-production",
+      "code": null,
+      "signal": "SIGTERM",
+      "aborted": "pressure=2, rssKiB=1506544",
+      "elapsedMs": 8341,
+      "peakKiB": 1523856
+    },
+    {
+      "label": "ui-phone-entry-preflight",
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 12218,
+      "peakKiB": 393584
+    },
+    {
+      "label": "review-a-ui-entry-pwa",
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 12058,
+      "peakKiB": 1312432
+    },
+    {
+      "label": "review-a-ui-adapter-d827cf76",
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 491,
+      "peakKiB": 112528
+    }
+  ],
+  "sourceLimits": [
+    "Earlier PWA/offline focus runs preceded the explicit shared-controls stylesheet import. Independent review-a-ui-entry-pwa passes the full HTTPS journey against the final styled d27babb production bundle; offline focus runtime logic/tests match d27babb.",
+    "ui-focus-expanded-results.json inherited af041a3a source field; that is base only. Final ui-entry-results.json has the correct productionSource.",
+    "Full typecheck and full guest journey were resource-aborted, not passed. Hosted ordinary-build observer absence remains required."
+  ],
+  "visuals": [
+    {
+      "path": "mobile-expanded-dark.png",
+      "sha256": "9c603b8509bfecb0ff41521809fb264c012a88897b40eeb24ea0e3dfcd5d1ac1",
+      "viewport": "390x844",
+      "source": "d27babb5773e722b76f6721262df76f35e2ac30c",
+      "kind": "actual native app, browser emulation"
+    },
+    {
+      "path": "mobile-formula-dark.png",
+      "sha256": "47b3787820a77aded2c96f6d8edb47e2ea4c7dd2c0e4e94fefc716667cb2d2a4",
+      "viewport": "390x844",
+      "source": "d27babb5773e722b76f6721262df76f35e2ac30c",
+      "kind": "actual native app, browser emulation"
+    },
+    {
+      "path": "mobile-formula-light.png",
+      "sha256": "0f1cbe308396b770ae0f965e4b69632b06a2b34533f307df0c73f388bb67891e",
+      "viewport": "390x844",
+      "source": "d27babb5773e722b76f6721262df76f35e2ac30c",
+      "kind": "actual native app, browser emulation"
+    },
+    {
+      "path": "mobile-long-text-dark.png",
+      "sha256": "da5e87148ad8f0482e0d6e29df21229e3b11501f6a5407fb0a12367e7aefc1c6",
+      "viewport": "390x900",
+      "source": "d27babb5773e722b76f6721262df76f35e2ac30c",
+      "kind": "production component story"
+    },
+    {
+      "path": "mobile-long-text-light.png",
+      "sha256": "951cfe8bde6204db49f9ffff327aea5dcebe3a56a618e421b290811966b3c025",
+      "viewport": "390x900",
+      "source": "d27babb5773e722b76f6721262df76f35e2ac30c",
+      "kind": "production component story"
+    },
+    {
+      "path": "mobile-native-edit-dark.png",
+      "sha256": "e87d1df9371f01a0bd02a8d54f4cedcb718698dd9bf78f66b4c8fc31b60fd221",
+      "viewport": "390x844",
+      "source": "d27babb5773e722b76f6721262df76f35e2ac30c",
+      "kind": "actual native app, browser emulation"
+    }
+  ],
+  "visualReview": {
+    "reviewer": "review_mobile_ui_a",
+    "source": "d27babb5773e722b76f6721262df76f35e2ac30c",
+    "result": "approved inspected states",
+    "disclosure": "agent review only"
+  },
+  "physical": {
+    "required": true,
+    "status": "pending actual installed Pixel keyboard actions",
+    "preflight": "runtime, worker and fresh invitation verified; first DNS ENOTFOUND retained; window stopped after verification",
+    "invitation": "expired; never reuse preflight or historical URLs",
+    "processes": "owned app/tunnel/browser processes stopped; unrelated processes preserved"
+  }
+}
