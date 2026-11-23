@@ -1,8 +1,13 @@
 import { randomUUID } from 'node:crypto';
 import { expect, test } from '@playwright/test';
 import type { Page, Request } from '@playwright/test';
-import type { IDocumentData } from '@univerjs/core';
-import { DOCS_NORMAL_EDITOR_UNIT_ID_KEY, DocumentFlavor, LocaleType } from '@univerjs/core';
+import type { IDocumentData, IWorkbookData } from '@univerjs/core';
+import {
+  DOCS_FORMULA_BAR_EDITOR_UNIT_ID_KEY,
+  DOCS_NORMAL_EDITOR_UNIT_ID_KEY,
+  DocumentFlavor,
+  LocaleType,
+} from '@univerjs/core';
 import { docFormulas } from '@spinel/doc-formulas';
 import { SyncServer } from '@spinel/sync-server';
 import sharp from 'sharp';
@@ -49,6 +54,110 @@ async function phoneText(page: Page, unitId: string) {
 
 test.describe('downloaded native editors', () => {
   test.setTimeout(180_000);
+
+  test('phone Sheet pen edits replay from the file list once with original formulas intact', async ({
+    browser,
+    baseURL,
+  }, info) => {
+    const seed = {
+      id: 'phone-sheet',
+      name: 'Phone Sheet',
+      appVersion: '1.3.1',
+      locale: LocaleType.EN_US,
+      styles: {},
+      sheetOrder: ['first'],
+      sheets: {
+        first: {
+          id: 'first',
+          name: 'Sheet1',
+          rowCount: 100,
+          columnCount: 26,
+          defaultRowHeight: 24,
+          defaultColumnWidth: 88,
+          cellData: {
+            0: { 0: { v: 10 } },
+            1: { 0: { v: 15 } },
+            2: { 0: { v: 20 } },
+            3: { 0: { v: 26 } },
+            4: { 1: { f: '=SUM(A:A)' } },
+          },
+        },
+      },
+    } as IWorkbookData;
+    const f = await fixture(browser, baseURL!, info, 'sheet', { phone: true, seed });
+    const region = f.page.getByRole('region', { name: 'Sheet document', exact: true });
+    const selectPhoneCell = async (column: number, row: number) => {
+      const grid = region.getByLabel('Spreadsheet grid', { exact: true });
+      const box = (await grid.boundingBox())!;
+      // The isolated seed fixes row/column sizes; assert the selected reference
+      // below rather than using a writable native facade or a desktop name box.
+      await f.page.touchscreen.tap(box.x + 80 + column * 88, box.y + 40 + row * 24);
+    };
+    try {
+      await f.download();
+      const baseline = await f.read();
+      await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
+      await f.page.getByRole('button', { name: `${f.item.name} Sheet`, exact: true }).click();
+      await synced(f.page);
+      await expect(region).toHaveAttribute('data-mobile', 'true');
+      await selectPhoneCell(1, 4);
+      await expect(region.getByRole('button', { name: 'Read B5', exact: true })).toHaveText(
+        '=SUM(A:A)',
+      );
+      await expect(region.locator('[data-u-comp="mobile-formula-bar"]')).toBeHidden();
+      await f.network.setOffline(true);
+      await selectPhoneCell(2, 4);
+      await region.getByRole('button', { name: 'Edit C5', exact: true }).click();
+      await expect(
+        f.page.locator(`[id="__editor_${DOCS_FORMULA_BAR_EDITOR_UNIT_ID_KEY}"]`),
+      ).toBeFocused();
+      await f.page.keyboard.type('=SUM(A:B)');
+      await region
+        .locator('[data-u-comp="mobile-formula-bar"]')
+        .getByRole('button', { name: 'OK', exact: true })
+        .click();
+      await savedLocally(f.page);
+      // Native OK advances one row; inspect the cell we just authored.
+      // Inspect B5 first so this is not a deliberate rapid double tap on C5.
+      await selectPhoneCell(1, 4);
+      await expect(region.getByRole('button', { name: 'Read B5', exact: true })).toHaveText(
+        '=SUM(A:A)',
+      );
+      await selectPhoneCell(2, 4);
+      await expect(region.getByRole('button', { name: 'Read C5', exact: true })).toHaveText(
+        '=SUM(A:B)',
+      );
+      expect(pending((await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint)).toBe(true);
+      expect(await f.read()).toEqual(baseline);
+      await f.page.getByRole('button', { name: 'Back to files', exact: true }).click();
+      await expect(f.page.locator('.univer-container')).toHaveCount(0);
+      const before = f.network.outgoing.length;
+      await f.network.setOffline(false);
+      await expect
+        .poll(async () =>
+          pending((await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint),
+        )
+        .toBe(false);
+      const saved = await f.read();
+      expect(saved.revision).toBe(baseline.revision + 1);
+      const data = saved.snapshot.sheets.first.cellData!;
+      for (const [row, value] of [10, 15, 20, 26].entries()) expect(data[row]?.[0]?.v).toBe(value);
+      expect(data[4]?.[1]?.f).toBe('=SUM(A:A)');
+      expect(data[4]?.[2]?.f).toBe('=SUM(A:B)');
+      const submits = f.network.outgoing.slice(before).filter((frame) => frame.type === 'submit');
+      expect(new Set(submits.map((frame) => frame.mutationId)).size).toBe(1);
+      await f.page.getByRole('button', { name: `${f.item.name} Sheet`, exact: true }).click();
+      await synced(f.page);
+      await selectPhoneCell(2, 4);
+      await expect(region.getByRole('button', { name: 'Read C5', exact: true })).toHaveText(
+        '=SUM(A:B)',
+      );
+      await matchesServer(f.page, saved);
+      expect(f.errors).toEqual([]);
+    } finally {
+      await f.close();
+    }
+  });
 
   test('the file list replays queued Doc and Sheet edits without reopening either editor', async ({
     browser,

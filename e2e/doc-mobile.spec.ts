@@ -20,6 +20,7 @@ import { DocumentStore } from '../src/server/workspace/documents.ts';
 import { recordNativeSnapshots } from './sync-snapshot.ts';
 import { beginWriting, selectFirstWord, textPoint } from './doc-touch.ts';
 import { registerDocEditingTests } from './doc-editing.ts';
+import { keyboardOcclusion } from './mobile-keyboard.ts';
 
 if (process.env.SPINEL_DOC_EDITING_MOBILE === '1')
   test.describe('on-demand native Doc editing', { tag: '@doc-editing-mobile' }, () => {
@@ -75,24 +76,6 @@ interface DocSelectionEvidence {
   bounds?: { left: number; right: number; top: number; bottom: number };
   scroll: number;
   text: string;
-}
-
-// Chromium desktop automation does not open an OS keyboard. Drive the browser
-// visual-viewport event contract explicitly; physical iOS/Android checks remain
-// separate. This exercises the native toolbar response, not an actual keyboard.
-async function keyboardOcclusion(page: Page, height: number) {
-  await page.evaluate((height) => {
-    const viewport = window.visualViewport;
-    if (!viewport) throw new Error('Visual viewport is unavailable.');
-    Reflect.deleteProperty(viewport, 'height');
-    const available = viewport.height;
-    if (height)
-      Object.defineProperty(viewport, 'height', {
-        configurable: true,
-        get: () => available - height,
-      });
-    viewport.dispatchEvent(new Event('resize'));
-  }, height);
 }
 
 async function capture(page: Page, info: TestInfo, name: string, ticket = 'spn-072') {

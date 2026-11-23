@@ -185,10 +185,10 @@ same collaborator dialog; authorized Share remains in More.
 
 ### 📱 Persistent Sheet cell editor (SPN-165)
 
-Design prerequisite for [SPN-165](../todo/SPN-165.md), following the owner's
-2026-11-23 phone observations and retarget. This specifies the proposed UI;
-implementation and actual light/dark/390px and physical-keyboard acceptance
-remain pending. Native Sheet editing remains one session, with its existing
+Design pattern for [SPN-165](../implementation/SPN-165.md), following the owner's
+2026-11-23 phone observations and retarget. The implementation record tracks
+actual light/dark/390px evidence and required physical-keyboard acceptance.
+Native Sheet editing remains one session, with its existing
 formula, commit/cancel, undo/redo and permission semantics.
 
 ```text

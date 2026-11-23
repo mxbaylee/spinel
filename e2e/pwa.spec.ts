@@ -1,9 +1,11 @@
 import { expect, test } from '@playwright/test';
 import type { IWorkbookData, ICellData } from '@univerjs/core';
+import { DOCS_FORMULA_BAR_EDITOR_UNIT_ID_KEY } from '@univerjs/core';
 import { openDatabase } from '../server/database.ts';
 import { AuthStore, COOKIE_NAME } from '../src/server/auth/store.ts';
 import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { interruptibleNetwork } from './live-network.ts';
+import { keyboardOcclusion } from './mobile-keyboard.ts';
 
 test('configured HTTPS installs, supports sheet touch editing and opens only a generic offline page', async ({
   page,
@@ -82,10 +84,18 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     await expect(sheet).toHaveAttribute('data-mobile', 'true');
     // The mobile SDK also renders an invisible embedded text-editor canvas.
     const canvas = sheet.getByLabel('Spreadsheet grid', { exact: true });
-    async function startEdit(value: string) {
+    const selectFirstCell = async () => {
+      const box = (await canvas.boundingBox())!;
+      // Inspect another cell first. Two rapid canvas taps at the same location
+      // intentionally mean native double-tap editing, even across toolbar clicks.
+      await page.touchscreen.tap(box.x + 168, box.y + 40);
+      await expect(sheet.getByRole('button', { name: 'Read B1', exact: true })).toBeVisible();
+      await page.touchscreen.tap(box.x + 80, box.y + 40);
+    };
+    async function startEdit(value: string, entry: 'pen' | 'double-tap' = 'double-tap') {
       await canvas.scrollIntoViewIfNeeded();
       const box = (await canvas.boundingBox())!;
-      // Touch the first visible data cell twice to open the SDK's mobile editor.
+      // Selection alone never opens input; both pen and native double tap do.
       expect(
         await canvas.evaluate(
           (node, point) => document.elementFromPoint(point.x, point.y) === node,
@@ -98,26 +108,125 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
       const scrollBefore = await page.evaluate(() => scrollY);
       await page.touchscreen.tap(box.x + 80, box.y + 40);
       expect(await page.evaluate(() => scrollY)).toBe(scrollBefore);
-      await page.touchscreen.tap(box.x + 80, box.y + 40);
+      if (entry === 'pen') {
+        await expect(sheet.locator('[data-u-comp="mobile-formula-bar"]')).toBeHidden();
+        await expect(sheet.getByRole('group', { name: 'Selected cell' })).toBeVisible();
+        await expect(sheet.getByRole('button', { name: 'Read A1', exact: true })).toHaveText(
+          'Empty cell',
+        );
+        await sheet.getByRole('button', { name: /^Edit [A-Z]+\d+$/ }).tap();
+      } else await page.touchscreen.tap(box.x + 80, box.y + 40);
       const bar = sheet.locator('[data-u-comp="mobile-formula-bar"]');
       await expect(bar).toBeVisible();
+      await expect(
+        page.locator(`[id="__editor_${DOCS_FORMULA_BAR_EDITOR_UNIT_ID_KEY}"]`),
+      ).toBeFocused();
       await page.keyboard.type(value);
       const confirm = bar.getByRole('button', { name: 'OK', exact: true });
       const button = (await confirm.boundingBox())!;
       expect(button.height).toBeGreaterThanOrEqual(44);
       return confirm;
     }
-    async function edit(value: string) {
-      const confirm = await startEdit(value);
+    async function edit(value: string, entry?: 'pen' | 'double-tap') {
+      const confirm = await startEdit(value, entry);
       await confirm.tap();
       await saved();
     }
-    await edit('17');
+    await edit('17', 'pen');
     await expect
       .poll(
         async () => cells(await read()).find((cell) => cell.row === 0 && cell.column === 0)?.value,
       )
       .toBe(17);
+    // Native OK advances the selection. Read the authored cell after selecting it.
+    await selectFirstCell();
+    await expect(sheet.getByRole('button', { name: 'Read A1', exact: true })).toHaveText('17');
+    await sheet.getByRole('button', { name: 'Edit A1', exact: true }).tap();
+    const nativeBar = sheet.locator('[data-u-comp="mobile-formula-bar"]');
+    const inputBefore = await page
+      .locator(`[id="__editor_${DOCS_FORMULA_BAR_EDITOR_UNIT_ID_KEY}"]`)
+      .elementHandle();
+    await page.keyboard.type('-discarded');
+    const unchangedCanvas = await canvas.elementHandle();
+    await cdp.send('Emulation.setSafeAreaInsetsOverride', {
+      insets: { bottom: 34, bottomMax: 34 },
+    });
+    await expect
+      .poll(() => nativeBar.evaluate((node) => getComputedStyle(node).paddingBottom))
+      .toBe('34px');
+    for (const inset of [320, 240, 320, 0]) {
+      await keyboardOcclusion(page, inset);
+      await expect
+        .poll(async () => {
+          const box = (await nativeBar.boundingBox())!;
+          const bottom = await page.evaluate(
+            () => visualViewport!.offsetTop + visualViewport!.height,
+          );
+          return Math.round(box.y + box.height - bottom);
+        })
+        .toBe(0);
+      expect(await inputBefore!.evaluate((node) => node.isConnected)).toBe(true);
+      expect(await unchangedCanvas!.evaluate((node) => node.isConnected)).toBe(true);
+      const tools = await sheet
+        .getByRole('button', { name: 'Open sheet tools', exact: true })
+        .boundingBox();
+      expect(tools!.y + tools!.height).toBeLessThanOrEqual((await nativeBar.boundingBox())!.y);
+    }
+    await nativeBar.getByRole('button', { name: 'Cancel', exact: true }).tap();
+    await saved();
+    expect(cells(await read()).find((cell) => cell.row === 0 && cell.column === 0)?.value).toBe(17);
+    await expect(sheet.getByRole('button', { name: 'Read A1', exact: true })).toHaveText('17');
+    await sheet.getByRole('button', { name: 'Edit A1', exact: true }).tap();
+    await expect(
+      page.locator(`[id="__editor_${DOCS_FORMULA_BAR_EDITOR_UNIT_ID_KEY}"]`),
+    ).toBeFocused();
+    // This project emulates Android; ControlOrMeta follows the Mac test host.
+    await page.keyboard.press('Control+A');
+    await page.keyboard.type('=SUM(1,2)');
+    // The nonterminal native caret must stay before ')' across both viewport
+    // changes. Continued typing proves the draft and caret, not just DOM identity.
+    await page.keyboard.press('ArrowLeft');
+    const nativeInput = page.locator(`[id="__editor_${DOCS_FORMULA_BAR_EDITOR_UNIT_ID_KEY}"]`);
+    const formulaInput = await nativeInput.elementHandle();
+    for (const inset of [320, 0]) {
+      await keyboardOcclusion(page, inset);
+      await expect
+        .poll(async () => {
+          const box = (await nativeBar.boundingBox())!;
+          const bottom = await page.evaluate(
+            () => visualViewport!.offsetTop + visualViewport!.height,
+          );
+          return Math.round(box.y + box.height - bottom);
+        })
+        .toBe(0);
+      await expect(nativeInput).toBeFocused();
+      expect(await formulaInput!.evaluate((node) => node.isConnected)).toBe(true);
+      const operator = nativeBar.getByRole('button', { name: '=', exact: true });
+      await expect(operator).toBeVisible();
+      const tools = (await sheet
+        .getByRole('button', { name: 'Open sheet tools', exact: true })
+        .boundingBox())!;
+      const operatorBounds = (await operator.boundingBox())!;
+      expect(tools.y + tools.height).toBeLessThanOrEqual(operatorBounds.y);
+      expect(tools.x).toBeGreaterThanOrEqual(0);
+      expect(tools.x + tools.width).toBeLessThanOrEqual(page.viewportSize()!.width);
+      expect(operatorBounds.y).toBeGreaterThanOrEqual(0);
+      await page.keyboard.type('0');
+    }
+    await nativeBar.getByRole('button', { name: 'OK', exact: true }).tap();
+    await saved();
+    const formulaSnapshot = await read();
+    expect(formulaSnapshot.sheets[formulaSnapshot.sheetOrder[0]].cellData?.[0]?.[0]?.f).toBe(
+      '=SUM(1,200)',
+    );
+    await selectFirstCell();
+    await expect(sheet.getByRole('button', { name: 'Read A1', exact: true })).toHaveText(
+      '=SUM(1,200)',
+    );
+    await cdp.send('Emulation.setSafeAreaInsetsOverride', { insets: {} });
+    await sheet.getByRole('button', { name: 'Undo', exact: true }).tap();
+    await saved();
+    expect(cells(await read()).find((cell) => cell.row === 0 && cell.column === 0)?.value).toBe(17);
     await canvas.scrollIntoViewIfNeeded();
     let box = (await canvas.boundingBox())!;
     const x = box.x + 150,
@@ -230,6 +339,7 @@ test('configured HTTPS installs, supports sheet touch editing and opens only a g
     await expect(page).toHaveURL(/\/sign-in$/);
     await expect(page.getByText('Private phone budget')).toHaveCount(0);
   } finally {
+    await keyboardOcclusion(page, 0).catch(() => undefined);
     await network.setOffline(false);
     db.close();
   }
