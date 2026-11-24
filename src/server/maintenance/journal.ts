@@ -624,6 +624,7 @@ export class RecoveryJournal {
       | 'journal.json'
       | 'control.sock'
       | 'restore-jobs'
+      | `restore-${string}`
       | `pending-${string}`
       | `rejected-${string}.json`,
   ) {
