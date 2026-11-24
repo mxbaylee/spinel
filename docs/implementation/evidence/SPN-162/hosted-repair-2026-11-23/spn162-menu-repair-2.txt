@@ -1,0 +1,16 @@
+
+(!) build.outDir must not be the same directory of root or a parent directory of root as this could cause Vite to overwriting source files with build outputs.
+
+Review light: space-review--deep-tree
+Review light: space-review--metadata-dialog-focus
+Review light: space-review--move-or-reorder
+Review light: space-review--mutation-failure
+Review light: space-review--trash-subtree-confirmation
+Review light: space-review--file-admin
+Review light: spaces-root-actions--menu-labels
+Review light: spaces-root-actions--rename
+Review light: spaces-root-actions--move
+Review dark: space-review--deep-tree
+WATCHDOG abort rss=522608 pressure=2
+serial: SIGTERM; killing the run.
+WATCHDOG peakKiB=1075168 aborted=true

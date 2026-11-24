@@ -797,7 +797,7 @@ export const DeepTree: Story = {
     const scrollLeft = region.scrollLeft;
     await userEvent.click(action);
     const menu = within(await page.findByRole('menu', { name: 'More actions for Level 14' }));
-    for (const name of ['Rename', 'Move or reorder', 'Trash'])
+    for (const name of ['Rename…', 'Move or reorder…', 'Move to Trash'])
       await expect(menu.getByRole('menuitem', { name })).toBeVisible();
     await expect(region.scrollLeft).toBe(scrollLeft);
     await userEvent.keyboard('{Escape}');

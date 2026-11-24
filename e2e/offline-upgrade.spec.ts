@@ -305,7 +305,10 @@ test('the actual SPN-054 eager client keeps its pending Doc and lazy files durin
       applicationSource: a.applicationSource,
     });
     browser = await chromium.launch({ headless: true });
-    f = await fixture(browser, origin, info, 'doc', { databasePath });
+    f = await fixture(browser, origin, info, 'doc', {
+      databasePath,
+      offlineActionLabel: 'Available offline on this device',
+    });
     observation = await startOfflineUpgradeObservation(
       browser,
       f.context,
