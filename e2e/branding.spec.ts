@@ -93,3 +93,63 @@ test('public identity assets load and preview clearly in light, dark and phone l
     database.close();
   }
 });
+
+test('initial HTML and app admission retain the brand, chosen theme and reduced motion', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  // Hold the actual script boundary, then the actual account boundary. No copied UI fixture.
+  await page.addInitScript(() => localStorage.setItem('spinel-theme', 'dark'));
+  await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' });
+  let releaseScripts!: () => void;
+  let releaseSession!: () => void;
+  const scripts = new Promise<void>((resolve) => {
+    releaseScripts = resolve;
+  });
+  const session = new Promise<void>((resolve) => {
+    releaseSession = resolve;
+  });
+  await page.route('**/*', async (route) => {
+    if (route.request().resourceType() === 'script') await scripts;
+    if (new URL(route.request().url()).pathname === '/api/auth/session') await session;
+    await route.continue();
+  });
+  try {
+    await page.goto('/sign-in', { waitUntil: 'commit' });
+    const startup = page.locator('.sp-startup');
+    await expect(startup.getByRole('status')).toContainText('Loading your workspace…');
+    await expect(startup.getByText('spinel', { exact: true })).toBeVisible();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    await expect(startup.locator('.sp-startup-gem')).toHaveCSS('animation-name', 'none');
+    await expect(startup.locator('.gem')).toHaveCSS('transform', 'matrix(-1, 0, 0, -1, 0, 0)');
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await expect(startup.locator('.sp-startup-gem')).toHaveCSS(
+      'animation-name',
+      'sp-startup-pulse',
+    );
+    await expect(startup.locator('.sp-startup-gem')).toHaveCSS('animation-duration', '1.6s');
+    const firstScale = await startup
+      .locator('.sp-startup-gem')
+      .evaluate((element) => getComputedStyle(element).transform);
+    await expect
+      .poll(() =>
+        startup
+          .locator('.sp-startup-gem')
+          .evaluate((element) => getComputedStyle(element).transform),
+      )
+      .not.toBe(firstScale);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    const request = page.waitForRequest('**/api/auth/session');
+    releaseScripts();
+    await request;
+    await expect(startup.getByRole('status')).toContainText('Loading your workspace…');
+    await expect(startup.locator('.sp-startup-gem')).toHaveCSS('animation-name', 'none');
+    releaseSession();
+    await expect(page.getByRole('button', { name: 'Sign in with a passkey' })).toBeVisible();
+    await expect(startup).toHaveCount(0);
+  } finally {
+    releaseScripts();
+    releaseSession();
+    await page.unrouteAll({ behavior: 'wait' });
+  }
+});

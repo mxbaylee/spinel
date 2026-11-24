@@ -50,12 +50,14 @@ export const InContext: Story = {
   render: () => (
     <section className="entity-gallery" aria-label="Entity icon placement examples">
       <h1>Create and browse</h1>
-      <p>Artwork examples. Space creation and navigation are previews of a future feature.</p>
+      <p>
+        Artwork examples. The Dashboard New menu uses these type marks; saved items keep their
+        chosen identity.
+      </p>
       <div className="entity-example-actions">
         {kinds.map((kind) => (
-          <button key={kind} type="button" disabled={kind === 'space'}>
+          <button key={kind} type="button">
             <EntityIcon kind={kind} size={32} /> Create {entityLabels[kind]}
-            {kind === 'space' ? ' (coming later)' : ''}
           </button>
         ))}
       </div>
@@ -65,10 +67,7 @@ export const InContext: Story = {
           <li key={kind}>
             <EntityIcon kind={kind} />{' '}
             <span>{['Autumn recipes', 'Household budget', 'Our household'][i]}</span>
-            <small>
-              {entityLabels[kind]}
-              {kind === 'space' ? ' · Preview' : ''}
-            </small>
+            <small>{entityLabels[kind]}</small>
           </li>
         ))}
       </ul>

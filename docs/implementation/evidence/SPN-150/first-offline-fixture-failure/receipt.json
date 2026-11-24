@@ -1,0 +1,10 @@
+{
+  "ticket": "SPN-150",
+  "status": "failed, uncommitted first local candidate",
+  "disposition": "OfflineEntry story saw the initial about:blank document. Replaced readyState-only readiness with bounded observation of the actual response heading in the current frame document. No application assertion relaxed. Pulse was subsequently refined per owner request.",
+  "files": {
+    "failed-current-production-shell-startup--offline-entry-light.png": "5c605063adb238aad63fdd8b03398209fdbcca955e52122f79f0382e48b7f363",
+    "failed-current-production-shell-startup--offline-entry-light.json": "ac49621010a90b46a201421aff5cdb2b323f803d4429f633d6141290b1d967dd",
+    "manifest.json": "b58d8f044bcf5b7d61ebe6ea787108faadef74ca13cacd707b65c223381509b7"
+  }
+}

@@ -1107,6 +1107,12 @@ export function Dashboard({
                   actions={[
                     ...newKinds.map((kind) => ({
                       label: fileKindLabel[kind],
+                      icon:
+                        kind === 'folder' ? (
+                          <ProfileIcon icon="lucide:folder" size={20} />
+                        ) : (
+                          <EntityIcon kind={kind} size={20} />
+                        ),
                       onClick: () => edit('new', undefined, kind),
                       disabled: busy,
                     })),

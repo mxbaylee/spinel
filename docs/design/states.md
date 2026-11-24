@@ -164,3 +164,18 @@ SDK-owned dialogs through unsupported hooks. The proposal uses a 20 px decorativ
 
 The reused profile icon picker also has a decorative title icon; its native dialog
 keeps the existing accessible title and keyboard behavior.
+
+### 💎 Startup branding (SPN-150)
+
+Before usable application navigation exists, the initial HTML and admitted app
+reuse the existing 52 px gem, lowercase wordmark and one region-local loading
+status. This implements the owner's accepted startup composition, not the runner
+proposal above. A visible, gentle 1.6-second pulse (94%–106% scale) decorates the gem wrapper; its
+independent dark-theme inversion remains intact. Reduced motion shows a still
+gem. The label makes no progress, connectivity or persistence claim. Existing
+workspace navigation remains usable when only its content is loading.
+
+New/Add page choices reuse the approved Doc/Sheet/Space type artwork beside
+unchanged text; folders retain a functional folder icon. Saved item identity
+continues to use the person's chosen artwork. See the
+[complete branding audit](../implementation/SPN-150.md).

@@ -648,6 +648,12 @@ export function Space({
               label="Add page"
               actions={(['doc', 'sheet', 'folder'] as const).map((kind) => ({
                 label: kind === 'doc' ? 'Doc' : kind === 'sheet' ? 'Sheet' : 'Folder',
+                icon:
+                  kind === 'folder' ? (
+                    <ProfileIcon icon="lucide:folder" size={20} />
+                  ) : (
+                    <EntityIcon kind={kind} size={20} />
+                  ),
                 disabled: busy || unavailableManagement,
                 onClick: () => {
                   close();

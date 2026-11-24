@@ -59,7 +59,9 @@ export function AccessState({
     <div className="sp-ui access-state">
       <header className="access-state-header">
         <span className="access-state-brand">
-          <GemLogo size={32} />
+          <span className={kind === 'loading' ? 'sp-startup-gem' : undefined} aria-hidden="true">
+            <GemLogo size={32} />
+          </span>
           <strong>spinel</strong>
         </span>
         <ThemeMenu />

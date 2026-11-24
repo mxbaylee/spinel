@@ -301,7 +301,7 @@ export const AppLoading: Story = {
   parameters: { api: { 'GET /api/auth/session': pending() } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(await canvas.findByRole('status')).toHaveTextContent('Loading…');
+    await expect(await canvas.findByRole('status')).toHaveTextContent('Loading your workspace…');
     await expect(canvas.queryByRole('region', { name: 'Space pages' })).not.toBeInTheDocument();
   },
 };
@@ -1170,5 +1170,21 @@ export const FileAdmin: Story = {
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
     await contents(canvasElement);
     await expect(page.getByRole('button', { name: 'Add page' })).toBeVisible();
+  },
+};
+
+export const AddPageArtwork: Story = {
+  parameters: { api: treeApi() },
+  play: async ({ canvasElement }) => {
+    await ready(canvasElement);
+    await contents(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    const add = await page.findByRole('button', { name: 'Add page' });
+    await userEvent.click(add);
+    for (const name of ['Doc', 'Sheet', 'Folder']) {
+      const item = await page.findByRole('menuitem', { name });
+      await expect(item.querySelector('svg')).not.toBeNull();
+      await expect(within(item).queryByRole('img')).not.toBeInTheDocument();
+    }
   },
 };

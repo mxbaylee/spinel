@@ -1,0 +1,71 @@
+.sp-startup {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  padding: 32px 16px;
+  background: var(--sp-bg);
+  color: var(--sp-text);
+  font:
+    1rem/1.5 system-ui,
+    sans-serif;
+}
+.sp-startup-content {
+  display: grid;
+  justify-items: center;
+  gap: 16px;
+  max-width: 100%;
+  text-align: center;
+}
+.sp-startup-gem {
+  display: flex;
+  animation: sp-startup-pulse 1.6s ease-in-out infinite;
+}
+.sp-startup .gem {
+  display: block;
+}
+:root[data-theme='dark'] .sp-startup .gem {
+  transform: rotate(180deg);
+}
+.sp-startup-wordmark {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.sp-startup p {
+  margin: 0;
+  color: var(--sp-muted);
+  overflow-wrap: anywhere;
+}
+@keyframes sp-startup-pulse {
+  0%,
+  100% {
+    transform: scale(0.94);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sp-startup-gem {
+    animation: none;
+  }
+  .sp-startup .gem {
+    transition: none;
+  }
+}
+
+.sp-startup-contained {
+  min-height: 240px;
+}
+.sp-startup-failed .sp-startup-gem {
+  animation: none;
+}
+.sp-startup-failed p {
+  max-width: 40ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .sp-startup .gem {
+    transform: rotate(180deg);
+  }
+}

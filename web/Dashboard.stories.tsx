@@ -1374,3 +1374,17 @@ export const ClearEmptyGlobalScope: Story = {
     await expect(canvas.queryByText('All accessible files')).not.toBeInTheDocument();
   },
 };
+
+export const NewMenuArtwork: Story = {
+  parameters: { api: withSpaces },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(await canvas.findByRole('button', { name: 'New' }));
+    const body = within(canvasElement.ownerDocument.body);
+    for (const name of ['Doc', 'Sheet', 'Space', 'Folder']) {
+      const item = await body.findByRole('menuitem', { name });
+      await expect(item.querySelector('svg')).not.toBeNull();
+      await expect(within(item).queryByRole('img')).not.toBeInTheDocument();
+    }
+  },
+};

@@ -1,8 +1,10 @@
+import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import type { Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+import { startupHtml } from './src/build/startupHtml.tsx';
 import sharp from 'sharp';
 import { CURRENT_SDK_VERSION, shellFiles, SHELL_PLACEHOLDER } from './src/shared/offlineShell.ts';
 import type { RuntimeCompatibility, ShellManifest } from './src/shared/offlineShell.ts';
@@ -100,6 +102,11 @@ export default defineConfig(({ mode }) => {
     root: fileURLToPath(new URL('./web', import.meta.url)),
     plugins: [
       react(),
+      {
+        name: 'spinel-startup-html',
+        transformIndexHtml: (html) =>
+          startupHtml(html, readFileSync(new URL('./src/ui/startup.css', import.meta.url), 'utf8')),
+      },
       offlineShell(compatibility, mode === 'offline-upgrade' ? format : undefined),
     ],
     define: { __SPINEL_RUNTIME_COMPATIBILITY__: JSON.stringify(compatibility) },

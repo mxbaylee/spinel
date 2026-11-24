@@ -1,3 +1,4 @@
+import { StartupScreen } from '../src/ui/StartupScreen.tsx';
 import { AuthEntry } from './AuthEntry.tsx';
 import { MaintenanceShell } from './Maintenance.tsx';
 import { ProfilePage } from './ProfilePage.tsx';
@@ -644,6 +645,7 @@ function AccountApp() {
       />
     );
   if (accountLocked) return <AccountAccessChanged onReopen={() => location.reload()} />;
+  if (!loaded && !user && !spaceReview) return <StartupScreen />;
   if (adminRecovery)
     return (
       <ConsoleRecovery
@@ -659,12 +661,7 @@ function AccountApp() {
       />
     );
   if (spaceReview) {
-    if (!loaded)
-      return (
-        <main className="space-bootstrap">
-          <p role="status">Loading…</p>
-        </main>
-      );
+    if (!loaded) return <StartupScreen />;
     if (unreachable)
       return (
         <main className="space-bootstrap">
@@ -773,7 +770,7 @@ function AccountApp() {
         {loaded && !local && <RestoreNotice notice={restored} />}
         <main>
           {!loaded ? (
-            <p role="status">Loading…</p>
+            <StartupScreen contained />
           ) : unreachable ? (
             <OfflineUnreachable />
           ) : local && location.pathname === '/preview' ? (

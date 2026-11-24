@@ -1,3 +1,4 @@
+import { showStartupFailure } from '../src/ui/startupFailure.ts';
 import { registerAppWorker } from './installApp.ts';
 import {
   CURRENT_SDK_VERSION,
@@ -178,6 +179,5 @@ void boot().catch((error: unknown) => {
       errorName: names.includes(name) ? name : 'UnknownError',
     }),
   );
-  root.textContent =
-    'Spinel could not start. Connect and reload to try again. Your saved device data has not been changed.';
+  showStartupFailure(root);
 });
