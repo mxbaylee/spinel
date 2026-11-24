@@ -30,10 +30,6 @@ repeated tree-level copies. Smaller heads keep their original null fold. It keep
 the prefix/Enter join, its style retain and the final head/tail join in order. Other structural/metadata shapes retain the existing fold. Tests preserve
 the exact earlier build as a work negative and compare raw publications,
 metadata, accumulator ownership and complete applied snapshots.
-The SPN-146 component diagnostic in `scripts/ci/doc-native-runtime/` reuses
-that licensed actual-manager fixture with controlled publication sinks and an
-inspectable browser journal. Generated diagnostic source retains its original
-Apache-2.0 header; archived native/bundle bytes are diagnostic evidence.
 SPN-135 also
 adds opt-in scalar flush observations covering native timer and public entry paths.
 It preserves native operation

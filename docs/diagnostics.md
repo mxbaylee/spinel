@@ -230,6 +230,12 @@ Metric names constrain kind/unit/value. See the
 
 ## Emitter maintenance inventory
 
+🧹 SPN-089 retires SPN-146's opt-in composition/runtime investigation and browser
+request listener. Production operation, save, sync and runtime-sampling emitters
+are unchanged. The bounded scalar native flush observer and strict responsiveness
+budgets remain, with source-identity, native lifecycle/trace and retained-window
+regressions; see [the retirement record](implementation/SPN-089.md#-diagnostic-retirement-and-retained-gate).
+
 📱 SPN-164's explicit `scripts/ci/startup-phone.config.ts` diagnostic build injects
 stage, session request/header/body/verification/settlement, account admission and
 browser connectivity observations. Normal builds do not import the observer.

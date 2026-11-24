@@ -151,9 +151,6 @@ export default defineConfig({
         trace: 'off',
         // SPN-146 attribution only: V8 flags for the patch A/B (for example a larger young generation).
         // Required CI never sets it.
-        ...(process.env.SPN146_AB_V8_FLAGS && {
-          launchOptions: { args: [`--js-flags=${process.env.SPN146_AB_V8_FLAGS}`] },
-        }),
       },
     },
     {
