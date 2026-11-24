@@ -407,3 +407,20 @@ local edit could clear and which duplicated a merge requirement. Weighed across 
 Operator keeps one clear gate per concern; the Owner sees grades about the work; Collaborators and
 Guests are unaffected. Procedure: [run-backlog](../run-backlog.md#3-get-two-independent-grades).
 
+
+## Severity gate replaces the 95/100 score (2026-11-24)
+
+Owner, chat 2026-11-24. Reviews grade findings by severity (blocker, should-fix, nit) and return
+a `pass` or `fix` verdict instead of a score; the gate is two `pass` verdicts on the same commit
+(no open blocker or should-fix). The rubric is written first and frozen for the ticket, adversarial
+testing has a stated scope, checkable facts are recomputed by a script before review, and a ledger
+lists only declined or deferred items so reviewers are not biased by what was already fixed. Each
+round uses fresh full reviews, and after three rounds the open items go to the owner. Earlier
+numeric decisions above (95/100, weights, steps to 100) are history and are superseded by this one.
+
+**Why.** On SPN-155 four rounds scored 90 to 96 without reaching the gate. Early rounds found real
+defects; later ones mostly repeated declined items, raised style, or traded one or two points for
+wording, so the number tracked reviewer mood rather than remaining risk. Weighed across the
+personas: the Operator gets a gate that converges and a clear stopping rule; the Owner sees which
+findings are real defects versus nits; Collaborators and Guests are unaffected.
+Procedure: [run-backlog](../run-backlog.md#3-get-two-independent-grades).
