@@ -179,10 +179,10 @@ export function CopyFileForm({
               'Your copy is ready to open.'}
           </p>
           <div className="copy-file-actions">
-            <Button onClick={onClose}>Close</Button>
             <Button primary disabled={Boolean(unavailable)} onClick={() => onCreated(created)}>
               Open copy
             </Button>
+            <Button onClick={onClose}>Close</Button>
           </div>
         </>
       ) : (

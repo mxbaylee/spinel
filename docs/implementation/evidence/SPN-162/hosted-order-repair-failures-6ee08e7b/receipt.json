@@ -1,0 +1,30 @@
+{
+  "head": "6ee08e7bddf308c9c5b2475d0ca0279ad68de01a",
+  "storybookRun": 45321162257,
+  "artifactId": 14887583215,
+  "zipSha256": "74edb2fdad71507731fd25e242e173f69a1dfa9818164849cc3f122b6081dddb",
+  "retention": "Original artifact expires2026-12-08; selectedfirstfailureevidencepreservedhere.",
+  "repairs": [
+    "AdminDiagnostics existing gap assertion nowchecksaffirmativebeforeCancel, retaining8pxgap/horizontal-or-verticalcontract.",
+    "CopyFile completedreceiptplacesOpencopybeforeClose withsameonCreated/unavailableguard."
+  ],
+  "supervisorFailure": {
+    "run": 45321162160,
+    "job": 138200154104,
+    "testsPassed": 130,
+    "testsFailed": 1,
+    "observed": "EADDRINUSE127.0.0.1:39617 before failed-freeze-publication scenario failure",
+    "sourceImpact": "supervisor,testharnessandserverappbyteidenticalupstream; no production/testlistenerchange introduced here",
+    "disposition": "Preservefirstfailure; nextintegrated-headsuite remainsrequired. Portallocationcollisionis indicated, not a waiver or assertedfix."
+  },
+  "sha256": {
+    "failed-dashboard-copyfile--completed-while-offline-phone.png": "e66ae23ab3cf2ff13be498a8e93ab0b17b11493869a4d48539a4801627615fdb",
+    "failed-dashboard-copyfile--completed-after-dismissal-phone.json": "6042785dff4a2afd33f4d17c83e38d9635e0241624e39a7e9ff3f39622cac594",
+    "failed-dashboard-copyfile--completed-after-dismissal-phone.png": "98f9736c8676a090b3942eef19d7b34444940f1da2ad6f03d581cd3a64fd9a50",
+    "manifest-excerpt.json": "6a2bb56ca2e8ae87ed9caf19fc05ceb155c790997aca856a958f9fd37ef01679",
+    "failed-current-production-admin-diagnostics--confirmation-phone.json": "e185eb1816ad1114dc9318ee2aae3c8d07816092c64c051874c508e2dfc6e481",
+    "failed-current-production-admin-diagnostics--confirmation-phone.png": "910e76e042540ce0cee2216fbdab0ac3cce7bfc91e7fa2353a1fe2277c0b04fe",
+    "failed-dashboard-copyfile--completed-while-offline-phone.json": "fd44764724f2868cf59b119059940a4f31c94b4566e2e3785d3595f82d5356bd",
+    "supervisor-port-failure.txt": "2c3c099d8acad67074b9acd37bb0384d565de60b533540cefe92100e9af0f2bd"
+  }
+}

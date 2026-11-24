@@ -79,8 +79,8 @@ export const Confirmation: Story = {
     const cancel = within(dialog).getByRole('button', { name: 'Cancel' });
     const truncate = within(dialog).getByRole('button', { name: 'Truncate diagnostics' });
     await waitFor(() => {
-      const first = cancel.getBoundingClientRect();
-      const second = truncate.getBoundingClientRect();
+      const first = truncate.getBoundingClientRect();
+      const second = cancel.getBoundingClientRect();
       expect(second.left >= first.right + 8 || second.top >= first.bottom + 8).toBe(true);
     });
   },

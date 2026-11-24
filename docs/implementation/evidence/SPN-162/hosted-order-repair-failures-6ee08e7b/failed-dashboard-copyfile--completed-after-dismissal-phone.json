@@ -1,0 +1,35 @@
+{
+  "id": "dashboard-copyfile--completed-after-dismissal",
+  "variant": "phone",
+  "message": "Error: dashboard-copyfile--completed-after-dismissal: no swallowed play exceptions\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  -  1\n+ Received  + 11\n\n- Array []\n+ Array [\n+   Object {\n+     \"message\": \"expected [ …(2) ] to deeply equal []\",\n+     \"name\": \"AssertionError\",\n+     \"stack\": \"AssertionError: expected [ …(2) ] to deeply equal []\n+     at i (http://127.0.0.1:6007/assets/dialogBounds-BbdE0irp.js:1:1981)\n+     at play (http://127.0.0.1:6007/assets/CopyFile.stories-DYUOMDwE.js:1:4409)\n+     at async PG.runPhase (http://127.0.0.1:6007/assets/iframe-C2lhq1SS.js:904:607)\n+     at async PG.render (http://127.0.0.1:6007/assets/iframe-C2lhq1SS.js:904:3467)\",\n+   },\n+ ]\n    at captureRawStack (/home/runner/work/spinel/spinel/node_modules/playwright-core/lib/coreBundle.js:9282:17)\n    at callMatcherAsStep (/home/runner/work/spinel/spinel/node_modules/playwright/lib/matchers/expect.js:13316:57)\n    at Object.toEqual (/home/runner/work/spinel/spinel/node_modules/playwright/lib/matchers/expect.js:13308:23)\n    at waitForStory (/home/runner/work/spinel/spinel/scripts/screenshots.ts:631:61)\n    at async file:///home/runner/work/spinel/spinel/scripts/screenshots.ts:231:9",
+  "filename": "failed-dashboard-copyfile--completed-after-dismissal-phone.png",
+  "storybook": {
+    "phase": "finished",
+    "storyFinished": {
+      "storyId": "dashboard-copyfile--completed-after-dismissal",
+      "status": "success"
+    },
+    "playErrors": [
+      {
+        "event": "playFunctionThrewException",
+        "count": 1,
+        "samples": [
+          "{\"name\":\"AssertionError\",\"message\":\"expected [ …(2) ] to deeply equal []\",\"stack\":\"AssertionError: expected [ …(2) ] to deeply equal []\\n    at i (http://127.0.0.1:6007/assets/dialogBounds-BbdE0irp.js:1:1981)\\n    at play (http://127.0.0.1:6007/assets/CopyFile.stories-DYUOMDwE.js:1:4409)\\n    at async PG.runPhase (http://127.0.0.1:6007/assets/iframe-C2lhq1SS.js:904:607)\\n    at async PG.render (http://127.0.0.1:6007/assets/iframe-C2lhq1SS.js:904:3467)\"}"
+        ]
+      },
+      {
+        "event": "unhandledErrorsWhilePlaying",
+        "count": 0,
+        "samples": []
+      }
+    ]
+  },
+  "accessibility": "- dialog \"Make a copy\":\n  - heading \"Make a copy\" [level=2]\n  - button \"Close dialog\": ×\n  - form \"Make a copy\":\n    - status: Created October budget (copy).\n    - paragraph: Your copy is ready to open.\n    - button \"Close\"\n    - button \"Open copy\"",
+  "nativeGeometry": {
+    "viewport": {
+      "width": 390,
+      "height": 900,
+      "scale": 1
+    }
+  }
+}
