@@ -129,9 +129,7 @@ async function removeDialog(page: Page, name: string) {
 }
 async function listDownload(page: Page, name: string) {
   await page.getByRole('button', { name: `More actions for ${name}`, exact: true }).click();
-  await page
-    .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
-    .click();
+  await page.getByRole('menuitem', { name: 'Make available offline', exact: true }).click();
 }
 async function downloaded(page: Page, name: string) {
   await expect(
@@ -283,9 +281,7 @@ test('a denied download offers offline storage guidance without leaving the edit
     const href = f.page.url();
     const canvas = await f.page.locator('.univer-container canvas').first().elementHandle();
     await f.page.getByRole('button', { name: 'Document actions', exact: true }).click();
-    await f.page
-      .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
-      .click();
+    await f.page.getByRole('menuitem', { name: 'Make available offline', exact: true }).click();
     await downloaded(f.page, f.item.name);
     const result = f.page.getByRole('dialog', { name: 'Offline availability', exact: true });
     await expect(result.getByText(/Your browser did not grant storage protection/)).toBeVisible();
@@ -349,9 +345,7 @@ test('an unanswered storage prompt never holds up the download, and its answer u
     await f.page.goto(`/?item=${f.item.id}`);
     await expect(saveStatus(f.page)).toHaveText('All changes saved.', { timeout: 30_000 });
     await f.page.getByRole('button', { name: 'Document actions', exact: true }).click();
-    await f.page
-      .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
-      .click();
+    await f.page.getByRole('menuitem', { name: 'Make available offline', exact: true }).click();
     await downloaded(f.page, f.item.name);
     const result = f.page.getByRole('dialog', { name: 'Offline availability', exact: true });
     const deciding = result.getByText(/still deciding on storage protection/);

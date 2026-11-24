@@ -1,0 +1,17 @@
+{
+  "source": "854163373f1562e57fcd9d7be24cb0980b2400fc",
+  "run": 45309230881,
+  "attempt": 1,
+  "job": 138162210426,
+  "artifact": 14882283946,
+  "artifactSha256": "32f8fa595f876c28098557169fdc6955247416b3f9de5489cb6d320aa35325b2",
+  "expiresAt": "2026-12-08T02:16:20Z",
+  "disposition": "DeepTree dynamic label list retained old Rename/Move or reorder/Trash text. Update the exact list to match accepted labels; preserve geometry, reveal, focus, menu and disabled assertions. All prior targeted states passed; full catalogue exposed this omitted owner. Broaden local selection to all affected Space production stories.",
+  "files": {
+    "failed-space-review--deep-tree-light.png": "52f53ee63cde9bbb7f403946744f44b2cb1b7574b2783d8e782195e12cc5523e",
+    "failed-space-review--deep-tree-light.json": "e9fd4b21bd65f83f8a7466f72d1bcb67d4923c8bf46f61ad657357724ad661fb",
+    "manifest-excerpt.json": "eabdfc4cb548a8ecd2f69308c222f45e4a7d4541a261ca1a241c1af11481fc29"
+  },
+  "originalManifestSha256": "a7c679df544341f4cc88ddfd533c7678bf5c0efd3d89662ebe28cdb4bbcb10f7",
+  "manifestNote": "Derived DeepTree-only excerpt with complete original failure and original catalogue counts; full manifest remains in digest-bound supplementary artifact."
+}

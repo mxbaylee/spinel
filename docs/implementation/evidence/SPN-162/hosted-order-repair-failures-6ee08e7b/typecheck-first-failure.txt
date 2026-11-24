@@ -1,0 +1,21 @@
+Run45321162160 job138200154149 source6ee08e7bddf308c9c5b2475d0ca0279ad68de01a
+2026-11-24T03:54:06.1644627Z ##[error]scripts/screenshots.ts(91,52): error TS2345: Argument of type '(root?: ParentNode) => { checked: number; skipped: number; violations: string[]; }' is not assignable to parameter of type 'PageFunction<void, { checked: number; skipped: number; violations: string[]; }>'.
+2026-11-24T03:54:06.1653824Z   Type '(root?: ParentNode) => { checked: number; skipped: number; violations: string[]; }' is not assignable to type '(arg: void) => Promise<{ checked: number; skipped: number; violations: string[]; }> | { checked: number; skipped: number; violations: string[]; }'.
+2026-11-24T03:54:06.1655365Z     Types of parameters 'root' and 'arg' are incompatible.
+2026-11-24T03:54:06.1656095Z       Type 'void' is not assignable to type 'ParentNode | undefined'.
+2026-11-24T03:54:06.1658857Z ##[error]scripts/screenshots.ts(101,41): error TS2345: Argument of type '(root?: ParentNode) => { checked: number; skipped: number; violations: string[]; }' is not assignable to parameter of type 'PageFunction<void, { checked: number; skipped: number; violations: string[]; }>'.
+2026-11-24T03:54:06.1661343Z   Type '(root?: ParentNode) => { checked: number; skipped: number; violations: string[]; }' is not assignable to type '(arg: void) => Promise<{ checked: number; skipped: number; violations: string[]; }> | { checked: number; skipped: number; violations: string[]; }'.
+2026-11-24T03:54:06.1662710Z     Types of parameters 'root' and 'arg' are incompatible.
+2026-11-24T03:54:06.1663309Z       Type 'void' is not assignable to type 'ParentNode | undefined'.
+2026-11-24T03:54:06.1665628Z ##[error]scripts/screenshots.ts(108,39): error TS2345: Argument of type '(root?: ParentNode) => { checked: number; skipped: number; violations: string[]; }' is not assignable to parameter of type 'PageFunction<void, { checked: number; skipped: number; violations: string[]; }>'.
+2026-11-24T03:54:06.1668058Z   Type '(root?: ParentNode) => { checked: number; skipped: number; violations: string[]; }' is not assignable to type '(arg: void) => Promise<{ checked: number; skipped: number; violations: string[]; }> | { checked: number; skipped: number; violations: string[]; }'.
+2026-11-24T03:54:06.1669209Z     Types of parameters 'root' and 'arg' are incompatible.
+2026-11-24T03:54:06.1669727Z       Type 'void' is not assignable to type 'ParentNode | undefined'.
+2026-11-24T03:54:06.1672061Z ##[error]scripts/screenshots.ts(112,47): error TS2345: Argument of type '(root?: ParentNode) => { checked: number; skipped: number; violations: string[]; }' is not assignable to parameter of type 'PageFunction<void, { checked: number; skipped: number; violations: string[]; }>'.
+2026-11-24T03:54:06.1675139Z   Type '(root?: ParentNode) => { checked: number; skipped: number; violations: string[]; }' is not assignable to type '(arg: void) => Promise<{ checked: number; skipped: number; violations: string[]; }> | { checked: number; skipped: number; violations: string[]; }'.
+2026-11-24T03:54:06.1676296Z     Types of parameters 'root' and 'arg' are incompatible.
+2026-11-24T03:54:06.1676848Z       Type 'void' is not assignable to type 'ParentNode | undefined'.
+2026-11-24T03:54:06.1679164Z ##[error]scripts/screenshots.ts(233,31): error TS2345: Argument of type '(root?: ParentNode) => { checked: number; skipped: number; violations: string[]; }' is not assignable to parameter of type 'PageFunction<void, { checked: number; skipped: number; violations: string[]; }>'.
+2026-11-24T03:54:06.1681930Z   Type '(root?: ParentNode) => { checked: number; skipped: number; violations: string[]; }' is not assignable to type '(arg: void) => Promise<{ checked: number; skipped: number; violations: string[]; }> | { checked: number; skipped: number; violations: string[]; }'.
+2026-11-24T03:54:06.1683350Z     Types of parameters 'root' and 'arg' are incompatible.
+2026-11-24T03:54:06.1683820Z       Type 'void' is not assignable to type 'ParentNode | undefined'.

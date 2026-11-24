@@ -160,19 +160,19 @@ export function SpaceRootActions({
           triggerRef={actionTrigger}
           actions={[
             {
-              label: 'Share',
+              label: 'Share…',
               icon: <ProfileIcon icon="lucide:share-2" size={16} />,
               onClick: () => void open('share'),
               disabled: busy,
             },
             {
-              label: 'Rename',
+              label: 'Rename…',
               icon: <ProfileIcon icon="lucide:pencil" size={16} />,
               onClick: () => void open('rename'),
               disabled: busy,
             },
             {
-              label: 'Move',
+              label: 'Move…',
               icon: <ProfileIcon icon="lucide:folder-input" size={16} />,
               onClick: () => void open('move'),
               disabled: busy,
@@ -296,7 +296,13 @@ export function SpaceRootActions({
                       !owned.some((folder) => folder.id === destination))
                   }
                 >
-                  {busy ? 'Saving…' : mode === 'trash' ? 'Move Space to Trash' : 'Save'}
+                  {busy
+                    ? mode === 'trash'
+                      ? 'Moving to Trash…'
+                      : 'Saving…'
+                    : mode === 'trash'
+                      ? 'Move Space to Trash'
+                      : 'Save'}
                 </Button>
                 <Button type="button" disabled={busy} onClick={close}>
                   Cancel

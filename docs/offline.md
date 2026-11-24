@@ -76,7 +76,7 @@ After an initial online setup in the app context they will use:
 | -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Application    | Shell, theme preference, icons and the code/assets needed by selected editors load without a server dependency.                                                                                                                                                                                                                                                                                                                                |
 | Catalog        | Last-synchronized authorized folder/file metadata, personal tags and visible paths remain browsable; freshness and offline availability are clear. A failed refresh never becomes an apparently empty workspace.                                                                                                                                                                                                                               |
-| Selected items | An explicit **Available offline on this device** action stores a complete existing Sheet/Doc and its required assets/images. Known undownloaded items remain identifiable but need a connection to open.                                                                                                                                                                                                                                       |
+| Selected items | An explicit **Make available offline** action stores a complete existing Sheet/Doc and its required assets/images. Known undownloaded items remain identifiable but need a connection to open.                                                                                                                                                                                                                                       |
 | Changes        | Committed edits save locally and survive ordinary termination/reopen while offline. Eligible downloaded Doc/Sheet edits sync when the running app reconnects in the editor or file list; pending clears only after acknowledgement and durable checkpoint cleanup. Ordinary saved edits are informational and send on their own; only incompatible or failed work remains available for explicit recovery. Local-save failure remains visible. |
 | Entry points   | Stable item links support direct launch; offline downloads and home-screen shortcuts remain distinct actions.                                                                                                                                                                                                                                                                                                                                  |
 
@@ -231,8 +231,9 @@ download. Sign-out still locks private access and retains clean copies until
 explicit deletion; observed revocation removes clean copies through the existing
 cleanup path. See [SPN-071](implementation/SPN-071.md).
 
-**Download.** Signed-in, non-admin accounts see **Available offline on this
-device** on each Sheet and Doc they can open (`web/offline/download.ts`). It:
+**Download.** Signed-in, non-admin accounts see **Make available offline** on each
+Sheet and Doc they can open (`web/offline/download.ts`). ✏️ The command names the
+action; **Available offline** remains a status badge ([SPN-162](implementation/SPN-162.md)). It:
 
 1. Fetches the [download bundle](#download-bundle) with `no-store` and checks it
    is version 1, for this account and item, from the pinned SDK version, and

@@ -371,18 +371,6 @@ export function Sharing({
                     )}
                     <div className="sharing-editor-actions">
                       <Button
-                        disabled={busy}
-                        onClick={() => {
-                          // Cancel disappears with the editor. Move focus first
-                          // so dialog containment never has to recover it later.
-                          focusAfterChange.current = null;
-                          (personRows.current.get(person.id) ?? peoplePanel.current)?.focus();
-                          discardDraft();
-                        }}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
                         primary
                         type="submit"
                         disabled={
@@ -400,6 +388,18 @@ export function Sharing({
                           : person.effectiveRole || person.directRole
                             ? 'Save changes'
                             : 'Share'}
+                      </Button>
+                      <Button
+                        disabled={busy}
+                        onClick={() => {
+                          // Cancel disappears with the editor. Move focus first
+                          // so dialog containment never has to recover it later.
+                          focusAfterChange.current = null;
+                          (personRows.current.get(person.id) ?? peoplePanel.current)?.focus();
+                          discardDraft();
+                        }}
+                      >
+                        Cancel
                       </Button>
                     </div>
                   </form>

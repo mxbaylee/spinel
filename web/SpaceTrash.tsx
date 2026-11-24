@@ -157,11 +157,11 @@ export function SpaceTrash({
           {error && <p role="alert">{error}</p>}
           {disabled && <p role="status">Reconnect before deleting this subtree.</p>}
           <div className="sp-actions">
-            <Button disabled={busy} onClick={onCancelDelete}>
-              Cancel
-            </Button>
             <Button primary disabled={busy || disabled} onClick={() => onConfirmDelete(preview)}>
               {busy ? 'Deleting…' : 'Delete permanently'}
+            </Button>
+            <Button disabled={busy} onClick={onCancelDelete}>
+              Cancel
             </Button>
           </div>
         </Modal>

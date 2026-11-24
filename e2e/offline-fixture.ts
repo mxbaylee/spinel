@@ -275,6 +275,8 @@ export async function fixture(
   kind: Kind,
   options: {
     databasePath?: string;
+    /** Retained pre-SPN-162 clients keep their original public action wording. */
+    offlineActionLabel?: 'Make available offline' | 'Available offline on this device';
     space?: boolean;
     actor?: 'owner' | 'editor' | 'viewer';
     images?: boolean;
@@ -483,7 +485,10 @@ export async function fixture(
         await dialog.getByRole('button', { name: 'Close dialog', exact: true }).click();
       } else {
         await page
-          .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
+          .getByRole('menuitem', {
+            name: options.offlineActionLabel ?? 'Make available offline',
+            exact: true,
+          })
           .click();
         const dialog = page.getByRole('dialog', { name: 'Offline availability', exact: true });
         await expect(dialog.getByRole('status')).toHaveText(

@@ -188,3 +188,23 @@ export const SpaceGraphChanged: Story = {
     );
   },
 };
+
+export const EmptyPending: Story = {
+  parameters: { api: { ...loaded, 'POST /api/items/trash/empty': pending() } },
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: 'Empty trash' }),
+    );
+    const dialog = within(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+        name: 'Empty trash confirmation',
+      }),
+    );
+    const confirm = dialog.getByRole('button', { name: 'Permanently delete 4 items' });
+    await expect(confirm).toHaveClass('sp-primary');
+    await userEvent.click(confirm);
+    await expect(await dialog.findByRole('button', { name: 'Deleting…' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Close dialog' })).toBeDisabled();
+  },
+};

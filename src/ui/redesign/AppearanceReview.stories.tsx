@@ -23,6 +23,7 @@ function Playground({
   gem,
   open,
   failSave,
+  holdSave = false,
   connected = false,
   disabled = false,
 }: {
@@ -30,6 +31,7 @@ function Playground({
   gem: GemName;
   open: boolean;
   failSave: boolean;
+  holdSave?: boolean;
   connected?: boolean;
   disabled?: boolean;
 }) {
@@ -80,6 +82,7 @@ function Playground({
           path="/storybook-fixture"
           close={() => setDialog(false)}
           save={async (patch) => {
+            if (holdSave) await new Promise<void>(() => {});
             if (failSave) throw new Error('Save failed. Your previous cover is unchanged.');
             const cover = patch.cover as
               { source: string; images?: Record<string, string | { data: string }> } | undefined;
@@ -257,5 +260,19 @@ export const ConnectedReadOnly: Story = {
       canvasElement,
       'You can view this item, but cannot change its appearance.',
     );
+  },
+};
+
+export const UpdatingCover: Story = {
+  args: { open: true, holdSave: true },
+  play: async (context) => {
+    await PageCoverOpen.play!(context);
+    const dialog = within(
+      within(context.canvasElement.ownerDocument.body).getByRole('dialog', { name: 'Page cover' }),
+    );
+    await userEvent.click(dialog.getByRole('button', { name: 'Save cover' }));
+    await expect(await dialog.findByRole('button', { name: 'Updating cover…' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Remove cover' })).toBeDisabled();
   },
 };

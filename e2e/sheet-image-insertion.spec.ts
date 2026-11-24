@@ -917,9 +917,7 @@ test('online images inserted into an already downloaded Sheet render after an of
       .poll(() => f.page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
       .toBe(true);
     await f.page.getByRole('button', { name: 'Document actions', exact: true }).click();
-    await f.page
-      .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
-      .click();
+    await f.page.getByRole('menuitem', { name: 'Make available offline', exact: true }).click();
     const dialog = f.page.getByRole('dialog', { name: 'Offline availability', exact: true });
     await expect(dialog.getByRole('status')).toHaveText(
       'Recipe pictures is available offline on this device.',

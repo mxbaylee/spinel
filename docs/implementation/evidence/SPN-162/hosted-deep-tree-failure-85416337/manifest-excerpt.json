@@ -1,0 +1,56 @@
+{
+  "reviewedAt": "2026-11-24T02:16:19.838Z",
+  "durationMs": 569060,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "desktop",
+  "theme": "light",
+  "variants": [
+    "light"
+  ],
+  "requested": [
+    "space-review--deep-tree"
+  ],
+  "checked": [],
+  "captures": [
+    {
+      "id": "space-review--deep-tree",
+      "variant": "light \u2014 FAILED",
+      "filename": "failed-space-review--deep-tree-light.png",
+      "title": "Failed capture: Current production/Spaces/Space"
+    }
+  ],
+  "verifications": [
+    "sheet: native keyboard edit saved in local snapshot",
+    "sheet: native viewer rejects keyboard edits",
+    "doc: native keyboard edit saved in local snapshot",
+    "doc: native viewer rejects keyboard edits",
+    "light: docs-native-formulas--inline-and-table native formula viewer settled before capture",
+    "light: docs-native-formulas--private native formula viewer settled before capture",
+    "light: docs-native-formulas--dark native formula viewer settled before capture",
+    "light: docs-native-formulas--phone native formula viewer settled before capture",
+    "light: docs-native-formulas--thirty-rows native formula viewer settled before capture",
+    "light: docs-native-formulas--styled-scalar native formula viewer settled before capture",
+    "light: redesign-native-editors--sheet native toolbar remains visible after content scroll",
+    "light: redesign-native-editors--doc native toolbar remains visible after content scroll",
+    "light: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "light: Appearance styles survive a same-document Controls visit"
+  ],
+  "failures": [
+    {
+      "id": "space-review--deep-tree",
+      "variant": "light",
+      "message": "Error: space-review--deep-tree: no swallowed play exceptions\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  -   1\n+ Received  + 200\n\n- Array []\n+ Array [\n+   Object {\n+     \"message\": \"Unable to find an accessible element with the role \\\"menuitem\\\" and name \\\"Rename\\\"\n+\n+ Here are the accessible roles:\n+\n+   menuitem:\n+\n+   Name \\\"Appearance\u2026\\\":\n+   <div\n+     class=\\\"sp-option  \\\"\n+     id=\\\"base-ui-_r_4i_\\\"\n+     role=\\\"menuitem\\\"\n+     tabindex=\\\"-1\\\"\n+   />\n+\n+   --------------------------------------------------menuitem:\n+\n+   Name \\\"Rename\u2026\\\":\n+   <div\n+     class=\\\"sp-option  \\\"\n+     id=\\\"base-ui-_r_4j_\\\"\n+     role=\\\"menuitem\\\"\n+     tabindex=\\\"-1\\\"\n+   />\n+\n+   --------------------------------------------------menuitem:\n+\n+   Name \\\"Move or reorder\u2026\\\":\n+   <div\n+     class=\\\"sp-option  \\\"\n+     id=\\\"base-ui-_r_4k_\\\"\n+     role=\\\"menuitem\\\"\n+     tabindex=\\\"-1\\\"\n+   />\n+\n+   --------------------------------------------------menuitem:\n+\n+   Name \\\"Move to Trash\\\":\n+   <div\n+     class=\\\"sp-option sp-destructive \\\"\n+     id=\\\"base-ui-_r_4l_\\\"\n+     role=\\\"menuitem\\\"\n+     tabindex=\\\"-1\\\"\n+   />\n+\n+   --------------------------------------------------\n+\n+ Ignored nodes: comments, script, style\n+ <div\n+   aria-label=\\\"More actions for Level 14\\\"\n+   class=\\\"sp-popup\\\"\n+   data-align=\\\"end\\\"\n+   data-base-ui-focusable=\\\"\\\"\n+   data-open=\\\"\\\"\n+   data-rootownerid=\\\"base-ui-_r_3u_\\\"\n+   data-side=\\\"top\\\"\n+   data-starting-style=\\\"\\\"\n+   id=\\\"base-ui-_r_3v_\\\"\n+   role=\\\"menu\\\"\n+   style=\\\"transition: none;\\\"\n+   tabindex=\\\"-1\\\"\n+ >\n+   <div\n+     class=\\\"sp-option  \\\"\n+     id=\\\"base-ui-_r_4i_\\\"\n+     role=\\\"menuitem\\\"\n+     tabindex=\\\"-1\\\"\n+   >\n+     Appearance\u2026\n+   </div>\n+   <div\n+     class=\\\"sp-option  \\\"\n+     id=\\\"base-ui-_r_4j_\\\"\n+     role=\\\"menuitem\\\"\n+     tabindex=\\\"-1\\\"\n+   >\n+     Rename\u2026\n+   </div>\n+   <div\n+     class=\\\"sp-option  \\\"\n+     id=\\\"base-ui-_r_4k_\\\"\n+     role=\\\"menuitem\\\"\n+     tabindex=\\\"-1\\\"\n+   >\n+     Move or reorder\u2026\n+   </div>\n+   <div\n+     class=\\\"sp-option sp-destructive \\\"\n+     id=\\\"base-ui-_r_4l_\\\"\n+     role=\\\"menuitem\\\"\n+     tabindex=\\\"-1\\\"\n+   >\n+     Move to Trash\n+   </div>\n+ </div>\",\n+     \"name\": \"TestingLibraryElementError\",\n+     \"stack\": \"TestingLibraryElementError: Unable to find an accessible element with the role \\\"menuitem\\\" and name \\\"Rename\\\"\n+\n+ Here are the accessible roles:\n+\n+   menuitem:\n+\n+   Name \\\"Appearance\u2026\\\":\n+   <div\n+     class=\\\"sp-option  \\\"\n+     id=\\\"base-ui-_r_4i_\\\"\n+     role=\\\"menuitem\\\"\n+     tabindex=\\\"-1\\\"\n+   />\n+\n+   --------------------------------------------------menuitem:\n+\n+   Name \\\"Rename\u2026\\\":\n+   <div\n+     class=\\\"sp-option  \\\"\n+     id=\\\"base-ui-_r_4j_\\\"\n+     role=\\\"menuitem\\\"\n+     tabindex=\\\"-1\\\"\n+   />\n+\n+   --------------------------------------------------menuitem:\n+\n+   Name \\\"Move or reorder\u2026\\\":\n+   <div\n+     class=\\\"sp-option  \\\"\n+     id=\\\"base-ui-_r_4k_\\\"\n+     role=\\\"menuitem\\\"\n+     tabindex=\\\"-1\\\"\n+   />\n+\n+   --------------------------------------------------menuitem:\n+\n+   Name \\\"Move to Trash\\\":\n+   <div\n+     class=\\\"sp-option sp-destructive \\\"\n+     id=\\\"base-ui-_r_4l_\\\"\n+     role=\\\"menuitem\\\"\n+     tabindex=\\\"-1\\\"\n+   />\n+\n+   --------------------------------------------------\n+\n+ Ignored nodes: comments, script, style\n+ <div\n+   aria-label=\\\"More actions for Level 14\\\"\n+   class=\\\"sp-popup\\\"\n+   data-align=\\\"end\\\"\n+   data-base-ui-focusable=\\\"\\\"\n+   data-open=\\\"\\\"\n+   data-rootownerid=\\\"base-ui-_r_3u_\\\"\n+   data-side=\\\"top\\\"\n+   data-starting-style=\\\"\\\"\n+   id=\\\"base-ui-_r_3v_\\\"\n+   role=\\\"menu\\\"\n+   style=\\\"transition: none;\\\"\n+   tabindex=\\\"-1\\\"\n+ >\n+   <div\n+     class=\\\"sp-option  \\\"\n+     id=\\\"base-ui-_r_4i_\\\"\n+     role=\\\"menuitem\\\"\n+     tabindex=\\\"-1\\\"\n+   >\n+     Appearance\u2026\n+   </div>\n+   <div\n+     class=\\\"sp-option  \\\"\n+     id=\\\"base-ui-_r_4j_\\\"\n+     role=\\\"menuitem\\\"\n+     tabindex=\\\"-1\\\"\n+   >\n+     Rename\u2026\n+   </div>\n+   <div\n+     class=\\\"sp-option  \\\"\n+     id=\\\"base-ui-_r_4k_\\\"\n+     role=\\\"menuitem\\\"\n+     tabindex=\\\"-1\\\"\n+   >\n+     Move or reorder\u2026\n+   </div>\n+   <div\n+     class=\\\"sp-option sp-destructive \\\"\n+     id=\\\"base-ui-_r_4l_\\\"\n+     role=\\\"menuitem\\\"\n+     tabindex=\\\"-1\\\"\n+   >\n+     Move to Trash\n+   </div>\n+ </div>\n+     at Object.getElementError (http://127.0.0.1:6007/assets/iframe-a5xmHJ9n.js:749:284)\n+     at http://127.0.0.1:6007/assets/iframe-a5xmHJ9n.js:138:112\n+     at http://127.0.0.1:6007/assets/iframe-a5xmHJ9n.js:130:4035\n+     at http://127.0.0.1:6007/assets/iframe-a5xmHJ9n.js:752:377\n+     at play (http://127.0.0.1:6007/assets/Space.stories--XOspz3U.js:2:32341)\n+     at async PG.runPhase (http://127.0.0.1:6007/assets/iframe-a5xmHJ9n.js:904:607)\n+     at async PG.render (http://127.0.0.1:6007/assets/iframe-a5xmHJ9n.js:904:3467)\",\n+   },\n+ ]\n    at captureRawStack (/home/runner/work/spinel/spinel/node_modules/playwright-core/lib/coreBundle.js:9282:17)\n    at callMatcherAsStep (/home/runner/work/spinel/spinel/node_modules/playwright/lib/matchers/expect.js:13316:57)\n    at Object.toEqual (/home/runner/work/spinel/spinel/node_modules/playwright/lib/matchers/expect.js:13308:23)\n    at waitForStory (/home/runner/work/spinel/spinel/scripts/screenshots.ts:542:61)\n    at async file:///home/runner/work/spinel/spinel/scripts/screenshots.ts:149:9",
+      "filename": "failed-space-review--deep-tree-light.png"
+    }
+  ],
+  "excerpt": {
+    "originalSha256": "a7c679df544341f4cc88ddfd533c7678bf5c0efd3d89662ebe28cdb4bbcb10f7",
+    "originalCounts": {
+      "requested": 1140,
+      "checked": 1139,
+      "captures": 1144
+    },
+    "selection": "Retain DeepTree entries and complete failure/verification records; unrelated successful catalogue entries omitted."
+  }
+}

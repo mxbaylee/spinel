@@ -314,11 +314,11 @@ export function AdminInvites({
           {loading && <p role="status">Loading invitation recipients…</p>}
           {issues}
           <div className="admin-dialog-actions">
-            <Button type="button" disabled={busy} onClick={() => setFormOpen(false)}>
-              Cancel
-            </Button>
             <Button primary type="submit" disabled={disabled || invalidRecipient}>
               {busy ? 'Creating…' : 'Create invite'}
+            </Button>
+            <Button type="button" disabled={busy} onClick={() => setFormOpen(false)}>
+              Cancel
             </Button>
           </div>
         </form>

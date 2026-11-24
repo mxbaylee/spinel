@@ -247,3 +247,16 @@ export const StaleAccountResponse: Story = {
     }
   },
 };
+
+export const TurningOff: Story = {
+  parameters: { api: { ...api, [remove]: pending() } },
+  play: async ({ canvasElement }) => {
+    const body = await menu(canvasElement);
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Turn off link' }));
+    const dialog = within(await body.findByRole('dialog'));
+    await userEvent.click(dialog.getByRole('button', { name: 'Turn off link' }));
+    await expect(await dialog.findByRole('button', { name: 'Turning off link…' })).toBeDisabled();
+    await expect(dialog.getByRole('status')).toHaveTextContent('Turning off guest link…');
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+  },
+};

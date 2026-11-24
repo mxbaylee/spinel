@@ -105,9 +105,7 @@ export async function verifySharedCreationRestart(baseURL: string, info: TestInf
         .poll(() => page.evaluate(() => Boolean(navigator.serviceWorker.controller)))
         .toBe(true);
       await page.getByRole('button', { name: 'Document actions', exact: true }).click();
-      await page
-        .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
-        .click();
+      await page.getByRole('menuitem', { name: 'Make available offline', exact: true }).click();
       const dialog = page.getByRole('dialog', { name: 'Offline availability', exact: true });
       await expect(dialog.getByRole('status')).toHaveText(
         `${seed.name} is available offline on this device.`,

@@ -173,15 +173,6 @@ export function VersionPreview({
           )}
           <div className="sp-actions">
             <Button
-              disabled={busy}
-              onClick={() => {
-                setConfirming(false);
-                onBusyChange(false);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
               primary
               disabled={
                 busy ||
@@ -192,6 +183,15 @@ export function VersionPreview({
               onClick={() => void restore()}
             >
               {busy ? 'Restoring…' : 'Restore version'}
+            </Button>
+            <Button
+              disabled={busy}
+              onClick={() => {
+                setConfirming(false);
+                onBusyChange(false);
+              }}
+            >
+              Cancel
             </Button>
           </div>
         </Modal>

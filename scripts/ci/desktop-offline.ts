@@ -416,7 +416,7 @@ async function main() {
       );
       const before = await browser.evaluate<boolean>('navigator.storage.persisted()');
       await named('button', 'Document actions');
-      await named('[role="menuitem"]', 'Available offline on this device');
+      await named('[role="menuitem"]', 'Make available offline');
       const permission =
         kind === 'firefox' && !before ? await browser.resolveStoragePrompt() : null;
       const message = await until(

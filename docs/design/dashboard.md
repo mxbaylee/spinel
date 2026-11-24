@@ -108,8 +108,8 @@ once filed, "Remove from my folder". All four areas are cluttered (owner, chat
 | Always visible                                                      | Behind a menu                                                                                            |
 | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | New (primary), search, breadcrumb                                   | New → Folder, Sheet, Doc, Import file…                                                                   |
-| Sidebar: My files, Shared with me, theme, profile; network by gem   | Owned row ⋯ → Open, Tags…, Share…, Rename…, Move…, Available offline on this device, Trash               |
-| Row: icon, name, shared/view-only/offline badges, two tags, date, ⋯ | Shared row ⋯ → Open, Access details…, Tags…, File into folder… or Remove from my folder, Available offline on this device, Hide / Show |
+| Sidebar: My files, Shared with me, theme, profile; network by gem   | Owned row ⋯ → Open, Tags…, Share…, Rename…, Move…, Make available offline, Move to Trash               |
+| Row: icon, name, shared/view-only/offline badges, two tags, date, ⋯ | Shared row ⋯ → Open, Access details…, Tags…, File into folder… or Remove from my folder, Make available offline, Hide / Show |
 | Shared with me title                                               | Title ⋯ → Show hidden / Hide hidden                                                                      |
 |                                                                     | Folder ⋯ → the owned-row items that apply to folders, plus Refresh folder                                |
 | Filter chips while searching or filtering                           | Tags chip → tag list                                                                                     |
@@ -146,7 +146,8 @@ Owner correction and approval, chat 2026-10-20, decision
 ## Offline (SPN-039, SPN-053, SPN-054, SPN-051, SPN-052)
 
 The words come from [docs/offline.md](../offline.md); this page only places
-them. The row menu's **Available offline on this device** is the toggle; Google
+them. ✏️ [SPN-162](../implementation/SPN-162.md) aligns operation wording while
+retaining availability badges as state labels. The row menu's **Make available offline** is the toggle; Google
 Drive puts its per-file offline toggle in the same place. Once downloaded, the
 same menu item reads **Remove from device**; with pending changes it opens the
 recovery choices from the contract instead of removing. A downloaded row shows
@@ -164,7 +165,7 @@ attention" and its menu offers **Choose another folder…** (SPN-051). An offlin
 copy, `<title> (offline copy, <local date and time>)`, lands in the person's own
 files and its row links to the original. See [states.md](states.md#offline).
 
-**Dashboard migration (SPN-048).** **Available offline on this device** and
+**Dashboard migration (SPN-048).** **Make available offline** and
 **Remove from device** are in the row menu. Badges remain `OfflineBadge`. SPN-042 adds the shared `ConnectionStatus`
 control beside the gem, with Online, Offline and Reconnecting states. Its
 hover, focus or tap detail contains "Files as of" while the catalog is local,

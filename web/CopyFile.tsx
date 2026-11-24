@@ -179,10 +179,10 @@ export function CopyFileForm({
               'Your copy is ready to open.'}
           </p>
           <div className="copy-file-actions">
-            <Button onClick={onClose}>Close</Button>
             <Button primary disabled={Boolean(unavailable)} onClick={() => onCreated(created)}>
               Open copy
             </Button>
+            <Button onClick={onClose}>Close</Button>
           </div>
         </>
       ) : (
@@ -231,9 +231,6 @@ export function CopyFileForm({
           {unavailable && <p role="status">{unavailable}</p>}
           {error && <p role="alert">{error}</p>}
           <div className="copy-file-actions">
-            <Button onClick={onClose} disabled={busy}>
-              Cancel
-            </Button>
             {!options && error ? (
               <Button primary onClick={() => retry((value) => value + 1)}>
                 Try again
@@ -247,6 +244,9 @@ export function CopyFileForm({
                 {busy ? 'Making a copy…' : 'Make a copy'}
               </Button>
             )}
+            <Button onClick={onClose} disabled={busy}>
+              Cancel
+            </Button>
           </div>
         </>
       )}

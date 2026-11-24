@@ -149,7 +149,7 @@ test('hiding preserves a prepared share and its offline discovery preference wit
     await page.getByRole('menuitem', { name: 'Show hidden', exact: true }).click();
   };
   const download = async () => {
-    await rowAction('Available offline on this device');
+    await rowAction('Make available offline');
     await expect(page.getByRole('status').filter({ hasText: 'available offline' })).toHaveText(
       `${doc.name} is available offline on this device.`,
       { timeout: 120_000 },
@@ -443,9 +443,7 @@ test('downloaded Sheets and Docs open offline with local images; nothing else do
     expect(await page.evaluate(() => caches.keys())).toEqual([]);
     for (const name of [sheet.name, doc.name]) {
       await page.getByRole('button', { name: `More actions for ${name}`, exact: true }).click();
-      await page
-        .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
-        .click();
+      await page.getByRole('menuitem', { name: 'Make available offline', exact: true }).click();
       await expect(page.getByRole('status').filter({ hasText: 'available offline' })).toHaveText(
         `${name} is available offline on this device.`,
         { timeout: 120_000 },
@@ -515,7 +513,7 @@ test('downloaded Sheets and Docs open offline with local images; nothing else do
         json: { error: 'Offline download is temporarily unavailable.' },
       }),
     );
-    await offlineAction('Available offline on this device');
+    await offlineAction('Make available offline');
     await expect(availability.getByRole('alert')).toHaveText(
       'Offline download is temporarily unavailable.',
     );
@@ -530,7 +528,7 @@ test('downloaded Sheets and Docs open offline with local images; nothing else do
     await expect(availability).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Document actions', exact: true })).toBeFocused();
     await page.unroute(bundlePath);
-    await offlineAction('Available offline on this device');
+    await offlineAction('Make available offline');
     await expect(availability.getByRole('status')).toHaveText(
       `${doc.name} is available offline on this device.`,
       { timeout: 120_000 },

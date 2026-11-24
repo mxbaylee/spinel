@@ -827,7 +827,7 @@ export const DeepTree: Story = {
     const scrollLeft = region.scrollLeft;
     await userEvent.click(action);
     const menu = within(await page.findByRole('menu', { name: 'More actions for Level 14' }));
-    for (const name of ['Rename', 'Move or reorder', 'Trash'])
+    for (const name of ['Rename…', 'Move or reorder…', 'Move to Trash'])
       await expect(menu.getByRole('menuitem', { name })).toBeVisible();
     await expect(region.scrollLeft).toBe(scrollLeft);
     await userEvent.keyboard('{Escape}');
@@ -884,7 +884,7 @@ export const MoveOrReorder: Story = {
     const navigation = await contents(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.click(navigation.getByRole('button', { name: 'More actions for Welcome' }));
-    await userEvent.click(await page.findByRole('menuitem', { name: 'Move or reorder' }));
+    await userEvent.click(await page.findByRole('menuitem', { name: 'Move or reorder…' }));
     const dialog = within(await page.findByRole('dialog', { name: 'Move or reorder Welcome' }));
     await userEvent.click(dialog.getByRole('combobox', { name: 'Parent page or folder' }));
     await expect(page.queryByRole('option', { name: /Welcome · Doc/ })).not.toBeInTheDocument();
@@ -905,9 +905,16 @@ export const MetadataDialogFocus: Story = {
     for (const mode of ['Rename', 'Move or reorder']) {
       const navigation = await contents(canvasElement);
       await userEvent.click(navigation.getByRole('button', { name: 'More actions for Welcome' }));
-      await userEvent.click(await page.findByRole('menuitem', { name: mode }));
+      await userEvent.click(await page.findByRole('menuitem', { name: mode + '…' }));
       const dialog = await page.findByRole('dialog', { name: mode + ' Welcome' });
       await expect(page.getAllByRole('dialog')).toHaveLength(1);
+      // Shared dialog convention: the primary action precedes Cancel in DOM
+      // and visual order, including a form reached from the phone contents panel.
+      await expect(
+        Array.from(dialog.querySelectorAll('.sp-actions button')).map(
+          (button) => button.textContent,
+        ),
+      ).toEqual(['Save', 'Cancel']);
       await expect(page.queryByRole('dialog', { name: 'Space contents' })).not.toBeInTheDocument();
       await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
       await waitFor(() =>
@@ -936,7 +943,7 @@ export const MutationFailure: Story = {
     const navigation = await contents(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.click(navigation.getByRole('button', { name: 'More actions for Welcome' }));
-    await userEvent.click(await page.findByRole('menuitem', { name: 'Rename' }));
+    await userEvent.click(await page.findByRole('menuitem', { name: 'Rename…' }));
     const dialog = within(await page.findByRole('dialog', { name: 'Rename Welcome' }));
     const name = dialog.getByRole('textbox', { name: 'Name' });
     await userEvent.clear(name);
@@ -956,12 +963,16 @@ export const TrashSubtreeConfirmation: Story = {
     const navigation = await contents(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.click(navigation.getByRole('button', { name: 'More actions for Welcome' }));
-    await userEvent.click(await page.findByRole('menuitem', { name: 'Trash' }));
-    const dialog = within(await page.findByRole('dialog', { name: 'Trash Welcome' }));
+    await userEvent.click(await page.findByRole('menuitem', { name: 'Move to Trash' }));
+    const panel = await page.findByRole('dialog', { name: 'Trash Welcome' });
+    const dialog = within(panel);
     await expect(
       dialog.getByText(/Move Welcome and its 2 descendants to Space Trash/),
     ).toBeVisible();
     await expect(dialog.getByRole('button', { name: 'Move to Trash' })).toBeEnabled();
+    await expect(
+      Array.from(panel.querySelectorAll('.sp-actions button')).map((button) => button.textContent),
+    ).toEqual(['Move to Trash', 'Cancel']);
   },
 };
 
@@ -1222,5 +1233,49 @@ export const AddPageArtwork: Story = {
       await expect(item.querySelector('svg')).not.toBeNull();
       await expect(within(item).queryByRole('img')).not.toBeInTheDocument();
     }
+  },
+};
+
+export const CreatingSpace: Story = {
+  parameters: {
+    ...NewSpace.parameters,
+    api: { ...NewSpace.parameters!.api, 'POST /api/spaces': pending() },
+  },
+  play: async (context) => {
+    await NewSpace.play!(context);
+    const dialog = within(
+      within(context.canvasElement.ownerDocument.body).getByRole('dialog', { name: 'New Space' }),
+    );
+    await userEvent.click(dialog.getByRole('button', { name: 'Create' }));
+    await expect(await dialog.findByRole('button', { name: 'Creating…' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+  },
+};
+export const CreatingDoc: Story = {
+  parameters: { api: { ...treeApi(), ['POST /api/spaces/' + root + '/items']: pending() } },
+  play: async (context) => {
+    await createMember('Doc')(context);
+    const dialog = within(
+      within(context.canvasElement.ownerDocument.body).getByRole('dialog', { name: 'New Doc' }),
+    );
+    await userEvent.click(dialog.getByRole('button', { name: 'Create' }));
+    await expect(await dialog.findByRole('button', { name: 'Creating…' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+  },
+};
+export const TrashingSubtree: Story = {
+  parameters: {
+    api: { ...treeApi(), ['DELETE /api/spaces/' + root + '/items/' + id(1)]: pending() },
+  },
+  play: async (context) => {
+    await TrashSubtreeConfirmation.play!(context);
+    const dialog = within(
+      within(context.canvasElement.ownerDocument.body).getByRole('dialog', {
+        name: 'Trash Welcome',
+      }),
+    );
+    await userEvent.click(dialog.getByRole('button', { name: 'Move to Trash' }));
+    await expect(await dialog.findByRole('button', { name: 'Moving to Trash…' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
   },
 };

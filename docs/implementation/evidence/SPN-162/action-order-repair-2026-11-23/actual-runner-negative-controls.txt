@@ -1,0 +1,2 @@
+{"actualRunnerProbe":true,"verifications":["dialog action order: positive, disabled, vertical and reversed DOM/visual negative controls passed"]}
+WATCHDOG peakKiB=477792 aborted=false

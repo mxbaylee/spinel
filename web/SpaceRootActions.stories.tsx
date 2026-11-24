@@ -49,7 +49,9 @@ async function choose(canvasElement: HTMLElement, name: string) {
     await within(canvasElement).findByRole('button', { name: 'Space actions for Research Space' }),
   );
   await userEvent.click(
-    await within(canvasElement.ownerDocument.body).findByRole('menuitem', { name }),
+    await within(canvasElement.ownerDocument.body).findByRole('menuitem', {
+      name: ['Share', 'Rename', 'Move'].includes(name) ? name + '…' : name,
+    }),
   );
 }
 async function themedTarget(control: HTMLElement, dialog: HTMLElement) {
@@ -61,6 +63,24 @@ async function themedTarget(control: HTMLElement, dialog: HTMLElement) {
   await expect(getComputedStyle(control).color).toBe(getComputedStyle(dialog).color);
 }
 export const Owner: Story = {};
+export const MenuLabels: Story = {
+  play: async ({ canvasElement }) => {
+    const trigger = await within(canvasElement).findByRole('button', {
+      name: 'Space actions for Research Space',
+    });
+    await userEvent.click(trigger);
+    const menu = within(canvasElement.ownerDocument.body);
+    for (const name of ['Share…', 'Rename…', 'Move…']) {
+      await expect(await menu.findByRole('menuitem', { name })).toBeEnabled();
+    }
+    await expect(menu.getByRole('menuitem', { name: 'Move to Trash' })).toHaveClass(
+      'sp-destructive',
+    );
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(trigger).toHaveFocus());
+    await userEvent.click(trigger);
+  },
+};
 export const Viewer: Story = {
   args: { item: { ...item, access: 'viewer', ownerName: 'Alex Kim' } },
   play: async ({ canvasElement }) => {
@@ -308,7 +328,7 @@ export const FailedResponseAfterNavigation: Story = {
     await userEvent.click(
       within(canvasElement).getByRole('button', { name: 'Space actions for Next Space' }),
     );
-    await userEvent.click(await body.findByRole('menuitem', { name: 'Rename' }));
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Rename…' }));
     const dialog = await body.findByRole('dialog', { name: 'Rename Space' });
     await releasePrevious(canvasElement);
     await waitFor(() => expect(within(dialog).getByRole('button', { name: 'Save' })).toBeEnabled());
@@ -351,5 +371,20 @@ export const FileAdminNoDestinations: Story = {
       await within(dialog).findByText(/No authorized folders are available/),
     ).toBeVisible();
     await expect(within(dialog).getByLabelText('Destination')).toBeDisabled();
+  },
+};
+
+export const TrashingSpace: Story = {
+  parameters: { api: { [`POST /api/items/${item.id}/trash`]: pending() } },
+  play: async ({ canvasElement }) => {
+    await choose(canvasElement, 'Move to Trash');
+    const panel = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'Move Space to Trash?',
+    });
+    const dialog = within(panel);
+    await userEvent.click(dialog.getByRole('button', { name: 'Move Space to Trash' }));
+    await expect(await dialog.findByRole('button', { name: 'Moving to Trash…' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+    await assertDialogControls(panel);
   },
 };

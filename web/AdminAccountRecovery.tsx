@@ -249,9 +249,6 @@ export function AdminAccountRecovery({
           </>
         )}
         <div className="admin-recovery-actions">
-          <Button disabled={busy} onClick={onClose}>
-            {attempted ? 'Close' : 'Cancel'}
-          </Button>
           <Button
             primary
             disabled={
@@ -264,6 +261,9 @@ export function AdminAccountRecovery({
             onClick={() => void perform()}
           >
             {busy ? 'Please wait…' : transfer ? 'Transfer ownership' : 'Reactivate account'}
+          </Button>
+          <Button disabled={busy} onClick={onClose}>
+            {attempted ? 'Close' : 'Cancel'}
           </Button>
         </div>
       </div>

@@ -305,7 +305,10 @@ test('the actual SPN-054 eager client keeps its pending Doc and lazy files durin
       applicationSource: a.applicationSource,
     });
     browser = await chromium.launch({ headless: true });
-    f = await fixture(browser, origin, info, 'doc', { databasePath });
+    f = await fixture(browser, origin, info, 'doc', {
+      databasePath,
+      offlineActionLabel: 'Available offline on this device',
+    });
     observation = await startOfflineUpgradeObservation(
       browser,
       f.context,
@@ -791,6 +794,7 @@ test('interrupted emitted updates preserve exact native work, a live old client 
       await page
         .getByRole('button', { name: `More actions for ${item.name}`, exact: true })
         .click();
+      // This initial host is build A from previousCommit (3a0e2238), before SPN-162.
       await page
         .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
         .click();
