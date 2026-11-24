@@ -56,6 +56,81 @@ async function phoneText(page: Page, unitId: string) {
 test.describe('downloaded native editors', () => {
   test.setTimeout(180_000);
 
+  test('connection observations distinguish historical offline from a current transient', async ({
+    browser,
+  }, info) => {
+    const context = await browser.newContext();
+    try {
+      const page = await context.newPage();
+      await page.setContent(
+        '<section class="editor-frame"><span class="connection-status" data-state="offline">Connection</span></section>',
+      );
+      await page.evaluate(() =>
+        Object.defineProperty(navigator, 'onLine', { configurable: true, value: false }),
+      );
+      const observation = await observeConnectionOpening(page);
+      try {
+        await observation.mark('opening-doc');
+        await page.evaluate(() => {
+          // The old Offline value was truthful; recovery happened before online.
+          document.querySelector('.connection-status')!.setAttribute('data-state', 'reconnecting');
+          Object.defineProperty(navigator, 'onLine', { configurable: true, value: true });
+          window.dispatchEvent(new Event('online'));
+        });
+        await observation.mark('room-ready');
+        const recovered = await observation.read();
+        expect(
+          recovered.events.some(
+            (event) => !event.historical && event.state === 'offline' && event.browserOnline,
+          ),
+        ).toBe(false);
+        expect(
+          recovered.events.some(
+            (event) =>
+              event.historical && event.state === 'offline' && event.browserOnline === null,
+          ),
+        ).toBe(true);
+        await page.evaluate(() =>
+          document.querySelector('.connection-status')!.setAttribute('data-state', 'online'),
+        );
+        await observation.mark('opening-doc');
+        await page.evaluate(() => {
+          const node = document.querySelector('.connection-status')!;
+          node.setAttribute('data-state', 'offline');
+          node.setAttribute('data-state', 'online');
+        });
+        const transient = await observation.read();
+        expect(
+          transient.events.some(
+            (event) =>
+              !event.historical &&
+              event.kind === 'attribute' &&
+              event.state === 'offline' &&
+              event.browserOnline,
+          ),
+        ).toBe(true);
+        expect(transient.negativeControl.detected).toBe(true);
+        expect(transient.overflow || transient.readinessOverflow).toBe(false);
+        await page.evaluate(() => {
+          const node = document.querySelector('.connection-status')!;
+          for (let i = 0; i < 250; i++)
+            node.setAttribute('data-state', i % 2 ? 'online' : 'reconnecting');
+        });
+        const bounded = await observation.read();
+        expect(bounded.overflow).toBe(true);
+        expect(bounded.events).toHaveLength(200);
+        await info.attach('connection-observer-negative-controls', {
+          body: JSON.stringify({ recovered, transient, overflowDetected: bounded.overflow }),
+          contentType: 'application/json',
+        });
+      } finally {
+        await observation.close();
+      }
+    } finally {
+      await context.close();
+    }
+  });
+
   test('phone Sheet pen edits replay from the file list once with original formulas intact', async ({
     browser,
     baseURL,
@@ -727,8 +802,8 @@ test.describe('downloaded native editors', () => {
             await observation.mark('room-ready');
             const trace = await observation.read();
             expect(trace.overflow || trace.readinessOverflow).toBe(false);
-            const opening = trace.events.filter((event) =>
-              ['opening-doc', 'room-ready'].includes(event.phase),
+            const opening = trace.events.filter(
+              (event) => !event.historical && ['opening-doc', 'room-ready'].includes(event.phase),
             );
             expect(opening.some((event) => event.owner === 'editor')).toBe(true);
             expect(opening.some((event) => event.state === 'offline' && event.browserOnline)).toBe(

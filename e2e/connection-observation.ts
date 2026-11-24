@@ -8,6 +8,7 @@ export async function observeConnectionOpening(page: Page) {
     let phase = 'observer-negative-control';
     let overflow = false;
     let nextId = 0;
+    let browserOnline = navigator.onLine;
     const identities = new WeakMap<Element, { id: number; owner: string }>();
     const events: {
       elapsedMs: number;
@@ -17,7 +18,8 @@ export async function observeConnectionOpening(page: Page) {
       id: number;
       owner: string;
       state: string;
-      browserOnline: boolean;
+      browserOnline: boolean | null;
+      historical: boolean;
       connected: boolean;
       visible: boolean;
       saveCategory: string;
@@ -40,7 +42,7 @@ export async function observeConnectionOpening(page: Page) {
         )
           ? save.slice('Save details: '.length)
           : 'absent-or-other';
-      const signature = `${phase}:${kind}:${identity.id}:${state}:${navigator.onLine}:${saveCategory}`;
+      const signature = `${phase}:${kind}:${identity.id}:${state}:${browserOnline}:${saveCategory}`;
       if (signature === previous) return;
       previous = signature;
       if (events.length >= 200) {
@@ -55,7 +57,9 @@ export async function observeConnectionOpening(page: Page) {
         kind,
         ...identity,
         state,
-        browserOnline: navigator.onLine,
+        // oldValue is historical context, never a current connectivity claim.
+        historical: kind === 'attribute-old',
+        browserOnline: kind === 'attribute-old' ? null : browserOnline,
         connected: node.isConnected,
         visible: node.isConnected && rect.width > 0 && rect.height > 0,
         saveCategory,
@@ -68,21 +72,45 @@ export async function observeConnectionOpening(page: Page) {
     };
     const sample = (kind: string) =>
       document.querySelectorAll('.connection-status').forEach((node) => record(node, kind));
-    const observer = new MutationObserver((changes) => {
-      for (const change of changes) {
+    const process = (changes: MutationRecord[]) => {
+      for (const [index, change] of changes.entries()) {
         if (
           change.type === 'attributes' &&
           change.target instanceof Element &&
           change.target.matches('.connection-status')
         ) {
           record(change.target, 'attribute-old', change.oldValue);
-          record(change.target, 'attribute');
+          // The next mutation's oldValue is this mutation's resulting value.
+          // Reading only the final attribute would hide Offline→Online in one delivery.
+          const next = changes
+            .slice(index + 1)
+            .find(
+              (candidate) => candidate.type === 'attributes' && candidate.target === change.target,
+            );
+          record(
+            change.target,
+            'attribute',
+            next ? next.oldValue : change.target.getAttribute('data-state'),
+          );
         }
         for (const node of change.addedNodes) visit(node, 'added');
         for (const node of change.removedNodes) visit(node, 'removed');
       }
       sample('current');
-    });
+    };
+    const observer = new MutationObserver(process);
+    const flush = () => {
+      const changes = observer.takeRecords();
+      if (changes.length) process(changes);
+    };
+    const connectivity = () => {
+      // Capture runs before product event handlers; queued old work retains its
+      // previous connectivity. Do not sample an intermediate pre-handler DOM.
+      flush();
+      browserOnline = navigator.onLine;
+    };
+    window.addEventListener('online', connectivity, true);
+    window.addEventListener('offline', connectivity, true);
     observer.observe(document.body, {
       subtree: true,
       childList: true,
@@ -95,10 +123,12 @@ export async function observeConnectionOpening(page: Page) {
       events,
       overflow: () => overflow,
       mark(value: string) {
+        flush();
         phase = value;
         sample('phase');
       },
       reset() {
+        flush();
         events.length = 0;
         previous = '';
         overflow = false;
@@ -106,7 +136,11 @@ export async function observeConnectionOpening(page: Page) {
         phase = 'pending-offline-doc';
         sample('initial');
       },
-      stop: () => observer.disconnect(),
+      stop() {
+        observer.disconnect();
+        window.removeEventListener('online', connectivity, true);
+        window.removeEventListener('offline', connectivity, true);
+      },
     };
   });
   // A same-delivery insertion/removal must not escape this observer. The probe
