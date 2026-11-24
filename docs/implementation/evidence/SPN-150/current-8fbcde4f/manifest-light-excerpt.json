@@ -1,0 +1,145 @@
+{
+  "reviewedAt": "2026-11-24T04:21:01.132Z",
+  "durationMs": 535882,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "desktop",
+  "theme": "light",
+  "variants": [
+    "light"
+  ],
+  "verifications": [
+    "sheet: native keyboard edit saved in local snapshot",
+    "sheet: native viewer rejects keyboard edits",
+    "doc: native keyboard edit saved in local snapshot",
+    "doc: native viewer rejects keyboard edits",
+    "light: docs-native-formulas--inline-and-table native formula viewer settled before capture",
+    "light: docs-native-formulas--private native formula viewer settled before capture",
+    "light: docs-native-formulas--dark native formula viewer settled before capture",
+    "light: docs-native-formulas--phone native formula viewer settled before capture",
+    "light: docs-native-formulas--thirty-rows native formula viewer settled before capture",
+    "light: docs-native-formulas--styled-scalar native formula viewer settled before capture",
+    "light: redesign-native-editors--sheet native toolbar remains visible after content scroll",
+    "light: redesign-native-editors--doc native toolbar remains visible after content scroll",
+    "light: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "light: Appearance styles survive a same-document Controls visit"
+  ],
+  "failures": [],
+  "originalManifestSha256": "be3634058e736b655c4796ed8103feba9df9cf281f8914ac337de383c7596dd8",
+  "totalChecked": 1155,
+  "totalCaptures": 1159,
+  "captures": [
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "light",
+      "filename": "current-production-shell-startup--loading-light.png",
+      "title": "Current production/Shell/Startup / Loading"
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "light",
+      "filename": "current-production-shell-startup--within-workspace-light.png",
+      "title": "Current production/Shell/Startup / Within Workspace"
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "light",
+      "filename": "current-production-shell-startup--failed-light.png",
+      "title": "Current production/Shell/Startup / Failed"
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "light",
+      "filename": "current-production-shell-startup--offline-entry-light.png",
+      "title": "Current production/Shell/Startup / Offline Entry"
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "light",
+      "filename": "current-production-guest-accessstate--loading-light.png",
+      "title": "Current production/Guest/AccessState / Loading"
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "light",
+      "filename": "dashboard-dashboard--new-menu-artwork-light.png",
+      "title": "Current production/Dashboard/Dashboard / New Menu Artwork"
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "light",
+      "filename": "guest-guestapp--loading-light.png",
+      "title": "Current production/Guest/GuestApp / Loading"
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "light",
+      "filename": "space-review--app-loading-light.png",
+      "title": "Current production/Spaces/Space / App Loading"
+    },
+    {
+      "id": "space-review--app-unreachable",
+      "variant": "light",
+      "filename": "space-review--app-unreachable-light.png",
+      "title": "Current production/Spaces/Space / App Unreachable"
+    },
+    {
+      "id": "space-review--app-unavailable",
+      "variant": "light",
+      "filename": "space-review--app-unavailable-light.png",
+      "title": "Current production/Spaces/Space / App Unavailable"
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "light",
+      "filename": "space-review--add-page-artwork-light.png",
+      "title": "Current production/Spaces/Space / Add Page Artwork"
+    }
+  ],
+  "checked": [
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "light"
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "light"
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "light"
+    },
+    {
+      "id": "space-review--app-unreachable",
+      "variant": "light"
+    },
+    {
+      "id": "space-review--app-unavailable",
+      "variant": "light"
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "light"
+    }
+  ]
+}

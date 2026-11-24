@@ -1,0 +1,13 @@
+[
+  "current-production-guest-accessstate--loading",
+  "current-production-shell-startup--failed",
+  "current-production-shell-startup--loading",
+  "current-production-shell-startup--offline-entry",
+  "current-production-shell-startup--within-workspace",
+  "dashboard-dashboard--new-menu-artwork",
+  "guest-guestapp--loading",
+  "space-review--add-page-artwork",
+  "space-review--app-loading",
+  "space-review--app-unavailable",
+  "space-review--app-unreachable"
+]

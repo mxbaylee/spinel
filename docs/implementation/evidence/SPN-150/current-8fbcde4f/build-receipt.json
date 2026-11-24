@@ -1,0 +1,19 @@
+{
+  "run": 45323591143,
+  "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+  "testedMerge": "c561e6bd59b655fb69ed786ae57c30fb69a8ff8b",
+  "identicalTree": "a34dcde4b1aafd91d883bfa187ddacd99e0528ff",
+  "artifact": 14889125631,
+  "zipSha256": "70272f5b3aa94f47a28c82e68aac851e63654261b52687cf70de5f033ad2d069",
+  "motionObservations": 6,
+  "motionViewport": [
+    390,
+    844
+  ],
+  "motionTheme": "dark",
+  "motionPeakKiB": 740160,
+  "motionScriptSha256": "133b4120dd532ddd7a9b909a9b11ad495e48ea4fdde2e4af4f7bd85c0752364d",
+  "motionLogSha256": "3c922a309eca7ad056f52cdc75ea06c853d475b3f489cc435b7e8a325a6ef989",
+  "physicalPhone": false,
+  "visualReview": "pending hosted captures"
+}

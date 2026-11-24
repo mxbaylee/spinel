@@ -1,0 +1,140 @@
+{
+  "scope": "Real production Admin browser flow with synthetic CDP passkey, Linux controller and disposable HTTPS proxy; not physical-device or remote-provider acceptance",
+  "productionSource": "a2e7baf099f126f6d4290901234482876880b47d",
+  "containerMemoryMiB": 1024,
+  "containerCpus": 0.75,
+  "supervisorOldSpaceMiB": 64,
+  "workloadProfile": "images-256m",
+  "canonicalFailure": {
+    "outcome": "preparation-planned",
+    "phase": "recovery-required",
+    "closedFailure": true,
+    "failureCode": "restore-prep-planned-candidate-reconcile-memory-headroom",
+    "sourceSha256": "65d0ce763bcdedf140646fb58a630f2876ddd365707bc8c86bd59f49864ca2f4",
+    "selected": false
+  },
+  "failureSource": {
+    "file": "restore-browser.acceptance.ts",
+    "line": 1278,
+    "column": 11
+  },
+  "pageErrors": 0,
+  "servingResources": {
+    "memoryLimitBytes": 1073741824,
+    "swapLimitBytes": 0,
+    "cpuMax": "75000 100000",
+    "pidsMax": 128,
+    "memoryPeakBytes": 1073741824,
+    "memoryCurrentBytes": 358748160,
+    "memoryStatSnapshot": {
+      "scope": "Pre-shutdown snapshot; not a peak breakdown or exact preparation-admission counters",
+      "units": "bytes",
+      "recordedAt": "2026-11-24T03:51:02.769Z",
+      "anon": 50704384,
+      "file": 272629760,
+      "shmem": 0,
+      "inactive_file": 272556032,
+      "active_file": 73728,
+      "file_dirty": 90112,
+      "file_writeback": 0
+    },
+    "peakScope": "Serving cgroup through pre-shutdown observation; excludes separate observer and later cold helper"
+  },
+  "recoveryHeadroom": {
+    "state": "collected",
+    "scope": "Up to eight ordered stderr refusals in the final 30-line/16-KiB log tail; earlier events may be absent; not automatic attribution to the canonical failure",
+    "refusals": [
+      {
+        "version": 1,
+        "phase": "running",
+        "probes": [
+          "fulfilled",
+          "fulfilled",
+          "fulfilled",
+          "fulfilled"
+        ],
+        "maximumBytes": 1073741824,
+        "usedBytes": 984604672,
+        "chargedBytes": 984604672,
+        "fileBytes": 691298304,
+        "sharedBytes": 0,
+        "inactiveBytes": 691355648,
+        "dirtyBytes": 57344,
+        "writebackBytes": 0,
+        "availableKiB": 14475020,
+        "observedAtMs": 1795492261982,
+        "reclaimableBytes": 0,
+        "cgroupRequiredBytes": 134217728,
+        "hostRequiredKiB": 262144,
+        "cacheCountersValid": false,
+        "cgroupRefused": true,
+        "hostRefused": false
+      }
+    ],
+    "malformed": 0,
+    "omitted": 0,
+    "inputTruncated": false
+  },
+  "supervisorClosure": {
+    "running": false,
+    "pid": 0,
+    "exitCode": 0,
+    "oomKilled": false
+  },
+  "stage": "confirming-and-restoring",
+  "stageTimings": [
+    {
+      "stage": "initializing",
+      "elapsedMs": 0
+    },
+    {
+      "stage": "starting-linux-supervisor",
+      "elapsedMs": 471
+    },
+    {
+      "stage": "bootstrapping-closed-workspace",
+      "elapsedMs": 1816
+    },
+    {
+      "stage": "starting-shipped-supervisor",
+      "elapsedMs": 40608
+    },
+    {
+      "stage": "cli-verify",
+      "elapsedMs": 44738
+    },
+    {
+      "stage": "cli-start",
+      "elapsedMs": 45731
+    },
+    {
+      "stage": "cli-resume",
+      "elapsedMs": 48840
+    },
+    {
+      "stage": "authenticating-browser",
+      "elapsedMs": 49317
+    },
+    {
+      "stage": "authenticating-current-owner",
+      "elapsedMs": 56991
+    },
+    {
+      "stage": "preparing-through-admin",
+      "elapsedMs": 67724
+    },
+    {
+      "stage": "confirming-and-restoring",
+      "elapsedMs": 126843
+    }
+  ],
+  "elapsedMs": 170635,
+  "passed": false,
+  "run": 45321337898,
+  "job": 138200796495,
+  "artifact": 14888166883,
+  "zipSha256": "4e399c6deb50e674b7b26bd01fa69968526098430d8338bdf89fa02a3976831d",
+  "originalEvidenceSha256": "593ed7ee7caa975b447c03e86c03a2bd5f113b5d79b19e0088eeb512670e5a8d",
+  "artifactExpires": "2026-12-08",
+  "disposition": "Failed acceptance retained. Reviewer B found unchanged guarded runtime/restore paths; no demonstrated branding cause. Keep all budgets/guards; require complete acceptance on integrated head. Tail refusal is not automatic exact canonical attribution."
+}

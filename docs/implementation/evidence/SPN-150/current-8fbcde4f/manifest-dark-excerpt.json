@@ -1,0 +1,141 @@
+{
+  "reviewedAt": "2026-11-24T04:17:48.988Z",
+  "durationMs": 581489,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "desktop",
+  "theme": "dark",
+  "variants": [
+    "dark"
+  ],
+  "verifications": [
+    "dark: docs-native-formulas--inline-and-table native formula viewer settled before capture",
+    "dark: docs-native-formulas--private native formula viewer settled before capture",
+    "dark: docs-native-formulas--dark native formula viewer settled before capture",
+    "dark: docs-native-formulas--phone native formula viewer settled before capture",
+    "dark: docs-native-formulas--thirty-rows native formula viewer settled before capture",
+    "dark: docs-native-formulas--styled-scalar native formula viewer settled before capture",
+    "dark: redesign-native-editors--sheet native toolbar remains visible after content scroll",
+    "dark: redesign-native-editors--doc native toolbar remains visible after content scroll",
+    "dark: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "dark: Appearance styles survive a same-document Controls visit"
+  ],
+  "failures": [],
+  "originalManifestSha256": "92ef3354f1f9d93a2df3b770cc85e24e5dc2fb281b5fd13b56036784bd7b8ebd",
+  "totalChecked": 1155,
+  "totalCaptures": 1159,
+  "captures": [
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "dark",
+      "filename": "current-production-shell-startup--loading-dark.png",
+      "title": "Current production/Shell/Startup / Loading"
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "dark",
+      "filename": "current-production-shell-startup--within-workspace-dark.png",
+      "title": "Current production/Shell/Startup / Within Workspace"
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "dark",
+      "filename": "current-production-shell-startup--failed-dark.png",
+      "title": "Current production/Shell/Startup / Failed"
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "dark",
+      "filename": "current-production-shell-startup--offline-entry-dark.png",
+      "title": "Current production/Shell/Startup / Offline Entry"
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "dark",
+      "filename": "current-production-guest-accessstate--loading-dark.png",
+      "title": "Current production/Guest/AccessState / Loading"
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "dark",
+      "filename": "dashboard-dashboard--new-menu-artwork-dark.png",
+      "title": "Current production/Dashboard/Dashboard / New Menu Artwork"
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "dark",
+      "filename": "guest-guestapp--loading-dark.png",
+      "title": "Current production/Guest/GuestApp / Loading"
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "dark",
+      "filename": "space-review--app-loading-dark.png",
+      "title": "Current production/Spaces/Space / App Loading"
+    },
+    {
+      "id": "space-review--app-unreachable",
+      "variant": "dark",
+      "filename": "space-review--app-unreachable-dark.png",
+      "title": "Current production/Spaces/Space / App Unreachable"
+    },
+    {
+      "id": "space-review--app-unavailable",
+      "variant": "dark",
+      "filename": "space-review--app-unavailable-dark.png",
+      "title": "Current production/Spaces/Space / App Unavailable"
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "dark",
+      "filename": "space-review--add-page-artwork-dark.png",
+      "title": "Current production/Spaces/Space / Add Page Artwork"
+    }
+  ],
+  "checked": [
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "dark"
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "dark"
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "dark"
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "dark"
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "dark"
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "dark"
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "dark"
+    },
+    {
+      "id": "space-review--app-unreachable",
+      "variant": "dark"
+    },
+    {
+      "id": "space-review--app-unavailable",
+      "variant": "dark"
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "dark"
+    }
+  ]
+}

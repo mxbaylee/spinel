@@ -1,0 +1,735 @@
+{
+  "run": 45323591143,
+  "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+  "testedMerge": "c561e6bd59b655fb69ed786ae57c30fb69a8ff8b",
+  "identicalTree": "a34dcde4b1aafd91d883bfa187ddacd99e0528ff",
+  "artifact": 14889125631,
+  "zipSha256": "70272f5b3aa94f47a28c82e68aac851e63654261b52687cf70de5f033ad2d069",
+  "motionObservations": 6,
+  "motionViewport": [
+    390,
+    844
+  ],
+  "motionTheme": "dark",
+  "motionPeakKiB": 740160,
+  "motionScriptSha256": "133b4120dd532ddd7a9b909a9b11ad495e48ea4fdde2e4af4f7bd85c0752364d",
+  "motionLogSha256": "3c922a309eca7ad056f52cdc75ea06c853d475b3f489cc435b7e8a325a6ef989",
+  "physicalPhone": false,
+  "visualReview": "approved: agent review only",
+  "reviewer": "/root/spn089_review_b",
+  "findings": [],
+  "reviewedImageCount": 33,
+  "scope": "11 selected current production states in desktop light, desktop dark and phone light; all 33 images directly inspected",
+  "limitations": [
+    "Source approval applies to 8fbc and its identical-tree test merge only; SPN-162 integration still requires revalidation.",
+    "Motion observations use a local Chromium browser against the downloaded hosted static build, not a physical phone or full initial-HTML navigation.",
+    "Full current-head CI and sized-restore acceptance remain independent merge requirements.",
+    "Screenshot catalogue uses reduced motion; six separate fresh observations establish normal pulse and reduced-motion stillness."
+  ],
+  "captures": [
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "light",
+      "filename": "current-production-shell-startup--loading-light.png",
+      "title": "Current production/Shell/Startup / Loading",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "959dad6c90ac712a91401f56a6e8c660ebb8706040e3202231b58e498332f0bf",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Shell/Startup / Loading \u2014 light, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "light",
+      "filename": "current-production-shell-startup--within-workspace-light.png",
+      "title": "Current production/Shell/Startup / Within Workspace",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "6794d03f58af95aaae16912e0538ba0bb774bdfb83da4832b6b3110b7c8c2905",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Shell/Startup / Within Workspace \u2014 light, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "light",
+      "filename": "current-production-shell-startup--failed-light.png",
+      "title": "Current production/Shell/Startup / Failed",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "3f8614941733c8a7e94c0d57250232e7fbbf7359331201d307e8a2e7da03d0a7",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Shell/Startup / Failed \u2014 light, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "light",
+      "filename": "current-production-shell-startup--offline-entry-light.png",
+      "title": "Current production/Shell/Startup / Offline Entry",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        904
+      ],
+      "sha256": "e0dd84ce407161936669d1419d1d57cc1e7512204da483d2b6b2fc85fe8b4470",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Shell/Startup / Offline Entry \u2014 light, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "light",
+      "filename": "current-production-guest-accessstate--loading-light.png",
+      "title": "Current production/Guest/AccessState / Loading",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "7b0371f6e341c4c9a0f8fc29e81adc6fe901275d69acb927e0f4f970ebc268f1",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Guest/AccessState / Loading \u2014 light, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "light",
+      "filename": "dashboard-dashboard--new-menu-artwork-light.png",
+      "title": "Current production/Dashboard/Dashboard / New Menu Artwork",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "ee4ad13b60d4d5fe8d2c7c05a33b7fe3eb3a1b2c732ddf30012b43cf1242fe3f",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Dashboard/Dashboard / New Menu Artwork \u2014 light, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "light",
+      "filename": "guest-guestapp--loading-light.png",
+      "title": "Current production/Guest/GuestApp / Loading",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "7c51b31106cfca6f9e08d0b5363635369d593028544727c77782d797682035f1",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Guest/GuestApp / Loading \u2014 light, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "light",
+      "filename": "space-review--app-loading-light.png",
+      "title": "Current production/Spaces/Space / App Loading",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "959dad6c90ac712a91401f56a6e8c660ebb8706040e3202231b58e498332f0bf",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Spaces/Space / App Loading \u2014 light, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "space-review--app-unreachable",
+      "variant": "light",
+      "filename": "space-review--app-unreachable-light.png",
+      "title": "Current production/Spaces/Space / App Unreachable",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "fe8db3efbbc32ee73c013222f9ee51e822c1eefe210c9bffe453d63dd18f858d",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Spaces/Space / App Unreachable \u2014 light, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "space-review--app-unavailable",
+      "variant": "light",
+      "filename": "space-review--app-unavailable-light.png",
+      "title": "Current production/Spaces/Space / App Unavailable",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "d254e5eb37d4cddcc42af63d16f5a657a4c1bce51dd3cc452dc3f8ddbe1ae36b",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Spaces/Space / App Unavailable \u2014 light, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "light",
+      "filename": "space-review--add-page-artwork-light.png",
+      "title": "Current production/Spaces/Space / Add Page Artwork",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "73d7a026ebcf827f9caf890dbde3f47ade772124df3dc8648843f6daa8a83de4",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Spaces/Space / Add Page Artwork \u2014 light, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "dark",
+      "filename": "current-production-shell-startup--loading-dark.png",
+      "title": "Current production/Shell/Startup / Loading",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "dark",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "4c3336401b06dbf335f0e03335e15bf890258a014040910ac69a409e03f9242d",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Shell/Startup / Loading \u2014 dark, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "dark",
+      "filename": "current-production-shell-startup--within-workspace-dark.png",
+      "title": "Current production/Shell/Startup / Within Workspace",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "dark",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "22af19b4747bbce364f33d03300f0451cdf4f6b0ffb87c53d2f1eadab6338c10",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Shell/Startup / Within Workspace \u2014 dark, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "dark",
+      "filename": "current-production-shell-startup--failed-dark.png",
+      "title": "Current production/Shell/Startup / Failed",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "dark",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "f378e3c3c4adfe578559c35d0258b2184cd46e111679f52858e51801e5c23506",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Shell/Startup / Failed \u2014 dark, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "dark",
+      "filename": "current-production-shell-startup--offline-entry-dark.png",
+      "title": "Current production/Shell/Startup / Offline Entry",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "dark",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        904
+      ],
+      "sha256": "1d0e8f40264718c7b13781da41e8b9f86dc9d83c7ae758d5388ceb5940c2ab28",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Shell/Startup / Offline Entry \u2014 dark, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "dark",
+      "filename": "current-production-guest-accessstate--loading-dark.png",
+      "title": "Current production/Guest/AccessState / Loading",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "dark",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "5b237caabeb3fb2712ecbb108541cad731ce674a869e77a88738ab7171c11f1a",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Guest/AccessState / Loading \u2014 dark, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "dark",
+      "filename": "dashboard-dashboard--new-menu-artwork-dark.png",
+      "title": "Current production/Dashboard/Dashboard / New Menu Artwork",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "dark",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "3c08038aa367191d71e8e24893c6121230361a850f7c10c240542954d2ea608b",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Dashboard/Dashboard / New Menu Artwork \u2014 dark, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "dark",
+      "filename": "guest-guestapp--loading-dark.png",
+      "title": "Current production/Guest/GuestApp / Loading",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "dark",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "cd4170180a72a457efa3f52b4e69a15bdb87bfb0bcd6a7cfbb66621270aa4353",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Guest/GuestApp / Loading \u2014 dark, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "dark",
+      "filename": "space-review--app-loading-dark.png",
+      "title": "Current production/Spaces/Space / App Loading",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "dark",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "4c3336401b06dbf335f0e03335e15bf890258a014040910ac69a409e03f9242d",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Spaces/Space / App Loading \u2014 dark, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "space-review--app-unreachable",
+      "variant": "dark",
+      "filename": "space-review--app-unreachable-dark.png",
+      "title": "Current production/Spaces/Space / App Unreachable",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "dark",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "b124f3afe0d0b678fca0ae29132f6cb5a51c5cddc5f23f5252afa72dcc62d2a5",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Spaces/Space / App Unreachable \u2014 dark, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "space-review--app-unavailable",
+      "variant": "dark",
+      "filename": "space-review--app-unavailable-dark.png",
+      "title": "Current production/Spaces/Space / App Unavailable",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "dark",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "a2ffb2955fff02f35cd8fff75a53c21ac1dc080cfcec532a2b4f05aa94e856d3",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Spaces/Space / App Unavailable \u2014 dark, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "dark",
+      "filename": "space-review--add-page-artwork-dark.png",
+      "title": "Current production/Spaces/Space / Add Page Artwork",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "dark",
+      "viewport": [
+        1280,
+        900
+      ],
+      "imageDimensions": [
+        1280,
+        900
+      ],
+      "sha256": "7c5aa840f527596d6dca0611b4ff604c5960ce460c5d9b750dd5fbf3d314f4fd",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Spaces/Space / Add Page Artwork \u2014 dark, desktop 1280\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "phone",
+      "filename": "current-production-shell-startup--loading-phone.png",
+      "title": "Current production/Shell/Startup / Loading",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        390,
+        900
+      ],
+      "imageDimensions": [
+        390,
+        900
+      ],
+      "sha256": "4579792581b9fe50f64372b03f8b35d5ffcf3b2548de2716efea36b6e8e3122c",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Shell/Startup / Loading \u2014 light, phone 390\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "phone",
+      "filename": "current-production-shell-startup--within-workspace-phone.png",
+      "title": "Current production/Shell/Startup / Within Workspace",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        390,
+        900
+      ],
+      "imageDimensions": [
+        390,
+        900
+      ],
+      "sha256": "5798d75d9d0ca0a9a54af1e887bbe86de5ae918d348bc97c95b94425c679c238",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Shell/Startup / Within Workspace \u2014 light, phone 390\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "phone",
+      "filename": "current-production-shell-startup--failed-phone.png",
+      "title": "Current production/Shell/Startup / Failed",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        390,
+        900
+      ],
+      "imageDimensions": [
+        390,
+        900
+      ],
+      "sha256": "f2d1445098543ba3cebea6e4e4abede7d7d1433cf47e7bd1521d94777ddfc9e2",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Shell/Startup / Failed \u2014 light, phone 390\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "phone",
+      "filename": "current-production-shell-startup--offline-entry-phone.png",
+      "title": "Current production/Shell/Startup / Offline Entry",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        390,
+        900
+      ],
+      "imageDimensions": [
+        390,
+        904
+      ],
+      "sha256": "015f3ec214795edd6a0d3751f08a7ff30440f4da2927da55d0dd4b4acba91b11",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Shell/Startup / Offline Entry \u2014 light, phone 390\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "phone",
+      "filename": "current-production-guest-accessstate--loading-phone.png",
+      "title": "Current production/Guest/AccessState / Loading",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        390,
+        900
+      ],
+      "imageDimensions": [
+        390,
+        900
+      ],
+      "sha256": "1ef61f3bf07f54210e491df72a9ed5b13e355c0b1d1c814e6f1162acd958c8d2",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Guest/AccessState / Loading \u2014 light, phone 390\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "phone",
+      "filename": "dashboard-dashboard--new-menu-artwork-phone.png",
+      "title": "Current production/Dashboard/Dashboard / New Menu Artwork",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        390,
+        900
+      ],
+      "imageDimensions": [
+        390,
+        2180
+      ],
+      "sha256": "910c4424d50b60d22e2bbc318e77c4d41d4f9808c6d3e58db888770412dc7093",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Dashboard/Dashboard / New Menu Artwork \u2014 light, phone 390\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "phone",
+      "filename": "guest-guestapp--loading-phone.png",
+      "title": "Current production/Guest/GuestApp / Loading",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        390,
+        900
+      ],
+      "imageDimensions": [
+        390,
+        900
+      ],
+      "sha256": "6f3978bcd53c551c6f54ef2bb6302414d34af45be4ba0d523ab455f8e945e85b",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Guest/GuestApp / Loading \u2014 light, phone 390\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "phone",
+      "filename": "space-review--app-loading-phone.png",
+      "title": "Current production/Spaces/Space / App Loading",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        390,
+        900
+      ],
+      "imageDimensions": [
+        390,
+        900
+      ],
+      "sha256": "4579792581b9fe50f64372b03f8b35d5ffcf3b2548de2716efea36b6e8e3122c",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Spaces/Space / App Loading \u2014 light, phone 390\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "space-review--app-unreachable",
+      "variant": "phone",
+      "filename": "space-review--app-unreachable-phone.png",
+      "title": "Current production/Spaces/Space / App Unreachable",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        390,
+        900
+      ],
+      "imageDimensions": [
+        390,
+        900
+      ],
+      "sha256": "6c588285d47a304f7c7b2e1aa454abcf91352857d7eddb5e0690739217872ec4",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Spaces/Space / App Unreachable \u2014 light, phone 390\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "space-review--app-unavailable",
+      "variant": "phone",
+      "filename": "space-review--app-unavailable-phone.png",
+      "title": "Current production/Spaces/Space / App Unavailable",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        390,
+        900
+      ],
+      "imageDimensions": [
+        390,
+        900
+      ],
+      "sha256": "e1814f29c7f7f4693aa301be4a118f710514f4ba4022a4371448f896a2e9b6bd",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Spaces/Space / App Unavailable \u2014 light, phone 390\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "phone",
+      "filename": "space-review--add-page-artwork-phone.png",
+      "title": "Current production/Spaces/Space / Add Page Artwork",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "theme": "light",
+      "viewport": [
+        390,
+        900
+      ],
+      "imageDimensions": [
+        390,
+        900
+      ],
+      "sha256": "86b4855ad498c6baa581109f46d349bd357580dd2f5f46f05cef3d079fec3887",
+      "visuallyInspected": true,
+      "verdict": "approved",
+      "caption": "Current production/Spaces/Space / Add Page Artwork \u2014 light, phone 390\u00d7900, full-page capture, source 8fbcde4f, hosted run 45323591143, agent review only."
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14890116036,
+      "name": "design-review-desktop-light",
+      "digest": "sha256:fefc415091abab921872765ddb3dac489934025eee446a9ba470437d9e8ea45b",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "manifest": "manifest-light-original.json",
+      "manifestSha256": "be3634058e736b655c4796ed8103feba9df9cf281f8914ac337de383c7596dd8",
+      "excerpt": "manifest-light-excerpt.json",
+      "excerptSha256": "7d501cfa9483415bf9be41de14a69231938ae0f5b89d2d7a5bcc704d2b88497b",
+      "totalChecked": 1155,
+      "failures": []
+    },
+    {
+      "id": 14889007899,
+      "name": "design-review-desktop-dark",
+      "digest": "sha256:b373092b40432329838cbb0fd12fd0fbe4884a0890b29ea2cf260b23357bc889",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "manifest": "manifest-dark-original.json",
+      "manifestSha256": "92ef3354f1f9d93a2df3b770cc85e24e5dc2fb281b5fd13b56036784bd7b8ebd",
+      "excerpt": "manifest-dark-excerpt.json",
+      "excerptSha256": "1b172dba44216da46bbc55db80dd5515a746dadcc645903757f6347bbc1f4dcb",
+      "totalChecked": 1155,
+      "failures": []
+    },
+    {
+      "id": 14888972950,
+      "name": "design-review-mobile-light",
+      "digest": "sha256:8eecee1832de503a42a9b892f6999e01c610898fd96a36a937b46b3bd68a13e3",
+      "source": "8fbcde4f2a33b3a60df132cb6e19d36734e1eb6b",
+      "manifest": "manifest-phone-original.json",
+      "manifestSha256": "dbaaf401266bbbd2abadbd2ee72e72ff762554c98ebca546c9fbefa128bcaf02",
+      "excerpt": "manifest-phone-excerpt.json",
+      "excerptSha256": "9d3e492b43a2cd23ec3cedb274bb5a551b2f7e8e677f5b0b200487586e4c89e4",
+      "totalChecked": 1155,
+      "failures": []
+    }
+  ],
+  "supportingFiles": {
+    "motion-check.ts": "133b4120dd532ddd7a9b909a9b11ad495e48ea4fdde2e4af4f7bd85c0752364d",
+    "motion-check.log": "3c922a309eca7ad056f52cdc75ea06c853d475b3f489cc435b7e8a325a6ef989",
+    "build/sha.json": "4e8749364aed9ac362d0651e57e650d13600dd2cef31c222027ad3ded17df5dd",
+    "selected-story-ids.json": "3f0b91f8559babb6387382806cc4baebe7c732e80ca23d4014f32cbe064a6e76"
+  }
+}
