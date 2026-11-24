@@ -189,8 +189,11 @@ cause, do not add retries or budgets. The CI reporter `e2e/reset-diagnostics-rep
 (see [SPN-166](implementation/SPN-166.md)) logs one content-free `econnreset-diagnostic` line per
 connection reset, paired with the owned server's state. The `offline-upgrade` timeout error lists
 the held and pending Web Locks and the old worker's unfinished events
-(`e2e/worker-inflight.ts`, [SPN-167](implementation/SPN-167.md); the cause is open in
-[SPN-169](todo/SPN-169.md)). A wait that guards a page load shares that load's one budget:
+(`e2e/worker-inflight.ts`, [SPN-167](implementation/SPN-167.md)). A later native
+capture identified Chromium restart/idle starvation;
+[SPN-169](implementation/SPN-169.md) was resolved **won't fix** as an upstream
+browser defect. This does not waive a failed test or change its activation budget.
+A wait that guards a page load shares that load's one budget:
 do not put a shorter default `expect` deadline ahead of it. These diagnostics are observe-only.
 
 ## Keep coverage routing complete
