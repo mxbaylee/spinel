@@ -65,10 +65,16 @@ export async function observeConnectionOpening(page: Page) {
         saveCategory,
       });
     };
-    const visit = (node: Node, kind: string) => {
+    const visit = (node: Node, kind: string, following: MutationRecord[]) => {
       if (!(node instanceof Element)) return;
-      if (node.matches('.connection-status')) record(node, kind);
-      node.querySelectorAll('.connection-status').forEach((child) => record(child, kind));
+      const atMutation = (status: Element) => {
+        const next = following.find(
+          (change) => change.type === 'attributes' && change.target === status,
+        );
+        record(status, kind, next ? next.oldValue : status.getAttribute('data-state'));
+      };
+      if (node.matches('.connection-status')) atMutation(node);
+      node.querySelectorAll('.connection-status').forEach(atMutation);
     };
     const sample = (kind: string) =>
       document.querySelectorAll('.connection-status').forEach((node) => record(node, kind));
@@ -93,8 +99,8 @@ export async function observeConnectionOpening(page: Page) {
             next ? next.oldValue : change.target.getAttribute('data-state'),
           );
         }
-        for (const node of change.addedNodes) visit(node, 'added');
-        for (const node of change.removedNodes) visit(node, 'removed');
+        for (const node of change.addedNodes) visit(node, 'added', changes.slice(index + 1));
+        for (const node of change.removedNodes) visit(node, 'removed', changes.slice(index + 1));
       }
       sample('current');
     };

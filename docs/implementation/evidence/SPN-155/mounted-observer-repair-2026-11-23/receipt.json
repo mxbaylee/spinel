@@ -1,0 +1,26 @@
+{
+  "base": "235c14d69e30967fe7cf470308fdb39798e0fca5",
+  "rejectedObserverHead": "3f5aa271abb27f20ae3c300a75401439f4fc597d",
+  "productionChanged": false,
+  "observerTest": {
+    "passed": 1,
+    "durationSeconds": 2.5,
+    "peakKiB": 786512,
+    "purpose": "Actual maintained instrument case with lawful recovery, transient attribute and mounted-node states, removed-node detection and overflow. Neutral page only, no product/phone acceptance."
+  },
+  "sourceSha256": {
+    "web/spinelSync.ts": "286c18563822b3ab07c9d8068f807998869c5c6f0027ba85d7c23b4496bfd260",
+    "web/connectionState.ts": "c8a4c4195f7f3eca350604d0b683e5a29e0c3e7cac77b4f31c0d2aaa8bb11e3b",
+    "web/useConnectionStatus.ts": "05a3ae05b05267632f596893704902bfa371942fe880d5d193d404d0ff41b731",
+    "web/App.tsx": "c572ec06c24bc4ab122673860ecaf5b20eb7df437f99136b73d42477a1f63187",
+    "web/DocEditor.tsx": "dfacd4994d3d2b66189c38b802f18d5f0ea8676355988b137e72c12e7b053bdb",
+    "src/ui/spinelSync.test.ts": "82b9b19c6e72eb569d6adc9220cf2a4fda6b610f85cdf5a78133ab181455c277",
+    "src/ui/connectionState.test.ts": "22c4ddcef4a04dfeb984f74bc6ae0cc5bb936a32170216544cdd184f1efd3ad8",
+    "e2e/connection-observation.ts": "6af2ce7f2c781ee1f4f842f973f4816f6ea9af9546c49047c52c5ca7c491f943",
+    "e2e/offline-editing.spec.ts": "1bcd0dfeb737655fec2c3688af33a524e5182a7d41d7bd61d03abf7a430a197c"
+  },
+  "fileSha256": {
+    "first-mounted-transient-miss.txt": "cbc4fd98e7550c28eaa5c610617b2cd27652dfbe1037d9a173c077188b98b75d",
+    "actual-instrument-test.txt": "0f0474045fe88cc3e5065bffcfa2a766264da2cd457b724aaee59555cfff9379"
+  }
+}

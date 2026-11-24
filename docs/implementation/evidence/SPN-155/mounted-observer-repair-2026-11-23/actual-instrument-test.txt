@@ -1,0 +1,20 @@
+
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+[1/1] [observer-only] › e2e/offline-editing.spec.ts:59:3 › downloaded native editors › connection observations distinguish historical offline from a current transient
+  1 passed (2.5s)
+WATCHDOG peakKiB=786512 aborted=false

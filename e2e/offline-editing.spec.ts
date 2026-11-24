@@ -99,6 +99,15 @@ test.describe('downloaded native editors', () => {
           node.setAttribute('data-state', 'offline');
           node.setAttribute('data-state', 'online');
         });
+        await page.evaluate(() => {
+          // Initial Offline can be corrected in the same delivery as mounting,
+          // including a status nested in a newly mounted editor subtree.
+          const subtree = document.createElement('div');
+          subtree.innerHTML =
+            '<span class="connection-status" data-state="offline">Connection</span>';
+          document.querySelector('.editor-frame')!.append(subtree);
+          subtree.firstElementChild!.setAttribute('data-state', 'online');
+        });
         const transient = await observation.read();
         expect(
           transient.events.some(
@@ -107,6 +116,16 @@ test.describe('downloaded native editors', () => {
               event.kind === 'attribute' &&
               event.state === 'offline' &&
               event.browserOnline,
+          ),
+        ).toBe(true);
+        expect(
+          transient.events.some(
+            (event) =>
+              !event.historical &&
+              event.kind === 'added' &&
+              event.state === 'offline' &&
+              event.browserOnline &&
+              event.visible,
           ),
         ).toBe(true);
         expect(transient.negativeControl.detected).toBe(true);
