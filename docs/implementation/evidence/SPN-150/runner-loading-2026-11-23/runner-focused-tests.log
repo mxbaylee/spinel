@@ -1,0 +1,13 @@
+
+ RUN  v5.1.0 /workspace/scratch/095a9b3f0a59/spinel
+
+
+ Test Files  3 passed (3)
+      Tests  13 passed (13)
+   Start at  21:53:05
+   Duration  674ms (tests 58%, transform 21%, import 15%, worker 6%)
+
+    Isolate  3 workers spawned · ~144ms startup each (spawn + environment, per file)
+             at least ~288ms faster with isolate: false — reuses workers across files instead of one per file
+
+watchdog: exit=0 elapsed=1.21s peak=282992 KiB aborted=None

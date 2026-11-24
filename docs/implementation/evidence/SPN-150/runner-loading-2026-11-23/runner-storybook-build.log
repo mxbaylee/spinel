@@ -1,0 +1,25 @@
+│  storybook-static/assets/es-D9gxFkry.js
+│  1,536.02 kB
+
+│
+▲  Vite [plugin builtin:vite-reporter]
+│  (!) Some chunks are larger than 500 kB after minification. Consider:
+│  - Using dynamic import() to code-split the application
+│  - Use build.rolldownOptions.output.codeSplitting to improve chunking:
+│  ]8;;https://rolldown.rs/reference/OutputOptions.codeSplittinghttps://rolldown.rs/reference/OutputOptions.codeSplitting]8;;
+│  - Adjust chunk size limit for this warning via
+│  build.chunkSizeWarningLimit.
+│
+▲  Vite [33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mweb/offline/recovery.ts is
+│  dynamically imported by web/spinelSync.ts but also statically imported
+│  by web/offline/OfflineSession.ts, dynamic import will not move module
+│  into another chunk.
+
+│  Vite ✓ built in 2.80s
+│
+◇  Output directory:
+│  /workspace/scratch/095a9b3f0a59/spinel/storybook-static
+│
+└  Storybook build completed successfully
+
+watchdog: exit=0 elapsed=6.23s peak=1705944 KiB aborted=None

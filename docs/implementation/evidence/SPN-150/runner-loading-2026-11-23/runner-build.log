@@ -1,0 +1,25 @@
+dist/assets/offlineStore-D8w1wZIt.js                                                                          33.40 kB │ gzip:     9.98 kB
+dist/assets/spinelSync-dLjyv5oX.js                                                                           103.11 kB │ gzip:    32.68 kB
+dist/assets/documentReady-DFJ6hJEF.js                                                                        185.13 kB │ gzip:    50.58 kB
+dist/assets/floating-ui.react-dom-Cu3TIp2r.js                                                                214.40 kB │ gzip:    67.21 kB
+dist/assets/application-CgruoYnE.js                                                                          375.03 kB │ gzip:   109.81 kB
+dist/assets/lib-BtG_rSXs.js                                                                                  397.29 kB │ gzip:   108.83 kB
+dist/assets/profile-CWPuQQA6.js                                                                              433.43 kB │ gzip:    78.01 kB
+dist/assets/es-BIO-t1xb.js                                                                                   499.33 kB │ gzip:   159.05 kB
+dist/assets/CopyFile-BFz2I0Em.js                                                                             631.39 kB │ gzip:   107.04 kB
+dist/assets/es-D80byLqe.js                                                                                   726.06 kB │ gzip:   207.62 kB
+dist/assets/useDiagnostics-BNc1Cs7k.js                                                                       752.01 kB │ gzip:   192.22 kB
+dist/assets/es-QP97_786.js                                                                                 1,173.69 kB │ gzip:   208.09 kB
+dist/assets/es-CKrcAUgb.js                                                                                 1,536.34 kB │ gzip:   391.35 kB
+dist/assets/nativeSyncPermissions-Da1QEaql.js                                                              1,883.51 kB │ gzip:   545.02 kB
+dist/assets/univer-renderer-c9tsae3h.js                                                                    5,310.21 kB │ gzip: 1,257.63 kB
+
+[plugin builtin:vite-reporter]
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0mweb/offline/recovery.ts is dynamically imported by web/spinelSync.ts but also statically imported by web/offline/OfflineSession.ts, dynamic import will not move module into another chunk.
+
+✓ built in 1.78s
+watchdog: exit=0 elapsed=2.41s peak=1192020 KiB aborted=None

@@ -1,0 +1,482 @@
+{
+  "reviewedAt": "2026-11-24T02:14:52.852Z",
+  "durationMs": 20320,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "all",
+  "theme": "all",
+  "variants": [
+    "light",
+    "dark",
+    "phone",
+    "phone-dark",
+    "tablet"
+  ],
+  "requested": [
+    "current-production-shell-startup--loading",
+    "current-production-shell-startup--within-workspace",
+    "current-production-shell-startup--failed",
+    "current-production-shell-startup--offline-entry",
+    "dashboard-dashboard--new-menu-artwork",
+    "space-review--add-page-artwork",
+    "space-review--app-loading",
+    "guest-guestapp--loading",
+    "current-production-guest-accessstate--loading"
+  ],
+  "checked": [
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "light"
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "light"
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "light"
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "dark"
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "dark"
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "dark"
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "dark"
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "dark"
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "dark"
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "dark"
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "dark"
+    },
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "phone"
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "phone"
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "phone"
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "phone"
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "phone"
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "phone"
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "phone"
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "phone"
+    },
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "tablet"
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "tablet"
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "tablet"
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "tablet"
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "tablet"
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "tablet"
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "tablet"
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "tablet"
+    }
+  ],
+  "captures": [
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "light",
+      "filename": "current-production-shell-startup--loading-light.png",
+      "title": "Current production/Shell/Startup / Loading"
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "light",
+      "filename": "current-production-shell-startup--within-workspace-light.png",
+      "title": "Current production/Shell/Startup / Within Workspace"
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "light",
+      "filename": "current-production-shell-startup--failed-light.png",
+      "title": "Current production/Shell/Startup / Failed"
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "light",
+      "filename": "current-production-shell-startup--offline-entry-light.png",
+      "title": "Current production/Shell/Startup / Offline Entry"
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "light",
+      "filename": "dashboard-dashboard--new-menu-artwork-light.png",
+      "title": "Current production/Dashboard/Dashboard / New Menu Artwork"
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "light",
+      "filename": "space-review--add-page-artwork-light.png",
+      "title": "Current production/Spaces/Space / Add Page Artwork"
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "light",
+      "filename": "space-review--app-loading-light.png",
+      "title": "Current production/Spaces/Space / App Loading"
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "light",
+      "filename": "guest-guestapp--loading-light.png",
+      "title": "Current production/Guest/GuestApp / Loading"
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "light",
+      "filename": "current-production-guest-accessstate--loading-light.png",
+      "title": "Current production/Guest/AccessState / Loading"
+    },
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "dark",
+      "filename": "current-production-shell-startup--loading-dark.png",
+      "title": "Current production/Shell/Startup / Loading"
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "dark",
+      "filename": "current-production-shell-startup--within-workspace-dark.png",
+      "title": "Current production/Shell/Startup / Within Workspace"
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "dark",
+      "filename": "current-production-shell-startup--failed-dark.png",
+      "title": "Current production/Shell/Startup / Failed"
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "dark",
+      "filename": "current-production-shell-startup--offline-entry-dark.png",
+      "title": "Current production/Shell/Startup / Offline Entry"
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "dark",
+      "filename": "dashboard-dashboard--new-menu-artwork-dark.png",
+      "title": "Current production/Dashboard/Dashboard / New Menu Artwork"
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "dark",
+      "filename": "space-review--add-page-artwork-dark.png",
+      "title": "Current production/Spaces/Space / Add Page Artwork"
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "dark",
+      "filename": "space-review--app-loading-dark.png",
+      "title": "Current production/Spaces/Space / App Loading"
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "dark",
+      "filename": "guest-guestapp--loading-dark.png",
+      "title": "Current production/Guest/GuestApp / Loading"
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "dark",
+      "filename": "current-production-guest-accessstate--loading-dark.png",
+      "title": "Current production/Guest/AccessState / Loading"
+    },
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "phone",
+      "filename": "current-production-shell-startup--loading-phone.png",
+      "title": "Current production/Shell/Startup / Loading"
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "phone",
+      "filename": "current-production-shell-startup--within-workspace-phone.png",
+      "title": "Current production/Shell/Startup / Within Workspace"
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "phone",
+      "filename": "current-production-shell-startup--failed-phone.png",
+      "title": "Current production/Shell/Startup / Failed"
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "phone",
+      "filename": "current-production-shell-startup--offline-entry-phone.png",
+      "title": "Current production/Shell/Startup / Offline Entry"
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "phone",
+      "filename": "dashboard-dashboard--new-menu-artwork-phone.png",
+      "title": "Current production/Dashboard/Dashboard / New Menu Artwork"
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "phone",
+      "filename": "space-review--add-page-artwork-phone.png",
+      "title": "Current production/Spaces/Space / Add Page Artwork"
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "phone",
+      "filename": "space-review--app-loading-phone.png",
+      "title": "Current production/Spaces/Space / App Loading"
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "phone",
+      "filename": "guest-guestapp--loading-phone.png",
+      "title": "Current production/Guest/GuestApp / Loading"
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "phone",
+      "filename": "current-production-guest-accessstate--loading-phone.png",
+      "title": "Current production/Guest/AccessState / Loading"
+    },
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "phone-dark",
+      "filename": "current-production-shell-startup--loading-phone-dark.png",
+      "title": "Current production/Shell/Startup / Loading"
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "phone-dark",
+      "filename": "current-production-shell-startup--within-workspace-phone-dark.png",
+      "title": "Current production/Shell/Startup / Within Workspace"
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "phone-dark",
+      "filename": "current-production-shell-startup--failed-phone-dark.png",
+      "title": "Current production/Shell/Startup / Failed"
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "phone-dark",
+      "filename": "current-production-shell-startup--offline-entry-phone-dark.png",
+      "title": "Current production/Shell/Startup / Offline Entry"
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "phone-dark",
+      "filename": "dashboard-dashboard--new-menu-artwork-phone-dark.png",
+      "title": "Current production/Dashboard/Dashboard / New Menu Artwork"
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "phone-dark",
+      "filename": "space-review--add-page-artwork-phone-dark.png",
+      "title": "Current production/Spaces/Space / Add Page Artwork"
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "phone-dark",
+      "filename": "space-review--app-loading-phone-dark.png",
+      "title": "Current production/Spaces/Space / App Loading"
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "phone-dark",
+      "filename": "guest-guestapp--loading-phone-dark.png",
+      "title": "Current production/Guest/GuestApp / Loading"
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "phone-dark",
+      "filename": "current-production-guest-accessstate--loading-phone-dark.png",
+      "title": "Current production/Guest/AccessState / Loading"
+    },
+    {
+      "id": "current-production-shell-startup--loading",
+      "variant": "tablet",
+      "filename": "current-production-shell-startup--loading-tablet.png",
+      "title": "Current production/Shell/Startup / Loading"
+    },
+    {
+      "id": "current-production-shell-startup--within-workspace",
+      "variant": "tablet",
+      "filename": "current-production-shell-startup--within-workspace-tablet.png",
+      "title": "Current production/Shell/Startup / Within Workspace"
+    },
+    {
+      "id": "current-production-shell-startup--failed",
+      "variant": "tablet",
+      "filename": "current-production-shell-startup--failed-tablet.png",
+      "title": "Current production/Shell/Startup / Failed"
+    },
+    {
+      "id": "current-production-shell-startup--offline-entry",
+      "variant": "tablet",
+      "filename": "current-production-shell-startup--offline-entry-tablet.png",
+      "title": "Current production/Shell/Startup / Offline Entry"
+    },
+    {
+      "id": "dashboard-dashboard--new-menu-artwork",
+      "variant": "tablet",
+      "filename": "dashboard-dashboard--new-menu-artwork-tablet.png",
+      "title": "Current production/Dashboard/Dashboard / New Menu Artwork"
+    },
+    {
+      "id": "space-review--add-page-artwork",
+      "variant": "tablet",
+      "filename": "space-review--add-page-artwork-tablet.png",
+      "title": "Current production/Spaces/Space / Add Page Artwork"
+    },
+    {
+      "id": "space-review--app-loading",
+      "variant": "tablet",
+      "filename": "space-review--app-loading-tablet.png",
+      "title": "Current production/Spaces/Space / App Loading"
+    },
+    {
+      "id": "guest-guestapp--loading",
+      "variant": "tablet",
+      "filename": "guest-guestapp--loading-tablet.png",
+      "title": "Current production/Guest/GuestApp / Loading"
+    },
+    {
+      "id": "current-production-guest-accessstate--loading",
+      "variant": "tablet",
+      "filename": "current-production-guest-accessstate--loading-tablet.png",
+      "title": "Current production/Guest/AccessState / Loading"
+    }
+  ],
+  "verifications": [],
+  "failures": []
+}

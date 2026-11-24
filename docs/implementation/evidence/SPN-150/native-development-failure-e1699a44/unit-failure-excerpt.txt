@@ -1,0 +1,14 @@
+2026-11-24T02:46:00.5262897Z  FAIL  server/app.test.ts > Vite cannot serve database files, sidecars or server source through its filesystem routes
+2026-11-24T02:46:00.5263846Z  FAIL  server/app.test.ts > page metadata stays generic with configured-origin assets (development)
+2026-11-24T02:46:00.5265336Z TypeError: Unknown file extension ".tsx" for /home/runner/work/spinel/spinel/src/build/startupHtml.tsx
+2026-11-24T02:46:00.5268258Z  FAIL  server/dev.test.ts > development watch mode stays running without a config-bundle restart loop
+2026-11-24T02:46:00.5275622Z TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".tsx" for /home/runner/work/spinel/spinel/src/build/startupHtml.tsx
+2026-11-24T02:46:00.5292246Z  FAIL  src/ui/bootstrapFailure.test.ts > a real rejected application import reports its stage without private error text
+2026-11-24T02:46:00.5292827Z AssertionError: expected '' to contain 'Spinel could not start.'
+2026-11-24T02:46:00.5300346Z TypeError: root.querySelector is not a function
+2026-11-24T02:46:00.5302393Z       3|   const loading = root.querySelector<HTMLElement>('.sp-startup-content…
+2026-11-24T02:46:00.5309168Z  Test Files  3 failed | 204 passed (207)
+2026-11-24T02:46:00.5325715Z       Tests  4 failed | 2463 passed (2467)
+2026-11-24T02:46:00.5387953Z ##[error]TypeError: root.querySelector is not a function
+TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".tsx" for /home/runner/work/spinel/spinel/src/build/startupHtml.tsx
+2026-11-24T02:46:00.5416375Z ##[error]AssertionError: expected '' to contain 'Spinel could not start.'

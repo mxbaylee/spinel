@@ -1,0 +1,7 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> backlog:pr
+> node scripts/backlog/cli.ts pr --base origin/main --title 🪩 SPN-150 Review and complete Spinel branding across the product
+
+pull request ok
+watchdog: exit=0 elapsed=6.23s peak=269932 KiB aborted=None

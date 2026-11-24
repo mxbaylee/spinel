@@ -1,0 +1,21 @@
+{
+  "sourceCommit": "e1699a44370c987064a81eb60a9265647d3206f4",
+  "run": 45312730372,
+  "jobs": [
+    138172531422,
+    138172531433
+  ],
+  "failure": "Development web server exited before ready; native Vite config import cannot load startupHtml.tsx.",
+  "localReproduction": "node -e import('./vite.config.ts')",
+  "disposition": "Convert the same three rendering modules to native-loadable TypeScript using React createElement. Preserve the shared markup, existing loader mode and startup animation. Actual development and production acceptance remain pending.",
+  "additionalJob": 138172530996,
+  "additionalFailure": "Bootstrap diagnostic test DOM stub lacked querySelector; native development app/watch tests share the TSX import failure.",
+  "files": {
+    "native-import-failure.txt": "759489e408983bdd0adeb40fcee150a6b1ca1466f3ebd3cd42c6cdf336a8adce",
+    "spn150-native-development-bootstrap-clean.txt": "645bd84009c15024ce87fa8a326f1be8d278269dcea16240773a959e1c558ec4",
+    "spn150-native-development-bootstrap-selected.txt": "c3d1356d7a6ceccd802c1cdaafc3d382689fcdb8dadd9cd4571b759f9483a1f1",
+    "spn150-native-repair-final-contracts.txt": "56c73ed8d78d7823acd6483f75bbcca7e09f5095ccd051ff11169cc5e913545b",
+    "spn150-native-repair-typecheck.txt": "e905f8be616bcb0700cd519dba4dc0952ba61f10f052e800d0fe880d315ce6a3",
+    "unit-failure-excerpt.txt": "e291d8562da5673c3ee896541ae8852475d7860429e59443ac5864bdd17152c4"
+  }
+}

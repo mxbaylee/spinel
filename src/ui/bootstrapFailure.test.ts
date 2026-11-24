@@ -17,7 +17,9 @@ afterEach(() => {
 });
 
 test('a real rejected application import reports its stage without private error text', async () => {
-  const root = { textContent: '' };
+  // This import-diagnostic fixture has no branded HTML; the helper falls back
+  // to the root's existing recovery wording. Branded failure UI is story-tested.
+  const root = { textContent: '', querySelector: () => null };
   vi.stubGlobal('document', { getElementById: (id: string) => (id === 'root' ? root : null) });
   const report = vi.spyOn(console, 'error').mockImplementation(() => {});
   await import('../../web/main.tsx');

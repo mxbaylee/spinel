@@ -1,5 +1,6 @@
 /// <reference lib="webworker" />
 import { faviconSvg } from '../src/ui/favicon.ts';
+import { offlineHtml } from '../src/ui/offlinePage.ts';
 import { offlineErrorMessage } from '../src/shared/offlineError.ts';
 import { isInstallationPath } from '../src/shared/pwa.ts';
 import {
@@ -38,9 +39,8 @@ const shell = parseShellManifest('__SPINEL_SHELL_MANIFEST__');
 // These are actual Client.id values, never caller-supplied tab identifiers.
 const observedClients = new Map<string, string[]>();
 
-const offline = `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#c42c58"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><meta name="robots" content="noindex"><title>Spinel — Offline</title><style>body{font:1.1rem system-ui,sans-serif;margin:0;padding:3rem 1.5rem;background:#fff5f2;color:#4a1e33}main{max-width:32rem;margin:auto}button{font:inherit;min-height:44px;padding:.75rem 1rem;border:0;border-radius:.5rem;background:#c42c58;color:white}</style></head><body><main><h1>You're offline</h1><p>Connect to the internet, then try again to open this page.</p><button id="retry">Try again</button></main><script>document.getElementById('retry').addEventListener('click',()=>location.reload());</script></body></html>`;
 const offlinePage = () =>
-  new Response(offline, {
+  new Response(offlineHtml, {
     status: 503,
     headers: {
       'Content-Type': 'text/html; charset=utf-8',

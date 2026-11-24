@@ -4,6 +4,7 @@ import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
 import { GuestApp } from './GuestApp.tsx';
+import { checkLoadingRunner } from '../.storybook/loadingChecks.ts';
 
 // GuestApp reads its item ID from the page path (/share/<id>) and its link
 // token from the hash. replaceState changes both without navigating, so the
@@ -64,6 +65,7 @@ export const Loading: Story = {
     await expect(within(canvasElement).getByRole('status')).toHaveTextContent(
       'Opening shared document…',
     );
+    await checkLoadingRunner(canvasElement);
   },
 };
 /** The link was revoked or replaced: any 401, 403 or 404 ends the page. */

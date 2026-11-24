@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { GemLogo } from '../src/ui/GemLogo.tsx';
+import { GemLogo } from '../src/ui/GemLogo.ts';
 import { Button, Modal } from '../src/ui/redesign/Controls.tsx';
 import { ThemeMenu } from '../src/ui/redesign/ThemeMenu.tsx';
 import '../src/ui/redesign/entryJourney.css';

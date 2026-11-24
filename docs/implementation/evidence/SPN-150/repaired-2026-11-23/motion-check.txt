@@ -1,0 +1,19 @@
+import { preview } from '/Users/mxbaylee/projects/spinel-spn150/node_modules/vite/dist/node/index.js';
+import { chromium, expect } from '/Users/mxbaylee/projects/spinel-spn150/node_modules/@playwright/test/index.mjs';
+const server=await preview({configFile:false,root:process.cwd()+'/storybook-static',build:{outDir:'.'},preview:{host:'127.0.0.1',port:6007,strictPort:true}});
+const browser=await chromium.launch();
+try {
+ for(const motion of ['no-preference','reduce'] as const) for(const id of ['space-review--app-loading','guest-guestapp--loading','current-production-guest-accessstate--loading']) {
+  const page=await browser.newPage({viewport:{width:390,height:844},colorScheme:'dark',reducedMotion:motion});
+  try {
+   await page.goto(`http://127.0.0.1:6007/iframe.html?id=${id}&viewMode=story&globals=theme:dark`);
+   const gem=page.locator('.sp-startup-gem'); await expect(gem).toBeVisible();
+   await expect.poll(()=>page.evaluate(()=> (window as any).__STORYBOOK_PREVIEW__?.channel?.last('storyFinished')?.[0]?.status)).toBe('success');
+   const errors=await page.evaluate(()=>['playFunctionThrewException','unhandledErrorsWhilePlaying'].flatMap(event=>(window as any).__STORYBOOK_PREVIEW__?.channel?.last(event)??[]));expect(errors).toEqual([]);
+   await expect(gem).toHaveCSS('animation-name',motion==='reduce'?'none':'sp-startup-pulse');
+   if(id==='space-review--app-loading')await expect(page.locator('.sp-startup')).toHaveCSS('display','grid');
+   if(motion==='no-preference') { const initial=await gem.evaluate(e=>getComputedStyle(e).transform);await expect.poll(()=>gem.evaluate(e=>getComputedStyle(e).transform)).not.toBe(initial); }
+   console.log(JSON.stringify({id,motion,pulse:await gem.evaluate(e=>getComputedStyle(e).animationName),passed:true}));
+  } finally {await page.close();}
+ }
+} finally {await browser.close();await new Promise<void>((resolve,reject)=>server.httpServer.close(error=>error?reject(error):resolve()));}

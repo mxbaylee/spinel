@@ -14,7 +14,7 @@ import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { Action } from '../src/ui/redesign/Controls.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
-import { GemLogo } from '../src/ui/GemLogo.tsx';
+import { GemLogo } from '../src/ui/GemLogo.ts';
 import { ConnectionStatus } from './ConnectionStatus.tsx';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
 import type { ConnectionState } from './connectionState.ts';

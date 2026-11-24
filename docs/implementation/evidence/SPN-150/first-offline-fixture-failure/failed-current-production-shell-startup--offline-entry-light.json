@@ -1,0 +1,35 @@
+{
+  "id": "current-production-shell-startup--offline-entry",
+  "variant": "light",
+  "message": "Error: current-production-shell-startup--offline-entry: no swallowed play exceptions\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  -  1\n+ Received  + 22\n\n- Array []\n+ Array [\n+   Object {\n+     \"message\": \"Unable to find an accessible element with the role \\\"heading\\\" and name \\\"You're offline\\\"\n+\n+ There are no accessible roles. But there might be some inaccessible roles. If you wish to access them, then set the `hidden` option to `true`. Learn more about this here: https://testing-library.com/docs/dom-testing-library/api-queries#byrole\n+\n+ Ignored nodes: comments, script, style\n+ <body />\",\n+     \"name\": \"TestingLibraryElementError\",\n+     \"stack\": \"TestingLibraryElementError: Unable to find an accessible element with the role \\\"heading\\\" and name \\\"You're offline\\\"\n+\n+ There are no accessible roles. But there might be some inaccessible roles. If you wish to access them, then set the `hidden` option to `true`. Learn more about this here: https://testing-library.com/docs/dom-testing-library/api-queries#byrole\n+\n+ Ignored nodes: comments, script, style\n+ <body />\n+     at Object.getElementError (http://127.0.0.1:6007/assets/iframe-D6HL-Z0O.js:749:284)\n+     at http://127.0.0.1:6007/assets/iframe-D6HL-Z0O.js:138:112\n+     at http://127.0.0.1:6007/assets/iframe-D6HL-Z0O.js:130:4035\n+     at http://127.0.0.1:6007/assets/iframe-D6HL-Z0O.js:752:377\n+     at play (http://127.0.0.1:6007/assets/StartupScreen.stories-Dw1phRXz.js:1:3683)\",\n+   },\n+ ]\n    at captureRawStack (/Users/mxbaylee/projects/spinel-spn150/node_modules/playwright-core/lib/coreBundle.js:9282:17)\n    at callMatcherAsStep (/Users/mxbaylee/projects/spinel-spn150/node_modules/playwright/lib/matchers/expect.js:13316:57)\n    at Object.toEqual (/Users/mxbaylee/projects/spinel-spn150/node_modules/playwright/lib/matchers/expect.js:13308:23)\n    at waitForStory (/Users/mxbaylee/projects/spinel-spn150/scripts/screenshots.ts:542:61)\n    at async file:///Users/mxbaylee/projects/spinel-spn150/scripts/screenshots.ts:149:9",
+  "filename": "failed-current-production-shell-startup--offline-entry-light.png",
+  "storybook": {
+    "phase": "finished",
+    "storyFinished": {
+      "storyId": "current-production-shell-startup--offline-entry",
+      "status": "success"
+    },
+    "playErrors": [
+      {
+        "event": "playFunctionThrewException",
+        "count": 1,
+        "samples": [
+          "{\"name\":\"TestingLibraryElementError\",\"message\":\"Unable to find an accessible element with the role \\\"heading\\\" and name \\\"You're offline\\\"\\n\\nThere are no accessible roles. But there might be some inaccessible roles. If you wish to access them, then set the `hidden` option to `true`. Learn more about this here: https://testing-library.com/docs/dom-testing-library/api-queries#byrole\\n\\nIgnored nodes: comments, script, style\\n<body />\",\"stack\":\"TestingLibraryElementError: Unable to find an accessible element with the role \\\"heading\\\" and name \\\"You're offline\\\"\\n\\nThere are no accessible roles. But there might be some inaccessible roles. If you wish to access them, then set the `hidden` option to `true`. Learn more about this here: https://testing-library.com/docs/dom-testing-library/api-queries#byrole\\n\\nIgnored nodes: comments, script, style\\n<body />\\n    at Object.getElementError (http://127.0.0.1:6007/assets/iframe-D6HL-Z0O.js:749:284)\\n    at http://127.0.0.1:6007/assets/iframe-D6H"
+        ]
+      },
+      {
+        "event": "unhandledErrorsWhilePlaying",
+        "count": 0,
+        "samples": []
+      }
+    ]
+  },
+  "accessibility": "- iframe",
+  "nativeGeometry": {
+    "viewport": {
+      "width": 1280,
+      "height": 900,
+      "scale": 1
+    }
+  }
+}

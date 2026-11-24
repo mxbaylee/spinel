@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import config from '/Users/mxbaylee/projects/spinel-spn150/vite.config.ts';
+import { startupHtml } from '/Users/mxbaylee/projects/spinel-spn150/src/build/startupHtml.ts';
+const root = '/Users/mxbaylee/projects/spinel-spn150/';
+assert.equal(typeof config, 'function');
+const html = startupHtml(readFileSync(root + 'web/index.html', 'utf8'), readFileSync(root + 'src/ui/startup.css', 'utf8'));
+assert.match(html, /<main class="sp-startup">/);
+assert.match(html, /<svg class="gem"/);
+assert.match(html, /Loading your workspace…/);
+assert.match(html, /sp-startup-pulse/);
+assert.match(html, /prefers-reduced-motion/);
+assert.equal((html.match(/<strong class="sp-startup-wordmark">spinel<\/strong>/g) ?? []).length, 1);
+console.log(JSON.stringify({ nativeConfigImport: 'passed', nativeStaticRender: 'passed', bytes: Buffer.byteLength(html), sha256: createHash('sha256').update(html).digest('hex') }));

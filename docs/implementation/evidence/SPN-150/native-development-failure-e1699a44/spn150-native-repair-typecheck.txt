@@ -1,0 +1,8 @@
+
+> typecheck
+> tsc -p .
+
+WATCHDOG abort rss=983104 pressure=2
+serial: SIGTERM; killing the run.
+serial: waiting for remaining workers.
+WATCHDOG peakKiB=983104 aborted=true

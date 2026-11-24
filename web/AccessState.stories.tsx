@@ -1,18 +1,20 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { AccessState } from './AccessState.tsx';
+import { checkLoadingRunner } from '../.storybook/loadingChecks.ts';
 
 const meta = {
   title: 'Current production/Guest/AccessState',
   component: AccessState,
   parameters: { shell: 'none' },
   args: { kind: 'revoked' },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const heading = canvas.getByRole('heading', { level: 1 });
     await expect(heading).toBeVisible();
     await expect(heading).toHaveAccessibleName(/.+/);
     await expect(canvas.queryByRole('link')).not.toBeInTheDocument();
+    if (args.kind !== 'loading') await expect(canvasElement.querySelector('.rd-runner')).toBeNull();
     const window = canvasElement.ownerDocument.defaultView!;
     const width = window.innerWidth;
     // Base UI radios render spans, not buttons. Check the actual targets at
@@ -55,7 +57,18 @@ export const RevokedWithUnsavedInput: Story = {
     await expect(canvas.queryByRole('link')).not.toBeInTheDocument();
   },
 };
-export const Loading: Story = { args: { kind: 'loading' } };
+export const Loading: Story = {
+  args: { kind: 'loading' },
+  play: async (context) => {
+    const { canvasElement } = context;
+    await meta.play(context);
+    await expect(within(canvasElement).getAllByRole('status')).toHaveLength(1);
+    await expect(within(canvasElement).getByRole('status')).toHaveTextContent(
+      'Opening shared document…',
+    );
+    await checkLoadingRunner(canvasElement);
+  },
+};
 export const UnsupportedBrowser: Story = { args: { kind: 'unsupported' } };
 export const Offline: Story = { args: { kind: 'offline', onRetry: fn() } };
 export const MissingGuestPage: Story = { args: { kind: 'missing' } };

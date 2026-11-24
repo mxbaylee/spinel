@@ -1,3 +1,5 @@
+import { GemLogo } from '../src/ui/GemLogo.ts';
+import { StartupScreen } from '../src/ui/StartupScreen.ts';
 import { AuthEntry } from './AuthEntry.tsx';
 import { MaintenanceShell } from './Maintenance.tsx';
 import { ProfilePage } from './ProfilePage.tsx';
@@ -644,6 +646,7 @@ function AccountApp() {
       />
     );
   if (accountLocked) return <AccountAccessChanged onReopen={() => location.reload()} />;
+  if (!loaded && !user && !spaceReview) return <StartupScreen />;
   if (adminRecovery)
     return (
       <ConsoleRecovery
@@ -659,21 +662,28 @@ function AccountApp() {
       />
     );
   if (spaceReview) {
-    if (!loaded)
-      return (
-        <main className="space-bootstrap">
-          <p role="status">Loading…</p>
-        </main>
-      );
+    if (!loaded) return <StartupScreen />;
     if (unreachable)
       return (
         <main className="space-bootstrap">
+          <div className="space-entry-brand">
+            <span aria-hidden="true">
+              <GemLogo size={36} />
+            </span>
+            <strong>spinel</strong>
+          </div>
           <OfflineUnreachable />
         </main>
       );
     if (!user || user.isAdmin)
       return (
         <main className="space-bootstrap">
+          <div className="space-entry-brand">
+            <span aria-hidden="true">
+              <GemLogo size={36} />
+            </span>
+            <strong>spinel</strong>
+          </div>
           <p role="alert">This Space is not available.</p>
         </main>
       );
@@ -773,7 +783,7 @@ function AccountApp() {
         {loaded && !local && <RestoreNotice notice={restored} />}
         <main>
           {!loaded ? (
-            <p role="status">Loading…</p>
+            <StartupScreen contained />
           ) : unreachable ? (
             <OfflineUnreachable />
           ) : local && location.pathname === '/preview' ? (

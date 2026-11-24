@@ -4,7 +4,7 @@ import './fileRail.css';
 import { Modal } from '../src/ui/redesign/Controls.tsx';
 import { ThemeMenu } from '../src/ui/redesign/ThemeMenu.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
-import { GemLogo } from '../src/ui/GemLogo.tsx';
+import { GemLogo } from '../src/ui/GemLogo.ts';
 import type { NavigationGuard } from './navigation.ts';
 import { ConnectionStatus } from './ConnectionStatus.tsx';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';

@@ -4,6 +4,8 @@ import { GuestApp } from './GuestApp.tsx';
 import { guestItemId } from './documentAccess.ts';
 import { App } from './App.tsx';
 import '../src/ui/theme.css';
+import '../src/ui/startup.css';
+import '../src/ui/redesign/loadingReview.css';
 import { initializeTheme } from '../src/ui/theme.ts';
 import { installRuntimeHost } from './offline/runtime.ts';
 import type { RuntimeHost, RuntimeCompatibility } from './offline/runtime.ts';

@@ -1,0 +1,285 @@
+{
+  "base": "2c0454350a710103fac727d4b2acdba3bc5f935f",
+  "main": "4318e8bb513900c56f9980957ebcff1d73ffb8c3",
+  "branch": "codex/spn-150-runner-loading",
+  "scope": "Suggestion commit reusing the existing runner for startup and guest admission; not merge acceptance.",
+  "runtime": "Node 26.13.0",
+  "sources": [
+    {
+      "path": ".storybook/loadingChecks.ts",
+      "sha256": "cc0b908762e841a0a1261c79e9f30818f031ba516b47156f1f79c968993eb3c6"
+    },
+    {
+      "path": ".storybook/preview.tsx",
+      "sha256": "732c8d00621e337863fcb933edad5475fda5eb6712793f010d191003375aac0b"
+    },
+    {
+      "path": "docs/design/README.md",
+      "sha256": "c0f9f94a98495c2791d84aaf0d6175f26d275eec0b6ce645d17186b9414e5495"
+    },
+    {
+      "path": "docs/design/states.md",
+      "sha256": "dbfde90728114066683cecf0f8df7954291fe0ba8cc76b2f69af282514bd72f4"
+    },
+    {
+      "path": "docs/implementation/SPN-150.md",
+      "sha256": "7ead04d32531c147e61554b2161be4b9e67bb804086a9ce75c7f701ebfdfbe92"
+    },
+    {
+      "path": "e2e/branding.spec.ts",
+      "sha256": "a8bb07b46f86b03729ff7413f430a605192bc42596907026fd1d0832209d20be"
+    },
+    {
+      "path": "src/build/startupHtml.ts",
+      "sha256": "4f510641008149ee539072eb4286c1d46e168c5b4457fdc1c505bf60ecc35b65"
+    },
+    {
+      "path": "src/ui/GemLogo.ts",
+      "sha256": "8f19036c43f8ed1be66f8be75a725a5d5e6d60271f27eb08c4b580eaad63eebf"
+    },
+    {
+      "path": "src/ui/LoadingRunner.ts",
+      "sha256": "9dc2c8d3c66a7ec8c90cd7581d3e426e406d84315bcee47144dda09ec9c157b4"
+    },
+    {
+      "path": "src/ui/StartupScreen.stories.tsx",
+      "sha256": "8c747fdc5fdb559daa82e7a987d1fb81b1537f840067d4f0084b60c74bdd3b8c"
+    },
+    {
+      "path": "src/ui/StartupScreen.ts",
+      "sha256": "6c838ff0827f2e9eaa9e944c14dcb62b0096256d0be6a76599d604c321ab5b52"
+    },
+    {
+      "path": "src/ui/initialTheme.ts",
+      "sha256": "486ba1893d51e43b72dcd19bcef00b3706c17018e22cb6627a8dc5c33c0c8a8a"
+    },
+    {
+      "path": "src/ui/redesign/LoadingReview.stories.tsx",
+      "sha256": "c1ce6725b8f7f5a2d9472f92ebb39f2f9efe3fa51d698b6bd253620886c43ed8"
+    },
+    {
+      "path": "src/ui/redesign/LoadingReview.tsx",
+      "sha256": "76d2e2e711d6abfe92982ae28c7b561403c0e3abceb1819b9119ba288d9c2d40"
+    },
+    {
+      "path": "src/ui/redesign/loadingReview.css",
+      "sha256": "47e7679299d822da0d8c90545830fa86d60afed35f98f571f719f1684f0bc309"
+    },
+    {
+      "path": "src/ui/startup.css",
+      "sha256": "ca46de01f6e7304610d6668e7aba0cd42fd7a38e9dfb2687af6efa760935dd0b"
+    },
+    {
+      "path": "src/ui/startupFailure.ts",
+      "sha256": "e26311260c733ccd24061f5b8a82793cd8a4be873110be00ab3ec8716e21939b"
+    },
+    {
+      "path": "vite.config.ts",
+      "sha256": "12449c7486ccce626f1e7a30dd4d3322d7d0c4756c609840e1aca94e787872b6"
+    },
+    {
+      "path": "web/AccessState.stories.tsx",
+      "sha256": "041f55135c7d1ed8044f944695b5721bd6076ae302e07b50fd2430daadde7cf4"
+    },
+    {
+      "path": "web/AccessState.tsx",
+      "sha256": "ac3f94d720a6c66f909146e1117b59f6a1f8d96b8d783457924e0a3294a23e37"
+    },
+    {
+      "path": "web/GuestApp.stories.tsx",
+      "sha256": "b71e389312954aaf52cc179c0cf54119791698bb79d6e67937a561d7767d385e"
+    },
+    {
+      "path": "web/Space.stories.tsx",
+      "sha256": "b28c573297793063a4e561ebdd344398abeff64de8d0eb7681624dbdc2746d1f"
+    },
+    {
+      "path": "web/SpaceGuest.stories.tsx",
+      "sha256": "835e0aa397912691dbcb1a4d715c4ac77fec68732d1c75fbf2f9a004ba3da726"
+    },
+    {
+      "path": "web/accessState.css",
+      "sha256": "d3058b6fa1d0bb915f51c6ba44e68ed01a8cbd3375ff46e1333516bfd8343ba8"
+    },
+    {
+      "path": "web/application.tsx",
+      "sha256": "88facc6f2e9d48e3873b605c1467e9f518a90e589dd33055728a00428f1aad9b"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "runner-typecheck.log",
+      "sha256": "088771710b9cf07307ef0fa81fb129028abbce16c3bd4eee51692ef16399345f"
+    },
+    {
+      "path": "runner-lint.log",
+      "sha256": "3e76714d8c6f8bc6141706d9e5e9ff0c2c334de895b18b0358997f08b320f385"
+    },
+    {
+      "path": "runner-focused-tests.log",
+      "sha256": "89e719f0b5ca133591b578ec64d62b69e2fa32f575a390a38db6881b0c282fd9"
+    },
+    {
+      "path": "runner-build.log",
+      "sha256": "9da3a63342a7859d53cbb8009be7c30c033d0457259ae5ca9252a35f11aab99f",
+      "scope": "last 25 lines of build output; trailing whitespace normalized"
+    },
+    {
+      "path": "runner-storybook-build.log",
+      "sha256": "a445f5e39077fab8775d3d54b12fad52339d6109c8b5d90873f28be81cbb7da5",
+      "scope": "last 25 lines of build output; trailing whitespace normalized"
+    },
+    {
+      "path": "runner-native-probe.log",
+      "sha256": "e3ae78d56e6b09ed567b915a97cd870bb872e7a60721e74f67c25916cb6238d5"
+    },
+    {
+      "path": "runner-backlog-pr.log",
+      "sha256": "24996f2c76106930a4da88f07cf7307e03bba4dc18e204aca4e4c094d68f862f"
+    },
+    {
+      "path": "loading-baseline.log",
+      "sha256": "864edbf000e5c2c3b4e73472fff8d2e6f1e04bc1801a8b5f4e9e84acc2755f00"
+    }
+  ],
+  "nativeProbe": {
+    "base": "2c0454350a710103fac727d4b2acdba3bc5f935f",
+    "runtime": "v26.13.0",
+    "originalWrapperMarkupPreserved": [
+      {
+        "label": "Opening document\u2026",
+        "size": "page",
+        "motion": "running",
+        "sha256": "ede412cbbc38aec4f4c3c3db6b5f3fa0a52820bd59640b12d75ccb21d03698a0"
+      },
+      {
+        "label": "Opening document\u2026",
+        "size": "page",
+        "motion": "still",
+        "sha256": "51c36a09cdb84780117812fb93a228300806f8ab95d864292d6e7c3562a23e89"
+      },
+      {
+        "label": "Opening document\u2026",
+        "size": "page",
+        "scheme": "light",
+        "motion": "running",
+        "sha256": "76129b7f0077a39bf79a5de3c037aca75274c93bc150a2e579dbb6b8ef77335a"
+      },
+      {
+        "label": "Opening document\u2026",
+        "size": "page",
+        "scheme": "light",
+        "motion": "still",
+        "sha256": "b47ebaa1e2325ee800e0ffe30b12e1db280c2ba9bbe7f330623686f1e1eb39de"
+      },
+      {
+        "label": "Opening document\u2026",
+        "size": "page",
+        "scheme": "dark",
+        "motion": "running",
+        "sha256": "7d90cfa951d9c0b04f3edf82d7ce9923998e5984e2d0ce99a3e2839d5f1b1797"
+      },
+      {
+        "label": "Opening document\u2026",
+        "size": "page",
+        "scheme": "dark",
+        "motion": "still",
+        "sha256": "85ce44364dd93690ac379595a278556a23d3207c1cf0132e977efc7f7e0eada6"
+      },
+      {
+        "label": "Opening document\u2026",
+        "size": "compact",
+        "motion": "running",
+        "sha256": "09e37ce1851ca8a446a92e082a3a1822f1112fa36beddf3e6efa50d5b67aece5"
+      },
+      {
+        "label": "Opening document\u2026",
+        "size": "compact",
+        "motion": "still",
+        "sha256": "b649aad35254cf76782de46843d49261e1e7d574758d1830e5a2453161ea9b41"
+      },
+      {
+        "label": "Opening document\u2026",
+        "size": "compact",
+        "scheme": "light",
+        "motion": "running",
+        "sha256": "9f924e61bbef1ad531414983a06a36ad24ddc023874fea907f2e4f89db97fc63"
+      },
+      {
+        "label": "Opening document\u2026",
+        "size": "compact",
+        "scheme": "light",
+        "motion": "still",
+        "sha256": "110919d66f6d1ee50329b12f0d16bd65c8b4267d40afcea3371bc034a782c4b5"
+      },
+      {
+        "label": "Opening document\u2026",
+        "size": "compact",
+        "scheme": "dark",
+        "motion": "running",
+        "sha256": "ec1ea2d34da7a4512dcea0a246ece83b8827184539a06637742ace431ba51ab3"
+      },
+      {
+        "label": "Opening document\u2026",
+        "size": "compact",
+        "scheme": "dark",
+        "motion": "still",
+        "sha256": "2a4bedf330726d6a9ac0849ff17393a9e999363bb5f7956b98984f65f83fb8ba"
+      }
+    ],
+    "animationStylesUnchanged": true,
+    "nativeConfigurationLoaded": true,
+    "nativeHtml": {
+      "bytes": 11105,
+      "sha256": "b034ea0d92e6d89c67151fe18fe0d14460b3e0b7741b3e2345ad6ac922bb483b",
+      "runnerCount": 1,
+      "statusCount": 1
+    }
+  },
+  "pending": [
+    "Production-component story plays",
+    "Light/dark/phone screenshots",
+    "Independent visual approval",
+    "Initial HTML to React browser journey",
+    "Current-head hosted acceptance"
+  ],
+  "limitations": [
+    "Pinned Chromium installation returned HTTP 403; no manual retry.",
+    "Installed Chromium 156.0.8078.79 could not launch: singleton socket EPERM; zero pages observed.",
+    "Cloud browser could not reach the local preview.",
+    "Builds used a temporary empty-interface fallback because this host denies network-interface enumeration; no repository or dependency modifications.",
+    "Storybook build used --test --preview-only, without hosted catalogue identity."
+  ],
+  "sourceReviewRepair": {
+    "localCandidate": "97a05182ee962fbf31bd81b6adaf7952d0f77795",
+    "reviewers": [
+      {
+        "name": "runner_review_a",
+        "score": 99,
+        "rubric": [
+          35,
+          25,
+          20,
+          10,
+          9
+        ]
+      },
+      {
+        "name": "runner_review_b",
+        "score": 99,
+        "rubric": [
+          35,
+          25,
+          20,
+          10,
+          9
+        ]
+      }
+    ],
+    "finding": "Superseded maintained startup paragraph still described a 52 px pulsing gem instead of the existing runner and stationary 32 px brand row.",
+    "disposition": "Corrected docs/design/states.md; historical implementation evidence retained.",
+    "previousDocumentSha256": "2f4e23b22dde3c37b68b3fd2b72d4e7975f94cb045e54b761c744666320d9e38",
+    "runtimeSourcesChanged": false,
+    "visualApproval": false
+  }
+}

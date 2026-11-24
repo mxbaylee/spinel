@@ -1,0 +1,97 @@
+Local host adapter: interface enumeration unavailable; using an empty address set.
+Local host adapter: interface enumeration unavailable; using an empty address set.
+{
+  "base": "2c0454350a710103fac727d4b2acdba3bc5f935f",
+  "runtime": "v26.13.0",
+  "originalWrapperMarkupPreserved": [
+    {
+      "label": "Opening document…",
+      "size": "page",
+      "motion": "running",
+      "sha256": "ede412cbbc38aec4f4c3c3db6b5f3fa0a52820bd59640b12d75ccb21d03698a0"
+    },
+    {
+      "label": "Opening document…",
+      "size": "page",
+      "motion": "still",
+      "sha256": "51c36a09cdb84780117812fb93a228300806f8ab95d864292d6e7c3562a23e89"
+    },
+    {
+      "label": "Opening document…",
+      "size": "page",
+      "scheme": "light",
+      "motion": "running",
+      "sha256": "76129b7f0077a39bf79a5de3c037aca75274c93bc150a2e579dbb6b8ef77335a"
+    },
+    {
+      "label": "Opening document…",
+      "size": "page",
+      "scheme": "light",
+      "motion": "still",
+      "sha256": "b47ebaa1e2325ee800e0ffe30b12e1db280c2ba9bbe7f330623686f1e1eb39de"
+    },
+    {
+      "label": "Opening document…",
+      "size": "page",
+      "scheme": "dark",
+      "motion": "running",
+      "sha256": "7d90cfa951d9c0b04f3edf82d7ce9923998e5984e2d0ce99a3e2839d5f1b1797"
+    },
+    {
+      "label": "Opening document…",
+      "size": "page",
+      "scheme": "dark",
+      "motion": "still",
+      "sha256": "85ce44364dd93690ac379595a278556a23d3207c1cf0132e977efc7f7e0eada6"
+    },
+    {
+      "label": "Opening document…",
+      "size": "compact",
+      "motion": "running",
+      "sha256": "09e37ce1851ca8a446a92e082a3a1822f1112fa36beddf3e6efa50d5b67aece5"
+    },
+    {
+      "label": "Opening document…",
+      "size": "compact",
+      "motion": "still",
+      "sha256": "b649aad35254cf76782de46843d49261e1e7d574758d1830e5a2453161ea9b41"
+    },
+    {
+      "label": "Opening document…",
+      "size": "compact",
+      "scheme": "light",
+      "motion": "running",
+      "sha256": "9f924e61bbef1ad531414983a06a36ad24ddc023874fea907f2e4f89db97fc63"
+    },
+    {
+      "label": "Opening document…",
+      "size": "compact",
+      "scheme": "light",
+      "motion": "still",
+      "sha256": "110919d66f6d1ee50329b12f0d16bd65c8b4267d40afcea3371bc034a782c4b5"
+    },
+    {
+      "label": "Opening document…",
+      "size": "compact",
+      "scheme": "dark",
+      "motion": "running",
+      "sha256": "ec1ea2d34da7a4512dcea0a246ece83b8827184539a06637742ace431ba51ab3"
+    },
+    {
+      "label": "Opening document…",
+      "size": "compact",
+      "scheme": "dark",
+      "motion": "still",
+      "sha256": "2a4bedf330726d6a9ac0849ff17393a9e999363bb5f7956b98984f65f83fb8ba"
+    }
+  ],
+  "animationStylesUnchanged": true,
+  "nativeConfigurationLoaded": true,
+  "nativeHtml": {
+    "bytes": 11105,
+    "sha256": "b034ea0d92e6d89c67151fe18fe0d14460b3e0b7741b3e2345ad6ac922bb483b",
+    "runnerCount": 1,
+    "statusCount": 1
+  }
+}
+watchdog: exit=0 elapsed=1.00s peak=247692 KiB aborted=None

@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
+import { checkLoadingRunner } from '../.storybook/loadingChecks.ts';
 import { assertDialogTitle } from '../.storybook/dialogBounds.ts';
 import type {
   SpaceDeletePreview,
@@ -302,7 +303,11 @@ export const AppLoading: Story = {
   parameters: { api: { 'GET /api/auth/session': pending() } },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(await canvas.findByRole('status')).toHaveTextContent('Loading…');
+    await expect(await canvas.findByRole('status')).toHaveTextContent('Loading your workspace…');
+    await expect(getComputedStyle(canvasElement.querySelector('.sp-startup')!).display).toBe(
+      'grid',
+    );
+    await checkLoadingRunner(canvasElement);
     await expect(canvas.queryByRole('region', { name: 'Space pages' })).not.toBeInTheDocument();
   },
 };
@@ -314,6 +319,7 @@ export const AppUnreachable: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(await canvas.findByRole('heading', { name: "You're offline" })).toBeVisible();
+    await expect(canvas.getByText('spinel', { exact: true })).toBeVisible();
     const retry = canvas.getByRole('button', { name: 'Try again' });
     await expect(retry).toBeEnabled();
     const bounds = retry.getBoundingClientRect();
@@ -349,6 +355,7 @@ export const AppUnavailable: Story = {
     await expect(await canvas.findByRole('alert')).toHaveTextContent(
       'This Space is not available.',
     );
+    await expect(canvas.getByText('spinel', { exact: true })).toBeVisible();
     await expect(canvas.queryByRole('region', { name: 'Space pages' })).not.toBeInTheDocument();
     await expect(canvas.queryByRole('button', { name: 'New Space' })).not.toBeInTheDocument();
   },
@@ -1207,6 +1214,22 @@ export const FileAdmin: Story = {
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
     await contents(canvasElement);
     await expect(page.getByRole('button', { name: 'Add page' })).toBeVisible();
+  },
+};
+
+export const AddPageArtwork: Story = {
+  parameters: { api: treeApi() },
+  play: async ({ canvasElement }) => {
+    await ready(canvasElement);
+    await contents(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    const add = await page.findByRole('button', { name: 'Add page' });
+    await userEvent.click(add);
+    for (const name of ['Doc', 'Sheet', 'Folder']) {
+      const item = await page.findByRole('menuitem', { name });
+      await expect(item.querySelector('svg')).not.toBeNull();
+      await expect(within(item).queryByRole('img')).not.toBeInTheDocument();
+    }
   },
 };
 
