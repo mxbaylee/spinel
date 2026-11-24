@@ -1,0 +1,40 @@
+{
+  "base": "235c14d69e30967fe7cf470308fdb39798e0fca5",
+  "rejectedObserverHead": "019c7c4b08063a8adb8169692407f41cace3ad66",
+  "productionChanged": false,
+  "observerTest": {
+    "passed": 1,
+    "durationSeconds": 2.8,
+    "peakKiB": 652784,
+    "purpose": "Actual maintained observation regression on neutral Chromium page, scratch config excludes application servers; not phone/product acceptance."
+  },
+  "controlledContracts": {
+    "passed": 119,
+    "durationMs": 644,
+    "peakKiB": 294640,
+    "clock": "deterministic fixture clock, not runtime latency"
+  },
+  "sourceSha256": {
+    "web/spinelSync.ts": "286c18563822b3ab07c9d8068f807998869c5c6f0027ba85d7c23b4496bfd260",
+    "web/connectionState.ts": "c8a4c4195f7f3eca350604d0b683e5a29e0c3e7cac77b4f31c0d2aaa8bb11e3b",
+    "web/useConnectionStatus.ts": "05a3ae05b05267632f596893704902bfa371942fe880d5d193d404d0ff41b731",
+    "web/App.tsx": "c572ec06c24bc4ab122673860ecaf5b20eb7df437f99136b73d42477a1f63187",
+    "web/DocEditor.tsx": "dfacd4994d3d2b66189c38b802f18d5f0ea8676355988b137e72c12e7b053bdb",
+    "src/ui/spinelSync.test.ts": "82b9b19c6e72eb569d6adc9220cf2a4fda6b610f85cdf5a78133ab181455c277",
+    "src/ui/connectionState.test.ts": "22c4ddcef4a04dfeb984f74bc6ae0cc5bb936a32170216544cdd184f1efd3ad8",
+    "e2e/connection-observation.ts": "2de01b8047bead143be742615c1523a53823c993a3ea04d7cfb5ca92b6875961",
+    "e2e/offline-editing.spec.ts": "472bdde8c3248bdb4d22b1b4a26f6ccca677c25205a7e0233aa697e995a7724f"
+  },
+  "fileSha256": {
+    "actual-instrument-test.txt": "5f6ba0c66a16fc0bd1e1de40acb603eb00fbeb873fb29701bba01dee9074d0d2",
+    "first-attribution-failure.txt": "616f1e20bdf65d5e41cd550273db187bc4147f746fbd56abe4f6be07bb231fbf",
+    "controlled-contracts.txt": "9b121227a693e3aee4a6c04b84b2a120e08349941f1702a01de6c8818ebe26cc",
+    "local-instrument-config.txt": "6d4ce2d378a67f61ee757c7e242d4f036786ea54b35609fb4d610f7017bcf062"
+  },
+  "pending": [
+    "Exact-head independent re-review",
+    "Actual causal phone-viewport journey and transition attachment",
+    "Preceding batch integrations",
+    "All current-head hosted acceptance before ordered merge"
+  ]
+}

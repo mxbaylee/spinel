@@ -1,0 +1,27 @@
+spn155-before-phone-open-sync.log
+
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+[1/1] [sync-production] › e2e/offline-editing.spec.ts:602:5 › downloaded native editors › phone doc: durable edits survive two offline reloads and reconnect exactly once
+WATCHDOG abort rss=1049360 pressure=2
+serial: SIGTERM; killing the run.
+WATCHDOG cleaning 2 matching task descendants
+WATCHDOG peakKiB=1049360 aborted=true
+
+spn155-pending-phone-open.log
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+Running 1 test using 1 worker
+
+WATCHDOG abort rss=596576 pressure=2
+serial: SIGTERM; killing the run.
+WATCHDOG cleaning 2 matching task descendants
+WATCHDOG peakKiB=596576 aborted=true

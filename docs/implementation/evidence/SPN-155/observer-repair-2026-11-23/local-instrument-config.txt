@@ -1,0 +1,2 @@
+import { defineConfig } from '/Users/mxbaylee/projects/spinel-spn155/node_modules/@playwright/test/index.mjs';
+export default defineConfig({ testDir: '/Users/mxbaylee/projects/spinel-spn155/e2e', testMatch: 'offline-editing.spec.ts', grep: /connection observations distinguish historical offline/, workers: 1, retries: 0, timeout: 30000, reporter: 'line', outputDir: '/tmp/spn155-observer-current-results', projects: [{ name: 'observer-only', use: { browserName: 'chromium' } }] });

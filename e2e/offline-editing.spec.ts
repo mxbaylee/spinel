@@ -32,6 +32,12 @@ import {
 } from './offline-fixture.ts';
 import { beginWriting, textPoint } from './doc-touch.ts';
 import { recordNativeSnapshots } from './sync-snapshot.ts';
+import {
+  anyCurrentOffline,
+  falseOffline,
+  observeConnectionOpening,
+  offlineInPhase,
+} from './connection-observation.ts';
 
 async function phoneText(page: Page, unitId: string) {
   return page.evaluate((id) => {
@@ -54,6 +60,96 @@ async function phoneText(page: Page, unitId: string) {
 
 test.describe('downloaded native editors', () => {
   test.setTimeout(180_000);
+
+  test('connection observations distinguish historical offline from a current transient', async ({
+    browser,
+  }, info) => {
+    const context = await browser.newContext();
+    try {
+      const page = await context.newPage();
+      await page.setContent(
+        '<section class="editor-frame"><span class="connection-status" data-state="offline">Connection</span></section>',
+      );
+      await page.evaluate(() =>
+        Object.defineProperty(navigator, 'onLine', { configurable: true, value: false }),
+      );
+      const observation = await observeConnectionOpening(page);
+      try {
+        await observation.mark('opening-doc');
+        await page.evaluate(() => {
+          // The old Offline value was truthful; recovery happened before online.
+          document.querySelector('.connection-status')!.setAttribute('data-state', 'reconnecting');
+          Object.defineProperty(navigator, 'onLine', { configurable: true, value: true });
+          window.dispatchEvent(new Event('online'));
+        });
+        await observation.mark('room-ready');
+        const recovered = await observation.read();
+        expect(falseOffline(recovered.events)).toBe(false);
+        expect(
+          recovered.events.some(
+            (event) =>
+              event.historical && event.state === 'offline' && event.browserOnline === null,
+          ),
+        ).toBe(true);
+        await page.evaluate(() =>
+          document.querySelector('.connection-status')!.setAttribute('data-state', 'online'),
+        );
+        await observation.mark('opening-doc');
+        await page.evaluate(() => {
+          const node = document.querySelector('.connection-status')!;
+          node.setAttribute('data-state', 'offline');
+          node.setAttribute('data-state', 'online');
+        });
+        await page.evaluate(() => {
+          // Initial Offline can be corrected in the same delivery as mounting,
+          // including a status nested in a newly mounted editor subtree.
+          const subtree = document.createElement('div');
+          subtree.innerHTML =
+            '<span class="connection-status" data-state="offline">Connection</span>';
+          document.querySelector('.editor-frame')!.append(subtree);
+          subtree.firstElementChild!.setAttribute('data-state', 'online');
+        });
+        const transient = await observation.read();
+        expect(
+          transient.events.some(
+            (event) =>
+              !event.historical &&
+              event.kind === 'attribute' &&
+              event.state === 'offline' &&
+              event.browserOnline,
+          ),
+        ).toBe(true);
+        expect(
+          transient.events.some(
+            (event) =>
+              !event.historical &&
+              event.kind === 'added' &&
+              event.state === 'offline' &&
+              event.browserOnline &&
+              event.visible,
+          ),
+        ).toBe(true);
+        expect(transient.negativeControl.detected).toBe(true);
+        expect(transient.overflow || transient.readinessOverflow).toBe(false);
+        await page.evaluate(() => {
+          const node = document.querySelector('.connection-status')!;
+          for (let i = 0; i < 250; i++)
+            node.setAttribute('data-state', i % 2 ? 'online' : 'reconnecting');
+        });
+        const bounded = await observation.read();
+        expect(bounded.overflow).toBe(true);
+        expect(bounded.events).toHaveLength(200);
+        await info.attach('connection-observer-negative-controls', {
+          body: JSON.stringify({ recovered, transient, overflowDetected: bounded.overflow }),
+          contentType: 'application/json',
+        });
+      } finally {
+        await observation.close();
+      }
+    } finally {
+      await context.close();
+    }
+  });
 
   test('phone Sheet pen edits replay from the file list once with original formulas intact', async ({
     browser,
@@ -699,8 +795,81 @@ test.describe('downloaded native editors', () => {
           await expect.poll(pixels, { timeout: 25_000 }).toBe(true);
         }
         if (phone) expect(await f.read()).toEqual(baseline);
-        await f.network.setOffline(false);
-        await synced(f.page);
+        if (phone) {
+          const observation = await observeConnectionOpening(f.page);
+          let pendingAtList: boolean | undefined;
+          let pendingAtOpen: boolean | undefined;
+          try {
+            await f.page.getByRole('button', { name: 'Back to files', exact: true }).tap();
+            pendingAtList = pending(
+              (await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint,
+            );
+            expect(pendingAtList).toBe(true);
+            await observation.mark('pending-offline-list');
+            await f.network.setOffline(false);
+            await observation.mark('reconnected-list');
+            // Verified live, so later phases cannot rely on a cached connectivity stamp. This phase
+            // keeps the stamp-based check: its queued events predate the online event by design.
+            expect(await f.page.evaluate(() => navigator.onLine)).toBe(true);
+            pendingAtOpen = pending(
+              (await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint,
+            );
+            // Do not wait for background replay or the health probe before the
+            // original pending-list-to-editor handoff. Record what actually won.
+            await observation.mark('opening-doc');
+            await f.page.getByRole('button', { name: `${f.item.name} Doc`, exact: true }).tap();
+            await synced(f.page);
+            await expect(
+              f.page.getByRole('status', { name: 'Connection status', exact: true }),
+            ).toHaveText('Online');
+            await observation.mark('room-ready');
+            // A late false Offline after readiness must also be seen (bounded 4 s window).
+            await f.page.waitForTimeout(4000);
+            expect(await f.page.evaluate(() => navigator.onLine)).toBe(true);
+            await observation.mark('settled');
+            const trace = await observation.read();
+            expect(trace.overflow || trace.readinessOverflow).toBe(false);
+            const live = trace.events.filter(
+              (event) =>
+                !event.historical &&
+                ['reconnected-list', 'opening-doc', 'room-ready', 'settled'].includes(event.phase),
+            );
+            expect(live.some((event) => event.owner === 'editor')).toBe(true);
+            expect(falseOffline(live)).toBe(false);
+            // The browser was verified online before these phases began, so no cached
+            // connectivity stamp is needed to call an Offline status false.
+            expect(
+              anyCurrentOffline(live.filter((event) => event.phase !== 'reconnected-list')),
+            ).toBe(false);
+            // Real offline is still reported while the browser is genuinely offline.
+            expect(offlineInPhase(trace.events, 'pending-offline-list', false)).toBe(true);
+            expect(offlineInPhase(trace.events, 'pending-offline-list', true)).toBe(false);
+            expect(
+              trace.readiness.some((event) => event.route === 'access' && event.status === 200),
+            ).toBe(true);
+            expect(
+              trace.readiness.some((event) => event.route === 'ticket' && event.status === 200),
+            ).toBe(true);
+          } finally {
+            try {
+              await info.attach('spn-155-phone-open-connection-transitions', {
+                body: JSON.stringify({
+                  physicalPhone: false,
+                  viewport: { width: 390, height: 844 },
+                  pendingAtList,
+                  pendingAtOpen,
+                  ...(await observation.read()),
+                }),
+                contentType: 'application/json',
+              });
+            } finally {
+              await observation.close();
+            }
+          }
+        } else {
+          await f.network.setOffline(false);
+          await synced(f.page);
+        }
         const committed = await f.read();
         expect(committed.revision).toBe(baseline.revision + 1);
         expect(pending((await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint)).toBe(

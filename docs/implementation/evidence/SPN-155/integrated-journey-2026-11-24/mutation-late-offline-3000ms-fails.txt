@@ -1,0 +1,8 @@
+# Scratch mutation (patch beside this file, applied to web/ConnectionStatus.tsx then reverted): Offline for 30 ms, 3000 ms after a Doc opens, while online.
+# Slipped past the earlier 1.5 s settle window (an independent review round); with the 4 s window the journey fails:
+# command: SPINEL_E2E_PROJECT=sync-production npx playwright test --project=sync-production e2e/offline-editing.spec.ts -g 'phone doc: durable edits' --workers=1 --reporter=line
+    Expected: false
+    Received: true
+        at e2e/offline-editing.spec.ts:837:40
+    test-results/sync-production/offline-editing-downloaded-65664--and-reconnect-exactly-once-sync-production/test-failed-1.png
+  1 failed

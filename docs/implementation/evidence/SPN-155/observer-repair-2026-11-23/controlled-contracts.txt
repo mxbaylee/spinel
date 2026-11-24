@@ -1,0 +1,11 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn155
+
+SPN-155 controlled connection trace [{"elapsedMs":0,"state":"reconnecting","browserOnline":true},{"elapsedMs":20,"state":"online","browserOnline":true},{"elapsedMs":30,"state":"offline","browserOnline":false},{"elapsedMs":40,"state":"reconnecting","browserOnline":true},{"elapsedMs":60,"state":"online","browserOnline":true}]
+
+ Test Files  2 passed (2)
+      Tests  119 passed (119)
+   Start at  19:47:56
+   Duration  644ms (tests 67%, import 19%, transform 13%, worker 1%)
+
+WATCHDOG peakKiB=294640 aborted=false
