@@ -9,7 +9,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** A Sheet or Doc downloaded on this device with **Available offline on this device**. */
+/** A Sheet or Doc downloaded on this device with **Make available offline**. */
 export const Available: Story = { args: { state: 'available' } };
 /** A Space opens only the individual pages prepared on this device. */
 export const PagesAvailable: Story = { args: { state: 'pages-available' } };

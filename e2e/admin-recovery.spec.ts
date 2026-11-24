@@ -223,7 +223,7 @@ test('Operator hands over retained ordinary and Space contents, then recovers th
     await page.getByRole('menuitem', { name: 'Disable account…' }).click();
     await page
       .getByRole('dialog', { name: `Disable ${departed.name}?`, exact: true })
-      .getByRole('button', { name: 'Confirm removal' })
+      .getByRole('button', { name: 'Disable account' })
       .click();
     await expect(account.getByText('Member · Disabled', { exact: true })).toBeVisible();
     expect(auth.session(oldSession.token)).toBeUndefined();

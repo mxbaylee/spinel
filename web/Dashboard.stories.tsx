@@ -363,6 +363,48 @@ export const FileViewTargets: Story = {
  * into My files. Opening a sheet or doc would load the Univer editor, so don't.
  */
 export const Populated: Story = { parameters: { api: populated } };
+/** The real controller supplies operation labels; availability badges remain states. */
+export const ActionMenuLabels: Story = {
+  parameters: { api: populated },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const screen = within(canvasElement.ownerDocument.body);
+    const trigger = await canvas.findByRole('button', { name: `More actions for ${budget.name}` });
+    trigger.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(
+      await screen.findByRole('menuitem', { name: 'Make available offline' }),
+    ).toBeEnabled();
+    await expect(screen.getByRole('menuitem', { name: 'Move to Trash' })).toHaveClass(
+      'sp-destructive',
+    );
+    await expect(
+      screen.queryByRole('menuitem', { name: 'Available offline on this device' }),
+    ).not.toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(trigger).toHaveFocus());
+    await userEvent.click(trigger);
+  },
+};
+export const RenamePending: Story = {
+  parameters: { api: { ...populated, [`PATCH /api/items/${budget.id}`]: pending() } },
+  play: async ({ canvasElement }) => {
+    const screen = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      await within(canvasElement).findByRole('button', { name: `More actions for ${budget.name}` }),
+    );
+    await userEvent.click(await screen.findByRole('menuitem', { name: 'Rename…' }));
+    const dialog = await screen.findByRole('dialog', {
+      name: `Rename ${budget.name}`,
+    });
+    const form = within(dialog);
+    await userEvent.click(form.getByRole('button', { name: 'Save' }));
+    await expect(await form.findByRole('button', { name: 'Saving…' })).toBeDisabled();
+    await expect(form.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+    await expect(form.getByRole('button', { name: 'Close dialog' })).toBeDisabled();
+    await assertDialogControls(dialog);
+  },
+};
 export const MakeCopy: Story = {
   parameters: {
     api: {

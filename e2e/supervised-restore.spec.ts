@@ -346,9 +346,7 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
     await member
       .getByRole('button', { name: `More actions for ${item.name}`, exact: true })
       .click();
-    await member
-      .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
-      .click();
+    await member.getByRole('menuitem', { name: 'Make available offline', exact: true }).click();
     await expect(member.getByRole('status').filter({ hasText: 'available offline' })).toHaveText(
       `${item.name} is available offline on this device.`,
       { timeout: 90_000 },

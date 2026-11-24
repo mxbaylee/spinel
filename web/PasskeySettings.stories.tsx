@@ -37,7 +37,7 @@ async function remove(canvasElement: HTMLElement, name = 'Laptop') {
   const canvas = within(canvasElement);
   await userEvent.click(await canvas.findByRole('button', { name: `More actions for ${name}` }));
   const body = within(document.body);
-  await userEvent.click(await body.findByRole('menuitem', { name: 'Remove…' }));
+  await userEvent.click(await body.findByRole('menuitem', { name: 'Remove passkey…' }));
   return within(await body.findByRole('dialog', { name: `Remove ${name}?` }));
 }
 export const Ready: Story = { parameters: { api: read } };
@@ -113,6 +113,7 @@ export const Saving: Story = {
   play: async ({ canvasElement }) => {
     const dialog = await remove(canvasElement);
     await userEvent.click(dialog.getByRole('button', { name: 'Remove passkey' }));
+    await expect(await dialog.findByRole('button', { name: 'Removing…' })).toBeDisabled();
     await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
   },
 };
@@ -261,7 +262,7 @@ export const UncertainCannotRepeat: Story = {
     await expect(canvas.getByRole('button', { name: 'Sign out other devices' })).toBeDisabled();
     await userEvent.click(canvas.getByRole('button', { name: 'More actions for Laptop' }));
     await expect(
-      await within(document.body).findByRole('menuitem', { name: 'Remove…' }),
+      await within(document.body).findByRole('menuitem', { name: 'Remove passkey…' }),
     ).toHaveAttribute('aria-disabled', 'true');
     await userEvent.keyboard('{Escape}');
   },

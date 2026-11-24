@@ -401,7 +401,13 @@ export function AdminUsers({
                 Cancel
               </Button>
               <Button primary disabled={busy} onClick={() => void perform()}>
-                {busy ? 'Removing…' : 'Confirm removal'}
+                {busy
+                  ? action.key
+                    ? 'Removing…'
+                    : 'Disabling…'
+                  : action.key
+                    ? 'Remove passkey'
+                    : 'Disable account'}
               </Button>
             </div>
           </div>

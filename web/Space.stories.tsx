@@ -848,7 +848,7 @@ export const MoveOrReorder: Story = {
     const navigation = await contents(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.click(navigation.getByRole('button', { name: 'More actions for Welcome' }));
-    await userEvent.click(await page.findByRole('menuitem', { name: 'Move or reorder' }));
+    await userEvent.click(await page.findByRole('menuitem', { name: 'Move or reorder…' }));
     const dialog = within(await page.findByRole('dialog', { name: 'Move or reorder Welcome' }));
     await userEvent.click(dialog.getByRole('combobox', { name: 'Parent page or folder' }));
     await expect(page.queryByRole('option', { name: /Welcome · Doc/ })).not.toBeInTheDocument();
@@ -900,7 +900,7 @@ export const MutationFailure: Story = {
     const navigation = await contents(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.click(navigation.getByRole('button', { name: 'More actions for Welcome' }));
-    await userEvent.click(await page.findByRole('menuitem', { name: 'Rename' }));
+    await userEvent.click(await page.findByRole('menuitem', { name: 'Rename…' }));
     const dialog = within(await page.findByRole('dialog', { name: 'Rename Welcome' }));
     const name = dialog.getByRole('textbox', { name: 'Name' });
     await userEvent.clear(name);
@@ -920,7 +920,7 @@ export const TrashSubtreeConfirmation: Story = {
     const navigation = await contents(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.click(navigation.getByRole('button', { name: 'More actions for Welcome' }));
-    await userEvent.click(await page.findByRole('menuitem', { name: 'Trash' }));
+    await userEvent.click(await page.findByRole('menuitem', { name: 'Move to Trash' }));
     const dialog = within(await page.findByRole('dialog', { name: 'Trash Welcome' }));
     await expect(
       dialog.getByText(/Move Welcome and its 2 descendants to Space Trash/),

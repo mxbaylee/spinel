@@ -333,7 +333,7 @@ export function PasskeySettings({
                   label={`More actions for ${key.name}`}
                   actions={[
                     {
-                      label: 'Remove…',
+                      label: 'Remove passkey…',
                       destructive: true,
                       disabled: busy || loading,
                       onClick: (trigger) => open({ kind: 'remove', key }, trigger),
@@ -438,7 +438,9 @@ export function PasskeySettings({
                   {phase === 'verifying'
                     ? 'Verifying…'
                     : phase === 'saving'
-                      ? 'Saving…'
+                      ? action.kind === 'remove'
+                        ? 'Removing…'
+                        : 'Saving…'
                       : needsProof
                         ? 'Verify with a passkey'
                         : action.kind === 'remove'

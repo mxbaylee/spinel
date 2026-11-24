@@ -232,7 +232,7 @@ test.describe('Recorded passkey fixture', () => {
             await page
               .getByRole('button', { name: `More actions for ${lostKey.name}`, exact: true })
               .click();
-            await page.getByRole('menuitem', { name: 'Remove…', exact: true }).click();
+            await page.getByRole('menuitem', { name: 'Remove passkey…', exact: true }).click();
             const remove = page.getByRole('dialog', {
               name: `Remove ${lostKey.name}?`,
               exact: true,
@@ -259,7 +259,7 @@ test.describe('Recorded passkey fixture', () => {
             await page
               .getByRole('button', { name: `More actions for ${lostKey.name}`, exact: true })
               .click();
-            await page.getByRole('menuitem', { name: 'Remove…', exact: true }).click();
+            await page.getByRole('menuitem', { name: 'Remove passkey…', exact: true }).click();
             await remove
               .getByRole('button', { name: 'Verify with a passkey', exact: true })
               .click();
@@ -283,7 +283,7 @@ test.describe('Recorded passkey fixture', () => {
             await page
               .getByRole('button', { name: `More actions for ${firstKey.name}`, exact: true })
               .click();
-            await page.getByRole('menuitem', { name: 'Remove…', exact: true }).click();
+            await page.getByRole('menuitem', { name: 'Remove passkey…', exact: true }).click();
             const lastKey = page.getByRole('dialog', {
               name: `Remove ${firstKey.name}?`,
               exact: true,

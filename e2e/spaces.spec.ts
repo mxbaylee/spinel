@@ -212,7 +212,12 @@ async function action(
 ) {
   const navigation = await pages(page);
   await navigation.getByRole('button', { name: `More actions for ${name}`, exact: true }).click();
-  await page.getByRole('menuitem', { name: actionName, exact: true }).click();
+  await page
+    .getByRole('menuitem', {
+      name: actionName === 'Trash' ? 'Move to Trash' : actionName + '…',
+      exact: true,
+    })
+    .click();
   return page.getByRole('dialog', { name: `${actionName} ${name}`, exact: true });
 }
 
@@ -553,12 +558,12 @@ test('ordinary My files creates and opens one Space root while preserving its pr
         .click();
       await page.getByRole('menuitem', { name, exact: true }).click();
     };
-    await chooseRoot('Rename', item.name);
+    await chooseRoot('Rename…', item.name);
     const rename = page.getByRole('dialog', { name: 'Rename Space', exact: true });
     await rename.getByLabel('Name', { exact: true }).fill('Research collection');
     await rename.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(rename).not.toBeVisible();
-    await chooseRoot('Move', 'Research collection');
+    await chooseRoot('Move…', 'Research collection');
     const move = page.getByRole('dialog', { name: 'Move Space', exact: true });
     await move.getByRole('combobox', { name: 'Destination', exact: true }).selectOption('');
     await move.getByRole('button', { name: 'Save', exact: true }).click();
@@ -588,7 +593,7 @@ test('ordinary My files creates and opens one Space root while preserving its pr
     await files.getByRole('button', { name: 'Research collection Space', exact: true }).click();
     await expect(page).toHaveURL(f.origin + normalHref(item.id));
     await expect((await pages(page)).getByText(child.name, { exact: true })).toBeVisible();
-    await chooseRoot('Share', 'Research collection');
+    await chooseRoot('Share…', 'Research collection');
     const sharing = page.getByRole('dialog', { name: 'Share Research collection', exact: true });
     await sharing.getByRole('tab', { name: 'Link', exact: true }).click();
     const link = sharing.getByRole('region', { name: 'Guest link', exact: true });
@@ -676,7 +681,7 @@ test('an owner creates and edits a persistent Space tree with native Docs, Sheet
     await duplicateRow
       .getByRole('button', { name: 'More actions for Repeated title', exact: true })
       .click();
-    await page.getByRole('menuitem', { name: 'Rename', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Rename…', exact: true }).click();
     const rename = page.getByRole('dialog', { name: 'Rename Repeated title', exact: true });
     await rename.getByRole('textbox', { name: 'Name', exact: true }).fill('Appendix');
     await rename.getByRole('button', { name: 'Save', exact: true }).click();
@@ -1337,7 +1342,7 @@ for (const role of ['editor', 'admin'] as const) {
           .getByRole('button', { name: `More actions for ${doc.name}`, exact: true })
           .click();
         await expect(
-          editor.page.getByRole('menuitem', { name: 'Rename', exact: true }),
+          editor.page.getByRole('menuitem', { name: 'Rename…', exact: true }),
         ).toBeVisible();
         await expect(editor.page.getByRole('menuitem', { name: /Share/ })).toHaveCount(0);
         await editor.page.keyboard.press('Escape');

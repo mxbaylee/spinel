@@ -937,10 +937,12 @@ export function Dashboard({
       result.push({
         label:
           offline.busy === item.id
-            ? 'Updating offline copy…'
+            ? offline.downloads.has(item.id)
+              ? 'Removing…'
+              : 'Downloading…'
             : offline.downloads.has(item.id)
               ? 'Remove from device'
-              : 'Available offline on this device',
+              : 'Make available offline',
         disabled: offline.busy !== null,
         onClick: (trigger) => {
           offlineFocus.current = trigger ?? null;
@@ -1604,11 +1606,13 @@ export function Dashboard({
                     !name.trim())
                 }
               >
-                {action.mode === 'new'
-                  ? 'Create'
-                  : action.mode === 'relocate-creation'
-                    ? 'Choose folder'
-                    : 'Save'}
+                {busy
+                  ? 'Saving…'
+                  : action.mode === 'new'
+                    ? 'Create'
+                    : action.mode === 'relocate-creation'
+                      ? 'Choose folder'
+                      : 'Save'}
               </button>
               <button
                 type="button"

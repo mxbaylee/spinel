@@ -151,17 +151,17 @@ export function SpaceTree({
                           onAction({ mode: 'appearance', item }, trigger ?? undefined),
                       },
                       {
-                        label: 'Rename',
+                        label: 'Rename…',
                         disabled,
                         onClick: () => onAction({ mode: 'rename', item }),
                       },
                       {
-                        label: 'Move or reorder',
+                        label: 'Move or reorder…',
                         disabled,
                         onClick: () => onAction({ mode: 'move', item }),
                       },
                       {
-                        label: 'Trash',
+                        label: 'Move to Trash',
                         disabled,
                         destructive: true,
                         onClick: () => onAction({ mode: 'trash', item }),
