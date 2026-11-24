@@ -7,6 +7,7 @@ import { preview } from 'vite';
 import { chromium, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { selectStorybookReview } from './ci/storybook-review.ts';
+import { verifyStoryStyleIsolation } from './ci/storybook-style-isolation.ts';
 
 if (
   process.platform === 'darwin' &&
@@ -340,6 +341,63 @@ try {
       await page.close();
     }
   }
+  if (
+    requested.includes('redesign-controls--default') &&
+    requested.includes('redesign-appearance--playground-story')
+  ) {
+    for (const [theme, width, variant] of variants) {
+      const page = await browser.newPage({
+        viewport: { width, height: 900 },
+        isMobile: width === 390,
+        hasTouch: width <= 768,
+        reducedMotion: 'reduce',
+        colorScheme: theme,
+      });
+      await page.clock.setSystemTime(new Date('2026-10-20T16:00:00Z'));
+      const errors: string[] = [];
+      page.on('pageerror', (error) => errors.push(error.message));
+      try {
+        await page.goto(
+          `http://127.0.0.1:6007/iframe.html?id=redesign-appearance--playground-story&viewMode=story&globals=theme:${theme}`,
+        );
+        await verifyStoryStyleIsolation(
+          page,
+          waitForStory,
+          async (state) => {
+            const filename = `style-isolation-${state}-${variant}.png`;
+            if (
+              await captureScreenshot(page, {
+                path: resolve(directory, filename),
+                fullPage: true,
+                animations: 'disabled',
+              })
+            ) {
+              captures.push({
+                id: 'redesign-appearance--playground-story',
+                variant,
+                filename,
+                title: `Appearance after shared Controls: ${state}`,
+              });
+            }
+          },
+          (observations) =>
+            writeFile(
+              resolve(directory, `style-isolation-${variant}.json`),
+              JSON.stringify(observations, null, 2),
+            ),
+        );
+        expect(
+          errors,
+          `${variant}: no runtime errors during same-document story navigation`,
+        ).toEqual([]);
+        verifications.push(`${variant}: Appearance styles survive a same-document Controls visit`);
+      } catch (error) {
+        await recordCaptureFailure(page, 'appearance-style-isolation', variant, error);
+      } finally {
+        await page.close();
+      }
+    }
+  }
 } catch (error) {
   captureFailures.push({
     id: 'interaction-verification',
@@ -382,7 +440,7 @@ await writeFile(
 if (review.captureScreenshots) {
   await writeFile(
     resolve(directory, 'index.html'),
-    `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Spinel design review</title><style>body{font:16px system-ui;margin:32px;background:#fafafa;color:#222}nav{display:flex;gap:16px;flex-wrap:wrap}section{margin:40px 0} .shots{display:flex;gap:16px;overflow:auto;align-items:start}figure{margin:0;flex:0 0 480px}img{width:100%;border:1px solid #ddd}figcaption{padding:12px}a{color:#8a1d3f}</style><h1>Spinel · component review</h1><p>Current production stories render shipped components with local API fixtures. Native fixtures isolate SDK behavior. Redesign contains only proposals owned by the open ticket shown in each title.</p><h2>All states and sizes</h2><nav>${requested.map((id) => `<a href="#${escape(id)}">${escape(index.entries[id].name)}</a>`).join('')}</nav>${requested
+    `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>Spinel design review</title><style>body{font:16px system-ui;margin:32px;background:#fafafa;color:#222}nav{display:flex;gap:16px;flex-wrap:wrap}section{margin:40px 0} .shots{display:flex;gap:16px;overflow:auto;align-items:start}figure{margin:0;flex:0 0 480px}img{width:100%;border:1px solid #ddd}figcaption{padding:12px}a{color:#8a1d3f}</style><h1>Spinel · component review</h1><p>Current production stories render shipped components with local API fixtures. Native fixtures isolate SDK behavior.</p><h2>All states and sizes</h2><nav>${requested.map((id) => `<a href="#${escape(id)}">${escape(index.entries[id].name)}</a>`).join('')}</nav>${requested
       .map(
         (id) =>
           `<section id="${escape(id)}"><h2>${escape(index.entries[id].title)} / ${escape(index.entries[id].name)}</h2><div class="shots">${captures
@@ -396,13 +454,11 @@ if (review.captureScreenshots) {
       .join('')}</html>`,
   );
 }
-// The mockup chunk is isolated from production. Report actual emitted bytes, not npm unpacked size.
+// Report the retained control/story chunks by actual emitted bytes, not npm unpacked size.
 const { readdir } = await import('node:fs/promises');
 const assets = await readdir('storybook-static/assets');
 const bundles = [];
-for (const filename of assets.filter(
-  (name) => /Controls|Mockups/i.test(name) && name.endsWith('.js'),
-)) {
+for (const filename of assets.filter((name) => /Controls/i.test(name) && name.endsWith('.js'))) {
   const bytes = await readFile(resolve('storybook-static/assets', filename));
   bundles.push({ filename, bytes: bytes.length, gzipBytes: gzipSync(bytes).length });
 }

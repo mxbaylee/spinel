@@ -119,8 +119,7 @@ export const Tablet: Story = {
   parameters: { api: workspace },
 };
 /**
- * Below 640px the rail is a bar across the top; below 600px the folder list
- * stacks above the files.
+ * Below 640px the rail is a bar across the top.
  */
 export const Phone: Story = {
   globals: { viewport: { value: 'phone', isRotated: false } },

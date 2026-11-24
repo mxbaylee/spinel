@@ -130,21 +130,3 @@
     animation: none;
   }
 }
-.rd-loading-comparison {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
-  gap: 16px;
-}
-.rd-loading-specimen {
-  background: var(--sp-panel);
-  color: var(--sp-text);
-  border: 1px solid var(--sp-border);
-  border-radius: 12px;
-  padding: 24px;
-}
-.rd-loading-specimen h2 {
-  margin: 0;
-  font:
-    600 1rem/1.5 system-ui,
-    sans-serif;
-}

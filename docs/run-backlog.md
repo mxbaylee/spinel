@@ -160,6 +160,14 @@ Ask each reviewer for a score out of 100 using this rubric:
   deduct for avoidable complexity with an actionable simplification, not for
   necessary safeguards. Owner, chat 2026-10-20, decision
   [#105](implementation/backlog-workflow.md#legacy-decision-105-deduct-unnecessary-complexity).
+  🧹 **Code removal** is part of the same line. Reviewers check whether the change
+  leaves code, styles, assets, exports, fixtures or docs it made obsolete, or
+  duplicates something that already exists, and deduct with the exact item to delete
+  and the proof it is unused (imports, lazy modules, SDK/plugin registration, scripts,
+  config, stories, selectors, dynamic or template-built names). A no-reference search
+  alone is not proof. Reviewers never ask to delete retained evidence, externally
+  consumed entry points or anything a ticket record explicitly retains. Owner, chat 2026-11-23,
+  [decision](implementation/SPN-087.md#decision-code-removal-in-the-review-rubric).
 
 **Reviewers never deduct for CI results.** A pending, queued, missing, cancelled, failing or
   not-yet-run check, on this SHA or another, costs no points in any rubric line, and reviewers

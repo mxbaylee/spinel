@@ -1,0 +1,113 @@
+{
+  "source": "2d3ef587aa4071b8da676248171f6ff398b8a736",
+  "run": 45290939749,
+  "attempt": 1,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "files": [
+    {
+      "file": "redesign-controls--default-light.png",
+      "sha256": "4e5c1afe2eb8bd2a161eb7dc171224c1fb037c534ad3b9c3b99ae6c3dd773434",
+      "artifactPath": "design-review-desktop-light/redesign-controls--default-light.png"
+    },
+    {
+      "file": "redesign-controls--default-dark.png",
+      "sha256": "c870f812bd1b89fef5809a85fe1fdc445b76b1cae37fa7df06cd2d870611b781",
+      "artifactPath": "design-review-desktop-dark/redesign-controls--default-dark.png"
+    },
+    {
+      "file": "redesign-controls--default-phone.png",
+      "sha256": "7bfc759b498266ef18f3988aee05a8a3a9397ade3da9a93ccc2a498fa1e7ffdf",
+      "artifactPath": "design-review-mobile-light/redesign-controls--default-phone.png"
+    },
+    {
+      "file": "redesign-controls--default-phone-dark.png",
+      "sha256": "105eaf26b736dabfe3a3fc53a4a84db5febeb0b93e0c397019347aba346ab398",
+      "artifactPath": "design-review-mobile-dark/redesign-controls--default-phone-dark.png"
+    },
+    {
+      "file": "redesign-controls--default-tablet.png",
+      "sha256": "1bd8b07231acb08f741d9a94ba3c030555b9c4e1cfbb6bda341f90a528a59899",
+      "artifactPath": "design-review-tablet/redesign-controls--default-tablet.png"
+    },
+    {
+      "file": "style-isolation-nested-icon-after-light.png",
+      "sha256": "656626b130c6d4cca8c462c403fa60cf75e92812d02546ca33c1ac6a2c5c1502",
+      "artifactPath": "design-review-desktop-light/style-isolation-nested-icon-after-light.png"
+    },
+    {
+      "file": "style-isolation-nested-icon-after-phone.png",
+      "sha256": "9f4829f76285b189a3ae98a28a64b603def4744a24395035cb667ba8f4be7ee7",
+      "artifactPath": "design-review-mobile-light/style-isolation-nested-icon-after-phone.png"
+    },
+    {
+      "file": "style-isolation-nested-icon-after-phone-dark.png",
+      "sha256": "e1f3c4cfcb045909e05b2ec298e48a7e75cbcff990a22e284b9b62be9b7e70a7",
+      "artifactPath": "design-review-mobile-dark/style-isolation-nested-icon-after-phone-dark.png"
+    },
+    {
+      "file": "style-isolation-selected-cover-after-tablet.png",
+      "sha256": "693c34ae4909715a21b9e6e81a01f53c7b2538742816829cd706d31097b77829",
+      "artifactPath": "design-review-tablet/style-isolation-selected-cover-after-tablet.png"
+    },
+    {
+      "file": "desktop-light-manifest.json.gz",
+      "sha256": "084354055c9da264b30f6ca296ebb68a951209d6975391f6988314dd8f1f2a57",
+      "uncompressedSha256": "333f47f0f3c07069f5ac575251d022ab4cb0d6d0b5a45c98c03d1dc773b78ec6",
+      "artifactPath": "design-review-desktop-light/manifest.json"
+    },
+    {
+      "file": "desktop-light-style-isolation-light.json.gz",
+      "sha256": "4916580cfea4e829e6093d6bc765cbadf11c7d909da09cf25d89af7b2076e058",
+      "uncompressedSha256": "39b87822baf9782d3f2afb383c301bb035084e40b6c46374cf718f79cb9bdce7",
+      "artifactPath": "design-review-desktop-light/style-isolation-light.json"
+    },
+    {
+      "file": "desktop-dark-manifest.json.gz",
+      "sha256": "a7fe803496a03839385e95dce43682458710463bcdf3f3fe95369b761a24c0d3",
+      "uncompressedSha256": "a14284ece8331a9d84c2d4a7a0de2c4989cec571b55284161959efcfce51e0e8",
+      "artifactPath": "design-review-desktop-dark/manifest.json"
+    },
+    {
+      "file": "desktop-dark-style-isolation-dark.json.gz",
+      "sha256": "28443b1f7373fbddd6775f87deb47a7cc28b148c61823ea57891d17802a63092",
+      "uncompressedSha256": "67e704ca242a60ef1a619578d9fa51cb5d0dfeb811d70b7898cc07bb047e926c",
+      "artifactPath": "design-review-desktop-dark/style-isolation-dark.json"
+    },
+    {
+      "file": "mobile-light-manifest.json.gz",
+      "sha256": "856f29db0f0b3a00c85b925b47fc493a807f586c54c2089a4e804a22c454b28c",
+      "uncompressedSha256": "0015624a0d9b51689af5142306f5ddc0b851e6fe30b0a9ceea16bbd389f5484c",
+      "artifactPath": "design-review-mobile-light/manifest.json"
+    },
+    {
+      "file": "mobile-light-style-isolation-phone.json.gz",
+      "sha256": "f83f7004f06bf25778d5b6cdd26a39a5f82fbddf6ebe1f8fae717ca517b408a1",
+      "uncompressedSha256": "0178a8c710a87c771cff6c482d1eb08b99fca831c9f83ef1cd28507cf6a950f7",
+      "artifactPath": "design-review-mobile-light/style-isolation-phone.json"
+    },
+    {
+      "file": "mobile-dark-manifest.json.gz",
+      "sha256": "8d6b426a311f9e4f65a927fbaab93cf235e6ab446afbd90c68a37ba18f6fe6a8",
+      "uncompressedSha256": "3c3609c2a2871e3b35bb91bfd91c5129463e02446aa965ac87133bf105d96797",
+      "artifactPath": "design-review-mobile-dark/manifest.json"
+    },
+    {
+      "file": "mobile-dark-style-isolation-phone-dark.json.gz",
+      "sha256": "b811eed8a46eb739906d49284c62db77472466f40a05b7ea6f6203b77a950d2a",
+      "uncompressedSha256": "5db5d94a3b9eb48d0a415d984775f368d3f6b3d13eb3227c74e4f22fc193d25a",
+      "artifactPath": "design-review-mobile-dark/style-isolation-phone-dark.json"
+    },
+    {
+      "file": "tablet-manifest.json.gz",
+      "sha256": "58872bbae43f1efee71e5a54263f2a632d4e73809c0b08faa3d80b5a0c59a463",
+      "uncompressedSha256": "72752ff9a3742df784c0bc89852e4443bb65fe39f91e92003c62b0514d945474",
+      "artifactPath": "design-review-tablet/manifest.json"
+    },
+    {
+      "file": "tablet-style-isolation-tablet.json.gz",
+      "sha256": "f29d266e6d4c54f277cf6f0d9dcbe8fb562fdd0f6fb20a5efc9fbc3a3e62c02f",
+      "uncompressedSha256": "47a6fe70947b83c2701ab2614ae27d30484351c3669452b4b1f04ec3e6c253e4",
+      "artifactPath": "design-review-tablet/style-isolation-tablet.json"
+    }
+  ]
+}

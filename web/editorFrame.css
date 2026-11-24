@@ -222,14 +222,6 @@
   min-width: 0;
   margin-block: 12px;
 }
-.editor-people-avatar {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  flex: none;
-  border-radius: 8px;
-}
 .editor-people-detail {
   min-width: 0;
   flex: 1;

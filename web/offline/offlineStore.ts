@@ -1002,14 +1002,6 @@ export function watchOfflineAccount() {
   window.addEventListener('storage', changed);
   return () => window.removeEventListener('storage', changed);
 }
-/** A sign-out made offline; the server session is revoked on the next online start. */
-export function signOutPending() {
-  return storage()?.getItem(SIGN_OUT_KEY) != null;
-}
-export function setSignOutPending(pending: boolean) {
-  if (pending) storage()?.setItem(SIGN_OUT_KEY, '1');
-  else storage()?.removeItem(SIGN_OUT_KEY);
-}
 
 function request<T>(operation: IDBRequest<T>) {
   return new Promise<T>((resolve, reject) => {

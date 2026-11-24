@@ -50,7 +50,7 @@ const preview: Preview = {
       storySort: { order: ['Current production', 'Identity', 'Native fixtures', '*'] },
     },
     controls: { expanded: true },
-    // theme.css switches the rail to a top bar at 640px and stacks the dashboard at 600px.
+    // theme.css switches the rail to a top bar at 640px.
     viewport: {
       options: {
         phone: { name: 'Phone', styles: { width: '390px', height: '844px' }, type: 'mobile' },

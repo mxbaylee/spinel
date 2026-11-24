@@ -1,0 +1,26 @@
+{
+  "id": "appearance-style-isolation",
+  "variant": "light",
+  "message": "Error: expect(received).toEqual(expected) // deep equality\n\n- Expected  - 10\n+ Received  + 10\n\n@@ -1,9 +1,9 @@\n  Object {\n    \"cover\": Object {\n      \"background\": \"rgb(196, 44, 88)\",\n-     \"border\": \"1px solid rgb(240, 194, 207)\",\n+     \"border\": \"1px solid rgb(196, 44, 88)\",\n      \"borderRadius\": \"8px\",\n      \"color\": \"rgb(255, 255, 255)\",\n      \"display\": \"flex\",\n      \"gridColumns\": \"none\",\n      \"height\": 36,\n@@ -19,20 +19,20 @@\n      \"dialog\": Object {\n        \"background\": \"rgb(255, 255, 255)\",\n        \"border\": \"1px solid rgb(240, 194, 207)\",\n        \"borderRadius\": \"12px\",\n        \"color\": \"rgb(74, 30, 51)\",\n-       \"display\": \"block\",\n-       \"gridColumns\": \"none\",\n-       \"height\": 644.390625,\n-       \"margin\": \"127.797px 400px 127.812px\",\n+       \"display\": \"grid\",\n+       \"gridColumns\": \"98.1719px 347.828px\",\n+       \"height\": 701.390625,\n+       \"margin\": \"99.2969px 400px 99.3125px\",\n        \"overflow\": \"auto\",\n        \"overscroll\": \"auto\",\n        \"padding\": \"16px\",\n        \"width\": 480,\n        \"x\": 400,\n-       \"y\": 127.796875,\n+       \"y\": 99.296875,\n      },\n      \"grid\": Object {\n        \"background\": \"rgba(0, 0, 0, 0)\",\n        \"border\": \"0px none rgb(74, 30, 51)\",\n        \"borderRadius\": \"0px\",\n@@ -40,15 +40,15 @@\n        \"display\": \"grid\",\n        \"gridColumns\": \"47.75px 47.75px 47.75px 47.75px 47.75px 47.75px 47.75px 47.75px\",\n        \"height\": 360,\n        \"margin\": \"0px\",\n        \"overflow\": \"auto\",\n-       \"overscroll\": \"auto\",\n+       \"overscroll\": \"contain\",\n        \"padding\": \"4px\",\n        \"width\": 446,\n        \"x\": 417,\n-       \"y\": 359.1875,\n+       \"y\": 363.6875,\n      },\n      \"search\": Object {\n        \"background\": \"rgb(255, 255, 255)\",\n        \"border\": \"1px solid rgb(240, 194, 207)\",\n        \"borderRadius\": \"8px\",\n@@ -60,11 +60,11 @@\n        \"overflow\": \"clip\",\n        \"overscroll\": \"auto\",\n        \"padding\": \"8px 12px\",\n        \"width\": 446,\n        \"x\": 417,\n-       \"y\": 200.796875,\n+       \"y\": 184.296875,\n      },\n      \"selected\": Object {\n        \"background\": \"rgb(255, 255, 255)\",\n        \"border\": \"1px solid rgb(240, 194, 207)\",\n        \"borderRadius\": \"8px\",\n@@ -76,9 +76,9 @@\n        \"overflow\": \"visible\",\n        \"overscroll\": \"auto\",\n        \"padding\": \"8px\",\n        \"width\": 47.75,\n        \"x\": 811.25,\n-       \"y\": 415.1875,\n+       \"y\": 419.6875,\n      },\n    },\n  }\n    at captureRawStack (/Users/mxbaylee/projects/spinel-spn-087/node_modules/playwright-core/lib/coreBundle.js:9282:17)\n    at callMatcherAsStep (/Users/mxbaylee/projects/spinel-spn-087/node_modules/playwright/lib/matchers/expect.js:13316:57)\n    at Object.toEqual (/Users/mxbaylee/projects/spinel-spn-087/node_modules/playwright/lib/matchers/expect.js:13308:23)\n    at verifyStoryStyleIsolation (/Users/mxbaylee/projects/spinel-spn-087/scripts/ci/storybook-style-isolation.ts:96:17)\n    at async file:///Users/mxbaylee/projects/spinel-spn-087/scripts/screenshots.ts:354:9",
+  "filename": "failed-appearance-style-isolation-light.png",
+  "storybook": {
+    "phase": "finished",
+    "storyFinished": {
+      "storyId": "redesign-appearance--playground-story",
+      "status": "success"
+    },
+    "playErrors": [
+      {
+        "event": "playFunctionThrewException",
+        "count": 0,
+        "samples": []
+      },
+      {
+        "event": "unhandledErrorsWhilePlaying",
+        "count": 0,
+        "samples": []
+      }
+    ]
+  },
+  "accessibility": "- dialog \"Page cover\":\n  - heading \"Page cover\" [level=2]\n  - button \"Close dialog\": ×\n  - img \"Cover preview\"\n  - group \"Cover source\":\n    - button \"Gems\" [pressed]\n    - button \"Upload\"\n    - button \"Unsplash\"\n  - button \"Ruby\"\n  - button \"Jasper\"\n  - button \"Yellow Diamond\"\n  - button \"Peridot\"\n  - button \"Sapphire\"\n  - button \"Lapis\"\n  - button \"Amethyst\"\n  - button \"Spinel\" [pressed]\n  - button \"Rose Quartz\"\n  - button \"Pearl\"\n  - button \"Obsidian\"\n  - button \"Bismuth\"\n  - button \"Remove cover\"\n  - button \"Cancel\"\n  - button \"Save cover\""
+}

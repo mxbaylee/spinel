@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { randomToken } from '../server/auth/store.ts';
+import { offlineAccountEvent } from '../../web/offline/offlineStore.ts';
 
 vi.mock('../../web/maintenanceState.ts', () => import('./fixtures/unsupervisedMaintenance.ts'));
 
@@ -72,6 +73,7 @@ test('accepted exit locks synchronously, stores identifiers only, and keeps its 
   expect(values.has('spinel.offline.account')).toBe(false);
   expect(exit.persisted).toBe(true);
   expect(JSON.parse(values.get(EXIT)!)).toEqual(exit.intent);
+  expect(offlineAccountEvent({ key: EXIT, newValue: values.get(EXIT)! }, A)).toBe(true);
   expect(Object.keys(exit.intent).sort()).toEqual([
     'accountId',
     'authGeneration',
@@ -646,3 +648,8 @@ test.each([
     expect(fetch).toHaveBeenCalledTimes(1);
   },
 );
+
+test('offlineAccountEvent treats a set sign-out key as a close signal and a cleared one as not', () => {
+  expect(offlineAccountEvent({ key: EXIT, newValue: '1' }, A)).toBe(true);
+  expect(offlineAccountEvent({ key: EXIT, newValue: null }, A)).toBe(false);
+});

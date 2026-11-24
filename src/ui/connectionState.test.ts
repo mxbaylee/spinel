@@ -1,83 +1,9 @@
 import { afterEach, expect, test, vi } from 'vitest';
-import {
-  CONNECTION_CHECK_EVENT,
-  createEditorConnection,
-  reduceEditorConnection,
-  watchServerConnection,
-} from '../../web/connectionState.ts';
+import { CONNECTION_CHECK_EVENT, watchServerConnection } from '../../web/connectionState.ts';
 import { CONNECTION_CHECKED_EVENT } from '../../web/connectionState.ts';
-import type { ConnectionState, EditorConnectionEvent } from '../../web/connectionState.ts';
+import type { ConnectionState } from '../../web/connectionState.ts';
 
 vi.mock('../../web/maintenanceState.ts', () => import('./fixtures/unsupervisedMaintenance.ts'));
-
-function editor(...events: EditorConnectionEvent[]) {
-  return events.reduce(reduceEditorConnection, createEditorConnection(true));
-}
-const active = { type: 'sync', status: 'active' } as const;
-const joined = { type: 'room', status: 'online' } as const;
-
-test('an editor needs both an active collaboration unit and a joined room', () => {
-  expect(createEditorConnection(true).state).toBe('reconnecting');
-  expect(createEditorConnection(false).state).toBe('offline');
-  expect(editor(active).state).toBe('reconnecting');
-  expect(editor(joined).state).toBe('reconnecting');
-  expect(editor(active, joined).state).toBe('online');
-  expect(editor(joined, active).state).toBe('online');
-});
-
-test('ordinary synchronization changes do not make a joined editor reconnect', () => {
-  // Pending edits and acknowledgements normalize to active: connectivity never confirms a save.
-  let connection = editor(active, joined);
-  for (let edit = 0; edit < 3; edit++) {
-    connection = reduceEditorConnection(connection, active);
-    expect(connection.state).toBe('online');
-  }
-});
-
-test.each([
-  [{ type: 'room', status: 'idle' }, 'reconnecting'],
-  [{ type: 'room', status: 'joining' }, 'reconnecting'],
-  [{ type: 'room', status: 'offline' }, 'offline'],
-  [{ type: 'sync', status: 'offline' }, 'offline'],
-  [{ type: 'sync', status: 'not-started' }, 'reconnecting'],
-] satisfies [EditorConnectionEvent, ConnectionState][])(
-  'a joined editor reflects %j',
-  (event, expected) => {
-    expect(reduceEditorConnection(editor(active, joined), event).state).toBe(expected);
-  },
-);
-
-test('browser recovery cannot reuse a stale joined room or a synchronization callback', () => {
-  let connection = editor(active, joined);
-  connection = reduceEditorConnection(connection, { type: 'browser', online: false });
-  expect(connection.state).toBe('offline');
-  connection = reduceEditorConnection(connection, joined);
-  expect(connection.state).toBe('offline');
-  connection = reduceEditorConnection(connection, { type: 'browser', online: true });
-  expect(connection.state).toBe('reconnecting');
-  connection = reduceEditorConnection(connection, active);
-  expect(connection.state).toBe('reconnecting');
-  connection = reduceEditorConnection(connection, joined);
-  expect(connection.state).toBe('online');
-});
-
-test('a disconnected room needs a new joined event, not an ordinary sync callback', () => {
-  const lost = { type: 'room', status: 'offline' } as const;
-  const joining = { type: 'room', status: 'joining' } as const;
-  expect(editor(active, joined, lost, active).state).toBe('offline');
-  expect(editor(active, joined, lost, joining, active).state).toBe('reconnecting');
-  expect(editor(active, joined, lost, joining, joined).state).toBe('online');
-});
-
-test('rejoining can progress while the previous collaboration status still says offline', () => {
-  let connection = editor(active, joined, { type: 'sync', status: 'offline' });
-  connection = reduceEditorConnection(connection, { type: 'room', status: 'joining' });
-  expect(connection.state).toBe('reconnecting');
-  connection = reduceEditorConnection(connection, joined);
-  expect(connection.state).toBe('offline');
-  connection = reduceEditorConnection(connection, active);
-  expect(connection.state).toBe('online');
-});
 
 function deferred<T>() {
   let resolve!: (value: T) => void;
