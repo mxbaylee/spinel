@@ -1,0 +1,1556 @@
+[
+  {
+    "id": "dashboard-dashboard--action-menu-labels",
+    "variant": "light",
+    "group": "original-action-states",
+    "title": "Current production/Dashboard/Dashboard / Action Menu Labels",
+    "filename": "dashboard-dashboard--action-menu-labels-light.png",
+    "sha256": "083706e4b589014deab66bc7750973cc550efe1665d99a784d87eec420421e81",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Dashboard / Action Menu Labels; current production story state after its play."
+  },
+  {
+    "id": "dashboard-dashboard--action-menu-labels",
+    "variant": "dark",
+    "group": "original-action-states",
+    "title": "Current production/Dashboard/Dashboard / Action Menu Labels",
+    "filename": "dashboard-dashboard--action-menu-labels-dark.png",
+    "sha256": "6c8cbe6f599e7728aa06fd46457990aa97e2365482372c0a2d9ff7bf082cd654",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Dashboard / Action Menu Labels; current production story state after its play."
+  },
+  {
+    "id": "dashboard-dashboard--action-menu-labels",
+    "variant": "phone",
+    "group": "original-action-states",
+    "title": "Current production/Dashboard/Dashboard / Action Menu Labels",
+    "filename": "dashboard-dashboard--action-menu-labels-phone.png",
+    "sha256": "a3e405f0303f70c7f637dc4e5724f3d632bfc4f3b4ec3f2487b1e3d6b5d28487",
+    "imagePixels": {
+      "width": 390,
+      "height": 1682
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Dashboard / Action Menu Labels; current production story state after its play."
+  },
+  {
+    "id": "dashboard-dashboard--rename-pending",
+    "variant": "light",
+    "group": "original-action-states",
+    "title": "Current production/Dashboard/Dashboard / Rename Pending",
+    "filename": "dashboard-dashboard--rename-pending-light.png",
+    "sha256": "1b0693ca141f5d1a5abad41270a8e91ce6a608668667769c3966bfb05b701dd2",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Dashboard / Rename Pending; current production story state after its play."
+  },
+  {
+    "id": "dashboard-dashboard--rename-pending",
+    "variant": "dark",
+    "group": "original-action-states",
+    "title": "Current production/Dashboard/Dashboard / Rename Pending",
+    "filename": "dashboard-dashboard--rename-pending-dark.png",
+    "sha256": "19fe0b379c23b36724e40a193557e4f99deb6f4ad973fe1a651ee011a6fff702",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Dashboard / Rename Pending; current production story state after its play."
+  },
+  {
+    "id": "dashboard-dashboard--rename-pending",
+    "variant": "phone",
+    "group": "original-action-states",
+    "title": "Current production/Dashboard/Dashboard / Rename Pending",
+    "filename": "dashboard-dashboard--rename-pending-phone.png",
+    "sha256": "e5674a7b0ee12d01b5767ae36daf8444dce1f0270d830fa20240a5d350678d9f",
+    "imagePixels": {
+      "width": 390,
+      "height": 1682
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Dashboard / Rename Pending; current production story state after its play."
+  },
+  {
+    "id": "spaces-root-actions--menu-labels",
+    "variant": "light",
+    "group": "original-action-states",
+    "title": "Current production/Spaces/Root actions / Menu Labels",
+    "filename": "spaces-root-actions--menu-labels-light.png",
+    "sha256": "880f4605c914dfc8deab996b9518ecd7fcf6577b6e73cbd5cf70b3bd6d6e71e5",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Spaces/Root actions / Menu Labels; current production story state after its play."
+  },
+  {
+    "id": "spaces-root-actions--menu-labels",
+    "variant": "dark",
+    "group": "original-action-states",
+    "title": "Current production/Spaces/Root actions / Menu Labels",
+    "filename": "spaces-root-actions--menu-labels-dark.png",
+    "sha256": "324a07cf557ce4ed57f0686682504cec82500886840c822d2d9e586a8a3e9f17",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Spaces/Root actions / Menu Labels; current production story state after its play."
+  },
+  {
+    "id": "spaces-root-actions--menu-labels",
+    "variant": "phone",
+    "group": "original-action-states",
+    "title": "Current production/Spaces/Root actions / Menu Labels",
+    "filename": "spaces-root-actions--menu-labels-phone.png",
+    "sha256": "8d9e9b09bc5439d3b9288a22763f889721088d9de1f58e31ce92e19dd1ae27c8",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Spaces/Root actions / Menu Labels; current production story state after its play."
+  },
+  {
+    "id": "admin-adminusers--confirm-passkey-removal",
+    "variant": "light",
+    "group": "original-action-states",
+    "title": "Current production/Admin/AdminUsers / Confirm Passkey Removal",
+    "filename": "admin-adminusers--confirm-passkey-removal-light.png",
+    "sha256": "cd579d75c569b2d811c39f2f0f7439cdef16e99f1769ac938eb0db2c7b1f43d2",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Admin/AdminUsers / Confirm Passkey Removal; current production story state after its play."
+  },
+  {
+    "id": "admin-adminusers--confirm-passkey-removal",
+    "variant": "dark",
+    "group": "original-action-states",
+    "title": "Current production/Admin/AdminUsers / Confirm Passkey Removal",
+    "filename": "admin-adminusers--confirm-passkey-removal-dark.png",
+    "sha256": "dea3ce1f3c47494d535903c6d948fd597eec84d404a05d051e3f854c8300d57f",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Admin/AdminUsers / Confirm Passkey Removal; current production story state after its play."
+  },
+  {
+    "id": "admin-adminusers--confirm-passkey-removal",
+    "variant": "phone",
+    "group": "original-action-states",
+    "title": "Current production/Admin/AdminUsers / Confirm Passkey Removal",
+    "filename": "admin-adminusers--confirm-passkey-removal-phone.png",
+    "sha256": "974db3b8328c79c011bc0163d3b532a2c647475c0cb67caa92b55ce18e8d322e",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Admin/AdminUsers / Confirm Passkey Removal; current production story state after its play."
+  },
+  {
+    "id": "admin-adminusers--disable-pending",
+    "variant": "light",
+    "group": "original-action-states",
+    "title": "Current production/Admin/AdminUsers / Disable Pending",
+    "filename": "admin-adminusers--disable-pending-light.png",
+    "sha256": "30e24e719ddc4bae3a0e916516fa177c1a6496d8759f1c7facb157f6b952676c",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Admin/AdminUsers / Disable Pending; current production story state after its play."
+  },
+  {
+    "id": "admin-adminusers--disable-pending",
+    "variant": "dark",
+    "group": "original-action-states",
+    "title": "Current production/Admin/AdminUsers / Disable Pending",
+    "filename": "admin-adminusers--disable-pending-dark.png",
+    "sha256": "c977d9dc08bb289fa81f67ac0c79929480ddfe8d9edb598354b45a314cd78095",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Admin/AdminUsers / Disable Pending; current production story state after its play."
+  },
+  {
+    "id": "admin-adminusers--disable-pending",
+    "variant": "phone",
+    "group": "original-action-states",
+    "title": "Current production/Admin/AdminUsers / Disable Pending",
+    "filename": "admin-adminusers--disable-pending-phone.png",
+    "sha256": "ed2b7f4d143e269bc5f98823b7c40bde63dc82c6e14b1568e1d408cbbb4c1649",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Admin/AdminUsers / Disable Pending; current production story state after its play."
+  },
+  {
+    "id": "current-production-account-passkey-security--confirm-removal",
+    "variant": "light",
+    "group": "original-action-states",
+    "title": "Current production/Account/Passkey security / Confirm Removal",
+    "filename": "current-production-account-passkey-security--confirm-removal-light.png",
+    "sha256": "090e839b33f04c668280a2549fa255d00981a8f8f9d5f2846ea26ea8d08ed772",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Account/Passkey security / Confirm Removal; current production story state after its play."
+  },
+  {
+    "id": "current-production-account-passkey-security--confirm-removal",
+    "variant": "dark",
+    "group": "original-action-states",
+    "title": "Current production/Account/Passkey security / Confirm Removal",
+    "filename": "current-production-account-passkey-security--confirm-removal-dark.png",
+    "sha256": "97fea6b6f03b99b8cc7cccf6a2f83f4567431262f7d7051e99f35523d82ca3e7",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Account/Passkey security / Confirm Removal; current production story state after its play."
+  },
+  {
+    "id": "current-production-account-passkey-security--confirm-removal",
+    "variant": "phone",
+    "group": "original-action-states",
+    "title": "Current production/Account/Passkey security / Confirm Removal",
+    "filename": "current-production-account-passkey-security--confirm-removal-phone.png",
+    "sha256": "eddb9aa0b2085b690b6adb6fea8ff1eb9ec90554cb1262a173daa1f498cd8e0e",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Account/Passkey security / Confirm Removal; current production story state after its play."
+  },
+  {
+    "id": "current-production-account-passkey-security--saving",
+    "variant": "light",
+    "group": "original-action-states",
+    "title": "Current production/Account/Passkey security / Saving",
+    "filename": "current-production-account-passkey-security--saving-light.png",
+    "sha256": "ee9a355750bff94dc4a574ec589b4f8b9cdeecd1f0671e22877ebb3c8123480f",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Account/Passkey security / Saving; current production story state after its play."
+  },
+  {
+    "id": "current-production-account-passkey-security--saving",
+    "variant": "dark",
+    "group": "original-action-states",
+    "title": "Current production/Account/Passkey security / Saving",
+    "filename": "current-production-account-passkey-security--saving-dark.png",
+    "sha256": "25aa2b59c19b2f9ea042ab7617b7839708fb379770a834441c6e42131aa8dce9",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Account/Passkey security / Saving; current production story state after its play."
+  },
+  {
+    "id": "current-production-account-passkey-security--saving",
+    "variant": "phone",
+    "group": "original-action-states",
+    "title": "Current production/Account/Passkey security / Saving",
+    "filename": "current-production-account-passkey-security--saving-phone.png",
+    "sha256": "6ef6b32d56b9ac0118fa52311658440890307922fcd77c48a7951789f28ec11f",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Account/Passkey security / Saving; current production story state after its play."
+  },
+  {
+    "id": "dashboard-trash--confirm-empty",
+    "variant": "light",
+    "group": "original-action-states",
+    "title": "Current production/Dashboard/Trash / Confirm Empty",
+    "filename": "dashboard-trash--confirm-empty-light.png",
+    "sha256": "bde022ecce402bd393cb4862329047527d7fffe35b9bcb970e9c5898bee9ddc4",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Trash / Confirm Empty; current production story state after its play."
+  },
+  {
+    "id": "dashboard-trash--confirm-empty",
+    "variant": "dark",
+    "group": "original-action-states",
+    "title": "Current production/Dashboard/Trash / Confirm Empty",
+    "filename": "dashboard-trash--confirm-empty-dark.png",
+    "sha256": "4bd6c12e6d9cb44ad28b04bc423b05fe56d7f2fd343cfbf762838e78f443b555",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Trash / Confirm Empty; current production story state after its play."
+  },
+  {
+    "id": "dashboard-trash--confirm-empty",
+    "variant": "phone",
+    "group": "original-action-states",
+    "title": "Current production/Dashboard/Trash / Confirm Empty",
+    "filename": "dashboard-trash--confirm-empty-phone.png",
+    "sha256": "31494fb38ebf13f244e3eeb743d17c3da65437237986270780c0a2f0e12585d5",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Trash / Confirm Empty; current production story state after its play."
+  },
+  {
+    "id": "dashboard-trash--empty-pending",
+    "variant": "light",
+    "group": "original-action-states",
+    "title": "Current production/Dashboard/Trash / Empty Pending",
+    "filename": "dashboard-trash--empty-pending-light.png",
+    "sha256": "f97ab0645b115808b559caab142834a9fa0d7eb66e43c46db3d7dcbebbf33b18",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Trash / Empty Pending; current production story state after its play."
+  },
+  {
+    "id": "dashboard-trash--empty-pending",
+    "variant": "dark",
+    "group": "original-action-states",
+    "title": "Current production/Dashboard/Trash / Empty Pending",
+    "filename": "dashboard-trash--empty-pending-dark.png",
+    "sha256": "0acfe75d96432c9485c589007fa87c7d7f0d16ea1d08759fac17c0f19c1e8f44",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Trash / Empty Pending; current production story state after its play."
+  },
+  {
+    "id": "dashboard-trash--empty-pending",
+    "variant": "phone",
+    "group": "original-action-states",
+    "title": "Current production/Dashboard/Trash / Empty Pending",
+    "filename": "dashboard-trash--empty-pending-phone.png",
+    "sha256": "29139215e3bd04a3e169437563badaa3ce73b666bf71be21d2e936fbcdf1117c",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Trash / Empty Pending; current production story state after its play."
+  },
+  {
+    "id": "space-review--trash-subtree-confirmation",
+    "variant": "light",
+    "group": "original-action-states",
+    "title": "Current production/Spaces/Space / Trash Subtree Confirmation",
+    "filename": "space-review--trash-subtree-confirmation-light.png",
+    "sha256": "a904aa7dffce6635653f8dee6bf05a5d80d594b79fa9a0f1c6b4eddbc30a4561",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Spaces/Space / Trash Subtree Confirmation; current production story state after its play."
+  },
+  {
+    "id": "space-review--trash-subtree-confirmation",
+    "variant": "dark",
+    "group": "original-action-states",
+    "title": "Current production/Spaces/Space / Trash Subtree Confirmation",
+    "filename": "space-review--trash-subtree-confirmation-dark.png",
+    "sha256": "dd2e063f42a3548d3a38e8a41aa617f060e325ff167f86372460df7d7df7c47b",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Spaces/Space / Trash Subtree Confirmation; current production story state after its play."
+  },
+  {
+    "id": "space-review--trash-subtree-confirmation",
+    "variant": "phone",
+    "group": "original-action-states",
+    "title": "Current production/Spaces/Space / Trash Subtree Confirmation",
+    "filename": "space-review--trash-subtree-confirmation-phone.png",
+    "sha256": "47768ac9bc46e338ffe8f5367beb84dc6f6ca0cef629179f0a0619bbf455293f",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Spaces/Space / Trash Subtree Confirmation; current production story state after its play."
+  },
+  {
+    "id": "space-review--metadata-dialog-focus",
+    "variant": "light",
+    "group": "original-action-states",
+    "title": "Current production/Spaces/Space / Metadata Dialog Focus",
+    "filename": "space-review--metadata-dialog-focus-light.png",
+    "sha256": "9fc89a1d1b90bfa51341ed89fe553511d28b518e3878023003aa4f684c3eb313",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Final closed-dialog focus-return state; intermediate metadata dialog interactions are covered by the completed story play."
+  },
+  {
+    "id": "space-review--metadata-dialog-focus",
+    "variant": "dark",
+    "group": "original-action-states",
+    "title": "Current production/Spaces/Space / Metadata Dialog Focus",
+    "filename": "space-review--metadata-dialog-focus-dark.png",
+    "sha256": "90487e0d4baa361061bf1b4836eac2287c4910e1fa35ba72eb6beec5d7fca087",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Final closed-dialog focus-return state; intermediate metadata dialog interactions are covered by the completed story play."
+  },
+  {
+    "id": "space-review--metadata-dialog-focus",
+    "variant": "phone",
+    "group": "original-action-states",
+    "title": "Current production/Spaces/Space / Metadata Dialog Focus",
+    "filename": "space-review--metadata-dialog-focus-phone.png",
+    "sha256": "2aba81c6febbc3bd2f13d25ac6ce74d15f75c0f9f91a6d9ec585cf81480d7fff",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Final closed-dialog focus-return state; intermediate metadata dialog interactions are covered by the completed story play."
+  },
+  {
+    "id": "space-review--deep-tree",
+    "variant": "light",
+    "group": "original-action-states",
+    "title": "Current production/Spaces/Space / Deep Tree",
+    "filename": "space-review--deep-tree-light.png",
+    "sha256": "de5a722ba7e1c5516482e8f9802d0c98ffcb505dc6ed35b9987d93bfe354e423",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Intentional horizontally scrolled tree brings active Level 14 into view; earlier ancestors may be clipped at the scroll edge."
+  },
+  {
+    "id": "space-review--deep-tree",
+    "variant": "dark",
+    "group": "original-action-states",
+    "title": "Current production/Spaces/Space / Deep Tree",
+    "filename": "space-review--deep-tree-dark.png",
+    "sha256": "a12d38e070be4ca4ab94bec69a0dd0920ea8ca86574db720684dae4c4bdb2a21",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Intentional horizontally scrolled tree brings active Level 14 into view; earlier ancestors may be clipped at the scroll edge."
+  },
+  {
+    "id": "space-review--deep-tree",
+    "variant": "phone",
+    "group": "original-action-states",
+    "title": "Current production/Spaces/Space / Deep Tree",
+    "filename": "space-review--deep-tree-phone.png",
+    "sha256": "8ddab14d53d78c735305057150fa668479acb3945f05d90cd66e552e0451c9f5",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Intentional horizontally scrolled tree brings active Level 14 into view; earlier ancestors may be clipped at the scroll edge."
+  },
+  {
+    "id": "space-offline-actions--removal-inventory-refresh",
+    "variant": "light",
+    "group": "original-action-states",
+    "title": "Current production/Spaces/Offline availability / Removal Inventory Refresh",
+    "filename": "space-offline-actions--removal-inventory-refresh-light.png",
+    "sha256": "f33ce80538f8a894433e7660a79146a90f5cf43a82bb6ea17140065bca2f2a20",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Settled inventory removal outcome. Held pending neutral label and accessible busy state are asserted during the story play, not shown in this final image."
+  },
+  {
+    "id": "space-offline-actions--removal-inventory-refresh",
+    "variant": "dark",
+    "group": "original-action-states",
+    "title": "Current production/Spaces/Offline availability / Removal Inventory Refresh",
+    "filename": "space-offline-actions--removal-inventory-refresh-dark.png",
+    "sha256": "c3e40853ee702c82283f4b22c25c695b58395016683c63bbb057c3f85c1a4ef1",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Settled inventory removal outcome. Held pending neutral label and accessible busy state are asserted during the story play, not shown in this final image."
+  },
+  {
+    "id": "space-offline-actions--removal-inventory-refresh",
+    "variant": "phone",
+    "group": "original-action-states",
+    "title": "Current production/Spaces/Offline availability / Removal Inventory Refresh",
+    "filename": "space-offline-actions--removal-inventory-refresh-phone.png",
+    "sha256": "d5a3b4b9b517b2d8baff059c5c0fbeaf8fefb8329cc464c9cf882bcc92c09036",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Settled inventory removal outcome. Held pending neutral label and accessible busy state are asserted during the story play, not shown in this final image."
+  },
+  {
+    "id": "account-exit--delete-confirmation",
+    "variant": "light",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Account/Sign out / Delete Confirmation",
+    "filename": "account-exit--delete-confirmation-light.png",
+    "sha256": "3797b44a77bd01a9455157e8dfddd51d3458d76f9ec6bc8403ff0c226307ce18",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Account/Sign out / Delete Confirmation; current production story state after its play."
+  },
+  {
+    "id": "admin-account-recovery--confirm-reactivation",
+    "variant": "dark",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Admin/Account recovery / Confirm Reactivation",
+    "filename": "admin-account-recovery--confirm-reactivation-dark.png",
+    "sha256": "bb75cb661ea6fb0e0a5664915264e2eb4663fe2801acf6e28bafff63b52a2167",
+    "imagePixels": {
+      "width": 1280,
+      "height": 1051
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Admin/Account recovery / Confirm Reactivation; current production story state after its play."
+  },
+  {
+    "id": "admin-admininvites--recovery-invite",
+    "variant": "phone",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Admin/AdminInvites / Recovery Invite",
+    "filename": "admin-admininvites--recovery-invite-phone.png",
+    "sha256": "5a9db29d63e0ea3d9477a471207d9bf5a82df47a25a840117ff24ce7a7bc57a0",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Admin/AdminInvites / Recovery Invite; current production story state after its play."
+  },
+  {
+    "id": "current-production-admin-diagnostics--confirmation",
+    "variant": "light",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Admin/Diagnostics / Confirmation",
+    "filename": "current-production-admin-diagnostics--confirmation-light.png",
+    "sha256": "3bd9477dfb88d2447e07edda32aae116377ede7fd4cb24eaada0b7745c57a503",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Admin/Diagnostics / Confirmation; current production story state after its play."
+  },
+  {
+    "id": "current-production-admin-diagnostics--confirmation",
+    "variant": "dark",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Admin/Diagnostics / Confirmation",
+    "filename": "current-production-admin-diagnostics--confirmation-dark.png",
+    "sha256": "9ed3bcabcc04bb158354b05c890abeacfa0cd52cce7345ffd46d607c1053a75b",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Admin/Diagnostics / Confirmation; current production story state after its play."
+  },
+  {
+    "id": "current-production-admin-diagnostics--confirmation",
+    "variant": "phone",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Admin/Diagnostics / Confirmation",
+    "filename": "current-production-admin-diagnostics--confirmation-phone.png",
+    "sha256": "910e76e042540ce0cee2216fbdab0ac3cce7bfc91e7fa2353a1fe2277c0b04fe",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Admin/Diagnostics / Confirmation; current production story state after its play."
+  },
+  {
+    "id": "admin-backupdownloads--fresh-passkey-required",
+    "variant": "dark",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Admin/BackupDownloads / Fresh Passkey Required",
+    "filename": "admin-backupdownloads--fresh-passkey-required-dark.png",
+    "sha256": "0b3677e8f65adef8044f0bdfed30b2cade4a8e2426838462309f1b08a709f63e",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Admin/BackupDownloads / Fresh Passkey Required; current production story state after its play."
+  },
+  {
+    "id": "admin-backuprestore--manual-upload",
+    "variant": "phone",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Admin/BackupRestore / Manual Upload",
+    "filename": "admin-backuprestore--manual-upload-phone.png",
+    "sha256": "5f4e43d6361c3b93b864f560a70311c825e09d507af20145d7745370c2cbf4f1",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Admin/BackupRestore / Manual Upload; current production story state after its play."
+  },
+  {
+    "id": "admin-backuprestore--full-confirmation",
+    "variant": "light",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Admin/BackupRestore / Full Confirmation",
+    "filename": "admin-backuprestore--full-confirmation-light.png",
+    "sha256": "6adefc84dde1daa5230e4466fe4ad70062a646d411f7df868e28f3a9ff2bc01f",
+    "imagePixels": {
+      "width": 1280,
+      "height": 1208
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Story intentionally scrolls to the acknowledgement and confirmation actions; this is not a capture of the dialog top."
+  },
+  {
+    "id": "dashboard-copyfile--making-copy",
+    "variant": "dark",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Dashboard/Make a copy / Making Copy",
+    "filename": "dashboard-copyfile--making-copy-dark.png",
+    "sha256": "b392e3f0a87e712147a12c14e2391578449e12485f666e5b4ea2463e0302382c",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Make a copy / Making Copy; current production story state after its play."
+  },
+  {
+    "id": "dashboard-copyfile--completed-after-dismissal",
+    "variant": "light",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Dashboard/Make a copy / Completed After Dismissal",
+    "filename": "dashboard-copyfile--completed-after-dismissal-light.png",
+    "sha256": "8fe1fad4ccfc10b4a5d20a67026d835963563344d5a006d9145836f4a97385c5",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Make a copy / Completed After Dismissal; current production story state after its play."
+  },
+  {
+    "id": "dashboard-copyfile--completed-after-dismissal",
+    "variant": "dark",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Dashboard/Make a copy / Completed After Dismissal",
+    "filename": "dashboard-copyfile--completed-after-dismissal-dark.png",
+    "sha256": "9c0a646a7db144c8381da29161f73c43542ee1eb51c5e6d4c2bbcd4104aca66b",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Make a copy / Completed After Dismissal; current production story state after its play."
+  },
+  {
+    "id": "dashboard-copyfile--completed-after-dismissal",
+    "variant": "phone",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Dashboard/Make a copy / Completed After Dismissal",
+    "filename": "dashboard-copyfile--completed-after-dismissal-phone.png",
+    "sha256": "5ffcff8b3c01054625e218b3068e32e3a08d645b2b592a4a83bff7c80e5ce25b",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Make a copy / Completed After Dismissal; current production story state after its play."
+  },
+  {
+    "id": "dashboard-copyfile--completed-while-offline",
+    "variant": "light",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Dashboard/Make a copy / Completed While Offline",
+    "filename": "dashboard-copyfile--completed-while-offline-light.png",
+    "sha256": "f44f5f2ca65b9dbad397367f56f4bd86d5203e0abc5444bccc51693519c3560d",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Make a copy / Completed While Offline; current production story state after its play."
+  },
+  {
+    "id": "dashboard-copyfile--completed-while-offline",
+    "variant": "dark",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Dashboard/Make a copy / Completed While Offline",
+    "filename": "dashboard-copyfile--completed-while-offline-dark.png",
+    "sha256": "28442ca4982eddd374cd92e546ffa6abec1a778c1ac5977fab9268518e3b07e6",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Make a copy / Completed While Offline; current production story state after its play."
+  },
+  {
+    "id": "dashboard-copyfile--completed-while-offline",
+    "variant": "phone",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Dashboard/Make a copy / Completed While Offline",
+    "filename": "dashboard-copyfile--completed-while-offline-phone.png",
+    "sha256": "7d80384263c762e1f1509058a9aadc84d26c607589452112674d0e0ed381862b",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Make a copy / Completed While Offline; current production story state after its play."
+  },
+  {
+    "id": "history-browser--name-current",
+    "variant": "dark",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/History/Browser / Name Current",
+    "filename": "history-browser--name-current-dark.png",
+    "sha256": "4843352a1a13c3d97dda839b07ccd45b6dac352164bb0bbcbe446409ec35c175",
+    "imagePixels": {
+      "width": 1280,
+      "height": 1053
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/History/Browser / Name Current; current production story state after its play."
+  },
+  {
+    "id": "history-browser--restoring",
+    "variant": "phone",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/History/Browser / Restoring",
+    "filename": "history-browser--restoring-phone.png",
+    "sha256": "df4eb10db18bb4e556632fd4e6f44c5a1708040dd4369d92edfc3c2e5aa24055",
+    "imagePixels": {
+      "width": 390,
+      "height": 1148
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/History/Browser / Restoring; current production story state after its play."
+  },
+  {
+    "id": "maintenance-controls--confirm-pause",
+    "variant": "light",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Admin/Maintenance / Confirm Pause",
+    "filename": "maintenance-controls--confirm-pause-light.png",
+    "sha256": "e946e2483b50ac511fdfde53443571b082170a7078c808f0ef4f284ef3baa0e5",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Admin/Maintenance / Confirm Pause; current production story state after its play."
+  },
+  {
+    "id": "sharing-sharing--access-saving",
+    "variant": "dark",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Sharing/Sharing / Access Saving",
+    "filename": "sharing-sharing--access-saving-dark.png",
+    "sha256": "a81f39ad652979e81301b1f09bf67de8c700a15702bf008dcce4d49644a7ef6a",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Sharing/Sharing / Access Saving; current production story state after its play."
+  },
+  {
+    "id": "redesign-appearance--appearance-open",
+    "variant": "phone",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Appearance / Appearance Open",
+    "filename": "redesign-appearance--appearance-open-phone.png",
+    "sha256": "27bb85592041cfb3a6347780644aad91d3275119e5af5ab0a64f72808e9aa1ba",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Appearance / Appearance Open; current production story state after its play."
+  },
+  {
+    "id": "redesign-appearance--page-cover-open",
+    "variant": "light",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Appearance / Page Cover Open",
+    "filename": "redesign-appearance--page-cover-open-light.png",
+    "sha256": "3a900b6419199c379be583e29684cdd0ee3c1674df6028917560eb61da65b2fe",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Appearance / Page Cover Open; current production story state after its play."
+  },
+  {
+    "id": "current-production-account-guest-links--change-expiry",
+    "variant": "dark",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Account/Guest links / Change Expiry",
+    "filename": "current-production-account-guest-links--change-expiry-dark.png",
+    "sha256": "b59444438960c13b7d4d1430d434528edd836e89b3359b8ebc8e540312a4a3a6",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "dark",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Account/Guest links / Change Expiry; current production story state after its play."
+  },
+  {
+    "id": "sharing-sharelink--replacing",
+    "variant": "phone",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Sharing/ShareLink / Replacing",
+    "filename": "sharing-sharelink--replacing-phone.png",
+    "sha256": "1173e980573ba1f3eb1c30166d432aa1bcf4e603a800edd32f376ade8addbe8d",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Sharing/ShareLink / Replacing; current production story state after its play."
+  },
+  {
+    "id": "space-review--delete-confirmation",
+    "variant": "light",
+    "group": "expanded-dialog-owners",
+    "title": "Current production/Spaces/Space / Delete Confirmation",
+    "filename": "space-review--delete-confirmation-light.png",
+    "sha256": "9aacc3507aad23909921e4ffdb21e90d8d8efa1603e4c2b0c8128282fbb554b8",
+    "imagePixels": {
+      "width": 1280,
+      "height": 900
+    },
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Spaces/Space / Delete Confirmation; current production story state after its play."
+  },
+  {
+    "id": "space-review--creating-space",
+    "variant": "phone",
+    "group": "new-pending-state",
+    "title": "Current production/Spaces/Space / Creating Space",
+    "filename": "space-review--creating-space-phone.png",
+    "sha256": "c717df38f427bf616a62dde3437b2c92239d26ffab80ddce3ff2f1f7c5e0cb5f",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Spaces/Space / Creating Space; current production story state after its play."
+  },
+  {
+    "id": "space-review--creating-doc",
+    "variant": "phone",
+    "group": "new-pending-state",
+    "title": "Current production/Spaces/Space / Creating Doc",
+    "filename": "space-review--creating-doc-phone.png",
+    "sha256": "50a6fa1ffb36c535beb651fe01af193ad2de372e763870e444ca974bc3cc5b07",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Spaces/Space / Creating Doc; current production story state after its play."
+  },
+  {
+    "id": "space-review--trashing-subtree",
+    "variant": "phone",
+    "group": "new-pending-state",
+    "title": "Current production/Spaces/Space / Trashing Subtree",
+    "filename": "space-review--trashing-subtree-phone.png",
+    "sha256": "5d2d7edea3df6093ff09a395841f53092f93bf2e662a28e2d30913615e77f00f",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Spaces/Space / Trashing Subtree; current production story state after its play."
+  },
+  {
+    "id": "spaces-root-actions--trashing-space",
+    "variant": "phone",
+    "group": "new-pending-state",
+    "title": "Current production/Spaces/Root actions / Trashing Space",
+    "filename": "spaces-root-actions--trashing-space-phone.png",
+    "sha256": "8ca96dbe33052a3d8d6c144688ebdeb5323adb3db4d60173f915d1714e59e16a",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Spaces/Root actions / Trashing Space; current production story state after its play."
+  },
+  {
+    "id": "dashboard-dashboard--creating-folder",
+    "variant": "phone",
+    "group": "new-pending-state",
+    "title": "Current production/Dashboard/Dashboard / Creating Folder",
+    "filename": "dashboard-dashboard--creating-folder-phone.png",
+    "sha256": "e01b17f5f23fb63dc05a7033fbde5329020edc66aaec5d57103c7050ecf940c5",
+    "imagePixels": {
+      "width": 390,
+      "height": 1702
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Dashboard/Dashboard / Creating Folder; current production story state after its play."
+  },
+  {
+    "id": "current-production-account-passkey-security--signing-out-others",
+    "variant": "phone",
+    "group": "new-pending-state",
+    "title": "Current production/Account/Passkey security / Signing Out Others",
+    "filename": "current-production-account-passkey-security--signing-out-others-phone.png",
+    "sha256": "bde18f561e332a134cf7b209738c8cf55cf644ab9a4fb9d826e9d8f7a89e86de",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Account/Passkey security / Signing Out Others; current production story state after its play."
+  },
+  {
+    "id": "current-production-account-guest-links--turning-off",
+    "variant": "phone",
+    "group": "new-pending-state",
+    "title": "Current production/Account/Guest links / Turning Off",
+    "filename": "current-production-account-guest-links--turning-off-phone.png",
+    "sha256": "aafe965c0e68f950ecc0f2c6f9a3c4ac454e12bca4d1d47c596f8dfd0c01adfa",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Account/Guest links / Turning Off; current production story state after its play."
+  },
+  {
+    "id": "sharing-sharelink--creating-space-link",
+    "variant": "phone",
+    "group": "new-pending-state",
+    "title": "Current production/Sharing/ShareLink / Creating Space Link",
+    "filename": "sharing-sharelink--creating-space-link-phone.png",
+    "sha256": "48f480f7b9b85a47c9097ffb13d3ed5e0f26a199c6e7f86cb70784e13f3a28c4",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Sharing/ShareLink / Creating Space Link; current production story state after its play."
+  },
+  {
+    "id": "sharing-sharelink--turning-off-space-link",
+    "variant": "phone",
+    "group": "new-pending-state",
+    "title": "Current production/Sharing/ShareLink / Turning Off Space Link",
+    "filename": "sharing-sharelink--turning-off-space-link-phone.png",
+    "sha256": "1b1c83e2c4ff769c238d81538e3f74b979264d21351fd7c7d1625bb1199d8849",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Current production/Sharing/ShareLink / Turning Off Space Link; current production story state after its play."
+  },
+  {
+    "id": "redesign-appearance--updating-cover",
+    "variant": "phone",
+    "group": "new-pending-state",
+    "title": "Current production/Appearance / Updating Cover",
+    "filename": "redesign-appearance--updating-cover-phone.png",
+    "sha256": "7f25e7e531a2e0908237fbcf99bfe52ab9e7efcbfc1539165f4440c2de13ee23",
+    "imagePixels": {
+      "width": 390,
+      "height": 900
+    },
+    "viewport": {
+      "width": 390,
+      "height": 900
+    },
+    "theme": "light",
+    "captureMode": "full-page",
+    "reducedMotion": "reduce",
+    "visuallyInspected": true,
+    "caption": "Phone footer wraps with pending primary before Cancel; gem grid remains independently scrollable."
+  }
+]
