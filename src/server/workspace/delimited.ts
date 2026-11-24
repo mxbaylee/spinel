@@ -59,8 +59,13 @@ export function parseDelimited(input: unknown, delimiter: Delimiter): string[][]
   // 'quoted' = inside quotes, 'closed' = just after a closing quote.
   let state: 'start' | 'plain' | 'quoted' | 'closed' = 'start';
   let quoteLine = 1;
+  // Where the current run of literal characters began. Fields are cut out of the text
+  // with slice, not built one character at a time, so one huge field costs one copy.
+  let start = 0;
+  let escaped = false;
 
-  const endField = () => {
+  const endField = (end: number) => {
+    if (state === 'plain') field = text.slice(start, end);
     if (field.length && ++populated > DELIMITED_MAX_CELLS)
       throw tooLarge(`more than ${DELIMITED_MAX_CELLS.toLocaleString('en-US')} non-empty cells`);
     row.push(field);
@@ -69,8 +74,8 @@ export function parseDelimited(input: unknown, delimiter: Delimiter): string[][]
     field = '';
     state = 'start';
   };
-  const endRow = () => {
-    endField();
+  const endRow = (end: number) => {
+    endField(end);
     if (rows.length >= DELIMITED_MAX_ROWS)
       throw tooLarge(`more than ${DELIMITED_MAX_ROWS.toLocaleString('en-US')} rows`);
     rows.push(row);
@@ -82,24 +87,28 @@ export function parseDelimited(input: unknown, delimiter: Delimiter): string[][]
     if (state === 'quoted') {
       if (char === '"') {
         if (text[index + 1] === '"') {
-          field += '"';
+          escaped = true;
           index++;
-        } else state = 'closed';
-      } else {
-        if (char === '\n') line++;
-        field += char;
-      }
+        } else {
+          // Inside quotes a quote only ever appears doubled, so one split and join undoes
+          // them all, and uses far less memory than replaceAll on a huge field.
+          field = text.slice(start, index);
+          if (escaped) field = field.split('""').join('"');
+          escaped = false;
+          state = 'closed';
+        }
+      } else if (char === '\n' || (char === '\r' && text[index + 1] !== '\n')) line++;
       continue;
     }
     if (char === '\r' || char === '\n') {
       // CRLF, LF and a lone CR each end exactly one row.
+      endRow(index);
       if (char === '\r' && text[index + 1] === '\n') index++;
-      endRow();
       line++;
       continue;
     }
     if (char === delimiter) {
-      endField();
+      endField(index);
       continue;
     }
     if (state === 'closed') throw malformed(line, 'text follows a closing quote');
@@ -107,15 +116,16 @@ export function parseDelimited(input: unknown, delimiter: Delimiter): string[][]
       if (state !== 'start') throw malformed(line, 'a quote appears inside an unquoted field');
       state = 'quoted';
       quoteLine = line;
+      start = index + 1;
       continue;
     }
-    field += char;
+    if (state === 'start') start = index;
     state = 'plain';
   }
   if (state === 'quoted') throw malformed(quoteLine, 'a quoted field is never closed');
   // One final line break does not add an empty row; text without one still ends a row.
   const endsWithBreak = /[\r\n]$/.test(text);
-  if (!endsWithBreak) endRow();
+  if (!endsWithBreak) endRow(text.length);
   return rows;
 }
 

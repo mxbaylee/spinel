@@ -109,6 +109,8 @@ test('a non-string body is refused', () => {
 test('error lines count rows, including breaks inside earlier quoted fields', () => {
   expect(() => parseDelimited('a\n"x\ny"\nb"c\n', ',')).toThrow('line 4');
   expect(() => parseDelimited('a\n"never', ',')).toThrow('line 2');
+  // A lone CR is a line break inside quotes too.
+  expect(() => parseDelimited('"a\rb"\rc"d\n', ',')).toThrow('line 3');
 });
 
 test('row, column, populated-cell and byte limits refuse without parsing further', () => {
@@ -130,6 +132,8 @@ test('row, column, populated-cell and byte limits refuse without parsing further
     parseDelimited(`${','.repeat(DELIMITED_MAX_COLUMNS - 1)}\n`.repeat(1000), ','),
   ).toHaveLength(1000);
   expect(() => parseDelimited('x'.repeat(20 * 1024 * 1024 + 1), ',')).toThrow('20 MiB');
+  // The cap is in bytes, not characters: 7,000,000 euro signs are 21 MB.
+  expect(() => parseDelimited('€'.repeat(7_000_000), ',')).toThrow('20 MiB');
 });
 
 test('the workbook has one worksheet in field and row order, with empty values left empty', () => {
