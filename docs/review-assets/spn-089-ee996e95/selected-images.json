@@ -1,0 +1,117 @@
+{
+  "source": "ee996e95e5a1ca117f4144e5e3950341eb97c6da",
+  "images": [
+    {
+      "file": "redesign-controls--long-modal-title-phone.png",
+      "group": "Shared titles",
+      "caption": "Wrapped SVG title · phone light",
+      "bytes": 34570,
+      "sha256": "93d2abb3e50bbe9b7f54b274e302ddeb9fcd112e60a365e9be958d886a8889d0",
+      "gitBlob": "073f8144cf7c18ac5d49cce0f9f2b8028a68fd2b"
+    },
+    {
+      "file": "redesign-controls--emoji-modal-title-light.png",
+      "group": "Shared titles",
+      "caption": "Literal emoji · desktop light",
+      "bytes": 34402,
+      "sha256": "6d07f23583b256c003c04cc232d3eced6d530576c389f3d4f166c9941725b66c",
+      "gitBlob": "e20ae33c58918d60c879ebf17527195797f281f2"
+    },
+    {
+      "file": "redesign-controls--emoji-modal-title-phone-dark.png",
+      "group": "Shared titles",
+      "caption": "Literal emoji · phone dark",
+      "bytes": 31424,
+      "sha256": "1e959af2bd2a4f3bc7698e3976390f757391f9b959b9122354b4b92ab0324d51",
+      "gitBlob": "3ec59abbb22e0a19114131828b2baa87280d1dc4"
+    },
+    {
+      "file": "docs-formulas--insert-phone.png",
+      "group": "Formula dialogs",
+      "caption": "Insert formula · phone light",
+      "bytes": 36654,
+      "sha256": "c1567be9eba728498ddd2b3879090121cdc5f7b357cf150d359a2be02fd1c3e2",
+      "gitBlob": "a9dc4c6106bdd343f2787eeb8ad754ec8e18d4b6"
+    },
+    {
+      "file": "docs-formulas--edit-dark.png",
+      "group": "Formula dialogs",
+      "caption": "Edit formula · desktop dark",
+      "bytes": 52447,
+      "sha256": "41df77b5f42587f4c39ec7566d00aa683ee62a65f961670da531586475b52aae",
+      "gitBlob": "df7d999352b02f2a28d1c39c82bece642bc293c2"
+    },
+    {
+      "file": "account-profile--icon-picker-light.png",
+      "group": "Pickers and Space",
+      "caption": "Profile icon picker · desktop light",
+      "bytes": 69867,
+      "sha256": "f33270d607ccb3d46e320a0b587e1d1a026f8bdd5f4686a02083c5f0539bdddf",
+      "gitBlob": "1a88bb56da7fe204d2ba722dabc542d986f4b445"
+    },
+    {
+      "file": "account-profile--icon-picker-phone-dark.png",
+      "group": "Pickers and Space",
+      "caption": "Profile icon picker · phone dark",
+      "bytes": 38774,
+      "sha256": "e41dc95027499b3e9b893edb669af1e9bac77eaf3e739bf2faee2bd1045e3bf0",
+      "gitBlob": "8ea5c9dbf12f37c0ca8275fa4ec8eee44cfbf392"
+    },
+    {
+      "file": "redesign-appearance--icon-or-emoji-picker-open-light.png",
+      "group": "Pickers and Space",
+      "caption": "Nested Appearance picker · desktop light",
+      "bytes": 80543,
+      "sha256": "36be47204387f9bd743fbc1497b41d7c6bb9ce2516335dab02820523adb84e6c",
+      "gitBlob": "a61d8adacf7a4e41948a3d6ee505357320c41578"
+    },
+    {
+      "file": "redesign-appearance--icon-or-emoji-picker-open-phone-dark.png",
+      "group": "Pickers and Space",
+      "caption": "Nested Appearance picker · phone dark",
+      "bytes": 54024,
+      "sha256": "d3d543efe9327d3f1d0eff2cce6ddeca2082b7304d6d8201982754c0b446f219",
+      "gitBlob": "f7cea73ee6dc30c0bfe036403cb8aa2d24a7bfb5"
+    },
+    {
+      "file": "space-review--pages-drawer-phone.png",
+      "group": "Pickers and Space",
+      "caption": "Space contents · phone light",
+      "bytes": 26583,
+      "sha256": "1eafb7180fca7e856bd6c76e04106cc3eb061484aa9b0022a5aa807ff00d2f2a",
+      "gitBlob": "3c1f3b5f01e86ea3123b0ad91f056ed25e33d1c7"
+    },
+    {
+      "file": "redesign-native-editors--make-copy-dialog-light.png",
+      "group": "Native SDK copy",
+      "caption": "Native Make a copy · desktop light",
+      "bytes": 75360,
+      "sha256": "7cd955f8a65c4be85de1cec68ff75f6b2ccf4a3aca96099cee951f65096fbf17",
+      "gitBlob": "9d5af5d5df4d9b0c189a61233aa873bc52bc7332"
+    },
+    {
+      "file": "redesign-native-editors--make-copy-dialog-dark.png",
+      "group": "Native SDK copy",
+      "caption": "Native Make a copy · desktop dark",
+      "bytes": 74874,
+      "sha256": "92ae0a431921ab81f1e194b6ee5f5aad8456f61a73ffe40ebd3c090d2710dbce",
+      "gitBlob": "a396a0ca6669a5d0dae4a49e4392ef0094ea5508"
+    },
+    {
+      "file": "redesign-native-editors--make-copy-dialog-phone.png",
+      "group": "Native SDK copy",
+      "caption": "Native Make a copy · phone light",
+      "bytes": 22688,
+      "sha256": "a5e551cdcc8dfea74942b7da87d5875d02a3f258172e72406de5d238c261ddb4",
+      "gitBlob": "cdbc119f60d18afe10addee2e453bf1c74f6e397"
+    },
+    {
+      "file": "redesign-native-editors--make-copy-dialog-phone-dark.png",
+      "group": "Native SDK copy",
+      "caption": "Native Make a copy · phone dark",
+      "bytes": 22753,
+      "sha256": "5f1c5ca9a57b2813910caa564275d7f3b227010fd1dabc1bd6801f2f9a945c9d",
+      "gitBlob": "495838296027dd82507b9a6f45466a7ab7b0a80b"
+    }
+  ]
+}

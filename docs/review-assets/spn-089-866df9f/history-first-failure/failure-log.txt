@@ -1,0 +1,38 @@
+2026-11-05T00:31:17.9926499Z [12/76] [development] › e2e/history.spec.ts:8:3 › sheet versions can be named, renamed, unnamed and read by a viewer
+2026-11-05T00:31:55.8034086Z [13/76] (retries) [development] › e2e/history.spec.ts:8:3 › sheet versions can be named, renamed, unnamed and read by a viewer (retry #1)
+2026-11-05T00:32:10.6948246Z   1) [development] › e2e/history.spec.ts:8:3 › sheet versions can be named, renamed, unnamed and read by a viewer
+2026-11-05T00:32:10.6948629Z
+2026-11-05T00:32:10.6948840Z     Error: expect(locator).toContainText(expected) failed
+2026-11-05T00:32:10.6949041Z
+2026-11-05T00:32:10.6949359Z     Locator: getByRole('region', { name: 'Sheet document', exact: true }).getByRole('status', { name: 'Save status' })
+2026-11-05T00:32:10.6949803Z     Expected substring: "View only"
+2026-11-05T00:32:10.6950048Z     Timeout: 30000ms
+2026-11-05T00:32:10.6950264Z     Error: element(s) not found
+2026-11-05T00:32:10.6950402Z
+2026-11-05T00:32:10.6950478Z     Call log:
+2026-11-05T00:32:10.6950985Z       - Expect "toContainText" getByRole('region', { name: 'Sheet document', exact: true }).getByRole('status', { name: 'Save status' }) with timeout 30000ms
+2026-11-05T00:32:10.6952090Z       - waiting for getByRole('region', { name: 'Sheet document', exact: true }).getByRole('status', { name: 'Save status' })
+2026-11-05T00:32:10.6952428Z
+2026-11-05T00:32:10.6952432Z
+2026-11-05T00:32:10.6952589Z       91 |       await context.addCookies([cookie(viewer.id)]);
+2026-11-05T00:32:10.6952890Z       92 |       await page.reload();
+2026-11-05T00:32:10.6953239Z     > 93 |       await expect(saved).toContainText('View only', { timeout: 30_000 });
+2026-11-05T00:32:10.6953724Z          |                           ^
+2026-11-05T00:32:10.6954201Z       94 |       await page.getByRole('button', { name: 'Document actions', exact: true }).click();
+2026-11-05T00:32:10.6954894Z       95 |       await page.getByRole('menuitem', { name: 'Versions', exact: true }).click();
+2026-11-05T00:32:10.6955492Z       96 |       await expect(panel.getByText('Before editing', { exact: true })).toBeVisible();
+2026-11-05T00:32:10.6956042Z         at /home/runner/work/spinel/spinel/e2e/history.spec.ts:93:27
+2026-11-05T00:32:10.6956386Z
+2026-11-05T00:32:10.6956816Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-11-05T00:32:10.6957762Z     test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development/test-failed-1.png
+2026-11-05T00:32:10.6958602Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-11-05T00:32:10.6958918Z
+2026-11-05T00:32:10.6959439Z     Error Context: test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development/error-context.md
+2026-11-05T00:32:10.6959897Z
+2026-11-05T00:32:10.6959901Z
+...
+2026-11-05T00:43:55.3089627Z   1 flaky
+2026-11-05T00:43:55.3090545Z     [development] › e2e/history.spec.ts:8:3 › sheet versions can be named, renamed, unnamed and read by a viewer
+2026-11-05T00:43:55.3090966Z   1 skipped
+2026-11-05T00:43:55.3091155Z   74 passed (15.4m)
+2026-11-05T00:43:55.3902324Z ##[error]Process completed with exit code 1.

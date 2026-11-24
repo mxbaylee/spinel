@@ -255,7 +255,6 @@ function fixture() {
             'web/docResponsivenessEvidence.ts',
             'src/ui/docIdleEpisode.ts',
             'src/ui/nativeDocFlush.ts',
-            'src/ui/nativeDocFlushDiagnostic.ts',
             'playwright.config.ts',
             'package-lock.json',
           ].map((path) => [path, 'd'.repeat(64)]),
@@ -1339,7 +1338,6 @@ test('acceptance helpers require exact harness identities and sealed native evid
   for (const path of [
     'src/ui/docIdleEpisode.ts',
     'src/ui/nativeDocFlush.ts',
-    'src/ui/nativeDocFlushDiagnostic.ts',
     'e2e/doc-responsiveness-native-trace.ts',
     'e2e/doc-responsiveness-native-window.ts',
     'e2e/doc-responsiveness-native-sources.ts',

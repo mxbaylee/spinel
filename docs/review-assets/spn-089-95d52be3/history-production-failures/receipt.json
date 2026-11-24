@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-11-05T01:56:52.615700+00:00",
+  "sourceSha": "95d52be36061315bff866dec615544104ca4767c",
+  "baseSha": "5c565b61e11ce29780581f33410749436ecef42f",
+  "testedSha": "679ad75636799820e47bf0214ade771c3fe859e2",
+  "runId": 41948253612,
+  "attempt": 1,
+  "jobId": 126985936574,
+  "project": "production",
+  "shard": "2/2",
+  "stats": {
+    "startTime": "2026-11-05T01:38:39.873Z",
+    "duration": 904027.6190000001,
+    "expected": 82,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  },
+  "historyCases": [
+    {
+      "title": "sheet versions can be named, renamed, unnamed and read by a viewer",
+      "file": "history.spec.ts",
+      "line": 9,
+      "project": "production",
+      "expectedStatus": "passed",
+      "status": "unexpected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "failed",
+          "duration": 12006,
+          "startTime": "2026-11-05T01:40:02.414Z",
+          "error": "Missing Your profile link; expected Version viewer; 5000ms; e2e/history.spec.ts:112"
+        },
+        {
+          "retry": 1,
+          "status": "failed",
+          "duration": 14522,
+          "startTime": "2026-11-05T01:40:15.004Z",
+          "error": "Missing Your profile link; expected Version viewer; 5000ms; e2e/history.spec.ts:112"
+        },
+        {
+          "retry": 2,
+          "status": "failed",
+          "duration": 12210,
+          "startTime": "2026-11-05T01:40:30.304Z",
+          "error": "Missing Your profile link; expected Version viewer; 5000ms; e2e/history.spec.ts:112"
+        }
+      ]
+    },
+    {
+      "title": "doc versions can be named, renamed, unnamed and read by a viewer",
+      "file": "history.spec.ts",
+      "line": 9,
+      "project": "production",
+      "expectedStatus": "passed",
+      "status": "unexpected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "failed",
+          "duration": 12021,
+          "startTime": "2026-11-05T01:40:43.121Z",
+          "error": "Missing Your profile link; expected Version viewer; 5000ms; e2e/history.spec.ts:112"
+        },
+        {
+          "retry": 1,
+          "status": "failed",
+          "duration": 13975,
+          "startTime": "2026-11-05T01:40:55.739Z",
+          "error": "Missing Your profile link; expected Version viewer; 5000ms; e2e/history.spec.ts:112"
+        },
+        {
+          "retry": 2,
+          "status": "failed",
+          "duration": 11990,
+          "startTime": "2026-11-05T01:41:10.454Z",
+          "error": "Missing Your profile link; expected Version viewer; 5000ms; e2e/history.spec.ts:112"
+        }
+      ]
+    }
+  ],
+  "artifact": {
+    "id": 13381012788,
+    "name": "theme-screenshots-production-2",
+    "bytes": 22322815,
+    "sha256": "baf065842766fd404ff820ac78ef63eff7863b8c2509ac7ff1c2ea1ca0ca90f7",
+    "createdAt": "2026-11-05T01:53:47Z",
+    "expiresAt": "2026-11-12T01:53:44Z",
+    "expired": false,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13381012788"
+  },
+  "reportEntry": {
+    "path": "playwright-report/production-2-of-2.json",
+    "bytes": 1606992,
+    "sha256": "76e51b0738fa52c03777144f547dffa6751391e232edbfc07b075cb32e9b3dde",
+    "crc32": "3b05e6cb"
+  },
+  "firstFailureAttachments": [
+    {
+      "originalPath": "test-results/production/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-production/error-context.md",
+      "path": "sheet-context.md",
+      "bytes": 11313,
+      "sha256": "0cffddbcfad4a57f8fa4a9e189462074428512e7d6f3dfeecf696f9c36faa137",
+      "crc32": "7165da34"
+    },
+    {
+      "originalPath": "test-results/production/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-production/test-failed-1.png",
+      "path": "sheet-failure.png",
+      "bytes": 42798,
+      "sha256": "17b75cc461ba53feffb4b751d70c77d78f071959bf08dfd85813047fdfd63fda",
+      "crc32": "783f47b2"
+    },
+    {
+      "originalPath": "test-results/production/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-production-retry1/trace.zip",
+      "path": null,
+      "bytes": 2170863,
+      "sha256": "76212aa3d95ae2a23a93304b4b81ff3078d7fd02a8de93af2288dc10c1b6acbd",
+      "crc32": "40630463",
+      "published": false
+    },
+    {
+      "originalPath": "test-results/production/history-doc-versions-can-b-ed300-nnamed-and-read-by-a-viewer-production/error-context.md",
+      "path": "doc-context.md",
+      "bytes": 10792,
+      "sha256": "07e945a7223ce18dadf72119005a1284159cabce9ccdf3185ac2fbb7da3d58ef",
+      "crc32": "9cff0860"
+    },
+    {
+      "originalPath": "test-results/production/history-doc-versions-can-b-ed300-nnamed-and-read-by-a-viewer-production/test-failed-1.png",
+      "path": "doc-failure.png",
+      "bytes": 29917,
+      "sha256": "eaf022c3fccac6fcfcd93afd3e59df5c25f8b18c36a3309c97f3495c56d831c6",
+      "crc32": "957789a3"
+    },
+    {
+      "originalPath": "test-results/production/history-doc-versions-can-b-ed300-nnamed-and-read-by-a-viewer-production-retry1/trace.zip",
+      "path": null,
+      "bytes": 1594617,
+      "sha256": "65b7e446cfa9acddb26e2d2984b42d105e0f4e6bd628863ac462decfe938bcca",
+      "crc32": "99f2873e",
+      "published": false
+    }
+  ],
+  "verification": "Archive size/SHA-256 and all ZIP-entry CRCs verified. Sheet and Doc each failed retry0/1/2 at the same current-source profile navigation locator; no workflow rerun. All other82cases passed. Raw original report/ZIP/session-bearing traces remain scratch-only."
+}

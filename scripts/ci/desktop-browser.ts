@@ -213,20 +213,34 @@ const applescript = (source: string, ...args: string[]) =>
 
 // Inspect browser chrome through macOS accessibility, excluding website content.
 // Approval re-runs the same inspection and matches the question captured before it.
-const firefoxStoragePromptScript = String.raw`
+export const firefoxStoragePromptScript = String.raw`
 function run(argv) {
   var system = Application('System Events');
-  var processes = system.applicationProcesses.whose({ unixId: Number(argv[0]) })();
-  if (processes.length !== 1) throw new Error('The owned Firefox process is unavailable.');
-  var process = processes[0];
-  var identity = { pid: process.unixId(), name: process.name(), bundleIdentifier: process.bundleIdentifier() };
-  console.log('firefox identity: ' + JSON.stringify(identity));
-  if (identity.pid !== Number(argv[0]) || identity.bundleIdentifier !== 'org.mozilla.firefox')
-    throw new Error('The owned process is not the expected Firefox bundle: ' + JSON.stringify(identity));
+  var expectedPid = Number(argv[0]);
+  if (!Number.isSafeInteger(expectedPid) || expectedPid <= 0) throw new Error('Invalid owned Firefox PID.');
+  // Read a scalar directly from the PID query, not a materialized reference
+  // whose collection index can change when Firefox helpers appear/disappear.
+  var names = system.applicationProcesses.whose({ unixId: expectedPid }).name();
+  if (!Array.isArray(names) || names.length !== 1 || typeof names[0] !== 'string' || !names[0])
+    throw new Error('The owned Firefox process is unavailable or ambiguous.');
+  var expectedName = names[0];
+  var namedPids = system.applicationProcesses.whose({ name: expectedName }).unixId();
+  if (!Array.isArray(namedPids) || namedPids.length !== 1 || namedPids[0] !== expectedPid)
+    throw new Error('The owned Firefox process name is unavailable or ambiguous.');
+  var process = system.applicationProcesses.byName(expectedName);
+  function verifyIdentity() {
+    var record = process.properties();
+    var identity = { pid: record.unixId, name: record.name, bundleIdentifier: record.bundleIdentifier };
+    if (identity.pid !== expectedPid || identity.name !== expectedName || identity.bundleIdentifier !== 'org.mozilla.firefox')
+      throw new Error('The owned Firefox process changed: ' + JSON.stringify(identity));
+    return identity;
+  }
+  var identity = verifyIdentity();
   // Firefox activates its native accessibility tree when a client reads the
   // application role. Reading window roles alone exposes only titlebar buttons.
   identity.applicationRole = process.attributes.byName('AXRole').value();
   if (identity.applicationRole !== 'AXApplication') throw new Error('The owned Firefox accessibility application is unavailable.');
+  verifyIdentity();
   process.frontmost = true;
   var nodes = [], candidates = [], allButtons = [], truncated = false;
   var question = /\b(?:will you allow|allow) (?:https:\/\/)?localhost:8176 to store data (?:in persistent storage|on your computer)\?/i;
@@ -275,6 +289,7 @@ function run(argv) {
   var result = { status: status, action: 'none', process: identity, browserChromeObserved: browserChromeObserved, observedText: candidates.length === 1 ? candidates[0].prompt : knownQuestion ? knownQuestion[0] : null, nodes: nodes };
   if (argv[1] === 'allow') {
     if (result.status !== 'recognized' || result.observedText !== argv[2]) throw new Error('The observed localhost storage prompt changed before approval.');
+    verifyIdentity();
     system.click(candidates[0].button.element);
     result.action = 'allow';
   }
@@ -506,8 +521,13 @@ export function createDesktopBrowser(
       browserChromeObserved: boolean;
       nodes: unknown[];
     };
-    const inspect = async (action = 'inspect', expected = '') =>
-      JSON.parse(
+    const inspect = async (action = 'inspect', expected = '') => {
+      assert.equal(
+        await processIdentity(browserPid!),
+        browserIdentity,
+        'The owned Firefox process identity changed before permission inspection.',
+      );
+      return JSON.parse(
         await command(
           '/usr/bin/osascript',
           [
@@ -522,6 +542,7 @@ export function createDesktopBrowser(
           10_000,
         ),
       ) as Inspection;
+    };
     let last: Inspection | undefined;
     let evidence: { screenshot: string; accessibility: string } | undefined;
     async function capture(error?: unknown) {

@@ -1,0 +1,27 @@
+{
+  "startedAt": "2026-11-04T22:43:43.943Z",
+  "finishedAt": "2026-11-04T22:44:45.460Z",
+  "node": "v26.12.1",
+  "cwd": "/workspace/scratch/ce40e94380e1/alignment-current",
+  "command": "node",
+  "args": [
+    "/workspace/scratch/ce40e94380e1/spinel/scripts/serial.ts",
+    "node",
+    "--import",
+    "/workspace/scratch/ce40e94380e1/validation/network-interfaces.ts",
+    "/workspace/scratch/ce40e94380e1/spinel/scripts/screenshots.ts",
+    "redesign-controls--long-modal-title",
+    "redesign-controls--emoji-modal-title",
+    "docs-formulas--insert",
+    "docs-formulas--edit",
+    "account-profile--icon-picker",
+    "redesign-appearance--icon-or-emoji-picker-open",
+    "space-review--pages-drawer",
+    "redesign-native-editors--make-copy-dialog"
+  ],
+  "elapsedMs": 61516,
+  "peakKiB": 1252664,
+  "code": 0,
+  "signal": null,
+  "aborted": null
+}

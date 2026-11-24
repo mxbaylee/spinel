@@ -1,0 +1,418 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-11-05T01:06:08.660Z",
+  "parentSource": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+  "integratedMain": "5c565b61e11ce29780581f33410749436ecef42f",
+  "finalFixture": {
+    "path": "e2e/history.spec.ts",
+    "blob": "8f36da93be833f57443dc3ffed0105f0c8c90290",
+    "sha256": "dc6426c1a38b99e5e7e1f8773d657e0159ee7b9e1d5925600ca9627bb24a39e1",
+    "bytes": 7021
+  },
+  "importedMainSources": [
+    {
+      "path": "e2e/doc-responsiveness-callback-trace.ts",
+      "blob": "6fd66bbae44b037ac144a2607f10c29545398728",
+      "mainBlob": "6fd66bbae44b037ac144a2607f10c29545398728",
+      "identical": true
+    },
+    {
+      "path": "e2e/doc-responsiveness-callback-progress.ts",
+      "blob": "2fc3871ce356176de7746abec3ed808a461a06c1",
+      "mainBlob": "2fc3871ce356176de7746abec3ed808a461a06c1",
+      "identical": true
+    },
+    {
+      "path": "e2e/doc-responsiveness-callbacks.spec.ts",
+      "blob": "ce8789e7e632e4278468e5be4f2a499daf1ef6c5",
+      "mainBlob": "ce8789e7e632e4278468e5be4f2a499daf1ef6c5",
+      "identical": true
+    },
+    {
+      "path": "e2e/doc-responsiveness-fixture.ts",
+      "blob": "573a0ed60e4aace758e7a20c65af8015c254c773",
+      "mainBlob": "573a0ed60e4aace758e7a20c65af8015c254c773",
+      "identical": true
+    },
+    {
+      "path": "scripts/ci/doc-callback-trace.test.ts",
+      "blob": "53329199cfa5c946f620d48ace2e730a5feb5e84",
+      "mainBlob": "53329199cfa5c946f620d48ace2e730a5feb5e84",
+      "identical": true
+    },
+    {
+      "path": "scripts/ci/doc-callback-progress.test.ts",
+      "blob": "551b22573de5813a776aa780063a3e77fcbf7bab",
+      "mainBlob": "551b22573de5813a776aa780063a3e77fcbf7bab",
+      "identical": true
+    },
+    {
+      "path": "scripts/ci/doc-callback-comparison.ts",
+      "blob": "4f11e5bc45ac1e446352bf1f73417082ae8f9117",
+      "mainBlob": "4f11e5bc45ac1e446352bf1f73417082ae8f9117",
+      "identical": true
+    },
+    {
+      "path": "scripts/ci/doc-callback-comparison.test.ts",
+      "blob": "9ac316d74e9f9a80b03f68a97b7896082506c490",
+      "mainBlob": "9ac316d74e9f9a80b03f68a97b7896082506c490",
+      "identical": true
+    },
+    {
+      "path": "scripts/ci/doc-callback-sources.test.ts",
+      "blob": "9a8d4b54e0d9035fef93dfdd45ebf7d0fa8add4b",
+      "mainBlob": "9a8d4b54e0d9035fef93dfdd45ebf7d0fa8add4b",
+      "identical": true
+    }
+  ],
+  "protocol": {
+    "purpose": "Bounded acceptance of the history fixture ownership repair after first-attempt failure in run41938091631.",
+    "parentSource": "866df9f34f8d1fa3d2782c5a9fe796e4744604c5",
+    "testFile": "e2e/history.spec.ts",
+    "scenarios": [
+      "sheet versions can be named, renamed, unnamed and read by a viewer",
+      "doc versions can be named, renamed, unnamed and read by a viewer"
+    ],
+    "inputCorrection": "Independent viewer BrowserContext with credentials installed before navigation; owner page closed first; explicit item URL and viewer identity. All saved-content/name/read-only/no-naming assertions retained and page errors collected from both actors.",
+    "causalBoundary": "First failure shows an authenticated viewer dashboard with no document. The exact original redirecting request is unavailable because only retry1 has a trace. Unchanged native access polling can observe the live cookie gap and route to sign-in without item. This repair removes that unowned account/route transition from the history contract; it does not claim a product auth fix.",
+    "execution": {
+      "project": "development",
+      "workers": 1,
+      "retries": 0,
+      "CI": true,
+      "node": "26.12.1",
+      "serialized": true,
+      "maximumCombinedRSSKiB": 2097152,
+      "maximumRuntimeMs": 480000
+    },
+    "stopCondition": "Retain first outcome; on any failure inspect diagnostics before further execution. No unchanged retries, timeouts, assertions or selection changes.",
+    "environmentAdaptation": "Existing container-only os.networkInterfaces ERR_SYSTEM_ERROR fallback; no application instrumentation."
+  },
+  "attempts": [
+    {
+      "name": "history-repair-local",
+      "scope": "Initial isolated-viewer draft, before SPN-143 integration",
+      "outcome": "environment-blocked",
+      "disposition": "Server workspace-lease abstract Unix listen returned EPERM before either test ran. No retry or lock bypass.",
+      "watchdog": {
+        "startedAt": "2026-11-05T00:52:30.309Z",
+        "finishedAt": "2026-11-05T00:52:40.124Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "e2e/history.spec.ts",
+          "--project=development",
+          "--workers=1",
+          "--retries=0"
+        ],
+        "elapsedMs": 9811,
+        "peakKiB": 569972,
+        "code": 1,
+        "signal": null,
+        "aborted": null
+      },
+      "logSha256": "fa0ca49c8d21c6a61f8c0012eb7b90179115f073db16c0aa23fd7a12888edf21",
+      "logBytes": 2125,
+      "log": "[WebServer] (node:32) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)\n\n[WebServer] node:net:2368\n[WebServer]       const error = new UVExceptionWithHostPort(rval, 'listen', address, port);\n[WebServer]                     ^\n[WebServer] \n[WebServer] Error: listen EPERM: operation not permitted \u0000spinel-application-53cb559209f4f219975e9ced201432a6c285b6109f7d6dfa8e1da8a671cbf844\n[WebServer]     at Server.setupListenHandle [as _listen2] (node:net:2368:21)\n[WebServer]     at listenInCluster (node:net:2499:12)\n[WebServer]     at Server.listen (node:net:2641:5)\n[WebServer]     at file:///workspace/scratch/ce40e94380e1/spinel/src/server/maintenance/journal.ts:133:12\n[WebServer]     at new Promise (<anonymous>)\n[WebServer]     at kernelLock (file:///workspace/scratch/ce40e94380e1/spinel/src/server/maintenance/journal.ts:131:9)\n[WebServer]     at acquireWorkspaceLease (file:///workspace/scratch/ce40e94380e1/spinel/src/server/maintenance/journal.ts:197:26)\n[WebServer]     at acquireLiveWorkspace (file:///workspace/scratch/ce40e94380e1/spinel/src/server/maintenance/journal.ts:343:10)\n[WebServer]     at file:///workspace/scratch/ce40e94380e1/spinel/server/index.ts:42:29\n[WebServer]     at file:///workspace/scratch/ce40e94380e1/spinel/server/index.ts:111:3 {\n[WebServer]   code: 'EPERM',\n[WebServer]   errno: -1,\n[WebServer]   syscall: 'listen',\n[WebServer]   address: '\\x00spinel-application-53cb559209f4f219975e9ced201432a6c285b6109f7d6dfa8e1da8a671cbf844',\n[WebServer]   port: -1\n[WebServer] }\n[WebServer] \n[WebServer] Node.js v26.12.1\n\nError: Process from config.webServer was not able to start. Exit code: 1\n\n{\"startedAt\":\"2026-11-05T00:52:30.309Z\",\"finishedAt\":\"2026-11-05T00:52:40.124Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/ce40e94380e1/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"node\",\"node_modules/@playwright/test/cli.js\",\"test\",\"e2e/history.spec.ts\",\"--project=development\",\"--workers=1\",\"--retries=0\"],\"elapsedMs\":9811,\"peakKiB\":569972,\"code\":1,\"signal\":null,\"aborted\":null}\n"
+    },
+    {
+      "name": "history-repair-typecheck",
+      "scope": "Initial isolated-viewer draft, before SPN-143 integration",
+      "outcome": "passed",
+      "disposition": "Narrow historical scope; later combined and final typechecks supersede it.",
+      "watchdog": {
+        "startedAt": "2026-11-05T00:56:51.230Z",
+        "finishedAt": "2026-11-05T00:57:21.047Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "run",
+          "typecheck"
+        ],
+        "elapsedMs": 29817,
+        "peakKiB": 1851852,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "logSha256": "fb83e4bac40125674aec4c363d25dee4731dbd1f627e4e138755ecf3dd4973cf",
+      "logBytes": 465
+    },
+    {
+      "name": "history-repair-backlog-index",
+      "scope": "Integrated SPN-143 and history repair",
+      "outcome": "passed",
+      "disposition": "CLI generation completed before validation.",
+      "watchdog": {
+        "startedAt": "2026-11-05T00:58:20.343Z",
+        "finishedAt": "2026-11-05T00:58:21.894Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "run",
+          "backlog:index"
+        ],
+        "elapsedMs": 1551,
+        "peakKiB": 333144,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "logSha256": "4e9963171cb7d8a18034f147dd5cd0a8fd95721fe1433925722831f001278909",
+      "logBytes": 1721
+    },
+    {
+      "name": "history-repair-combined-typecheck",
+      "scope": "Integrated SPN-143 with initial viewer cleanup draft",
+      "outcome": "passed",
+      "disposition": "Later final cleanup typecheck owns current source.",
+      "watchdog": {
+        "startedAt": "2026-11-05T00:58:26.929Z",
+        "finishedAt": "2026-11-05T00:58:44.916Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "run",
+          "typecheck"
+        ],
+        "elapsedMs": 17987,
+        "peakKiB": 1853668,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "logSha256": "20bec1248e9c119e8a0bb8d66a7d266049a60a5d73b81da30df6e05934bde598",
+      "logBytes": 465
+    },
+    {
+      "name": "history-repair-combined-lint",
+      "scope": "Integrated SPN-143 with initial viewer cleanup draft",
+      "outcome": "passed",
+      "disposition": "Full dependencies/lint/format passed; final focused lint and formatting cover the only later executable edit.",
+      "watchdog": {
+        "startedAt": "2026-11-05T00:59:00.223Z",
+        "finishedAt": "2026-11-05T00:59:48.498Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "run",
+          "lint"
+        ],
+        "elapsedMs": 48274,
+        "peakKiB": 844256,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "logSha256": "39a894acbc53a96098084e0df9afbe1f118bb26f6838db365ddb858322865cd7",
+      "logBytes": 1354
+    },
+    {
+      "name": "history-repair-callback-controls",
+      "scope": "Exact imported SPN-143 callback source/test files",
+      "outcome": "passed",
+      "disposition": "72 passed, zero failed/cancelled/skipped. These files remained unchanged afterward.",
+      "watchdog": {
+        "startedAt": "2026-11-05T00:59:44.824Z",
+        "finishedAt": "2026-11-05T01:00:00.606Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "node",
+          "--test",
+          "scripts/ci/doc-callback-trace.test.ts",
+          "scripts/ci/doc-callback-progress.test.ts",
+          "scripts/ci/doc-callback-comparison.test.ts",
+          "scripts/ci/doc-callback-sources.test.ts"
+        ],
+        "elapsedMs": 15782,
+        "peakKiB": 771812,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "logSha256": "5e09f53f529f858f9fa967e555bdc926ec134f1eacd23e96648fa06f1043ef6f",
+      "logBytes": 8140
+    },
+    {
+      "name": "history-repair-backlog-check",
+      "scope": "Final merged backlog",
+      "outcome": "passed",
+      "disposition": "21 open tickets; 20 completions; next ID145.",
+      "watchdog": {
+        "startedAt": "2026-11-05T01:00:44.997Z",
+        "finishedAt": "2026-11-05T01:00:46.021Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "run",
+          "backlog:check"
+        ],
+        "elapsedMs": 1024,
+        "peakKiB": 327528,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "logSha256": "20ede931c8730a74d23c49c3bec7c0a8e25a823b9dd514a29c50213434783779",
+      "logBytes": 2015
+    },
+    {
+      "name": "history-repair-final-typecheck",
+      "scope": "Intermediate viewer cleanup using an explicit finally throw",
+      "outcome": "passed",
+      "disposition": "Type-correct, but the focused lint below rejected unsafe-finally control flow.",
+      "watchdog": {
+        "startedAt": "2026-11-05T01:02:28.402Z",
+        "finishedAt": "2026-11-05T01:02:50.533Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "run",
+          "typecheck"
+        ],
+        "elapsedMs": 22131,
+        "peakKiB": 1845096,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "logSha256": "abe6e2dae78096b21a71b065120b7c276b6d5924494ead54c1451c2dd4c5f80a",
+      "logBytes": 465
+    },
+    {
+      "name": "history-repair-final-file-lint",
+      "scope": "Intermediate viewer cleanup using an explicit finally throw",
+      "outcome": "failed",
+      "disposition": "no-unsafe-finally rejected that structure. The input changed to collect/log cleanup failures and throw cleanup-only failure after the protected body.",
+      "watchdog": {
+        "startedAt": "2026-11-05T01:02:50.996Z",
+        "finishedAt": "2026-11-05T01:02:51.397Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "bash",
+          "-c",
+          "./node_modules/.bin/oxlint --deny-warnings e2e/history.spec.ts && ./node_modules/.bin/prettier --check e2e/history.spec.ts"
+        ],
+        "elapsedMs": 401,
+        "peakKiB": 243972,
+        "code": 1,
+        "signal": null,
+        "aborted": null
+      },
+      "logSha256": "1ec9bc104dd5902062cfe6f42704b0a85434071241b1b10cafe7e33af9baf43a",
+      "logBytes": 576,
+      "log": "e2e/history.spec.ts:132:22: warning eslint(no-unsafe-finally): Unsafe `finally` block. help: Control flow inside `try` or `catch` blocks will be overwritten by this statement.\n{\"startedAt\":\"2026-11-05T01:02:50.996Z\",\"finishedAt\":\"2026-11-05T01:02:51.397Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/ce40e94380e1/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"bash\",\"-c\",\"./node_modules/.bin/oxlint --deny-warnings e2e/history.spec.ts && ./node_modules/.bin/prettier --check e2e/history.spec.ts\"],\"elapsedMs\":401,\"peakKiB\":243972,\"code\":1,\"signal\":null,\"aborted\":null}\n"
+    },
+    {
+      "name": "history-repair-cleanup-file-lint",
+      "scope": "Revised cleanup before formatting",
+      "outcome": "failed",
+      "disposition": "Oxlint passed; Prettier found the long cleanup-log line. Prettier then changed the input.",
+      "watchdog": {
+        "startedAt": "2026-11-05T01:04:09.758Z",
+        "finishedAt": "2026-11-05T01:04:11.084Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "bash",
+          "-c",
+          "./node_modules/.bin/oxlint --deny-warnings e2e/history.spec.ts && ./node_modules/.bin/prettier --check e2e/history.spec.ts"
+        ],
+        "elapsedMs": 1326,
+        "peakKiB": 265460,
+        "code": 1,
+        "signal": null,
+        "aborted": null
+      },
+      "logSha256": "ddf2d2ed82384fb9a9d2c9343ec5a8e19fea70ba3802967b7e1edca8ae0adc67",
+      "logBytes": 535,
+      "log": "Checking formatting...\n[warn] e2e/history.spec.ts\n[warn] Code style issues found in the above file. Run Prettier with --write to fix.\n{\"startedAt\":\"2026-11-05T01:04:09.758Z\",\"finishedAt\":\"2026-11-05T01:04:11.084Z\",\"node\":\"v26.12.1\",\"cwd\":\"/workspace/scratch/ce40e94380e1/spinel\",\"command\":\"node\",\"args\":[\"scripts/serial.ts\",\"bash\",\"-c\",\"./node_modules/.bin/oxlint --deny-warnings e2e/history.spec.ts && ./node_modules/.bin/prettier --check e2e/history.spec.ts\"],\"elapsedMs\":1326,\"peakKiB\":265460,\"code\":1,\"signal\":null,\"aborted\":null}\n"
+    },
+    {
+      "name": "history-repair-cleanup-typecheck",
+      "scope": "Final formatted history fixture and integrated SPN-143",
+      "outcome": "passed",
+      "disposition": "Final full typecheck.",
+      "watchdog": {
+        "startedAt": "2026-11-05T01:04:51.676Z",
+        "finishedAt": "2026-11-05T01:05:30.150Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "npm",
+          "run",
+          "typecheck"
+        ],
+        "elapsedMs": 38473,
+        "peakKiB": 1838744,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "logSha256": "c3c19509f0b9623cda6cbdeafd84fb12a6e613b9d6d98230d19ad59a625631b5",
+      "logBytes": 465
+    },
+    {
+      "name": "history-repair-verified-file-lint",
+      "scope": "Final formatted history fixture",
+      "outcome": "passed",
+      "disposition": "Final focused Oxlint and Prettier check. All other executable files match the earlier full lint input.",
+      "watchdog": {
+        "startedAt": "2026-11-05T01:05:30.899Z",
+        "finishedAt": "2026-11-05T01:05:31.961Z",
+        "node": "v26.12.1",
+        "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+        "command": "node",
+        "args": [
+          "scripts/serial.ts",
+          "bash",
+          "-c",
+          "./node_modules/.bin/oxlint --deny-warnings e2e/history.spec.ts && ./node_modules/.bin/prettier --check e2e/history.spec.ts"
+        ],
+        "elapsedMs": 1060,
+        "peakKiB": 268032,
+        "code": 0,
+        "signal": null,
+        "aborted": null
+      },
+      "logSha256": "311155ae880b0c9fc34ca366e7beba10e7a6ecfc110696dd548af12839717ab0",
+      "logBytes": 467
+    }
+  ],
+  "finalCleanup": "Acquisition is inside try. Context and DB closure are independently attempted. Secondary cleanup failures are recorded; an original body failure propagates unchanged. A cleanup-only failure is thrown after the body/finally, without unsafe finally control flow.",
+  "hostedAcceptance": "Pending on the complete reviewed repair commit. Require actual Sheet and Doc history scenarios in fresh development/production owners, all selected current-head CI, native desktop matrix, full Storybook and current-source visual disposition. No older pass or built-in retry substitutes for these gates.",
+  "sourceReviewAndPrCheck": "The exact-title PR check and both independent grades run on the complete committed candidate. Their exact SHA/results belong in the PR acceptance record; they are not claimed by this pre-commit receipt."
+}

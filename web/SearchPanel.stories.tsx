@@ -6,7 +6,7 @@ import type { SearchItem } from '../src/shared/search.ts';
 import type { FileItem, ItemKind } from '../src/shared/workspace.ts';
 import { failure, pending } from '../.storybook/api.ts';
 import { SearchPanel } from './SearchPanel.tsx';
-import { assertDialogControls } from '../.storybook/dialogBounds.ts';
+import { assertDialogControls, assertDialogTitle } from '../.storybook/dialogBounds.ts';
 
 const now = Date.now();
 const hour = 3_600_000;
@@ -233,5 +233,12 @@ export const SearchOptions: Story = {
     );
     await expect(canvas.getByRole('button', { name: 'Remove Type: Doc' })).toBeVisible();
     await expect(canvas.getByRole('button', { name: 'Remove Tag: summer travel' })).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'Search options' }));
+    await assertDialogTitle(
+      await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+        name: 'Search options',
+      }),
+      'Search options',
+    );
   },
 };

@@ -1,0 +1,62 @@
+{
+  "sourceSha": "95d52be36061315bff866dec615544104ca4767c",
+  "runId": 41948253612,
+  "jobId": 126985936508,
+  "stats": {
+    "startTime": "2026-11-05T01:38:33.850Z",
+    "duration": 267223.201,
+    "expected": 11,
+    "skipped": 64,
+    "unexpected": 1,
+    "flaky": 0
+  },
+  "historyCases": [
+    {
+      "title": "sheet versions can be named, renamed, unnamed and read by a viewer",
+      "file": "history.spec.ts",
+      "line": 9,
+      "project": "development",
+      "expectedStatus": "passed",
+      "status": "unexpected",
+      "results": [
+        {
+          "retry": 0,
+          "status": "failed",
+          "duration": 17418,
+          "startTime": "2026-11-05T01:41:59.557Z"
+        },
+        {
+          "retry": 1,
+          "status": "failed",
+          "duration": 25106,
+          "startTime": "2026-11-05T01:42:17.565Z"
+        },
+        {
+          "retry": 2,
+          "status": "failed",
+          "duration": 17233,
+          "startTime": "2026-11-05T01:42:43.568Z"
+        }
+      ]
+    },
+    {
+      "title": "doc versions can be named, renamed, unnamed and read by a viewer",
+      "file": "history.spec.ts",
+      "line": 9,
+      "project": "development",
+      "expectedStatus": "passed",
+      "status": "skipped",
+      "results": []
+    }
+  ],
+  "assertion": {
+    "path": "e2e/history.spec.ts",
+    "line": 112,
+    "locator": "getByRole('link', { name: 'Your profile' })",
+    "expected": "Version viewer",
+    "timeoutMs": 5000,
+    "actual": "element(s) not found",
+    "allThreeSheetAttempts": "failed at this same assertion"
+  },
+  "skippedOwnership": "64 cases, including Doc history, have empty results and no explicit skip annotations because development maxFailures=1 stopped the shard. They did not run and provide no acceptance."
+}

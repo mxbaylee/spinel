@@ -1,0 +1,23 @@
+[
+  {
+    "mode": "phone",
+    "result": "failed",
+    "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('dialog', { name: 'Make a copy', exact: true })\nExpected: visible\nTimeout: 3000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('dialog', { name: 'Make a copy', exact: true }) with timeout 3000ms\n  - waiting for getByRole('dialog', { name: 'Make a copy', exact: true })\n",
+    "events": [],
+    "accessibility": "- group: Native editor review controls\n- region \"Document editor\":\n  - button \"Undo\" [disabled]:\n    - img\n  - button \"Redo\" [disabled]:\n    - img\n  - button \"Paste\":\n    - img\n    - text: Paste\n    - img\n  - button \"More\":\n    - img\n  - complementary\n  - complementary\n  - button \"Edit\":\n    - img\n  - region \"Notifications alt+T\"\n  - region \"Notifications alt+T\""
+  },
+  {
+    "mode": "phone-dark",
+    "result": "failed",
+    "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('dialog', { name: 'Make a copy', exact: true })\nExpected: visible\nTimeout: 3000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('dialog', { name: 'Make a copy', exact: true }) with timeout 3000ms\n  - waiting for getByRole('dialog', { name: 'Make a copy', exact: true })\n",
+    "events": [],
+    "accessibility": "- group: Native editor review controls\n- region \"Document editor\":\n  - button \"Undo\" [disabled]:\n    - img\n  - button \"Redo\" [disabled]:\n    - img\n  - button \"Paste\":\n    - img\n    - text: Paste\n    - img\n  - button \"More\":\n    - img\n  - complementary\n  - complementary\n  - button \"Edit\":\n    - img\n  - region \"Notifications alt+T\"\n  - region \"Notifications alt+T\""
+  },
+  {
+    "mode": "tablet",
+    "result": "failed",
+    "error": "Error: expect(locator).toBeVisible() failed\n\nLocator: getByRole('dialog', { name: 'Make a copy', exact: true })\nExpected: visible\nTimeout: 3000ms\nError: element(s) not found\n\nCall log:\n  - Expect \"toBeVisible\" getByRole('dialog', { name: 'Make a copy', exact: true }) with timeout 3000ms\n  - waiting for getByRole('dialog', { name: 'Make a copy', exact: true })\n",
+    "events": [],
+    "accessibility": "- group: Native editor review controls\n- region \"Document editor\":\n  - button \"Undo\" [disabled]:\n    - img\n  - button \"Redo\" [disabled]:\n    - img\n  - button \"Paste\":\n    - img\n    - text: Paste\n    - img\n  - button \"More\":\n    - img\n  - complementary\n  - complementary\n  - button \"Edit\":\n    - img\n  - region \"Notifications alt+T\"\n  - region \"Notifications alt+T\""
+  }
+]
