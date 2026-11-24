@@ -1,7 +1,7 @@
 {
   "name": "Spinel",
   "prefix": "SPN",
-  "next_id": 171,
+  "next_id": 172,
   "personas": "docs/product/personas.md",
   "grooming": {
     "every": 7,
@@ -10,6 +10,7 @@
       "SPN-165",
       "SPN-068",
       "SPN-169",
+      "SPN-087",
       "SPN-089"
     ]
   },

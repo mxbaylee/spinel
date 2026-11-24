@@ -660,7 +660,7 @@ separately with exact source and CI evidence.
 
 Independent source review of `dc9170f` found no blocking scope, correctness or
 access issue. It retained a one-point maintainability deduction for superseded
-shell CSS declarations and accepted [SPN-087](../todo/SPN-087.md) as the separate
+shell CSS declarations and accepted [SPN-087](../implementation/SPN-087.md) as the separate
 cleanup disposition. The reviewer explicitly did not penalize file size alone
 or request a new framework. Final independent grading follows the complete current-source artifact; the source subtotal alone is not an aggregate grade or merge approval.
 

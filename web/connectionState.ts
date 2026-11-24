@@ -4,61 +4,6 @@ export const CONNECTION_CHECK_EVENT = 'spinel-connection-check';
 /** Sent when a check started by Try now has an answer. */
 export const CONNECTION_CHECKED_EVENT = 'spinel-connection-checked';
 export type ConnectionState = 'online' | 'offline' | 'reconnecting';
-export type RoomConnectionStatus = 'idle' | 'joining' | 'offline' | 'online';
-export type EditorSyncStatus = 'active' | 'offline' | 'not-started';
-
-export interface EditorConnection {
-  readonly browserOnline: boolean;
-  readonly room: RoomConnectionStatus;
-  readonly sync: EditorSyncStatus;
-  readonly state: ConnectionState;
-}
-
-export type EditorConnectionEvent =
-  | { type: 'browser'; online: boolean }
-  | { type: 'room'; status: RoomConnectionStatus }
-  | { type: 'sync'; status: EditorSyncStatus };
-
-export function createEditorConnection(browserOnline: boolean): EditorConnection {
-  return {
-    browserOnline,
-    room: 'idle',
-    sync: 'not-started',
-    state: browserOnline ? 'reconnecting' : 'offline',
-  };
-}
-
-/** Connection proof belongs to a room subscription, independently of unsaved edits. */
-export function reduceEditorConnection(
-  current: EditorConnection,
-  event: EditorConnectionEvent,
-): EditorConnection {
-  let { browserOnline, room, sync } = current;
-  switch (event.type) {
-    case 'browser':
-      browserOnline = event.online;
-      // The browser returning online cannot reuse the previous room's joined proof.
-      room = browserOnline ? 'joining' : 'offline';
-      break;
-    case 'room':
-      room = event.status;
-      break;
-    case 'sync':
-      sync = event.status;
-      break;
-  }
-  const state = !browserOnline
-    ? 'offline'
-    : room === 'idle' || room === 'joining'
-      ? 'reconnecting'
-      : room === 'offline' || sync === 'offline'
-        ? 'offline'
-        : sync === 'not-started'
-          ? 'reconnecting'
-          : 'online';
-  return { browserOnline, room, sync, state };
-}
-
 /** Dashboard reachability only; a live editor must use its own room subscription. */
 export function watchServerConnection(
   publish: (state: ConnectionState) => void,

@@ -49,10 +49,6 @@ h2 {
 p {
   line-height: 1.6;
 }
-.placeholder {
-  color: var(--sp-muted);
-  margin-bottom: 0;
-}
 @media (max-width: 600px) {
   .workspace {
     padding: 24px;
@@ -65,8 +61,7 @@ p {
   }
 }
 .workspace > header,
-.workspace > header nav,
-.file-view > nav {
+.workspace > header nav {
   display: flex;
   align-items: center;
   gap: 20px;
@@ -130,47 +125,9 @@ button.primary {
   background: var(--sp-panel);
   color: inherit;
 }
-.invites {
-  margin-top: 32px;
-}
-.dashboard {
-  display: grid;
-  grid-template-columns: minmax(150px, 230px) minmax(0, 1fr);
-  gap: 28px;
-}
-.folder-tree,
 .file-list {
   list-style: none;
   padding: 0;
-}
-.folder-tree button {
-  width: 100%;
-  text-align: left;
-  overflow-wrap: anywhere;
-}
-.folder-tree [aria-current='page'] {
-  background: var(--sp-tint-1);
-}
-.files {
-  min-width: 0;
-}
-.file-view > nav {
-  gap: 8px;
-}
-.file-view > nav button {
-  padding: 6px;
-}
-.folder-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin: 24px 0;
-}
-.folder-heading h2 {
-  margin: 0;
-  overflow-wrap: anywhere;
 }
 .file-list li {
   display: flex;
@@ -179,11 +136,6 @@ button.primary {
   align-items: center;
   border-bottom: 1px solid var(--sp-border);
   flex-wrap: wrap;
-}
-.item-open {
-  text-align: left;
-  overflow-wrap: anywhere;
-  min-width: 0;
 }
 .item-kind {
   color: var(--sp-muted);
@@ -203,15 +155,6 @@ button.primary {
   border-radius: 12px;
   overflow-wrap: anywhere;
 }
-@media (max-width: 600px) {
-  .dashboard {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .dashboard > aside {
-    border-bottom: 1px solid var(--sp-border);
-    padding-bottom: 16px;
-  }
-}
 
 .sheet-editor {
   margin-top: 20px;
@@ -221,12 +164,6 @@ button.primary {
   min-height: 400px;
   border: 1px solid var(--sp-border);
   position: relative;
-}
-.dashboard:has(.sheet-editor) {
-  grid-template-columns: minmax(0, 1fr);
-}
-.dashboard:has(.sheet-editor) > aside {
-  display: none;
 }
 
 .workspace button.collaborator-badge,
@@ -279,33 +216,6 @@ button.primary {
   font-size: 0.85rem;
 }
 
-.admin-users {
-  list-style: none;
-  padding: 0;
-}
-.admin-users > li {
-  border-top: 1px solid var(--sp-border);
-  padding: 0.75rem 0;
-}
-.admin-users h4 {
-  margin: 0.25rem 0;
-}
-.admin-users p {
-  margin: 0.5rem 0;
-}
-.admin-confirmation {
-  max-width: min(32rem, calc(100vw - 2rem));
-  border: 1px solid var(--sp-border);
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-}
-.admin-confirmation::backdrop {
-  background: rgb(20 15 30 / 40%);
-}
-.admin-confirmation button {
-  margin: 0.25rem;
-}
-
 .tag-labels {
   display: inline-flex;
   flex-wrap: wrap;
@@ -320,27 +230,6 @@ button.primary {
   overflow-wrap: anywhere;
   font-size: 0.85rem;
 }
-.document-tags {
-  width: min(30rem, calc(100vw - 3rem));
-  max-height: calc(100vh - 3rem);
-  overflow: auto;
-  border-radius: 0.75rem;
-  padding: 1.25rem;
-}
-.document-tags::backdrop {
-  background: #0006;
-}
-.document-tags form {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  gap: 0.5rem;
-  margin-block: 1rem;
-}
-.document-tags li {
-  overflow-wrap: anywhere;
-  margin-block: 0.5rem;
-}
 
 .shared-badge {
   display: inline-block;
@@ -351,15 +240,6 @@ button.primary {
 .shared-owner {
   font-size: 0.85rem;
   overflow-wrap: anywhere;
-}
-.shared-drawer {
-  border: 1px solid var(--sp-border);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 24px;
-  max-height: 32rem;
-  overflow: auto;
-  background: var(--sp-tint-1);
 }
 /* Gem rail, adapted from the owner's approved reference. */
 :root {
@@ -545,27 +425,6 @@ dialog {
 .theme-settings {
   margin-bottom: 24px;
 }
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-  padding: 32px;
-  border: 2px dashed var(--sp-border);
-  border-radius: 18px;
-}
-.fill-palette {
-  display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
-  gap: 8px;
-  padding: 12px 0;
-}
-.workspace .fill-palette button,
-.space-native-editor .fill-palette button {
-  padding: 10px 4px;
-  font-size: 12px;
-  border-color: var(--sp-border);
-}
 @media (max-width: 640px) {
   .workspace {
     flex-direction: column;
@@ -592,9 +451,6 @@ dialog {
     left: 0;
     transform: none;
   }
-  .fill-palette {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
 }
 @media (prefers-reduced-motion: reduce) {
   .gem {
@@ -610,12 +466,6 @@ dialog {
   display: block;
   padding: clamp(16px, 3vw, 32px);
   min-width: 0;
-}
-.guest-brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
 }
 
 .history-browser > [role='group'],
@@ -674,29 +524,6 @@ dialog {
 .dashboard-search {
   margin-block-end: 1.5rem;
 }
-.search-filters {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: end;
-  gap: 0.75rem;
-}
-.search-filters label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-.search-filters input,
-.search-filters select {
-  max-width: 100%;
-}
-.search-filters input[type='search'] {
-  width: min(24rem, 100%);
-}
-.search-paths {
-  flex-basis: 100%;
-  overflow-wrap: anywhere;
-  font-size: 0.85rem;
-}
 /* Offline (SPN-039): badges are text with an icon, never interactive. */
 .offline-badge {
   display: inline-block;
@@ -725,7 +552,6 @@ dialog {
   flex-shrink: 0;
   vertical-align: middle;
 }
-.item-open > .entity-icon,
 .file-list li > div > .entity-icon {
   margin-right: 8px;
 }
@@ -759,8 +585,7 @@ dialog {
   min-height: 44px;
   padding: 8px;
 }
-.profile-icon-grid button[aria-pressed='true'],
-.fill-palette button[aria-pressed='true'] {
+.profile-icon-grid button[aria-pressed='true'] {
   outline: 2px solid var(--sp-text);
   outline-offset: 2px;
 }
