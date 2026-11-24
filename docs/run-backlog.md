@@ -147,27 +147,52 @@ Reviewers may share concrete findings and evidence, but each assesses the full
 rubric and issues their own grade. Review is read-only; the implementing agent
 owns fixes. If either independent review is unavailable, keep the PR unmerged.
 
-Ask each reviewer for a score out of 100 using this rubric:
+Ask each reviewer for a **verdict** (`pass` or `fix`) and a list of findings, each
+graded by severity, never a numeric score. Owner, chat 2026-11-24,
+[decision](implementation/backlog-workflow.md#severity-gate-replaces-the-95100-score-2026-11-24):
 
-- **35:** ticket scope and acceptance criteria.
-- **25:** correctness, data integrity and access boundaries.
-- **20:** meaningful regression protection and verification evidence.
-- **10:** CI and operational usability appropriate to the ticket: whether the delivered
+- **blocker:** a defect, a false or contradicted claim, an unmet acceptance criterion or a check
+  that can pass when it should fail. The work does not proceed.
+- **should-fix:** a real, contained weakness a careful owner would repair before merging (a
+  missing in-scope assertion, a misleading name, a stale doc section).
+- **nit:** style, preference, duplication with no stated replacement, anything the reviewer could
+  not verify, or an item outside the rubric's stated scope. Nits never gate and need no repair.
+
+`pass` means no blocker and no should-fix. Each reviewer states `met`, `partly` or `not met`
+per criterion, with the evidence checked:
+
+- **Ticket scope and acceptance criteria.**
+- **Correctness, data integrity and access boundaries.**
+- **Meaningful regression protection and verification evidence**, including the work's own tests
+  run locally.
+- **CI and operational usability appropriate to the ticket:** whether the delivered
   workflows, job selection, diagnostics and runbooks are usable. Never CI *results*; see below.
-- **10:** maintainability, documentation, backlog/process consistency and
-  **over-complexity**: unnecessary abstractions, dependencies or speculative
-  flexibility. Prefer the smallest complete implementation that meets the ticket;
-  deduct for avoidable complexity with an actionable simplification, not for
-  necessary safeguards. Owner, chat 2026-10-20, decision
+- **Maintainability, documentation, backlog/process consistency and over-complexity:**
+  unnecessary abstractions, dependencies or speculative flexibility. Prefer the smallest
+  complete implementation that meets the ticket; report avoidable complexity only with an
+  actionable simplification, not for necessary safeguards. Owner, chat 2026-10-20, decision
   [#105](implementation/backlog-workflow.md#legacy-decision-105-deduct-unnecessary-complexity).
+  Duplication alone is a nit.
   🧹 **Code removal** is part of the same line. Reviewers check whether the change
   leaves code, styles, assets, exports, fixtures or docs it made obsolete, or
-  duplicates something that already exists, and deduct with the exact item to delete
+  duplicates something that already exists, and report it with the exact item to delete
   and the proof it is unused (imports, lazy modules, SDK/plugin registration, scripts,
   config, stories, selectors, dynamic or template-built names). A no-reference search
   alone is not proof. Reviewers never ask to delete retained evidence, externally
   consumed entry points or anything a ticket record explicitly retains. Owner, chat 2026-11-23,
   [decision](implementation/SPN-087.md#decision-code-removal-in-the-review-rubric).
+
+The author writes the rubric **before** review and keeps it frozen for the ticket. It names the
+requirements' source of truth, adds claim checks (every number, hash, count and status sentence in
+docs and the PR body is true), and says what each reviewer should concentrate on. Scope any
+adversarial testing (for example "false Offline from mount up to N seconds"): a hole just past a
+stated, documented limit is a nit unless the claims overstate the limit.
+
+Before review, run a script or commands that recompute every checkable fact the docs and PR body
+quote (counts, hashes, reproducible timings, file lists, anchors, test totals) and fix mismatches.
+Give reviewers a **ledger** of items the author *declined or deferred* (with reasons) and limits
+to weigh. It never lists fixed items and never contains earlier scores or verdicts; a reviewer may
+re-raise a declined item only by showing the reason is wrong or the claims overstate the limit.
 
 **Reviewers never deduct for CI results.** A pending, queued, missing, cancelled, failing or
   not-yet-run check, on this SHA or another, costs no points in any rubric line, and reviewers
@@ -184,22 +209,22 @@ file/line references where relevant, reproduction evidence, severity, and a
 recommended fix or follow-up scope. Do not deduct for a feature the ticket
 explicitly defers, but do deduct if the delivered slice is unsafe or incomplete.
 
-The merge gate is **two independent scores each above 95/100 on the same current
-commit AND no unresolved blocking findings in either review**. Exactly 95 does
-not pass. An average, an older commit's grade, or a single review does not satisfy
-it. Record both reviewers, their individual scores and rubrics, the shared reviewed
-commit SHA, deductions and each finding's disposition in the PR. Review uncommitted
+The merge gate is **two independent `pass` verdicts on the same current
+commit: no open blocker and no open should-fix in either review**. An older
+commit's verdict, or a single review, does not satisfy it. Record both reviewers, their
+verdicts and rubrics, the shared reviewed
+commit SHA, findings by severity and each finding's disposition in the PR. Review uncommitted
 work only provisionally; tie both final assessments to the committed diff.
 Owner, chat 2026-10-26; [decision](implementation/backlog-workflow.md#two-independent-grades-on-the-same-commit).
 
-The same numerical gate applies before validation pushes under the owner's 2026-11-02
+The same gate applies before validation pushes under the owner's 2026-11-02
 [ordering decision](implementation/grooming-2026-11-02.md#review-before-push).
 Each review states the local evidence actually checked, findings and their
 disposition, and the hosted/platform acceptance still pending. A pre-push grade
 does not certify those pending checks or authorize merging. After any repair,
 bookkeeping edit or base update, both reviewers revalidate the new committed SHA
 before the next validation push; focused revalidation may reuse unchanged evidence with its
-original source identity. Do not inflate a score to get access to CI.
+original source identity. Do not soften a finding's severity to get access to CI.
 
 ### 🔁 Review–repair loop before a validation push
 
@@ -207,23 +232,25 @@ Owner, chat 2026-11-06; [decision](implementation/backlog-workflow.md#reviewrepa
 push to see whether CI passes in the meantime.
 
 1. **Commit** the complete candidate and record its SHA.
-2. **Review** that exact SHA with two fresh subagents as above. Give no target score.
-   CI results are never deducted (see above); report hosted acceptance as pending and
-   deduct only for what the committed code, tests and docs fail to show.
-3. **Require every step to 100.** A reviewer who withholds points lists *every* actionable
-   step to a perfect score, not only the steps to clear 95: for each, the points at
-   stake, the exact file and line or command, the concrete change, and whether it can
-   be done locally, only on hosted CI, or needs an owner decision. Include one-point
-   items, and steps judged impossible with the reason.
-4. **Repair** every local step. Hosted-only and owner-decision steps stay explicitly
-   pending in the PR; never reword or trim a finding to make a deduction disappear.
-5. **Revalidate** with the relevant local checks, commit the repair as a new SHA, and
-   return to step 2.
-6. **Push** only when both reviews exceed 95 on the SHA being pushed. If every remaining
-   deduction is hosted-only or an owner decision, stop and put it to the owner as an
-   explicit one-time push exception, recorded in the PR, rather than looping.
+2. **Review** that exact SHA with two fresh subagents as above. Give no target verdict.
+   CI results are never graded (see above); report hosted acceptance as pending and
+   report only what the committed code, tests and docs fail to show. Each round is a
+   full review, not a check of the last fixes.
+3. **Classify every finding** as blocker, should-fix or nit, each with the exact file and
+   line or command, the concrete change, and whether it can be done locally, only on hosted
+   CI, or needs an owner decision. A finding the reviewer cannot classify above nit is a nit.
+4. **Repair** every local blocker and should-fix (union of both reviewers, blockers first). Nits
+   are optional. Hosted-only and owner-decision items stay explicitly pending in the PR; never
+   reword or trim a finding to make it disappear. Log anything declined, with the reason, in the
+   ledger rather than dropping it.
+5. **Revalidate** with the relevant local checks and the facts script, commit the repair as a
+   new SHA, and return to step 2 with new reviewers.
+6. **Push** only when both reviews pass on the SHA being pushed. After three rounds without
+   two passes, stop and hand the open items and the ledger to the owner. If every remaining
+   item is hosted-only or an owner decision, put it to the owner as an explicit one-time
+   push exception, recorded in the PR, rather than looping.
 
-Record each iteration's SHA, both scores, deductions and dispositions in the PR.
+Record each iteration's SHA, both verdicts, findings by severity and dispositions in the PR.
 
 ## 4. Fix here or file separately
 
@@ -265,16 +292,16 @@ the review evidence, and record why each remainder can ship separately. A depend
 follow-up may name the current ticket only while that ticket is still open; remove
 completed dependency IDs when landing, keeping provenance in the ticket body.
 
-If either score is 95 or below, implement the appropriate repairs or scoped split
+If either verdict is `fix`, implement the appropriate repairs or scoped split
 and send the revised change and finding dispositions back to both independent
 reviewers. Repeat until the gate is met or an actual blocker/limit requires a
 checkpoint. Filing a ticket
-alone does not resolve an in-scope blocker or erase a deduction. Both reviewers must
-assess the resulting slice. Do not shop for a more generous reviewer or round up.
+alone does not resolve an in-scope blocker or should-fix. Both reviewers must
+assess the resulting slice. Do not shop for a more generous reviewer or soften a severity.
 
-Even when both scores are above 95, fix or ticket any remaining actionable finding
+Even when both verdicts are `pass`, fix or ticket any remaining actionable finding
 according to the same scope rules; a non-actionable observation may be explicitly accepted with
-its reason. All blockers still prevent merging, regardless of the numerical score.
+its reason. All blockers still prevent merging, whatever the verdict.
 
 New tickets must exist on `main` before their implementation PRs can land. File
 follow-ups with the current ticket PR whenever possible. If there is no such PR,

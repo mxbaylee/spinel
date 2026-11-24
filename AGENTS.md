@@ -102,7 +102,7 @@ that isn't waiting on another is next.
   [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).
 - **Review locally before pushing.** Run the relevant feasible local checks,
   commit the complete candidate, and obtain two independent nonimplementing
-  reviews, each **above 95/100 on that exact commit**, before a validation push
+  reviews, each a **`pass` (no open blocker, no open should-fix) on that exact commit**, before a validation push
   or repair push intended to run CI. Fix findings and revalidate each new head.
   Draft checkpoint pushes may save unfinished work remotely with triggered CI
   deliberately cancelled; record missing checks/grades and verify cancellation.
@@ -117,7 +117,9 @@ that isn't waiting on another is next.
   tests changed. Owner, chat 2026-10-22.
 - **Reviews never deduct for CI, and run as a loop.** Reviewers never deduct for CI results (pending, missing or failing); required checks gate
   the merge. They do run the tests related to the work locally and grade those. Owner, chat 2026-11-06; [decision](docs/implementation/backlog-workflow.md#reviewers-do-not-deduct-for-ci-results).
-  Run the review as a loop: reviewers list every step to 100, repair, recommit and review
-  again until both exceed 95; if every remaining deduction is hosted-only or an owner
-  decision, ask for a recorded one-time push exception instead. Owner, chat 2026-11-06;
-  [decision](docs/implementation/backlog-workflow.md#reviewrepair-loop-before-a-validation-push).
+  Run the review as a loop: reviewers grade findings by severity (blocker, should-fix, nit), not
+  points; repair every local blocker and should-fix, recommit and review again with fresh reviewers
+  until both pass. After three rounds, stop and hand the open items to the owner; if every remaining
+  item is hosted-only or an owner decision, ask for a recorded one-time push exception instead.
+  Owner, chat 2026-11-06 and 2026-11-24;
+  [decision](docs/implementation/backlog-workflow.md#severity-gate-replaces-the-95100-score-2026-11-24).
