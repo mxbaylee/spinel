@@ -1,0 +1,235 @@
+{
+  "purpose": "Before evidence only. This does not validate the SPN-089 implementation.",
+  "identity": {
+    "sha": "13b74ecea5f2552627ff638be9413ad4754ef581",
+    "checkedOutSha": "13b74ecea5f2552627ff638be9413ad4754ef581",
+    "branch": "main",
+    "pullRequest": null,
+    "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41899103723",
+    "builtAt": "2026-11-04T19:41:16.604Z"
+  },
+  "artifact": {
+    "id": 13356039635,
+    "sha256": "23a69dcf0255745d1efecf3e616ea2c78585fc8fcbde27f4e10d110e5fee4d35"
+  },
+  "reviewedAt": "2026-11-04T20:52:16.447Z",
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "durationMs": 51095,
+  "checked": [
+    {
+      "id": "docs-formulas--insert",
+      "variant": "light"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "light"
+    },
+    {
+      "id": "docs-formulas--loading-sources",
+      "variant": "light"
+    },
+    {
+      "id": "docs-formulas--source-error",
+      "variant": "light"
+    },
+    {
+      "id": "account-icon-picker--browse",
+      "variant": "light"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "light"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "light"
+    },
+    {
+      "id": "editor-frame--offline-formulas",
+      "variant": "light"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "dark"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "dark"
+    },
+    {
+      "id": "docs-formulas--loading-sources",
+      "variant": "dark"
+    },
+    {
+      "id": "docs-formulas--source-error",
+      "variant": "dark"
+    },
+    {
+      "id": "account-icon-picker--browse",
+      "variant": "dark"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "dark"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "dark"
+    },
+    {
+      "id": "editor-frame--offline-formulas",
+      "variant": "dark"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "phone"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "phone"
+    },
+    {
+      "id": "docs-formulas--loading-sources",
+      "variant": "phone"
+    },
+    {
+      "id": "docs-formulas--source-error",
+      "variant": "phone"
+    },
+    {
+      "id": "account-icon-picker--browse",
+      "variant": "phone"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "phone"
+    },
+    {
+      "id": "editor-frame--offline-formulas",
+      "variant": "phone"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--loading-sources",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--source-error",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-icon-picker--browse",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--offline-formulas",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "tablet"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "tablet"
+    },
+    {
+      "id": "docs-formulas--loading-sources",
+      "variant": "tablet"
+    },
+    {
+      "id": "docs-formulas--source-error",
+      "variant": "tablet"
+    },
+    {
+      "id": "account-icon-picker--browse",
+      "variant": "tablet"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "tablet"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "tablet"
+    },
+    {
+      "id": "editor-frame--offline-formulas",
+      "variant": "tablet"
+    }
+  ],
+  "captureCount": 45,
+  "retainedImages": [
+    "before-docs-formulas--insert-light.png",
+    "before-docs-formulas--edit-dark.png",
+    "before-docs-formulas--insert-phone.png",
+    "before-space-review--pages-drawer-phone.png",
+    "before-redesign-controls--long-modal-title-phone-dark.png",
+    "before-account-icon-picker--browse-light.png"
+  ],
+  "failures": [],
+  "runtime": {
+    "startedAt": "2026-11-04T20:51:24.343Z",
+    "finishedAt": "2026-11-04T20:52:16.585Z",
+    "node": "v26.12.1",
+    "command": "node",
+    "args": [
+      "scripts/serial.ts",
+      "node",
+      "scripts/screenshots.ts",
+      "docs-formulas--insert",
+      "docs-formulas--edit",
+      "docs-formulas--loading-sources",
+      "docs-formulas--source-error",
+      "account-icon-picker--browse",
+      "space-review--pages-drawer",
+      "redesign-controls--long-modal-title",
+      "editor-frame--editable-formulas",
+      "editor-frame--offline-formulas"
+    ],
+    "elapsedMs": 52242,
+    "peakKiB": 1242068,
+    "code": 0,
+    "signal": null,
+    "aborted": null
+  }
+}

@@ -773,6 +773,7 @@ export function ConnectedAppearanceDialog({
     <Modal
       finalFocus={finalFocus}
       title="Appearance"
+      icon="palette"
       open
       onOpenChange={(open) => {
         if (!open) close();

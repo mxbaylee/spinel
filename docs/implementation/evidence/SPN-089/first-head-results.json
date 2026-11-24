@@ -1,0 +1,332 @@
+{
+  "scope": "First hosted SPN-089 source plus local repair checks; repaired hosted Storybook acceptance remains pending.",
+  "source": {
+    "head": "8e5c48f52098dd381bd71bc1499a2f626f3497fb",
+    "tree": "237666557e69d63cbc6a45b5160f42b3db069ea9",
+    "testedMerge": "5e6585d7e2a4be9f87e42b7f8071c2e396fe263b",
+    "testedMergeTree": "237666557e69d63cbc6a45b5160f42b3db069ea9",
+    "base": "13b74ecea5f2552627ff638be9413ad4754ef581",
+    "pullRequest": 260
+  },
+  "storybookBuild": {
+    "runId": 41912204285,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41912204285",
+    "artifactId": 13362798016,
+    "artifactName": "storybook-review",
+    "archiveBytes": 6192692,
+    "archiveSha256": "223e1bb91156a46683c50ea7350bb7db90a80509c0eb504fc987f20fbf555054",
+    "providerDigestMatched": true,
+    "shaJson": {
+      "sha": "8e5c48f52098dd381bd71bc1499a2f626f3497fb",
+      "checkedOutSha": "5e6585d7e2a4be9f87e42b7f8071c2e396fe263b",
+      "branch": "codex/spn-089-dialog-title-icons",
+      "pullRequest": 260,
+      "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41912204285",
+      "builtAt": "2026-11-04T21:03:06.479Z"
+    }
+  },
+  "localHostedBuildCaptures": {
+    "manifest": "first-head-manifest.json",
+    "manifestSha256": "4bf3cdc1d4784081543233efdbcfef5fb7cdf7ef0f5fd0f17ea83eb4a0aa170c",
+    "measurements": "first-head-captures.json",
+    "requestedStories": 32,
+    "variants": [
+      "light",
+      "dark",
+      "phone",
+      "phone-dark",
+      "tablet"
+    ],
+    "attempted": 160,
+    "passed": 157,
+    "failed": 3,
+    "elapsedMs": 164114,
+    "peakKiB": 1698376,
+    "exitCode": 1,
+    "failureStory": "redesign-native-editors--make-copy-dialog",
+    "failureVariants": [
+      "phone",
+      "phone-dark",
+      "tablet"
+    ],
+    "failureJsons": [
+      "failed-redesign-native-editors--make-copy-dialog-phone.json",
+      "failed-redesign-native-editors--make-copy-dialog-phone-dark.json",
+      "failed-redesign-native-editors--make-copy-dialog-tablet.json"
+    ],
+    "representativeFailureScreenshot": "failed-redesign-native-editors--make-copy-dialog-phone.png",
+    "disposition": "Failed: the real Make a copy dialog was absent after the compact Storybook play. These retained failures are not acceptance or successful modal captures.",
+    "selectedSuccessfulScreenshots": [
+      {
+        "file": "after-redesign-controls--long-modal-title-phone-dark.png",
+        "sha256": "bd7cc6df768b41575110eb071df8a59237cf528ac643d26ce7913594dc315c67"
+      },
+      {
+        "file": "after-redesign-controls--emoji-modal-title-light.png",
+        "sha256": "0f4e23638ce70d49df368573d249f57fe1ef7384a1f184203e2dc563c68eb414"
+      },
+      {
+        "file": "after-redesign-controls--pending-modal-phone.png",
+        "sha256": "6d0cf93c5d4ae140b21a852e631fc64139833c7eade36234fd9e32ca892f30b1"
+      },
+      {
+        "file": "after-redesign-controls--error-modal-phone.png",
+        "sha256": "beff9d57c1d29ce60121d173b364e6f3decfbc9c1ae362fe2436439ed4a03750"
+      },
+      {
+        "file": "after-docs-formulas--insert-phone.png",
+        "sha256": "32ee89207b36457618e3704e521cfb33b9b98c1dabb583533d66da51a5b343cb"
+      },
+      {
+        "file": "after-docs-formulas--edit-dark.png",
+        "sha256": "803d435f5336f374edf9a278494174e303730e544cde733a384c2c6c2ff36d0f"
+      },
+      {
+        "file": "after-redesign-appearance--appearance-open-phone-dark.png",
+        "sha256": "76ddefce437d5941a2c63a1f7d4854b98749e802a2d820f34a4388c48adabc00"
+      },
+      {
+        "file": "after-redesign-appearance--connected-loading-light.png",
+        "sha256": "e37b0711d7ea3f794cfc9aab7e1b2b127828e381bcbc63056f7c5ca02963357f"
+      },
+      {
+        "file": "after-account-profile--icon-picker-phone-dark.png",
+        "sha256": "d510b6340a6a94ef2c4bfe3a9c20da274e55458dbf4abe1b9e15c92fd8ea0dc2"
+      },
+      {
+        "file": "after-space-review--pages-drawer-phone.png",
+        "sha256": "92f5664b1113f372cea5ba3e6b38bce72a7e61d4eca6a3b6dcf747f787297bfb"
+      }
+    ]
+  },
+  "firstHeadFullHostedCatalogue": {
+    "runId": 41912204285,
+    "source": "Parent inspection of first-attempt hosted job logs; distinct from the local 160-state run.",
+    "failedVariants": [
+      "desktop-dark",
+      "mobile-light",
+      "mobile-dark",
+      "tablet"
+    ],
+    "desktopDarkJobId": 126863118429,
+    "reportedFailure": "The only reported failure in each failed full-catalogue job is MakeCopyDialog: unable to find dialog Make a copy.",
+    "desktopLight": "Still running at the last parent observation; not claimed passing."
+  },
+  "diagnostics": [
+    {
+      "description": "Fresh isolated production Doc story: Playwright tap/mouse and Storybook user-event touch/mouse.",
+      "results": "native-copy-probe.json",
+      "process": "native-copy-probe-run.json",
+      "passed": 2,
+      "failed": 2,
+      "cases": [
+        {
+          "mode": "tap",
+          "result": "passed"
+        },
+        {
+          "mode": "mouse",
+          "result": "passed"
+        },
+        {
+          "mode": "user-event-touch",
+          "result": "failed"
+        },
+        {
+          "mode": "user-event-mouse",
+          "result": "failed"
+        }
+      ],
+      "acceptance": false
+    },
+    {
+      "description": "Fresh isolated production Doc story: user-event touch/mouse with coordinates and DOM click.",
+      "results": "native-copy-coordinates-probe.json",
+      "process": "native-copy-coordinates-probe-run.json",
+      "passed": 2,
+      "failed": 1,
+      "cases": [
+        {
+          "mode": "user-event-touch-coords",
+          "result": "failed"
+        },
+        {
+          "mode": "user-event-mouse-coords",
+          "result": "passed"
+        },
+        {
+          "mode": "dom-click",
+          "result": "passed"
+        }
+      ],
+      "acceptance": false
+    },
+    {
+      "description": "Proposed center-coordinate user-event pointer sequence in phone, phone-dark and tablet.",
+      "results": "native-copy-proposed-probe.json",
+      "process": "native-copy-proposed-probe-run.json",
+      "passed": 0,
+      "failed": 3,
+      "cases": [
+        {
+          "mode": "phone",
+          "result": "failed"
+        },
+        {
+          "mode": "phone-dark",
+          "result": "failed"
+        },
+        {
+          "mode": "tablet",
+          "result": "failed"
+        }
+      ],
+      "acceptance": false
+    }
+  ],
+  "diagnosticBoundary": "Diagnostic collectors exit 0 after saving both passes and failures. Isolated input probes do not replace strict Storybook play/capture or production E2E acceptance. The proposed coordinate repair failed all three compact variants.",
+  "nativeCopyProductionCi": {
+    "runId": 41912204272,
+    "jobId": 126862673939,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41912204272/job/126862673939",
+    "runAttempt": 1,
+    "project": "production",
+    "shard": "1/2",
+    "artifactId": 13362819386,
+    "artifactName": "theme-screenshots-production-1",
+    "archiveBytes": 36055862,
+    "archiveSha256": "9056f4b649666de5f4aa0716a2f9e0d06c7505b8fae3699ddf3ebeaa5070af70",
+    "providerDigestMatched": true,
+    "reportMember": "playwright-report/production-1-of-2.json",
+    "reportSha256": "fb8e4393bd57d033e6edc68342831252dd5bddd7fa93d108bc5634fcd01436da",
+    "stats": {
+      "startTime": "2026-11-04T21:03:40.586Z",
+      "duration": 570220.1359999999,
+      "expected": 81,
+      "skipped": 3,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "namedCopyTests": [
+      {
+        "file": "e2e/copy.spec.ts",
+        "line": 147,
+        "title": "native Sheet copying waits for saved online content, keeps images, and edits an independent same-folder copy",
+        "status": "expected",
+        "expectedStatus": "passed",
+        "results": [
+          {
+            "status": "passed",
+            "duration": 5574,
+            "retry": 0,
+            "errors": []
+          }
+        ]
+      },
+      {
+        "file": "e2e/copy.spec.ts",
+        "line": 341,
+        "title": "a phone Doc viewer retains a copy after dismissing its busy native drawer and losing source access",
+        "status": "expected",
+        "expectedStatus": "passed",
+        "results": [
+          {
+            "status": "passed",
+            "duration": 7389,
+            "retry": 0,
+            "errors": []
+          }
+        ]
+      }
+    ],
+    "unrelatedSkips": [
+      {
+        "file": "e2e/doc-mobile.spec.ts",
+        "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+        "reason": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects."
+      },
+      {
+        "file": "e2e/doc-mobile.spec.ts",
+        "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+        "reason": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects."
+      },
+      {
+        "file": "e2e/doc-mobile.spec.ts",
+        "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+        "reason": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects."
+      }
+    ],
+    "screenshots": [
+      {
+        "file": "after-native-doc-viewer-dialog-phone-dark-production.png",
+        "archiveMember": "test-results/theme-screenshots/spn-065-native-doc-viewer-dialog-phone-dark-production.png",
+        "sha256": "b9e7d6527385c8c12e259a628d1c70d75b4a811a1413082cbf7487181df3eb41"
+      },
+      {
+        "file": "after-native-doc-viewer-dialog-phone-light-production.png",
+        "archiveMember": "test-results/theme-screenshots/spn-065-native-doc-viewer-dialog-phone-light-production.png",
+        "sha256": "beb3cf2ceb762740ed27ee9e8b90a7dca40d9a74a213b3c5951c87f1db1e81db"
+      },
+      {
+        "file": "after-native-sheet-dialog-desktop-dark-production.png",
+        "archiveMember": "test-results/theme-screenshots/spn-065-native-sheet-dialog-desktop-dark-production.png",
+        "sha256": "4ce8d1f1e3d8bf69a9ab7606b33c68e727dc0c3795fda761f3b936e0ed27a7d6"
+      },
+      {
+        "file": "after-native-sheet-dialog-desktop-light-production.png",
+        "archiveMember": "test-results/theme-screenshots/spn-065-native-sheet-dialog-desktop-light-production.png",
+        "sha256": "dc35bd412b445747685f6a99bf847eea5179ba11ed3b72a339450b9cdfe643f4"
+      }
+    ],
+    "screenshotBytesMatchedArchive": true
+  },
+  "nativeCopyDevelopmentCi": {
+    "runId": 41912204272,
+    "jobId": 126862673887,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41912204272/job/126862673887",
+    "runAttempt": 1,
+    "project": "development",
+    "shard": "1/2",
+    "passed": 74,
+    "skipped": 3,
+    "failed": 0,
+    "namedCopyTests": "Both named e2e/copy.spec.ts journeys passed; the three skips are other tests.",
+    "source": "First-attempt job log, including both named journeys and final 74 passed / 3 skipped summary."
+  },
+  "syncFailure": {
+    "status": "unresolved",
+    "record": "first-head-sync-failure.json"
+  },
+  "localRepairChecks": {
+    "source": "Uncommitted NativeEditors.stories.tsx public-command onReady repair on top of the first head; hosted first-head artifacts do not include this edit.",
+    "node": "v26.12.1",
+    "watchdogKiB": 2097152,
+    "typecheck": {
+      "status": "passed",
+      "elapsedMs": 14219,
+      "peakKiB": 1867816,
+      "record": "typecheck-repair.json"
+    },
+    "lint": {
+      "status": "passed",
+      "elapsedMs": 42306,
+      "peakKiB": 803044,
+      "record": "lint-repair.json"
+    },
+    "focusedDevPreview": {
+      "status": "unavailable",
+      "elapsedMs": 9536,
+      "peakKiB": 2138112,
+      "record": "native-copy-dev-probe-run.json",
+      "reason": "Combined process tree exceeded the 2 GiB watchdog while bundling the first story. No assertions or captures completed. No retry or local cap increase."
+    },
+    "sourceFileSha256": "53e19809e39e5282c15d8f468dd172959f9153af69da0d565e934b72bb900335",
+    "backlog": "Passed:20 open tickets; existing ticket-length/grooming warnings retained.",
+    "pullRequest": "Exact title and base validated with backlog:pr --base13b74ecea5f2552627ff638be9413ad4754ef581 --title; an earlier invocation omitted named options and printed usage without running validation."
+  },
+  "repairPreview": {
+    "opening": "The real NativeEditor invokes the production MAKE_COPY_COMMAND through api.executeCommand in onReady; local API fixtures supply copy options.",
+    "assertions": "Keep strict named-dialog, shared title/cue, loaded form and viewport assertions. Existing production E2E owns real toolbar click/tap coverage.",
+    "status": "Repaired-story hosted build, recaptures and current-head hosted checks pending. No final visual approval or readiness claim."
+  }
+}

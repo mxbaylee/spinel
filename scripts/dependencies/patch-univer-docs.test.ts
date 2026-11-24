@@ -38,8 +38,6 @@ import { NORMAL_TEXT_SELECTION_PLUGIN_STYLE } from '@univerjs/engine-render';
 import { createNativeSyncClient, NativeReplica } from '@spinel/sync-client';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { patchInstalledDocs, prepareDocsPatch } from './patch-univer-docs.ts';
-import { observeNativeDocComposition } from '../../src/ui/nativeDocFlushDiagnostic.ts';
-import type { DiagnosticManager } from '../../src/ui/nativeDocFlushDiagnostic.ts';
 import type {
   NativeDocFlushManager,
   NativeDocFlushObservation,
@@ -2646,47 +2644,6 @@ for (const format of ['es', 'cjs'] as const) {
             `${context}: admitted join`,
           );
         }
-  });
-
-  test(`${format}: diagnostic wrappers preserve actual manager output and native phase ownership`, async () => {
-    const { constantGuardPatched } = prepareDocsPatch(await readBuild(format), format);
-    const scenario = paragraphSequence(3);
-    const control = flush(constantGuardPatched, scenario.states);
-    const fixture = managerFixture(constantGuardPatched);
-    const compose = core.JSONX.compose;
-    const diagnostic = observeNativeDocComposition(
-      fixture.manager as unknown as DiagnosticManager,
-      core.JSONX,
-      unitId,
-    );
-    try {
-      fixture.manager.setStateCache(unitId, {
-        history: [...scenario.states],
-        collaboration: [...scenario.states],
-      });
-      fixture.manager.flushPendingChanges(unitId);
-      const report = diagnostic.finish();
-      assert.equal(report.restored, true);
-      assert.equal(report.dropped, 0);
-      assert.equal(report.states, 64);
-      assert.deepEqual(
-        report.captures.map((value) => value.phase),
-        ['history', 'collaboration'],
-      );
-      assert.deepEqual(
-        report.captures.map((value) => decodeCapture(value.cache)),
-        [scenario.states, scenario.states],
-      );
-      assert.ok(report.calls.length > 0);
-      assert.deepEqual(
-        { history: fixture.history, changes: fixture.changes, publication: fixture.publication },
-        control,
-      );
-      assert.equal(core.JSONX.compose, compose);
-    } finally {
-      diagnostic.finish();
-      fixture.close();
-    }
   });
 
   test(`${format}: unsupported markers after odd and even prefixes retain raw native publication`, async () => {

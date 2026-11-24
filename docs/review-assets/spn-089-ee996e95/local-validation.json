@@ -1,0 +1,223 @@
+{
+  "source": "ee996e95e5a1ca117f4144e5e3950341eb97c6da",
+  "tree": "dca595ca8ef725b5f51af4732d7499af2346f4cc",
+  "parent": "ef899b8004c650f8564d6f1fc3fa7d9bf9623076",
+  "cleanWorkingTree": true,
+  "files": [
+    {
+      "path": ".storybook/dialogBounds.ts",
+      "sha256": "a6981c601a070200e1be0dae8153c59d33596100b79492918a69120121892c8b"
+    },
+    {
+      "path": "docs/implementation/SPN-089.md",
+      "sha256": "85e26e6e9f3d2f0a44324e224aae48390126d2994fedb9d6e7801200a96ba9e7"
+    },
+    {
+      "path": "src/ui/redesign/Controls.stories.tsx",
+      "sha256": "99403332e916e396c3bc16be44c518a5b93947a4c0980973ed0d1d393b393581"
+    },
+    {
+      "path": "src/ui/redesign/NativeEditors.stories.tsx",
+      "sha256": "5a06bf03810e8b6633d5d7bfecf328d2d58e720cec2e763d73e4c476e54890a6"
+    },
+    {
+      "path": "src/ui/redesign/controls.css",
+      "sha256": "ed56cd4cc511fce5b998d1830a4d5a055a5a349b303cbdccc798501ade08bdc9"
+    },
+    {
+      "path": "src/ui/theme.css",
+      "sha256": "c11509a20ad62f390228bc9b4fb7406363b4c2bb7c4b489dfe4b8672a0aa2db4"
+    }
+  ],
+  "runtime": {
+    "node": "v26.12.1",
+    "browser": "Chrome Headless Shell156.0.8078.4, Playwright revision1248",
+    "browserSource": "https://storage.googleapis.com/chrome-for-testing-public/156.0.8078.4/linux64/chrome-headless-shell-linux64.zip",
+    "browserArchiveSha256": "c3e50596aef52c58f8fda3c6b3411c33d34c88b177b3ed1c2243359fd3b8ba20",
+    "originalDownload": "Playwright CDN responded with 195-byte text/html, causing ZIP validation failure. Exact pinned browser obtained from official Google storage, ZIP CRC checked, executable version verified.",
+    "networkInterfaces": "Runner-only ERR_SYSTEM_ERROR fallback; explicit127.0.0.1 binding, no application/request/assertion changes",
+    "fonts": "Existing repository NotoColorEmoji.ttf installed in environment; application fonts unchanged"
+  },
+  "checks": {
+    "format": {
+      "startedAt": "2026-11-04T22:36:41.680Z",
+      "finishedAt": "2026-11-04T22:36:43.085Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "node_modules/prettier/bin/prettier.cjs",
+        "--write",
+        ".storybook/dialogBounds.ts",
+        "src/ui/redesign/Controls.stories.tsx",
+        "src/ui/redesign/NativeEditors.stories.tsx",
+        "src/ui/redesign/controls.css",
+        "src/ui/theme.css",
+        "docs/implementation/SPN-089.md"
+      ],
+      "elapsedMs": 1404,
+      "peakKiB": 321308,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "typecheck": {
+      "startedAt": "2026-11-04T22:36:56.558Z",
+      "finishedAt": "2026-11-04T22:37:12.187Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "elapsedMs": 15627,
+      "peakKiB": 1874400,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "lint": {
+      "startedAt": "2026-11-04T22:37:36.549Z",
+      "finishedAt": "2026-11-04T22:38:12.487Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "npm",
+        "run",
+        "lint"
+      ],
+      "elapsedMs": 35939,
+      "peakKiB": 779256,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "backlog": {
+      "startedAt": "2026-11-04T22:38:18.986Z",
+      "finishedAt": "2026-11-04T22:38:19.838Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "npm",
+        "run",
+        "backlog:check"
+      ],
+      "elapsedMs": 851,
+      "peakKiB": 326184,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "pr": {
+      "startedAt": "2026-11-04T22:38:53.587Z",
+      "finishedAt": "2026-11-04T22:38:54.937Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "scripts/backlog/cli.ts",
+        "pr",
+        "--base",
+        "7679351822caaa9535d73d656191f2a6597a3380",
+        "--title",
+        "💬 SPN-089 Check remaining dialogs for consistent title icons"
+      ],
+      "elapsedMs": 1349,
+      "peakKiB": 257036,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    },
+    "diagnostic": {
+      "startedAt": "2026-11-04T22:35:33.334Z",
+      "finishedAt": "2026-11-04T22:36:24.494Z",
+      "node": "v26.12.1",
+      "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "/workspace/scratch/ce40e94380e1/validation/diagnose-alignment.ts"
+      ],
+      "elapsedMs": 51160,
+      "peakKiB": 1183460,
+      "code": 0,
+      "signal": null,
+      "aborted": null
+    }
+  },
+  "diagnostic": {
+    "source": {
+      "sha": "ef899b8004c650f8564d6f1fc3fa7d9bf9623076",
+      "checkedOutSha": "b928c3848847eca3433171524a3ed8d331e295e4",
+      "branch": "codex/spn-089-dialog-title-icons",
+      "pullRequest": 260,
+      "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41918564629",
+      "builtAt": "2026-11-04T21:46:14.360Z"
+    },
+    "baselineArchiveSha256": "a39ef7084e29999b2da37c6764dcd90ffa6c5ced5d5cb9b0fcb17c23332906d6",
+    "states": 30,
+    "measuredCues": 34,
+    "maxAbsoluteDeltaPx": 0.5,
+    "failures": [],
+    "negativeControl": {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-controls--long-modal-title",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Delete the household planning folder and all its contents permanently?",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 5,
+          "textTop": 305.21875,
+          "textHeight": 24,
+          "cueTop": 305.21875,
+          "cueHeight": 20,
+          "slotTop": 305.21875,
+          "slotHeight": 20,
+          "delta": -2
+        }
+      ],
+      "after": [
+        {
+          "title": "Delete the household planning folder and all its contents permanently?",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 30px system-ui, sans-serif",
+          "lineCount": 5,
+          "textTop": 305.21875,
+          "textHeight": 24,
+          "cueTop": 307.21875,
+          "cueHeight": 20,
+          "slotTop": 302.21875,
+          "slotHeight": 30,
+          "delta": 0
+        }
+      ]
+    },
+    "purpose": "Diagnostic CSS injection into exact previous hosted artifact; not repaired-source acceptance",
+    "scriptSha256": "deafd68f06f4b843a7d55b7083832183d740ab90650abc1ab4d65e2ab09f01ad"
+  },
+  "acceptance": "Current-source hosted Storybook plays, actual screenshots, final independent visual review and current CI remain pending before validation publication.",
+  "phase": "Local checkpoint before validation publication"
+}

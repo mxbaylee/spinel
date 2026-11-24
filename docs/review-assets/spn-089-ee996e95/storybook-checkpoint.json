@@ -1,0 +1,91 @@
+{
+  "checkedAt": "2026-11-04 22:51:23 UTC",
+  "source": "ee996e95e5a1ca117f4144e5e3950341eb97c6da",
+  "testedMerge": "39a9b6227e0eb4339adbe1b9e99606318e90ef21",
+  "tree": "dca595ca8ef725b5f51af4732d7499af2346f4cc",
+  "run": {
+    "id": 41927434933,
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41927434933",
+    "head": "ee996e95e5a1ca117f4144e5e3950341eb97c6da",
+    "attempt": 1,
+    "status": "in_progress",
+    "conclusion": null
+  },
+  "jobs": [
+    {
+      "id": 126915395863,
+      "name": "Classify changes",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-04T22:41:19Z",
+      "completedAt": "2026-11-04T22:41:44Z"
+    },
+    {
+      "id": 126915627723,
+      "name": "Build Storybook",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-04T22:42:10Z",
+      "completedAt": "2026-11-04T22:42:58Z"
+    },
+    {
+      "id": 126916246169,
+      "name": "Review Storybook desktop (dark)",
+      "status": "in_progress",
+      "conclusion": null,
+      "startedAt": "2026-11-04T22:43:17Z",
+      "completedAt": null,
+      "currentStep": "Review stories and verify shared controls"
+    },
+    {
+      "id": 126916246181,
+      "name": "Review Storybook tablet",
+      "status": "in_progress",
+      "conclusion": null,
+      "startedAt": "2026-11-04T22:46:00Z",
+      "completedAt": null,
+      "currentStep": "Review stories and verify shared controls"
+    },
+    {
+      "id": 126916246241,
+      "name": "Review Storybook mobile (dark)",
+      "status": "in_progress",
+      "conclusion": null,
+      "startedAt": "2026-11-04T22:48:23Z",
+      "completedAt": null,
+      "currentStep": "Review stories and verify shared controls"
+    },
+    {
+      "id": 126916246249,
+      "name": "Review Storybook mobile (light)",
+      "status": "in_progress",
+      "conclusion": null,
+      "startedAt": "2026-11-04T22:44:50Z",
+      "completedAt": null,
+      "currentStep": "Review stories and verify shared controls"
+    },
+    {
+      "id": 126916246410,
+      "name": "Review Storybook desktop (light)",
+      "status": "in_progress",
+      "conclusion": null,
+      "startedAt": "2026-11-04T22:48:57Z",
+      "completedAt": null,
+      "currentStep": "Review stories and verify shared controls"
+    },
+    {
+      "id": 126916247538,
+      "name": "Publish PR preview to GitHub Pages",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-04T22:49:38Z",
+      "completedAt": "2026-11-04T22:49:49Z"
+    }
+  ],
+  "localActualSourceCapture": {
+    "states": 40,
+    "failures": 0,
+    "independentVisualApproval": "/root/dialog_audit approved exact source; see visual-review.json"
+  },
+  "boundary": "Focused current-source acceptance and full-catalogue hosted results are distinct. Jobs not terminal-success at this checkpoint are pending, not passed."
+}

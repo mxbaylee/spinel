@@ -1,0 +1,33 @@
+2026-11-05T02:06:45.3225423Z   1) [doc-responsiveness] › e2e/doc-responsiveness.spec.ts:320:5 › mobile sustained native typing plain-1
+2026-11-05T02:06:45.3226178Z
+2026-11-05T02:06:45.3226492Z     Error: expect(received).toBeLessThanOrEqual(expected)
+2026-11-05T02:06:45.3226849Z
+2026-11-05T02:06:45.3226989Z     Expected: <= 100
+2026-11-05T02:06:45.3227360Z     Received:    129.10000000009313
+2026-11-05T02:06:45.3227848Z
+2026-11-05T02:06:45.3228275Z       716 |             // Idle samples must never dilute the registered capacity distribution.
+2026-11-05T02:06:45.3229170Z       717 |             expect(capacityFlush!.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);
+2026-11-05T02:06:45.3230080Z     > 718 |             expect(capacityFlush!.max).toBeLessThanOrEqual(budgets[preset].flushMaxMs);
+2026-11-05T02:06:45.3231217Z           |                                        ^
+2026-11-05T02:06:45.3231578Z       719 |             expect(idleFlush).not.toBeNull();
+2026-11-05T02:06:45.3231897Z       720 |             {
+2026-11-05T02:06:45.3232345Z       721 |               expect(idleFlush!.p95).toBeLessThanOrEqual(budgets[preset].flushP95Ms);
+2026-11-05T02:06:45.3232938Z         at /home/runner/work/spinel/spinel/e2e/doc-responsiveness.spec.ts:718:40
+2026-11-05T02:06:45.3233252Z
+2026-11-05T02:06:45.3233787Z     attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-11-05T02:06:45.3234701Z     test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/test-failed-1.png
+2026-11-05T02:06:45.3236133Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-11-05T02:06:45.3236414Z
+2026-11-05T02:06:45.3236812Z     attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+2026-11-05T02:06:45.3237908Z     test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/test-failed-2.png
+2026-11-05T02:06:45.3238849Z     ────────────────────────────────────────────────────────────────────────────────────────────────
+2026-11-05T02:06:45.3239119Z
+2026-11-05T02:06:45.3239718Z     Error Context: test-results/doc-responsiveness/doc-responsiveness-mobile-sustained-native-typing-plain-1-doc-responsiveness/error-context.md
+2026-11-05T02:06:45.3240314Z
+2026-11-05T02:06:45.3240320Z
+2026-11-05T02:18:53.9788502Z   1 failed
+2026-11-05T02:18:53.9790051Z   6 passed (15.4m)
+2026-11-05T02:18:54.0525120Z ##[error]Process completed with exit code 1.
+2026-11-05T02:18:55.0544928Z SHA256 digest of uploaded artifact is b1d6d17d1b5f71e29c6149c4a85c649ce184699a8d934ba7eca3ebb8e6805b49
+2026-11-05T02:18:55.4938679Z Artifact doc-responsiveness-mobile successfully finalized. Artifact ID 13382342973
+2026-11-05T02:18:55.4939910Z Artifact doc-responsiveness-mobile has been successfully uploaded! Final size is 2831298 bytes. Artifact ID is 13382342973

@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { getDocsEmptySnapshot } from '@univerjs/core';
 import { failure, pending } from '../.storybook/api.ts';
+import { assertDialogTitle } from '../.storybook/dialogBounds.ts';
 import { HistoryBrowser } from './HistoryBrowser.tsx';
 import type { HistoryVersion } from '../src/shared/historyNavigation.ts';
 
@@ -304,6 +305,23 @@ export const NameFailure: Story = {
     await expect(dialog.getByRole('textbox', { name: 'Version name' })).toHaveValue(
       'Approved plan',
     );
+  },
+};
+export const NameSaved: Story = {
+  parameters: { api: api({ preview: pending() }) },
+  play: async ({ canvasElement }) => {
+    await within(canvasElement).findByRole('button', { name: 'Name current version…' });
+    const canvas = await choose(canvasElement);
+    await userEvent.click(
+      canvas.getByRole('button', { name: /Version actions for .*Ready for review/ }),
+    );
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Rename version…' }));
+    const dialog = await body.findByRole('dialog', { name: 'Name saved version' });
+    await assertDialogTitle(dialog, 'Name saved version');
+    const input = within(dialog).getByRole('textbox', { name: 'Version name' });
+    await expect(input).toHaveValue('Ready for review');
+    await expect(input).toHaveFocus();
   },
 };
 export const NamingFocusReturn: Story = {

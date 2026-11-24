@@ -1,0 +1,35 @@
+{
+  "archiveBytes": 5933894,
+  "archiveSha256": "d572e3e5d0a9d04334bfbc7e2efd8d3d30e33ab9cdb5e4e95b6881e16b79b0e6",
+  "everyEntryCrcVerified": true,
+  "selected": [
+    {
+      "originalPath": "test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development/error-context.md",
+      "savedAs": "error-context.md",
+      "bytes": 11313,
+      "sha256": "0cffddbcfad4a57f8fa4a9e189462074428512e7d6f3dfeecf696f9c36faa137",
+      "crc32": "7165da34"
+    },
+    {
+      "originalPath": "test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development/test-failed-1.png",
+      "savedAs": "failure.png",
+      "bytes": 42815,
+      "sha256": "9c788740dfe8ffa39b4336eb433e336d375215b22f87be100d905995488d7ea7",
+      "crc32": "51b3c6c5"
+    },
+    {
+      "originalPath": "playwright-report/development-2-of-2.json",
+      "savedAs": "../development-2-report.json",
+      "bytes": 1470188,
+      "sha256": "c87d1cc6a25460ce690ea3a49565f0b6f5c8f91c4016ea19ca8fe5152d5ce3af",
+      "crc32": "8dd6d5cc"
+    }
+  ],
+  "traceEntries": [
+    {
+      "path": "test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development-retry1/trace.zip",
+      "bytes": 2198011,
+      "crc32": "2d3aa1ff"
+    }
+  ]
+}

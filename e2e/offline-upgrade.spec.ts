@@ -794,7 +794,10 @@ test('interrupted emitted updates preserve exact native work, a live old client 
       await page
         .getByRole('button', { name: `More actions for ${item.name}`, exact: true })
         .click();
-      await page.getByRole('menuitem', { name: 'Make available offline', exact: true }).click();
+      // This initial host is build A from previousCommit (3a0e2238), before SPN-162.
+      await page
+        .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
+        .click();
       await expect(
         page
           .getByRole('status')

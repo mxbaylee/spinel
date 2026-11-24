@@ -21,6 +21,9 @@ import sheetsEnglish from '@univerjs/preset-sheets-core/locales/en-US';
 import '@univerjs/preset-docs-core/lib/index.css';
 import '@univerjs/preset-sheets-core/lib/index.css';
 import { sheetPreset } from '../../../web/sheetPreset.ts';
+import { docPreset } from '../../../web/docPreset.ts';
+import { NativeCopyPlugin } from '../../../web/nativeCopy.tsx';
+import { BehaviorSubject } from 'rxjs';
 import { documentReady } from '../../../web/documentReady.ts';
 import { editorTheme, installCanvasColors } from '../editorTheme.ts';
 import { getTheme, watchTheme } from '../theme.ts';
@@ -30,6 +33,8 @@ export type NativeEditorProps = {
   kind: 'doc' | 'sheet';
   title?: string;
   readOnly?: boolean;
+  /** Opt-in production addon; its requests use this story's local API fixtures. */
+  copyFileId?: string;
   onReady?: (editor: NativeEditorHandle) => void;
   onChange?: () => void;
   getSnapshot?: () => NativeSnapshot | undefined;
@@ -190,6 +195,7 @@ export function NativeEditor({
   kind,
   title,
   readOnly = false,
+  copyFileId,
   onReady,
   onChange,
   getSnapshot,
@@ -239,15 +245,23 @@ export function NativeEditor({
       await Promise.resolve();
       if (stopped) return;
       const mobile = window.matchMedia('(pointer: coarse) and (max-width: 900px)').matches;
+      const copyStatus = copyFileId ? new BehaviorSubject<string | null>(null) : undefined;
+      if (copyStatus) cleanups.push(() => copyStatus.complete());
       const created = createUniver({
         theme: editorTheme(),
         darkMode: getTheme() === 'dark',
         locale: LocaleType.EN_US,
         locales: { [LocaleType.EN_US]: mergeLocales(docsEnglish, sheetsEnglish) },
+        plugins:
+          copyFileId && copyStatus
+            ? [[NativeCopyPlugin, { id: copyFileId, unavailable: copyStatus }]]
+            : [],
         presets:
           kind === 'sheet'
             ? [sheetPreset(container, mobile)]
-            : [UniverDocsCorePreset({ container, disableAutoFocus: true })],
+            : copyFileId
+              ? [docPreset(container, mobile, readOnly, undefined, true)]
+              : [UniverDocsCorePreset({ container, disableAutoFocus: true })],
       });
       univer = created.univer;
       installCanvasColors(univer);
@@ -364,7 +378,7 @@ export function NativeEditor({
       release();
     });
     return release;
-  }, [kind, title, readOnly]);
+  }, [kind, title, readOnly, copyFileId]);
   return (
     <section
       className="rd-native-editor"

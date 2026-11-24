@@ -185,7 +185,12 @@
 .sp-modal-title-icon {
   display: inline-flex;
   flex: 0 0 20px;
-  margin-top: 3px;
+  align-items: center;
+  justify-content: center;
+  block-size: 1lh;
+  font-size: 20px;
+  /* In line-height, lh follows the parent's first-line metrics. */
+  line-height: 1lh;
   color: var(--sp-muted);
 }
 .sp-modal-heading > button {

@@ -1,0 +1,18 @@
+{
+  "source": "3e4e290b46748d8c0da01b7b95085e7dd92cabcd",
+  "run": 45302501585,
+  "attempt": 1,
+  "job": 138138220116,
+  "artifact": 14880315546,
+  "artifactSha256": "fc83314e6a606e75e95cf0ec1ddc871ce47ad67df57362471bb6128d590cbfdb",
+  "artifactExpires": "2026-12-08T01:13:22Z",
+  "browser": "Firefox160.0.1",
+  "ownedPid": 2593,
+  "observedPid": 2622,
+  "observedBundle": "org.mozilla.plugincontainer",
+  "disposition": "Identity guard rejected before chrome mutation; real localhost storage prompt remained visible. Collection-reference instability is an inference, not proven original cause. Fresh native execution remains required.",
+  "files": {
+    "firefox-storage-prompt-1.json": "eabb5538d8392b4a93d02902ec854e93166917ae04c629d725aa999991970efb",
+    "firefox-storage-prompt-1.png": "2b57d490cd1440cd0afd19baa8cad5dda2423df80a1ee445e5dcf64ca9b22399"
+  }
+}

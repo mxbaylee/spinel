@@ -142,7 +142,7 @@ export function SearchControls({
       )}
       <Modal
         title="Search options"
-        icon="info"
+        icon="search"
         description="Search words and filters edit the same query. All filters apply together within the current scope."
         open={optionsOpen}
         onOpenChange={setOptionsOpen}

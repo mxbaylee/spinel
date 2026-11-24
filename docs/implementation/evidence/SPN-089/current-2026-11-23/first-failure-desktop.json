@@ -1,0 +1,107 @@
+{
+  "id": "redesign-native-editors--make-copy-dialog",
+  "variant": "light",
+  "message": "Error: Native readiness failed for http://127.0.0.1:6007/iframe.html?id=redesign-native-editors--make-copy-dialog&viewMode=story&globals=theme%3Alight: Start\nInsert\nView\nPaste\nTitle\n128 words\n    at waitForNativeEditor (file:///Users/mxbaylee/projects/spinel/scripts/screenshots.ts:668:13)\n    at async file:///Users/mxbaylee/projects/spinel/scripts/screenshots.ts:164:11",
+  "filename": "failed-redesign-native-editors--make-copy-dialog-light.png",
+  "storybook": {
+    "phase": "finished",
+    "storyFinished": {
+      "storyId": "redesign-native-editors--make-copy-dialog",
+      "status": "success"
+    },
+    "playErrors": [
+      {
+        "event": "playFunctionThrewException",
+        "count": 0,
+        "samples": []
+      },
+      {
+        "event": "unhandledErrorsWhilePlaying",
+        "count": 0,
+        "samples": []
+      }
+    ]
+  },
+  "accessibility": "- region \"Document editor\":\n  - region \"Notifications alt+T\"\n  - region \"Notifications alt+T\"\n- dialog \"Make a copy\":\n  - heading \"Make a copy\" [level=2]\n  - form \"Make a copy\":\n    - text: Name\n    - textbox \"Name\": Autumn plans (copy)\n    - text: Folder\n    - combobox \"Folder\":\n      - option \"My files\" [selected]\n    - paragraph: Only you can open the copy until you share it.\n    - button \"Cancel\"\n    - button \"Make a copy\"",
+  "nativeGeometry": {
+    "viewport": {
+      "width": 1280,
+      "height": 900,
+      "scale": 1
+    },
+    "host": {
+      "x": 0,
+      "y": 0,
+      "width": 1280,
+      "height": 900,
+      "top": 0,
+      "right": 1280,
+      "bottom": 900,
+      "left": 0
+    },
+    "layout": {
+      "x": 0,
+      "y": 0,
+      "width": 1280,
+      "height": 900,
+      "top": 0,
+      "right": 1280,
+      "bottom": 900,
+      "left": 0
+    },
+    "toolbar": {
+      "x": 12,
+      "y": 43.5,
+      "width": 1256,
+      "height": 24,
+      "top": 43.5,
+      "right": 1268,
+      "bottom": 67.5,
+      "left": 12
+    },
+    "statistics": {
+      "x": 20,
+      "y": 866,
+      "width": 93.375,
+      "height": 28,
+      "top": 866,
+      "right": 113.375,
+      "bottom": 894,
+      "left": 20
+    },
+    "statisticsParent": {
+      "x": 20,
+      "y": 866,
+      "width": 93.375,
+      "height": 28,
+      "top": 866,
+      "right": 113.375,
+      "bottom": 894,
+      "left": 20
+    },
+    "mount": {
+      "x": 0,
+      "y": 76,
+      "width": 1280,
+      "height": 783,
+      "top": 76,
+      "right": 1280,
+      "bottom": 859,
+      "left": 0
+    },
+    "canvas": {
+      "x": 0,
+      "y": 76,
+      "width": 1280,
+      "height": 783,
+      "top": 76,
+      "right": 1280,
+      "bottom": 859,
+      "left": 0
+    },
+    "bitmap": {
+      "width": 1280,
+      "height": 783
+    }
+  }
+}

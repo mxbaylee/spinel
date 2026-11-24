@@ -162,7 +162,10 @@ try {
         }
         if (id.startsWith('redesign-')) {
           await expect(page.locator('.sp-ui, .rd-native-editor').first()).toBeVisible();
-          await waitForNativeEditor(page);
+          await waitForNativeEditor(
+            page,
+            id === 'redesign-native-editors--make-copy-dialog' ? 'Make a copy' : undefined,
+          );
           expect(
             await page.evaluate(
               () => document.documentElement.scrollWidth <= window.innerWidth + 1,
@@ -668,7 +671,7 @@ async function nativeEditorGeometry(page: Page) {
   );
 }
 
-async function waitForNativeEditor(page: Page) {
+async function waitForNativeEditor(page: Page, dialogTitle?: string) {
   const editor = page.locator('.rd-native-editor:visible');
   // The connected editor loads lazily; its visible slot precedes the native host.
   if ((await page.locator('.rd-live-editor:visible').count()) || (await editor.count())) {
@@ -690,7 +693,15 @@ async function waitForNativeEditor(page: Page) {
       const canvas = editor.locator('canvas[aria-label]');
       await expect(canvas).toBeVisible();
       await expect(editor.locator('[data-u-comp="workbench-skeleton-toolbar"]')).toBeHidden();
-      if ((await canvas.getAttribute('aria-label')) === 'Document canvas') {
+      if (dialogTitle) {
+        // The open native dialog hides the desktop editor from the accessibility
+        // tree; the production phone wrapper has no desktop footer at all.
+        // This story owns the dialog. Ordinary native stories still require all
+        // editor controls below, and every owner retains canvas/host geometry.
+        const dialog = page.getByRole('dialog', { name: dialogTitle, exact: true });
+        await expect(dialog).toBeVisible();
+        await expect(dialog.getByRole('form', { name: dialogTitle, exact: true })).toBeVisible();
+      } else if ((await canvas.getAttribute('aria-label')) === 'Document canvas') {
         // The Doc footer mounts from rootUnitType$ after native ready. Sampling
         // before its real controls appear can record a canvas 40px too tall.
         await expect(editor.getByRole('toolbar', { name: 'Start', exact: true })).toBeVisible();
@@ -721,9 +732,12 @@ async function waitForNativeEditor(page: Page) {
     } catch (error) {
       const id = new URL(page.url()).searchParams.get('id') ?? 'unknown';
       await page.screenshot({ path: resolve(directory, `failed-native-${id}.png`) });
-      throw new Error(`Native readiness failed for ${page.url()}: ${await editor.innerText()}`, {
-        cause: error,
-      });
+      throw new Error(
+        `Native readiness failed for ${page.url()}: ${String(error)}; ${await editor.innerText()}`,
+        {
+          cause: error,
+        },
+      );
     }
   }
 }

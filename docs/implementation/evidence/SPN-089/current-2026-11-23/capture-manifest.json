@@ -1,0 +1,482 @@
+{
+  "reviewedAt": "2026-11-24T01:00:07.686Z",
+  "durationMs": 39805,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "all",
+  "theme": "all",
+  "variants": [
+    "light",
+    "dark",
+    "phone",
+    "phone-dark",
+    "tablet"
+  ],
+  "requested": [
+    "redesign-controls--long-modal-title",
+    "redesign-controls--emoji-modal-title",
+    "redesign-controls--pending-modal",
+    "redesign-controls--error-modal",
+    "docs-formulas--insert",
+    "docs-formulas--edit",
+    "account-icon-picker--browse",
+    "space-review--pages-drawer",
+    "redesign-native-editors--make-copy-dialog"
+  ],
+  "checked": [
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "light"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "light"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "light"
+    },
+    {
+      "id": "account-icon-picker--browse",
+      "variant": "light"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "dark"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "dark"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "dark"
+    },
+    {
+      "id": "account-icon-picker--browse",
+      "variant": "dark"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "phone"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "phone"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "phone"
+    },
+    {
+      "id": "account-icon-picker--browse",
+      "variant": "phone"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-icon-picker--browse",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "tablet"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "tablet"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "tablet"
+    },
+    {
+      "id": "account-icon-picker--browse",
+      "variant": "tablet"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "tablet"
+    }
+  ],
+  "captures": [
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "light",
+      "filename": "redesign-controls--long-modal-title-light.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "light",
+      "filename": "redesign-controls--emoji-modal-title-light.png",
+      "title": "Current production/Controls / Emoji Modal Title"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "light",
+      "filename": "redesign-controls--pending-modal-light.png",
+      "title": "Current production/Controls / Pending Modal"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "light",
+      "filename": "redesign-controls--error-modal-light.png",
+      "title": "Current production/Controls / Error Modal"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "light",
+      "filename": "docs-formulas--insert-light.png",
+      "title": "Current production/Docs/Formulas / Insert"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "light",
+      "filename": "docs-formulas--edit-light.png",
+      "title": "Current production/Docs/Formulas / Edit"
+    },
+    {
+      "id": "account-icon-picker--browse",
+      "variant": "light",
+      "filename": "account-icon-picker--browse-light.png",
+      "title": "Current production/Account/Icon picker / Browse"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "light",
+      "filename": "space-review--pages-drawer-light.png",
+      "title": "Current production/Spaces/Space / Pages Drawer"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "light",
+      "filename": "redesign-native-editors--make-copy-dialog-light.png",
+      "title": "Native fixtures/Editors / Make Copy Dialog"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "dark",
+      "filename": "redesign-controls--long-modal-title-dark.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "dark",
+      "filename": "redesign-controls--emoji-modal-title-dark.png",
+      "title": "Current production/Controls / Emoji Modal Title"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "dark",
+      "filename": "redesign-controls--pending-modal-dark.png",
+      "title": "Current production/Controls / Pending Modal"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "dark",
+      "filename": "redesign-controls--error-modal-dark.png",
+      "title": "Current production/Controls / Error Modal"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "dark",
+      "filename": "docs-formulas--insert-dark.png",
+      "title": "Current production/Docs/Formulas / Insert"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "dark",
+      "filename": "docs-formulas--edit-dark.png",
+      "title": "Current production/Docs/Formulas / Edit"
+    },
+    {
+      "id": "account-icon-picker--browse",
+      "variant": "dark",
+      "filename": "account-icon-picker--browse-dark.png",
+      "title": "Current production/Account/Icon picker / Browse"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "dark",
+      "filename": "space-review--pages-drawer-dark.png",
+      "title": "Current production/Spaces/Space / Pages Drawer"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "dark",
+      "filename": "redesign-native-editors--make-copy-dialog-dark.png",
+      "title": "Native fixtures/Editors / Make Copy Dialog"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone",
+      "filename": "redesign-controls--long-modal-title-phone.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "phone",
+      "filename": "redesign-controls--emoji-modal-title-phone.png",
+      "title": "Current production/Controls / Emoji Modal Title"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "phone",
+      "filename": "redesign-controls--pending-modal-phone.png",
+      "title": "Current production/Controls / Pending Modal"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "phone",
+      "filename": "redesign-controls--error-modal-phone.png",
+      "title": "Current production/Controls / Error Modal"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "phone",
+      "filename": "docs-formulas--insert-phone.png",
+      "title": "Current production/Docs/Formulas / Insert"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "phone",
+      "filename": "docs-formulas--edit-phone.png",
+      "title": "Current production/Docs/Formulas / Edit"
+    },
+    {
+      "id": "account-icon-picker--browse",
+      "variant": "phone",
+      "filename": "account-icon-picker--browse-phone.png",
+      "title": "Current production/Account/Icon picker / Browse"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "phone",
+      "filename": "space-review--pages-drawer-phone.png",
+      "title": "Current production/Spaces/Space / Pages Drawer"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "phone",
+      "filename": "redesign-native-editors--make-copy-dialog-phone.png",
+      "title": "Native fixtures/Editors / Make Copy Dialog"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone-dark",
+      "filename": "redesign-controls--long-modal-title-phone-dark.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "phone-dark",
+      "filename": "redesign-controls--emoji-modal-title-phone-dark.png",
+      "title": "Current production/Controls / Emoji Modal Title"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "phone-dark",
+      "filename": "redesign-controls--pending-modal-phone-dark.png",
+      "title": "Current production/Controls / Pending Modal"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "phone-dark",
+      "filename": "redesign-controls--error-modal-phone-dark.png",
+      "title": "Current production/Controls / Error Modal"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "phone-dark",
+      "filename": "docs-formulas--insert-phone-dark.png",
+      "title": "Current production/Docs/Formulas / Insert"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "phone-dark",
+      "filename": "docs-formulas--edit-phone-dark.png",
+      "title": "Current production/Docs/Formulas / Edit"
+    },
+    {
+      "id": "account-icon-picker--browse",
+      "variant": "phone-dark",
+      "filename": "account-icon-picker--browse-phone-dark.png",
+      "title": "Current production/Account/Icon picker / Browse"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "phone-dark",
+      "filename": "space-review--pages-drawer-phone-dark.png",
+      "title": "Current production/Spaces/Space / Pages Drawer"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "phone-dark",
+      "filename": "redesign-native-editors--make-copy-dialog-phone-dark.png",
+      "title": "Native fixtures/Editors / Make Copy Dialog"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "tablet",
+      "filename": "redesign-controls--long-modal-title-tablet.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "tablet",
+      "filename": "redesign-controls--emoji-modal-title-tablet.png",
+      "title": "Current production/Controls / Emoji Modal Title"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "tablet",
+      "filename": "redesign-controls--pending-modal-tablet.png",
+      "title": "Current production/Controls / Pending Modal"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "tablet",
+      "filename": "redesign-controls--error-modal-tablet.png",
+      "title": "Current production/Controls / Error Modal"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "tablet",
+      "filename": "docs-formulas--insert-tablet.png",
+      "title": "Current production/Docs/Formulas / Insert"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "tablet",
+      "filename": "docs-formulas--edit-tablet.png",
+      "title": "Current production/Docs/Formulas / Edit"
+    },
+    {
+      "id": "account-icon-picker--browse",
+      "variant": "tablet",
+      "filename": "account-icon-picker--browse-tablet.png",
+      "title": "Current production/Account/Icon picker / Browse"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "tablet",
+      "filename": "space-review--pages-drawer-tablet.png",
+      "title": "Current production/Spaces/Space / Pages Drawer"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "tablet",
+      "filename": "redesign-native-editors--make-copy-dialog-tablet.png",
+      "title": "Native fixtures/Editors / Make Copy Dialog"
+    }
+  ],
+  "verifications": [],
+  "failures": []
+}

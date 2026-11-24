@@ -1,0 +1,306 @@
+{
+  "implementationSourceSha": "4cd7dd0eb00ad13dc09890110dcad136b57c516b",
+  "sourceReuse": "Later candidate changes are documentation, backlog bookkeeping and retained baseline evidence only; implementation TypeScript/TSX/CSS are unchanged.",
+  "watchdog": {
+    "combinedResidentMemoryLimitKiB": 2097152,
+    "deadlineMs": 480000,
+    "samplingMs": 100
+  },
+  "finalTypecheckEnvironment": {
+    "node": "26.12.1",
+    "GOMEMLIMIT": "1400MiB"
+  },
+  "attempts": [
+    {
+      "startedAt": "2026-11-04T20:34:01.616Z",
+      "finishedAt": "2026-11-04T20:34:15.308Z",
+      "node": "v26.12.1",
+      "command": "npm",
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "elapsedMs": 13692,
+      "peakKiB": 1952448,
+      "code": 1,
+      "signal": null,
+      "aborted": null,
+      "name": "typecheck-initial",
+      "disposition": "Draft: unsupported Testing Library exact option and one omitted Appearance cue; corrected."
+    },
+    {
+      "startedAt": "2026-11-04T20:34:50.594Z",
+      "finishedAt": "2026-11-04T20:34:59.067Z",
+      "node": "v26.12.1",
+      "command": "npm",
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "elapsedMs": 8470,
+      "peakKiB": 1942668,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "typecheck-draft",
+      "disposition": "Draft passed after the initial compile fixes."
+    },
+    {
+      "startedAt": "2026-11-04T20:38:50.411Z",
+      "finishedAt": "2026-11-04T20:38:58.060Z",
+      "node": "v26.12.1",
+      "command": "npm",
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "elapsedMs": 7649,
+      "peakKiB": 1993584,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "typecheck-native-draft",
+      "disposition": "Draft passed with native copy integration."
+    },
+    {
+      "startedAt": "2026-11-04T20:40:33.792Z",
+      "finishedAt": "2026-11-04T20:41:58.943Z",
+      "node": "v26.12.1",
+      "command": "npm",
+      "args": [
+        "run",
+        "typecheck"
+      ],
+      "elapsedMs": 85150,
+      "peakKiB": 1972548,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "typecheck-preview",
+      "disposition": "Passed after production preview story additions."
+    },
+    {
+      "startedAt": "2026-11-04T20:39:15.034Z",
+      "finishedAt": "2026-11-04T20:39:48.282Z",
+      "node": "v26.12.1",
+      "command": "npm",
+      "args": [
+        "run",
+        "lint"
+      ],
+      "elapsedMs": 33248,
+      "peakKiB": 740780,
+      "code": 1,
+      "signal": null,
+      "aborted": null,
+      "name": "lint-draft",
+      "disposition": "Dependency/lint passed; formatting failed in a concurrently edited Appearance story, then corrected."
+    },
+    {
+      "startedAt": "2026-11-04T20:43:11.409Z",
+      "finishedAt": "2026-11-04T20:43:12.249Z",
+      "node": "v26.12.1",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "--max-old-space-size=1024",
+        "--import",
+        "./.storybook/typescript-api.ts",
+        "node_modules/storybook/dist/bin/dispatcher.js",
+        "build",
+        "-o",
+        "storybook-static"
+      ],
+      "elapsedMs": 839,
+      "peakKiB": 311340,
+      "code": 1,
+      "signal": null,
+      "aborted": null,
+      "name": "storybook-build",
+      "disposition": "Startup unavailable: container cannot enumerate network interfaces."
+    },
+    {
+      "startedAt": "2026-11-04T20:43:35.432Z",
+      "finishedAt": "2026-11-04T20:44:32.262Z",
+      "node": "v26.12.1",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "--max-old-space-size=1024",
+        "--import",
+        "./.storybook/typescript-api.ts",
+        "node_modules/storybook/dist/bin/dispatcher.js",
+        "build",
+        "-o",
+        "storybook-static"
+      ],
+      "elapsedMs": 56830,
+      "peakKiB": 2097244,
+      "code": 1,
+      "signal": null,
+      "aborted": "process tree exceeded 2 GiB",
+      "name": "storybook-build-local",
+      "disposition": "Runner-only empty interface inventory; process-tree watchdog aborted the full build."
+    },
+    {
+      "startedAt": "2026-11-04T20:45:32.177Z",
+      "finishedAt": "2026-11-04T20:45:38.829Z",
+      "node": "v26.12.1",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "--max-old-space-size=768",
+        "--import",
+        "./.storybook/typescript-api.ts",
+        "node_modules/storybook/dist/bin/dispatcher.js",
+        "build",
+        "-o",
+        "storybook-static"
+      ],
+      "elapsedMs": 6639,
+      "peakKiB": 616976,
+      "code": 1,
+      "signal": null,
+      "aborted": null,
+      "name": "storybook-build-bounded",
+      "disposition": "Reduced heap/parallelism attempt failed on existing output directory before compilation."
+    },
+    {
+      "startedAt": "2026-11-04T20:46:01.985Z",
+      "finishedAt": "2026-11-04T20:46:28.883Z",
+      "node": "v26.12.1",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "--max-old-space-size=768",
+        "--import",
+        "./.storybook/typescript-api.ts",
+        "node_modules/storybook/dist/bin/dispatcher.js",
+        "build",
+        "-o",
+        "/tmp/spn089-storybook-current"
+      ],
+      "elapsedMs": 26897,
+      "peakKiB": 1849820,
+      "code": 1,
+      "signal": null,
+      "aborted": null,
+      "name": "storybook-build-clean",
+      "disposition": "Fresh output with 768 MiB heap: JavaScript heap exhausted."
+    },
+    {
+      "startedAt": "2026-11-04T20:46:50.702Z",
+      "finishedAt": "2026-11-04T20:48:11.389Z",
+      "node": "v26.12.1",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "--max-old-space-size=896",
+        "--import",
+        "./.storybook/typescript-api.ts",
+        "node_modules/storybook/dist/bin/dispatcher.js",
+        "build",
+        "-o",
+        "/tmp/spn089-storybook-896"
+      ],
+      "elapsedMs": 80687,
+      "peakKiB": 2090016,
+      "code": 1,
+      "signal": null,
+      "aborted": null,
+      "name": "storybook-build-896",
+      "disposition": "Fresh output with 896 MiB heap and one compiler thread: heap exhausted."
+    },
+    {
+      "startedAt": "2026-11-04T20:49:07.469Z",
+      "finishedAt": "2026-11-04T20:51:04.066Z",
+      "node": "v26.12.1",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "node",
+        "--max-old-space-size=1024",
+        "--import",
+        "./.storybook/typescript-api.ts",
+        "node_modules/storybook/dist/bin/dispatcher.js",
+        "build",
+        "--config-dir",
+        "<workspace>/validation/storybook-focused",
+        "-o",
+        "/tmp/spn089-storybook-focused"
+      ],
+      "elapsedMs": 116597,
+      "peakKiB": 1899628,
+      "code": 1,
+      "signal": null,
+      "aborted": null,
+      "name": "storybook-build-focused",
+      "disposition": "Focused ten-story-module catalogue with 1024 MiB heap: heap exhausted. Full current build/render acceptance assigned to hosted CI."
+    },
+    {
+      "startedAt": "2026-11-04T20:52:31.163Z",
+      "finishedAt": "2026-11-04T20:52:38.536Z",
+      "node": "v26.12.1",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "elapsedMs": 7373,
+      "peakKiB": 2098152,
+      "code": 1,
+      "signal": null,
+      "aborted": "process tree exceeded 2 GiB",
+      "name": "typecheck-final",
+      "disposition": "Final full typecheck attempt resource-aborted; serial/npm overhead crossed the watchdog limit."
+    },
+    {
+      "startedAt": "2026-11-04T20:54:44.128Z",
+      "finishedAt": "2026-11-04T20:54:58.391Z",
+      "node": "v26.12.1",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "npm",
+        "run",
+        "typecheck"
+      ],
+      "elapsedMs": 14263,
+      "peakKiB": 1852752,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "typecheck-bounded",
+      "disposition": "Final full typecheck passed with GOMEMLIMIT=1400MiB; same compiler, config, files and assertions."
+    },
+    {
+      "startedAt": "2026-11-04T20:54:58.530Z",
+      "finishedAt": "2026-11-04T20:55:56.454Z",
+      "node": "v26.12.1",
+      "command": "node",
+      "args": [
+        "scripts/serial.ts",
+        "npm",
+        "run",
+        "lint"
+      ],
+      "elapsedMs": 57925,
+      "peakKiB": 816824,
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "name": "lint-final",
+      "disposition": "Final dependency, lint and formatting checks passed."
+    }
+  ],
+  "finalBacklog": "backlog ok: 20 open tickets",
+  "finalPullRequestCheck": "pull request ok",
+  "hostedAcceptance": "Current-head CI, native copy integration tests, complete built Storybook plays and actual current-image visual approval are required before ready; not claimed by local results."
+}

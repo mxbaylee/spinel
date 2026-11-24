@@ -54,12 +54,15 @@ mock screen sources and their private CSS, keeping the production Controls
 specimen's layout in `controlsStories.css`. Production entry styles, shared
 controls, native loading/editor fixtures and gem artwork remain with their live
 consumers. Visiting Controls must not restyle another production story in the same
-Storybook document. SPN-089 checks production dialogs and their actual stories.
+Storybook document. 💬 [SPN-089](SPN-089.md) checks production dialogs and their
+actual stories, with explicit title cues and named previews that leave the
+reviewed dialogs open.
 
 Appearance, shared Controls and Theme control already render shipped components
 and move into Current production with their existing IDs retained. Native
 editors remain under Native fixtures with their keyboard, viewer, snapshot and
-native-menu regression checks. Their isolated SDK setup is not the production
-Doc mobile wrapper. Retired-only mock walkthrough assertions and old
+native-menu regression checks. Their ordinary isolated SDK setup is not the production
+Doc mobile wrapper; the opt-in native Make a copy preview uses that production
+wrapper and addon with local API fixtures. Retired-only mock walkthrough assertions and old
 before/proposed report sections are removed; surviving production and native
 checks remain.

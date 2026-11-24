@@ -1,0 +1,40 @@
+{
+  "sourceSha": "95d52be36061315bff866dec615544104ca4767c",
+  "files": [
+    {
+      "path": "receipt.json",
+      "bytes": 4980,
+      "sha256": "1204aa808a37c72c09eadbc4b493ee66ade4106fbe1752d14c2524e0a68076de"
+    },
+    {
+      "path": "sanitized-history-results.json",
+      "bytes": 1785,
+      "sha256": "b2760ecab9d30ed13227dea0a7e1a4c1bb4b40b15a2cc493f74c46e4b4925220"
+    },
+    {
+      "path": "failure-log.txt",
+      "bytes": 9931,
+      "sha256": "3683aa74d1fb5a391f36092d10029e37d69024b9bc7a6edfb15b2cf7bec84d9a"
+    },
+    {
+      "path": "observed-page.yaml",
+      "bytes": 2863,
+      "sha256": "347b11035008deda91b18edb7306f808bbf48ede550b9ca6e862b7565d0ed234"
+    },
+    {
+      "path": "failure.png",
+      "bytes": 42815,
+      "sha256": "9c788740dfe8ffa39b4336eb433e336d375215b22f87be100d905995488d7ea7"
+    },
+    {
+      "path": "source-hashes.json",
+      "bytes": 1143,
+      "sha256": "cd591a1b37828eee5a6593363f3524b684a9466f18aa5d1977ca481574fbbd02"
+    },
+    {
+      "path": "extraction-manifest.json",
+      "bytes": 1292,
+      "sha256": "faf6cf3a2b4b00e20efb999382d8bdb1d8f12b745209d3bec6950844f7556d6f"
+    }
+  ]
+}

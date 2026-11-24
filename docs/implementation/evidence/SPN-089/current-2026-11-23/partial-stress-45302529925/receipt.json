@@ -1,0 +1,10 @@
+{
+  "source": "3e4e290b46748d8c0da01b7b95085e7dd92cabcd",
+  "run": 45302529925,
+  "attempt": 1,
+  "conclusion": "cancelled",
+  "artifact": 14880915163,
+  "artifactExpires": "2026-12-01T01:22:19Z",
+  "sha256": "edd52ca966d4c6862607f8fb33bc2e8842ad73502f479ca062a10d082b75c9aa",
+  "disposition": "Partial observations only; cancelled for necessary Firefox harness repair. All current-head stress acceptance remains pending."
+}
