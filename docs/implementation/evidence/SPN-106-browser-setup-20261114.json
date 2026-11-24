@@ -1,0 +1,768 @@
+{
+  "source": "5adacb6b8acb9f39941cebb1de9701ca8224b5a3",
+  "base": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "fixtureSha256": "8ac3b2ad01f5d381631f8fd106596f800851f313483688c6e55a72f2fdf8db85",
+  "environment": {
+    "project": "development",
+    "node": "26.13.0",
+    "CI": "unset",
+    "SPINEL_E2E_PROJECT": "development",
+    "privateDependencies": true
+  },
+  "attempts": [
+    {
+      "name": "browser-desktop-account-first",
+      "watchdog": {
+        "name": "spn106-browser-desktop-account-first-20261114",
+        "args": [
+          "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "--project=development",
+          "e2e/documents.spec.ts",
+          "--grep",
+          "^desktop account Doc viewer opens plain and dated documents without a protection warning$",
+          "--reporter=line,json"
+        ],
+        "code": 1,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 2959,
+        "peakKiB": 1256224
+      },
+      "log": "[WebServer] (node:46137) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)\n\n[WebServer] Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator.\n[WebServer] Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator.\n[WebServer] Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator.\n\nError: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.\n\n{\"name\":\"spn106-browser-desktop-account-first-20261114\",\"args\":[\"/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node\",\"node_modules/@playwright/test/cli.js\",\"test\",\"--project=development\",\"e2e/documents.spec.ts\",\"--grep\",\"^desktop account Doc viewer opens plain and dated documents without a protection warning$\",\"--reporter=line,json\"],\"code\":1,\"signal\":null,\"reason\":null,\"elapsedMs\":2959,\"peakKiB\":1256224}\n",
+      "report": {
+        "config": {
+          "argv": [
+            "/private/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+            "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/node_modules/@playwright/test/cli.js",
+            "test",
+            "--project=development",
+            "e2e/documents.spec.ts",
+            "--grep",
+            "^desktop account Doc viewer opens plain and dated documents without a protection warning$",
+            "--reporter=line,json"
+          ],
+          "configFile": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/playwright.config.ts",
+          "rootDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+          "failOnFlakyTests": false,
+          "forbidOnly": false,
+          "fullyParallel": true,
+          "globalSetup": null,
+          "globalTeardown": null,
+          "globalTimeout": 0,
+          "grep": {},
+          "grepInvert": null,
+          "maxFailures": 0,
+          "metadata": {},
+          "preserveOutput": "always",
+          "projects": [
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {},
+              "id": "development",
+              "name": "development",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [
+                "**/pwa.spec.ts",
+                "**/offline.spec.ts",
+                "**/offline-editing.spec.ts",
+                "**/offline-creation.spec.ts",
+                "**/offline-recovery.spec.ts",
+                "**/offline-device.spec.ts",
+                "**/offline-sign-out.spec.ts",
+                "**/offline-upgrade.spec.ts",
+                "**/supervised-restore.spec.ts",
+                "**/sync-client.spec.ts",
+                "**/doc-responsiveness*.spec.ts"
+              ],
+              "testMatch": [
+                "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {},
+              "id": "production",
+              "name": "production",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [
+                "**/pwa.spec.ts",
+                "**/offline-editing.spec.ts",
+                "**/offline-creation.spec.ts",
+                "**/offline-recovery.spec.ts",
+                "**/offline-upgrade.spec.ts",
+                "**/supervised-restore.spec.ts",
+                "**/sync-client.spec.ts",
+                "**/doc-responsiveness*.spec.ts"
+              ],
+              "testMatch": [
+                "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {},
+              "id": "sync-development",
+              "name": "sync-development",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/sync-client.spec.ts",
+                "**/doc-mobile.spec.ts"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {},
+              "id": "sync-production",
+              "name": "sync-production",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/sync-client.spec.ts",
+                "**/doc-mobile.spec.ts",
+                "**/offline-editing.spec.ts",
+                "**/offline-creation.spec.ts",
+                "**/offline-recovery.spec.ts"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {},
+              "id": "sync-soak-sheet",
+              "name": "sync-soak-sheet",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/sync-client.spec.ts"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {},
+              "id": "sync-soak-doc",
+              "name": "sync-soak-doc",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/sync-client.spec.ts"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {},
+              "id": "doc-responsiveness",
+              "name": "doc-responsiveness",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/doc-responsiveness.spec.ts"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {},
+              "id": "doc-callback-lifetimes",
+              "name": "doc-callback-lifetimes",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/doc-responsiveness-callbacks.spec.ts"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {},
+              "id": "offline-upgrade",
+              "name": "offline-upgrade",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/offline-upgrade.spec.ts"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {},
+              "id": "supervised-restore",
+              "name": "supervised-restore",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/supervised-restore.spec.ts"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {},
+              "id": "mobile-https",
+              "name": "mobile-https",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/pwa.spec.ts",
+                "**/doc-mobile.spec.ts"
+              ],
+              "timeout": 30000
+            }
+          ],
+          "filteredProjects": [
+            {
+              "grep": {},
+              "grepInvert": null,
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {},
+              "name": "development",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "snapshotDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [
+                "**/pwa.spec.ts",
+                "**/offline.spec.ts",
+                "**/offline-editing.spec.ts",
+                "**/offline-creation.spec.ts",
+                "**/offline-recovery.spec.ts",
+                "**/offline-device.spec.ts",
+                "**/offline-sign-out.spec.ts",
+                "**/offline-upgrade.spec.ts",
+                "**/supervised-restore.spec.ts",
+                "**/sync-client.spec.ts",
+                "**/doc-responsiveness*.spec.ts"
+              ],
+              "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+              "timeout": 30000,
+              "use": {
+                "trace": "on-first-retry",
+                "screenshot": "only-on-failure",
+                "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+                "viewport": {
+                  "width": 1280,
+                  "height": 720
+                },
+                "screen": {
+                  "width": 1920,
+                  "height": 1080
+                },
+                "deviceScaleFactor": 1,
+                "isMobile": false,
+                "hasTouch": false,
+                "defaultBrowserType": "chromium",
+                "baseURL": "http://localhost:3100"
+              },
+              "dependencies": [],
+              "ignoreSnapshots": false,
+              "__projectId": "development"
+            }
+          ],
+          "quiet": false,
+          "reporter": [
+            [
+              "line"
+            ],
+            [
+              "json"
+            ]
+          ],
+          "reportSlowTests": {
+            "max": 5,
+            "threshold": 300000
+          },
+          "shard": null,
+          "tags": [],
+          "updateSnapshots": "default",
+          "updateSourceMethod": "patch",
+          "version": "1.64.1",
+          "workers": 1,
+          "webServer": null
+        },
+        "suites": [],
+        "errors": [
+          {
+            "message": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments.",
+            "stack": "Error: No tests found.\nMake sure that arguments are regular expressions matching test files.\nYou may need to escape symbols like \"$\" or \"*\" and quote the arguments."
+          }
+        ],
+        "stats": {
+          "startTime": "2026-11-14T20:38:41.489Z",
+          "duration": 2546.5420000000004,
+          "expected": 0,
+          "skipped": 0,
+          "unexpected": 0,
+          "flaky": 0
+        }
+      }
+    },
+    {
+      "name": "browser-selection",
+      "watchdog": {
+        "name": "spn106-browser-selection-20261114",
+        "args": [
+          "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "--project=development",
+          "e2e/documents.spec.ts",
+          "--grep",
+          "desktop account Doc viewer opens plain and dated documents without a protection warning$",
+          "--list"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 512,
+        "peakKiB": 295216
+      },
+      "log": "Listing tests:\n  [development] › documents.spec.ts:43:5 › desktop account Doc viewer opens plain and dated documents without a protection warning\nTotal: 1 test in 1 file\n{\"name\":\"spn106-browser-selection-20261114\",\"args\":[\"/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node\",\"node_modules/@playwright/test/cli.js\",\"test\",\"--project=development\",\"e2e/documents.spec.ts\",\"--grep\",\"desktop account Doc viewer opens plain and dated documents without a protection warning$\",\"--list\"],\"code\":0,\"signal\":null,\"reason\":null,\"elapsedMs\":512,\"peakKiB\":295216}\n"
+    },
+    {
+      "name": "browser-desktop-account-corrected",
+      "watchdog": {
+        "name": "spn106-browser-desktop-account-corrected-20261114",
+        "args": [
+          "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "--project=development",
+          "e2e/documents.spec.ts",
+          "--grep",
+          "desktop account Doc viewer opens plain and dated documents without a protection warning$",
+          "--reporter=line,json"
+        ],
+        "code": 1,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 2200,
+        "peakKiB": 876000
+      },
+      "log": "[WebServer] (node:47249) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)\n\n[WebServer] Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator.\n[WebServer] Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator.\n[WebServer] Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"rpc.remote-sync.service\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"univer.remote-instance-service\" already exists. Returning the cached identifier decorator.\n\n[WebServer] Identifier \"IRPCChannelService\" already exists. Returning the cached identifier decorator.\n\n\nRunning 1 test using 1 worker\n\n(node:47325) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n\n\n[1/1] [development] › e2e/documents.spec.ts:43:5 › desktop account Doc viewer opens plain and dated documents without a protection warning\n  1) [development] › e2e/documents.spec.ts:43:5 › desktop account Doc viewer opens plain and dated documents without a protection warning \n\n    Error: expect(received).toBe(expected) // Object.is equality\n\n    Expected: true\n    Received: false\n\n      129 |             headers: { Origin: baseURL! },\n      130 |           });\n    > 131 |           expect(prepared.ok()).toBe(true);\n          |                                 ^\n      132 |           const { unitId } = await prepared.json();\n      133 |           expect(unitId).toBe(item.id);\n      134 |           const head = () =>\n        at /Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e/documents.spec.ts:131:33\n\n    Error Context: test-results/development/documents-desktop-account--74663-ithout-a-protection-warning-development/error-context.md\n\n\n  1 failed\n    [development] › e2e/documents.spec.ts:43:5 › desktop account Doc viewer opens plain and dated documents without a protection warning \n{\"name\":\"spn106-browser-desktop-account-corrected-20261114\",\"args\":[\"/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node\",\"node_modules/@playwright/test/cli.js\",\"test\",\"--project=development\",\"e2e/documents.spec.ts\",\"--grep\",\"desktop account Doc viewer opens plain and dated documents without a protection warning$\",\"--reporter=line,json\"],\"code\":1,\"signal\":null,\"reason\":null,\"elapsedMs\":2200,\"peakKiB\":876000}\n",
+      "report": {
+        "config": {
+          "argv": [
+            "/private/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+            "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/node_modules/@playwright/test/cli.js",
+            "test",
+            "--project=development",
+            "e2e/documents.spec.ts",
+            "--grep",
+            "desktop account Doc viewer opens plain and dated documents without a protection warning$",
+            "--reporter=line,json"
+          ],
+          "configFile": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/playwright.config.ts",
+          "rootDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+          "failOnFlakyTests": false,
+          "forbidOnly": false,
+          "fullyParallel": true,
+          "globalSetup": null,
+          "globalTeardown": null,
+          "globalTimeout": 0,
+          "grep": {},
+          "grepInvert": null,
+          "maxFailures": 0,
+          "metadata": {
+            "actualWorkers": 1
+          },
+          "preserveOutput": "always",
+          "projects": [
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {
+                "actualWorkers": 1
+              },
+              "id": "development",
+              "name": "development",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [
+                "**/pwa.spec.ts",
+                "**/offline.spec.ts",
+                "**/offline-editing.spec.ts",
+                "**/offline-creation.spec.ts",
+                "**/offline-recovery.spec.ts",
+                "**/offline-device.spec.ts",
+                "**/offline-sign-out.spec.ts",
+                "**/offline-upgrade.spec.ts",
+                "**/supervised-restore.spec.ts",
+                "**/sync-client.spec.ts",
+                "**/doc-responsiveness*.spec.ts"
+              ],
+              "testMatch": [
+                "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {
+                "actualWorkers": 1
+              },
+              "id": "production",
+              "name": "production",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [
+                "**/pwa.spec.ts",
+                "**/offline-editing.spec.ts",
+                "**/offline-creation.spec.ts",
+                "**/offline-recovery.spec.ts",
+                "**/offline-upgrade.spec.ts",
+                "**/supervised-restore.spec.ts",
+                "**/sync-client.spec.ts",
+                "**/doc-responsiveness*.spec.ts"
+              ],
+              "testMatch": [
+                "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {
+                "actualWorkers": 1
+              },
+              "id": "sync-development",
+              "name": "sync-development",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/sync-client.spec.ts",
+                "**/doc-mobile.spec.ts"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {
+                "actualWorkers": 1
+              },
+              "id": "sync-production",
+              "name": "sync-production",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/sync-client.spec.ts",
+                "**/doc-mobile.spec.ts",
+                "**/offline-editing.spec.ts",
+                "**/offline-creation.spec.ts",
+                "**/offline-recovery.spec.ts"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {
+                "actualWorkers": 1
+              },
+              "id": "sync-soak-sheet",
+              "name": "sync-soak-sheet",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/sync-client.spec.ts"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {
+                "actualWorkers": 1
+              },
+              "id": "sync-soak-doc",
+              "name": "sync-soak-doc",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/sync-client.spec.ts"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {
+                "actualWorkers": 1
+              },
+              "id": "doc-responsiveness",
+              "name": "doc-responsiveness",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/doc-responsiveness.spec.ts"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {
+                "actualWorkers": 1
+              },
+              "id": "doc-callback-lifetimes",
+              "name": "doc-callback-lifetimes",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/doc-responsiveness-callbacks.spec.ts"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {
+                "actualWorkers": 1
+              },
+              "id": "offline-upgrade",
+              "name": "offline-upgrade",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/offline-upgrade.spec.ts"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {
+                "actualWorkers": 1
+              },
+              "id": "supervised-restore",
+              "name": "supervised-restore",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/supervised-restore.spec.ts"
+              ],
+              "timeout": 30000
+            },
+            {
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {
+                "actualWorkers": 1
+              },
+              "id": "mobile-https",
+              "name": "mobile-https",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [],
+              "testMatch": [
+                "**/pwa.spec.ts",
+                "**/doc-mobile.spec.ts"
+              ],
+              "timeout": 30000
+            }
+          ],
+          "filteredProjects": [
+            {
+              "grep": {},
+              "grepInvert": null,
+              "outputDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development",
+              "repeatEach": 1,
+              "retries": 0,
+              "metadata": {
+                "actualWorkers": 1
+              },
+              "name": "development",
+              "testDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "snapshotDir": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e",
+              "testIgnore": [
+                "**/pwa.spec.ts",
+                "**/offline.spec.ts",
+                "**/offline-editing.spec.ts",
+                "**/offline-creation.spec.ts",
+                "**/offline-recovery.spec.ts",
+                "**/offline-device.spec.ts",
+                "**/offline-sign-out.spec.ts",
+                "**/offline-upgrade.spec.ts",
+                "**/supervised-restore.spec.ts",
+                "**/sync-client.spec.ts",
+                "**/doc-responsiveness*.spec.ts"
+              ],
+              "testMatch": "**/*.@(spec|test).?(c|m)[jt]s?(x)",
+              "timeout": 30000,
+              "use": {
+                "trace": "on-first-retry",
+                "screenshot": "only-on-failure",
+                "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+                "viewport": {
+                  "width": 1280,
+                  "height": 720
+                },
+                "screen": {
+                  "width": 1920,
+                  "height": 1080
+                },
+                "deviceScaleFactor": 1,
+                "isMobile": false,
+                "hasTouch": false,
+                "defaultBrowserType": "chromium",
+                "baseURL": "http://localhost:3100"
+              },
+              "dependencies": [],
+              "ignoreSnapshots": false,
+              "__projectId": "development"
+            }
+          ],
+          "quiet": false,
+          "reporter": [
+            [
+              "line"
+            ],
+            [
+              "json"
+            ]
+          ],
+          "reportSlowTests": {
+            "max": 5,
+            "threshold": 300000
+          },
+          "shard": null,
+          "tags": [],
+          "updateSnapshots": "default",
+          "updateSourceMethod": "patch",
+          "version": "1.64.1",
+          "workers": 1,
+          "webServer": null
+        },
+        "suites": [
+          {
+            "title": "documents.spec.ts",
+            "file": "documents.spec.ts",
+            "column": 0,
+            "line": 0,
+            "specs": [
+              {
+                "title": "desktop account Doc viewer opens plain and dated documents without a protection warning",
+                "ok": false,
+                "tags": [],
+                "tests": [
+                  {
+                    "timeout": 150000,
+                    "annotations": [],
+                    "expectedStatus": "passed",
+                    "projectId": "development",
+                    "projectName": "development",
+                    "results": [
+                      {
+                        "workerIndex": 0,
+                        "parallelIndex": 0,
+                        "status": "failed",
+                        "duration": 63,
+                        "error": {
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m",
+                          "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n    at /Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e/documents.spec.ts:131:33",
+                          "location": {
+                            "file": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e/documents.spec.ts",
+                            "column": 33,
+                            "line": 131
+                          },
+                          "snippet": "  129 |             headers: { Origin: baseURL! },\n  130 |           });\n> 131 |           expect(prepared.ok()).toBe(true);\n      |                                 ^\n  132 |           const { unitId } = await prepared.json();\n  133 |           expect(unitId).toBe(item.id);\n  134 |           const head = () =>"
+                        },
+                        "errors": [
+                          {
+                            "location": {
+                              "file": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e/documents.spec.ts",
+                              "column": 33,
+                              "line": 131
+                            },
+                            "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32mtrue\u001b[39m\nReceived: \u001b[31mfalse\u001b[39m\n\n  129 |             headers: { Origin: baseURL! },\n  130 |           });\n> 131 |           expect(prepared.ok()).toBe(true);\n      |                                 ^\n  132 |           const { unitId } = await prepared.json();\n  133 |           expect(unitId).toBe(item.id);\n  134 |           const head = () =>\n    at /Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e/documents.spec.ts:131:33"
+                          }
+                        ],
+                        "stdout": [],
+                        "stderr": [],
+                        "retry": 0,
+                        "startTime": "2026-11-14T20:39:33.770Z",
+                        "annotations": [],
+                        "attachments": [
+                          {
+                            "name": "error-context",
+                            "contentType": "text/markdown",
+                            "path": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/test-results/development/documents-desktop-account--74663-ithout-a-protection-warning-development/error-context.md"
+                          }
+                        ],
+                        "errorLocation": {
+                          "file": "/Users/mxbaylee/projects/spinel-spn-106-current-main-20261114/e2e/documents.spec.ts",
+                          "column": 33,
+                          "line": 131
+                        }
+                      }
+                    ],
+                    "status": "unexpected"
+                  }
+                ],
+                "id": "9111b41e0f82b685c9ea-b7365cea2e02702e8957",
+                "file": "documents.spec.ts",
+                "line": 43,
+                "column": 5
+              }
+            ]
+          }
+        ],
+        "errors": [],
+        "stats": {
+          "startTime": "2026-11-14T20:39:32.347Z",
+          "duration": 1893.1779999999999,
+          "expected": 0,
+          "skipped": 0,
+          "unexpected": 1,
+          "flaky": 0
+        }
+      }
+    }
+  ],
+  "disposition": {
+    "selection": "Leading start anchor matched no full Playwright title. No tests executed; corrected suffix list selected exactly one existing development case.",
+    "setup": "Corrected invocation failed prepared.ok before baseline/viewer navigation. Request omitted JSON data/content type; source workspaceRoutes rejects non-GET without application/json. Response status/body was not retained, so exact historical HTTP result is unknown.",
+    "cleanup": "Port3100 absent after both terminated attempts; first logged server PID46137 absent. No task-owned server remains listening.",
+    "limits": "No viewer startup, native body/field persistence, denied-edit, concurrent-edit or visual result from these attempts. No product assertion weakened; no unchanged retry. Proposed JSON request repair requires next checkpoint."
+  }
+}

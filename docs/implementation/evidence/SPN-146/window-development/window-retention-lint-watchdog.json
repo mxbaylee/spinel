@@ -1,0 +1,54 @@
+{
+  "root": 88945,
+  "started": 1793885823165,
+  "elapsedMs": 139,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90272,
+  "peakKiB": 90272,
+  "live": [
+    {
+      "pid": 88945,
+      "parent": 88908,
+      "group": 88945,
+      "rssKiB": 88720,
+      "started": "Thu Nov  5 05:37:03 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-investigation/window-retention-lint-watchdog.json /Users/mxbaylee/projects/spinel/node_modules/.bin/oxlint --deny-warnings e2e/doc-responsiveness-native-sources.ts scripts/ci/doc-native-runtime/window-convert.ts scripts/ci/doc-native-window.test.ts"
+    },
+    {
+      "pid": 88978,
+      "parent": 88945,
+      "group": 88945,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:37:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 88945,
+      "parent": 88908,
+      "group": 88945,
+      "rssKiB": 88720,
+      "started": "Thu Nov  5 05:37:03 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-investigation/window-retention-lint-watchdog.json /Users/mxbaylee/projects/spinel/node_modules/.bin/oxlint --deny-warnings e2e/doc-responsiveness-native-sources.ts scripts/ci/doc-native-runtime/window-convert.ts scripts/ci/doc-native-window.test.ts"
+    },
+    {
+      "pid": 88964,
+      "parent": 88945,
+      "group": 88945,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:37:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 88978,
+      "parent": 88945,
+      "group": 88945,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:37:03 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

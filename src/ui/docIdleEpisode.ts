@@ -30,7 +30,10 @@ export function terminalIdleEpisode(
   terminal: DocTerminalState,
   firstEmptyAt: number,
   observations: readonly EpochDocFlush[],
-  policy: readonly (Omit<DocFlushObservation, 'reason'> & { reason: string })[],
+  policy: readonly (Omit<DocFlushObservation, 'reason' | 'outcome'> & {
+    reason: string;
+    outcome?: DocFlushObservation['outcome'];
+  })[],
 ): DocIdleEpisode {
   const fail = (reason: string): never => {
     throw new Error(`idle-evidence:${reason}`);
@@ -125,6 +128,9 @@ export function terminalIdleEpisode(
     outer.some(
       (value) =>
         value.reason !== 'idle' ||
+        // Historical policy rows predate diagnostic outcomes; their matching
+        // native phases above still prove success. Explicit failures cannot pass.
+        (value.outcome !== undefined && value.outcome !== 'success') ||
         !validTime(value.durationMs) ||
         value.startedAt + value.durationMs > firstEmptyAt ||
         !Number.isFinite(value.quietForMs) ||

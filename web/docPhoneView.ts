@@ -1,8 +1,10 @@
 import {
   DependentOn,
   DocumentFlavor,
+  ICommandService,
   Inject,
   Injector,
+  IUniverInstanceService,
   isInternalEditorID,
   Plugin,
   UniverInstanceType,
@@ -10,8 +12,11 @@ import {
 import {
   BoldMenuItemFactory,
   BulletListCommand,
+  DeleteLeftCommand,
+  DeleteRightCommand,
   DOC_PARAGRAPH_T_EDIT_MENU_ID,
   DocFloatMenuService,
+  DocIMEInputManagerService,
   DocSelectionRenderService,
   DocViewScaleService,
   EnterCommand,
@@ -38,9 +43,13 @@ export function guardPhoneDocInput(
   render: IRender,
   contextMenus: IContextMenuService,
   isReadOnly: () => boolean,
+  injector: Injector,
 ) {
   const mobile = render.with(DocSelectionRenderService) as MobileDocSelectionRenderService;
   const selectionMenus = render.with(DocFloatMenuService);
+  const ime = render.with(DocIMEInputManagerService);
+  const commands = injector.get(ICommandService);
+  const instances = injector.get(IUniverInstanceService);
   const input = mobile.inputElement;
   const oldMinHeight = input.style.getPropertyValue('min-height');
   const oldMinHeightPriority = input.style.getPropertyPriority('min-height');
@@ -54,6 +63,40 @@ export function guardPhoneDocInput(
   const focus = mobile.onFocus$.subscribe(() => {
     if (isReadOnly()) stopEditing();
   });
+  // The hidden native editor is empty between edits: deletion can deliver only
+  // beforeinput, and OSS 1.3.1 ignores null-data input. Own this cancelable stage
+  // once; native commands retain selection, paragraph, glyph and history rules.
+  const beforeInput = async (event: InputEvent) => {
+    const command =
+      event.inputType === 'deleteContentBackward'
+        ? DeleteLeftCommand
+        : event.inputType === 'deleteContentForward'
+          ? DeleteRightCommand
+          : undefined;
+    if (
+      !command ||
+      event.target !== input ||
+      !event.cancelable ||
+      event.defaultPrevented ||
+      event.isComposing ||
+      ime.getActiveRange() != null ||
+      isReadOnly() ||
+      render.isDisposed() ||
+      !mobile.isFocusing ||
+      !mobile.getActiveTextRange() ||
+      instances.getCurrentUnitOfType(UniverInstanceType.UNIVER_DOC)?.getUnitId() !== render.unitId
+    )
+      return;
+    event.preventDefault();
+    try {
+      // Permission denials return false through the native command boundary.
+      // Unexpected failures remain observable; neither result causes a retry.
+      await commands.executeCommand(command.id);
+    } catch (error) {
+      reportError(error);
+    }
+  };
+  input.addEventListener('beforeinput', beforeInput);
   const canvas = render.engine.getCanvasElement();
   let touchIdentifier: number | null = null;
   const touchStart = (event: TouchEvent) => {
@@ -99,6 +142,7 @@ export function guardPhoneDocInput(
     stopEditing,
     dispose() {
       focus.unsubscribe();
+      input.removeEventListener('beforeinput', beforeInput);
       canvas.removeEventListener('touchstart', touchStart);
       canvas.removeEventListener('touchmove', touchMove);
       canvas.removeEventListener('touchend', touchEnd);
@@ -152,17 +196,21 @@ export class DocPhoneViewPlugin extends Plugin {
   }
 
   override onStarting() {
-    // OSS 1.1.0's mobile plugin registers EnterCommand but omits its shortcut.
-    // Use the desktop-equivalent public route: native focus, IME exclusion and
-    // mutation permission checks still apply. Browser insertParagraph has null
-    // input data and is otherwise ignored by the shared native input controller.
-    this.disposeWithMe(
-      this._injector.get(IShortcutService).registerShortcut({
-        id: EnterCommand.id,
-        binding: KeyCode.ENTER,
-        preconditions: whenDocAndEditorFocused,
-      }),
-    );
+    // OSS 1.3.1's mobile plugin registers these commands without the desktop
+    // shortcuts. Native focus, IME exclusion and mutation permissions still
+    // apply; cancellation prevents a second browser beforeinput deletion.
+    for (const [id, binding] of [
+      [EnterCommand.id, KeyCode.ENTER],
+      [DeleteLeftCommand.id, KeyCode.BACKSPACE],
+      [DeleteRightCommand.id, KeyCode.DELETE],
+    ] as const)
+      this.disposeWithMe(
+        this._injector.get(IShortcutService).registerShortcut({
+          id,
+          binding,
+          preconditions: whenDocAndEditorFocused,
+        }),
+      );
     // Render modules retain the first registration for an identifier. Register
     // before the mobile Docs plugin supplies its default in onReady.
     this.disposeWithMe(

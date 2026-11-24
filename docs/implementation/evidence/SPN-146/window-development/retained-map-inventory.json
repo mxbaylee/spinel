@@ -1,0 +1,127 @@
+{
+  "zip": "/tmp/spn146-linux-hosted/callback-mobile-13405961161.zip",
+  "rows": [
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/1-runtime-BUQS9nEo.js.map",
+      "bytes": 10296,
+      "sha256": "eb10abb14ed8f0828600e2824277abc7cfeab59db213600da848468fce28ad88",
+      "targets": []
+    },
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/11-documentAccess-BpTD8alm.js.map",
+      "bytes": 12434,
+      "sha256": "1c0832139b3566d9de4d9856f488b53049ebfef98112115f69448f8a4d25904c",
+      "targets": []
+    },
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/13-application-BfPsYtT4.js.map",
+      "bytes": 1132137,
+      "sha256": "0d9bfff865f232ec2112b5d30cf824e1556c536381fc4169396f567d379151bb",
+      "targets": []
+    },
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/15-download-BPGf4w79.js.map",
+      "bytes": 12275,
+      "sha256": "67db225ce30b7689379d2e8710d821755cdab2de48274508ebaf886d0a34cebe",
+      "targets": []
+    },
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/17-useDiagnostics-DuPOOcXt.js.map",
+      "bytes": 47338,
+      "sha256": "81a379920b78fad5c612120d050c8abd014655d568a7824f5a626e83a0e4f3e6",
+      "targets": []
+    },
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/19-CopyFile-qR382OFY.js.map",
+      "bytes": 222275,
+      "sha256": "985d91134450f7bef519aa87f8fac4aa38c0332e4915308d6d2ad0225ed600a8",
+      "targets": []
+    },
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/21-nativeSyncPermissions-C0ZxlxKD.js.map",
+      "bytes": 12092734,
+      "sha256": "ed1d7eaa85b04073233f5d1539162ca92b973c4010fae80f8eba4bb860e21ac2",
+      "targets": []
+    },
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/23-univer-renderer-Cqyj3Y79.js.map",
+      "bytes": 13418035,
+      "sha256": "67a8b0011690f55e9153b7213c686f210aa0c559be49936e794b9b0bb297e09f",
+      "targets": [
+        {
+          "source": "../../node_modules/@univerjs/core/lib/es/index.js",
+          "sha256": "a019e7eb8b2ba235c7cfd54a19c262377a90c25aca13e5c2e0671a43b709e434",
+          "bytes": 1007983
+        }
+      ]
+    },
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/26-documentReady-CIuaWrM1.js.map",
+      "bytes": 649015,
+      "sha256": "f3f39d0febcbc9a90da17db97f2cab6990387999dd4c4ded670a0f9fc72b8d1d",
+      "targets": []
+    },
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/28-DocEditor-WlIoravQ.js.map",
+      "bytes": 121067,
+      "sha256": "d22cc306cc355ce8c3111a10f34567adec3ad649cd663ca7791b388e9c69a56e",
+      "targets": []
+    },
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/3-service-worker.js.map",
+      "bytes": 46566,
+      "sha256": "07cbb1a8bfd3d4acce73dc7f152c708bb0f617aba23859d2624e3bff2085f20f",
+      "targets": []
+    },
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/30-nativeCopy-DsP3TfC2.js.map",
+      "bytes": 526289,
+      "sha256": "909d02f5b02845b8ab787a97c4fac3c0ac2d1dd66e61ebb203bfac3a03090b0d",
+      "targets": []
+    },
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/32-model-Bsh2e20f.js.map",
+      "bytes": 478745,
+      "sha256": "195d5366b0b5411fe691363a35bfa8987ba02fe9caafe9e63fff8a8f08938dc4",
+      "targets": [
+        {
+          "source": "../../node_modules/@univerjs/docs/lib/es/index.js",
+          "sha256": "535ff692c3fd37ba10bdcc614720b8d848827c988f75fbbf9109ebf90d8d68c7",
+          "bytes": 231551
+        }
+      ]
+    },
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/34-es-QsSEw2iP.js.map",
+      "bytes": 4025072,
+      "sha256": "b9c1d3f391514965725113c4652068bd1aaf6b91d0883d512256ae144c5fe99e",
+      "targets": []
+    },
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/5-existingDatabase-D6zEq-NF.js.map",
+      "bytes": 19181,
+      "sha256": "bc3ffdc7d9972e80a79b5345c82132d09e460a1d9962725592fab22faeec1483",
+      "targets": []
+    },
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/7-main-BwWjgdDi.js.map",
+      "bytes": 7918,
+      "sha256": "666941e79eac4d2ed9cf1b1f1d57f5a6132bed87e9dd805a395f73214b97d888",
+      "targets": []
+    },
+    {
+      "name": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-sources/9-floating-ui.react-dom-BtIrzXdr.js.map",
+      "bytes": 1031396,
+      "sha256": "5a249df0eca1e44d593e7a7c6794ca06b58bfdbdfcc97925e961ca515a57ce43",
+      "targets": []
+    }
+  ],
+  "artifact": {
+    "id": 13405961161,
+    "bytes": 177576306,
+    "sha256": "490d64edecb9361e45407f5bee1f46589bef160d14c25f18daa25d91476f6713",
+    "run": 42006109864,
+    "head": "483bf8ae4609fa8027485293e6050fe8dca88e1c"
+  },
+  "limit": "Retained prior emitted production map capability; not current diagnostic source/native/browser acceptance. Original ZIP remains supplementary; selected map identities and native content hashes are preserved here."
+}

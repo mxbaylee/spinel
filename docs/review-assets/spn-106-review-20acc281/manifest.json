@@ -1,0 +1,334 @@
+{
+  "version": 1,
+  "reviewedSource": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+  "requiredArchiveParent": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+  "actualBase": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "selfExcluded": true,
+  "payloadFiles": 36,
+  "files": [
+    {
+      "path": "README.md",
+      "origin": "Archive metadata prepared from retained source identities",
+      "encoding": "identity",
+      "storedBytes": 4085,
+      "storedSha256": "9cfcbb18e56b52e230e7eb423b40bae2d8cd4c44819eb446a383fc1da3b6f48a",
+      "decodedBytes": 4085,
+      "decodedSha256": "9cfcbb18e56b52e230e7eb423b40bae2d8cd4c44819eb446a383fc1da3b6f48a"
+    },
+    {
+      "path": "audits/20acc-prose-repair-receipt.json",
+      "origin": "/tmp/spn106-prose-repair-receipt-20261114.json",
+      "encoding": "identity",
+      "storedBytes": 6815,
+      "storedSha256": "d17d8c441b862e29f9105c6f57b86a9dce773d81662c1252fab329b08dc1bd8a",
+      "decodedBytes": 6815,
+      "decodedSha256": "d17d8c441b862e29f9105c6f57b86a9dce773d81662c1252fab329b08dc1bd8a"
+    },
+    {
+      "path": "audits/ae39-final-head-pr-receipt.json",
+      "origin": "/tmp/spn106-final-head-pr-receipt-20261114.json",
+      "encoding": "identity",
+      "storedBytes": 5066,
+      "storedSha256": "4d8d317bf8a3746bd8c51ce548a2e7a6c78e014db4c85834e26eefcc20556a2d",
+      "decodedBytes": 5066,
+      "decodedSha256": "4d8d317bf8a3746bd8c51ce548a2e7a6c78e014db4c85834e26eefcc20556a2d"
+    },
+    {
+      "path": "audits/root-20acc-delta-original.json",
+      "origin": "/tmp/spn106-root-delta-audit-20acc281.json",
+      "encoding": "identity",
+      "storedBytes": 735,
+      "storedSha256": "1d7954e5484b4f45b1e823fd26e1efcb2ce1d3a4c3116ea266fef19ee0dd2885",
+      "decodedBytes": 735,
+      "decodedSha256": "1d7954e5484b4f45b1e823fd26e1efcb2ce1d3a4c3116ea266fef19ee0dd2885"
+    },
+    {
+      "path": "audits/root-ae39-original.json",
+      "origin": "/tmp/spn106-root-final-packet-audit-ae39.json",
+      "encoding": "identity",
+      "storedBytes": 1682,
+      "storedSha256": "1ffb9fa88229c54f6f5d30cea4166f1bb4bc6fb5e27dd98f1d90a6bce7ccb2ed",
+      "decodedBytes": 1682,
+      "decodedSha256": "1ffb9fa88229c54f6f5d30cea4166f1bb4bc6fb5e27dd98f1d90a6bce7ccb2ed"
+    },
+    {
+      "path": "implementation-checks/spn106-final-pr-first-20261114.json",
+      "origin": "/tmp/spinel-dependabot-2026-11-11/spn106-final-pr-first-20261114.json",
+      "encoding": "identity",
+      "storedBytes": 393,
+      "storedSha256": "169612fb54257993f6ef3b10d90dd76b00cd6e896c83cc113550884c91a46e31",
+      "decodedBytes": 393,
+      "decodedSha256": "169612fb54257993f6ef3b10d90dd76b00cd6e896c83cc113550884c91a46e31"
+    },
+    {
+      "path": "implementation-checks/spn106-final-pr-first-20261114.log",
+      "origin": "/tmp/spn106-final-pr-first-20261114.log",
+      "encoding": "identity",
+      "storedBytes": 342,
+      "storedSha256": "d9d59f44d24ea255d8aceff5c8183e03cfebcecd0b8f7ec64aab2259ca8a682f",
+      "decodedBytes": 342,
+      "decodedSha256": "d9d59f44d24ea255d8aceff5c8183e03cfebcecd0b8f7ec64aab2259ca8a682f"
+    },
+    {
+      "path": "implementation-checks/spn106-prose-backlog-first-20261114.json",
+      "origin": "/tmp/spinel-dependabot-2026-11-11/spn106-prose-backlog-first-20261114.json",
+      "encoding": "identity",
+      "storedBytes": 273,
+      "storedSha256": "21e28e14d0a7d9d9c0dad783dad535f1df9ef3a71c3efb7abca2523a99a38035",
+      "decodedBytes": 273,
+      "decodedSha256": "21e28e14d0a7d9d9c0dad783dad535f1df9ef3a71c3efb7abca2523a99a38035"
+    },
+    {
+      "path": "implementation-checks/spn106-prose-backlog-first-20261114.log",
+      "origin": "/tmp/spn106-prose-backlog-first-20261114.log",
+      "encoding": "identity",
+      "storedBytes": 1710,
+      "storedSha256": "9df70c30d1c32ad68d5a69daeff9923a41659901e79cfc389010229043ed5b7b",
+      "decodedBytes": 1710,
+      "decodedSha256": "9df70c30d1c32ad68d5a69daeff9923a41659901e79cfc389010229043ed5b7b"
+    },
+    {
+      "path": "implementation-checks/spn106-prose-diff-links-first-20261114.json",
+      "origin": "/tmp/spinel-dependabot-2026-11-11/spn106-prose-diff-links-first-20261114.json",
+      "encoding": "identity",
+      "storedBytes": 478,
+      "storedSha256": "f610586419a5ab218766bf8937d884cbc542649f7841436187651b5751eb67f7",
+      "decodedBytes": 478,
+      "decodedSha256": "f610586419a5ab218766bf8937d884cbc542649f7841436187651b5751eb67f7"
+    },
+    {
+      "path": "implementation-checks/spn106-prose-diff-links-first-20261114.log",
+      "origin": "/tmp/spn106-prose-diff-links-first-20261114.log",
+      "encoding": "identity",
+      "storedBytes": 431,
+      "storedSha256": "10e0de671e490d5a0ef7c644d2f27b409bf794222ff8cf9fad2bc293dde5225c",
+      "decodedBytes": 431,
+      "decodedSha256": "10e0de671e490d5a0ef7c644d2f27b409bf794222ff8cf9fad2bc293dde5225c"
+    },
+    {
+      "path": "implementation-checks/spn106-prose-pr-first-20261114.json",
+      "origin": "/tmp/spinel-dependabot-2026-11-11/spn106-prose-pr-first-20261114.json",
+      "encoding": "identity",
+      "storedBytes": 393,
+      "storedSha256": "af156c3f437a0104ac4c10305c5035766e2c5bcb74d2bedb1b9710ad37d04bab",
+      "decodedBytes": 393,
+      "decodedSha256": "af156c3f437a0104ac4c10305c5035766e2c5bcb74d2bedb1b9710ad37d04bab"
+    },
+    {
+      "path": "implementation-checks/spn106-prose-pr-first-20261114.log",
+      "origin": "/tmp/spn106-prose-pr-first-20261114.log",
+      "encoding": "identity",
+      "storedBytes": 342,
+      "storedSha256": "0ec0b1aef67b84e437ad66e5db2e9e45667c657362791f944277fa5fcbb2b9ea",
+      "decodedBytes": 342,
+      "decodedSha256": "0ec0b1aef67b84e437ad66e5db2e9e45667c657362791f944277fa5fcbb2b9ea"
+    },
+    {
+      "path": "inputs/full-base-to-reviewed.patch.gz",
+      "origin": "git diff --binary --full-index c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423 20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+      "encoding": "gzip",
+      "storedBytes": 345413,
+      "storedSha256": "c14f850aecbd0274d1426bcdc592a671819dcf293b3cbae3442a6adfe80eaf47",
+      "decodedBytes": 542839,
+      "decodedSha256": "bd806fe3af441bc336aa0ebbf195bad2f3cadd51c3ddf66dd781ebc64f887c2a"
+    },
+    {
+      "path": "inputs/original-grade-free-packet.md",
+      "origin": "/tmp/spn106-final-review-packet-20261114.md",
+      "encoding": "identity",
+      "storedBytes": 7709,
+      "storedSha256": "292475c67320b56b89afd51425ace327d23844eaeeb7f4851acb95ec6e7b32c9",
+      "decodedBytes": 7709,
+      "decodedSha256": "292475c67320b56b89afd51425ace327d23844eaeeb7f4851acb95ec6e7b32c9"
+    },
+    {
+      "path": "inputs/original-ticket.md",
+      "origin": "docs/implementation/evidence/SPN-106-original-ticket.md",
+      "encoding": "identity",
+      "storedBytes": 4711,
+      "storedSha256": "5e6160aea426af3e7a513e7b22d57b44de9b49d5b51e710e5b5f592430cbc06a",
+      "decodedBytes": 4711,
+      "decodedSha256": "5e6160aea426af3e7a513e7b22d57b44de9b49d5b51e710e5b5f592430cbc06a"
+    },
+    {
+      "path": "inputs/repair-grade-free-packet.md",
+      "origin": "/tmp/spn106-review-delta-20acc281-20261114.md",
+      "encoding": "identity",
+      "storedBytes": 4228,
+      "storedSha256": "0422acc23629eba128e120effb1977579e1c384703a779e1494c9dc552c3ae97",
+      "decodedBytes": 4228,
+      "decodedSha256": "0422acc23629eba128e120effb1977579e1c384703a779e1494c9dc552c3ae97"
+    },
+    {
+      "path": "inputs/review-repair.patch.gz",
+      "origin": "git diff --binary --full-index ae39bab3c1ba89460418f934765b67327cd601ec 20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+      "encoding": "gzip",
+      "storedBytes": 3228,
+      "storedSha256": "6869527998ce329b23a29db465f95cea5f1e0496a208bbfb5c8b8b1d6707d490",
+      "decodedBytes": 7972,
+      "decodedSha256": "56cdb971f40e2c1f2eeef8c60bd96de1f7c8baddb30c8cd37e9911ca2ac78afd"
+    },
+    {
+      "path": "inputs/watch.ts.gz",
+      "origin": "/tmp/spinel-dependabot-2026-11-11/watch.ts",
+      "encoding": "gzip",
+      "storedBytes": 786,
+      "storedSha256": "badc5254175b0cb6fe2eadeb5a80a4e66e696ffbe156df5a483a2e71b4b7b3db",
+      "decodedBytes": 1412,
+      "decodedSha256": "203c67c3a455f630bd6b79156834cdfc18b4f9c5bb78591fffbe7214057e9dba"
+    },
+    {
+      "path": "review-checks/a-corrected-vitest.config.ts.gz",
+      "origin": "node_modules/.cache/spn106-review-a-ae39/vitest.config.ts",
+      "encoding": "gzip",
+      "storedBytes": 194,
+      "storedSha256": "028a42245c64e38bdaad028927d064a5b41a7593d0ce4bef39e786a1ac52bb10",
+      "decodedBytes": 233,
+      "decodedSha256": "6b0697a47d08c2c66a21bdc3e03f2e2f9156d46e02fe0096e70ad5d7d85e0998"
+    },
+    {
+      "path": "review-checks/b-vitest.config.ts.gz",
+      "origin": "/tmp/spn106-review-b-vitest.config.ts",
+      "encoding": "gzip",
+      "storedBytes": 160,
+      "storedSha256": "00d8e38ae4f5b706d69fd8cbb5fce91f1ce1f571c3bf742f4a5023d3d770c7ab",
+      "decodedBytes": 176,
+      "decodedSha256": "1f6b97f8fb0c5552001543385a68abbdb380d289558574a1d264ab3535da573d"
+    },
+    {
+      "path": "review-checks/spn106-review-a-native-ae39.json",
+      "origin": "/tmp/spinel-dependabot-2026-11-11/spn106-review-a-native-ae39.json",
+      "encoding": "identity",
+      "storedBytes": 401,
+      "storedSha256": "51bb604363d988e851f538ea843b911cfc6e44cbb67baf01aef883258c22abd0",
+      "decodedBytes": 401,
+      "decodedSha256": "51bb604363d988e851f538ea843b911cfc6e44cbb67baf01aef883258c22abd0"
+    },
+    {
+      "path": "review-checks/spn106-review-a-native-ae39.log",
+      "origin": "/tmp/spn106-review-a-native-ae39.log",
+      "encoding": "identity",
+      "storedBytes": 552,
+      "storedSha256": "86fb88b95398819ec5d7f9ca578820f44ee47c107ea9bcae3e0d713f897ebb7d",
+      "decodedBytes": 552,
+      "decodedSha256": "86fb88b95398819ec5d7f9ca578820f44ee47c107ea9bcae3e0d713f897ebb7d"
+    },
+    {
+      "path": "review-checks/spn106-review-a-preparation-ae39.json",
+      "origin": "/tmp/spinel-dependabot-2026-11-11/spn106-review-a-preparation-ae39.json",
+      "encoding": "identity",
+      "storedBytes": 488,
+      "storedSha256": "2e8d17fbad686fc6bad37acc091d10184a91aa7b2482137c1b091c501b6002c3",
+      "decodedBytes": 488,
+      "decodedSha256": "2e8d17fbad686fc6bad37acc091d10184a91aa7b2482137c1b091c501b6002c3"
+    },
+    {
+      "path": "review-checks/spn106-review-a-preparation-ae39.log",
+      "origin": "/tmp/spn106-review-a-preparation-ae39.log",
+      "encoding": "identity",
+      "storedBytes": 2495,
+      "storedSha256": "4e945e96527a5e5f48094863c4520206d14548fbd7b9c2dc64260e841e7bd3d6",
+      "decodedBytes": 2495,
+      "decodedSha256": "4e945e96527a5e5f48094863c4520206d14548fbd7b9c2dc64260e841e7bd3d6"
+    },
+    {
+      "path": "review-checks/spn106-review-a-preparation-corrected-ae39.json",
+      "origin": "/tmp/spinel-dependabot-2026-11-11/spn106-review-a-preparation-corrected-ae39.json",
+      "encoding": "identity",
+      "storedBytes": 500,
+      "storedSha256": "265ef4563372a5f14a17c4a6129286548d2a7ad596a15c8a93ebc971285ba438",
+      "decodedBytes": 500,
+      "decodedSha256": "265ef4563372a5f14a17c4a6129286548d2a7ad596a15c8a93ebc971285ba438"
+    },
+    {
+      "path": "review-checks/spn106-review-a-preparation-corrected-ae39.log",
+      "origin": "/tmp/spn106-review-a-preparation-corrected-ae39.log",
+      "encoding": "identity",
+      "storedBytes": 653,
+      "storedSha256": "0671ceff45ae8eb7c53f49b6ccb05e8dc18b694e24dab39deb4c91122dffb125",
+      "decodedBytes": 653,
+      "decodedSha256": "0671ceff45ae8eb7c53f49b6ccb05e8dc18b694e24dab39deb4c91122dffb125"
+    },
+    {
+      "path": "review-checks/spn106-review-b-ae39-native.json",
+      "origin": "/tmp/spinel-dependabot-2026-11-11/spn106-review-b-ae39-native.json",
+      "encoding": "identity",
+      "storedBytes": 438,
+      "storedSha256": "3cbf5ecd36689665460f070f9ac0f0772d3a48a1afabf90578696814b7b4200d",
+      "decodedBytes": 438,
+      "decodedSha256": "3cbf5ecd36689665460f070f9ac0f0772d3a48a1afabf90578696814b7b4200d"
+    },
+    {
+      "path": "review-checks/spn106-review-b-ae39-native.log",
+      "origin": "/tmp/spn106-review-b-ae39-native.log",
+      "encoding": "identity",
+      "storedBytes": 574,
+      "storedSha256": "cf192f6e6b42877b245016bad4a84954ccf2d9b940988a37e7eca150332b381a",
+      "decodedBytes": 574,
+      "decodedSha256": "cf192f6e6b42877b245016bad4a84954ccf2d9b940988a37e7eca150332b381a"
+    },
+    {
+      "path": "review-checks/spn106-review-b-ae39-preparation.json",
+      "origin": "/tmp/spinel-dependabot-2026-11-11/spn106-review-b-ae39-preparation.json",
+      "encoding": "identity",
+      "storedBytes": 527,
+      "storedSha256": "60014e917b33e50ae0505516b3e680a7a8033159934270ce913d691dc3c8ee6d",
+      "decodedBytes": 527,
+      "decodedSha256": "60014e917b33e50ae0505516b3e680a7a8033159934270ce913d691dc3c8ee6d"
+    },
+    {
+      "path": "review-checks/spn106-review-b-ae39-preparation.log",
+      "origin": "/tmp/spn106-review-b-ae39-preparation.log",
+      "encoding": "identity",
+      "storedBytes": 665,
+      "storedSha256": "a9d93441fd0d1ebdb380f64700babfbac1b9a2d468806e84ecfc38dcfd557e63",
+      "decodedBytes": 665,
+      "decodedSha256": "a9d93441fd0d1ebdb380f64700babfbac1b9a2d468806e84ecfc38dcfd557e63"
+    },
+    {
+      "path": "reviews/20acc281-a.md",
+      "origin": "/tmp/spn106-review-20acc281-a.md",
+      "encoding": "identity",
+      "storedBytes": 7848,
+      "storedSha256": "2c3eca81643996b3407e8007e2e43188aa1800948910f36cdfd86bcb9409f422",
+      "decodedBytes": 7848,
+      "decodedSha256": "2c3eca81643996b3407e8007e2e43188aa1800948910f36cdfd86bcb9409f422"
+    },
+    {
+      "path": "reviews/20acc281-b.md",
+      "origin": "/tmp/spn106-review-20acc281-b.md",
+      "encoding": "identity",
+      "storedBytes": 9207,
+      "storedSha256": "0f716505ab947ee5d188781d1e50a29437df73ad490c15c4c8717039652a70ca",
+      "decodedBytes": 9207,
+      "decodedSha256": "0f716505ab947ee5d188781d1e50a29437df73ad490c15c4c8717039652a70ca"
+    },
+    {
+      "path": "reviews/ae39bab3-a.md",
+      "origin": "/tmp/spn106-review-ae39bab3-a.md",
+      "encoding": "identity",
+      "storedBytes": 14476,
+      "storedSha256": "9202163209181df9a48b849816413bcbe474dd8e42ca7f80d593eb41f6f1cc7c",
+      "decodedBytes": 14476,
+      "decodedSha256": "9202163209181df9a48b849816413bcbe474dd8e42ca7f80d593eb41f6f1cc7c"
+    },
+    {
+      "path": "reviews/ae39bab3-b.md",
+      "origin": "/tmp/spn106-review-ae39bab3-b.md",
+      "encoding": "identity",
+      "storedBytes": 12792,
+      "storedSha256": "3218147bd164078fba019c026ac2910c2543c87c76d2048eb9b1c3f119efb4ea",
+      "decodedBytes": 12792,
+      "decodedSha256": "3218147bd164078fba019c026ac2910c2543c87c76d2048eb9b1c3f119efb4ea"
+    },
+    {
+      "path": "source-bindings.json",
+      "origin": "Archive metadata prepared from retained source identities",
+      "encoding": "identity",
+      "storedBytes": 9475,
+      "storedSha256": "c781ec6deb4c34ea2c1cddd99b2e330fac5d065ff6576f940690b9012029306d",
+      "decodedBytes": 9475,
+      "decodedSha256": "c781ec6deb4c34ea2c1cddd99b2e330fac5d065ff6576f940690b9012029306d"
+    }
+  ]
+}

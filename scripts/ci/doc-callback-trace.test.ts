@@ -48,7 +48,7 @@ for (const scenario of [
           emitter.emit('Tracing.tracingComplete', {
             stream: 'owned-stream',
             dataLossOccurred: false,
-            traceFormat: 'json',
+            traceFormat: 'proto',
             streamCompression: 'none',
           });
           return {};
@@ -455,7 +455,7 @@ test('capture keeps all six categories and explicitly reserves a non-overwriting
       ],
     },
     transferMode: 'ReturnAsStream',
-    streamFormat: 'json',
+    streamFormat: 'proto',
     streamCompression: 'none',
     bufferUsageReportingInterval: 1000,
   });
@@ -479,7 +479,7 @@ for (const boundary of ['completion', 'end', 'read', 'late-handle'] as const)
     const completion = {
       stream: 'owned',
       dataLossOccurred: false,
-      traceFormat: 'json',
+      traceFormat: 'proto',
       streamCompression: 'none',
     };
     const cdp = Object.assign(emitter, {
@@ -577,7 +577,7 @@ test('raw Unicode bytes survive arbitrary protocol chunks with distinct stored p
         emitter.emit('Tracing.tracingComplete', {
           stream: 'raw',
           dataLossOccurred: false,
-          traceFormat: 'json',
+          traceFormat: 'proto',
           streamCompression: 'none',
         });
         return {};
@@ -639,7 +639,7 @@ for (const scenario of [
           emitter.emit('Tracing.tracingComplete', {
             stream: scenario === 'no-stream' ? undefined : 'owned',
             dataLossOccurred: scenario === 'lost-data',
-            traceFormat: scenario === 'wrong-format' ? 'proto' : 'json',
+            traceFormat: scenario === 'wrong-format' ? 'json' : 'proto',
             streamCompression: scenario === 'gzip-transport' ? 'gzip' : 'none',
           });
         if (command === 'IO.close') closed++;
@@ -681,7 +681,7 @@ test('a rejected trace-end still owns a late stream until interruption settles',
           emitter.emit('Tracing.tracingComplete', {
             stream: 'late',
             dataLossOccurred: false,
-            traceFormat: 'json',
+            traceFormat: 'proto',
             streamCompression: 'none',
           });
           emitter.emit('close');
@@ -709,7 +709,7 @@ test('native text transport retains complete Unicode characters and exact decode
         emitter.emit('Tracing.tracingComplete', {
           stream: 'text',
           dataLossOccurred: false,
-          traceFormat: 'json',
+          traceFormat: 'proto',
           streamCompression: 'none',
         });
       if (command === 'IO.read')
@@ -762,7 +762,7 @@ test('destination failure releases a pending read and close without replacing th
         emitter.emit('Tracing.tracingComplete', {
           stream: 'owned',
           dataLossOccurred: false,
-          traceFormat: 'json',
+          traceFormat: 'proto',
           streamCompression: 'none',
         });
       if (command === 'IO.read') {

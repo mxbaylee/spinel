@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
+import type { DiagnosticEvent } from '@spinel/diagnostics';
 import type { OfflineBundle } from '../shared/offlineBundle.ts';
 import { blankOfflineSnapshot } from '../shared/offlineCreation.ts';
 import type { OfflineCreationRequest } from '../shared/offlineCreation.ts';
@@ -59,7 +60,7 @@ function stored(kind: 'sheet' | 'doc' = 'doc'): StoredItem {
     readOnly: false,
     revision: 1,
     revisionOffset: 0,
-    sdkVersion: '1.1.0',
+    sdkVersion: '1.3.1',
     images: [],
     snapshot: blankOfflineSnapshot(request),
   } as OfflineBundle;
@@ -742,6 +743,11 @@ test('local folder admission accepts prepared editable ordinary folders without 
 
 test('simultaneous reconnect checks send one request and clear creation only after the local acknowledgement commits', async () => {
   const f = session();
+  const observations: DiagnosticEvent[] = [];
+  f.value.diagnostics = () => ({
+    sink: (event) => observations.push(event),
+    context: { component: 'editor' },
+  });
   let respond!: (response: Response) => void;
   const fetcher = vi.fn(
     () =>
@@ -764,11 +770,18 @@ test('simultaneous reconnect checks send one request and clear creation only aft
   await vi.waitFor(() => expect(f.store.updateCreation).toHaveBeenCalledOnce());
   expect(f.value.creation).toBeDefined();
   expect(f.value.pending).toBe(true);
+  expect(observations).toEqual([]);
   finish();
   await expect(first).resolves.toBe(true);
   await expect(second).resolves.toBe(true);
   expect(f.value.creation).toBeUndefined();
   expect(f.value.pending).toBe(false);
+  expect(observations).toEqual([
+    expect.objectContaining({
+      name: 'offline.publication',
+      details: expect.objectContaining({ outcome: 'success' }),
+    }),
+  ]);
   expect(f.download.outbox!.checkpoint.snapshot.id).toBe(input.unitId);
   f.value.dispose();
 });

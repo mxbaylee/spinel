@@ -4,6 +4,7 @@ import { mkdir, open, readFile } from 'node:fs/promises';
 import { createServer, request as tlsRequest } from 'node:https';
 import type { Server as HttpsServer } from 'node:https';
 import type { AddressInfo, Socket } from 'node:net';
+import type { Response } from 'express';
 import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { JSONX, TextX, TextXActionType } from '@univerjs/core';
@@ -18,6 +19,9 @@ import { AuthStore, COOKIE_NAME } from '../../src/server/auth/store.ts';
 import { WorkspaceStore } from '../../src/server/workspace/store.ts';
 import { docImageSnapshot } from '../../e2e/doc-image-fixture.ts';
 import { offlineSheetImages } from '../../e2e/offline-fixture.ts';
+import { parseFixtureOrigin } from './desktop-fixture-origin.ts';
+import { desktopTransferObservation } from './desktop-transfer-observation.ts';
+import { transfers } from '../../src/server/workspace/transfers.ts';
 
 export type DesktopSnapshot = { unitId: string; revision: number; snapshot: NativeSnapshot };
 export type DesktopItem = {
@@ -52,8 +56,9 @@ export async function createDesktopOfflineFixture(options: {
   keyPath: string;
   certPath: string;
   staticDirectory?: string;
+  origin?: string;
 }) {
-  const origin = 'https://localhost:8176';
+  const { origin, host, port, servername } = parseFixtureOrigin(options.origin);
   const directory = resolve(options.directory);
   await mkdir(directory, { recursive: true });
   const databasePath = join(directory, 'app.sqlite');
@@ -65,6 +70,9 @@ export async function createDesktopOfflineFixture(options: {
   let tls: HttpsServer | undefined;
   let closing: Promise<void> | undefined;
   let offline = false;
+  const transferObservation = desktopTransferObservation((response) =>
+    transfers.has(response as Response),
+  );
   const sockets = new Set<Socket>();
   const controls = new Set<WebSocket>();
   const counts = {
@@ -173,6 +181,7 @@ export async function createDesktopOfflineFixture(options: {
         method,
         headers: {
           Cookie: credentials[account],
+          Host: host,
           Origin: origin,
           ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
         },
@@ -261,6 +270,8 @@ export async function createDesktopOfflineFixture(options: {
 
     const loginPath = `/_desktop-login/${randomBytes(32).toString('hex')}`;
     const loginURL = origin + loginPath;
+    const storageLossPath = '/_desktop-storage-loss';
+    const storageLossURL = origin + storageLossPath;
     const certificate = await readFile(options.certPath);
     tls = createServer({ key: await readFile(options.keyPath), cert: certificate });
     tls.on('connection', track);
@@ -271,12 +282,20 @@ export async function createDesktopOfflineFixture(options: {
         request.socket.destroy();
         return;
       }
+      if (request.url?.split('?')[0] === storageLossPath && request.method === 'GET') {
+        response
+          .writeHead(200, {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'no-store',
+            'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none'",
+          })
+          .end(
+            '<!doctype html><title>Storage-loss preparation</title><body data-spinel-storage-loss="inert">Storage-loss preparation</body>',
+          );
+        return;
+      }
       if (request.url === loginPath) {
-        if (
-          counts.logins ||
-          request.method !== 'GET' ||
-          request.headers.host !== new URL(origin).host
-        ) {
+        if (counts.logins || request.method !== 'GET' || request.headers.host !== host) {
           response.writeHead(404, { 'Cache-Control': 'no-store' }).end();
           return;
         }
@@ -292,6 +311,7 @@ export async function createDesktopOfflineFixture(options: {
         return;
       }
       counts.forwardedRequests++;
+      transferObservation.observe(request, response);
       app!.server.emit('request', request, response);
     });
     tls.on('upgrade', (request, socket, head) => {
@@ -307,7 +327,7 @@ export async function createDesktopOfflineFixture(options: {
       new Promise<void>((resolveListen, reject) => {
         const failed = (error: Error) => reject(error);
         tls!.once('error', failed);
-        tls!.listen(8176, '127.0.0.1', () => {
+        tls!.listen(port, '127.0.0.1', () => {
           tls!.off('error', failed);
           resolveListen();
         });
@@ -325,15 +345,15 @@ export async function createDesktopOfflineFixture(options: {
             const outgoing = tlsRequest(
               {
                 hostname: '127.0.0.1',
-                port: 8176,
-                servername: 'localhost',
+                port,
+                servername,
                 ca: certificate,
                 agent: false,
                 path: upgrade
                   ? `/sync-api/items/${items[0].id}/socket?unitId=${items[0].unitId}&ticket=outage-probe`
                   : '/api/health',
                 headers: {
-                  Host: new URL(origin).host,
+                  Host: host,
                   Origin: origin,
                   ...(upgrade
                     ? {
@@ -391,7 +411,7 @@ export async function createDesktopOfflineFixture(options: {
       const socket = new WebSocket(
         `${controlOrigin.replace('http:', 'ws:')}${path}/socket?unitId=${encodeURIComponent(item.unitId)}&ticket=${encodeURIComponent(ticket.ticket)}`,
         {
-          headers: { Cookie: credentials.owner, Origin: origin },
+          headers: { Cookie: credentials.owner, Host: host, Origin: origin },
           handshakeTimeout: 10_000,
         },
       );
@@ -513,6 +533,7 @@ export async function createDesktopOfflineFixture(options: {
     return {
       origin,
       loginURL,
+      storageLossURL,
       actor,
       owner,
       items,
@@ -526,6 +547,9 @@ export async function createDesktopOfflineFixture(options: {
       verifyDisconnected,
       remoteEdit,
       close,
+      get transferEvidence() {
+        return transferObservation.snapshot();
+      },
       get transport() {
         return { ...counts, offline, activeBrowserSockets: sockets.size };
       },

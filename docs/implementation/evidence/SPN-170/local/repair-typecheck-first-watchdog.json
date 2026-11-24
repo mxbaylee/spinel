@@ -1,0 +1,23 @@
+{
+  "startedAt": "2026-11-19T19:01:23.318Z",
+  "finishedAt": "2026-11-19T19:02:13.313Z",
+  "node": "v26.13.0",
+  "source": "5151d1d0465c0edc119c469dcdc4303fe300631d",
+  "cwd": "/workspace/scratch/3b49aaf47fc3/spinel",
+  "command": "node",
+  "args": [
+    "scripts/serial.ts",
+    "npm",
+    "run",
+    "typecheck"
+  ],
+  "elapsedMs": 49995,
+  "initialAvailableKiB": 8896028,
+  "finalAvailableKiB": 8813692,
+  "samples": 499,
+  "peakKiB": 2007288,
+  "memoryLimitKiB": 2097152,
+  "code": 1,
+  "signal": null,
+  "aborted": null
+}

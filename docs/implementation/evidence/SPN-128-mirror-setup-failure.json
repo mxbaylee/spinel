@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "repository": "mxbaylee/spinel",
+  "pullRequest": 229,
+  "source": {
+    "headSha": "f3bdf95e1355de5bebf8ee64332b31201555b9c5",
+    "baseSha": "e63956c7ec214af03c825104a81f63517eb87d0b",
+    "testedMergeSha": "de4914329eaadfb0e7c948cf8efd37d70872f871",
+    "unchangedPathsInSPN128": [
+      "scripts/ci/prefer-ubuntu-archive.ts",
+      ".github/workflows/ci.yml"
+    ]
+  },
+  "workflowRunId": 41344876558,
+  "runAttempt": 1,
+  "failures": [
+    {
+      "jobId": 124963417053,
+      "name": "Unit tests (remaining)"
+    },
+    {
+      "jobId": 124963417201,
+      "name": "Playwright smoke (sync-development)"
+    }
+  ],
+  "environment": {
+    "node": "26.12.1",
+    "runnerImage": "ubuntu-24.04",
+    "runnerImageVersion": "20261018.96.1",
+    "cloud": "AWS",
+    "region": "us-east-1"
+  },
+  "failedStage": "scripts/ci/prefer-ubuntu-archive.ts before workload execution",
+  "error": "Unexpected /etc/apt/apt-mirrors.txt: expected one Azure/archive pair with priorities 1 and 2.",
+  "originalMirrorFileCaptured": false,
+  "limitations": [
+    "The original jobs did not log the mirror-file contents.",
+    "The provider name alone does not establish which entries were present.",
+    "The pinned official runner-image tag could not be retrieved (404).",
+    "Synthetic non-Azure test inputs are not a capture of either failed runner."
+  ],
+  "disposition": {
+    "classification": "Environment preparation failure; no test assertion ran in these two jobs.",
+    "repairBoundary": "Leave profiles with no Azure hostname byte-identical. Preserve validation before any Azure rewrite and all downstream apt/test failures.",
+    "acceptance": "Required final-head CI remains mandatory; no setup failure is waived."
+  },
+  "retryHistory": {
+    "jobRerunRequested": 124963417053,
+    "result": "GitHub refused because the containing workflow was still running.",
+    "newAttemptsStarted": 0
+  }
+}

@@ -1,11 +1,11 @@
 # @spinel/sync-transform
 
 Operational transforms for concurrent [Univer](https://github.com/dream-num/univer)
-1.1.0 Sheet and Doc mutations, so a central sync server can merge two people's
+1.3.1 Sheet and Doc mutations, so a central sync server can merge two people's
 edits the same way on every screen. Pure TypeScript with no server, DOM or
 rendering dependency. At runtime it imports `@univerjs/core` and, for the cell
 merge, `@univerjs/sheets`; `docs`, `drawing` and `engine-formula` are peers
-too, because the transforms implement their 1.1.0 mutation formats,
+too, because the transforms implement their 1.3.1 mutation formats,
 engine-formula's for defined names. The list of commands that make Univer
 rewrite names and formulas comes from `@univerjs/sheets-formula`'s
 `UpdateDefinedNameController` and `UpdateFormulaController`.
@@ -193,8 +193,8 @@ or rewriting references ([decision 39](../../docs/implementation/SPN-056.md#39-r
 
 ## What a sender must do
 
-The server and every client run `@univerjs/core` 1.1.0 with Spinel's patch
-(`scripts/dependencies/patch-univer-core.ts`, applied on install). Stock 1.1.0
+The current server and client run `@univerjs/core` 1.3.1 with Spinel's patch
+(`scripts/dependencies/patch-univer-core.ts`, applied on install). Stock 1.3.1
 splits a link where a style lands inside it, leaves `$n` range ids that differ
 between screens, can throw `duplicate-custom-range-id` for a single user,
 builds a negative retain when a new link crosses a paragraph break inside an
@@ -202,7 +202,8 @@ old one, and lets a concurrent bold survive on one screen only past a format
 painter's style that sets `bl: 0` and was accepted first. A copy of this lib
 published on its own needs the same patch, until upstream ships the fixes (the
 link fixes are [dream-num/univer#7938](https://github.com/dream-num/univer/pull/7938))
-and SPN-099 removes it.
+and [Spinel’s upgrade qualification](../../docs/univer-upgrades.md) proves it can
+be removed without losing the protected contracts.
 
 Capture the public `ICommandService.onMutationExecutedForCollab` stream and
 exclude events marked `onlyLocal`, `fromCollab` or `fromChangeset`. Keep

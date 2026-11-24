@@ -1,0 +1,13 @@
+{
+  "name": "spn156-current-backlog",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "scripts/backlog/cli.ts",
+    "check"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 151,
+  "peakKiB": 0
+}

@@ -3,6 +3,8 @@ import type { ItemAccess } from '../src/shared/workspace.ts';
 import { recordNativeMutationInventory } from './nativeMutationInventory.ts';
 import { bindSheetDrawingPermissions, readOnlySheetDrawings } from './readOnlySheetDrawings.ts';
 import { sheetImages } from './sheetImages.ts';
+import { sheetImageInsertion } from './sheetImageInsertion.ts';
+import { SheetImageStatus } from './SheetImageStatus.tsx';
 import sheetDrawingEnglish from '@univerjs/preset-sheets-drawing/locales/en-US';
 import { EditorTools } from './EditorTools.tsx';
 import { useEditorChrome } from './EditorFrame.tsx';
@@ -47,9 +49,14 @@ import type { ConnectionState } from './connectionState.ts';
 import { guestPendingBuffer } from './guestPendingBuffer.ts';
 import type { RegisterGuestEditor } from './guestRevocation.ts';
 import { nativeSyncPermissions } from './nativeSyncPermissions.ts';
+import { useDiagnostics } from './useDiagnostics.tsx';
+import { beginOperation, diagnosticSource } from './operationDiagnostics.ts';
 import { BehaviorSubject } from 'rxjs';
 import { copyUnavailable, NativeCopyPlugin } from './nativeCopy.tsx';
 import { guestItemId } from './documentAccess.ts';
+import { MobileSheetCellBar } from './MobileSheetCellBar.tsx';
+import { bindMobileSheetViewport, observeMobileSheetCell } from './mobileSheetCell.ts';
+import type { MobileSheetCell } from './mobileSheetCell.ts';
 
 export function SheetEditor({
   id,
@@ -73,8 +80,18 @@ export function SheetEditor({
   localAccountId?: string;
 }) {
   const chrome = useEditorChrome();
+  const diagnostics = useDiagnostics();
   const mobile = useRef(useMobileSheetControls()).current;
+  const host = useRef<HTMLElement>(null);
+  const [mobileCell, setMobileCell] = useState<MobileSheetCell | null>(null);
+  const editMobileCell = useRef<() => void>(() => {});
+  useEffect(() => {
+    if (mobile && host.current) return bindMobileSheetViewport(host.current);
+  }, [mobile]);
   const [people, setPeople] = useState<Collaborator[]>([]);
+  const [imageError, setImageError] = useState('');
+  // Every reported error remounts the alert, so a repeated identical error is announced again.
+  const [imageAttempt, setImageAttempt] = useState(0);
   const container = useRef<HTMLDivElement>(null);
   const controller = useRef<ReturnType<typeof watchCollaboration> | null>(null);
   const [reloadGeneration, reload] = useState(0);
@@ -86,6 +103,12 @@ export function SheetEditor({
     failed: false,
   });
   useEffect(() => {
+    const observe = diagnosticSource(diagnostics, {
+      component: 'editor',
+      fileId: id,
+      ...(spaceId ? { spaceId, route: '/spaces/:id' as const } : { route: '/files/:id' as const }),
+    });
+    const opened = beginOperation(observe, 'document-open');
     let disposed = false;
     let offlineSession: OfflineSession | undefined;
     let initialized = false;
@@ -109,8 +132,14 @@ export function SheetEditor({
     };
     let stopPresence: (() => void) | undefined;
     let stopDrawingPermissions: (() => void) | undefined;
+    let stopMobileCell: (() => void) | undefined;
+    setMobileCell(null);
+    editMobileCell.current = () => {};
     setPeople([]);
     let editing = false;
+    let insertingImage = false;
+    let imageInsertion: ReturnType<typeof sheetImageInsertion> | undefined;
+    let imagesWritable = false;
     let freezeAfterEditing = false;
     let disposeEditor: (() => void) | undefined;
     let save: ReturnType<typeof watchCollaboration> | undefined;
@@ -118,7 +147,8 @@ export function SheetEditor({
     const publish = (state: SaveState) => {
       lastState = state;
       if (disposed) return;
-      const dirty = editing || state.dirty;
+      const dirty = editing || insertingImage || state.dirty;
+      if (chrome) chrome.editing.current = editing || insertingImage;
       copyStatus.next(
         copyUnavailable(
           { ...state, dirty, failed: state.failed || Boolean(syncNotice.current) },
@@ -130,7 +160,7 @@ export function SheetEditor({
       onDirty(dirty, Boolean(state.retained));
       setStatus({
         ...state,
-        ...(editing ? { local: undefined } : {}),
+        ...(editing || insertingImage ? { local: undefined } : {}),
         dirty,
         failed: state.failed || (initialized && Boolean(syncNotice.current)),
         message: editing
@@ -139,11 +169,14 @@ export function SheetEditor({
               ? 'Your sign-in ended. Copy the unfinished cell text before signing in again.'
               : 'Copy the unfinished cell text before recovering your offline changes.'
             : `Editing cell — changes not saved yet.${state.failed ? ` ${state.message}` : ''}`
-          : state.failed
-            ? state.message
-            : ((initialized ? syncNotice.current : undefined) ?? state.message),
+          : insertingImage
+            ? 'Inserting image — keep this tab open.'
+            : state.failed
+              ? state.message
+              : ((initialized ? syncNotice.current : undefined) ?? state.message),
       });
     };
+    setImageError('');
     publish(lastState);
     void (async () => {
       const data = await prepareEditor(id, spaceId, () => !disposed, localAccountId);
@@ -153,6 +186,24 @@ export function SheetEditor({
         return;
       }
       const nativePermissions = nativeSyncPermissions(data.unitId, data.access);
+      imagesWritable = data.access !== 'viewer' && !guestItemId();
+      imageInsertion = sheetImageInsertion({
+        id,
+        unitId: data.unitId,
+        spaceId,
+        container: container.current!,
+        offline: data.offline,
+        canInsert: () => !disposed && captureReady && imagesWritable && !freezeAfterEditing,
+        onBusy: (busy) => {
+          insertingImage = busy;
+          publish(lastState);
+        },
+        onError: (message) => {
+          if (disposed) return;
+          setImageError(message);
+          if (message) setImageAttempt((attempt) => attempt + 1);
+        },
+      });
       recordNativeMutationInventory();
       const { univer, univerAPI } = createUniver({
         theme: editorTheme(),
@@ -174,7 +225,9 @@ export function SheetEditor({
               ? { initialFormulaComputing: CalculationMode.NO_CALCULATION }
               : undefined,
           ),
-          sheetImages(mobile, data.offline),
+          // Keep the account upload path installed for a later in-place edit grant.
+          // Native menu permissions and canInsert still refuse every viewer operation.
+          sheetImages(mobile, data.offline, !guestItemId() ? imageInsertion.upload : undefined),
         ],
       });
       // IMAGE formula results use a direct browser Image loader in the OSS
@@ -196,7 +249,9 @@ export function SheetEditor({
       // Sheet services are registered lazily when the first sheet is created.
       // Own disposal before awaiting load, then attach display hooks after readiness.
       disposeEditor = () => {
+        stopMobileCell?.();
         stopDrawingPermissions?.();
+        imageInsertion?.dispose();
         offlineImages?.dispose();
         disposeSpinelSync(univer);
         univer.dispose();
@@ -245,6 +300,7 @@ export function SheetEditor({
       installCanvasColors(univer);
       identifyCollaborator(univer, data.user);
       const readOnly = async (preserveInput = false) => {
+        imagesWritable = false;
         if (preserveInput && editing) {
           // A current native cell editor has not emitted its mutation yet.
           // Keep it available for copying; the expired binding sends no frames.
@@ -273,10 +329,11 @@ export function SheetEditor({
         spaceId,
         access: data.access,
         kind: 'sheet',
+        diagnostics: observe,
         signal: loading.signal,
         isCurrent: () => !disposed,
         offline: data.offline,
-        canRefresh: () => !editing,
+        canRefresh: () => !editing && !insertingImage,
         lock: () => {
           disposeEditor?.();
           disposeEditor = undefined;
@@ -294,6 +351,7 @@ export function SheetEditor({
         upgradeAccess: (access) => {
           if (disposed) return;
           onAccessUpgrade?.(access);
+          imagesWritable = !guestItemId() && access !== 'viewer';
           freezeAfterEditing = false;
           // Both drawing services follow the workbook AND active worksheet policy.
           nativePermissions.setAccess(access);
@@ -325,6 +383,7 @@ export function SheetEditor({
       captureReady = true;
       await editorReady(univerAPI);
       if (disposed) return;
+      imageInsertion.attach(univer);
       const interceptor = univer
         .__getInjector()
         .get(SheetInterceptorService)
@@ -374,7 +433,10 @@ export function SheetEditor({
         univerAPI.getActiveWorkbook()?.getActiveSheet()?.refreshCanvas();
       });
       disposeEditor = () => {
+        stopMobileCell?.();
         stopDrawingPermissions?.();
+        imageInsertion?.dispose();
+        offlineImages?.dispose();
         disposeSpinelSync(univer);
         stopTheme();
         interceptor.dispose();
@@ -382,6 +444,18 @@ export function SheetEditor({
         univer.dispose();
       };
       if (data.access === 'viewer') await readOnly();
+      if (disposed) return;
+      if (mobile) {
+        const cell = observeMobileSheetCell(univer, univerAPI, (value) => {
+          if (!disposed) setMobileCell(value);
+        });
+        editMobileCell.current = cell.edit;
+        stopMobileCell = () => {
+          cell.dispose();
+          editMobileCell.current = () => {};
+          if (!disposed) setMobileCell(null);
+        };
+      }
       stopPresence = await watchPresence(univer, univerAPI, data.unitId, setPeople);
       if (disposed) {
         stopPresence();
@@ -390,7 +464,9 @@ export function SheetEditor({
       initialized = true;
       save = watchCollaboration(univer, publish, readOnly, publishConnection);
       controller.current = save;
+      opened('success');
     })().catch((error) => {
+      opened(disposed || loading.signal.aborted ? 'cancelled' : 'failure');
       // Failed checkpoint/SDK initialization must not leave a writable canvas
       // without native capture. A bound client may already own pending input.
       if (!captureReady) {
@@ -410,10 +486,12 @@ export function SheetEditor({
         });
     });
     return () => {
+      opened('cancelled');
       disposed = true;
       copyStatus.next('This document is closed.');
       copyStatus.complete();
       loading.abort();
+      imageInsertion?.dispose();
       registerGuestEditor?.(null);
       stopPresence?.();
       save?.dispose();
@@ -428,7 +506,13 @@ export function SheetEditor({
     // Name is folder metadata; a rename must not recreate an editor with pending edits.
   }, [id, spaceId, reloadGeneration]);
   return (
-    <section className="sheet-editor" data-mobile={mobile} aria-label="Sheet document">
+    <section
+      ref={host}
+      className="sheet-editor"
+      data-mobile={mobile}
+      data-cell-bar={Boolean(mobileCell)}
+      aria-label="Sheet document"
+    >
       <SaveStatus
         state={status}
         target={chrome?.saveTarget ?? saveStatusTarget}
@@ -451,7 +535,11 @@ export function SheetEditor({
           }
         />
       )}
+      <SheetImageStatus key={imageAttempt} error={imageError} />
       <div className="univer-container" ref={container} />
+      {mobileCell && (
+        <MobileSheetCellBar cell={mobileCell} onEdit={() => editMobileCell.current()} />
+      )}
     </section>
   );
 }

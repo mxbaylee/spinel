@@ -1,0 +1,14 @@
+{
+  "source": "229e97684d404f9bd0908650f095055b2d4d4e11",
+  "main": "ecef3c6d6ea5093bdd9fcf7c0a69c5e5218b4a6f",
+  "VITE_SYNC_EVIDENCE": "1",
+  "configLoader": "native",
+  "runtimeVersion": "43c309cb3e283134",
+  "entry": "/assets/application-DjvUEl9z.js",
+  "indexSha256": "a991525f63faa5ef058362fed495af4d4f2ff54dfaecf53a9dc69088975d5768",
+  "fixtureSha256": "8ce42cb5431552e8765212d40626f4e1cb56b62498c9bda5f3531f3c0aa62dcd",
+  "browserEnvironment": {
+    "SPINEL_E2E_PROJECT": "sync-production",
+    "NODE_OPTIONS": "--max-old-space-size=256 --max-semi-space-size=8"
+  }
+}

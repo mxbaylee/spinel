@@ -1,5 +1,5 @@
 // Adapted from mxbaylee/circus-health src/shared/person-icon-vocabulary.ts at 2ab77af.
-// Updated for Spinel's Lucide 1.59 renames while preserving saved names and local tags.
+// Updated for Spinel's Lucide 1.69 renames while preserving saved names and local tags.
 // Local vocabulary augments upstream tags without renaming the actual Lucide icon.
 export const ICON_EXTRA_TAGS: Record<string, string[]> = {
   'flower-2': [
@@ -49,4 +49,37 @@ export const ICON_SEARCH_ALIASES: Record<string, string> = {
   'music-2': 'eighth-note',
   'music-3': 'half-note',
   'music-4': 'sixteenth-notes',
+  'archive-restore': 'archive-arrow-up',
+  'badge-alert': 'badge-exclamation-point',
+  'battery-warning': 'battery-exclamation-point',
+  'book-alert': 'book-exclamation-point',
+  'alert-circle': 'circle-exclamation-point',
+  'circle-alert': 'circle-exclamation-point',
+  copyright: 'circle-letter-c',
+  'parking-circle-off': 'circle-letter-p-off',
+  'circle-parking-off': 'circle-letter-p-off',
+  'parking-circle': 'circle-letter-p',
+  'circle-parking': 'circle-letter-p',
+  'clock-alert': 'clock-exclamation-point',
+  'cloud-alert': 'cloud-exclamation-point',
+  bold: 'letter-b',
+  heading: 'letter-h',
+  'mail-warning': 'mail-exclamation-point',
+  'mail-alert': 'mail-exclamation-point',
+  'message-circle-warning': 'message-circle-exclamation-point',
+  'message-circle-alert': 'message-circle-exclamation-point',
+  'message-square-warning': 'message-square-exclamation-point',
+  'message-square-alert': 'message-square-exclamation-point',
+  'alert-octagon': 'octagon-exclamation-point',
+  'octagon-alert': 'octagon-exclamation-point',
+  'search-alert': 'search-exclamation-point',
+  'shield-alert': 'shield-exclamation-point',
+  'm-square': 'square-letter-m',
+  'square-m': 'square-letter-m',
+  'parking-square-off': 'square-letter-p-off',
+  'square-parking-off': 'square-letter-p-off',
+  'parking-square': 'square-letter-p',
+  'square-parking': 'square-letter-p',
+  'alert-triangle': 'triangle-exclamation-point',
+  'triangle-alert': 'triangle-exclamation-point',
 };

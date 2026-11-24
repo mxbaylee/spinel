@@ -13,7 +13,7 @@ vi.mock('../../web/maintenanceState.ts', () => import('./fixtures/unsupervisedMa
 vi.mock('../../web/offline/shell.ts', () => ({
   prepareShell: vi.fn(async () => ({
     buildId: 'test-build',
-    compatibility: { format: 1, sdkVersion: '1.1.0' },
+    compatibility: { format: 1, sdkVersion: '1.3.1' },
   })),
 }));
 
@@ -227,7 +227,7 @@ test.each(['bundle', 'shell'] as const)(
     if (stage === 'shell')
       vi.mocked(prepareShell).mockImplementationOnce(async () => {
         active = false;
-        return { buildId: 'test-build', compatibility: { format: 1, sdkVersion: '1.1.0' } };
+        return { buildId: 'test-build', compatibility: { format: 1, sdkVersion: '1.3.1' } };
       });
     const commit = vi.fn();
     const saveDownload = vi.fn(
@@ -318,6 +318,8 @@ test('only a failed round trip counts as a network failure', () => {
     false,
   );
   expect(isNetworkFailure(new SyntaxError('Unexpected token <'))).toBe(false);
+  expect(isNetworkFailure(new DOMException('timed out', 'TimeoutError'))).toBe(true);
+  expect(isNetworkFailure(new DOMException('cancelled', 'AbortError'))).toBe(false);
 });
 
 test('cover bytes are verified independently and rejected before incomplete offline storage', async () => {

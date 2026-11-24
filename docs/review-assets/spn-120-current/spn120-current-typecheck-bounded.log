@@ -1,0 +1,2 @@
+serial: SIGTERM; killing the run.
+{"name":"spn120-current-typecheck-bounded","args":["node","node_modules/typescript/bin/tsc","-p","."],"code":1,"signal":null,"reason":"Resource guard","elapsedMs":5698,"peakKiB":1425536}

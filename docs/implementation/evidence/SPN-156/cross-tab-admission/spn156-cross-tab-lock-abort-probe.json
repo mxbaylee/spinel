@@ -1,0 +1,12 @@
+{
+  "name": "spn156-cross-tab-lock-abort-probe",
+  "args": [
+    "node",
+    "/tmp/spn156-lock-abort-probe.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 108,
+  "peakKiB": 0
+}

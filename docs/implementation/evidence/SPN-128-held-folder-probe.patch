@@ -1,0 +1,92 @@
+diff --git a/e2e/offline-creation.spec.ts b/e2e/offline-creation.spec.ts
+index 03148d8..f885c53 100644
+--- a/e2e/offline-creation.spec.ts
++++ b/e2e/offline-creation.spec.ts
+@@ -1,6 +1,6 @@
+-import { mkdir } from 'node:fs/promises';
++import { mkdir, writeFile } from 'node:fs/promises';
+ import { expect, test } from '@playwright/test';
+-import type { Page, TestInfo } from '@playwright/test';
++import type { Page, Route, TestInfo } from '@playwright/test';
+ import type { NativeSnapshot } from '@spinel/sync-client';
+ import type { OfflineCreationRequest } from '../src/shared/offlineCreation.ts';
+ import {
+@@ -47,7 +47,8 @@ async function deviceCatalog(f: OfflineFixture) {
+         sharedCreationRevision?: number;
+         creationMetadata?: { item: { id: string; parentId: string | null }; revision: number }[];
+         items: { id: string }[];
+-        shared: { id: string }[];
++        shared: { id: string; access?: string }[];
++        views?: Record<string, { id: string; kind: string }[]>;
+       }>((resolve, reject) => {
+         const opening = indexedDB.open(`spinel-offline-${accountId}`);
+         opening.onerror = () => reject(opening.error);
+@@ -377,6 +378,11 @@ test.describe('documents created offline', () => {
+         });
+         const appearanceRequests: string[] = [];
+         let createdId: string | undefined;
++        const probe = process.env.SPINEL_READINESS_PROBE;
++        let heldFolder: Route | undefined;
++        const readiness: Record<string, unknown> = {
++          probe, repeatEachIndex: info.repeatEachIndex, retry: info.retry, stage: 'setup',
++        };
+         f.page.on('request', (request) => {
+           if (createdId && new URL(request.url()).pathname === `/api/appearance/items/${createdId}`)
+             appearanceRequests.push(request.url());
+@@ -412,7 +418,37 @@ test.describe('documents created offline', () => {
+                 })
+               : undefined;
+           await f.download();
++          if (probe) await f.context.route(`**/api/items/${folder.id}`, (route) => {
++            heldFolder = route;
++            readiness.folderRequestHeld = true;
++          });
++          readiness.stage = 'opening-folder';
+           await openPreparedFolder(f, folder, shared);
++          readiness.readyReached = true;
++          if (probe === 'held-folder') {
++            await expect.poll(() => Boolean(heldFolder)).toBe(true);
++            const catalog = await deviceCatalog(f);
++            const before = {
++              headingVisible: await f.page.getByRole('heading', { name: folder.name, exact: true }).isVisible(),
++              newButtons: await f.page.getByRole('button', { name: 'New', exact: true }).count(),
++              contents: await f.page.getByRole('list', { name: 'Folder contents', exact: true }).count(),
++              loadingVisible: await f.page.getByText('Loading your files…', { exact: true }).isVisible(),
++              folderViewPrepared: Boolean(catalog.views?.[folder.id]),
++              sharedFolderAccess: catalog.shared.find((item) => item.id === folder.id)?.access,
++            };
++            readiness.beforeDisconnect = before;
++            expect(before).toEqual({ headingVisible: true, newButtons: 1, contents: 0, loadingVisible: true, folderViewPrepared: false, sharedFolderAccess: 'editor' });
++            await setDisconnected(true);
++            await transport.verifyDisconnected();
++            await heldFolder!.abort('internetdisconnected');
++            heldFolder = undefined;
++            await expect(f.page.getByRole('heading', { name: "This item isn't available", exact: true })).toBeVisible();
++            const newButtons = await f.page.getByRole('button', { name: 'New', exact: true }).count();
++            expect(newButtons).toBe(0);
++            readiness.afterDisconnect = { missing: true, newButtons };
++            readiness.stage = 'false-readiness-reproduced';
++            return;
++          }
+           await setDisconnected(true);
+           await transport.verifyDisconnected();
+           // A warm disconnected dashboard and a cold offline dashboard must both create.
+@@ -709,7 +745,18 @@ test.describe('documents created offline', () => {
+             ),
+           ).toHaveLength(1);
+           expect(f.errors).toEqual([]);
++        } catch (error) {
++          if (probe) readiness.failure = error instanceof Error ? error.message.slice(0, 4096) : String(error);
++          throw error;
+         } finally {
++          if (probe) {
++            if (heldFolder) await heldFolder.abort('internetdisconnected').catch((error) => {
++              readiness.releaseFailure = String(error);
++            });
++            readiness.disconnectProbeSent = transport.posts.some((post) => post.path === '/api/items/offline-create');
++            readiness.created = Boolean(createdId);
++            await writeFile(info.outputPath('readiness-probe.json'), JSON.stringify(readiness, null, 2));
++          }
+           releaseAdmission();
+           try {
+             await f.close(transport.posts);

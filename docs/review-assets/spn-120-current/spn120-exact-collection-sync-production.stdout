@@ -1,0 +1,407 @@
+{
+  "config": {
+    "argv": [
+      "/private/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+      "/Users/mxbaylee/projects/spinel-spn-120-production/node_modules/@playwright/test/cli.js",
+      "test",
+      "--project=sync-production",
+      "--grep",
+      "an unfinished native Sheet draft remains copyable before recovery freezes the queued edits|native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits",
+      "--repeat-each=2",
+      "--retries=0",
+      "--workers=1",
+      "--list",
+      "--reporter=json"
+    ],
+    "configFile": "/Users/mxbaylee/projects/spinel-spn-120-production/playwright.config.ts",
+    "rootDir": "/Users/mxbaylee/projects/spinel-spn-120-production/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {},
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/mxbaylee/projects/spinel-spn-120-production/test-results/sync-production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "development",
+        "name": "development",
+        "testDir": "/Users/mxbaylee/projects/spinel-spn-120-production/e2e",
+        "testIgnore": [
+          "**/pwa.spec.ts",
+          "**/offline.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts",
+          "**/offline-device.spec.ts",
+          "**/offline-sign-out.spec.ts",
+          "**/offline-upgrade.spec.ts",
+          "**/supervised-restore.spec.ts",
+          "**/sync-client.spec.ts",
+          "**/doc-responsiveness*.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/mxbaylee/projects/spinel-spn-120-production/test-results/sync-production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "production",
+        "name": "production",
+        "testDir": "/Users/mxbaylee/projects/spinel-spn-120-production/e2e",
+        "testIgnore": [
+          "**/pwa.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts",
+          "**/offline-upgrade.spec.ts",
+          "**/supervised-restore.spec.ts",
+          "**/sync-client.spec.ts",
+          "**/doc-responsiveness*.spec.ts"
+        ],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/mxbaylee/projects/spinel-spn-120-production/test-results/sync-production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "sync-development",
+        "name": "sync-development",
+        "testDir": "/Users/mxbaylee/projects/spinel-spn-120-production/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts",
+          "**/doc-mobile.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/mxbaylee/projects/spinel-spn-120-production/test-results/sync-production",
+        "repeatEach": 2,
+        "retries": 0,
+        "metadata": {},
+        "id": "sync-production",
+        "name": "sync-production",
+        "testDir": "/Users/mxbaylee/projects/spinel-spn-120-production/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts",
+          "**/doc-mobile.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/mxbaylee/projects/spinel-spn-120-production/test-results/sync-production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "sync-soak-sheet",
+        "name": "sync-soak-sheet",
+        "testDir": "/Users/mxbaylee/projects/spinel-spn-120-production/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/mxbaylee/projects/spinel-spn-120-production/test-results/sync-production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "sync-soak-doc",
+        "name": "sync-soak-doc",
+        "testDir": "/Users/mxbaylee/projects/spinel-spn-120-production/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/mxbaylee/projects/spinel-spn-120-production/test-results/sync-production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "doc-responsiveness",
+        "name": "doc-responsiveness",
+        "testDir": "/Users/mxbaylee/projects/spinel-spn-120-production/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/doc-responsiveness.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/mxbaylee/projects/spinel-spn-120-production/test-results/sync-production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "doc-callback-lifetimes",
+        "name": "doc-callback-lifetimes",
+        "testDir": "/Users/mxbaylee/projects/spinel-spn-120-production/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/doc-responsiveness-callbacks.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/mxbaylee/projects/spinel-spn-120-production/test-results/sync-production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "offline-upgrade",
+        "name": "offline-upgrade",
+        "testDir": "/Users/mxbaylee/projects/spinel-spn-120-production/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/offline-upgrade.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/mxbaylee/projects/spinel-spn-120-production/test-results/sync-production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "supervised-restore",
+        "name": "supervised-restore",
+        "testDir": "/Users/mxbaylee/projects/spinel-spn-120-production/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/supervised-restore.spec.ts"
+        ],
+        "timeout": 30000
+      },
+      {
+        "outputDir": "/Users/mxbaylee/projects/spinel-spn-120-production/test-results/sync-production",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {},
+        "id": "mobile-https",
+        "name": "mobile-https",
+        "testDir": "/Users/mxbaylee/projects/spinel-spn-120-production/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/pwa.spec.ts",
+          "**/doc-mobile.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": {},
+        "outputDir": "/Users/mxbaylee/projects/spinel-spn-120-production/test-results/sync-production",
+        "repeatEach": 2,
+        "retries": 0,
+        "metadata": {},
+        "name": "sync-production",
+        "testDir": "/Users/mxbaylee/projects/spinel-spn-120-production/e2e",
+        "snapshotDir": "/Users/mxbaylee/projects/spinel-spn-120-production/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/sync-client.spec.ts",
+          "**/doc-mobile.spec.ts",
+          "**/offline-editing.spec.ts",
+          "**/offline-creation.spec.ts",
+          "**/offline-recovery.spec.ts"
+        ],
+        "timeout": 30000,
+        "use": {
+          "trace": "on-first-retry",
+          "screenshot": "only-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium",
+          "baseURL": "http://localhost:3105"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "sync-production"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "offline-recovery.spec.ts",
+      "file": "offline-recovery.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "offline recovery copies",
+          "file": "offline-recovery.spec.ts",
+          "line": 336,
+          "column": 6,
+          "specs": [],
+          "suites": [
+            {
+              "title": "Recorded fixture first attempt",
+              "file": "offline-recovery.spec.ts",
+              "line": 397,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "an unfinished native Sheet draft remains copyable before recovery freezes the queued edits",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 180000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "sync-production",
+                      "projectName": "sync-production",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "d4610c33918c0d3d6a19-c2031c9a72e169522ee1",
+                  "file": "offline-recovery.spec.ts",
+                  "line": 398,
+                  "column": 5
+                },
+                {
+                  "title": "an unfinished native Sheet draft remains copyable before recovery freezes the queued edits",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 180000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "sync-production",
+                      "projectName": "sync-production",
+                      "results": [],
+                      "status": "skipped"
+                    }
+                  ],
+                  "id": "d4610c33918c0d3d6a19-d886ccd988b54df0134d",
+                  "file": "offline-recovery.spec.ts",
+                  "line": 398,
+                  "column": 5
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "sync-client.spec.ts",
+      "file": "sync-client.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Recorded fixture first attempt",
+          "file": "sync-client.spec.ts",
+          "line": 382,
+          "column": 6,
+          "specs": [
+            {
+              "title": "native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "sync-production",
+                  "projectName": "sync-production",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "542c6445fd575a52fb22-9bd4429710c034b4c3c4",
+              "file": "sync-client.spec.ts",
+              "line": 383,
+              "column": 3
+            },
+            {
+              "title": "native Docs preserve concurrent text and undo across reconnect, render profile presence, and capture actual image UI edits",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "sync-production",
+                  "projectName": "sync-production",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "542c6445fd575a52fb22-08bba0e21594e3c6e808",
+              "file": "sync-client.spec.ts",
+              "line": 383,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-14T03:06:58.134Z",
+    "duration": 800.0310000000001,
+    "expected": 0,
+    "skipped": 4,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

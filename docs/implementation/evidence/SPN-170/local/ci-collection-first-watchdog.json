@@ -1,0 +1,28 @@
+{
+  "startedAt": "2026-11-19T18:30:52.997Z",
+  "finishedAt": "2026-11-19T18:31:06.615Z",
+  "node": "v26.13.0",
+  "source": "dfd50502f456e0d02d2f0a36b0bfeff1db10fac6",
+  "cwd": "/workspace/scratch/3b49aaf47fc3/spinel",
+  "command": "node",
+  "args": [
+    "scripts/serial.ts",
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "scripts/ci/doc-editing-mobile-collection.test.ts",
+    "scripts/ci/plan.test.ts",
+    "scripts/ci/changes.test.ts",
+    "scripts/ci/coverage-result.test.ts",
+    "scripts/ci/doc-editing-mobile-result.test.ts"
+  ],
+  "elapsedMs": 13618,
+  "initialAvailableKiB": 9273516,
+  "finalAvailableKiB": 9117344,
+  "samples": 136,
+  "peakKiB": 654024,
+  "memoryLimitKiB": 2097152,
+  "code": 1,
+  "signal": null,
+  "aborted": null
+}

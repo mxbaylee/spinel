@@ -1,0 +1,166 @@
+{
+  "config": {
+    "argv": [
+      "/private/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+      "/Users/mxbaylee/projects/spinel-spn-156/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config=/tmp/spn156-locks-playwright.config.ts",
+      "--project=production",
+      "--workers=1",
+      "--retries=0"
+    ],
+    "configFile": "/tmp/spn156-locks-playwright.config.ts",
+    "rootDir": "/Users/mxbaylee/projects/spinel-spn-156/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/tmp/spn156-locks-platform-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "production",
+        "name": "production",
+        "testDir": "/Users/mxbaylee/projects/spinel-spn-156/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "offline-locks.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/tmp/spn156-locks-platform-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "production",
+        "testDir": "/Users/mxbaylee/projects/spinel-spn-156/e2e",
+        "snapshotDir": "/Users/mxbaylee/projects/spinel-spn-156/e2e",
+        "testIgnore": [],
+        "testMatch": "offline-locks.spec.ts",
+        "timeout": 30000,
+        "use": {
+          "trace": "on-first-retry",
+          "screenshot": "only-on-failure",
+          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "screen": {
+            "width": 1920,
+            "height": 1080
+          },
+          "deviceScaleFactor": 1,
+          "isMobile": false,
+          "hasTouch": false,
+          "defaultBrowserType": "chromium",
+          "baseURL": "http://localhost:3101"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "production"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "line",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "/tmp/spinel-dependabot-2026-11-11/spn156-locks-chromium-report.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "offline-locks.spec.ts",
+      "file": "offline-locks.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "an aborted queued Web Lock cannot run or orphan subsequent exclusive admission",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 15000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "production",
+              "projectName": "production",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 356,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "{\"browser\":\"156.0.8078.4\",\"result\":{\"before\":{\"held\":[{\"clientId\":\"CC0C9CBD1880EAB6E4C95746F565C0B8\",\"mode\":\"shared\",\"name\":\"spinel-lock-cancellation-1774a05e-9429-4b3b-8b53-374bebd49779\"}],\"pending\":[{\"clientId\":\"CC0C9CBD1880EAB6E4C95746F565C0B8\",\"mode\":\"exclusive\",\"name\":\"spinel-lock-cancellation-1774a05e-9429-4b3b-8b53-374bebd49779\"}]},\"error\":\"AbortError\",\"aborted\":{\"held\":[{\"clientId\":\"CC0C9CBD1880EAB6E4C95746F565C0B8\",\"mode\":\"shared\",\"name\":\"spinel-lock-cancellation-1774a05e-9429-4b3b-8b53-374bebd49779\"}],\"pending\":[]},\"called\":false,\"acquired\":true,\"final\":{\"held\":[],\"pending\":[]}}}\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-14T08:50:28.515Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "e38850319f5a7c4c7d27-772885a9d685f9c3ae6f",
+          "file": "offline-locks.spec.ts",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-14T08:50:28.302Z",
+    "duration": 945.5919999999999,
+    "expected": 1,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

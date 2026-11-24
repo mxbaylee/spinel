@@ -8,8 +8,8 @@ export function needsRestoreTiming(paths: readonly string[]): boolean {
       (path) =>
         /^(?:server|src\/server|src\/shared|src\/ui|lib|web)\//.test(path) ||
         /^e2e\/(?:restore-|supervised-restore)/.test(path) ||
-        /^e2e\/(?:doc-touch|native-sheet-value)\./.test(path) ||
-        /^scripts\/ci\/(?:changes|restore-timing-changes|restore-observer|pid-namespace)/.test(
+        /^e2e\/(?:doc-touch(?:-raster)?|native-sheet-value)\./.test(path) ||
+        /^scripts\/ci\/(?:changes|restore-timing-changes|restore-observer|restore-headroom|pid-namespace)/.test(
           path,
         ) ||
         path.startsWith('scripts/dependencies/') ||
@@ -58,6 +58,7 @@ export const suiteIds = [
   'responsiveness-baseline',
   'callback-baseline',
   'phone-compatibility',
+  'doc-editing-mobile',
 ] as const;
 export type SuiteId = (typeof suiteIds)[number];
 export interface SuitePlan {
@@ -76,6 +77,7 @@ export interface CoveragePlan {
   mode: 'targeted' | 'full';
   labels: string[];
   paths: string[] | null;
+  docEditingMobileRequest: { kind: 'label' | 'manual'; sha: string } | null;
   suites: Record<SuiteId, SuitePlan>;
 }
 const sha = (v: unknown): v is string =>
@@ -83,22 +85,73 @@ const sha = (v: unknown): v is string =>
 const object = (v: unknown): v is Record<string, unknown> =>
   !!v && typeof v === 'object' && !Array.isArray(v);
 
+/** Only a new, explicit request selects SPN-170. A retained label and any full
+ * coverage fallback are deliberately insufficient. Malformed explicit requests
+ * fail classification instead of becoming a successful inapplicable result. */
+function docEditingMobileRequest(
+  eventName: string,
+  event: Record<string, unknown>,
+  tested: string | undefined,
+): CoveragePlan['docEditingMobileRequest'] {
+  if (
+    eventName === 'pull_request' &&
+    event.action === 'labeled' &&
+    object(event.label) &&
+    event.label.name === 'ci-doc-editing-mobile'
+  ) {
+    const pr = object(event.pull_request) ? event.pull_request : {};
+    const base = object(pr.base) ? pr.base : {};
+    const head = object(pr.head) ? pr.head : {};
+    const baseRepo = object(base.repo) ? base.repo : {};
+    const headRepo = object(head.repo) ? head.repo : {};
+    const repository = object(event.repository) ? event.repository : {};
+    if (
+      !sha(head.sha) ||
+      !Number.isSafeInteger(repository.id) ||
+      Number(repository.id) <= 0 ||
+      baseRepo.id !== repository.id ||
+      headRepo.id !== repository.id
+    )
+      throw new Error('Mobile Doc editing label requires an immutable same-repository PR head.');
+    return { kind: 'label', sha: head.sha };
+  }
+  if (eventName === 'workflow_dispatch' && object(event.inputs)) {
+    // The workflow input is boolean; GitHub's event payload serializes it as a
+    // string, while the inputs context preserves booleans. Neither truthiness
+    // nor an unrelated manual/full run is an explicit request.
+    const requested = event.inputs.run_doc_editing_mobile;
+    if (requested === true || requested === 'true') {
+      if (!sha(tested)) throw new Error('Mobile Doc editing manual request has no tested SHA.');
+      return { kind: 'manual', sha: tested };
+    }
+  }
+  return null;
+}
+
+/** SPN-146 opt-in hosted A/B: never part of the product or a required gate. Its
+ * script tests still run (the change is not documentation-only), but it does not
+ * widen coverage to the full or performance suites. Remove with the experiment. */
+const experimentInput = (path: string) =>
+  path === '.github/workflows/patch-ab.yml' ||
+  /^scripts\/ci\/(patch-ab\/|patch-ab\.test\.ts$)/.test(path);
 const performanceInput = (path: string) =>
-  /^(web|server|lib|e2e|\.github|\.storybook)\//.test(path) ||
-  /^src\/(shared|server\/(sync|history|collaboration))\//.test(path) ||
-  /^scripts\/(ci|dependencies|sync-transition)\//.test(path) ||
-  /^(package(-lock)?\.json|.*\.config\.ts|tsconfig\.json|\.nvmrc|Dockerfile|\.dockerignore)$/.test(
-    path,
-  );
+  !experimentInput(path) &&
+  (/^(web|server|lib|e2e|\.github|\.storybook)\//.test(path) ||
+    /^src\/(shared|server\/(sync|history|collaboration))\//.test(path) ||
+    /^scripts\/(ci|dependencies|sync-transition)\//.test(path) ||
+    /^(package(-lock)?\.json|.*\.config\.ts|tsconfig\.json|\.nvmrc|Dockerfile|\.dockerignore)$/.test(
+      path,
+    ));
 const serviceInput = (path: string) =>
   /^src\/server\/(auth|workspace|backup|maintenance|appearance|diagnostics|formulas|health|mcp|pdf)\//.test(
     path,
   );
 const fullInput = (path: string) =>
-  /^(\.github|scripts\/(ci|dependencies))\//.test(path) ||
-  /^(package(-lock)?\.json|.*\.config\.ts|tsconfig\.json|\.nvmrc|Dockerfile|\.dockerignore)$/.test(
-    path,
-  );
+  !experimentInput(path) &&
+  (/^(\.github|scripts\/(ci|dependencies))\//.test(path) ||
+    /^(package(-lock)?\.json|.*\.config\.ts|tsconfig\.json|\.nvmrc|Dockerfile|\.dockerignore)$/.test(
+      path,
+    ));
 const libraryInput = (path: string) =>
   /^(lib|scripts\/dependencies)\//.test(path) ||
   /^(package(-lock)?\.json|vitest\.config\.ts|tsconfig\.json|\.nvmrc|\.github\/workflows\/ci\.yml)$/.test(
@@ -114,6 +167,7 @@ export function coveragePlan(
   tested?: string,
 ): CoveragePlan {
   const event = object(raw) ? raw : {};
+  const mobileRequest = docEditingMobileRequest(eventName, event, tested);
   const pr = object(event.pull_request) ? event.pull_request : {};
   const base = eventName === 'pull_request' && object(pr.base) ? pr.base.sha : event.before;
   const head = eventName === 'pull_request' && object(pr.head) ? pr.head.sha : event.after;
@@ -135,7 +189,11 @@ export function coveragePlan(
   const reliable = paths !== null && sha(base) && sha(head) && labelsValid;
   const unknown =
     paths?.filter(
-      (path) => !documentationOnly([path]) && !performanceInput(path) && !serviceInput(path),
+      (path) =>
+        !documentationOnly([path]) &&
+        !experimentInput(path) &&
+        !performanceInput(path) &&
+        !serviceInput(path),
     ) ?? [];
   const fullReason = !knownEvent
     ? 'Scheduled/manual or unsupported event requires full coverage.'
@@ -167,9 +225,26 @@ export function coveragePlan(
     mode: full ? 'full' : 'targeted',
     labels: [...new Set(labels)].sort(),
     paths: paths === null ? null : [...new Set(paths)].sort(),
+    docEditingMobileRequest: mobileRequest,
     suites: {} as CoveragePlan['suites'],
   };
   for (const id of suiteIds) {
+    if (id === 'doc-editing-mobile') {
+      plan.suites[id] = {
+        selected: mobileRequest !== null,
+        reason: mobileRequest
+          ? `Explicit ${mobileRequest.kind} request on ${mobileRequest.sha}; emulation is not software-keyboard proof.`
+          : 'No explicit mobile Doc editing request on this event; default-off even for full coverage.',
+        dependencies: [
+          'explicit same-repository ci-doc-editing-mobile label addition or manual run_doc_editing_mobile=true',
+          'recorded requested SHA; web native editor/input, SDK patches, auth, persistence and sync',
+          'e2e/doc-mobile.spec.ts, doc-editing.ts, doc-touch.ts, sync-snapshot.ts and shared fixtures',
+          'Playwright, runtime/build/manifests/lockfiles and CI plan/workflow/aggregate inputs',
+        ],
+        inputs: plan.paths ?? [],
+      };
+      continue;
+    }
     const selected =
       id === 'pull-request'
         ? eventName === 'pull_request'
@@ -193,7 +268,7 @@ export function coveragePlan(
             'src/{server,shared}/**',
             'lib/**',
             'web/** and src/ui/** (shared application/authentication bundle)',
-            'e2e restore/shared helpers',
+            'e2e restore/shared helpers (doc-touch, doc-touch-raster, native-sheet-value)',
             'runtime/build/dependency/workflow inputs',
           ]
         : id === 'lib-test-run'
@@ -264,6 +339,23 @@ export function verifyCoverage(
     Object.keys(plan.suites).length !== suiteIds.length
   )
     throw new Error('Coverage plan missing, malformed or not a code run.');
+  const request = plan.docEditingMobileRequest;
+  const mobile = plan.suites['doc-editing-mobile'];
+  if (
+    !(
+      request === null ||
+      (object(request) &&
+        Object.keys(request).length === 2 &&
+        ['label', 'manual'].includes(String(request.kind)) &&
+        sha(request.sha) &&
+        (request.kind === 'label'
+          ? plan.event === 'pull_request' && plan.action === 'labeled' && request.sha === plan.head
+          : plan.event === 'workflow_dispatch' && request.sha === plan.tested))
+    ) ||
+    !object(mobile) ||
+    mobile.selected !== (request !== null)
+  )
+    throw new Error('Mobile Doc editing request missing, malformed or inconsistent.');
   for (const id of suiteIds) {
     const suite = plan.suites[id];
     if (

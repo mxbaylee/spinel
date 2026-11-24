@@ -184,6 +184,7 @@ const modalIcons = {
   pages: 'panel-left',
   search: 'search',
   formula: 'square-function',
+  feedback: 'message-square',
 } as const;
 
 /** Every dialog chooses a cue; decoration never becomes its accessible name. */

@@ -44,8 +44,8 @@ locally. SPN-063 implements that destination and the recurring isolated verifier
 before deployment; selected-provider and target-host acceptance remain in SPN-038
 before public exposure. Admin separates publication, restore verification and
 offsite coverage. SPN-109 adds encrypted Admin downloads and deployment-owned
-backup policy for local storage and DigitalOcean Spaces. AWS S3 is a separate
-[post-production feature request](todo/SPN-114.md). SPN-111 implements
+backup policy for local storage and DigitalOcean Spaces. The AWS-specific request was
+[retired in favor of existing selected-provider support](implementation/SPN-114.md#-grooming-disposition); production qualification stays with SPN-038. SPN-111 implements
 [supervised maintenance](maintenance.md) for pause, drain and restart of the
 same dataset. SPN-112 adds [assisted workspace restore](#restore-through-admin)
 under that supervisor. Diagnostics expiry remains SPN-110; fresh-host CLI recovery
@@ -585,9 +585,14 @@ depends on how far it got:
   See the [staging recovery decision](implementation/SPN-112.md#recover-an-untouched-original-after-staging-fails).
 - **After a failed trial**, one original-content recovery runs. If it cannot
   finish in the operation's remaining time, the workspace stays closed as an
-  unresolved restore.
+  unresolved restore until the Operator follows the recovery runbook.
 - **Anywhere else after activation** (for example a power loss during the trial),
-  the workspace stays closed as an unresolved restore ([SPN-128](todo/SPN-128.md)).
+  the workspace stays closed as an unresolved restore. The supported
+  `recover-original --operation UUID` host command uses fresh Operator authority
+  to verify the preserved original and reopen a reconciled original-content
+  generation. Follow the [maintenance runbook](maintenance.md#an-unresolved-restore);
+  do not copy raw files over the workspace or remove its opening barrier. A
+  committed winner is never reinstalled, preserving any later acknowledged work.
 
 The fixed-size production-image acceptance measures a synthetic image-heavy
 database and encrypted archive over 256 MiB on the 1 GiB / 0.75 CPU profile; its

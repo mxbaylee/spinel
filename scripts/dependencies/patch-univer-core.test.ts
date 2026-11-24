@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
+import { cp, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { test } from 'node:test';
 import {
@@ -10,7 +13,7 @@ import {
   composeBody,
 } from '@univerjs/core';
 import type { IDocumentBody, IParagraph } from '@univerjs/core';
-import { patchCore } from './patch-univer-core.ts';
+import { patchCore, pooledMacroTask } from './patch-univer-core.ts';
 
 // Retain updates on the wire may omit identity; the snapshot interface requires it.
 // These deliberate legacy/update fixtures exercise the documented runtime fallback.
@@ -22,6 +25,10 @@ const paragraph: IParagraph = {
   paragraphId: 'stable-paragraph',
   bullet: { listId: 'list', listType: 'BULLET_LIST', nestingLevel: 0 },
   paragraphStyle: { namedStyleType: 4, outlineLevel: 0, headingId: 'heading' },
+  // 1.3.1 preserves these attributes in apply/transform. The composition repair
+  // must still agree with sequential REPLACE, including explicit falsy values.
+  styleId: 'old-style',
+  headingCollapsed: true,
 };
 
 test('composed paragraph replacement matches sequential application and preserves identity', () => {
@@ -34,6 +41,7 @@ test('composed paragraph replacement matches sequential application and preserve
     { startIndex: 0, paragraphStyle: {} },
     { startIndex: 0, paragraphStyle: { outlineLevel: 1 } },
     { startIndex: 0, paragraphId: 'replacement-id' },
+    { startIndex: 0, styleId: 'replacement-style', headingCollapsed: false },
   ].map(update);
   for (const replacement of replacements) {
     const first = new TextX()
@@ -231,5 +239,210 @@ test('adding a link across a paragraph that an existing link spans emits no nega
       );
       assert.deepEqual(rangesOf(core.TextX.apply(body, actions)), expected, name);
     }
+  }
+});
+
+type Request = (callback: () => void) => () => void;
+
+/**
+ * Behaviour every copy of the helper must show: call order, cancellation (before the run, after the run and
+ * for an entry another task already shifted), and that the callback is a macrotask. Run against the pooled
+ * source text and against the shipped, patched module alike.
+ */
+async function exerciseScheduler(request: Request) {
+  const order: string[] = [];
+  const done = new Promise<void>((resolve) => {
+    request(() => order.push('a'));
+    const cancelB = request(() => order.push('b'));
+    request(() => order.push('c'));
+    cancelB();
+    request(() => {
+      order.push('d');
+      // A task scheduled from a task still runs after it, in a later macrotask.
+      request(() => {
+        order.push('e');
+        resolve();
+      });
+      order.push('d-after');
+    });
+  });
+  await done;
+  assert.deepEqual(order, ['a', 'c', 'd', 'd-after', 'e']);
+
+  // Cancelling after the run, even repeatedly, is a no-op that neither throws nor suppresses a later task.
+  const later: string[] = [];
+  let cancelRan = () => {};
+  await new Promise<void>((resolve) => {
+    cancelRan = request(() => {
+      later.push('ran');
+      resolve();
+    });
+  });
+  cancelRan();
+  cancelRan();
+  // A task whose entry was already shifted (it is running) cancels itself harmlessly from inside.
+  await new Promise<void>((resolve) => {
+    const cancelSelf: () => void = request(() => {
+      cancelSelf();
+      later.push('self');
+      resolve();
+    });
+  });
+  await new Promise<void>((resolve) => request(() => (later.push('after'), resolve())));
+  assert.deepEqual(later, ['ran', 'self', 'after']);
+
+  // The callback is a macrotask: not synchronous, and after microtasks queued beside it.
+  const sequence: string[] = [];
+  const ran = new Promise<void>((resolve) => {
+    request(() => {
+      sequence.push('task');
+      resolve();
+    });
+  });
+  queueMicrotask(() => sequence.push('microtask'));
+  sequence.push('sync');
+  await ran;
+  assert.deepEqual(sequence, ['sync', 'microtask', 'task']);
+}
+
+const flat = (text: string) => text.trim().split('\n');
+function runChild(prelude: string, module: boolean, body: string) {
+  const child = spawnSync(
+    process.execPath,
+    [...(module ? ['--input-type=module'] : []), '-e', `${prelude}\n${body}`],
+    { encoding: 'utf8', timeout: 5000 },
+  );
+  // A hung process is killed by the timeout: status null and a signal, which fails every assertion below.
+  assert.equal(child.signal, null, `child hung or crashed: ${child.stderr}`);
+  assert.equal(child.status, 0, child.stderr);
+  return flat(child.stdout);
+}
+
+const pooledPrelude = `${pooledMacroTask}\nconst request = requestImmediateMacroTask;`;
+
+test('the pooled macrotask scheduler keeps order, cancellation and one channel (SPN-146)', async () => {
+  for (const format of ['es', 'cjs'] as const) {
+    const source = await readFile(
+      new URL(`../../node_modules/@univerjs/core/lib/${format}/index.js`, import.meta.url),
+      'utf8',
+    );
+    // The installed build uses the pooled function, and the A/B's previous build the upstream one.
+    assert.ok(patchCore(source, format).includes(pooledMacroTask));
+    const upstream = patchCore(source, format, { pooledChannel: false });
+    assert.ok(!upstream.includes('pendingMacroTasks'));
+    assert.match(upstream, /const channel = new MessageChannel\(\);/);
+    // The two builds differ only by the macrotask function: pooling the upstream build gives the shipped one.
+    assert.notEqual(upstream, patchCore(source, format));
+    assert.equal(patchCore(upstream, format), patchCore(source, format));
+  }
+  let channels = 0;
+  class Counting extends MessageChannel {
+    constructor() {
+      super();
+      channels++;
+    }
+  }
+  // The text under test is evaluated with a counting MessageChannel; the shipped bytes are tested below.
+  const request = new Function(
+    'MessageChannel',
+    `${pooledMacroTask}\nreturn requestImmediateMacroTask;`,
+  )(Counting) as Request;
+  await exerciseScheduler(request);
+  assert.equal(channels, 1);
+});
+
+test('a throwing macrotask callback is reported, and later tasks and shared state still work', () => {
+  // The throw surfaces as an uncaught exception from the port's message event; the child handles it.
+  const lines = runChild(
+    pooledPrelude,
+    false,
+    `process.on('uncaughtException', (error) => console.log('caught ' + error.message));
+request(() => { throw new Error('boom'); });
+request(() => console.log('after'));
+setTimeout(() => request(() => console.log('third')), 30);`,
+  );
+  assert.deepEqual(lines, ['caught boom', 'after', 'third']);
+});
+
+test('only a pending macrotask keeps a Node process alive (port ref/unref)', () => {
+  // An idle channel does not hold the process open: it exits after the task ran.
+  assert.deepEqual(runChild(pooledPrelude, false, `request(() => console.log('ran'));`), ['ran']);
+  // After going idle the next pending task re-references the port and still runs before exit, even though
+  // nothing else (timer, socket) is alive when it is posted.
+  assert.deepEqual(
+    runChild(
+      pooledPrelude,
+      false,
+      `request(() => { console.log('ran1'); setTimeout(() => request(() => console.log('ran2')), 30); });`,
+    ),
+    ['ran1', 'ran2'],
+  );
+  // A cancelled entry is only marked: its closure and message stay until the message is delivered, so it
+  // still holds the loop open for that one delivery, never runs, and the process then exits.
+  assert.deepEqual(
+    runChild(
+      pooledPrelude,
+      false,
+      `request(() => console.log('bad'))(); request(() => console.log('later'));
+const cancelled = request(() => console.log('bad2')); cancelled();`,
+    ),
+    ['later'],
+  );
+});
+
+test('the shipped, patched @univerjs/core has one pooled helper and shows the same behaviour', async () => {
+  // Work on a temp copy of the installed package, inside the repository so its own dependencies resolve.
+  const root = await mkdtemp(resolve('.spinel-core-module-'));
+  try {
+    const copy = resolve(root, 'core');
+    await cp(resolve('node_modules/@univerjs/core'), copy, { recursive: true });
+    for (const format of ['es', 'cjs'] as const) {
+      const source = await readFile(resolve(copy, 'lib', format, 'index.js'), 'utf8');
+      // The installed bytes are exactly the pooled build, with a single definition.
+      assert.equal(patchCore(source, format), source, format);
+      assert.equal(source.split('function requestImmediateMacroTask(').length, 2, format);
+      assert.equal(source.split(pooledMacroTask).length, 2, format);
+      assert.ok(!source.includes('const channel = new MessageChannel();'), format);
+      assert.equal(source.split('new MessageChannel(').length, 2, format);
+      // The only references are the definition and the public export (cjs names it on both sides).
+      const exported =
+        format === 'es'
+          ? /export \{[^}]*\brequestImmediateMacroTask\b[^}]*\}/
+          : /^exports\.requestImmediateMacroTask = requestImmediateMacroTask;$/m;
+      assert.match(source, exported, format);
+      assert.equal(
+        source.split(/\brequestImmediateMacroTask\b/).length - 1,
+        format === 'es' ? 2 : 3,
+        format,
+      );
+    }
+    const url = pathToFileURL(resolve(copy, 'lib/es/index.js')).href;
+    const es = (await import(url)) as { requestImmediateMacroTask: Request };
+    const cjs = createRequire(resolve(copy, 'package.json'))('./lib/cjs/index.js') as {
+      requestImmediateMacroTask: Request;
+    };
+    for (const core of [es, cjs]) await exerciseScheduler(core.requestImmediateMacroTask);
+    // Both formats' shipped bytes keep a throwing callback from breaking later tasks.
+    const throwing = `process.on('uncaughtException', (error) => console.log('caught ' + error.message));
+request(() => { throw new Error('boom'); });
+request(() => console.log('after'));`;
+    assert.deepEqual(
+      runChild(
+        `import { requestImmediateMacroTask as request } from ${JSON.stringify(url)};`,
+        true,
+        throwing,
+      ),
+      ['caught boom', 'after'],
+    );
+    assert.deepEqual(
+      runChild(
+        `const { requestImmediateMacroTask: request } = require(${JSON.stringify(resolve(copy, 'lib/cjs/index.js'))});`,
+        false,
+        throwing,
+      ),
+      ['caught boom', 'after'],
+    );
+  } finally {
+    await rm(root, { recursive: true, force: true });
   }
 });

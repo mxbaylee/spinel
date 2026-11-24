@@ -1,0 +1,646 @@
+{
+  "status": "first hosted native acceptance passed; wrapped-footer repair captured locally; exact new-head reviews and hosted acceptance pending",
+  "physicalPhone": "not run; owner waived conditional on local reproduction, 2026-11-22",
+  "originalIncidentCause": "unconfirmed",
+  "deadlineMs": 3000,
+  "nativeAcceptanceMaxMs": 4000,
+  "before": {
+    "source": "40ed569161c85d008b0ad6ebc76de9ba5ba3533f",
+    "rawSha256": "83f703b99489455376bc60384f81c97f72a522525a51ac93b563a9d7b5fcc05d",
+    "physicalPhone": false,
+    "results": [
+      {
+        "mode": "hold-headers",
+        "requestMs": 15002.1,
+        "stageMs": 15002.3,
+        "checkToDoneMs": 15002.8,
+        "dropped": 0,
+        "unavailable": false,
+        "outcome": [
+          "You're offline"
+        ]
+      },
+      {
+        "mode": "hold-body",
+        "requestMs": 15002.1,
+        "stageMs": 15002.4,
+        "checkToDoneMs": 15002.7,
+        "dropped": 0,
+        "unavailable": false,
+        "outcome": [
+          "You're offline"
+        ]
+      }
+    ]
+  },
+  "after": {
+    "source": "373b0ef91103766cfe5fe0119205670adfdf5f5a",
+    "rawSha256": "df5eec8631de29af881d2bcb3aed9bf6ecc66775f69d8ec6afa7b8c5604b45f6",
+    "physicalPhone": false,
+    "results": [
+      {
+        "mode": "hold-headers",
+        "requestMs": 3004.3,
+        "stageMs": 3004.5,
+        "checkToDoneMs": 3004.7,
+        "dropped": 0,
+        "unavailable": false,
+        "outcome": [
+          "You're offline"
+        ]
+      },
+      {
+        "mode": "hold-body",
+        "requestMs": 3002.7,
+        "stageMs": 3003,
+        "checkToDoneMs": 3003.1,
+        "dropped": 0,
+        "unavailable": false,
+        "outcome": [
+          "You're offline"
+        ]
+      }
+    ]
+  },
+  "repairIdentity": {
+    "source": "373b0ef91103766cfe5fe0119205670adfdf5f5a",
+    "runtime": "d3d43ef66b6b032b",
+    "manifestSha256": "35e4ab91c99966de67fb4536cf83a49e36039de30bf76c7e6558855cea11adc7",
+    "sourceSha256": {
+      "web/api.ts": "33023c0adfcc7aa199787617045d58e25a7fd79070721babe9a5bf2fe4bc4ac3",
+      "web/App.tsx": "c572ec06c24bc4ab122673860ecaf5b20eb7df437f99136b73d42477a1f63187",
+      "web/startupStage.ts": "2403310d1e6b2683924c5a0c4b6973bd549896ae60b89414eca452973a8aac49",
+      "web/maintenanceFetch.ts": "7fff7fcda81ca2c9dfdb8ecd4a2e37975321562037e7a734a375c5063fd6acba",
+      "scripts/ci/startup-phone.config.ts": "d2a847842979757d8ad582dde9e6f51f03b3c211bd48c52a56eda354439a0c95",
+      "scripts/ci/startup-phone-observer.ts": "24442acdd5e8a89ab07f7d6f9b17a695755d99b4bff60304ca11e4a36bf4c210",
+      "scripts/ci/startup-phone-instrumentation.ts": "35d14dfaaecb838968cce42d96f89f9d9f85ff09f1dbb18b5639c920bfedc583"
+    }
+  },
+  "checks": {
+    "session-restored-controls": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 1134,
+      "peakKiB": 416304,
+      "receiptSha256": "8ade261172dd04c493dda4577071e4fa73d365fa7c60ed56b64ef184298c932a"
+    },
+    "session-negative": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 1060,
+      "peakKiB": 422944,
+      "receiptSha256": "aaca6e2c2785a1c4fa63158362d10211c49f50e5af5bd4e31a32d2d92bc6971b"
+    },
+    "final-observer": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 143,
+      "peakKiB": null,
+      "receiptSha256": "0dc83abac9fce1e503336e75c7cac7b98eb34239b5dda618a5c4c0ef77b22c3f"
+    },
+    "final-lint": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 498,
+      "peakKiB": 143264,
+      "receiptSha256": "aa00306a3109f895ab42b9b4789bedff20715f5149788311ced72c7b55d12744"
+    },
+    "routing": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 70,
+      "peakKiB": null,
+      "receiptSha256": "8267a1411a1016db4018d5695c22807463b0a4e5dc813ba984e9a9625b439ace"
+    },
+    "boundary-baseline": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 33042,
+      "peakKiB": 922384,
+      "receiptSha256": "fba92e45fef3c365298ca9ef7d0a7cf433b445700a5e220e001e5c724768ca9b"
+    },
+    "boundary-repaired": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 8659,
+      "peakKiB": 952576,
+      "receiptSha256": "773a7fecbb35f4802f6b13a4f28340d5a966c8b46dd3025ca3fa53f94ce71f14"
+    },
+    "repair-types": {
+      "code": 1,
+      "aborted": "pressure=2, rssKiB=1299904",
+      "elapsedMs": 10398,
+      "peakKiB": 1532976,
+      "receiptSha256": "2305a775a34df7e4a5db80d76e79e66a449d862bfdcf0def3a3f33ae59b3a80d"
+    },
+    "reconnect-browser-first": {
+      "code": null,
+      "aborted": "pressure=2, rssKiB=1336240",
+      "elapsedMs": 5062,
+      "peakKiB": 1336240,
+      "receiptSha256": "89f5173d9c49543a1fa286350eb304833fa20f51af7a134e6724bc8e2a6056a9"
+    },
+    "visual-capture": {
+      "code": 1,
+      "aborted": null,
+      "elapsedMs": 16908,
+      "peakKiB": 853152,
+      "receiptSha256": "ce6fc135db00b30d100f8f56279946b96ebd1065a912da9bb58a8204eb640574"
+    },
+    "visual-capture-locks": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 40382,
+      "peakKiB": 968560,
+      "receiptSha256": "ab829b750aa89564247be2d5cb13bbe6554a36745a7a232c1662e5dacaa1acde"
+    },
+    "visual-fixed-build": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 2252,
+      "peakKiB": 973632,
+      "receiptSha256": "9bd617221a12a8ac298512c80952975448ac845f284f512719bf265631abfb49"
+    },
+    "visual-final": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 40199,
+      "peakKiB": 972944,
+      "receiptSha256": "85445a72f30d899b01cc116452cde9cd0e5517877735c9987d080de30bcdf145"
+    },
+    "archive-repair": {
+      "code": 1,
+      "aborted": null,
+      "elapsedMs": 2508,
+      "peakKiB": 158512,
+      "receiptSha256": "aa9af72660866e4e7cb30cc8210a078d635f254582e1aa214f1d485fd6256e05"
+    },
+    "archive-repair-verified": {
+      "code": 0,
+      "aborted": null,
+      "elapsedMs": 2548,
+      "peakKiB": 158160,
+      "receiptSha256": "9408eee8debb56476927e89de0687df9b47ec6e7ab6b9957c3aa73dacb696ce7"
+    }
+  },
+  "negativeControls": {
+    "results": [
+      {
+        "label": "old-deadline",
+        "title": "a stalled session",
+        "code": 1,
+        "originalSha256": "33023c0adfcc7aa199787617045d58e25a7fd79070721babe9a5bf2fe4bc4ac3",
+        "mutantSha256": "e94b4f38ba47e3c6783abd941ade0b9ca3d879f6b0f7ca035a48577c7db8440d"
+      },
+      {
+        "label": "lost-denial",
+        "title": "actual 401.*timed-out",
+        "code": 1,
+        "originalSha256": "33023c0adfcc7aa199787617045d58e25a7fd79070721babe9a5bf2fe4bc4ac3",
+        "mutantSha256": "55e4bccd10f1eb7362c5b5230921b733c311ef21b24c781a38a46f9d5545cfa1"
+      }
+    ],
+    "restoredSha256": "33023c0adfcc7aa199787617045d58e25a7fd79070721babe9a5bf2fe4bc4ac3"
+  },
+  "routing": {
+    "rawSha256": "43bfd1ac99fccb25d2cfe183cc4199a3ab7ffcfadc17db6e26a54c99bbec4169",
+    "inputs": [
+      {
+        "path": "web/api.ts",
+        "mode": "targeted",
+        "negativeControls": 52
+      },
+      {
+        "path": "web/App.tsx",
+        "mode": "targeted",
+        "negativeControls": 52
+      },
+      {
+        "path": "web/startupStage.ts",
+        "mode": "targeted",
+        "negativeControls": 52
+      },
+      {
+        "path": "web/maintenanceFetch.ts",
+        "mode": "targeted",
+        "negativeControls": 52
+      },
+      {
+        "path": "web/offline/localStart.ts",
+        "mode": "targeted",
+        "negativeControls": 52
+      },
+      {
+        "path": "web/offline/deadlines.ts",
+        "mode": "targeted",
+        "negativeControls": 52
+      },
+      {
+        "path": "e2e/offline.spec.ts",
+        "mode": "targeted",
+        "negativeControls": 48
+      },
+      {
+        "path": "src/ui/sessionRequest.test.ts",
+        "mode": "full",
+        "negativeControls": 60
+      },
+      {
+        "path": "scripts/ci/startup-phone-observer.ts",
+        "mode": "full",
+        "negativeControls": 60
+      },
+      {
+        "path": "web/StartupStage.stories.tsx",
+        "mode": "targeted",
+        "negativeControls": 52
+      }
+    ]
+  },
+  "visuals": {
+    "status": "passed",
+    "captures": [
+      {
+        "name": "light",
+        "theme": "light",
+        "width": 1280,
+        "height": 900,
+        "status": "Still starting: saved files (9 s)",
+        "statusBox": {
+          "x": 16,
+          "y": 789,
+          "width": 1248,
+          "height": 15
+        },
+        "footerBox": {
+          "x": 0,
+          "y": 834,
+          "width": 1280,
+          "height": 66
+        },
+        "source": "ebc4f12d3adb52cd3cd67e252c1812efa771bff1",
+        "runtime": "03230f74b4ca3837",
+        "surface": "actual application route, controlled auth-transition and catalog locks",
+        "physicalPhone": false
+      },
+      {
+        "name": "dark",
+        "theme": "dark",
+        "width": 1280,
+        "height": 900,
+        "status": "Still starting: saved files (9 s)",
+        "statusBox": {
+          "x": 16,
+          "y": 789,
+          "width": 1248,
+          "height": 15
+        },
+        "footerBox": {
+          "x": 0,
+          "y": 834,
+          "width": 1280,
+          "height": 66
+        },
+        "source": "ebc4f12d3adb52cd3cd67e252c1812efa771bff1",
+        "runtime": "03230f74b4ca3837",
+        "surface": "actual application route, controlled auth-transition and catalog locks",
+        "physicalPhone": false
+      },
+      {
+        "name": "phone",
+        "theme": "light",
+        "width": 390,
+        "height": 844,
+        "status": "Still starting: saved files (9 s)",
+        "statusBox": {
+          "x": 16,
+          "y": 733,
+          "width": 358,
+          "height": 15
+        },
+        "footerBox": {
+          "x": 0,
+          "y": 778,
+          "width": 390,
+          "height": 66
+        },
+        "source": "ebc4f12d3adb52cd3cd67e252c1812efa771bff1",
+        "runtime": "03230f74b4ca3837",
+        "surface": "actual application route, controlled auth-transition and catalog locks",
+        "physicalPhone": false
+      }
+    ],
+    "images": [
+      {
+        "file": "before-saved-files-phone.png",
+        "sha256": "560b0b9311cb16ed40ed6c2aa5de5214eee7e3b30a0aae1f5e70f2ecf5846455"
+      },
+      {
+        "file": "before-wrapped-footer-phone.png",
+        "sha256": "bb22fd929d7610a70a5a007d63babc55b45fffe035852ebc673e182eb56d94a5"
+      },
+      {
+        "file": "saved-files-dark.png",
+        "sha256": "b1e61f87851ffd38ce8589c6d714d173d134d7b5ef306c8cc6550913470b2505"
+      },
+      {
+        "file": "saved-files-light.png",
+        "sha256": "e420e81378ce52a4e883e81744e8e80cfb52c560a48ecc5e5f9a7cd7d871322e"
+      },
+      {
+        "file": "saved-files-phone.png",
+        "sha256": "d8f871c8244772e3913fb35177a12733a83d914aece0b144318d3f29c1fd362d"
+      },
+      {
+        "file": "unreachable-dark.png",
+        "sha256": "2aa0b3cd318c7e7dec5fff0b8bc362cf6c29b020d6a70c5bdae4004a70f06b41"
+      },
+      {
+        "file": "unreachable-light.png",
+        "sha256": "77d43b34ba4d13f25454e53ad07d303b27aef3a210d7e0288b35613ae7a40539"
+      },
+      {
+        "file": "unreachable-phone.png",
+        "sha256": "1b46395a684da104beed43134b21619d6ba63ceafd2c78b2642cd8920bb6efa1"
+      }
+    ],
+    "review": "new-head approval pending; supersedes source694d8b49 captures retained in verified private archives"
+  },
+  "archival": {
+    "path": "/Users/mxbaylee/.local/share/spinel-evidence/SPN-164/20261122-repair-694d8b49-verified/raw-repair-evidence.tar.gz",
+    "sha256": "9b033c8ce70b854d0d80fd30903721ed50cad9dfb34d5b62b2bfec245c02b321",
+    "bytes": 16057243,
+    "memberCount": 461,
+    "verifiedEveryMember": true
+  },
+  "failureDispositions": {
+    "repair-types": "Doc/Sheet snapshot union access fixed by explicit kind narrowing; run also watchdog-aborted at pressure 2. Hosted full typecheck pending.",
+    "reconnect-browser-first": "Watchdog-aborted before acceptance, not a pass; hosted native integration pending.",
+    "visual-capture": "Fixture dispatch delay did not expose saved-files stage; replaced with actual auth/catalog Web Locks.",
+    "visual-capture-locks": "Capture passed but inspection found phone footer overlap. Before screenshot retained; fixed placement and final geometry/captures passed.",
+    "archive-repair": "First verification rejected archive: inventory excluded archive script while tar retained it. Exact log/receipt-only exclusions corrected; separate verified archive preserves first failure."
+  },
+  "reviewRepairControls": {
+    "observerMutation": {
+      "code": 1,
+      "originalSha256": "35d14dfaaecb838968cce42d96f89f9d9f85ff09f1dbb18b5639c920bfedc583",
+      "mutantSha256": "93d19c0aee0715425a8f646687b9eca1b72f564f83d01438cd1a4b93855f94a1",
+      "restoredSha256": "35d14dfaaecb838968cce42d96f89f9d9f85ff09f1dbb18b5639c920bfedc583"
+    },
+    "observerRestored": {
+      "label": "observer-repaired",
+      "command": "node",
+      "args": [
+        "--test",
+        "scripts/ci/startup-phone.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 118,
+      "peakKiB": 0
+    },
+    "lint": {
+      "label": "review-repair-lint",
+      "command": "node",
+      "args": [
+        "/private/tmp/spn164/final-checks.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 451,
+      "peakKiB": 175712
+    }
+  },
+  "wrappedFooterRepair": {
+    "source": "ebc4f12d3adb52cd3cd67e252c1812efa771bff1",
+    "productionSourceSha256": "1bf4084bba59ed393b741b78a2a0beaef15a7f82e0a875d5313817922dff161b",
+    "failure": {
+      "head": "1968a1ed3bdaf6ea9f20136561f8a78ee280c621",
+      "tested": "3bd37d381244eeeed0348aa1d2e034a8c4c7045a",
+      "run": 45089308768,
+      "attempt": 1,
+      "jobs": [
+        137416078418,
+        137416078389,
+        137420548321
+      ],
+      "statusBottomPx": 820,
+      "footerTopPx": 816,
+      "lightArtifact": {
+        "id": 14781391705,
+        "sha256": "8c92a8d1dfe56bc307898fa8e0270cd8b400c55ec9db69a3c9bed58c2bb4170f"
+      },
+      "darkArtifact": {
+        "id": 14781008538,
+        "sha256": "834a2ede0ce3876b3eea8fe26e92e56da6fb13a1e4f3a64b7f466f5f2d826fd2"
+      }
+    },
+    "offsetPx": 96,
+    "observedWrappedFooterPx": 84,
+    "gapPx": 12,
+    "controlledReplay": {
+      "status": "passed",
+      "fixtureSource": "1968a1ed3bdaf6ea9f20136561f8a78ee280c621",
+      "productionLineSource": "ebc4f12d3adb52cd3cd67e252c1812efa771bff1",
+      "scope": "Archived actual Storybook fixture with footer width360px to reproduce observed CI two-line84px height under Mac fonts, replacing only status element with current production createStartupLine; full hosted rebuilt review still required",
+      "results": [
+        {
+          "theme": "light",
+          "natural": {
+            "status": {
+              "x": 16,
+              "y": 805,
+              "width": 358,
+              "height": 15
+            },
+            "footer": {
+              "x": 0,
+              "y": 834,
+              "width": 390,
+              "height": 66
+            }
+          },
+          "before": {
+            "status": {
+              "x": 16,
+              "y": 805,
+              "width": 358,
+              "height": 15
+            },
+            "footer": {
+              "x": 0,
+              "y": 816,
+              "width": 360,
+              "height": 84
+            }
+          },
+          "after": {
+            "status": {
+              "x": 16,
+              "y": 789,
+              "width": 358,
+              "height": 15
+            },
+            "footer": {
+              "x": 0,
+              "y": 816,
+              "width": 360,
+              "height": 84
+            }
+          },
+          "clearancePx": 12
+        },
+        {
+          "theme": "dark",
+          "natural": {
+            "status": {
+              "x": 16,
+              "y": 805,
+              "width": 358,
+              "height": 15
+            },
+            "footer": {
+              "x": 0,
+              "y": 834,
+              "width": 390,
+              "height": 66
+            }
+          },
+          "before": {
+            "status": {
+              "x": 16,
+              "y": 805,
+              "width": 358,
+              "height": 15
+            },
+            "footer": {
+              "x": 0,
+              "y": 816,
+              "width": 360,
+              "height": 84
+            }
+          },
+          "after": {
+            "status": {
+              "x": 16,
+              "y": 789,
+              "width": 358,
+              "height": 15
+            },
+            "footer": {
+              "x": 0,
+              "y": 816,
+              "width": 360,
+              "height": 84
+            }
+          },
+          "clearancePx": 12
+        }
+      ]
+    },
+    "checks": {
+      "wrapped-build": {
+        "label": "wrapped-build",
+        "command": "env",
+        "args": [
+          "NODE_OPTIONS=--max-old-space-size=384",
+          "RAYON_NUM_THREADS=1",
+          "VITE_SYNC_EVIDENCE=0",
+          "VITE_DOC_SELECTION_EVIDENCE=1",
+          "node",
+          "node_modules/vite/bin/vite.js",
+          "build",
+          "--config",
+          "/private/tmp/spn164/ordinary-build.config.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "aborted": null,
+        "elapsedMs": 2333,
+        "peakKiB": 963328
+      },
+      "visual-wrapped": {
+        "label": "visual-wrapped",
+        "command": "node",
+        "args": [
+          "--max-old-space-size=256",
+          "/private/tmp/spn164/visual-capture-wrapped.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "aborted": null,
+        "elapsedMs": 40447,
+        "peakKiB": 907424
+      },
+      "story-wrapped": {
+        "label": "story-wrapped",
+        "command": "node",
+        "args": [
+          "--max-old-space-size=256",
+          "/private/tmp/spn164/story-wrapped.ts"
+        ],
+        "code": 1,
+        "signal": null,
+        "aborted": null,
+        "elapsedMs": 1115,
+        "peakKiB": 512528
+      },
+      "story-wrapped-controlled": {
+        "label": "story-wrapped-controlled",
+        "command": "node",
+        "args": [
+          "--max-old-space-size=256",
+          "/private/tmp/spn164/story-wrapped-controlled.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "aborted": null,
+        "elapsedMs": 1252,
+        "peakKiB": 451248
+      },
+      "wrapped-lint": {
+        "label": "wrapped-lint",
+        "command": "node",
+        "args": [
+          "/private/tmp/spn164/final-checks.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "aborted": null,
+        "elapsedMs": 466,
+        "peakKiB": 163760
+      }
+    },
+    "failureDisposition": "First local archived-story replay did not wrap under Mac font metrics and failed its fixture expectation; controlled footer width360px at viewport390px reproduces exact observed84px height. Old line overlaps4px, current production function clears12px, both themes. Full rebuilt hosted Storybook remains required.",
+    "archival": {
+      "path": "/Users/mxbaylee/.local/share/spinel-evidence/SPN-164/20261122-wrapped-ebc4f12d/raw-repair-evidence.tar.gz",
+      "sha256": "768dd368154682cf25cade389c560983d6b2e8be53350ef68a7087acd02e9860",
+      "bytes": 23716910,
+      "memberCount": 962,
+      "verifiedEveryMember": true
+    }
+  },
+  "firstHostedNativeAcceptance": {
+    "source": "1968a1ed3bdaf6ea9f20136561f8a78ee280c621",
+    "tested": "3bd37d381244eeeed0348aa1d2e034a8c4c7045a",
+    "run": 45089308750,
+    "attempt": 1,
+    "job": 137415190360,
+    "suite": "production 2/2",
+    "testId": "586fc5283fd8ec7c7982-1d9332c969ae78b9f779",
+    "retry": 0,
+    "durationMs": 8706,
+    "sessionMs": 3000.0041090000013,
+    "suiteExpected": 102,
+    "suiteFlaky": 0,
+    "suiteUnexpected": 0,
+    "reportSha256": "9a75a9688043ea1b4aa63d7532a112b181ddbef6e60ad0f286189eed77395102",
+    "artifact": {
+      "id": 14781655422,
+      "sha256": "6777ae84f05392a800b854a135e8df42a93fc8c7a0919aaa5faeb633b5e602f3"
+    },
+    "limit": "Only layout changed afterward; final candidate must still pass required hosted acceptance."
+  }
+}

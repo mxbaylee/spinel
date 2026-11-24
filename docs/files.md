@@ -56,16 +56,13 @@ Operator's backup for server recovery.
 
 Open an owned folder (or My files) and choose **Import file**, or drop one
 file anywhere in its file pane. A `.json` or `.univer` file becomes a new item owned
-by you in that folder. Import never replaces an existing item. PDF, Office and CSV
-uploads are refused. Optional CSV import is post-launch SPN-093; optional format
-and document-type plugins are post-launch SPN-094. The built-in Office import/export proposal
-SPN-035 was retired at the owner's request on 2026-10-21. An installer could add
-Office conversion through a plugin; core Office support is not promised.
-SPN-094 also covers extension points for new document kinds such as slides or
-kanban boards. It supplies a plugin foundation and reference examples, not those
-complete editors; core Sheets and Docs and native backup/import remain supported.
+by you in that folder. Import never replaces an existing item. PDF, Office, CSV and
+TSV uploads are currently refused. Optional CSV/TSV import is post-launch SPN-093. The built-in
+Office import/export proposal SPN-035 was retired on 2026-10-21, and document-type/
+converter plugins SPN-094 were dropped on 2026-11-22. No XLSX or other proprietary
+format support is planned. Core Sheets, Docs and native backup/import stay supported.
 
-**Planned CSV semantics (SPN-093):** preserve UTF-8 fields literally, including
+**Planned CSV/TSV semantics (SPN-093):** preserve UTF-8 fields literally, including
 leading zeros, empty values, quoted content and the first row as data. Do not
 infer formulas, dates, numbers or headers. Future typing options require a
 separate decision; the initial importer reuses existing creation/access/cleanup
@@ -79,14 +76,35 @@ JPEG or WebP, at most 5 MiB and 16 megapixels each, with a 50 MiB total per docu
 Metadata is stripped when necessary; already sanitized image bytes are preserved.
 Only embedded images are imported: Spinel does not fetch remote URLs. Sheet floating,
 cell and background images use the same item-scoped stored bytes as Doc images.
-Existing images render in live Sheets and isolated history previews; new Sheet
-image upload/paste insertion remains unavailable. Imports, saves and restores
+Existing images render in live Sheets and isolated history previews. Account
+owners and editors insert new Sheet images through **Insert → Image → Float
+Image / Cell Image**. Paste an image file or drop one over the editor to place it
+over the selected cell. Insert one file per action; an image in a cell moves with
+its cell when rows are inserted. Native Undo/Redo, collaboration and history
+preserve both forms. Imports, saves and restores
 validate same-item image sources. Embedded cell Doc identities remain separate
 from workbook IDs. The server accepts an image cell in each mutation that carries
-cell data (set values, move range, insert sheet); the browser flows for cut/paste
-and duplicating a sheet have no end-to-end test yet. Viewers and link guests retain read-only drawing controls,
+cell data (set values, move range, insert sheet). Image-cell cut/paste and
+duplicating a sheet use these same native mutation paths; the
+[validation checkpoint](implementation/SPN-068.md#validation-checkpoint) records
+the current browser evidence.
+Cell-image fitting works on a display copy so rendering cannot rewrite saved
+image geometry or trigger a synchronization reload that loses Undo history.
+The [layout decision](implementation/SPN-068.md#cell-image-layout-and-undo)
+preserves native editing and the existing authored-content hash checks.
+Viewers and view-only link guests retain read-only drawing controls,
 including images that finish loading after permissions are applied; revoking
 access prevents subsequent image reads.
+New-file insertion requires an account with current edit access and a connection;
+Sheet guest uploads are refused even for an edit link. Existing authorized native
+editing of already stored image content is unchanged. Upload and dimension
+decoding keep navigation and refresh guarded until the native mutation enters
+synchronization. A changed target or lost access refuses a late insertion. Image
+errors appear in the fixed editor help slot; **Image not inserted · Details**
+opens the complete limit and next step on touch and keyboard. The document budget
+counts retained image bytes, including history, so deleting a drawing does not
+free its bytes, and neither does an upload whose insertion was refused or aborted
+after the bytes were stored. See [SPN-068](implementation/SPN-068.md).
 Decisions [#89](implementation/SPN-039.md#legacy-decision-89-preserve-existing-sheet-images) and
 [#91](implementation/SPN-039.md#legacy-decision-91-offline-prerequisites-without-partial-completion), 2026-10-18/19, supply the
 existing-image prerequisite for offline documents ([docs/offline.md](offline.md)).
@@ -224,8 +242,8 @@ production app's 512 MiB memory limit remains unchanged.
 A validation rejection adds no files. If the browser loses the final response,
 the import is reported as unconfirmed: refresh My files before trying again,
 because the transaction may already have committed. This archive is independent
-of Operator disaster-recovery backups and does not restore history. CSV, format
-plugins and PDF retain their separate ticket scopes. See the
+of Operator disaster-recovery backups and does not restore history. CSV/TSV import
+retains its separate SPN-093 scope; no plugin framework is planned. See the
 [SPN-067 decision record](implementation/SPN-067.md).
 
 ## Doc formulas in files
@@ -234,5 +252,4 @@ plugins and PDF retain their separate ticket scopes. See the
 results. Native imports detach source-bound formulas into ordinary expression
 text; source-free formulas remain active. PDF export renders freshly authorized
 values and complete tables, including the 30-row Formula result;
-SPN-094 retains the same source-access boundary for optional format plugins,
-and owned workspace archives use the deliberate reference remapping described above.
+owned workspace archives use the deliberate reference remapping described above.

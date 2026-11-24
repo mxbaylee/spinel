@@ -1,0 +1,183 @@
+{
+  "source": "c898d24b1506a8536964c5194f20dab03e7ea007",
+  "ordinaryTestedMerge": "8525b762d2636a558a33661b8953a27319638f46",
+  "description": "Actual first-attempt repaired execution, post-hosted A7 fixture finding, real label/retained-label events, and the separate unresolved navigation first failure. Physical/software-keyboard/manual-dispatch acceptance is not inferred.",
+  "files": [
+    {
+      "file": "repair-c898-mobile-result.json",
+      "bytes": 874,
+      "sha256": "0b1b34460954078e9dd38bdb1188e83f48ee8943b88134d8f02c490d13bf3448",
+      "uncompressedSha256": "0b1b34460954078e9dd38bdb1188e83f48ee8943b88134d8f02c490d13bf3448",
+      "origin": "spn170-mobile-evidence-c898d24b/doc-editing-mobile-result.json"
+    },
+    {
+      "file": "repair-c898-mobile-collection.json.gz",
+      "bytes": 1887,
+      "sha256": "c8bd758358d037c00a65d94877503f288e3a8132faa941accca9face6efc75fb",
+      "uncompressedSha256": "a80c3bf70922c69f37231886e1b64a964a30179002c49fe700090b3aacb1163c",
+      "origin": "spn170-mobile-evidence-c898d24b/doc-editing-mobile-collection.json"
+    },
+    {
+      "file": "repair-c898-mobile-report.json.gz",
+      "bytes": 375779,
+      "sha256": "8ede57d03481bbe9ce973fa847d761ec7de2619b817e01d7257c822a33a45953",
+      "uncompressedSha256": "4bb33a0e1452c90438245948f124bfd6ef10c9389716aeaca1c9a761c6830766",
+      "origin": "spn170-mobile-evidence-c898d24b/playwright-report/doc-editing-mobile.json"
+    },
+    {
+      "file": "repair-c898-mobile-job.log.gz",
+      "bytes": 14913,
+      "sha256": "21d5b2a7b3023844b7686aa0743dee72f5f9b29b5d9ff7ff44de1c7e207128cb",
+      "uncompressedSha256": "27b37170ecd4dc99d4fcda7562b05109f05edcb276de6454553c9c6df2bc6614",
+      "origin": "spn170-mobile-job135827903056.log"
+    },
+    {
+      "file": "repair-c898-mobile-summary.json",
+      "bytes": 23672,
+      "sha256": "ed60b648bfc88d09baebb301e62a5b431844f15d74ab7b66678274e17601c6ff",
+      "uncompressedSha256": "ed60b648bfc88d09baebb301e62a5b431844f15d74ab7b66678274e17601c6ff",
+      "origin": "review-a-c898-mobile-editing-summary.json"
+    },
+    {
+      "file": "repair-c898-desktop-summary.json",
+      "bytes": 12025,
+      "sha256": "a4b817d22d73e3a94266ecdf52efb4382c60dfb58ad5e112b5dd50b6c34a69d7",
+      "uncompressedSha256": "a4b817d22d73e3a94266ecdf52efb4382c60dfb58ad5e112b5dd50b6c34a69d7",
+      "origin": "review-a-c898-desktop-editing-summary.json"
+    },
+    {
+      "file": "repair-c898-denial-event-construction.txt",
+      "bytes": 6026,
+      "sha256": "c2714d04eaea98ffc74d42a4c85ca84d8dc83fbf5d5e821a693110768bd1703f",
+      "uncompressedSha256": "c2714d04eaea98ffc74d42a4c85ca84d8dc83fbf5d5e821a693110768bd1703f",
+      "origin": "review-a-c898-denial-event-construction.txt"
+    },
+    {
+      "file": "repair-c898-navigation-first-failure.json",
+      "bytes": 5238,
+      "sha256": "64968cdd83c97af3310e429aaa08900c08e82b7689cb08d07648dd07e989c504",
+      "uncompressedSha256": "64968cdd83c97af3310e429aaa08900c08e82b7689cb08d07648dd07e989c504",
+      "origin": "review-b-c898d24b-navigation-first-failure-summary.json"
+    },
+    {
+      "file": "repair-c898-navigation-report.json.gz",
+      "bytes": 2792,
+      "sha256": "9d02380312a9fe5bdb7e8d003aecf06cf3454e5353bbc67d0e4ac3c47c1c4bfe",
+      "uncompressedSha256": "bbac68ba86a3bb881439cd679c9e3f9cf0c15469897815e2b750180ed86b37c2",
+      "origin": "review-b-c898d24b-navigation-report-subset.json"
+    },
+    {
+      "file": "repair-c898-development-report.json.gz",
+      "bytes": 409330,
+      "sha256": "fc9ca73634d30ae7e1b5e1c5cec22d2a08d0daca39b64f3ab54d2a809a0ed608",
+      "uncompressedSha256": "518ec677bd480a784a59ea98869b1428b5067bd38a85da3c4810e6ecb9895afb",
+      "origin": "review-a-c898-development2-run44598172433-attempt1/playwright-report/development-2-of-2.json"
+    },
+    {
+      "file": "repair-c898-development-receipts.json.gz",
+      "bytes": 5503,
+      "sha256": "b74922522fbe0764dc58e8a0d575909c6e688eaba1824f7193ecac48755884be",
+      "uncompressedSha256": "5df62c129b60ee7638f672e7d1fe3c99a9140006b37c17ca9f30dad7c79aeb2d",
+      "origin": "run44598172433 development2 exact raw receipts"
+    },
+    {
+      "file": "repair-c898-production-report.json.gz",
+      "bytes": 413434,
+      "sha256": "d3174f614473a375d3f554b2e1ce63ac7e8cc7132f3c2e6ddfb6ece864831097",
+      "uncompressedSha256": "b075cf09abfd2753afaffbb29c41f1b43a55c36b5cd0b59985a874a5b655c10f",
+      "origin": "review-a-c898-production2-run44598172433-attempt1/playwright-report/production-2-of-2.json"
+    },
+    {
+      "file": "repair-c898-production-receipts.json.gz",
+      "bytes": 5420,
+      "sha256": "8d48376f87a3b8ec5020e00b7cc54d5f776f7f569e013961dc6a0216d6beb16f",
+      "uncompressedSha256": "0b218ceddae3c83ee6f281838abdc2b0a8c6c31c34c71b8b02d9d19348d7cf18",
+      "origin": "run44598172433 production2 exact raw receipts"
+    },
+    {
+      "file": "repair-c898-mobile-receipts.json.gz",
+      "bytes": 4711,
+      "sha256": "eccb4fcf5be693dac38681b82cdc2396ea667452f4b048c619c450989547f6bb",
+      "uncompressedSha256": "ce115da53349fd9b694ba52c000236cd1ccad0e55079187a54c921381b3feefc",
+      "origin": "run44598732094 artifact14570421041 exact raw receipts"
+    },
+    {
+      "file": "repair-c898-triggers.json.gz",
+      "bytes": 37289,
+      "sha256": "a1282feaf05591998e222b5fea11db13d1d12798844c00c46e77860547066cab",
+      "uncompressedSha256": "c6601fe78e199c2d6a77593b73d4e53b8e7558f56ca4a0a468ff3d05c8afafa2",
+      "origin": "actual complete classifier logs and raw coverage plans"
+    },
+    {
+      "file": "repair-c898-navigation-fixtures.json",
+      "bytes": 5150,
+      "sha256": "23358429a0855a2150acd3b13f64d091067089cef4aa19b2403a7e9a0117dfdf",
+      "uncompressedSha256": "23358429a0855a2150acd3b13f64d091067089cef4aa19b2403a7e9a0117dfdf",
+      "origin": "first attempt and inherited retry distinct owner-health receipts"
+    },
+    {
+      "file": "repair-c898-aggregate.log.gz",
+      "bytes": 6127,
+      "sha256": "e159ffd76d0eb65dc7b599291078a716ecdb575dce4c225fea11839ae2f19095",
+      "uncompressedSha256": "cc12be7f01ff441501c2b6b745c86c9e8c1bc7c693de1049c9d2aba717599d7a",
+      "origin": "review-b-c898d24b-synchronize-aggregate-run44598172433-job135846936265.log"
+    },
+    {
+      "file": "repair-c898-aggregate-summary.json",
+      "bytes": 2657,
+      "sha256": "fa1bfdbc75627c8494a987e70ab692c0175da470d16ba154c6d0bb2db4342aeb",
+      "uncompressedSha256": "fa1bfdbc75627c8494a987e70ab692c0175da470d16ba154c6d0bb2db4342aeb",
+      "origin": "review-b-c898d24b-synchronize-aggregate-summary.json"
+    },
+    {
+      "file": "repair-c898-aggregate-plan.json",
+      "bytes": 4533,
+      "sha256": "2b4f429337d07dfdd10683b63c2f2d2ca0836ef131e4d9236bc94e2a61e0819d",
+      "uncompressedSha256": "2b4f429337d07dfdd10683b63c2f2d2ca0836ef131e4d9236bc94e2a61e0819d",
+      "origin": "review-b-c898d24b-synchronize-aggregate-plan.json"
+    },
+    {
+      "file": "repair-c898-aggregate-job.json",
+      "bytes": 2937,
+      "sha256": "261293cb11cbfde4456c3b2a0aca2149850a2b7696a77647f219e03871051399",
+      "uncompressedSha256": "261293cb11cbfde4456c3b2a0aca2149850a2b7696a77647f219e03871051399",
+      "origin": "review-b-c898d24b-synchronize-aggregate-job.json"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14570421041,
+      "run": 44598732094,
+      "name": "doc-editing-mobile-evidence",
+      "sha256": "9956440e597d0db645897f08d4e0e6a9a129bf57f8cc379409398e058f9ed195",
+      "retentionDays": 30
+    },
+    {
+      "id": 14570021725,
+      "run": 44598732094,
+      "name": "doc-editing-mobile-build",
+      "sha256": "384d08c38979ab8377141f90fe7ef5c359b9ed7167559dd5a1e9b46d5702d09e",
+      "retentionDays": 30
+    },
+    {
+      "id": 14567802648,
+      "run": 44598172433,
+      "name": "production shard2 evidence",
+      "sha256": "9aec8009aaf3f0ea9fde0e0b7a6407fe5ee4d8ca6b4bb090fe76813d487d143a",
+      "retentionDays": 7
+    },
+    {
+      "id": 14568466435,
+      "run": 44598172433,
+      "name": "development shard2 evidence",
+      "sha256": "13b7fb17b60581ecc61ef8a19c038a4c762b7f321cab46ff5887386d9a4097b0",
+      "retentionDays": 7
+    }
+  ],
+  "separateNavigationTrace": {
+    "artifact": 14567802648,
+    "bytes": 10154895,
+    "sha256": "4a9707b88841034c5cf0e198671fe93bcda6829a038dee3dcabb89ecd5ad4d1f",
+    "retention": "Full trace remains a supplementary 7-day artifact; primary first error, report, fixture receipts and diagnosis are retained in this checkpoint. No browser retry was initiated."
+  }
+}

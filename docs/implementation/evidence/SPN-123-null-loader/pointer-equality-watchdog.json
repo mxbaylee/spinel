@@ -1,0 +1,54 @@
+{
+  "root": 80354,
+  "started": 1793882075588,
+  "elapsedMs": 171,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 90048,
+  "peakKiB": 90048,
+  "live": [
+    {
+      "pid": 80354,
+      "parent": 80328,
+      "group": 80354,
+      "rssKiB": 88512,
+      "started": "Thu Nov  5 04:34:35 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn123-production-inventory/pointer-equality-watchdog.json node /tmp/spn123-production-inventory/probe-pointer-equality.ts"
+    },
+    {
+      "pid": 80407,
+      "parent": 80354,
+      "group": 80354,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:34:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 80354,
+      "parent": 80328,
+      "group": 80354,
+      "rssKiB": 88512,
+      "started": "Thu Nov  5 04:34:35 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn123-production-inventory/pointer-equality-watchdog.json node /tmp/spn123-production-inventory/probe-pointer-equality.ts"
+    },
+    {
+      "pid": 80373,
+      "parent": 80354,
+      "group": 80354,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:34:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 80407,
+      "parent": 80354,
+      "group": 80354,
+      "rssKiB": 1536,
+      "started": "Thu Nov  5 04:34:35 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

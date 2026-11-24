@@ -1,0 +1,45 @@
+{
+  "base": "87c34e30ed810e6789d876e55b23dcbb349fa506",
+  "originalLocal": "aeee60266b505b1ac6f928c4725639d90c768073",
+  "scopeCheckpoint": "df87eea0",
+  "candidate": "integration tree identified by source hashes; final local commit follows evidence capture",
+  "status": "intermediate local checkpoint; not final review or hosted acceptance",
+  "files": [
+    {
+      "name": "spn123-resume-dependencies.json",
+      "sha256": "4f06160bf3b3f26e0bc9c904e450ff151777a599c8bc5aaf7c253db043f09818"
+    },
+    {
+      "name": "spn123-resume-native-controls.json",
+      "sha256": "a4f42636b3a69ed4cfe9ed0bf611c3858ed2c2c412c6e886d28d17f173ee07b6"
+    },
+    {
+      "name": "spn123-resume-native-controls.log.gz",
+      "sha256": "aa77a8708d64a3ee8680256203b835e153b29255452a670ea04060644c523e04"
+    },
+    {
+      "name": "spn123-resume-sources.json",
+      "sha256": "8d4def091360b3bd14cb078d37ba07f60dfbe8a905cc8446adf2adc406bfb604"
+    },
+    {
+      "name": "spn123-resume-sync-native.json",
+      "sha256": "22c1946cff181173017edc8098c615b739998f623bb2233ab3993996c256636f"
+    },
+    {
+      "name": "spn123-resume-sync-native.log.gz",
+      "sha256": "09defc3bb728230072a398138abce2186cf3392a3a7c303df2ed5dd9184096a5"
+    },
+    {
+      "name": "spn123-resume-types.json",
+      "sha256": "d7c11178d9d16b14dcbe76120d91a0349bb86e51fe81fde4d084ed707962e790"
+    },
+    {
+      "name": "spn123-resume-types.log.gz",
+      "sha256": "36deb00ea35f036e82f5a12cdff5abc104d0dd358f4bab600be2ac1e6deb37f5"
+    },
+    {
+      "name": "spn123-vitest.config.ts.gz",
+      "sha256": "dc10d4403696ae4eb015c7a6db4e8388ce9c4ba7c8b8e0230c0981cfe23bf458"
+    }
+  ]
+}

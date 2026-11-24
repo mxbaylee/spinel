@@ -1,0 +1,11 @@
+{
+  "at": "2026-11-14T03:09:22.250663+00:00",
+  "attempts": [
+    "spn120-current-typecheck",
+    "spn120-current-typecheck-bounded"
+  ],
+  "includesVerifiedNativeCompilerPath": true,
+  "survivingCandidates": [],
+  "ownedSurvivors": [],
+  "action": "Inspection only; no process signaled."
+}

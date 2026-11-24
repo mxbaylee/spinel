@@ -16,8 +16,8 @@
  * Modified for Spinel: execute the installed open-source virtual-list hook with
  * controlled React hooks and ResizeObserver delivery; retain its original
  * measurement below as a negative control. No @univerjs-pro package is read.
- * Source: packages/ui/src/views/hooks/virtual-list.ts, tag v1.1.0:
- * https://github.com/dream-num/univer/blob/v1.1.0/packages/ui/src/views/hooks/virtual-list.ts
+ * Source: packages/ui/src/views/hooks/virtual-list.ts, tag v1.3.1:
+ * https://github.com/dream-num/univer/blob/v1.3.1/packages/ui/src/views/hooks/virtual-list.ts
  */
 import assert from 'node:assert/strict';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
@@ -162,7 +162,7 @@ test('UI installation validates its version and both formats before changing eit
       originals[format],
     );
 
-  await writeFile(metadata, JSON.stringify({ version: '1.1.0' }));
+  await writeFile(metadata, JSON.stringify({ version: '1.3.1' }));
   const cjs = resolve(directory, 'lib/cjs/index.js');
   await writeFile(cjs, originals.cjs + '\n// unexpected change');
   await assert.rejects(patchInstalledUi(root), /Unrecognized @univerjs\/ui cjs/);

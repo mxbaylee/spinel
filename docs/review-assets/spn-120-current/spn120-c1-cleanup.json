@@ -1,0 +1,21 @@
+{
+  "at": "2026-11-14T20:59:24.949077+00:00",
+  "source": "5669bcac09db35180c4a19556849028b38ad40cd",
+  "sharedLockAbsent": true,
+  "taskWatchdogsOrChildrenObserved": [],
+  "taskServersStarted": false,
+  "sharedInstallMutation": false,
+  "donor": "/Users/mxbaylee/projects/spinel-spn-098-production",
+  "donorHead": "7a0451917ef38524138fa2eac432d4520fbed008",
+  "donorClean": true,
+  "equivalentInstallFiles": 241,
+  "installFieldsEqual": [
+    "dependencies",
+    "devDependencies",
+    "optionalDependencies",
+    "overrides",
+    "workspaces",
+    "engines",
+    "packageManager"
+  ]
+}

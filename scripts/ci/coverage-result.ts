@@ -19,6 +19,7 @@ const groups: Record<string, readonly SuiteId[]> = {
     'sync-transition',
     'doc-responsiveness',
     'doc-callback-lifetimes',
+    'doc-editing-mobile',
   ],
 };
 if (import.meta.main) {

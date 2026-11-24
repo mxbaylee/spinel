@@ -134,8 +134,8 @@ test('terminal capacity completion is observed after synchronous subscribers, ne
     expect(witness?.firstEmpty).toMatchObject({
       completedStates: 64,
       pending: { history: 0, collaboration: 0 },
-      history: { undos: 2, redos: 0 },
-      highWater: { history: 32, collaboration: 32 },
+      history: { undos: 4, redos: 0 },
+      highWater: { history: 16, collaboration: 16 },
     });
     expect(f.text()).toBe('a'.repeat(32) + 'b'.repeat(32) + '\r\n');
   } finally {
@@ -280,6 +280,7 @@ test('overflow and a detached native observer cannot yield valid terminal eviden
     f.arm();
     for (let index = 0; index < 4097; index++)
       f.observer.flushed({
+        outcome: 'success',
         reason: 'idle',
         startedAt: 0,
         durationMs: 0,

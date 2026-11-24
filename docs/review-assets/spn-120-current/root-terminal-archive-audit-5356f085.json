@@ -1,0 +1,24 @@
+{
+  "at": "2026-11-14T20:55:17.287Z",
+  "archive": "e9574cb5e19865916b8bf1952c83da131ed91ae7",
+  "parent": "5356f085f84302c85490acf473adab72cc0b7eb9",
+  "exclusiveAdditions": 241,
+  "payloads": 240,
+  "actualGzipDecoded": 6,
+  "allStoredHashesAndGitBlobsVerified": true,
+  "originalZIPsCRCAndHashesVerified": 28,
+  "inventoriedMembers": 1338,
+  "retainedOriginalMemberBindings": 142,
+  "manifestSHA256": "25858d6435fa6728f5a1c15dcf84c5349156e6974439c1ae955732bac73d3290",
+  "rawCallbacks": {
+    "completeMeasurements": 4,
+    "acceptedComparisons": 2,
+    "sourceRoleAttemptCleanupVerified": true
+  },
+  "storyCatalog": {
+    "actualBuilt": 1076,
+    "exactRequestedCheckedVariants": 5,
+    "captureScreenshots": false
+  },
+  "original24CaseAuditVerifiedEarlier": "/tmp/spn120-hosted-5356f085/root-24-case-audit.json"
+}

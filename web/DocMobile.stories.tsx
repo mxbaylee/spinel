@@ -5,13 +5,14 @@ import {
   createParagraphId,
   createSectionId,
   DocumentFlavor,
+  ErrorService,
   getDocsEmptySnapshot,
   LocaleType,
 } from '@univerjs/core';
 import type { Univer } from '@univerjs/core';
 import { DocSkeletonManagerService } from '@univerjs/docs';
 import { calcDocRangePositions, DocSelectionRenderService } from '@univerjs/docs-ui';
-import { IRenderManagerService, ptToPixel } from '@univerjs/engine-render';
+import { Documents, IRenderManagerService, ptToPixel } from '@univerjs/engine-render';
 import { createUniver, mergeLocales } from '@univerjs/presets';
 import { ContextMenuPosition, IContextMenuService } from '@univerjs/ui';
 import { UniverDocsDrawingPreset } from '@univerjs/preset-docs-drawing';
@@ -32,6 +33,8 @@ import { editorReady } from './editorReady.ts';
 import { EditorFrame, useEditorChrome } from './EditorFrame.tsx';
 import { EditorTools } from './EditorTools.tsx';
 import { SaveStatus } from './SaveStatus.tsx';
+import { mobileDocStoryLayoutReady } from './docMobileStoryLayout.ts';
+import type { MobileDocStoryLayout } from './docMobileStoryLayout.ts';
 
 interface MobileDocProps {
   viewer?: boolean;
@@ -50,6 +53,8 @@ interface Observation {
   userZoom: number;
   unchanged: boolean;
   canEdit: boolean;
+  layout: MobileDocStoryLayout;
+  permissionNotices: string[];
 }
 
 // Story-local commands/observations only. No test API or editor reference is
@@ -156,6 +161,14 @@ function MobileCanvas({
       });
       univer = created.univer;
       installCanvasColors(univer);
+      const permissionNotices: string[] = [];
+      const notices = univer
+        .__getInjector()
+        .get(ErrorService)
+        .error$.subscribe((error) => {
+          if (error.code === 'PERMISSION_DENIED') permissionNotices.push(error.errorKey);
+        });
+      cleanups.push(() => notices.unsubscribe());
       const doc = created.univerAPI.createDocument(data);
       await editorReady(created.univerAPI);
       if (abort.signal.aborted) return;
@@ -168,7 +181,12 @@ function MobileCanvas({
       const skeletons = render.with(DocSkeletonManagerService);
       const selections = render.with(DocSelectionRenderService);
       const contextMenus = univer.__getInjector().get(IContextMenuService);
-      const phoneInput = guardPhoneDocInput(render, contextMenus, () => readOnly);
+      const phoneInput = guardPhoneDocInput(
+        render,
+        contextMenus,
+        () => readOnly,
+        univer.__getInjector(),
+      );
       cleanups.push(() => phoneInput.dispose());
       const layout = JSON.stringify([data.documentStyle, data.settings]);
       const fixtureHost = host.current!;
@@ -177,7 +195,8 @@ function MobileCanvas({
           // Native resizing waits for an idle callback, and incremental layout
           // publishes on the skeleton itself without replacing currentSkeleton$.
           // Read each assertion's current geometry instead of caching one RAF.
-          const pages = skeletons.getSkeleton().getSkeletonData()?.pages ?? [];
+          const skeleton = skeletons.getSkeleton();
+          const pages = skeleton.getSkeletonData()?.pages ?? [];
           const lines = pages.flatMap((page) =>
             page.sections.flatMap((section) => section.columns.flatMap((column) => column.lines)),
           );
@@ -191,6 +210,9 @@ function MobileCanvas({
             ),
           );
           const snapshot = doc.getDocumentDataModel().getSnapshot();
+          // The fixture ends in CRLF; require its final text character as well
+          // as completed layout before comparing line counts across widths.
+          const contentEnd = snapshot.body!.dataStream.length - 3;
           return {
             hostWidth: fixtureHost.getBoundingClientRect().width,
             canvasWidth: canvas.getBoundingClientRect().width,
@@ -202,6 +224,23 @@ function MobileCanvas({
             unchanged:
               JSON.stringify([snapshot.body, snapshot.documentStyle, snapshot.settings]) === stored,
             canEdit: doc.getPermission().canEdit(),
+            layout: {
+              hasCompleteLayout: skeleton.hasCompleteLayout(),
+              layoutPending: skeleton.getLayoutProgress() != null,
+              coversContentEnd:
+                contentEnd >= 0 && Boolean(skeleton.findNodePositionByCharIndex(contentEnd)),
+              mountWidth: parseFloat(getComputedStyle(canvas.parentElement!).width),
+              canvasWidth: canvas.getBoundingClientRect().width,
+              bitmapWidth: canvas.width,
+              pixelRatio: render.engine.getPixelRatio(),
+              nativeWidth: render.scene.getParent()?.width ?? render.engine.width,
+              pageWidths: pages.map((page) => page.pageWidth),
+              pageMarginLeft:
+                render.mainComponent instanceof Documents
+                  ? render.mainComponent.pageMarginLeft
+                  : NaN,
+            },
+            permissionNotices: [...permissionNotices],
           };
         },
         append() {
@@ -335,13 +374,20 @@ type Story = StoryObj<typeof meta>;
 const observe = (canvas: HTMLElement): Observation =>
   mobileDocFixtures.get(canvas.querySelector<HTMLElement>('.univer-container')!)!.observe();
 
+function completeLayout(evidence: Observation) {
+  expect(
+    mobileDocStoryLayoutReady(evidence.layout),
+    `Complete phone Doc layout at the current width: ${JSON.stringify(evidence.layout)}`,
+  ).toBe(true);
+}
+
 async function ready(
   canvasElement: HTMLElement,
   editable: boolean,
   modern: boolean,
   zoomRatio = 1,
 ) {
-  await waitFor(
+  return waitFor(
     () => {
       expect(within(canvasElement).queryByRole('alert')).not.toBeInTheDocument();
       expect(
@@ -351,6 +397,7 @@ async function ready(
       expect(evidence).not.toBeNull();
       expect(evidence.unchanged).toBe(true);
       expect(evidence.canEdit).toBe(editable);
+      expect(evidence.permissionNotices).toEqual([]);
       expect(evidence.userZoom).toBe(zoomRatio);
       expect(evidence.canvasWidth).toBeLessThanOrEqual(evidence.hostWidth + 1);
       expect(evidence.lines).toBeGreaterThanOrEqual(paragraphs.length);
@@ -360,24 +407,26 @@ async function ready(
         expect(edit.getBoundingClientRect().height).toBeGreaterThanOrEqual(44);
       }
       if (modern) {
+        completeLayout(evidence);
         expect(evidence.scale).toBe(1);
         expect(evidence.minimumFontPixels).toBeGreaterThanOrEqual(15.9);
         expect(Math.max(...evidence.pageWidths)).toBeLessThanOrEqual(evidence.hostWidth);
       }
+      return evidence;
     },
     { timeout: 35_000 },
   );
 }
 
 async function reflows(canvasElement: HTMLElement, editable: boolean, zoomRatio = 1) {
-  await ready(canvasElement, editable, true, zoomRatio);
-  const initial = observe(canvasElement);
+  const initial = await ready(canvasElement, editable, true, zoomRatio);
   const shell = canvasElement.querySelector<HTMLElement>('[data-mobile-doc-shell]')!;
   const canvas = within(canvasElement).getByLabelText('Document canvas');
   try {
     shell.style.maxWidth = '320px';
     await waitFor(() => {
       const narrow = observe(canvasElement);
+      completeLayout(narrow);
       expect(narrow.hostWidth).toBeLessThan(initial.hostWidth);
       expect(Math.max(...narrow.pageWidths)).toBeLessThanOrEqual(narrow.hostWidth);
       expect(narrow.lines).toBeGreaterThan(initial.lines);
@@ -391,6 +440,7 @@ async function reflows(canvasElement: HTMLElement, editable: boolean, zoomRatio 
   }
   await waitFor(() => {
     const restored = observe(canvasElement);
+    completeLayout(restored);
     expect(restored.hostWidth).toBe(initial.hostWidth);
     expect(restored.lines).toBe(initial.lines);
     expect(restored.unchanged).toBe(true);
@@ -413,6 +463,30 @@ export const Viewer: Story = {
     await expect(
       within(canvasElement).queryByRole('button', { name: 'Edit' }),
     ).not.toBeInTheDocument();
+  },
+};
+
+export const ViewerDeniedEdit: Story = {
+  args: { viewer: true },
+  play: async ({ canvasElement }) => {
+    await ready(canvasElement, false, true);
+    const host = canvasElement.querySelector<HTMLElement>('.univer-container')!;
+    const fixture = mobileDocFixtures.get(host)!;
+    const original = fixture.caret().text;
+    // The fixture calls the mounted public Doc API, so an absent keyboard
+    // focus cannot turn this into a no-op that merely appears to deny editing.
+    expect(fixture.append().applied).toBe(false);
+    await waitFor(() => {
+      expect(fixture.caret().text).toBe(original);
+      expect(fixture.observe().unchanged).toBe(true);
+      expect(fixture.observe().permissionNotices).toHaveLength(1);
+      expect(
+        within(canvasElement.ownerDocument.body).getByText(
+          'This content is protected. This action is not allowed.',
+          { exact: true },
+        ),
+      ).toBeVisible();
+    });
   },
 };
 export const Traditional: Story = {

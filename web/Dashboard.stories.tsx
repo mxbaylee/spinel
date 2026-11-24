@@ -149,7 +149,7 @@ function LocalDeviceFixture({ local, children }: { local: LocalStart; children: 
     const manifest: ShellManifest = {
       protocol: 1,
       version: '0123456789abcdef',
-      compatibility: { format: 1, sdkVersion: '1.1.0' },
+      compatibility: { format: 1, sdkVersion: '1.3.1' },
       entry: '/assets/story-runtime.js',
       css: [],
       files: ['/assets/story-runtime.js'],
@@ -205,7 +205,7 @@ function LocalDeviceFixture({ local, children }: { local: LocalStart; children: 
             revisionOffset: 0,
             access: copy.creation?.access ?? (copy.readOnly ? 'viewer' : 'owner'),
             readOnly: copy.readOnly,
-            sdkVersion: '1.1.0',
+            sdkVersion: '1.3.1',
             images: [],
             snapshot: creation
               ? blankOfflineSnapshot(creation)
@@ -257,7 +257,33 @@ function LocalDeviceFixture({ local, children }: { local: LocalStart; children: 
               },
               () => {},
             );
-          } else await store.saveDownload(bundle, new Map());
+          } else {
+            await store.saveDownload(bundle, new Map());
+            // The hook rereads this store, so saved edits must be real queue records here.
+            // Summaries carry no pending flag of their own; a refresh would wipe it.
+            if (copy.pending || copy.retained)
+              await store.saveCheckpoint(
+                {
+                  account: local.user.id,
+                  item: copy.itemId,
+                  spaceId: copy.spaceId,
+                  unitId: bundle.unitId,
+                  revisionOffset: 0,
+                },
+                {
+                  version: 1,
+                  unitId: bundle.unitId,
+                  revision: copy.revision,
+                  snapshot: bundle.snapshot,
+                  sent: null,
+                  inflight: [],
+                  buffer: [[{ id: 'story.edit', params: { unitId: bundle.unitId } }]],
+                  // A record that could not be saved is the smallest state that needs a choice.
+                  ...(copy.retained ? { recoveryMissing: true } : {}),
+                } as never,
+                () => {},
+              );
+          }
         }
         await store.saveCatalog(local.user, local.catalog);
       } finally {
@@ -645,6 +671,84 @@ export const CreatedOffline: Story = {
       canvas.queryByRole('link', { name: `Recover ${blockedCreation.name}` }),
     ).not.toBeInTheDocument();
   },
+};
+// A copy of the first download for another item, so any listed file can carry saved edits.
+const downloadFor = (item: { id: string; name: string }, pending: boolean) => ({
+  ...local.downloads[0]!,
+  itemId: item.id,
+  name: item.name,
+  kind: 'doc' as const,
+  pending,
+});
+const pendingLocal = (item: { id: string; name: string }, pending = true): LocalStart => ({
+  ...local,
+  downloads: [...local.downloads, downloadFor(item, pending)],
+});
+export const PendingEditsOffline: Story = {
+  args: { local: pendingLocal(trip) },
+  parameters: { api: empty },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const status = await canvas.findByRole('status', { name: 'Sync status' });
+    await expect(status).toHaveTextContent('Waiting to sync');
+    await expect(status).toHaveTextContent(/changes saved on this device/);
+    // The banner word and the row badge use the same words.
+    await expect(canvas.getAllByText('Waiting to sync')).toHaveLength(2);
+    // The only action is rechecking the connection; there is nothing to recover.
+    await expect(within(status).getByRole('button', { name: 'Try now' })).toBeVisible();
+    await expect(canvas.queryByRole('link', { name: /^Recover / })).not.toBeInTheDocument();
+    // Pinned above folders, not only above other files.
+    const names = canvas
+      .getAllByRole('button', { name: /(Folder|Doc|Sheet)$/ })
+      .map((row) => row.getAttribute('aria-label') ?? row.textContent ?? '');
+    await expect(names.findIndex((name) => name.startsWith(trip.name))).toBe(0);
+    await expect(names.findIndex((name) => name.startsWith(household.name))).toBeGreaterThan(0);
+  },
+};
+/** Delivery acknowledged: the badge and the notice are gone and the file sorts normally. */
+export const PendingEditsCleared: Story = {
+  args: { local: pendingLocal(trip, false) },
+  parameters: { api: empty },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(await canvas.findByRole('button', { name: `${trip.name} Doc` })).toBeVisible();
+    await expect(canvas.queryByRole('status', { name: 'Sync status' })).not.toBeInTheDocument();
+    await expect(canvas.queryByText('Waiting to sync')).not.toBeInTheDocument();
+  },
+};
+/** Ordinary pending work beside genuine recovery: one banner with both lines and every action. */
+export const PendingEditsBesideRecovery: Story = {
+  args: {
+    local: {
+      ...pendingLocal(trip),
+      downloads: pendingLocal(trip).downloads.map((download) =>
+        download.itemId === roadmap.id ? { ...download, pending: true, retained: true } : download,
+      ),
+    },
+  },
+  parameters: { api: empty },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const status = await canvas.findByRole('alert', { name: 'Sync status' });
+    await expect(status).toHaveTextContent('Needs attention');
+    await expect(status).toHaveTextContent(/1 file has changes saved on this device/);
+    await expect(canvas.getAllByRole('alert')).toHaveLength(1);
+    await expect(
+      within(status).getByRole('link', { name: `Recover ${roadmap.name}` }),
+    ).toBeVisible();
+    await expect(within(status).getByRole('button', { name: 'Try now' })).toBeVisible();
+    await expect(
+      canvas.queryByRole('link', { name: `Recover ${trip.name}` }),
+    ).not.toBeInTheDocument();
+  },
+};
+export const PendingEditsOfflineDark: Story = {
+  ...PendingEditsOffline,
+  globals: { theme: 'dark' },
+};
+export const PendingEditsOfflinePhone: Story = {
+  ...PendingEditsOffline,
+  globals: { viewport: { value: 'phone', isRotated: false } },
 };
 const sharedLocal: LocalStart = {
   ...local,

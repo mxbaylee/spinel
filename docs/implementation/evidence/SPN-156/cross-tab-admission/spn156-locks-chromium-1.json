@@ -1,0 +1,17 @@
+{
+  "name": "spn156-locks-chromium-1",
+  "args": [
+    "node",
+    "node_modules/@playwright/test/cli.js",
+    "test",
+    "--config=/tmp/spn156-locks-playwright.config.ts",
+    "--project=production",
+    "--workers=1",
+    "--retries=0"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 1343,
+  "peakKiB": 690112
+}

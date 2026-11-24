@@ -1,0 +1,20 @@
+{
+  "source": "ff0f12018ea92caaa9b09f48064962326f8061ae",
+  "base": "89e4426dfff1c3469b260305e21180ffd79fdb7f",
+  "node": "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+  "typescript": "7.0.2",
+  "nativeCompilerSha256": "a82f731365ad69d5c4c15f5e18fba4584bf3b7b839960172a76c3462b5114bf2",
+  "compilerLauncherSha256": "cbdfbf11c26ed00dfc073155e316a42d6d6d8a387be61006b82fa9aa93ac572e",
+  "lockfileSha256": "cdb5afd5811c7229c9b0c9ffd945a51848dd1c58b32051d1fb20d2842568177c",
+  "typecheckEnvironment": {
+    "GOMEMLIMIT": "640MiB",
+    "GOGC": "50",
+    "GOMAXPROCS": "2"
+  },
+  "limits": {
+    "descendantRSSKiB": 2097152,
+    "elapsedMs": 480000,
+    "requiredPressure": 1
+  },
+  "ownedProcessAudit": "No test, compiler, server or browser processes remained after the batch; no process termination needed."
+}

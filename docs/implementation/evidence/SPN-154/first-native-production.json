@@ -1,0 +1,238 @@
+{
+  "source": "54ce60f42985adf304e76e3eb3c0d97b538b8427",
+  "project": "production",
+  "attempt": 0,
+  "browser": "156.0.8078.4",
+  "viewport": {
+    "width": 1440,
+    "height": 1100
+  },
+  "fixture": {
+    "mime": "image/png",
+    "width": 80,
+    "height": 60,
+    "bytes": 247,
+    "sha256": "3b5a98d5f358349c7e8e6cf77a4c4a3398c2530cfbc209b75da9668dca54e4c2"
+  },
+  "clipboard": {
+    "mime": "image/png",
+    "bytes": 255,
+    "sha256": "8d17b960c9ae5e7ee45ad341b09286d851521d3cc0c765048f6259f5ef3583cc"
+  },
+  "posts": [],
+  "sync": [
+    {
+      "direction": "received",
+      "type": "resume",
+      "revision": 1,
+      "inlineImageReferences": 0,
+      "storedImageReferences": 0
+    },
+    {
+      "direction": "sent",
+      "type": "submit",
+      "mutations": 1,
+      "inlineImageReferences": 1,
+      "storedImageReferences": 0
+    },
+    {
+      "direction": "received",
+      "type": "resync",
+      "reason": "unavailable",
+      "inlineImageReferences": 0,
+      "storedImageReferences": 0
+    },
+    {
+      "direction": "received",
+      "type": "resume",
+      "revision": 1,
+      "inlineImageReferences": 0,
+      "storedImageReferences": 0
+    }
+  ],
+  "observationFailures": 0,
+  "droppedSyncFrames": 0,
+  "topLevelNavigations": 1,
+  "totalImagePosts": 0,
+  "stages": [
+    {
+      "stage": "before-paste",
+      "keys": [
+        "stage",
+        "native",
+        "saved",
+        "originalCanvasMounted",
+        "topLevelNavigations",
+        "environment"
+      ],
+      "nativeText": "Phone journal\rSecond line\r\n",
+      "nativeTextRuns": [
+        {
+          "st": 6,
+          "ed": 13,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "nativeCustomBlocks": [],
+      "nativeRange": {
+        "start": 0,
+        "end": 0,
+        "collapsed": true,
+        "segmentId": "",
+        "segmentPage": -1
+      },
+      "inputConnected": true,
+      "inputFocused": true,
+      "savedText": "Phone journal\rSecond line\r\n",
+      "savedTextRuns": [
+        {
+          "st": 6,
+          "ed": 13,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "savedDrawings": {},
+      "savedRevision": 1,
+      "originalCanvasMounted": true,
+      "topLevelNavigations": 1,
+      "environment": {
+        "timeOrigin": 1795207886747.9,
+        "online": true,
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+        "pasteEvents": []
+      }
+    },
+    {
+      "stage": "after-native-paste-delivery",
+      "keys": [
+        "stage",
+        "native",
+        "saved",
+        "originalCanvasMounted",
+        "topLevelNavigations",
+        "environment"
+      ],
+      "nativeText": "Phone journal\rSecond line\r\n",
+      "nativeTextRuns": [
+        {
+          "st": 6,
+          "ed": 13,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "nativeCustomBlocks": [],
+      "nativeRange": {
+        "start": 0,
+        "end": 0,
+        "collapsed": true,
+        "segmentId": "",
+        "segmentPage": -1
+      },
+      "inputConnected": true,
+      "inputFocused": true,
+      "savedText": "Phone journal\rSecond line\r\n",
+      "savedTextRuns": [
+        {
+          "st": 6,
+          "ed": 13,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "savedDrawings": {},
+      "savedRevision": 1,
+      "originalCanvasMounted": true,
+      "topLevelNavigations": 1,
+      "environment": {
+        "timeOrigin": 1795207886747.9,
+        "online": true,
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+        "pasteEvents": [
+          {
+            "trusted": true,
+            "types": [
+              "Files"
+            ],
+            "files": [
+              {
+                "mime": "image/png",
+                "bytes": 255
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "stage": "final-before-cleanup",
+      "keys": [
+        "stage",
+        "native",
+        "saved",
+        "originalCanvasMounted",
+        "topLevelNavigations",
+        "environment"
+      ],
+      "nativeText": "Phone journal\rSecond line\r\n",
+      "nativeTextRuns": [
+        {
+          "st": 6,
+          "ed": 13,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "nativeCustomBlocks": [],
+      "nativeRange": {
+        "start": 0,
+        "end": 0,
+        "collapsed": true,
+        "segmentId": "",
+        "segmentPage": -1
+      },
+      "inputConnected": true,
+      "inputFocused": true,
+      "savedText": "Phone journal\rSecond line\r\n",
+      "savedTextRuns": [
+        {
+          "st": 6,
+          "ed": 13,
+          "ts": {
+            "bl": 1
+          }
+        }
+      ],
+      "savedDrawings": {},
+      "savedRevision": 1,
+      "originalCanvasMounted": false,
+      "topLevelNavigations": 1,
+      "environment": {
+        "timeOrigin": 1795207886747.9,
+        "online": true,
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+        "pasteEvents": [
+          {
+            "trusted": true,
+            "types": [
+              "Files"
+            ],
+            "files": [
+              {
+                "mime": "image/png",
+                "bytes": 255
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

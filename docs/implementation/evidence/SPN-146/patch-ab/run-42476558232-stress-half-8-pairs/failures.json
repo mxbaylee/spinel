@@ -1,0 +1,41 @@
+{
+  "note": "Non-zero runs only: exit code and first-failure message from the run artifact.",
+  "runs": [
+    {
+      "pair": 4,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.press: Test ended."
+    },
+    {
+      "pair": 6,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: expect(received).toBeLessThanOrEqual(expected) Expected: <= 100 Received: 205.59999999962747"
+    },
+    {
+      "pair": 6,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: expect(received).toBeLessThanOrEqual(expected) Expected: <= 100 Received: 130.39999999990687"
+    },
+    {
+      "pair": 7,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: expect(received).toBeLessThanOrEqual(expected) Expected: <= 100 Received: 130"
+    },
+    {
+      "pair": 8,
+      "variant": "patched",
+      "exitCode": 1,
+      "primaryFailure": "Error: keyboard.press: Test ended."
+    },
+    {
+      "pair": 8,
+      "variant": "previous",
+      "exitCode": 1,
+      "primaryFailure": "Error: expect(locator).toHaveText(expected) failed Locator: getByRole('status', { name: 'Save status' }) Expected: \"All changes saved.\" Received: \"Connection interrupted. Reconnect to continue.\" Call log: - Expect \"toHaveText\" getByRole('st"
+    }
+  ]
+}

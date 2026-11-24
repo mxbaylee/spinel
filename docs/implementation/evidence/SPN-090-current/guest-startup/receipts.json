@@ -1,0 +1,170 @@
+{
+  "beforeRepair": "18c3170590c162bebe118a17e4b47d7df40f36ad",
+  "checks": [
+    {
+      "name": "spn090-guest-lifecycle-first",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "e2e/startup-lifecycle.spec.ts",
+        "--project=development",
+        "--workers=1",
+        "--retries=0"
+      ],
+      "code": 1,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 41694,
+      "peakKiB": 1331072
+    },
+    {
+      "name": "spn090-guest-lifecycle-corrected",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "e2e/startup-lifecycle.spec.ts",
+        "--project=development",
+        "--workers=1",
+        "--retries=0"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 7008,
+      "peakKiB": 1283216
+    },
+    {
+      "name": "spn090-guest-lifecycle-negative",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "e2e/startup-lifecycle.spec.ts",
+        "--project=development",
+        "--workers=1",
+        "--retries=0",
+        "--grep",
+        "ready guest mounts"
+      ],
+      "code": 1,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 8548,
+      "peakKiB": 1307920
+    },
+    {
+      "name": "spn090-guest-timing-unit",
+      "args": [
+        "node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "src/ui/startupDeadlines.test.ts",
+        "src/ui/bootstrapFailure.test.ts",
+        "--cache=false",
+        "--fsModuleCachePath",
+        "/tmp/spn090-guest-vitest-cache"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 484,
+      "peakKiB": 289104
+    },
+    {
+      "name": "spn090-guest-project-selection",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "e2e/startup-lifecycle.spec.ts",
+        "--list"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 351,
+      "peakKiB": 219376
+    },
+    {
+      "name": "spn090-guest-lint",
+      "args": [
+        "node",
+        "node_modules/oxlint/bin/oxlint",
+        "--deny-warnings",
+        "web/GuestApp.tsx",
+        "e2e/startup-lifecycle.spec.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 126,
+      "peakKiB": 0
+    },
+    {
+      "name": "spn090-guest-types",
+      "args": ["npm", "run", "typecheck"],
+      "code": 1,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 9002,
+      "peakKiB": 1707360
+    },
+    {
+      "name": "spn090-guest-types-corrected",
+      "args": ["npm", "run", "typecheck"],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 9201,
+      "peakKiB": 1685440
+    },
+    {
+      "name": "spn090-guest-lifecycle-final",
+      "args": [
+        "node",
+        "node_modules/@playwright/test/cli.js",
+        "test",
+        "e2e/startup-lifecycle.spec.ts",
+        "--project=development",
+        "--workers=1",
+        "--retries=0"
+      ],
+      "code": 0,
+      "signal": null,
+      "reason": null,
+      "elapsedMs": 7211,
+      "peakKiB": 1415152
+    }
+  ],
+  "negativeControl": {
+    "guestSource": "18c3170590c162bebe118a17e4b47d7df40f36ad:web/GuestApp.tsx",
+    "restoredGuestSha256": "607ee52597344c4fba46e112a6d0a48571890c066718c1c74434e5511ac9168f",
+    "testSha256": "de8bad65202bc27980a0405734b365920f559a84778e33b4bb31db680165e485",
+    "testSnapshot": "before-type-correction.spec.ts.gz"
+  },
+  "productionHosted": "pending",
+  "fullTypecheck": "Final full types pass after actual Node/DOM wrapper type repair. Original type failure and earlier integration resource abort retained.",
+  "cleanup": "After normal positive and negative completion: owned server/browser/guard/serial processes absent; repaired GuestApp equals saved positive bytes.",
+  "beforeTypeCorrectionInputs": {
+    "web/GuestApp.tsx": "607ee52597344c4fba46e112a6d0a48571890c066718c1c74434e5511ac9168f",
+    "web/application.tsx": "d025d087f2a4d8a9a5ae85ec2a6b910f3ed88a2df5ed25a04fa6e460a41ee3b7",
+    "web/main.tsx": "37e2461eb93e2f5e5803ed8b8d0394e36e19a892118ee86e983277f0239de0f3",
+    "web/App.tsx": "9a4d8dff66a9ad39a2afc387d58f82c30d31ce3d99c4106f0d3e42ff3087df53",
+    "web/startupStage.ts": "2403310d1e6b2683924c5a0c4b6973bd549896ae60b89414eca452973a8aac49",
+    "web/StartupStage.stories.tsx": "4f43e676d353b03e9323e4c6a548ccafa12745a4c9569a2ab87aff3e973cc968",
+    "e2e/startup-lifecycle.spec.ts": "de8bad65202bc27980a0405734b365920f559a84778e33b4bb31db680165e485",
+    "playwright.config.ts": "9c35f858d78b3e70cfc2e826144589160ce9fb5892b8594077574b16d55110aa"
+  },
+  "finalInputs": {
+    "web/GuestApp.tsx": "607ee52597344c4fba46e112a6d0a48571890c066718c1c74434e5511ac9168f",
+    "web/application.tsx": "d025d087f2a4d8a9a5ae85ec2a6b910f3ed88a2df5ed25a04fa6e460a41ee3b7",
+    "web/main.tsx": "37e2461eb93e2f5e5803ed8b8d0394e36e19a892118ee86e983277f0239de0f3",
+    "web/App.tsx": "9a4d8dff66a9ad39a2afc387d58f82c30d31ce3d99c4106f0d3e42ff3087df53",
+    "web/startupStage.ts": "2403310d1e6b2683924c5a0c4b6973bd549896ae60b89414eca452973a8aac49",
+    "web/StartupStage.stories.tsx": "4f43e676d353b03e9323e4c6a548ccafa12745a4c9569a2ab87aff3e973cc968",
+    "e2e/startup-lifecycle.spec.ts": "c061f3a4cdd0a5e33499144ca7aa3630de2bfe17d4165fd5c7411f92db203d84",
+    "playwright.config.ts": "9c35f858d78b3e70cfc2e826144589160ce9fb5892b8594077574b16d55110aa"
+  }
+}

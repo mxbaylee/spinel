@@ -1,0 +1,70 @@
+{
+  "root": 89226,
+  "started": 1793885942162,
+  "elapsedMs": 420,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 70880,
+  "peakKiB": 215504,
+  "live": [
+    {
+      "pid": 89226,
+      "parent": 89190,
+      "group": 89226,
+      "rssKiB": 69328,
+      "started": "Thu Nov  5 05:39:02 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-investigation/retained-map-binding-watchdog.json node /tmp/spn146-investigation/bind-retained-map-inventory.ts"
+    },
+    {
+      "pid": 89291,
+      "parent": 89226,
+      "group": 89226,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:39:02 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 89226,
+      "parent": 89190,
+      "group": 89226,
+      "rssKiB": 69328,
+      "started": "Thu Nov  5 05:39:02 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn146-investigation/retained-map-binding-watchdog.json node /tmp/spn146-investigation/bind-retained-map-inventory.ts"
+    },
+    {
+      "pid": 89245,
+      "parent": 89226,
+      "group": 89226,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:39:02 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 89271,
+      "parent": 89226,
+      "group": 89226,
+      "rssKiB": 125680,
+      "started": "Thu Nov  5 05:39:02 2026",
+      "command": "node /tmp/spn146-investigation/bind-retained-map-inventory.ts"
+    },
+    {
+      "pid": 89277,
+      "parent": 89226,
+      "group": 89226,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:39:02 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 89291,
+      "parent": 89226,
+      "group": 89226,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 05:39:02 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

@@ -1,0 +1,22 @@
+{
+  "name": "spn156-cross-tab-lifecycle-1",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/offlinePersistence.test.ts",
+    "src/ui/offlineLifecycle.test.ts",
+    "src/ui/offlineTransactionErrors.test.ts",
+    "src/ui/offlineWriterHandoff.test.ts",
+    "src/ui/offlineReplay.test.ts",
+    "src/ui/spinelSync.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn156-cross-tab-cache"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 8616,
+  "peakKiB": 825312
+}

@@ -1,0 +1,15 @@
+{
+  "command": "node",
+  "args": [
+    "--test",
+    "scripts/dependencies/patch-playwright.test.ts",
+    "scripts/ci/reset-diagnostics.test.ts",
+    "scripts/ci/plan.test.ts",
+    "scripts/ci/coverage-result.test.ts"
+  ],
+  "code": 0,
+  "signal": null,
+  "failure": null,
+  "peakKiB": 644656,
+  "elapsedMs": 14451
+}

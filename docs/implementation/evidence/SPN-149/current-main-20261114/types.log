@@ -1,0 +1,1 @@
+{"name":"spn149-current-types","args":["node_modules/.bin/tsc","-p","."],"code":0,"signal":null,"reason":null,"elapsedMs":8465,"peakKiB":1652704}

@@ -159,9 +159,9 @@ follow-ups. Reuse proven shared work without counting it repeatedly. Owner, chat
 (`pre_launch`, the default), **Launch** (`launch`), then **After launch**
 (`post_launch`). Complete the current phase before advancing; if it is blocked,
 record the blocker rather than starting a later phase. SPN-038 is the launch
-milestone; optional CSV import (SPN-093) and document-type/converter plugins
-(SPN-094) follow it. Phase records this owner sequencing, without implying that
-CSV or plugins technically need public HTTPS. Owner, chat 2026-10-21. The fixed
+milestone; optional CSV/TSV import (SPN-093) follows it. SPN-094 plugins were dropped
+on 2026-11-22. Phase records this owner sequencing, without implying that
+delimited-text import technically needs public HTTPS. Owner, chat 2026-10-21. The fixed
 three-phase implementation and persona tradeoffs are recorded in
 [decision #129](../implementation/backlog-workflow.md#legacy-decision-129-fixed-lifecycle-phases).
 
@@ -173,9 +173,9 @@ Owner, chat 2026-10-27; [index decision](../implementation/grooming-2026-10-27.m
 Take the first ticket in the current phase that isn't waiting on an open
 `depends_on` or a listed `upstream_prs` prerequisite. Dependency inheritance is unchanged. A
 prerequisite must be in the same or an earlier phase; the checker rejects a
-dependency on later-phase work. SPN-093/094 also name SPN-038 as an explicit
+dependency on later-phase work. SPN-093 also names SPN-038 as an explicit
 launch sequencing dependency. These are timing constraints, not technical
-requirements for a converter or document-type plugin.
+requirements for delimited-text import.
 
 Agents decide; tickets have no `owner_input` field or human approval gate.
 Record a real external prerequisite (for example, device access, credentials or
@@ -218,6 +218,17 @@ place. Owner, chat 2026-10-26; [image-publication decision](../implementation/gr
    Update the implementation/PR test-plan checkpoint when these change, recording
    actual attempts, first failures, dispositions and the next missing evidence.
    Make decisions as they come up (below).
+   Maintain diagnostics with the behavior: when a change affects an instrumented
+   operation, save, sync, checkpoint, maintenance or runtime boundary, inspect
+   its emitter, exact timing/outcome, retry counting and attribution. Update the
+   [emitter inventory](../diagnostics.md#emitter-maintenance-inventory) and
+   meaningful regression coverage when the contract changes; remove obsolete
+   observations instead of leaving misleading success or duration records.
+   Retain fixed content-free fields, explicit units, collection/loss bounds and
+   observer-failure isolation. Describe the diagnostic impact in the PR template,
+   or explain why the inspected boundary is unchanged. This is upkeep of the
+   relevant contract, not a requirement to add metrics to every edit. Owner,
+   chat 2026-10-29, [maintenance decision](../implementation/SPN-123.md#ongoing-diagnostic-upkeep).
 4. **Split when it grows.** Past ~10k changed lines, or ~3 days in progress, look
    for a split. 100k is the hard limit and CI fails past it. Lockfiles and
    generated files don't count; the list is in `backlog.json`. Land the coherent
@@ -247,7 +258,12 @@ place. Owner, chat 2026-10-26; [image-publication decision](../implementation/gr
    Draft checkpoint pushes may preserve unreviewed work with intentional CI
    cancellation and explicit missing evidence; follow the
    [checkpoint procedure](../run-backlog.md#checkpoint-pushes-and-deliberate-ci-use).
-6. **Prepare to land.** In the same PR:
+   Run it as a [review–repair loop](../run-backlog.md#-reviewrepair-loop-before-a-validation-push):
+   commit, review, have reviewers list every step to 100, repair, commit, and review
+   again until both exceed 95, then push; if every remaining deduction is hosted-only or an owner
+   decision, ask for a recorded one-time push exception instead (owner, chat 2026-11-06,
+   [decision](../implementation/backlog-workflow.md#reviewrepair-loop-before-a-validation-push)).
+6. **Prepare to land.** Unless the owner defers landing until a recorded decision (SPN-146 did, until 2026-11-10), in the same PR:
    - Delete the ticket file.
    - Move its Rules and their reasons into the maintained docs under `docs/`,
      where the next reader will look. Add a short "why" comment to any test

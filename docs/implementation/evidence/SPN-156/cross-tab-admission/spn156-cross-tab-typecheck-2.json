@@ -1,0 +1,14 @@
+{
+  "name": "spn156-cross-tab-typecheck-2",
+  "args": [
+    "node",
+    "node_modules/typescript/bin/tsc",
+    "-p",
+    "."
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 8704,
+  "peakKiB": 1719792
+}

@@ -10,9 +10,32 @@ type Observation = {
   ready: boolean;
 };
 
+/** Readiness for one ordinary native click; never dismiss an obstruction or post input. */
+export function namedPointerTarget(selector: string, name: string) {
+  return `(() => {
+    const elements = Array.from(document.querySelectorAll(${JSON.stringify(selector)}));
+    return elements.findIndex(element => {
+      if (!(element instanceof HTMLElement) || !element.isConnected ||
+          (element.getAttribute('aria-label') || element.textContent).trim().replace(/\\s+/g, ' ') !== ${JSON.stringify(name)} ||
+          element.matches(':disabled, [aria-disabled="true"]')) return false;
+      const rect = element.getClientRects()[0];
+      if (!rect || ![rect.x, rect.y, rect.width, rect.height].every(Number.isFinite)) return false;
+      // WebDriver uses the center of the first client rect's viewport intersection.
+      const left = Math.max(0, Math.min(rect.x, rect.x + rect.width));
+      const right = Math.min(innerWidth, Math.max(rect.x, rect.x + rect.width));
+      const top = Math.max(0, Math.min(rect.y, rect.y + rect.height));
+      const bottom = Math.min(innerHeight, Math.max(rect.y, rect.y + rect.height));
+      if (right <= left || bottom <= top) return false;
+      const target = document.elementFromPoint(Math.floor((left + right) / 2), Math.floor((top + bottom) / 2));
+      return !!target && element.contains(target);
+    });
+  })()`;
+}
+
 const cursorMethod = 'CGEventGetLocation(CGEventCreate(NULL))';
 const cursorCoordinates = 'Quartz global display';
-type CursorPhase = 'before-move-post' | 'after-move-post' | 'move-observation-failure';
+type ObservationFailurePhase = 'move-observation-failure' | 'click-observation-failure';
+type CursorPhase = 'before-move-post' | 'after-move-post' | ObservationFailurePhase;
 
 export function validateSafariCursorSnapshot(value: unknown, phase: CursorPhase) {
   assert.ok(value && typeof value === 'object', 'Missing native cursor snapshot.');
@@ -54,7 +77,7 @@ export type PointerBoundary = {
     [key: string]: unknown;
   }>;
   post(mode: 'move' | 'click', point: Point, evidence: Record<string, unknown>): Promise<void>;
-  snapshot(): Promise<unknown>;
+  snapshot(phase: ObservationFailurePhase): Promise<unknown>;
   poll<T>(read: () => Promise<T>, accept: (value: T) => boolean, label: string): Promise<T>;
   record(evidence: Record<string, unknown>): Promise<void>;
 };
@@ -172,17 +195,21 @@ export async function clickSafariPointer(
   } catch (error) {
     failure = error;
     evidence.error = String(error).slice(0, 2000);
-    if (evidence.phase === 'move-observation') {
+    evidence.failureAt = new Date().toISOString();
+    if (evidence.phase === 'move-observation' || evidence.phase === 'click-observation') {
+      // These passive diagnostics follow the failed observation; they never
+      // extend its acceptance window, repair focus, or replay a posted action.
+      const phase = `${evidence.phase}-failure` as const;
       const time = new Date().toISOString();
       try {
-        evidence.failureCursor = await boundary.snapshot();
-        validateSafariCursorSnapshot(evidence.failureCursor, 'move-observation-failure');
+        evidence.failureCursor = await boundary.snapshot(phase);
+        validateSafariCursorSnapshot(evidence.failureCursor, phase);
       } catch (diagnosticError) {
         evidence.failureCursorError = String(diagnosticError).slice(0, 2000);
         evidence.failureCursor ??= {
           method: cursorMethod,
           coordinateSpace: cursorCoordinates,
-          phase: 'move-observation-failure',
+          phase,
           time,
           available: false,
           error: evidence.failureCursorError,
@@ -259,8 +286,11 @@ const safariCursorSnapshotFunction = String.raw`
 export const safariPointerSnapshotScript = String.raw`
         ObjC.import('CoreGraphics');
         ${safariCursorSnapshotFunction}
-        function run() {
-          return JSON.stringify(cursorSnapshot('move-observation-failure'));
+        function run(argv) {
+          var phase = argv[0];
+          if (phase !== 'move-observation-failure' && phase !== 'click-observation-failure')
+            throw new Error('Expected an observation failure phase.');
+          return JSON.stringify(cursorSnapshot(phase));
         }
 `;
 

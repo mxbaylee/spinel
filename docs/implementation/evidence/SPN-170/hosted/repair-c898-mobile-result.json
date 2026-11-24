@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "requested": "c898d24b1506a8536964c5194f20dab03e7ea007",
+  "actual": "c898d24b1506a8536964c5194f20dab03e7ea007",
+  "project": "doc-editing-mobile",
+  "testIds": [
+    "75807847b20dafea27b4-0561014a81f2a73a6eb4",
+    "75807847b20dafea27b4-2975a55cbf8de2ca7070",
+    "75807847b20dafea27b4-8c43e8ae2f24af94b5fb",
+    "75807847b20dafea27b4-95f3cb53f2a4365c00ef",
+    "75807847b20dafea27b4-b3034e24b2145ab12c0b",
+    "75807847b20dafea27b4-b7f43be7b3492c9dcd4a",
+    "75807847b20dafea27b4-e57b3ce25bd273b2b629",
+    "75807847b20dafea27b4-ff095935b983ee8eec9a"
+  ],
+  "tests": 8,
+  "collectionSha256": "a80c3bf70922c69f37231886e1b64a964a30179002c49fe700090b3aacb1163c",
+  "reportSha256": "4bb33a0e1452c90438245948f124bfd6ef10c9389716aeaca1c9a761c6830766",
+  "evidence": "Chromium phone emulation and browser/synthetic input; no physical software keyboard."
+}

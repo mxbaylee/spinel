@@ -8,7 +8,7 @@ and later [filesystem/pre-deployment direction](SPN-063.md#accepted-decision-imp
 are accepted. SPN-063 implements the filesystem destination, shared scheduler,
 isolated verifier and read-only admin status. [SPN-109](SPN-109.md) subsequently
 implements configuration and encrypted Admin downloads for filesystem/Spaces;
-the owner deferred AWS S3 to post-production [SPN-114](../todo/SPN-114.md).
+the owner deferred AWS S3 to post-production [SPN-114](SPN-114.md).
 Diagnostics expiry, maintenance and assisted restore remain SPN-110–112. This discussion permits
 a narrow **backup-destination** boundary; it does not reopen database-engine adapters.
 

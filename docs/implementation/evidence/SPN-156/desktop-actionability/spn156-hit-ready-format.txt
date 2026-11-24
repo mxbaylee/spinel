@@ -1,0 +1,4 @@
+scripts/ci/desktop-pointer.ts 54ms (unchanged)
+scripts/ci/desktop-pointer.test.ts 58ms
+scripts/ci/desktop-offline.ts 53ms (unchanged)
+{"name":"spn156-hit-ready-format","args":["/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node","node_modules/prettier/bin/prettier.cjs","--write","scripts/ci/desktop-pointer.ts","scripts/ci/desktop-pointer.test.ts","scripts/ci/desktop-offline.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":295,"peakKiB":202784}

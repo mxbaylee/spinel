@@ -1,0 +1,959 @@
+{
+  "scope": "Actual macOS ordinary-profile application restart, retained images/edits, reconnect and storage loss",
+  "sourceSha": "b9e57e465727870542177170b9acdc56656584ab",
+  "testedSha": "36d7e3cada11b2e6bfb964267c723ec92278e93d",
+  "run": "https://github.com/mxbaylee/spinel/actions/runs/41521489376",
+  "attempt": "1",
+  "runner": {
+    "label": "macos-15-intel",
+    "arch": "x64",
+    "imageOS": "macos15",
+    "imageVersion": "20260824.0482.1"
+  },
+  "browser": "safari",
+  "status": "failed",
+  "stages": [
+    {
+      "name": "browser-start",
+      "time": "2026-11-02T21:05:59.999Z",
+      "kind": "safari",
+      "version": "27.2",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+      "profile": {
+        "mode": "ordinary-hosted-safari-user",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+        "actualPath": "/Users/runner",
+        "directoryDevice": "16777222",
+        "directoryInode": "12884922560"
+      },
+      "browserPid": 5411,
+      "previousBrowserPid": null,
+      "driverPid": null,
+      "driverVersion": null,
+      "startedAt": "2026-11-02T21:05:57.407Z",
+      "browserTab": true,
+      "secureContext": true,
+      "storagePersisted": false
+    },
+    {
+      "name": "safari-online-rendering-baseline",
+      "time": "2026-11-02T21:06:20.586Z",
+      "diagnosticOnly": true,
+      "itemId": "daa60b09-bf2a-477c-bb6d-27b42d3d25bb",
+      "kind": "sheet",
+      "file": "sheet-online-before-download.png"
+    },
+    {
+      "name": "safari-online-rendering-baseline",
+      "time": "2026-11-02T21:07:55.239Z",
+      "diagnosticOnly": true,
+      "itemId": "2336d7b4-2517-49fd-84f1-288c2c3b6984",
+      "kind": "doc",
+      "file": "doc-online-before-download.png"
+    },
+    {
+      "name": "all-four-downloads-complete",
+      "time": "2026-11-02T21:09:08.069Z"
+    },
+    {
+      "name": "transport-disabled-before-quit",
+      "time": "2026-11-02T21:09:08.150Z",
+      "forwardedRequests": 523,
+      "blockedRequests": 1,
+      "forwardedUpgrades": 4,
+      "blockedUpgrades": 1,
+      "logins": 1,
+      "offline": true,
+      "activeBrowserSockets": 0
+    },
+    {
+      "name": "exact-records-captured-before-quit",
+      "time": "2026-11-02T21:09:20.564Z"
+    },
+    {
+      "name": "browser-stop",
+      "time": "2026-11-02T21:09:21.379Z",
+      "kind": "safari",
+      "browserPid": 5411,
+      "driverPid": null,
+      "browserExited": true,
+      "driverExited": true,
+      "stoppedAt": "2026-11-02T21:09:21.379Z"
+    },
+    {
+      "name": "transport-disabled-before-relaunch",
+      "time": "2026-11-02T21:09:21.507Z",
+      "forwardedRequests": 523,
+      "blockedRequests": 51,
+      "forwardedUpgrades": 4,
+      "blockedUpgrades": 2,
+      "logins": 1,
+      "offline": true,
+      "activeBrowserSockets": 0
+    },
+    {
+      "name": "browser-start",
+      "time": "2026-11-02T21:09:34.449Z",
+      "kind": "safari",
+      "version": "27.2",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+      "profile": {
+        "mode": "ordinary-hosted-safari-user",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+        "actualPath": "/Users/runner",
+        "directoryDevice": "16777222",
+        "directoryInode": "12884922560"
+      },
+      "browserPid": 9566,
+      "previousBrowserPid": 5411,
+      "driverPid": null,
+      "driverVersion": null,
+      "startedAt": "2026-11-02T21:09:33.196Z",
+      "browserTab": true,
+      "secureContext": true,
+      "storagePersisted": false
+    },
+    {
+      "name": "offline-catalog-and-original-records-retained",
+      "time": "2026-11-02T21:09:46.782Z"
+    },
+    {
+      "name": "native-doc-input-caret",
+      "time": "2026-11-02T21:11:01.186Z",
+      "itemId": "2336d7b4-2517-49fd-84f1-288c2c3b6984",
+      "before": {
+        "unitId": "2336d7b4-2517-49fd-84f1-288c2c3b6984",
+        "mobile": false,
+        "observedAt": 19518,
+        "currentUnitId": "2336d7b4-2517-49fd-84f1-288c2c3b6984",
+        "currentLogicalRange": {
+          "start": 20,
+          "end": 20,
+          "collapsed": true,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "unitLogicalRanges": [
+          {
+            "start": 20,
+            "end": 20,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          }
+        ],
+        "unitSelectionOptions": {
+          "preserveInputStyle": true
+        },
+        "unitSelectionStyles": [
+          {
+            "stroke": "rgba(0, 0, 0, 1)",
+            "fill": "rgba(128, 188, 254, 0.6)"
+          }
+        ],
+        "nativeRange": {
+          "start": 20,
+          "end": 20,
+          "collapsed": true,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "start": 20,
+        "end": 20,
+        "hasAnchor": true,
+        "anchor": {
+          "visible": true,
+          "left": 466.44596831003827,
+          "top": 133.66666666666669,
+          "width": 0,
+          "height": 16.000000000000014
+        },
+        "inputConnected": true,
+        "inputFocused": true,
+        "pointerSelection": false,
+        "pendingSelection": false,
+        "shortcutContext": {
+          "doc": true,
+          "editor": true,
+          "drawing": false,
+          "activated": false,
+          "formulaBar": false
+        },
+        "viewport": {
+          "key": "viewMain",
+          "active": true,
+          "width": 1324,
+          "height": 686,
+          "scrollX": 0,
+          "scrollY": 0,
+          "bounds": {
+            "left": 0,
+            "right": 1324,
+            "top": 0,
+            "bottom": 686
+          }
+        },
+        "scale": {
+          "x": 1,
+          "y": 1
+        },
+        "layout": {
+          "viewportReady": true,
+          "firstNode": {
+            "glyph": 0,
+            "divide": 0,
+            "line": 0,
+            "column": 0,
+            "section": 0,
+            "page": 0,
+            "pageType": 0,
+            "segmentPage": -1,
+            "isBack": true,
+            "path": [
+              "pages",
+              0
+            ]
+          },
+          "progress": null
+        },
+        "commands": [
+          {
+            "at": 5721,
+            "id": "doc.operation.set-selections",
+            "unitId": "2336d7b4-2517-49fd-84f1-288c2c3b6984"
+          },
+          {
+            "at": 15441,
+            "id": "doc.operation.set-selections",
+            "unitId": "2336d7b4-2517-49fd-84f1-288c2c3b6984"
+          },
+          {
+            "at": 15477,
+            "id": "doc.operation.set-selections",
+            "unitId": "2336d7b4-2517-49fd-84f1-288c2c3b6984"
+          }
+        ],
+        "editing": false,
+        "bounds": {
+          "left": 466.44596831003827,
+          "right": 466.44596831003827,
+          "top": 247.66666666666669,
+          "bottom": 310.6666666666667
+        },
+        "scroll": 0,
+        "text": "\bRecovery base notes\r\n"
+      },
+      "caret": {
+        "unitId": "2336d7b4-2517-49fd-84f1-288c2c3b6984",
+        "mobile": false,
+        "observedAt": 24652,
+        "currentUnitId": "2336d7b4-2517-49fd-84f1-288c2c3b6984",
+        "currentLogicalRange": {
+          "start": 0,
+          "end": 0,
+          "collapsed": true,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "unitLogicalRanges": [
+          {
+            "start": 0,
+            "end": 0,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          }
+        ],
+        "unitSelectionOptions": {
+          "preserveInputStyle": true
+        },
+        "unitSelectionStyles": [
+          {
+            "stroke": "rgba(0, 0, 0, 1)",
+            "fill": "rgba(128, 188, 254, 0.6)"
+          }
+        ],
+        "nativeRange": {
+          "start": 0,
+          "end": 0,
+          "collapsed": true,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "start": 0,
+        "end": 0,
+        "hasAnchor": true,
+        "anchor": {
+          "visible": true,
+          "left": 248.66666666666669,
+          "top": 86.66666666666667,
+          "width": 0,
+          "height": 60
+        },
+        "inputConnected": true,
+        "inputFocused": true,
+        "pointerSelection": false,
+        "pendingSelection": false,
+        "shortcutContext": {
+          "doc": true,
+          "editor": true,
+          "drawing": false,
+          "activated": false,
+          "formulaBar": false
+        },
+        "viewport": {
+          "key": "viewMain",
+          "active": true,
+          "width": 1324,
+          "height": 686,
+          "scrollX": 0,
+          "scrollY": 0,
+          "bounds": {
+            "left": 0,
+            "right": 1324,
+            "top": 0,
+            "bottom": 686
+          }
+        },
+        "scale": {
+          "x": 1,
+          "y": 1
+        },
+        "layout": {
+          "viewportReady": true,
+          "firstNode": {
+            "glyph": 0,
+            "divide": 0,
+            "line": 0,
+            "column": 0,
+            "section": 0,
+            "page": 0,
+            "pageType": 0,
+            "segmentPage": -1,
+            "isBack": true,
+            "path": [
+              "pages",
+              0
+            ]
+          },
+          "progress": null
+        },
+        "commands": [
+          {
+            "at": 5721,
+            "id": "doc.operation.set-selections",
+            "unitId": "2336d7b4-2517-49fd-84f1-288c2c3b6984"
+          },
+          {
+            "at": 15441,
+            "id": "doc.operation.set-selections",
+            "unitId": "2336d7b4-2517-49fd-84f1-288c2c3b6984"
+          },
+          {
+            "at": 15477,
+            "id": "doc.operation.set-selections",
+            "unitId": "2336d7b4-2517-49fd-84f1-288c2c3b6984"
+          },
+          {
+            "at": 24603,
+            "id": "doc.operation.move-cursor",
+            "direction": 0,
+            "granularity": "document"
+          },
+          {
+            "at": 24639,
+            "id": "doc.operation.set-selections",
+            "unitId": "2336d7b4-2517-49fd-84f1-288c2c3b6984"
+          }
+        ],
+        "editing": false,
+        "bounds": {
+          "left": 248.66666666666669,
+          "right": 248.66666666666669,
+          "top": 247.66666666666669,
+          "bottom": 310.6666666666667
+        },
+        "scroll": 0,
+        "text": "\bRecovery base notes\r\n"
+      },
+      "visual": {
+        "file": "2336d7b4-2517-49fd-84f1-288c2c3b6984-before-doc-input.png",
+        "colorPixelCounts": [
+          4661
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "native-doc-input-caret",
+      "time": "2026-11-02T21:11:33.184Z",
+      "itemId": "66ce3114-0a7a-4846-ab6e-4797d359299f",
+      "before": {
+        "unitId": "66ce3114-0a7a-4846-ab6e-4797d359299f",
+        "mobile": false,
+        "observedAt": 20672,
+        "currentUnitId": "66ce3114-0a7a-4846-ab6e-4797d359299f",
+        "currentLogicalRange": {
+          "start": 20,
+          "end": 20,
+          "collapsed": true,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "unitLogicalRanges": [
+          {
+            "start": 20,
+            "end": 20,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          }
+        ],
+        "unitSelectionOptions": {
+          "preserveInputStyle": true
+        },
+        "unitSelectionStyles": [
+          {
+            "stroke": "rgba(0, 0, 0, 1)",
+            "fill": "rgba(128, 188, 254, 0.6)"
+          }
+        ],
+        "nativeRange": {
+          "start": 20,
+          "end": 20,
+          "collapsed": true,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "start": 20,
+        "end": 20,
+        "hasAnchor": true,
+        "anchor": {
+          "visible": true,
+          "left": 466.44596831003827,
+          "top": 133.66666666666669,
+          "width": 0,
+          "height": 16.000000000000014
+        },
+        "inputConnected": true,
+        "inputFocused": true,
+        "pointerSelection": false,
+        "pendingSelection": false,
+        "shortcutContext": {
+          "doc": true,
+          "editor": true,
+          "drawing": false,
+          "activated": false,
+          "formulaBar": false
+        },
+        "viewport": {
+          "key": "viewMain",
+          "active": true,
+          "width": 1324,
+          "height": 686,
+          "scrollX": 0,
+          "scrollY": 0,
+          "bounds": {
+            "left": 0,
+            "right": 1324,
+            "top": 0,
+            "bottom": 686
+          }
+        },
+        "scale": {
+          "x": 1,
+          "y": 1
+        },
+        "layout": {
+          "viewportReady": true,
+          "firstNode": {
+            "glyph": 0,
+            "divide": 0,
+            "line": 0,
+            "column": 0,
+            "section": 0,
+            "page": 0,
+            "pageType": 0,
+            "segmentPage": -1,
+            "isBack": true,
+            "path": [
+              "pages",
+              0
+            ]
+          },
+          "progress": null
+        },
+        "commands": [
+          {
+            "at": 5141,
+            "id": "doc.operation.set-selections",
+            "unitId": "66ce3114-0a7a-4846-ab6e-4797d359299f"
+          },
+          {
+            "at": 16702,
+            "id": "doc.operation.set-selections",
+            "unitId": "66ce3114-0a7a-4846-ab6e-4797d359299f"
+          },
+          {
+            "at": 16754,
+            "id": "doc.operation.set-selections",
+            "unitId": "66ce3114-0a7a-4846-ab6e-4797d359299f"
+          }
+        ],
+        "editing": false,
+        "bounds": {
+          "left": 466.44596831003827,
+          "right": 466.44596831003827,
+          "top": 247.66666666666669,
+          "bottom": 310.6666666666667
+        },
+        "scroll": 0,
+        "text": "\bRecovery base notes\r\n"
+      },
+      "caret": {
+        "unitId": "66ce3114-0a7a-4846-ab6e-4797d359299f",
+        "mobile": false,
+        "observedAt": 22945,
+        "currentUnitId": "66ce3114-0a7a-4846-ab6e-4797d359299f",
+        "currentLogicalRange": {
+          "start": 0,
+          "end": 0,
+          "collapsed": true,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "unitLogicalRanges": [
+          {
+            "start": 0,
+            "end": 0,
+            "collapsed": true,
+            "segmentId": "",
+            "segmentPage": -1
+          }
+        ],
+        "unitSelectionOptions": {
+          "preserveInputStyle": true
+        },
+        "unitSelectionStyles": [
+          {
+            "stroke": "rgba(0, 0, 0, 1)",
+            "fill": "rgba(128, 188, 254, 0.6)"
+          }
+        ],
+        "nativeRange": {
+          "start": 0,
+          "end": 0,
+          "collapsed": true,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "start": 0,
+        "end": 0,
+        "hasAnchor": true,
+        "anchor": {
+          "visible": true,
+          "left": 248.66666666666669,
+          "top": 86.66666666666667,
+          "width": 0,
+          "height": 60
+        },
+        "inputConnected": true,
+        "inputFocused": true,
+        "pointerSelection": false,
+        "pendingSelection": false,
+        "shortcutContext": {
+          "doc": true,
+          "editor": true,
+          "drawing": false,
+          "activated": false,
+          "formulaBar": false
+        },
+        "viewport": {
+          "key": "viewMain",
+          "active": true,
+          "width": 1324,
+          "height": 686,
+          "scrollX": 0,
+          "scrollY": 0,
+          "bounds": {
+            "left": 0,
+            "right": 1324,
+            "top": 0,
+            "bottom": 686
+          }
+        },
+        "scale": {
+          "x": 1,
+          "y": 1
+        },
+        "layout": {
+          "viewportReady": true,
+          "firstNode": {
+            "glyph": 0,
+            "divide": 0,
+            "line": 0,
+            "column": 0,
+            "section": 0,
+            "page": 0,
+            "pageType": 0,
+            "segmentPage": -1,
+            "isBack": true,
+            "path": [
+              "pages",
+              0
+            ]
+          },
+          "progress": null
+        },
+        "commands": [
+          {
+            "at": 5141,
+            "id": "doc.operation.set-selections",
+            "unitId": "66ce3114-0a7a-4846-ab6e-4797d359299f"
+          },
+          {
+            "at": 16702,
+            "id": "doc.operation.set-selections",
+            "unitId": "66ce3114-0a7a-4846-ab6e-4797d359299f"
+          },
+          {
+            "at": 16754,
+            "id": "doc.operation.set-selections",
+            "unitId": "66ce3114-0a7a-4846-ab6e-4797d359299f"
+          },
+          {
+            "at": 22588,
+            "id": "doc.operation.move-cursor",
+            "direction": 0,
+            "granularity": "document"
+          },
+          {
+            "at": 22609,
+            "id": "doc.operation.set-selections",
+            "unitId": "66ce3114-0a7a-4846-ab6e-4797d359299f"
+          }
+        ],
+        "editing": false,
+        "bounds": {
+          "left": 248.66666666666669,
+          "right": 248.66666666666669,
+          "top": 247.66666666666669,
+          "bottom": 310.6666666666667
+        },
+        "scroll": 0,
+        "text": "\bRecovery base notes\r\n"
+      },
+      "visual": {
+        "file": "66ce3114-0a7a-4846-ab6e-4797d359299f-before-doc-input.png",
+        "colorPixelCounts": [
+          4661
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "native-offline-edits-committed",
+      "time": "2026-11-02T21:11:38.567Z"
+    },
+    {
+      "name": "browser-stop",
+      "time": "2026-11-02T21:11:39.542Z",
+      "kind": "safari",
+      "browserPid": 9566,
+      "driverPid": null,
+      "browserExited": true,
+      "driverExited": true,
+      "stoppedAt": "2026-11-02T21:11:39.542Z"
+    },
+    {
+      "name": "transport-still-disabled-before-pending-relaunch",
+      "time": "2026-11-02T21:11:39.581Z",
+      "forwardedRequests": 523,
+      "blockedRequests": 498,
+      "forwardedUpgrades": 4,
+      "blockedUpgrades": 3,
+      "logins": 1,
+      "offline": true,
+      "activeBrowserSockets": 0
+    },
+    {
+      "name": "browser-start",
+      "time": "2026-11-02T21:11:52.204Z",
+      "kind": "safari",
+      "version": "27.2",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+      "profile": {
+        "mode": "ordinary-hosted-safari-user",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+        "actualPath": "/Users/runner",
+        "directoryDevice": "16777222",
+        "directoryInode": "12884922560"
+      },
+      "browserPid": 12255,
+      "previousBrowserPid": 9566,
+      "driverPid": null,
+      "driverVersion": null,
+      "startedAt": "2026-11-02T21:11:50.739Z",
+      "browserTab": true,
+      "secureContext": true,
+      "storagePersisted": false
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-02T21:12:15.759Z",
+      "kind": "sheet",
+      "text": "731",
+      "selection": null
+    },
+    {
+      "name": "pending-restart-retained",
+      "time": "2026-11-02T21:12:15.759Z",
+      "itemId": "daa60b09-bf2a-477c-bb6d-27b42d3d25bb",
+      "kind": "sheet",
+      "outcome": "normal",
+      "checkpointSha256": "dd3e739cac11035b364fc1e45f7cf2f556162b9f4e7576639a297a931c67b102",
+      "imageHashes": [
+        {
+          "source": "/api/items/daa60b09-bf2a-477c-bb6d-27b42d3d25bb/images/0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+          "size": 248,
+          "sha256": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1"
+        },
+        {
+          "source": "/api/items/daa60b09-bf2a-477c-bb6d-27b42d3d25bb/images/882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+          "size": 242,
+          "sha256": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b"
+        },
+        {
+          "source": "/api/items/daa60b09-bf2a-477c-bb6d-27b42d3d25bb/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+          "size": 247,
+          "sha256": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f"
+        }
+      ],
+      "visual": {
+        "file": "sheet-normal-offline.png",
+        "colorPixelCounts": [
+          7200,
+          7081,
+          610532
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-02T21:12:40.414Z",
+      "kind": "sheet",
+      "text": "731",
+      "selection": null
+    },
+    {
+      "name": "pending-restart-retained",
+      "time": "2026-11-02T21:12:40.414Z",
+      "itemId": "b6671198-7b82-4669-9fe3-2d67a5aee5d1",
+      "kind": "sheet",
+      "outcome": "conflict",
+      "checkpointSha256": "5cb54a70c722c87779c043abce767ca2d2cee9e457717389ef058ac80d98716a",
+      "imageHashes": [
+        {
+          "source": "/api/items/b6671198-7b82-4669-9fe3-2d67a5aee5d1/images/0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1",
+          "size": 248,
+          "sha256": "0e4360e1c22b2f576a09eb8388e06e17de8f7f085bb0ed0ef957c2239f06d9c1"
+        },
+        {
+          "source": "/api/items/b6671198-7b82-4669-9fe3-2d67a5aee5d1/images/882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b",
+          "size": 242,
+          "sha256": "882f5c73114f86c86cfb06818c1486d52052982ed48f24715a7b010262b05b7b"
+        },
+        {
+          "source": "/api/items/b6671198-7b82-4669-9fe3-2d67a5aee5d1/images/89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f",
+          "size": 247,
+          "sha256": "89bf4146dcd93b96daf4de6b65cf891d809bebc29b140ab8ed12cf7ed07e5a0f"
+        }
+      ],
+      "visual": {
+        "file": "sheet-conflict-offline.png",
+        "colorPixelCounts": [
+          7200,
+          7081,
+          610532
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "native-clipboard-content",
+      "time": "2026-11-02T21:13:09.587Z",
+      "kind": "doc",
+      "text": "Desktop offline 731 Recovery base notes",
+      "selection": {
+        "unitId": "2336d7b4-2517-49fd-84f1-288c2c3b6984",
+        "nativeRange": {
+          "start": 0,
+          "end": 40,
+          "collapsed": false,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "logicalRange": {
+          "start": 0,
+          "end": 40,
+          "collapsed": false,
+          "segmentId": "",
+          "segmentPage": -1
+        },
+        "pendingSelection": false
+      }
+    },
+    {
+      "name": "pending-restart-retained",
+      "time": "2026-11-02T21:13:09.587Z",
+      "itemId": "2336d7b4-2517-49fd-84f1-288c2c3b6984",
+      "kind": "doc",
+      "outcome": "normal",
+      "checkpointSha256": "cf4df678cd7896325d1852542907e1dbdf5fa87b4c3610ab14134ac32a4b2258",
+      "imageHashes": [
+        {
+          "source": "/api/items/2336d7b4-2517-49fd-84f1-288c2c3b6984/images/385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e",
+          "size": 243,
+          "sha256": "385f4204006ec6d0374df5ab751fae0ec15b0ac52e774f4c41b685b6535d5c4e"
+        },
+        {
+          "source": "/api/items/2336d7b4-2517-49fd-84f1-288c2c3b6984/images/8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955",
+          "size": 244,
+          "sha256": "8142f099ba02073d3e1291949213edc927ffe38e03e090dc36324df99fcb5955"
+        },
+        {
+          "source": "/api/items/2336d7b4-2517-49fd-84f1-288c2c3b6984/images/f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594",
+          "size": 244,
+          "sha256": "f7c8c4d33c10a1bc5e4f3c43cec1c4e89c541114dbb15d9ae749df4cf9ff1594"
+        }
+      ],
+      "visual": {
+        "file": "doc-normal-offline.png",
+        "colorPixelCounts": [
+          4661
+        ],
+        "captures": 1
+      }
+    },
+    {
+      "name": "browser-stop",
+      "time": "2026-11-02T21:14:05.069Z",
+      "kind": "safari",
+      "browserPid": 12255,
+      "driverPid": null,
+      "browserExited": true,
+      "driverExited": true,
+      "stoppedAt": "2026-11-02T21:14:05.069Z"
+    }
+  ],
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t15.7.9\nBuildVersion:\t\t24G830",
+  "machine": "x86_64",
+  "release": {
+    "sourceSha": "b9e57e465727870542177170b9acdc56656584ab",
+    "checkedAt": "2026-11-02T21:00:24.457Z",
+    "kind": "safari",
+    "status": "passed",
+    "before": "26.6",
+    "releaseSource": "https://support.apple.com/en-us/149527",
+    "requiredStable": "27.2",
+    "availableUpdates": "Software Update Tool\n\nFinding available software\nSoftware Update found the following new or updated software:\n* Label: Safari27.2SequoiaAuto-27.2\n\tTitle: Safari, Version: 27.2, Size: 238722KiB, Recommended: YES, \n* Label: macOS Sequoia 15.8.2-24H232\n\tTitle: macOS Sequoia 15.8.2, Version: 15.8.2, Size: 1107530KiB, Recommended: YES, Action: restart, \n* Label: macOS Tahoe 26.7.2-25G332\n\tTitle: macOS Tahoe 26.7.2, Version: 26.7.2, Size: 5891500KiB, Recommended: YES, Action: restart, \n",
+    "install": "Software Update Tool\n\nFinding available software\nAttempting to quit apps: (\n    \"com.apple.Safari.SafariQuickLookPreview\",\n    \"com.apple.Safari\"\n)\nWaiting for user to quit any relevant apps\nSuccessfully quit all apps\n\nDownloading Safari\nDownloaded Safari\nInstalling Safari\nDone with Safari\nDone.\n",
+    "installed": "27.2"
+  },
+  "actor": {
+    "id": "adbf5b58-8e10-4356-b85a-aca7aadbfca5",
+    "role": "Collaborator with editor grants",
+    "ownerId": "76052f23-aa92-447e-a993-b866e776ab61"
+  },
+  "persistence": [
+    {
+      "itemId": "daa60b09-bf2a-477c-bb6d-27b42d3d25bb",
+      "before": false,
+      "after": false,
+      "permission": null,
+      "message": "Offline availability×Desktop normal sheet is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+    },
+    {
+      "itemId": "b6671198-7b82-4669-9fe3-2d67a5aee5d1",
+      "before": false,
+      "after": false,
+      "permission": null,
+      "message": "Offline availability×Desktop conflict sheet is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+    },
+    {
+      "itemId": "2336d7b4-2517-49fd-84f1-288c2c3b6984",
+      "before": false,
+      "after": false,
+      "permission": null,
+      "message": "Offline availability×Desktop normal doc is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+    },
+    {
+      "itemId": "66ce3114-0a7a-4846-ab6e-4797d359299f",
+      "before": false,
+      "after": false,
+      "permission": null,
+      "message": "Offline availability×Desktop conflict doc is available offline on this device.Your browser did not grant storage protection. It may clear offline documents when space runs low.How to keep themDone"
+    }
+  ],
+  "error": "Error: Safari did not receive the native pointer click: null",
+  "stack": "Error: Safari did not receive the native pointer click: null\n    at poll (file:///Users/runner/work/spinel/spinel/scripts/ci/desktop-browser.ts:140:9)\n    at async Object.clickAt (file:///Users/runner/work/spinel/spinel/scripts/ci/desktop-browser.ts:807:23)\n    at async focusDocText (file:///Users/runner/work/spinel/spinel/scripts/ci/desktop-offline.ts:154:3)\n    at async nativeText (file:///Users/runner/work/spinel/spinel/scripts/ci/desktop-offline.ts:222:20)\n    at async main (file:///Users/runner/work/spinel/spinel/scripts/ci/desktop-offline.ts:560:11)\n    at async file:///Users/runner/work/spinel/spinel/scripts/ci/desktop-offline.ts:783:1",
+  "page": {
+    "url": "https://localhost:8176/?item=66ce3114-0a7a-4846-ab6e-4797d359299f",
+    "text": "🍂\nDesktop conflict doc\nSaved locally\nOffline\nOn this device\nSaved on this device — waiting to sync.\n\nClick the page to write. Type / for commands.\n\nStart\nInsert\nView\nPaste\nNormal\n6 words",
+    "status": "Saved on this device — waiting to sync."
+  },
+  "launches": [
+    {
+      "kind": "safari",
+      "version": "27.2",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+      "profile": {
+        "mode": "ordinary-hosted-safari-user",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+        "actualPath": "/Users/runner",
+        "directoryDevice": "16777222",
+        "directoryInode": "12884922560"
+      },
+      "browserPid": 5411,
+      "previousBrowserPid": null,
+      "driverPid": null,
+      "driverVersion": null,
+      "startedAt": "2026-11-02T21:05:57.407Z"
+    },
+    {
+      "kind": "safari",
+      "version": "27.2",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+      "profile": {
+        "mode": "ordinary-hosted-safari-user",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+        "actualPath": "/Users/runner",
+        "directoryDevice": "16777222",
+        "directoryInode": "12884922560"
+      },
+      "browserPid": 9566,
+      "previousBrowserPid": 5411,
+      "driverPid": null,
+      "driverVersion": null,
+      "startedAt": "2026-11-02T21:09:33.196Z"
+    },
+    {
+      "kind": "safari",
+      "version": "27.2",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.2 Safari/605.1.15",
+      "profile": {
+        "mode": "ordinary-hosted-safari-user",
+        "requestedPath": "/Users/runner/work/spinel/spinel/test-results/desktop-offline-safari/profile",
+        "actualPath": "/Users/runner",
+        "directoryDevice": "16777222",
+        "directoryInode": "12884922560"
+      },
+      "browserPid": 12255,
+      "previousBrowserPid": 9566,
+      "driverPid": null,
+      "driverVersion": null,
+      "startedAt": "2026-11-02T21:11:50.739Z"
+    }
+  ]
+}

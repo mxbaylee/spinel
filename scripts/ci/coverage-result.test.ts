@@ -13,12 +13,19 @@ function run(
   overrides: Record<string, string> = {},
   group = 'browser',
   paths = ['src/server/auth/session.ts'],
+  mobileRequested = false,
 ) {
   const plan = coveragePlan(
     'pull_request',
     {
-      action: 'synchronize',
-      pull_request: { base: { sha: 'a'.repeat(40) }, head: { sha: head }, labels: [] },
+      action: mobileRequested ? 'labeled' : 'synchronize',
+      label: { name: mobileRequested ? 'ci-doc-editing-mobile' : 'unrelated' },
+      repository: { id: 170 },
+      pull_request: {
+        base: { sha: 'a'.repeat(40), repo: { id: 170 } },
+        head: { sha: head, repo: { id: 170 } },
+        labels: mobileRequested ? [{ name: 'ci-doc-editing-mobile' }] : [],
+      },
     },
     paths,
     head,
@@ -69,8 +76,38 @@ test('CLI binds same-run immutable plan digest/source and publishes all selected
   assert.equal(result.code, 0);
   assert.equal(result.report.passed, true);
   assert.equal(result.report.evidence.plan.tested, head);
-  assert.equal(result.report.evidence.results.length, 12);
+  assert.equal(result.report.evidence.results.length, 13);
   assert.match(result.summary, /doc-responsiveness/);
+});
+
+test('required browser aggregate rejects missing, skipped, failed or cancelled requested mobile work', () => {
+  const passing = run({}, 'browser', ['docs/testing.md'], true);
+  assert.equal(passing.code, 0);
+  assert.equal(passing.report.evidence.plan.docEditingMobileRequest.sha, head);
+  const complete = Object.fromEntries(
+    passing.report.evidence.results.map((row: { suite: string; result: string }) => [
+      row.suite,
+      row.result,
+    ]),
+  );
+  for (const status of [undefined, 'failure', 'cancelled', 'skipped']) {
+    const failed = run(
+      { COVERAGE_RESULTS: JSON.stringify({ ...complete, 'doc-editing-mobile': status }) },
+      'browser',
+      ['docs/testing.md'],
+      true,
+    );
+    assert.equal(failed.code, 1, String(status));
+    assert.match(failed.report.evidence.error, /Incomplete coverage doc-editing-mobile/);
+  }
+  const unrequested = run({}, 'browser', ['docs/testing.md']);
+  assert.equal(unrequested.code, 0);
+  assert.equal(
+    unrequested.report.evidence.results.find(
+      (row: { suite: string }) => row.suite === 'doc-editing-mobile',
+    ).selected,
+    false,
+  );
 });
 test('CLI failure records survive wrong identity, cancelled gate and missing selected evidence', () => {
   const failures: Record<string, string>[] = [

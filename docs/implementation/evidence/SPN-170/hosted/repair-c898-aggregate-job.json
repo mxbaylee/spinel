@@ -1,0 +1,92 @@
+{
+  "id": 135846936265,
+  "run_id": 44598172433,
+  "workflow_name": "💎 CI",
+  "head_branch": "codex/spn-170-doc-editing",
+  "run_url": "https://api.github.com/repos/mxbaylee/spinel/actions/runs/44598172433",
+  "run_attempt": 1,
+  "node_id": "CR_kwDOVNik2c8AAAAfoRu-yQ",
+  "head_sha": "c898d24b1506a8536964c5194f20dab03e7ea007",
+  "url": "https://api.github.com/repos/mxbaylee/spinel/actions/jobs/135846936265",
+  "html_url": "https://github.com/mxbaylee/spinel/actions/runs/44598172433/job/135846936265",
+  "status": "completed",
+  "conclusion": "failure",
+  "created_at": "2026-11-19T20:06:23Z",
+  "started_at": "2026-11-19T20:07:05Z",
+  "completed_at": "2026-11-19T20:07:18Z",
+  "name": "Playwright smoke",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1,
+      "started_at": "2026-11-19T20:07:06Z",
+      "completed_at": "2026-11-19T20:07:07Z"
+    },
+    {
+      "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2,
+      "started_at": "2026-11-19T20:07:07Z",
+      "completed_at": "2026-11-19T20:07:11Z"
+    },
+    {
+      "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3,
+      "started_at": "2026-11-19T20:07:11Z",
+      "completed_at": "2026-11-19T20:07:15Z"
+    },
+    {
+      "name": "Verify selected evidence and publish result",
+      "status": "completed",
+      "conclusion": "failure",
+      "number": 4,
+      "started_at": "2026-11-19T20:07:15Z",
+      "completed_at": "2026-11-19T20:07:15Z"
+    },
+    {
+      "name": "Retain coverage result",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5,
+      "started_at": "2026-11-19T20:07:15Z",
+      "completed_at": "2026-11-19T20:07:16Z"
+    },
+    {
+      "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 9,
+      "started_at": "2026-11-19T20:07:16Z",
+      "completed_at": "2026-11-19T20:07:16Z"
+    },
+    {
+      "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 10,
+      "started_at": "2026-11-19T20:07:16Z",
+      "completed_at": "2026-11-19T20:07:16Z"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 11,
+      "started_at": "2026-11-19T20:07:16Z",
+      "completed_at": "2026-11-19T20:07:16Z"
+    }
+  ],
+  "check_run_url": "https://api.github.com/repos/mxbaylee/spinel/check-runs/135846936265",
+  "labels": [
+    "ubuntu-latest"
+  ],
+  "runner_id": 1000055691,
+  "runner_name": "GitHub Actions 1000055691",
+  "runner_group_id": 0,
+  "runner_group_name": "GitHub Actions"
+}

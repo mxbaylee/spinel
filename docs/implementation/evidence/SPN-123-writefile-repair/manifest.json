@@ -1,0 +1,69 @@
+{
+  "failedSource": "6ef945eae3168da7f3706088dc7c2b78fad39cd5",
+  "actualMain": "ec42f0741415e4e712395fb47c30b911bc4e64ea",
+  "repairedE2ESourceSHA256": "4f34b5a1765a21921386dea72a2bc4b516fe1d1bdd84dc61a844bd22aa43b7b3",
+  "originalFirstTypeFailure": {
+    "run": 43633378605,
+    "attempt": 1,
+    "job": 132565004312,
+    "rawLogSHA256": "938f5d68751c48630fd7f0aaee65693f2aa3f533fce6bb08f61f5a14f76b133b"
+  },
+  "localTypes": "Fresh materially changed integrated source passed. Original hosted6ef failed; earlier pre-ec42 type abort remains aborted. No unchanged retry.",
+  "hostedPlan": "Actual full conservative mode; all15 suites selected; no targeted hosted claim.",
+  "files": [
+    {
+      "path": "spn123-writefile-format.json.gz",
+      "sha256": "18d9542e6063dd119789c58775623a786b5d64b784e572c6c493ee78188262d4",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-writefile-format.json",
+      "originalSHA256": "99fe4058ad0c17ecaaf20063b63412d7ffe73a0cb560fdaa4475db736628e192"
+    },
+    {
+      "path": "spn123-writefile-format.log.gz",
+      "sha256": "12e7dbae879843a09c4ebe84b9af6e3d0377978cf8ffb3515f9c1efaff6f516f",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-writefile-format.log",
+      "originalSHA256": "9102b664761131e25fef3a6532ecf375324f8dfa89447031a7cbbceed15d9b8b"
+    },
+    {
+      "path": "spn123-writefile-lint.json.gz",
+      "sha256": "a1b72cc214117acf58f1553aebef6eab669ca093483edfebffff5fa9887e8ad9",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-writefile-lint.json",
+      "originalSHA256": "cc93e22521b2cd749467280da245b733aa92d7cc77e0bac9cb32b5e494c92e93"
+    },
+    {
+      "path": "spn123-writefile-lint.log.gz",
+      "sha256": "c05c05b57c52edb41195766828542fbac215a8c90fc29dd3af329749fb6cf94d",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-writefile-lint.log",
+      "originalSHA256": "a4e476f3ddbaee0845d6e5af4e2d844cc588c5ab9bbd4f3fbf1901e81f1dcd87"
+    },
+    {
+      "path": "spn123-writefile-source.json.gz",
+      "sha256": "c3b5c444a40637475ac10f166556ebaeafb839b927ae5d1333393dd2a4fb47e7",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-writefile-source.json",
+      "originalSHA256": "83f8a15eecacdc30e0cc92c70b4661cc182db2efc2f88884feeecc6458e5fa61"
+    },
+    {
+      "path": "spn123-writefile-types.json.gz",
+      "sha256": "9fc208ffb154a9519da6410957c888695bdc07ab6ae0919d18221edaa85dd03d",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-writefile-types.json",
+      "originalSHA256": "adbb7eb1e21ef7643f2bf14ade56d2f158fef532faa0a81c4d2bbc0c939a957f"
+    },
+    {
+      "path": "spn123-writefile-types.log.gz",
+      "sha256": "9b23219fa4e7ba7725e39b32d445e902d179623be6e2328ae5eb4c6b3f62960d",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-writefile-types.log",
+      "originalSHA256": "0a023e90ccddcd8c5c5388dd37af6f2ff3ad9816e9f8df8a6730c38b87c5ce5e"
+    },
+    {
+      "path": "collector-original.ts.gz",
+      "sha256": "d3903251f842d0680811a91c5601a4e668215deb084900d2bc3be3224e36c702",
+      "originalPath": "/tmp/spn123-publication-6ef945ea/collect-initial.ts",
+      "originalSHA256": "a58242ddc2b361715fbdca6db35263c64c0ec01acf9c04419c99350525abc393"
+    },
+    {
+      "path": "initial-hosted-checkpoint.tar.gz",
+      "sha256": "a19795d74d13e998849f7974ce6fe773646cccf2fd144bc88574bee455a141bb",
+      "originalPath": "/tmp/spn123-publication-6ef945ea/initial-43633378605",
+      "contentManifestSHA256": "ff0ffe1d79f1d35e06a661c40f14ce1189981a71a1e1387ae50dbded9ad00c6c"
+    }
+  ]
+}

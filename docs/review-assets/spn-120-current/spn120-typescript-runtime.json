@@ -1,0 +1,10 @@
+{
+  "path": "/Users/mxbaylee/projects/spinel-spn-098-production/node_modules/@typescript/typescript-darwin-arm64/lib/tsc",
+  "sha256": "a82f731365ad69d5c4c15f5e18fba4584bf3b7b839960172a76c3462b5114bf2",
+  "goVersionMarkers": [
+    "go1.26.4"
+  ],
+  "hasGOMEMLIMIT": true,
+  "hasGOMAXPROCS": true,
+  "invocation": "Unchanged full project -p . through pinned TypeScript7.0.2 launcher; tool-only GOMEMLIMIT=1GiB GOMAXPROCS=2. External pressure/RSS/time guard unchanged."
+}

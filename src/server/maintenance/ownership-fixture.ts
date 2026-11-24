@@ -10,7 +10,11 @@ import {
   workspaceOwnershipAddresses,
   workspaceOwnershipRoles,
 } from './journal.ts';
-import { OWNERSHIP_CHANNEL, receiveWorkspaceOwnership } from './ownership.ts';
+import {
+  OWNERSHIP_CHANNEL,
+  ownershipFailureDetails,
+  receiveWorkspaceOwnership,
+} from './ownership.ts';
 import { restoreBarrierPath } from './restore-barrier.ts';
 
 if (!process.send || !process.env.DATABASE_PATH || !process.env.SPINEL_MAINTENANCE_ROOT)
@@ -42,14 +46,19 @@ if (process.env.SPINEL_TEST_OWNERSHIP_ROLE === 'parent') {
   });
   let sent = false;
   let lateClosed = false;
+  let receiverFailure: ReturnType<typeof ownershipFailureDetails>;
   let receivedSecond: (() => void) | undefined;
   if (pending)
     child.once('exit', (code) => {
       void journal.close().then(() => {
-        process.send?.({ refused: true, code, lateClosed }, () => process.disconnect?.());
+        process.send?.({ refused: true, code, lateClosed, receiverFailure }, () =>
+          process.disconnect?.(),
+        );
       });
     });
   child.on('message', (value: unknown) => {
+    if (value && typeof value === 'object' && 'receiverFailure' in value)
+      receiverFailure = value.receiverFailure as ReturnType<typeof ownershipFailureDetails>;
     if (
       pending === 'during' &&
       value &&
@@ -181,8 +190,10 @@ if (process.env.SPINEL_TEST_OWNERSHIP_ROLE === 'parent') {
     writeFileSync(`${process.env.DATABASE_PATH}.opened`, 'opened', { flag: 'wx' });
     const database = openDatabase(process.env.DATABASE_PATH);
     database.close();
-  } catch {
+  } catch (error) {
     process.exitCode = 1;
+    if (process.connected)
+      process.send?.({ receiverFailure: ownershipFailureDetails(error) }, () => {});
     if (process.env.SPINEL_TEST_OWNERSHIP_BARRIER === 'during')
       await new Promise<void>((resolve) => {
         const finish = (value: unknown) => {

@@ -13,13 +13,16 @@ import { HistoryStore } from './store.ts';
 import { MINUTE } from './policy.ts';
 import { SheetStore } from '../workspace/sheets.ts';
 import { randomUUID } from 'node:crypto';
+import type { DiagnosticEvent, DiagnosticContext } from '@spinel/diagnostics';
 
 const cleanup: (() => unknown | Promise<unknown>)[] = [];
 afterEach(async () => {
   vi.restoreAllMocks();
   for (const close of cleanup.splice(0).reverse()) await close();
 });
-async function fixture() {
+async function fixture(
+  diagnostics?: (event: DiagnosticEvent, context: DiagnosticContext, actorId?: string) => void,
+) {
   const directory = await mkdtemp(join(tmpdir(), 'spinel-history-'));
   cleanup.push(() => rm(directory, { recursive: true, force: true }));
   const path = join(directory, 'app.sqlite');
@@ -35,9 +38,9 @@ async function fixture() {
     admin = auth.createUser('Operator', true);
   const item = workspace.create(owner.id, { kind: 'sheet', name: 'History', parentId: null });
   workspace.share(owner.id, item.id, viewer.id, 'viewer');
-  const collaboration = new CollaborationStore(workspace, path);
+  const collaboration = new CollaborationStore(workspace, path, { diagnostics });
   cleanup.push(() => collaboration.close());
-  const history = new HistoryStore(workspace, collaboration);
+  const history = new HistoryStore(workspace, collaboration, undefined, diagnostics);
   cleanup.push(() => history.close());
   await collaboration.prepare(owner.id, item.id);
   let request = 0;
@@ -89,6 +92,83 @@ async function fixture() {
     now: () => clock,
   };
 }
+
+test('checkpoint outcomes and one restore outcome preserve content across concurrent and receipt retries', async () => {
+  const observations: { event: DiagnosticEvent; context: DiagnosticContext; actorId?: string }[] =
+    [];
+  let broken = false;
+  const f = await fixture((event, context, actorId) => {
+    if (broken) throw new Error('Observer failure must not change history.');
+    observations.push({ event, context, actorId });
+  });
+  const baseline = f.history.list(f.owner.id, f.item.id)[0];
+  await f.edit('Private edited content');
+  await f.history.capture(f.owner.id, f.item.id);
+  await f.history.capture(f.owner.id, f.item.id);
+  const captured = observations.filter(({ event }) => event.name === 'history.checkpoint');
+  expect(captured.map(({ event }) => event.details)).toEqual(
+    expect.arrayContaining([
+      expect.objectContaining({ outcome: 'captured', reason: 'capture' }),
+      expect.objectContaining({ outcome: 'skipped', reason: 'unchanged' }),
+    ]),
+  );
+  expect(captured.every(({ actorId }) => actorId === undefined)).toBe(true);
+  broken = true;
+  await f.edit('Saved even when observations throw');
+  await expect(f.history.capture(f.owner.id, f.item.id)).resolves.toBeUndefined();
+  const latest = f.history.list(f.owner.id, f.item.id)[0];
+  const snapshot = (await f.history.load(f.owner.id, f.item.id, latest.id)) as IWorkbookData;
+  expect(snapshot.sheets.first.cellData?.[0]?.[0]?.v).toBe('Saved even when observations throw');
+  broken = false;
+  const requestId = randomUUID();
+  const restore = () => f.history.restore(f.owner.id, f.item.id, baseline.id, f.item.id, requestId);
+  const [one, two] = await Promise.all([restore(), restore()]);
+  expect(two).toEqual(one);
+  expect(await restore()).toEqual(one);
+  const restored = observations.filter(
+    ({ event }) =>
+      event.name === 'operation.result' && event.details.operation === 'snapshot-restore',
+  );
+  expect(restored).toHaveLength(1);
+  expect(restored[0]).toMatchObject({
+    actorId: f.owner.id,
+    context: { fileId: f.item.id },
+    event: { details: { outcome: 'success' } },
+  });
+  expect(JSON.stringify(observations)).not.toContain('Private edited content');
+});
+
+test('restore failure preserves the original error, live content and history when observations throw', async () => {
+  const observations: DiagnosticEvent[] = [];
+  const f = await fixture((event) => {
+    observations.push(event);
+    throw new Error('An observer cannot replace the restore error.');
+  });
+  const baseline = f.history.list(f.owner.id, f.item.id)[0];
+  await f.edit('Keep the current content');
+  const before = await f.collaboration.load(f.owner.id, f.item.id);
+  const checkpoints = f.history.list(f.owner.id, f.item.id);
+  const failure = new Error('Injected generation commit failure.');
+  vi.spyOn(f.collaboration.generations, 'finish').mockImplementationOnce(() => {
+    throw failure;
+  });
+  await expect(
+    f.history.restore(f.owner.id, f.item.id, baseline.id, f.item.id, randomUUID()),
+  ).rejects.toBe(failure);
+  expect(await f.collaboration.load(f.owner.id, f.item.id)).toEqual(before);
+  expect(f.history.list(f.owner.id, f.item.id)).toEqual(checkpoints);
+  expect(
+    observations.filter(
+      (event) =>
+        event.name === 'operation.result' && event.details.operation === 'snapshot-restore',
+    ),
+  ).toMatchObject([{ details: { operation: 'snapshot-restore', outcome: 'failure' } }]);
+  await f.edit('Editing still works after the failed restore');
+  const latest = (await f.collaboration.load(f.owner.id, f.item.id)).snapshot as IWorkbookData;
+  expect(latest.sheets.first.cellData?.[0]?.[0]?.v).toBe(
+    'Editing still works after the failed restore',
+  );
+});
 
 test('captures a baseline before editing, every five minutes of work, and at idle breaks; rejects unauthorized reads', async () => {
   const f = await fixture();

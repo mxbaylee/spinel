@@ -1,5 +1,9 @@
 import assert from 'node:assert/strict';
-import { clearDesktopStorage } from './desktop-storage.ts';
+import {
+  clearDesktopStorage,
+  unregisterDesktopStorageWorkers,
+  verifyDesktopStorageQuiescence,
+} from './desktop-storage.ts';
 import { execFile } from 'node:child_process';
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
@@ -11,11 +15,19 @@ import type { NativeSnapshot } from '@spinel/sync-client';
 import { mapNativeImageSources } from '../../src/shared/nativeImageSources.ts';
 import { snapshotIdentity } from '../../src/shared/snapshotIdentity.ts';
 import { reconstructOffline } from '../../web/offline/recovery.ts';
-import type { StoredItem } from '../../web/offline/offlineStore.ts';
+import { hasStoredEdits, type StoredItem } from '../../web/offline/offlineStore.ts';
 import { comparable, pending } from '../../e2e/offline-fixture.ts';
 import { createDesktopBrowser } from './desktop-browser.ts';
 import type { DesktopBrowserKind, DesktopBrowserStart } from './desktop-browser.ts';
 import { createDesktopOfflineFixture } from './desktop-offline-fixture.ts';
+import { desktopSyncObservation } from './desktop-sync-observation.ts';
+import {
+  desktopRecoveryRetry,
+  desktopRecoveryPublication,
+  desktopRecoveryRemaining,
+} from './desktop-recovery-retry.ts';
+import { namedPointerTarget } from './desktop-pointer.ts';
+import { countOfflineImagePixels, offlineImagesPainted } from './offline-image-pixels.ts';
 
 const kind = process.argv[2] as DesktopBrowserKind;
 assert.ok(['chrome', 'firefox', 'safari'].includes(kind));
@@ -68,15 +80,14 @@ async function until<T>(
   throw new Error(`${label}: ${JSON.stringify(last)?.slice(0, 1800)}`);
 }
 
-async function named(selector: string, name: string) {
+async function named(selector: string, name: string, timeout = 45_000, deadline?: number) {
   const index = await until(
-    () =>
-      browser.evaluate<number>(
-        `Array.from(document.querySelectorAll(${JSON.stringify(selector)})).findIndex(element => element.getClientRects().length && (element.getAttribute('aria-label') || element.textContent).trim().replace(/\\s+/g, ' ') === ${JSON.stringify(name)})`,
-      ),
+    () => browser.evaluate<number>(namedPointerTarget(selector, name)),
     (value) => value >= 0,
-    `Missing ${name}`,
+    `Named click target is missing, disabled or obscured: ${name}`,
+    timeout,
   );
+  if (deadline !== undefined) desktopRecoveryRemaining(deadline);
   await browser.click(selector, index);
 }
 
@@ -300,14 +311,6 @@ function imageSources(snapshot: NativeSnapshot, itemId: string, hashes: string[]
 
 async function visibleImages(name: string, documentKind: 'sheet' | 'doc') {
   const path = resolve(output, `${name}.png`);
-  const colors =
-    documentKind === 'sheet'
-      ? [
-          [255, 153, 0],
-          [34, 85, 238],
-          [34, 187, 102],
-        ]
-      : [[119, 0, 204]];
   let captures = 0;
   let counts: number[];
   try {
@@ -319,15 +322,9 @@ async function visibleImages(name: string, documentKind: 'sheet' | 'doc') {
           .removeAlpha()
           .raw()
           .toBuffer({ resolveWithObject: true });
-        const counts = colors.map(() => 0);
-        for (let offset = 0; offset < data.length; offset += info.channels)
-          colors.forEach((color, index) => {
-            if (color.every((value, channel) => Math.abs(data[offset + channel] - value) < 12))
-              counts[index]++;
-          });
-        return counts;
+        return countOfflineImagePixels({ data, ...info }, documentKind);
       },
-      (counts) => counts.every((count) => count > 100),
+      (counts) => offlineImagesPainted(counts, documentKind),
       'Existing image pixels must actually paint after native canvas creation',
       15_000,
     );
@@ -427,7 +424,10 @@ async function main() {
           browser.evaluate<string>(
             'document.querySelector(\'[role="dialog"][aria-labelledby]\')?.textContent || Array.from(document.querySelectorAll(\'[role="dialog"]\')).map(node => node.textContent).join(" ")',
           ),
-        (value) => value.includes(`${item.name} is available offline on this device.`),
+        // The download no longer waits for the storage answer, so wait for both.
+        (value) =>
+          value.includes(`${item.name} is available offline on this device.`) &&
+          !value.includes('still deciding on storage protection'),
         'Complete image-backed download',
         120_000,
       );
@@ -582,10 +582,18 @@ async function main() {
         .prepare('SELECT * FROM workspace_offline_recoveries WHERE user_id=? ORDER BY recovery_id')
         .all(f.actor.id);
     const recoveryIds = new Set<string>();
+    const recovered: {
+      item: (typeof f.items)[number];
+      href: string;
+      copyId: string;
+      copied: Awaited<ReturnType<typeof f.readRecovered>>;
+    }[] = [];
     assert.deepEqual(receipts(), []);
     await f.setOffline(false);
     stage('transport-restored');
     for (const item of f.items) {
+      const transferStart = f.transferEvidence.total;
+      const receiptsBefore = receipts();
       await browser.goto(`${f.origin}/?item=${item.id}`);
       await canvas();
       if (item.outcome === 'normal') {
@@ -617,17 +625,98 @@ async function main() {
         // The status region contains the detailed published-copy message; the
         // production save-details control carries the stable attention label.
         await named('button', 'Save details: Needs attention');
-        const href = await until(
-          () =>
-            browser.evaluate<string>(
-              'Array.from(document.querySelectorAll(\'[role="dialog"] a\')).find(link=>link.textContent.trim()==="Open copy")?.getAttribute("href") || ""',
-            ),
-          Boolean,
-          'One published recovery copy',
-        );
+        const deadline = Date.now() + 45_000;
+        const remaining = () => desktopRecoveryRemaining(deadline);
+        const readPublication = async () =>
+          desktopRecoveryPublication(
+            await browser.evaluate<{ href: string; retry: boolean; message: string }>(`(() => {
+            const recovery = document.querySelector('[role="dialog"] [aria-label="Offline recovery"]');
+            return {
+              href: Array.from(recovery?.querySelectorAll('a') || []).find(link => link.textContent.trim() === 'Open copy')?.getAttribute('href') || '',
+              retry: Array.from(recovery?.querySelectorAll('button') || []).some(button => button.textContent.trim() === 'Retry creating copy'),
+              message: recovery?.querySelector('[role="status"]')?.textContent.trim() || '',
+            };
+          })()`),
+          );
+        const observePublication = () =>
+          until(
+            readPublication,
+            (value) => Boolean(value.href) || value.failed,
+            'One published recovery copy',
+            remaining(),
+          );
+        let publication = await observePublication();
+        let retriedRequest: { recoveryId: string; requestHash: string } | undefined;
+        if (publication.failed && publication.reason === 'transfer-busy') {
+          const firstTransfers = f.transferEvidence;
+          assert.ok(
+            desktopRecoveryRetry(firstTransfers, transferStart),
+            'Busy UI needs a matching recovery 429 and overlapping bundle',
+          );
+          const saved = await local(f.actor.id, item.id);
+          assert.ok(saved.item?.outbox && saved.item.recovery);
+          assert.deepEqual(receipts(), receiptsBefore);
+          assert.deepEqual(f.originalState(item), originals.get(item.id));
+          const request = saved.item.recovery;
+          retriedRequest = {
+            recoveryId: request.recoveryId,
+            requestHash: hash([
+              request.filename,
+              request.possibleReplayCrash,
+              JSON.stringify(request.snapshot),
+            ]),
+          };
+          stage('recovery-transfer-busy-first-result', {
+            itemId: item.id,
+            ...retriedRequest,
+            checkpointSha256: hash(saved.item.outbox.checkpoint),
+            recoverySha256: hash(request),
+            receipts: receiptsBefore,
+            transfers: firstTransfers,
+          });
+          await browser.screenshot(resolve(output, `${item.kind}-transfer-busy-first.png`));
+          const ready = await until(
+            async () => desktopRecoveryRetry(f.transferEvidence, transferStart),
+            (value) => value?.ready === true,
+            'Observed competing transfer completed and released admission',
+            remaining(),
+          );
+          const beforeRetry = await local(f.actor.id, item.id);
+          assert.deepEqual(beforeRetry.item?.outbox, saved.item.outbox);
+          assert.deepEqual(beforeRetry.item?.recovery, request);
+          assert.deepEqual(beforeRetry.images, saved.images);
+          assert.deepEqual(receipts(), receiptsBefore);
+          assert.deepEqual(f.originalState(item), originals.get(item.id));
+          assert.equal(desktopRecoveryRetry(f.transferEvidence, transferStart)?.ready, true);
+          // One documented UI retry of a refused, immutable recovery request.
+          // No test retry, other-error retry or fresh deadline is permitted.
+          await named('button', 'Retry creating copy', remaining(), deadline);
+          stage('recovery-transfer-busy-native-retry', {
+            itemId: item.id,
+            ...ready,
+            ...retriedRequest,
+          });
+          // The physical click may return before the async preparation redraws.
+          // Do not mistake the retained first error for a second refusal.
+          await until(
+            readPublication,
+            (value) => Boolean(value.href) || !value.failed,
+            'Native retry leaves its retained first error',
+            remaining(),
+          );
+          publication = await observePublication();
+        }
+        assert.ok(publication.href, `Recovery publication failed: ${publication.reason}`);
+        remaining();
+        const href = publication.href;
         const copyId = new URL(href, f.origin).searchParams.get('item');
         assert.ok(copyId && copyId !== item.id);
         assert.deepEqual(f.originalState(item), originals.get(item.id));
+        if (retriedRequest) {
+          const receipt = receipts().find((row) => row.item_id === copyId);
+          assert.equal(receipt?.recovery_id, retriedRequest.recoveryId);
+          assert.equal(receipt?.request_hash, retriedRequest.requestHash);
+        }
         recoveryIds.add(copyId);
         assert.deepEqual(
           receipts()
@@ -659,39 +748,55 @@ async function main() {
         );
         assert.deepEqual(content(copied.snapshot), content(expected.get(item.id)!));
         assert.deepEqual(f.imageRows(copyId), f.imageRows(item.id));
-        const publishedReceipts = receipts();
-        await browser.goto(`${f.origin}/?item=${item.id}`);
-        await waitStatus('All changes saved.');
-        await f.setOffline(true);
-        stage('recovered-original-reconnect-outage', {
-          itemId: item.id,
-          ...(await f.verifyDisconnected()),
-        });
-        await f.setOffline(false);
-        await browser.goto(`${f.origin}/?item=${item.id}`);
-        await waitStatus('All changes saved.');
-        await browser.goto(`${f.origin}${href}`);
-        await waitStatus('All changes saved.');
-        await canvas();
-        const visual = await visibleImages(`${item.kind}-recovered-copy`, item.kind);
-        assert.ok(
-          (
-            await nativeText(item.kind, item.kind === 'sheet' ? '731' : 'Desktop offline 731 ')
-          ).includes(item.kind === 'sheet' ? '731' : 'Desktop offline 731 '),
-        );
-        assert.deepEqual(f.originalState(item), originals.get(item.id));
-        assert.deepEqual(receipts(), publishedReceipts);
-        stage('conflict-copy-preserves-original', {
-          itemId: item.id,
-          copyId,
-          receipts: publishedReceipts,
-          snapshotSha256: hash(copied.snapshot),
-          images: f.imageRows(copyId),
-          visual,
-        });
+        recovered.push({ item, href, copyId, copied });
+        stage('conflict-copy-published', { itemId: item.id, copyId });
       }
     }
     assert.equal(receipts().length, 2);
+    assert.equal(recovered.length, 2);
+    // A fixture-wide cut must not interrupt another document's background replay.
+    // First prove every normal queue clean and both conflict copies published;
+    // then exercise the original/copy outage assertions with no pending edits.
+    for (const item of f.items.filter((item) => item.outcome === 'normal')) {
+      const clean = await local(f.actor.id, item.id);
+      assert.ok(clean.item);
+      // A clean refresh may remove an empty outbox. Reject pending, malformed
+      // and recovery records, while accepting either valid clean representation.
+      assert.equal(hasStoredEdits(clean.item), false);
+    }
+    stage('all-reconnect-outcomes-verified-before-outage');
+    for (const { item, href, copyId, copied } of recovered) {
+      const publishedReceipts = receipts();
+      await browser.goto(`${f.origin}/?item=${item.id}`);
+      await waitStatus('All changes saved.');
+      await f.setOffline(true);
+      stage('recovered-original-reconnect-outage', {
+        itemId: item.id,
+        ...(await f.verifyDisconnected()),
+      });
+      await f.setOffline(false);
+      await browser.goto(`${f.origin}/?item=${item.id}`);
+      await waitStatus('All changes saved.');
+      await browser.goto(`${f.origin}${href}`);
+      await waitStatus('All changes saved.');
+      await canvas();
+      const visual = await visibleImages(`${item.kind}-recovered-copy`, item.kind);
+      assert.ok(
+        (
+          await nativeText(item.kind, item.kind === 'sheet' ? '731' : 'Desktop offline 731 ')
+        ).includes(item.kind === 'sheet' ? '731' : 'Desktop offline 731 '),
+      );
+      assert.deepEqual(f.originalState(item), originals.get(item.id));
+      assert.deepEqual(receipts(), publishedReceipts);
+      stage('conflict-copy-preserves-original', {
+        itemId: item.id,
+        copyId,
+        receipts: publishedReceipts,
+        snapshotSha256: hash(copied.snapshot),
+        images: f.imageRows(copyId),
+        visual,
+      });
+    }
     // Deliberate loss of private downloads uses real browser deletion APIs, with no
     // claim that filling a CI disk reproduces the browser's eviction heuristic.
     // Return online first so the server can supply catalog names after loss.
@@ -705,7 +810,31 @@ async function main() {
       (value) => value === 2,
       'Two normal copies positively advertise availability before storage deletion',
     );
-    const deletion = await clearDesktopStorage(browser, `spinel-offline-${f.actor.id}`);
+    // Unregistration leaves the current controller alive. Leave the app first,
+    // unregister from a script-free document, then replace every controlled
+    // document while the browser is alive. Witness the same-profile exit and
+    // restart too, before touching storage. Never race the app's shell refresh.
+    await browser.goto(f.storageLossURL);
+    stage('storage-loss-tabs-prepared', await browser.storageLossTabs(f.storageLossURL, 'prepare'));
+    const privateDatabase = `spinel-offline-${f.actor.id}`;
+    const preparation = await unregisterDesktopStorageWorkers(
+      browser,
+      privateDatabase,
+      f.storageLossURL,
+    );
+    stage('storage-loss-unregistration', { preparation });
+    assert.equal(preparation.status, 'passed', JSON.stringify(preparation));
+    // A distinct query avoids an ignored same-URL assignment. Each tab's lost
+    // page marker additionally proves this was a new document, not a URL edit.
+    const quiescentURL = f.storageLossURL + '?phase=uncontrolled';
+    stage('storage-loss-tabs-handed-off', await browser.storageLossTabs(quiescentURL, 'handoff'));
+    const quiescence = await verifyDesktopStorageQuiescence(browser, privateDatabase, quiescentURL);
+    stage('storage-loss-quiescence-before-stop', { quiescence });
+    assert.equal(quiescence.status, 'passed', JSON.stringify(quiescence));
+    stage('browser-stop-before-storage-loss', await browser.stop());
+    await launch(quiescentURL);
+    stage('storage-loss-tabs-restarted', await browser.storageLossTabs(quiescentURL, 'verify'));
+    const deletion = await clearDesktopStorage(browser, privateDatabase, quiescentURL);
     stage('storage-deletion', { deletion });
     assert.equal(deletion.status, 'passed', JSON.stringify(deletion));
     await browser.goto(f.origin + '/');
@@ -758,6 +887,20 @@ async function main() {
     await browser.screenshot(resolve(output, 'failure-screen.png'), 'screen').catch(() => {});
     process.exitCode = 1;
   } finally {
+    if (fixture) {
+      report.transferEvidence = fixture.transferEvidence;
+      report.syncEvidence = desktopSyncObservation(
+        resolve(directory, 'diagnostics.sqlite'),
+        fixture.items.map((item) => item.id),
+      );
+      try {
+        report.recoveryReceiptCount = fixture.db
+          .prepare('SELECT count(*) AS count FROM workspace_offline_recoveries WHERE user_id=?')
+          .get(fixture.actor.id)?.count;
+      } catch (error) {
+        report.recoveryReceiptObservationError = String(error);
+      }
+    }
     try {
       stage('browser-stop', await browser.stop());
     } catch (error) {

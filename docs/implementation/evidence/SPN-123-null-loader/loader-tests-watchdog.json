@@ -1,0 +1,54 @@
+{
+  "root": 80492,
+  "started": 1793882143493,
+  "elapsedMs": 222,
+  "outcome": "command-passed",
+  "pressure": "1",
+  "rssKiB": 92896,
+  "peakKiB": 92896,
+  "live": [
+    {
+      "pid": 80492,
+      "parent": 80465,
+      "group": 80492,
+      "rssKiB": 91344,
+      "started": "Thu Nov  5 04:35:43 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn123-production-inventory/loader-tests-watchdog.json node --test scripts/ci/desktop-safari-identity.test.ts"
+    },
+    {
+      "pid": 80544,
+      "parent": 80492,
+      "group": 80492,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 04:35:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "known": [
+    {
+      "pid": 80492,
+      "parent": 80465,
+      "group": 80492,
+      "rssKiB": 91344,
+      "started": "Thu Nov  5 04:35:43 2026",
+      "command": "node /tmp/spn146-runtime-watchdog.ts /tmp/spn123-production-inventory/loader-tests-watchdog.json node --test scripts/ci/desktop-safari-identity.test.ts"
+    },
+    {
+      "pid": 80511,
+      "parent": 80492,
+      "group": 80492,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 04:35:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    },
+    {
+      "pid": 80544,
+      "parent": 80492,
+      "group": 80492,
+      "rssKiB": 1552,
+      "started": "Thu Nov  5 04:35:43 2026",
+      "command": "ps -axo pid=,ppid=,pgid=,rss=,lstart=,command="
+    }
+  ],
+  "scope": "Observed task descendants, retaining start/command identities across reparenting; not system-wide absence"
+}

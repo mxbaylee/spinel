@@ -12,6 +12,7 @@ import { openExistingDatabase } from './existingDatabase.ts';
 import { releaseAccountRuntime } from './runtime.ts';
 import type { AccountRuntimeRequirement } from './runtime.ts';
 import { isAccessUpgrade } from '../../src/shared/accessUpgrade.ts';
+import { offlineReplayAdmission } from './replayAdmission.ts';
 
 /**
  * Account-scoped IndexedDB storage for documents downloaded on this device
@@ -43,6 +44,10 @@ export type OfflineDownload = {
   revision: number;
   downloadedAt: number;
   pending?: boolean;
+  /** Saved work that needs a deliberate choice (recover, export or discard) rather
+   * than ordinary delivery on reconnect: unverifiable data, an in-progress copy,
+   * a failed replay or retained recovery state. Pending work without it syncs by itself. */
+  retained?: boolean;
   /** A record alone is not proof that its images and public runtime still exist. */
   available?: boolean;
   problem?: string;
@@ -188,6 +193,16 @@ function storedCreationKnown(item: Record<string, unknown>, bundle: Record<strin
   );
 }
 
+/** Applies a pending-change notice to a known row. New work starts ordinary, so it drops a stale
+ * retained mark until the summary is re-read; delivery leaves the mark alone (inert once nothing is
+ * pending), so a recovery record that outlives delivery never loses its Recover link. Unverifiable data
+ * stays pending and retained until a fresh summary says otherwise. */
+export function applyPendingChange(item: OfflineDownload, pending: boolean): OfflineDownload {
+  const next = { ...item, pending: item.uncertain || pending };
+  if (pending && !item.pending && !item.uncertain) delete next.retained;
+  return next;
+}
+
 export function isKnownOfflineOutbox(value: unknown): value is OfflineOutbox {
   if (!object(value) || value.version !== 1 || !object(value.checkpoint)) return false;
   const checkpoint = value.checkpoint;
@@ -328,12 +343,25 @@ export function hasStoredEdits(item: unknown) {
 
 const CHANGE_KEY = 'spinel.offline.changed';
 
-export type OfflineChange = { itemId: string; pending?: boolean };
+/** `checkpoint` marks a notice from the editor's own checkpoint write; its sync binding ignores it. */
+export type OfflineChange = { itemId: string; pending?: boolean; checkpoint?: true };
 type AccountOfflineChange = OfflineChange & { accountId: string };
 const itemWriterChanges = new Map<string, AccountOfflineChange[]>();
 const itemWriterKey = (accountId: string, itemId: string) => JSON.stringify([accountId, itemId]);
 const temporaryItemWriters = new Map<string, Set<Promise<void>>>();
 const editorAdmissions = new Map<string, number>();
+const replayWriters = new Map<string, () => Promise<void>>();
+
+/** Reserve a same-tab replay lifetime before its asynchronous writer admission. */
+export function reserveOfflineReplay(accountId: string, itemId: string, stop: () => Promise<void>) {
+  const key = itemWriterKey(accountId, itemId);
+  if (editorAdmissions.has(key) || temporaryItemWriters.has(key) || replayWriters.has(key))
+    return undefined;
+  replayWriters.set(key, stop);
+  return () => {
+    if (replayWriters.get(key) === stop) replayWriters.delete(key);
+  };
+}
 
 function publishOfflineChange(detail: AccountOfflineChange) {
   window.dispatchEvent(new CustomEvent('spinel-offline-changed', { detail }));
@@ -344,8 +372,18 @@ function publishOfflineChange(detail: AccountOfflineChange) {
   }
 }
 
-export const offlineChanged = (accountId: string, itemId: string, pending?: boolean) => {
-  const detail = { accountId, itemId, ...(pending === undefined ? {} : { pending }) };
+export const offlineChanged = (
+  accountId: string,
+  itemId: string,
+  pending?: boolean,
+  checkpoint?: true,
+) => {
+  const detail = {
+    accountId,
+    itemId,
+    ...(pending === undefined ? {} : { pending }),
+    ...(checkpoint ? { checkpoint } : {}),
+  };
   const deferred = itemWriterChanges.get(itemWriterKey(accountId, itemId));
   if (deferred) deferred.push(detail);
   else publishOfflineChange(detail);
@@ -372,6 +410,12 @@ export function watchOfflineChanges(accountId: string, changed: (change: Offline
     window.removeEventListener('storage', remote);
   };
 }
+
+/** A checkpoint that failed or awaits recovery needs a deliberate choice, not a silent retry. */
+export const retainsWork = (checkpoint: ClientCheckpoint) =>
+  checkpoint.failure !== undefined ||
+  checkpoint.recoverySnapshot !== undefined ||
+  Boolean(checkpoint.recoveryMissing);
 
 /** Validate identity before exposing a stored title; damaged records stay visible generically. */
 export function downloadSummary(
@@ -405,6 +449,9 @@ export function downloadSummary(
     Boolean(scopeMismatch) ||
     (item.outbox !== undefined && !isKnownOfflineOutbox(item.outbox)) ||
     (item.recovery !== undefined && item.outbox === undefined);
+  const checkpoint = !uncertain && outbox ? (outbox.checkpoint as ClientCheckpoint) : undefined;
+  const retained =
+    uncertain || item.recovery !== undefined || Boolean(checkpoint && retainsWork(checkpoint));
   return {
     ...(valid && object(bundle.appearance)
       ? { appearance: bundle.appearance as unknown as ItemAppearance }
@@ -423,6 +470,7 @@ export function downloadSummary(
       item.recovery !== undefined ||
       item.creation !== undefined ||
       Boolean(outbox && checkpointHasEdits(outbox.checkpoint as ClientCheckpoint)),
+    ...(retained ? { retained: true } : {}),
     ...(!uncertain && item.creation !== undefined
       ? {
           creation: {
@@ -753,9 +801,9 @@ export async function withOfflineCatalogLock<T>(
 }
 
 /**
- * Hand a same-tab maintenance writer to an opening editor. New maintenance
- * cannot slip into the handoff; other tabs still use the nonblocking Web Lock
- * admission and are never mistaken for a temporary operation we may await.
+ * Hand temporary work to an opening editor without admitting new maintenance.
+ * Cross-tab replay/foreground admission has a bounded FIFO handoff; the actual
+ * item writer stays nonblocking and never waits for a live editor's lifetime.
  */
 export async function withOfflineEditorAdmission<T>(
   accountId: string,
@@ -767,8 +815,20 @@ export async function withOfflineEditorAdmission<T>(
   editorAdmissions.set(key, (editorAdmissions.get(key) ?? 0) + 1);
   try {
     await Promise.all(temporaryItemWriters.get(key) ?? []);
-    verifyCurrent();
-    return await acquire();
+    if (!navigator.locks) {
+      verifyCurrent();
+      return await acquire();
+    }
+    return await offlineReplayAdmission().foreground(
+      accountId,
+      itemId,
+      verifyCurrent,
+      async () => {
+        await replayWriters.get(key)?.();
+      },
+      acquire,
+      'editor',
+    );
   } finally {
     const count = editorAdmissions.get(key)!;
     if (count === 1) editorAdmissions.delete(key);
@@ -787,6 +847,8 @@ export async function withOfflineItemWriter<T>(
   const key = itemWriterKey(accountId, itemId);
   if (editorAdmissions.has(key))
     throw new Error('Close this document in every tab before changing its device copy.');
+  // A denied storage fence must not leave a registered writer with no finally.
+  const verify = offlineEpoch();
   let finish!: () => void;
   const completed = new Promise<void>((resolve) => {
     finish = resolve;
@@ -796,16 +858,25 @@ export async function withOfflineItemWriter<T>(
   temporaryItemWriters.set(key, writers);
   let changes: AccountOfflineChange[] | undefined;
   try {
-    return await navigator.locks.request(
-      `spinel-offline:${accountId}:${itemId}`,
-      { ifAvailable: true },
-      async (lock) => {
-        if (!lock)
-          throw new Error('Close this document in every tab before changing its device copy.');
-        changes = [];
-        itemWriterChanges.set(key, changes);
-        return operation();
+    return await offlineReplayAdmission().foreground(
+      accountId,
+      itemId,
+      verify,
+      async () => {
+        await replayWriters.get(key)?.();
       },
+      () =>
+        navigator.locks.request(
+          `spinel-offline:${accountId}:${itemId}`,
+          { ifAvailable: true },
+          async (lock) => {
+            if (!lock)
+              throw new Error('Close this document in every tab before changing its device copy.');
+            changes = [];
+            itemWriterChanges.set(key, changes);
+            return operation();
+          },
+        ),
     );
   } finally {
     writers.delete(completed);
@@ -1469,6 +1540,7 @@ export class OfflineStore {
     const completion = done(transaction);
     const items = transaction.objectStore('items');
     let pendingChanged = false;
+    let retainedChanged = false;
     let pending = false;
     try {
       const item = (await request(items.get(scope.item))) as StoredItem | undefined;
@@ -1500,6 +1572,10 @@ export class OfflineStore {
         !storedSnapshotShape(checkpoint.snapshot, item.bundle.kind, scope.unitId) ||
         hasOfflineEdits(item.outbox);
       pendingChanged = Boolean(previous.pending) !== pending;
+      // A failure or recovery written while already pending changes no pending flag,
+      // yet it moves the file from "sends by itself" to "needs a choice".
+      retainedChanged =
+        Boolean(previous.retained) !== (item.recovery !== undefined || retainsWork(checkpoint));
       if (imageFiles) {
         item.bundle.images = imageFiles.images;
         const images = transaction.objectStore('images');
@@ -1522,6 +1598,7 @@ export class OfflineStore {
     await completion;
     verifyCurrent();
     if (pendingChanged) offlineChanged(this.accountId, scope.item, pending);
+    else if (retainedChanged) offlineChanged(this.accountId, scope.item, undefined, true);
   }
   /** Fix retry identity, title and bytes before any request can publish a copy. */
   async beginRecovery(

@@ -1,0 +1,19 @@
+{
+  "name": "spn156-cross-tab-gate-negative",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/offlineWriterHandoff.test.ts",
+    "-t",
+    "another tab joins replay cleanup",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn156-cross-tab-negative-cache"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 2020,
+  "peakKiB": 1079312
+}

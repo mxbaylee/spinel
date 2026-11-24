@@ -1,0 +1,8 @@
+{
+  "contract": "A readable signed-out session must not admit authentication while paused",
+  "originalSha256": "44eeb0d2d7ea264bcbdded9a7e49b86841d041cd62b448407377e42f92fc3504",
+  "negativeSha256": "49c8bd06fcc72f5edf0c5c90ea0cef7d0e8cdb31c1196e197bf2dd4a678b592a",
+  "change": "Replace only the actual shared readiness decision with the prior session-status-only condition",
+  "exitCode": 1,
+  "restoredSha256": "44eeb0d2d7ea264bcbdded9a7e49b86841d041cd62b448407377e42f92fc3504"
+}

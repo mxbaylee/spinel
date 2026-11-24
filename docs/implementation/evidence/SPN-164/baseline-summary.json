@@ -1,0 +1,322 @@
+{
+  "status": "physical baseline pending; no repair or merge",
+  "productionBaseline": "c17c74d9225b3317541696dd6ea6c4a4c713f7be",
+  "fixtureCommit": "40ed569161c85d008b0ad6ebc76de9ba5ba3533f",
+  "runtime": "1d60311c62cc362c",
+  "identityManifestSha256": "674b920e5cc70faf8a759461e0f7a5bb7ce285bec5f24086845544e47bcfce51",
+  "sourceSha256": {
+    "web/api.ts": "45121a0724c70091d5f0d4e6e71fb80aa8bf282b63ddc1c99d7aa958171138cf",
+    "web/App.tsx": "2a43a2185abbf34d3f2e328cab7d5fed1d373bb48141002fb64620caf56b6d54",
+    "web/startupStage.ts": "2403310d1e6b2683924c5a0c4b6973bd549896ae60b89414eca452973a8aac49",
+    "web/maintenanceFetch.ts": "7fff7fcda81ca2c9dfdb8ecd4a2e37975321562037e7a734a375c5063fd6acba",
+    "scripts/ci/startup-phone.config.ts": "d2a847842979757d8ad582dde9e6f51f03b3c211bd48c52a56eda354439a0c95",
+    "scripts/ci/startup-phone-observer.ts": "24442acdd5e8a89ab07f7d6f9b17a695755d99b4bff60304ca11e4a36bf4c210",
+    "scripts/ci/startup-phone-instrumentation.ts": "97c89b454646e9ef0825f5183b3738b02ff0de379dd87b4ba304ffb3ab002d99"
+  },
+  "indexSha256": "65efe4f7440e1066a23ec0a611a7fb18409eb1753b2121b948f04eb9138f3c99",
+  "workerSha256": "dc1dc4dfd8f9cd815210b3094d16cb3c8df35cfa1234d2a7fb6b8434ad7e6e05",
+  "checks": {
+    "observer-controls": {
+      "label": "observer-controls",
+      "command": "node",
+      "args": [
+        "--test",
+        "scripts/ci/startup-phone.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 137,
+      "peakKiB": null,
+      "sourceReceiptSha256": "3de8079e5d655cd78cf287bc9b06b1e5f87975aecb534661db4bbfd859a48ea6"
+    },
+    "observer-final-controls": {
+      "label": "observer-final-controls",
+      "command": "node",
+      "args": [
+        "--test",
+        "scripts/ci/startup-phone.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 117,
+      "peakKiB": null,
+      "sourceReceiptSha256": "5698ac441a73cf2e55045605050757869f902bc611df00db6ecf8256f24db28b"
+    },
+    "fixture-types": {
+      "label": "fixture-types",
+      "command": "env",
+      "args": [
+        "GOMEMLIMIT=640MiB",
+        "GOGC=50",
+        "GOMAXPROCS=2",
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "."
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": "pressure=2, rssKiB=1267536",
+      "elapsedMs": 9797,
+      "peakKiB": 1555856,
+      "sourceReceiptSha256": "9da037117be2f48489c0e38cefb7e0e97e1303dc699cbb4504fd8f0d8f8bfb21"
+    },
+    "focused-fixture-types": {
+      "label": "focused-fixture-types",
+      "command": "env",
+      "args": [
+        "GOMEMLIMIT=256MiB",
+        "GOGC=50",
+        "GOMAXPROCS=2",
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--noEmit",
+        "--skipLibCheck",
+        "--allowImportingTsExtensions",
+        "--target",
+        "esnext",
+        "--module",
+        "nodenext",
+        "--lib",
+        "esnext,dom",
+        "scripts/ci/startup-phone-observer.ts",
+        "scripts/ci/startup-phone-instrumentation.ts",
+        "scripts/ci/startup-phone.config.ts",
+        "scripts/ci/startup-phone.test.ts"
+      ],
+      "code": 1,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 42,
+      "peakKiB": null,
+      "sourceReceiptSha256": "b1044a0f931ce8f4745aac7aa6ae37321c7afc3fa2e4f28e8ac52736fa219209"
+    },
+    "focused-fixture-types-corrected": {
+      "label": "focused-fixture-types-corrected",
+      "command": "env",
+      "args": [
+        "GOMEMLIMIT=256MiB",
+        "GOGC=50",
+        "GOMAXPROCS=2",
+        "node",
+        "node_modules/typescript/bin/tsc",
+        "--ignoreConfig",
+        "--noEmit",
+        "--skipLibCheck",
+        "--allowImportingTsExtensions",
+        "--target",
+        "esnext",
+        "--module",
+        "nodenext",
+        "--lib",
+        "esnext,dom",
+        "scripts/ci/startup-phone-observer.ts",
+        "scripts/ci/startup-phone-instrumentation.ts",
+        "scripts/ci/startup-phone.config.ts",
+        "scripts/ci/startup-phone.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 172,
+      "peakKiB": null,
+      "sourceReceiptSha256": "d07f97ece4c02384ba8e069f6afb4e8c2c65fe46774f8efa8fb77a6ab19d056d"
+    },
+    "fixture-lint": {
+      "label": "fixture-lint",
+      "command": "node",
+      "args": [
+        "node_modules/oxlint/bin/oxlint",
+        "--deny-warnings",
+        "scripts/ci/startup-phone-observer.ts",
+        "scripts/ci/startup-phone-instrumentation.ts",
+        "scripts/ci/startup-phone.config.ts",
+        "scripts/ci/startup-phone.test.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 81,
+      "peakKiB": null,
+      "sourceReceiptSha256": "544648e4da9141122087b1d50efced5a35b2990d171df0a31b765e231f55e5b5"
+    },
+    "backlog-check": {
+      "label": "backlog-check",
+      "command": "node",
+      "args": [
+        "scripts/backlog/cli.ts",
+        "check"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 106,
+      "peakKiB": null,
+      "sourceReceiptSha256": "24f9cde1a55aa8e3796b4640687d466ed0f64d033d86c1a88ae715b77c85cdb0"
+    },
+    "baseline-build": {
+      "label": "baseline-build",
+      "command": "env",
+      "args": [
+        "NODE_OPTIONS=--max-old-space-size=384",
+        "RAYON_NUM_THREADS=1",
+        "VITE_SYNC_EVIDENCE=0",
+        "VITE_DOC_SELECTION_EVIDENCE=0",
+        "SPINEL_PHONE_DIST=/private/tmp/spn164/baseline-dist",
+        "node",
+        "node_modules/vite/bin/vite.js",
+        "build",
+        "--config",
+        "scripts/ci/startup-phone.config.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 2029,
+      "peakKiB": 941056,
+      "sourceReceiptSha256": "3bb288aae808e8e69467774c8c240f63118a11f13418f7fd6f16ce051a5b05db"
+    },
+    "browser-smoke": {
+      "label": "browser-smoke",
+      "command": "node",
+      "args": [
+        "--max-old-space-size=256",
+        "/private/tmp/spn164/smoke.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 2956,
+      "peakKiB": 870720,
+      "sourceReceiptSha256": "46d45dd1e306133d44567e3f08cef8cb2dd6ef1300656e073e411f9d69a160e4"
+    },
+    "committed-baseline-build": {
+      "label": "committed-baseline-build",
+      "command": "env",
+      "args": [
+        "NODE_OPTIONS=--max-old-space-size=384",
+        "RAYON_NUM_THREADS=1",
+        "VITE_SYNC_EVIDENCE=0",
+        "VITE_DOC_SELECTION_EVIDENCE=0",
+        "SPINEL_PHONE_DIST=/private/tmp/spn164/baseline-dist",
+        "node",
+        "node_modules/vite/bin/vite.js",
+        "build",
+        "--config",
+        "scripts/ci/startup-phone.config.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 1904,
+      "peakKiB": 925056,
+      "sourceReceiptSha256": "7b2e261a4d397202f1a2860b376e8d3e8532df33bf348d8b81c8ffbbbf2e5edb"
+    },
+    "committed-browser-smoke": {
+      "label": "committed-browser-smoke",
+      "command": "node",
+      "args": [
+        "--max-old-space-size=256",
+        "/private/tmp/spn164/smoke.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 2206,
+      "peakKiB": 908064,
+      "sourceReceiptSha256": "aa7810c923416066f60d8ac162afc79de764d78ee39a2512184413167907b13d"
+    },
+    "phone-preflight": {
+      "label": "phone-preflight",
+      "command": "env",
+      "args": [
+        "SPINEL_PHONE_PREFLIGHT=1",
+        "SPINEL_PHONE_RUN=/private/tmp/spn164/phone-preflight",
+        "node",
+        "--max-old-space-size=128",
+        "/private/tmp/spn164/phone-window.ts"
+      ],
+      "code": 1,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 16229,
+      "peakKiB": 383120,
+      "sourceReceiptSha256": "7b281cd8a2866ef23b049e53711431b356820b2285c7d15ad3ec9edbf47b7814"
+    },
+    "phone-preflight-corrected": {
+      "label": "phone-preflight-corrected",
+      "command": "env",
+      "args": [
+        "SPINEL_PHONE_PREFLIGHT=1",
+        "SPINEL_PHONE_RUN=/private/tmp/spn164/phone-preflight-corrected",
+        "node",
+        "--max-old-space-size=128",
+        "/private/tmp/spn164/phone-window.ts"
+      ],
+      "code": 1,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 17311,
+      "peakKiB": 381376,
+      "sourceReceiptSha256": "22907dd83f5f5e83c4cd013c50759b418399e83882012451104cbf394ac32e9a"
+    },
+    "phone-preflight-ready": {
+      "label": "phone-preflight-ready",
+      "command": "env",
+      "args": [
+        "SPINEL_PHONE_PREFLIGHT=1",
+        "SPINEL_PHONE_RUN=/private/tmp/spn164/phone-preflight-ready",
+        "node",
+        "--max-old-space-size=128",
+        "/private/tmp/spn164/phone-window.ts"
+      ],
+      "code": 0,
+      "signal": null,
+      "aborted": null,
+      "elapsedMs": 11200,
+      "peakKiB": 406432,
+      "sourceReceiptSha256": "e512e20e3ecefbcc4491c499458c62308e4537d7b76f5ffe9cc65c64a977c6a3"
+    }
+  },
+  "browserControls": {
+    "physicalPhone": false,
+    "normal": {
+      "requestMs": 3.7,
+      "checkToDoneMs": 5.8,
+      "dropped": 0,
+      "unavailable": false
+    },
+    "delayedDispatch200ms": {
+      "requestMs": 208.8,
+      "checkToDoneMs": 211,
+      "dropped": 0,
+      "unavailable": false
+    }
+  },
+  "archival": {
+    "path": "/Users/mxbaylee/.local/share/spinel-evidence/SPN-164/20261122-baseline-40ed5691/raw-fixture-evidence.tar.gz",
+    "sha256": "ab38ea2edad5d58647bc7e43bdacb95930ff4f780ea67303aa5b41b4bbd55146",
+    "bytes": 7721316,
+    "memberCount": 203,
+    "verifiedEveryMember": true
+  },
+  "failureDispositions": {
+    "fixture-types": "Resource-aborted on pressure 2 despite compiler exit 0; full project typecheck not passed.",
+    "focused-fixture-types": "TS5112 invocation error; corrected explicit-file invocation adds --ignoreConfig.",
+    "phone-preflight": "Bounded readiness checks could not resolve the new tunnel hostname. Later public DNS resolution succeeded; DNS cause not isolated.",
+    "phone-preflight-corrected": "New explicit HTTPS client reached server but did not follow the expected anonymous-root 302. Preflight changed to /sign-in and checks embedded runtime plus exact worker hash; public metadata legitimately changes full HTML bytes.",
+    "phone-preflight-ready": "Corrected readiness passed with one DNS-not-ready probe followed by actual 200s and valid invitation. Rehearsal then shut down; no phone was tested."
+  },
+  "pending": [
+    "physical before timing",
+    "evidence-backed bound/strategy",
+    "behavior repair and deterministic regressions",
+    "selected browser/native and physical after acceptance",
+    "visual disposition",
+    "two independent exact-head reviews",
+    "seven current-head CI gates",
+    "squash merge and branch cleanup"
+  ]
+}

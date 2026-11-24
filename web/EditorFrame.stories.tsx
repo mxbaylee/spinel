@@ -18,11 +18,13 @@ function Fixture({
   saved = true,
   presence = false,
   formulas = false,
+  fileId = 'fixture',
 }: {
   dialog?: boolean;
   saved?: boolean;
   presence?: boolean;
   formulas?: boolean;
+  fileId?: string;
 }) {
   const chrome = useEditorChrome();
   return (
@@ -48,7 +50,7 @@ function Fixture({
         onRetry={fn()}
       />
       <EditorTools
-        id="fixture"
+        id={fileId}
         name="Quarterly planning"
         people={[
           {
@@ -179,7 +181,59 @@ export const Phone: Story = {
     await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
   },
 };
-export const Guest: Story = { args: { guest: true, onBack: undefined, access: 'View only' } };
+export const Guest: Story = {
+  args: {
+    guest: true,
+    onBack: undefined,
+    access: 'View only',
+    feedbackAccountId: '11111111-1111-4111-8111-111111111111',
+  },
+  play: async ({ canvasElement }) => {
+    await expect(
+      within(canvasElement).queryByRole('button', { name: 'Document actions' }),
+    ).not.toBeInTheDocument();
+    await expect(
+      within(document.body).queryByRole('dialog', { name: 'Send feedback' }),
+    ).not.toBeInTheDocument();
+  },
+};
+export const Feedback: Story = {
+  args: {
+    feedbackAccountId: '11111111-1111-4111-8111-111111111111',
+    children: <Fixture fileId="33333333-3333-4333-8333-333333333333" />,
+  },
+  parameters: {
+    api: {
+      'GET /api/diagnostics/feedback-context': {
+        generation: '22222222-2222-4222-8222-222222222222',
+        binding: 'a'.repeat(64),
+        maxMessageLength: 2000,
+        maxMessageBytes: 8000,
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement),
+      body = within(document.body);
+    await userEvent.click(canvas.getByRole('button', { name: 'Document actions' }));
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Send feedback…' }));
+    const dialog = await body.findByRole('dialog', { name: 'Send feedback' });
+    await expect(within(dialog).getByRole('textbox', { name: 'Message' })).toBeVisible();
+    await assertDialogTargets(dialog);
+  },
+};
+export const FeedbackFocusReturn: Story = {
+  ...Feedback,
+  play: async (context) => {
+    await Feedback.play!(context);
+    const dialog = await within(document.body).findByRole('dialog', { name: 'Send feedback' });
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await expect(
+      within(context.canvasElement).getByRole('button', { name: 'Document actions' }),
+    ).toHaveFocus();
+  },
+};
 export const Reconnecting: Story = { args: { connection: 'reconnecting' } };
 export const Rename: Story = {
   args: { onRename: fn(async () => {}) },

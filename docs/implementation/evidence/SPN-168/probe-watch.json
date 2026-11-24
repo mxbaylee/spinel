@@ -1,0 +1,9 @@
+{
+  "command": "/Users/mxbaylee/.nvm/versions/node/v26.13.0/bin/node",
+  "args": ["/tmp/spn168/probe.ts"],
+  "code": null,
+  "signal": "SIGKILL",
+  "failure": "Memory pressure, RSS, or time bound exceeded",
+  "peakKiB": 314368,
+  "elapsedMs": 12567
+}

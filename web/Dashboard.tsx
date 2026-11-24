@@ -45,15 +45,20 @@ import type { SpaceRootActionMode } from './SpaceRootActions.tsx';
 import { EditorFrame } from './EditorFrame.tsx';
 import { AccessState } from './AccessState.tsx';
 import { AccessDetails } from './AccessDetails.tsx';
+import { CONNECTION_CHECK_EVENT, CONNECTION_CHECKED_EVENT } from './connectionState.ts';
 import type { ConnectionState } from './connectionState.ts';
 import type { CatalogConnectionDetails } from './ConnectionStatus.tsx';
+import { ITEM_REQUEST_DEADLINE_MS } from './offline/deadlines.ts';
 import { isNetworkFailure } from './offline/localStart.ts';
 import type { LocalStart } from './offline/localStart.ts';
+import { hasUsableCopy, isRequestTimeout, viewAfterNetworkFailure } from './offline/warmOpen.ts';
+import { readWarmFailureView } from './offline/warmCatalog.ts';
 import { preparedAccount } from './offline/offlineStore.ts';
 import type { OfflineCatalog, OfflineDownload, OfflineUser } from './offline/offlineStore.ts';
 import { useOfflineDownloads } from './offline/useOfflineDownloads.ts';
 import { OfflineAvailability, OfflineAvailabilityActions } from './offline/OfflineAvailability.tsx';
-import { OfflineRecoveryList } from './OfflineRecoveryEntry.tsx';
+import { itemNeedsSync, pendingBadge, pendingFirst, syncSummary } from './OfflineStatus.tsx';
+import { SyncStatus } from './SyncStatus.tsx';
 import { spaceCopies } from './offline/spaceCopies.ts';
 import type { ItemAppearance } from '../src/shared/appearance.ts';
 import { CopyFileForm } from './CopyFile.tsx';
@@ -181,6 +186,8 @@ export function Dashboard({
   const [viewLoading, setViewLoading] = useState(false);
   const [viewId, setViewId] = useState<string | null>(null);
   const [viewMissing, setViewMissing] = useState(false);
+  // A warm Dashboard that lost its connection opens this downloaded item from the device.
+  const [deviceOpenId, setDeviceOpenId] = useState<string | null>(null);
   const [refresh, setRefresh] = useState(0);
   const [sharing, setSharing] = useState<FileItem | null>(null);
   const [accessDetails, setAccessDetails] = useState<FileItem | null>(null);
@@ -333,7 +340,7 @@ export function Dashboard({
           ),
         }
       : null;
-  const offline = useOfflineDownloads(user, local, catalog);
+  const offline = useOfflineDownloads(user, local, catalog, { foregroundItemId: currentId });
   const creationItems = [...offline.downloads.values()].flatMap((copy) => {
     const item = creationFile(copy);
     return item ? [item] : [];
@@ -381,7 +388,11 @@ export function Dashboard({
   if (currentCreation) heldCreation.current = currentCreation;
   else if (heldCreation.current?.id !== currentId) heldCreation.current = null;
   const heldCreationId = heldCreation.current?.id;
-  const localEditor = Boolean(local || heldCreationId === currentId);
+  // A warm Dashboard that lost its connection shows this downloaded item as offline
+  // does: from the device copy, with no server-only actions.
+  const deviceOpen = Boolean(currentId && deviceOpenId === currentId);
+  const offlineFrame = Boolean(local || deviceOpen);
+  const localEditor = Boolean(local || heldCreationId === currentId || deviceOpen);
   useEffect(() => {
     // Returning from the native editor reuses this Dashboard. Read its newly
     // committed pending state before showing the account recovery entries.
@@ -423,7 +434,15 @@ export function Dashboard({
     window.addEventListener('popstate', back);
     return () => window.removeEventListener('popstate', back);
   }, []);
+  // The native offline binding reconnects in place. A metadata refetch must not
+  // replace its mounted editor: it may own unfinished input not yet in the outbox.
+  // Explicit navigation is already protected by navigation.allow().
+  useEffect(() => setDeviceOpenId(null), [currentId]);
+  const latest = useRef({ items, shared: shared.items, downloads: offline.downloads });
+  latest.current = { items, shared: shared.items, downloads: offline.downloads };
   useEffect(() => {
+    // Incidental list/metadata refreshes cannot tear down this editor either.
+    if (deviceOpen) return;
     setSharing(null);
     setAccessDetails(null);
     setViewed([]);
@@ -448,27 +467,46 @@ export function Dashboard({
       item: FileItem;
       children: FileItem[];
       ancestors: FileItem[];
-    }>(`/${currentId}`)
+    }>(`/${currentId}`, 'GET', undefined, undefined, AbortSignal.timeout(ITEM_REQUEST_DEADLINE_MS))
       .then((result) => {
         if (disposed) return;
         const view = [...result.ancestors, result.item, ...result.children];
         views.current = { ...views.current, [currentId]: view };
         setViewed(view);
+        setDeviceOpenId(null);
       })
-      .catch((failure) => {
+      .catch(async (failure) => {
         if (!disposed) {
-          const saved = views.current[currentId];
-          // A warm Dashboard can disconnect after this folder was prepared.
-          // Reuse only that account's saved folder on a network failure; an
-          // actual server denial remains authoritative even with cached rows.
-          if (
-            isNetworkFailure(failure) &&
-            preparedAccount() === user.id &&
-            saved?.some((item) => item.id === currentId && item.kind === 'folder')
-          ) {
-            setViewed(saved);
+          // Read the newest lists: this effect only re-runs on navigation, so its
+          // own render's `items` and downloads may predate the lists' first load.
+          const now = latest.current;
+          const copy = now.downloads.get(currentId);
+          // A warm Dashboard can disconnect after this item was listed or prepared.
+          // On a network failure reuse only that account's saved folder, or open
+          // its downloaded Doc or Sheet from this device; an actual server denial
+          // remains authoritative even with cached rows.
+          let fallback = viewAfterNetworkFailure({
+            networkFailure: isNetworkFailure(failure),
+            accountId: user.id,
+            preparedAccountId: preparedAccount(),
+            currentId,
+            saved: views.current[currentId],
+            views: Object.values(views.current),
+            rows: [...now.items, ...now.shared],
+            downloaded: hasUsableCopy(copy),
+          });
+          if (!fallback && isNetworkFailure(failure))
+            fallback = await readWarmFailureView(user.id, currentId, () => !disposed);
+          if (disposed) return;
+          if (fallback) {
+            setViewed(fallback.rows);
+            if (fallback.kind === 'device') setDeviceOpenId(currentId);
           } else {
-            setError(failure.message);
+            setError(
+              isRequestTimeout(failure)
+                ? 'Spinel did not answer. Check your connection and try again.'
+                : failure.message,
+            );
             setViewMissing(true);
           }
         }
@@ -762,9 +800,29 @@ export function Dashboard({
       setBusy(false);
     }
   }
+  const needsSyncFor = (item: FileItem) => itemNeedsSync(item, offline.downloads);
+  // Try now asks the connection probe and the replay owner to look again; the probe answers
+  // within its 2 s timeout, so the button never stays busy longer than that.
+  const [checking, setChecking] = useState(false);
+  const checkNow = () => {
+    setChecking(true);
+    window.dispatchEvent(new Event(CONNECTION_CHECK_EVENT));
+  };
+  useEffect(() => {
+    if (!checking) return;
+    const done = () => setChecking(false);
+    // The probe's answer ends the check; the timer only covers one that never arrives.
+    window.addEventListener(CONNECTION_CHECKED_EVENT, done, { once: true });
+    const fallback = setTimeout(done, 2500);
+    return () => {
+      window.removeEventListener(CONNECTION_CHECKED_EVENT, done);
+      clearTimeout(fallback);
+    };
+  }, [checking]);
   function offlineState(item: FileItem) {
-    const creation = offline.downloads.get(item.id)?.creation;
-    if (creation) return creation.problem ? 'needs-attention' : 'not-synced';
+    const download = offline.downloads.get(item.id);
+    const pending = pendingBadge(download, needsSyncFor(item), connection);
+    if (pending) return pending;
     if (
       item.kind === 'space' &&
       spaceCopies(offline.downloads.values(), item.id).some((copy) => copy.available !== false)
@@ -788,7 +846,7 @@ export function Dashboard({
             },
           ]
         : [];
-    if (local) return [];
+    if (local || (deviceOpen && item.id === currentId)) return [];
     const result: MenuAction[] = [];
     if (placement === 'row' && (item.kind === 'sheet' || item.kind === 'doc'))
       result.push({
@@ -936,7 +994,9 @@ export function Dashboard({
       pendingScroll.current = null;
     });
   }
-  const sharedFailure = shared.error && (
+  // A failed background file list must not cover an admitted device editor.
+  // Keep its error for the next list view; the editor has its own save/access status.
+  const sharedFailure = !deviceOpen && shared.error && (
     <p role="alert">
       {shared.error} <button onClick={() => void shared.refresh()}>Refresh shared items</button>
     </p>
@@ -949,8 +1009,9 @@ export function Dashboard({
   const newKinds = FILE_KINDS.filter((kind) =>
     localCreation ? kind === 'sheet' || kind === 'doc' : kind !== 'space' || spacesEnabled,
   );
-  // Shared is already ordered by latest grant; alphabetizing would hide recent shares.
-  const listedItems = sharedOpen
+  // Shared is ordered by latest grant, not alphabetized, so recent shares stay visible; files that
+  // still need to sync are then pinned above that order by pendingFirst.
+  const orderedItems = sharedOpen
     ? [
         ...new Map(
           [...deviceCreatedFiles.filter((item) => item.access !== 'owner'), ...shared.items].map(
@@ -964,6 +1025,7 @@ export function Dashboard({
           a.name.localeCompare(b.name) ||
           a.id.localeCompare(b.id),
       );
+  const listedItems = pendingFirst(orderedItems, needsSyncFor);
   return (
     <section ref={dropTarget} className="dashboard-content" aria-label="Your files">
       {!onPlaces && !framedEditor && (
@@ -1070,7 +1132,12 @@ export function Dashboard({
           {shareMessage && <p role="status">{shareMessage}</p>}
 
           {!currentId && (
-            <OfflineRecoveryList downloads={offline.downloads.values()} navigation={navigation} />
+            <SyncStatus
+              {...syncSummary(offline.downloads.values(), connection)}
+              onTryNow={checkNow}
+              checking={checking}
+              allowNavigation={() => navigation.allow()}
+            />
           )}
 
           {local && (
@@ -1172,7 +1239,7 @@ export function Dashboard({
       {!framedEditor && offline.message && (
         <>
           <p role={offline.message.failed ? 'alert' : 'status'}>{offline.message.text}</p>
-          {offline.message.detail && <p>{offline.message.detail}</p>}
+          {offline.message.detail && <p aria-live="polite">{offline.message.detail}</p>}
           <OfflineAvailabilityActions
             message={offline.message}
             allowNavigation={navigation.allow}
@@ -1188,7 +1255,7 @@ export function Dashboard({
         />
       )}
       {!framedEditor && sharedFailure}
-      {!loaded || viewLoading || currentId !== viewId ? (
+      {(!loaded && !deviceOpen) || viewLoading || currentId !== viewId ? (
         <p role="status">
           {error ? 'Your files could not be loaded. Reload to try again.' : 'Loading your files…'}
         </p>
@@ -1263,14 +1330,15 @@ export function Dashboard({
         current && (
           <EditorFrame
             appearanceTarget={current}
-            appearanceDisabled={!!local || Boolean(currentCreation)}
+            appearanceDisabled={offlineFrame || Boolean(currentCreation)}
             offlineAccountId={user.id}
+            feedbackAccountId={user.id}
             key={current.id}
             name={current.name}
-            connection={local ? 'offline' : connection}
+            connection={connection}
             catalog={connectionCatalog}
             access={
-              local
+              offlineFrame
                 ? offline.downloads.get(current.id)?.readOnly
                   ? 'Read only'
                   : 'On this device'
@@ -1281,7 +1349,7 @@ export function Dashboard({
             onBack={returnToFiles}
             actions={rowActions(current, 'editor').filter((action) => action.label !== 'Rename…')}
             onRename={
-              !local && !currentCreation && canAdminister(current.access)
+              !offlineFrame && !currentCreation && canAdminister(current.access)
                 ? async (name) => {
                     const { item } = await itemsRequest<{ item: FileItem }>(
                       `/${current.id}`,
@@ -1629,9 +1697,10 @@ export function Dashboard({
       )}
       {/* AccessState already presents this generic failure. Keep distinct
           request errors and their state for network/server failure reporting. */}
-      {error && !action && !(missingView && error === 'This item is not available.') && (
-        <p role="alert">{error}</p>
-      )}
+      {error &&
+        !deviceOpen &&
+        !action &&
+        !(missingView && error === 'This item is not available.') && <p role="alert">{error}</p>}
       {framedEditor && sharedFailure}
     </section>
   );

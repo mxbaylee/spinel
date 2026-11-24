@@ -1,0 +1,23 @@
+{
+  "base": "9717f55f",
+  "node": "26.13.0",
+  "playwright": "1.64.1",
+  "sources": {
+    "scripts/dependencies/patch-playwright.ts": "d8049083632a86281adc9da8187afb8fc8e61f1073c009850ba065e4564c7327",
+    "scripts/dependencies/patch-playwright.test.ts": "fde86e2fdf3e7b2fd3ed2c28cdb2d9a5010c60a524b123ead24a6744ec6401fd",
+    "scripts/dependencies/playwright-transport-fixture.ts": "176a81b6a676498d6119a1bc36e97f5cf90500a875137068d414f5be102280e3",
+    "scripts/ci/plan.test.ts": "278f78979904eab7ed5d92b19bc184aaf9b7d537f1b481029ddc389062b7e242",
+    "e2e/reset-diagnostics.ts": "869c6f282f4e4f3ba2cf0d387fff3f96bedfb3c2a495c8662300e7f42951afa2",
+    "e2e/owned-process.ts": "b97a250c2641d32a4d41641ee875a9b9344978c8402883dad8eb0a808299554c",
+    "server/http.ts": "7430dae6558e48c61e85fa385c84ef61dec960174d7472d9b3ebeffe87bdc207",
+    "package.json": "380abc309e45cb4aa2e6e5c2933521321c548f74c0478a99ec08a0225d8379a9",
+    "package-lock.json": "5c247ce8ca878599d97d5cc4f9dd6794dbbebc707d0d6d98355c789fce3d6be2"
+  },
+  "checks": {
+    "final-focused": "35 tests passed; final-focused.log and final-focused-watch.json",
+    "types-second": "passed before test cleanup refactor; final typecheck follows",
+    "types-final": "passed; types-final-watch.json",
+    "lint": "passed, including dependency policy, oxlint and complete code formatting; lint.log and lint-watch.json"
+  },
+  "limitations": "Historical hosted reset has no socket trace. Server-stall experiment proves mechanism; hosted candidate acceptance remains pending."
+}

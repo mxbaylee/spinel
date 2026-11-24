@@ -26,6 +26,7 @@ import {
 import { expectNativeSheetValue } from './native-sheet-value.ts';
 import { textPoint } from './doc-touch.ts';
 import { RestoreObserver, containRestoreObserver } from './restore-observer.ts';
+import { restoreHeadroomDiagnostics } from './restore-headroom.ts';
 
 const run = promisify(execFile);
 const configuredImage = process.env.SPINEL_RESTORE_BROWSER_IMAGE;
@@ -601,6 +602,14 @@ async function shutdown() {
             timeout: 5000,
             maxBuffer: 16_384,
           }).catch(() => null);
+          artifact.recoveryHeadroom = logs
+            ? {
+                state: 'collected',
+                scope:
+                  'Up to eight ordered stderr refusals in the final 30-line/16-KiB log tail; earlier events may be absent; not automatic attribution to the canonical failure',
+                ...restoreHeadroomDiagnostics(logs.stderr),
+              }
+            : { state: 'unavailable', reason: 'bounded-log-read-failed' };
           if (logs) {
             const tail = (logs.stderr + logs.stdout).slice(-16_384);
             const errno = /errno:\s*(-?\d{1,8})/.exec(tail)?.[1];
@@ -1293,8 +1302,9 @@ try {
   setStage('checking-owner-session-reset');
   expect((await owner.context.request.get(`${origin}/api/auth/session`)).status()).toBe(401);
   setStage('authenticating-after-session-reset');
-  // Anonymous /admin deliberately returns 404; reauthenticate at the public entry.
-  await page.goto(`${origin}/sign-in`);
+  // The shell redirects when its health probe observes the expired session.
+  // Observe that transition without starting a competing navigation.
+  await page.waitForURL(`${origin}/sign-in`);
   await page.getByRole('button', { name: 'Sign in with a passkey', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Administration', exact: true })).toBeVisible();
   await page.goto(`${origin}/admin#health`);

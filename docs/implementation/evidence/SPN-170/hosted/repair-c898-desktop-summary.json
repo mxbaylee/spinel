@@ -1,0 +1,227 @@
+{
+  "head": "c898d24b1506a8536964c5194f20dab03e7ea007",
+  "testedMerge": "8525b762d2636a558a33661b8953a27319638f46",
+  "run": 44598172433,
+  "event": "synchronize",
+  "editingResult": {
+    "passed": 10,
+    "failed": 0,
+    "skipped": 0,
+    "flaky": 0,
+    "allFirstAttempt": true
+  },
+  "owners": {
+    "production": {
+      "job": 135823040623,
+      "jobConclusion": "failure",
+      "editingPassed": 5,
+      "browser": "156.0.8078.4",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+        "online": true
+      },
+      "artifact": 14567802648,
+      "artifactSha256": "9aec8009aaf3f0ea9fde0e0b7a6407fe5ee4d8ca6b4bb090fe76813d487d143a",
+      "reportPath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-production2-run44598172433-attempt1/playwright-report/production-2-of-2.json",
+      "reportSha256": "b075cf09abfd2753afaffbb29c41f1b43a55c36b5cd0b59985a874a5b655c10f",
+      "jobLogPath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-production2-run44598172433-job135823040623.log",
+      "jobLogSha256": "c84d797a0932dd8464e2c04ba66100d5a83b6456e57311260fedadcfc314d547",
+      "editingTracePaths": [],
+      "cases": [
+        {
+          "title": "Doc editing inserts at start, middle and end and preserves Unicode and surrounding formatting",
+          "id": "9111b41e0f82b685c9ea-c7be65261ebbb0ba8703",
+          "status": "passed",
+          "attempts": 1,
+          "retry": 0,
+          "startTime": "2026-11-19T19:30:11.202Z",
+          "durationMs": 6111,
+          "finalNativeText": "Start Phone journal\rSecond line \r\n",
+          "finalPersistedText": "Start Phone journal\rSecond line \r\n",
+          "capturedNavigations": 2,
+          "capturedEvents": 113,
+          "pageErrors": [],
+          "receiptPath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-production2-run44598172433-attempt1/test-results/production/documents-desktop-native-D-c5ba3--and-surrounding-formatting-production/doc-editing-evidence.json",
+          "receiptSha256": "95e6b3823bef4ebc87ec124ea795e2c945e701d04ad5c1351befc43292683d45"
+        },
+        {
+          "title": "Doc editing deletes and replaces a native selection with exact undo and redo",
+          "id": "9111b41e0f82b685c9ea-26dea8fb52591048058f",
+          "status": "passed",
+          "attempts": 1,
+          "retry": 0,
+          "startTime": "2026-11-19T19:30:17.324Z",
+          "durationMs": 4831,
+          "finalNativeText": "Garden journal\rSecond line\r\n",
+          "finalPersistedText": "Garden journal\rSecond line\r\n",
+          "capturedNavigations": 2,
+          "capturedEvents": 25,
+          "pageErrors": [],
+          "receiptPath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-production2-run44598172433-attempt1/test-results/production/documents-desktop-native-D-952dd-on-with-exact-undo-and-redo-production/doc-editing-evidence.json",
+          "receiptSha256": "b08eb140a55ae5274370a9bcb3da04e115b35186aaeb585520b038afb3a4fa70"
+        },
+        {
+          "title": "Doc editing inserts and joins paragraphs without deleting beyond document boundaries",
+          "id": "9111b41e0f82b685c9ea-17a0a15040f534f982dd",
+          "status": "passed",
+          "attempts": 1,
+          "retry": 0,
+          "startTime": "2026-11-19T19:30:22.163Z",
+          "durationMs": 4923,
+          "finalNativeText": "Phone journal\rSecond line\r\n",
+          "finalPersistedText": "Phone journal\rSecond line\r\n",
+          "capturedNavigations": 2,
+          "capturedEvents": 51,
+          "pageErrors": [],
+          "receiptPath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-production2-run44598172433-attempt1/test-results/production/documents-desktop-native-D-0c8c4--beyond-document-boundaries-production/doc-editing-evidence.json",
+          "receiptSha256": "89bd5bf623397d1a0947584df7b28d22fc270bf1c4a1300615b672b703e9ffb4"
+        },
+        {
+          "title": "Doc editing can delete all text and type again in an empty document",
+          "id": "9111b41e0f82b685c9ea-42eba13eeec99c124054",
+          "status": "passed",
+          "attempts": 1,
+          "retry": 0,
+          "startTime": "2026-11-19T19:30:27.096Z",
+          "durationMs": 4318,
+          "finalNativeText": "New\r\n",
+          "finalPersistedText": "New\r\n",
+          "capturedNavigations": 2,
+          "capturedEvents": 16,
+          "pageErrors": [],
+          "receiptPath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-production2-run44598172433-attempt1/test-results/production/documents-desktop-native-D-2b919--again-in-an-empty-document-production/doc-editing-evidence.json",
+          "receiptSha256": "9149c757397a21aa44e882f5768a593a19574d150fb7fe51ee81fee95240708f"
+        },
+        {
+          "title": "Doc editing respects viewer mutation denial",
+          "id": "9111b41e0f82b685c9ea-d158eeb51c347b7c721d",
+          "status": "passed",
+          "attempts": 1,
+          "retry": 0,
+          "startTime": "2026-11-19T19:30:31.424Z",
+          "durationMs": 3770,
+          "finalNativeText": "Phone journal\rSecond line\r\n",
+          "finalPersistedText": "Phone journal\rSecond line\r\n",
+          "capturedNavigations": 2,
+          "capturedEvents": 32,
+          "pageErrors": [],
+          "receiptPath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-production2-run44598172433-attempt1/test-results/production/documents-desktop-native-D-fbdca-ects-viewer-mutation-denial-production/doc-editing-evidence.json",
+          "receiptSha256": "ee17a3d33d49640d4500a3cdb68925a1d6d86a691acf7af5c5be167e541cafe0"
+        }
+      ]
+    },
+    "development": {
+      "job": 135823040776,
+      "jobConclusion": "success",
+      "editingPassed": 5,
+      "browser": "156.0.8078.4",
+      "viewport": {
+        "width": 1440,
+        "height": 1100
+      },
+      "environment": {
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Safari/537.36",
+        "online": true
+      },
+      "artifact": 14568466435,
+      "artifactSha256": "13b7fb17b60581ecc61ef8a19c038a4c762b7f321cab46ff5887386d9a4097b0",
+      "reportPath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-development2-run44598172433-attempt1/playwright-report/development-2-of-2.json",
+      "reportSha256": "518ec677bd480a784a59ea98869b1428b5067bd38a85da3c4810e6ecb9895afb",
+      "jobLogPath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-development2-run44598172433-job135823040776.log",
+      "jobLogSha256": "b9828afd8b81da57b5e6749b7497bef5289c38bd2bc854b8f0c440cfe8a714a4",
+      "editingTracePaths": [],
+      "cases": [
+        {
+          "title": "Doc editing inserts at start, middle and end and preserves Unicode and surrounding formatting",
+          "id": "9111b41e0f82b685c9ea-5c2ce2c125c960a3c799",
+          "status": "passed",
+          "attempts": 1,
+          "retry": 0,
+          "startTime": "2026-11-19T19:33:38.482Z",
+          "durationMs": 14456,
+          "finalNativeText": "Start Phone journal\rSecond line \r\n",
+          "finalPersistedText": "Start Phone journal\rSecond line \r\n",
+          "capturedNavigations": 2,
+          "capturedEvents": 113,
+          "pageErrors": [],
+          "receiptPath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-development2-run44598172433-attempt1/test-results/development/documents-desktop-native-D-c5ba3--and-surrounding-formatting-development/doc-editing-evidence.json",
+          "receiptSha256": "f3053b6ce3aba927c75577f306b13b37db12598a94d7311b6c58f35c835524a6"
+        },
+        {
+          "title": "Doc editing deletes and replaces a native selection with exact undo and redo",
+          "id": "9111b41e0f82b685c9ea-708571b9eb4a91913ec2",
+          "status": "passed",
+          "attempts": 1,
+          "retry": 0,
+          "startTime": "2026-11-19T19:33:52.955Z",
+          "durationMs": 11403,
+          "finalNativeText": "Garden journal\rSecond line\r\n",
+          "finalPersistedText": "Garden journal\rSecond line\r\n",
+          "capturedNavigations": 2,
+          "capturedEvents": 25,
+          "pageErrors": [],
+          "receiptPath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-development2-run44598172433-attempt1/test-results/development/documents-desktop-native-D-952dd-on-with-exact-undo-and-redo-development/doc-editing-evidence.json",
+          "receiptSha256": "57c43b15be363ee6174170a284932b0a24a4e8ca766b641bd8527f44f43835ec"
+        },
+        {
+          "title": "Doc editing inserts and joins paragraphs without deleting beyond document boundaries",
+          "id": "9111b41e0f82b685c9ea-989bc507bc7803844374",
+          "status": "passed",
+          "attempts": 1,
+          "retry": 0,
+          "startTime": "2026-11-19T19:34:04.371Z",
+          "durationMs": 12290,
+          "finalNativeText": "Phone journal\rSecond line\r\n",
+          "finalPersistedText": "Phone journal\rSecond line\r\n",
+          "capturedNavigations": 2,
+          "capturedEvents": 51,
+          "pageErrors": [],
+          "receiptPath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-development2-run44598172433-attempt1/test-results/development/documents-desktop-native-D-0c8c4--beyond-document-boundaries-development/doc-editing-evidence.json",
+          "receiptSha256": "88fff457b7b78e11cdc9b74148e1bb00766553599f4fb7cc18988f9a295c782f"
+        },
+        {
+          "title": "Doc editing can delete all text and type again in an empty document",
+          "id": "9111b41e0f82b685c9ea-3c0f79f49d415cc0a177",
+          "status": "passed",
+          "attempts": 1,
+          "retry": 0,
+          "startTime": "2026-11-19T19:34:16.673Z",
+          "durationMs": 10383,
+          "finalNativeText": "New\r\n",
+          "finalPersistedText": "New\r\n",
+          "capturedNavigations": 2,
+          "capturedEvents": 16,
+          "pageErrors": [],
+          "receiptPath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-development2-run44598172433-attempt1/test-results/development/documents-desktop-native-D-2b919--again-in-an-empty-document-development/doc-editing-evidence.json",
+          "receiptSha256": "66d770d1eccde5fe754708fdb0560da7af280a7407f09fbb6ca77dfec6e56dfd"
+        },
+        {
+          "title": "Doc editing respects viewer mutation denial",
+          "id": "9111b41e0f82b685c9ea-4c06f95f23f0c1350a21",
+          "status": "passed",
+          "attempts": 1,
+          "retry": 0,
+          "startTime": "2026-11-19T19:34:27.072Z",
+          "durationMs": 10233,
+          "finalNativeText": "Phone journal\rSecond line\r\n",
+          "finalPersistedText": "Phone journal\rSecond line\r\n",
+          "capturedNavigations": 2,
+          "capturedEvents": 32,
+          "pageErrors": [],
+          "receiptPath": "/workspace/scratch/3b49aaf47fc3/spn170-evidence/hosted/review-a-c898-development2-run44598172433-attempt1/test-results/development/documents-desktop-native-D-fbdca-ects-viewer-mutation-denial-development/doc-editing-evidence.json",
+          "receiptSha256": "c8c3aceb94c68cae6dfcdf76efa2d0390a031dc5410cbf5d402a82037516d2ca"
+        }
+      ]
+    }
+  },
+  "limits": [
+    "Desktop Chromium browser automation only; no physical phone or OS software keyboard evidence.",
+    "New cases are on shard 2 after the extended trace fixture changed grouping.",
+    "No editing failure trace is expected from these passing cases; the retain-on-failure path was not exercised by a new editing failure.",
+    "Production shard 2 job failed separately because an existing phone-navigation case was flaky; new editing-case passes do not clear that gate."
+  ]
+}

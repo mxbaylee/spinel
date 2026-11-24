@@ -1,5 +1,15 @@
 import assert from 'node:assert/strict';
 import {
+  safariStorageLossTabsScript,
+  validateStorageLossTabs,
+  validateStorageLossHandles,
+  inspectStorageLossDocument,
+  storageLossDocumentReady,
+  type StorageLossTabInventory,
+  type StorageLossTabMode,
+  type StorageLossDocument,
+} from './desktop-storage.ts';
+import {
   clickSafariPointer,
   safariPointerIdentityScript,
   safariPointerPostScript,
@@ -72,6 +82,7 @@ export type DesktopBrowser = {
     errors: string[];
   }>;
   stop(): Promise<DesktopBrowserStop>;
+  storageLossTabs(url: string, mode: StorageLossTabMode): Promise<StorageLossTabInventory>;
 };
 
 const run = promisify(execFile);
@@ -756,11 +767,11 @@ export function createDesktopBrowser(
             ),
           );
         },
-        snapshot: async () =>
+        snapshot: async (phase) =>
           JSON.parse(
             await command(
               '/usr/bin/osascript',
-              ['-l', 'JavaScript', '-e', safariPointerSnapshotScript],
+              ['-l', 'JavaScript', '-e', safariPointerSnapshotScript, phase],
               5000,
             ),
           ),
@@ -1127,6 +1138,64 @@ export function createDesktopBrowser(
     },
     goto,
     evaluate,
+    async storageLossTabs(url, mode) {
+      assert.ok(browserPid && browserIdentity, 'Start the owned browser first.');
+      assert.equal(await processIdentity(browserPid), browserIdentity, 'Browser identity changed.');
+      let inventory: StorageLossTabInventory;
+      const marker = `__spinelStorageHandoff_${randomUUID().replaceAll('-', '')}`;
+      if (kind === 'safari') {
+        inventory = JSON.parse(
+          await command(
+            '/usr/bin/osascript',
+            [
+              '-l',
+              'JavaScript',
+              '-e',
+              safariStorageLossTabsScript,
+              String(browserPid),
+              url,
+              new URL(url).origin + '/',
+              mode,
+              marker,
+            ],
+            5000,
+          ),
+        );
+      } else {
+        const selected = (await session('window')) as string;
+        const handles = await session('window/handles');
+        assert.ok(Array.isArray(handles) && handles.length > 0);
+        const before: string[] = [];
+        const after: string[] = [];
+        const documents: StorageLossDocument[] = [];
+        for (const handle of handles) {
+          assert.equal(typeof handle, 'string');
+          await session('window', 'POST', { handle });
+          const current = (await session('url')) as string;
+          before.push(current);
+          if (new URL(current).origin === new URL(url).origin) {
+            if (mode === 'handoff') {
+              await evaluate(`globalThis[${JSON.stringify(marker)}] = true`);
+              await goto(url);
+              const state = await evaluate<StorageLossDocument>(
+                `(${inspectStorageLossDocument.toString()})(${JSON.stringify(marker)})`,
+              );
+              assert.ok(storageLossDocumentReady(url, state), JSON.stringify(state));
+              documents.push(state);
+            } else if (mode === 'prepare' && current !== url) await goto(url);
+          }
+          after.push((await session('url')) as string);
+        }
+        // On failure the existing outer teardown closes this owned browser;
+        // do not mask the first inventory/navigation error with a restore error.
+        await session('window', 'POST', { handle: selected });
+        // A tab created during inventory is unaccounted for, not quiescent.
+        validateStorageLossHandles(handles, await session('window/handles'));
+        inventory = { before, after, ...(mode === 'handoff' ? { documents } : {}) };
+      }
+      validateStorageLossTabs(url, inventory.after);
+      return inventory;
+    },
     focus: (selector) => focusAt(selector, 0),
     press,
     clickAt,

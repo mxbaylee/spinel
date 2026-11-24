@@ -5,7 +5,7 @@ collaboration rollout flag. Retained pre-cutover databases need the explicit
 [verified transition](../scripts/sync-transition/README.md) before serving; fresh
 disposable databases initialize normally. See [collaboration](collaboration.md).
 
-Use the Node version in `.nvmrc` (26.12.1). From a fresh checkout:
+Use the Node version in `.nvmrc` (26.13.0). From a fresh checkout:
 
 ```sh
 nvm use
@@ -72,8 +72,8 @@ official host-network deployment.
 ## Deployment stage
 
 Spinel is **pre-production** until SPN-038 launches `https://spinel.baylee.dev`.
-That is the last launch prerequisite; optional CSV import (SPN-093) and document/format
-plugins (SPN-094) come afterward. The private test host was retired. References to a production
+That is the last launch prerequisite; optional CSV/TSV import (SPN-093) comes afterward; document/format
+plugins were dropped on 2026-11-22. The private test host was retired. References to a production
 build, production Playwright project or current production component describe
 the application runtime, not an already-live production deployment.
 
@@ -97,9 +97,10 @@ restore controls can be developed locally; real-provider and target-host checks
 remain launch acceptance under SPN-038. The filesystem destination and recurring
 verifier are implemented by SPN-063. [SPN-109](implementation/SPN-109.md) adds
 deployment-owned local/Spaces policy and encrypted Admin downloads. SPN-111 adds
-the [maintenance supervisor](maintenance.md); diagnostics expiry and assisted
-dataset activation remain SPN-110 and SPN-112. AWS S3 is
-sequenced after production in [SPN-114](todo/SPN-114.md). See the
+the [maintenance supervisor](maintenance.md); SPN-110 adds deployment-owned
+[diagnostics expiry](deployment.md#configure-and-start). Assisted dataset activation
+is covered by SPN-112. The AWS-only request is
+[retired](implementation/SPN-114.md#-grooming-disposition); selected-provider deployment qualification remains with SPN-038. See the
 [local setup and verification runbook](backups.md#filesystem-destination-for-local-operation).
 The
 [capacity writeup](implementation/SPN-063-capacity.md) records engine limits,
@@ -198,6 +199,29 @@ files for seven days. Extracted artifacts preserve `test-results/` and
 `playwright-report/` prefixes. A passing run without retries has no trace.
 Investigate the first failed attempt and its durations before rerunning;
 `failOnFlakyTests` deliberately keeps a retry-only success red.
+
+The named SPN-120 historical cases retain their first failing attempt's trace.
+Their normal HTTP servers also retain bounded, sanitized process evidence in
+`playwright-report/server-<port>.json`; per-test `fixture-evidence.json` records
+source, repetition, phase, exact-account setup and cleanup status. The wrapper's
+readiness marker follows its first atomic evidence write. Primary responsiveness
+and callback measurements retain plain servers and disabled tracing.
+
+Non-authentication fixtures seed real disposable sessions, then verify the
+browser context's exact account before feature actions. Only that preparation
+GET can recover once from a classified connection reset within its original
+five-second deadline, after fresh owned-process and HTTP health checks. Denial,
+expiry, wrong identity, authentication mutations, product assertions and saved
+snapshot observations never receive that recovery. Both preparation attempts
+remain in evidence. See [SPN-120](implementation/SPN-120.md) for negative controls,
+first-cause-preserving bounded cleanup and the fixed historical sample.
+
+For a deliberately bounded fixture audit, add `ci-fixture-baseline` or
+`ci-fixture-audit` to a same-repository PR, or manually dispatch the Browser
+fixture audit with an immutable baseline SHA. Each explicit label event runs
+the declared 24 first attempts once; ordinary pushes do not repeat the audit.
+The candidate proof disables setup recovery. Review every outcome before a
+new invocation; a later green retry never explains or removes an earlier failure.
 
 Every PR edit, including title/body changes and base retargets, runs fresh full
 validation. Edits have isolated concurrency so they do not cancel or replace
@@ -449,3 +473,10 @@ These choices favour a small setup for the Operator, dependable storage and
 rendering for the Owner, a consistent origin for the Collaborator, and an
 explicit future access boundary for the Link guest. The [folder API](folders.md) enforces ownership for every item. Operator accounts
 cannot access documents, and Link guests cannot access the dashboard.
+
+## 🔄 Univer dependency maintenance
+
+Every Univer update follows the [upgrade checklist](univer-upgrades.md), including
+per-patch source/byte assessment, retained regression contracts and safe retirement.
+SPN-147 owns remaining upstream contributions; standalone SPN-099/119/122 were
+consolidated into this recurring responsibility on 2026-11-22, not completed.

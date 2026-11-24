@@ -64,3 +64,35 @@ explicitly if the required channel API is absent; do not silently skip completio
 The existing native print tests exercise the real child-process path. This adds
 no Node 26-only library API and retains the print package's Node 24+ contract.
 The persona and verification decisions above apply to this second phase as well.
+
+## Advance the aligned runtime to 26.13.0 LTS
+
+**2026-11-02 — accepted, agent judgment for the owner's request to merge
+Dependabot PRs individually, most complex first.** Source: [PR #239](https://github.com/mxbaylee/spinel/pull/239).
+
+Advance `.nvmrc`, both Docker stages and the root application/lockfile engine
+minimum together to 26.13.0. The [official October 28 release](https://nodejs.org/en/blog/release/v26.13.0)
+changes LTS metadata only relative to 26.12.1. The Docker image's immutable index
+digest, `sha256:bc0a2afd3b74ce12222fc8bab99271e66257f021078f5f4a5d687a77d280c1d9`,
+matches [Docker's official image record](https://github.com/docker-library/repo-info/blob/7d6f3328b3b63fcd8eb2674cd5984498ab63e21a/repos/node/remote/26.13.0-bookworm-slim.md).
+Retain bookworm/glibc, all package resolutions and the independent print
+library's Node 24+ contract.
+
+🔎 The original Docker-only candidate's [container check](https://github.com/mxbaylee/spinel/actions/runs/41489528110/job/125430989943)
+built the image but correctly rejected actual `v26.13.0` against `.nvmrc`'s
+expected `v26.12.1`. Its successful host tests used the old runtime. Keep that
+assertion and require fresh full host and production-container validation on the
+aligned candidate; do not count the earlier run as new-runtime acceptance.
+
+Keep [SPN-117's development-only fast API mitigation](SPN-117.md). This release
+does not claim to fix the crash: [the flag](https://github.com/nodejs/node/blob/v26.13.0/deps/v8/src/flags/flag-definitions.h)
+and [the guarded compiler target selection](https://github.com/nodejs/node/blob/v26.13.0/deps/v8/src/compiler/fast-api-calls.cc)
+remain in the selected source. The existing watched-development test and
+development browser suites must verify flag acceptance and the affected Vite
+workload under 26.13.0. Preserve all existing timing, retry and failure gates.
+
+The Operator gets a reproducible LTS runtime aligned with development and CI;
+Owner and Collaborator editing/persistence and Link guest access remain covered
+by the existing full suites. No UI design, deployment or data migration changes.
+Final source, checks, independent grades and any failure dispositions belong in
+the PR description; planned validation here is not a claim that it ran.

@@ -1,0 +1,13 @@
+{
+  "name": "spn120-current-backlog-final",
+  "args": [
+    "node",
+    "scripts/backlog/cli.ts",
+    "check"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 166,
+  "peakKiB": 0
+}

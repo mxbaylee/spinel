@@ -1,0 +1,497 @@
+{
+  "originalRows": [
+    {
+      "id": "0d6db367-76c8-43d6-a9b8-96bd29480a0c",
+      "schema_version": 1,
+      "generation": "b8c6f043-9c4b-456f-a1c8-660b4d154bc5",
+      "occurred_at": 9000000,
+      "received_at": 100,
+      "name": "operation.result",
+      "kind": "event",
+      "source": "frontend",
+      "component": "editor",
+      "build": "test-build",
+      "actor_id": "aaf2c5d0-2a9a-4496-9cde-c2aba4e39ce7",
+      "file_id": null,
+      "space_id": null,
+      "route": "/files",
+      "run_id": "b3da5460-4015-4789-954d-3ef387518a62",
+      "level": null,
+      "message": null,
+      "metric_kind": null,
+      "metric_unit": null,
+      "metric_value": null,
+      "details": "{\"operation\":\"document-open\",\"outcome\":\"success\",\"durationMs\":1}",
+      "byte_size": 274
+    },
+    {
+      "id": "904ed22f-76e5-42e2-b550-eb9cf7cb95da",
+      "schema_version": 1,
+      "generation": "b8c6f043-9c4b-456f-a1c8-660b4d154bc5",
+      "occurred_at": 100,
+      "received_at": 100,
+      "name": "operation.result",
+      "kind": "event",
+      "source": "backend",
+      "component": "editor",
+      "build": "test-build",
+      "actor_id": null,
+      "file_id": null,
+      "space_id": null,
+      "route": "/files",
+      "run_id": "eb38bc2d-32fe-4feb-87ad-21baeb5ecd14",
+      "level": null,
+      "message": null,
+      "metric_kind": null,
+      "metric_unit": null,
+      "metric_value": null,
+      "details": "{\"operation\":\"document-open\",\"outcome\":\"success\",\"durationMs\":1}",
+      "byte_size": 270
+    },
+    {
+      "id": "cdf53f7a-da78-4ae8-9aa9-8376ff0ec850",
+      "schema_version": 1,
+      "generation": "b8c6f043-9c4b-456f-a1c8-660b4d154bc5",
+      "occurred_at": 100,
+      "received_at": 100,
+      "name": "feedback",
+      "kind": "event",
+      "source": "frontend",
+      "component": "feedback",
+      "build": "test-build",
+      "actor_id": "aaf2c5d0-2a9a-4496-9cde-c2aba4e39ce7",
+      "file_id": null,
+      "space_id": null,
+      "route": "/files",
+      "run_id": null,
+      "level": null,
+      "message": "Deliberately submitted text",
+      "metric_kind": null,
+      "metric_unit": null,
+      "metric_value": null,
+      "details": "{\"submission\":\"explicit\"}",
+      "byte_size": 114
+    }
+  ],
+  "frozen": {
+    "user": {
+      "rows": [
+        {
+          "id": "0d6db367-76c8-43d6-a9b8-96bd29480a0c",
+          "schema_version": 1,
+          "generation": "b8c6f043-9c4b-456f-a1c8-660b4d154bc5",
+          "occurred_at": 9000000,
+          "received_at": 100,
+          "name": "operation.result",
+          "kind": "event",
+          "source": "frontend",
+          "component": "editor",
+          "build": "test-build",
+          "actor_id": "aaf2c5d0-2a9a-4496-9cde-c2aba4e39ce7",
+          "file_id": null,
+          "space_id": null,
+          "route": "/files",
+          "run_id": "b3da5460-4015-4789-954d-3ef387518a62",
+          "level": null,
+          "message": null,
+          "metric_kind": null,
+          "metric_unit": null,
+          "metric_value": null,
+          "details": "{\"operation\":\"document-open\",\"outcome\":\"success\",\"durationMs\":1}",
+          "byte_size": 274
+        },
+        {
+          "id": "cdf53f7a-da78-4ae8-9aa9-8376ff0ec850",
+          "schema_version": 1,
+          "generation": "b8c6f043-9c4b-456f-a1c8-660b4d154bc5",
+          "occurred_at": 100,
+          "received_at": 100,
+          "name": "feedback",
+          "kind": "event",
+          "source": "frontend",
+          "component": "feedback",
+          "build": "test-build",
+          "actor_id": "aaf2c5d0-2a9a-4496-9cde-c2aba4e39ce7",
+          "file_id": null,
+          "space_id": null,
+          "route": "/files",
+          "run_id": null,
+          "level": null,
+          "message": "Deliberately submitted text",
+          "metric_kind": null,
+          "metric_unit": null,
+          "metric_value": null,
+          "details": "{\"submission\":\"explicit\"}",
+          "byte_size": 114
+        }
+      ],
+      "manifest": {
+        "schemaVersion": 1,
+        "diagnosticsSchemaVersion": 1,
+        "snapshotId": "8cfddf00-3de0-4f7b-8ba3-1153f5a4b2cc",
+        "generation": "b8c6f043-9c4b-456f-a1c8-660b4d154bc5",
+        "createdAt": 691200000,
+        "selectedActorId": "aaf2c5d0-2a9a-4496-9cde-c2aba4e39ce7",
+        "scope": "user",
+        "window": {
+          "start": 100,
+          "end": 100
+        },
+        "timeBasis": "received_at; trusted server receipt; both endpoints inclusive",
+        "inclusion": "every retained row attributed to selectedActorId",
+        "completeRetainedSelection": true,
+        "historicalCompleteness": "unknown",
+        "rowCount": 2,
+        "counts": {
+          "user": 2,
+          "system": 3,
+          "userObservations": 1,
+          "systemObservations": 2
+        },
+        "context": "retained",
+        "snapshotWatermark": {
+          "recordCount": 3,
+          "latestReceivedAt": 100
+        },
+        "build": "test-build",
+        "dropped": {
+          "scope": "global process lifetime before preparation",
+          "values": {
+            "invalid": 0,
+            "queue": 0,
+            "storage": 0,
+            "unavailable": 0,
+            "stale": 0,
+            "expired": 0
+          }
+        },
+        "retention": {
+          "feedback": "until explicit truncate",
+          "observationAgeTargetDays": 7,
+          "observations": "server receipt age target; bounded maintenance may lag; prior deletion history unknown"
+        },
+        "limits": {
+          "sourceBytes": 67108864,
+          "artifactBytes": 69206016,
+          "rowCap": null
+        },
+        "limitations": [
+          "All means matching rows retained in this snapshot. Unsent browser queues and discarded observations are not included.",
+          "Historical completeness and expired or never-collected context are unknown.",
+          "Drop counters are global process-lifetime counters sampled before preparation, not loss measured for this user or time span.",
+          "Feedback survives observation expiry; an old report does not guarantee its original metrics still exist."
+        ]
+      },
+      "integrity": "ok"
+    },
+    "system": {
+      "rows": [
+        {
+          "id": "0d6db367-76c8-43d6-a9b8-96bd29480a0c",
+          "schema_version": 1,
+          "generation": "b8c6f043-9c4b-456f-a1c8-660b4d154bc5",
+          "occurred_at": 9000000,
+          "received_at": 100,
+          "name": "operation.result",
+          "kind": "event",
+          "source": "frontend",
+          "component": "editor",
+          "build": "test-build",
+          "actor_id": "aaf2c5d0-2a9a-4496-9cde-c2aba4e39ce7",
+          "file_id": null,
+          "space_id": null,
+          "route": "/files",
+          "run_id": "b3da5460-4015-4789-954d-3ef387518a62",
+          "level": null,
+          "message": null,
+          "metric_kind": null,
+          "metric_unit": null,
+          "metric_value": null,
+          "details": "{\"operation\":\"document-open\",\"outcome\":\"success\",\"durationMs\":1}",
+          "byte_size": 274
+        },
+        {
+          "id": "904ed22f-76e5-42e2-b550-eb9cf7cb95da",
+          "schema_version": 1,
+          "generation": "b8c6f043-9c4b-456f-a1c8-660b4d154bc5",
+          "occurred_at": 100,
+          "received_at": 100,
+          "name": "operation.result",
+          "kind": "event",
+          "source": "backend",
+          "component": "editor",
+          "build": "test-build",
+          "actor_id": null,
+          "file_id": null,
+          "space_id": null,
+          "route": "/files",
+          "run_id": "eb38bc2d-32fe-4feb-87ad-21baeb5ecd14",
+          "level": null,
+          "message": null,
+          "metric_kind": null,
+          "metric_unit": null,
+          "metric_value": null,
+          "details": "{\"operation\":\"document-open\",\"outcome\":\"success\",\"durationMs\":1}",
+          "byte_size": 270
+        },
+        {
+          "id": "cdf53f7a-da78-4ae8-9aa9-8376ff0ec850",
+          "schema_version": 1,
+          "generation": "b8c6f043-9c4b-456f-a1c8-660b4d154bc5",
+          "occurred_at": 100,
+          "received_at": 100,
+          "name": "feedback",
+          "kind": "event",
+          "source": "frontend",
+          "component": "feedback",
+          "build": "test-build",
+          "actor_id": "aaf2c5d0-2a9a-4496-9cde-c2aba4e39ce7",
+          "file_id": null,
+          "space_id": null,
+          "route": "/files",
+          "run_id": null,
+          "level": null,
+          "message": "Deliberately submitted text",
+          "metric_kind": null,
+          "metric_unit": null,
+          "metric_value": null,
+          "details": "{\"submission\":\"explicit\"}",
+          "byte_size": 114
+        }
+      ],
+      "manifest": {
+        "schemaVersion": 1,
+        "diagnosticsSchemaVersion": 1,
+        "snapshotId": "8cfddf00-3de0-4f7b-8ba3-1153f5a4b2cc",
+        "generation": "b8c6f043-9c4b-456f-a1c8-660b4d154bc5",
+        "createdAt": 691200000,
+        "selectedActorId": "aaf2c5d0-2a9a-4496-9cde-c2aba4e39ce7",
+        "scope": "system",
+        "window": {
+          "start": 100,
+          "end": 100
+        },
+        "timeBasis": "received_at; trusted server receipt; both endpoints inclusive",
+        "inclusion": "every retained row of every actor, including unattributed system rows, within window",
+        "completeRetainedSelection": true,
+        "historicalCompleteness": "unknown",
+        "rowCount": 3,
+        "counts": {
+          "user": 2,
+          "system": 3,
+          "userObservations": 1,
+          "systemObservations": 2
+        },
+        "context": "retained",
+        "snapshotWatermark": {
+          "recordCount": 3,
+          "latestReceivedAt": 100
+        },
+        "build": "test-build",
+        "dropped": {
+          "scope": "global process lifetime before preparation",
+          "values": {
+            "invalid": 0,
+            "queue": 0,
+            "storage": 0,
+            "unavailable": 0,
+            "stale": 0,
+            "expired": 0
+          }
+        },
+        "retention": {
+          "feedback": "until explicit truncate",
+          "observationAgeTargetDays": 7,
+          "observations": "server receipt age target; bounded maintenance may lag; prior deletion history unknown"
+        },
+        "limits": {
+          "sourceBytes": 67108864,
+          "artifactBytes": 69206016,
+          "rowCap": null
+        },
+        "limitations": [
+          "All means matching rows retained in this snapshot. Unsent browser queues and discarded observations are not included.",
+          "Historical completeness and expired or never-collected context are unknown.",
+          "Drop counters are global process-lifetime counters sampled before preparation, not loss measured for this user or time span.",
+          "Feedback survives observation expiry; an old report does not guarantee its original metrics still exist."
+        ]
+      },
+      "integrity": "ok"
+    }
+  },
+  "afterExpiry": {
+    "user": {
+      "rows": [
+        {
+          "id": "cdf53f7a-da78-4ae8-9aa9-8376ff0ec850",
+          "schema_version": 1,
+          "generation": "b8c6f043-9c4b-456f-a1c8-660b4d154bc5",
+          "occurred_at": 100,
+          "received_at": 100,
+          "name": "feedback",
+          "kind": "event",
+          "source": "frontend",
+          "component": "feedback",
+          "build": "test-build",
+          "actor_id": "aaf2c5d0-2a9a-4496-9cde-c2aba4e39ce7",
+          "file_id": null,
+          "space_id": null,
+          "route": "/files",
+          "run_id": null,
+          "level": null,
+          "message": "Deliberately submitted text",
+          "metric_kind": null,
+          "metric_unit": null,
+          "metric_value": null,
+          "details": "{\"submission\":\"explicit\"}",
+          "byte_size": 114
+        }
+      ],
+      "manifest": {
+        "schemaVersion": 1,
+        "diagnosticsSchemaVersion": 1,
+        "snapshotId": "b36ca6c5-5b61-469f-bc3c-bff7fc5e8d55",
+        "generation": "b8c6f043-9c4b-456f-a1c8-660b4d154bc5",
+        "createdAt": 691200000,
+        "selectedActorId": "aaf2c5d0-2a9a-4496-9cde-c2aba4e39ce7",
+        "scope": "user",
+        "window": {
+          "start": 100,
+          "end": 100
+        },
+        "timeBasis": "received_at; trusted server receipt; both endpoints inclusive",
+        "inclusion": "every retained row attributed to selectedActorId",
+        "completeRetainedSelection": true,
+        "historicalCompleteness": "unknown",
+        "rowCount": 1,
+        "counts": {
+          "user": 1,
+          "system": 1,
+          "userObservations": 0,
+          "systemObservations": 0
+        },
+        "context": "feedback-only",
+        "snapshotWatermark": {
+          "recordCount": 1,
+          "latestReceivedAt": 100
+        },
+        "build": "test-build",
+        "dropped": {
+          "scope": "global process lifetime before preparation",
+          "values": {
+            "invalid": 0,
+            "queue": 0,
+            "storage": 0,
+            "unavailable": 0,
+            "stale": 0,
+            "expired": 2
+          }
+        },
+        "retention": {
+          "feedback": "until explicit truncate",
+          "observationAgeTargetDays": 7,
+          "observations": "server receipt age target; bounded maintenance may lag; prior deletion history unknown"
+        },
+        "limits": {
+          "sourceBytes": 67108864,
+          "artifactBytes": 69206016,
+          "rowCap": null
+        },
+        "limitations": [
+          "All means matching rows retained in this snapshot. Unsent browser queues and discarded observations are not included.",
+          "Historical completeness and expired or never-collected context are unknown.",
+          "Drop counters are global process-lifetime counters sampled before preparation, not loss measured for this user or time span.",
+          "Feedback survives observation expiry; an old report does not guarantee its original metrics still exist."
+        ]
+      },
+      "integrity": "ok"
+    },
+    "system": {
+      "rows": [
+        {
+          "id": "cdf53f7a-da78-4ae8-9aa9-8376ff0ec850",
+          "schema_version": 1,
+          "generation": "b8c6f043-9c4b-456f-a1c8-660b4d154bc5",
+          "occurred_at": 100,
+          "received_at": 100,
+          "name": "feedback",
+          "kind": "event",
+          "source": "frontend",
+          "component": "feedback",
+          "build": "test-build",
+          "actor_id": "aaf2c5d0-2a9a-4496-9cde-c2aba4e39ce7",
+          "file_id": null,
+          "space_id": null,
+          "route": "/files",
+          "run_id": null,
+          "level": null,
+          "message": "Deliberately submitted text",
+          "metric_kind": null,
+          "metric_unit": null,
+          "metric_value": null,
+          "details": "{\"submission\":\"explicit\"}",
+          "byte_size": 114
+        }
+      ],
+      "manifest": {
+        "schemaVersion": 1,
+        "diagnosticsSchemaVersion": 1,
+        "snapshotId": "b36ca6c5-5b61-469f-bc3c-bff7fc5e8d55",
+        "generation": "b8c6f043-9c4b-456f-a1c8-660b4d154bc5",
+        "createdAt": 691200000,
+        "selectedActorId": "aaf2c5d0-2a9a-4496-9cde-c2aba4e39ce7",
+        "scope": "system",
+        "window": {
+          "start": 100,
+          "end": 100
+        },
+        "timeBasis": "received_at; trusted server receipt; both endpoints inclusive",
+        "inclusion": "every retained row of every actor, including unattributed system rows, within window",
+        "completeRetainedSelection": true,
+        "historicalCompleteness": "unknown",
+        "rowCount": 1,
+        "counts": {
+          "user": 1,
+          "system": 1,
+          "userObservations": 0,
+          "systemObservations": 0
+        },
+        "context": "feedback-only",
+        "snapshotWatermark": {
+          "recordCount": 1,
+          "latestReceivedAt": 100
+        },
+        "build": "test-build",
+        "dropped": {
+          "scope": "global process lifetime before preparation",
+          "values": {
+            "invalid": 0,
+            "queue": 0,
+            "storage": 0,
+            "unavailable": 0,
+            "stale": 0,
+            "expired": 2
+          }
+        },
+        "retention": {
+          "feedback": "until explicit truncate",
+          "observationAgeTargetDays": 7,
+          "observations": "server receipt age target; bounded maintenance may lag; prior deletion history unknown"
+        },
+        "limits": {
+          "sourceBytes": 67108864,
+          "artifactBytes": 69206016,
+          "rowCap": null
+        },
+        "limitations": [
+          "All means matching rows retained in this snapshot. Unsent browser queues and discarded observations are not included.",
+          "Historical completeness and expired or never-collected context are unknown.",
+          "Drop counters are global process-lifetime counters sampled before preparation, not loss measured for this user or time span.",
+          "Feedback survives observation expiry; an old report does not guarantee its original metrics still exist."
+        ]
+      },
+      "integrity": "ok"
+    }
+  },
+  "explicitTruncateInvalidatedBoth": true
+}

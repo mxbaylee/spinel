@@ -1,0 +1,237 @@
+{
+  "reviewedParent": "cae5a58689b049e4f62c3a815482e21bb5212f49",
+  "status": "repair source identified by source-identity receipt; original reviews archival only; full TypeScript resource-blocked; final integration/reviews/hosted pending",
+  "files": [
+    {
+      "file": "spn123-ack-contracts.json",
+      "sha256": "5329aec2312ed009ee0bfaea12f1fafaabe018cd0f5fbd239698c69c4530f131",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-contracts.json",
+      "originalSHA256": "5329aec2312ed009ee0bfaea12f1fafaabe018cd0f5fbd239698c69c4530f131",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-contracts.log.gz",
+      "sha256": "242fdc963f38f74241ce30ace8f8d5b610f0ddfddeb01c2124269fd06b5cbfe6",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-contracts.log",
+      "originalSHA256": "be5f21bb803e0caf8ad65888c53c1799c86eaf21ea086833df78dd911dd54a56",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-format.json",
+      "sha256": "9937a756aaa261319bbc32e7cb203810c32884858fd397058e164c7abb5fae3b",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-format.json",
+      "originalSHA256": "9937a756aaa261319bbc32e7cb203810c32884858fd397058e164c7abb5fae3b",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-format.log.gz",
+      "sha256": "c8cd3bd04568e696d42c8e5b70742ffa5eee2dafaf5f89d103ae750b89b92deb",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-format.log",
+      "originalSHA256": "f586a75bfd9175b73f2ed3c8c1d76738a5df7cb2adee734e3b85dcace1687427",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-negative-identity.json",
+      "sha256": "025d0c91c569424c0e7d45489d118352657c446c52c677ec23ed467466bca001",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-negative-identity.json",
+      "originalSHA256": "025d0c91c569424c0e7d45489d118352657c446c52c677ec23ed467466bca001",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-negative.json",
+      "sha256": "76b2bc53624864de85eba8bc437b08945af6381a206767e885d63ad84839e7de",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-negative.json",
+      "originalSHA256": "76b2bc53624864de85eba8bc437b08945af6381a206767e885d63ad84839e7de",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-negative.log.gz",
+      "sha256": "626f2a613216729be4723252b7d679ddba83f8fcbc77e579b91315bc1d032648",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-negative.log",
+      "originalSHA256": "9ab4430254938e6d3734006ec545f13625182b6841b503163e85bd6fd86fde3d",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-negative.ts.gz",
+      "sha256": "6472f16978935a9c8997ef7af1e5f9f408ab600311c1360399d01a8f7825595a",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-negative.ts",
+      "originalSHA256": "40fcf796567d39506d5343fd72a3a4152edcb294fcec20421b8ffdb87b1859c2",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-overhead-sample.json.gz",
+      "sha256": "23bebc83bf86eb1c237c677de6f3d656da2db523ae20390762e5c890501d6a00",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-overhead-sample.json",
+      "originalSHA256": "e86f16c7b3e8d087d0a623863ffa0bcc6afe1763f57e2c1b289a7543284b3611",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-overhead.json",
+      "sha256": "cf07ea680c94059616d0ff4a4e31d62625942f0020b35b36bafeeae7f1da9839",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-overhead.json",
+      "originalSHA256": "cf07ea680c94059616d0ff4a4e31d62625942f0020b35b36bafeeae7f1da9839",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-overhead.log.gz",
+      "sha256": "7075f463dc260fceddd1d3ac76112893b1d4a13fb33bff4847e6c34fc577e641",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-overhead.log",
+      "originalSHA256": "f9d0a2aab5d159776a6a1d22390699511e12e464d706143fb9e4276fddd39d7e",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-source-identity.json",
+      "sha256": "a274910f28b0d345535a4abf64877c350c823f377980a6c0012c61e40660b09e",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-source-identity.json",
+      "originalSHA256": "a274910f28b0d345535a4abf64877c350c823f377980a6c0012c61e40660b09e",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-types.json",
+      "sha256": "75c56973f66d7ff9833fcfe1fbb952ac186769e3a941934047fcfc6c28b39949",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-types.json",
+      "originalSHA256": "75c56973f66d7ff9833fcfe1fbb952ac186769e3a941934047fcfc6c28b39949",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-types.log.gz",
+      "sha256": "4cda6a18fd6d1d5315c612d6edb359873248096d5d8688d5975b09fafc185519",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-types.log",
+      "originalSHA256": "64b8446d26cc4e1884e526ed30d832714d7f6e47d96dc2e02460e73cf11f114a",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-review-b-cae5a586-supported.json",
+      "sha256": "49820669c30d5be6236fa35e7623a76cfef1d2821c1a259b1832f9ff971357f0",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-review-b-cae5a586-supported.json",
+      "originalSHA256": "49820669c30d5be6236fa35e7623a76cfef1d2821c1a259b1832f9ff971357f0",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-review-b-cae5a586.json",
+      "sha256": "48b9af8977de2911818f19fa57f3b91afc3f1fac5352bdd00e40f847137c7893",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-review-b-cae5a586.json",
+      "originalSHA256": "48b9af8977de2911818f19fa57f3b91afc3f1fac5352bdd00e40f847137c7893",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-review-cae5-a-stale-ack.json",
+      "sha256": "af13c5bf159d0cbe3c1c33270dffe05d764540d2effa2eef218819039cbcaeb5",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-review-cae5-a-stale-ack.json",
+      "originalSHA256": "af13c5bf159d0cbe3c1c33270dffe05d764540d2effa2eef218819039cbcaeb5",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-review-cae5-a.json",
+      "sha256": "9a8e9a2823c991ef95a0e0cbdacabab392442d1ca220c37dc8992c0b2d59d942",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-review-cae5-a.json",
+      "originalSHA256": "9a8e9a2823c991ef95a0e0cbdacabab392442d1ca220c37dc8992c0b2d59d942",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-review-b-cae5a586-supported.log.gz",
+      "sha256": "6f9902e57b2cd1024607f35a9bfa56e1e22ee8d6e94b84ed6cb0bec21e19dba0",
+      "originalPath": "/tmp/spn123-review-b-cae5a586-supported.log",
+      "originalSHA256": "4ae42c4763001b75a7a10b75ace528071636c884f39006f6c7abc5c86fdd0416",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-review-b-cae5a586.log.gz",
+      "sha256": "93220a0e33c2e38bd94e91436ae6ad37f01066a9db350386e1b298f6bc7dfc50",
+      "originalPath": "/tmp/spn123-review-b-cae5a586.log",
+      "originalSHA256": "e471e6851cce67b40bbe5b5dcd42b80c37b6240a58c67c53ef3beb6f77b3fbc6",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-review-cae5-a-stale-ack.log.gz",
+      "sha256": "a8d2479eab59d38b38c4e6e093d2efc7d53f1c07cc34113eef97897f146d927a",
+      "originalPath": "/tmp/spn123-review-cae5-a-stale-ack.log",
+      "originalSHA256": "60b62be02e5a3d89a1123742de9b3b0dec286181792bc655339f6bb323e7ecdb",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-review-cae5-a-stale-ack.ts.gz",
+      "sha256": "715dbddd4a74a5c9704c5d3d1f5e3321e3afdefec21d5c9ce69d71901b15f810",
+      "originalPath": "/tmp/spn123-review-cae5-a-stale-ack.ts",
+      "originalSHA256": "3b12393343f30f4a32264c8cc86e596db8f2d38f40a01ba4159376f1040738b0",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-review-cae5-a.log.gz",
+      "sha256": "8fb2ea3919e8d11c0f74bcbc04ff4e7aada40272b37a638657c194388ae1f48b",
+      "originalPath": "/tmp/spn123-review-cae5-a.log",
+      "originalSHA256": "d33f8e5c056e7d6d599a5b9ae990eb72e27ba90cb88cb89604def81dc7fad18b",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-review-cae5a586-a.md.gz",
+      "sha256": "568d7a22d2e2f79fa502682444e78262921676021ea3899f57f01d814b17270a",
+      "originalPath": "/tmp/spn123-review-cae5a586-a.md",
+      "originalSHA256": "1f88bc1c02633b361860887d3fcd9058111241b582d1b6a13ff1bea2b282f1db",
+      "historicalAssessmentArchive": true
+    },
+    {
+      "file": "spn123-review-cae5a586-b.md.gz",
+      "sha256": "774dec3b05cb63b53e3372df28409791172eb0db37d2b7ed29b71649bae7205b",
+      "originalPath": "/tmp/spn123-review-cae5a586-b.md",
+      "originalSHA256": "67ef77e209900d0e3887ca7175a7b7a5394c9728d6c1b9921a37350cdd7fc803",
+      "historicalAssessmentArchive": true
+    },
+    {
+      "file": "spn123-ack-lint.json",
+      "sha256": "d58cf978fa03630772d2132b4864c31deb43d6ed07b5dff86da4315861e25abb",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-lint.json",
+      "originalSHA256": "d58cf978fa03630772d2132b4864c31deb43d6ed07b5dff86da4315861e25abb",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-lint.log.gz",
+      "sha256": "e72c71268329b05e31569cd5c0d2acc7665f4e803f2c814b319e7f335a9551ee",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-lint.log",
+      "originalSHA256": "cab4571ef55a0f4770a0fb4e96b2affda56d3a9465bafc30bedf3362062debd2",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-record-format.json",
+      "sha256": "95bfe371dcb98fe58e0864df17e20bd9b2f792aa74da373eff33e573a49d90dc",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-record-format.json",
+      "originalSHA256": "95bfe371dcb98fe58e0864df17e20bd9b2f792aa74da373eff33e573a49d90dc",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-record-format.log.gz",
+      "sha256": "51b658911ce02313acfcb79e6265a9e22c3b93c2558ed1306edfbc123e09cb55",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-record-format.log",
+      "originalSHA256": "684cdcf47d2e4929d81c6ecc693662ee2b9c431ce59a7115e9dfbcca33a7b07e",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-format-check.json",
+      "sha256": "564eda62fffad06c6e54435d5f584a3593fddcd91928edd18c0dc3ed7c18cfff",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-format-check.json",
+      "originalSHA256": "564eda62fffad06c6e54435d5f584a3593fddcd91928edd18c0dc3ed7c18cfff",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-format-check.log.gz",
+      "sha256": "66cd2e3a23df5c21e1d9c34214846ba35485f1c0b7cb345d7cfa9cc89e29c9e1",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-format-check.log",
+      "originalSHA256": "97f1169cf63937db60ebaccd4726fb143412a764b5ffe5fac78416f90251179e",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-format-check-v2.json",
+      "sha256": "944944ab00fb0e0abd41be99c5c160f2886359fb85bc03bfed1d475c33bdca1b",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-format-check-v2.json",
+      "originalSHA256": "944944ab00fb0e0abd41be99c5c160f2886359fb85bc03bfed1d475c33bdca1b",
+      "historicalAssessmentArchive": false
+    },
+    {
+      "file": "spn123-ack-format-check-v2.log.gz",
+      "sha256": "78633540f29370af1ee14bf3f1e79d2cff56bfb9181e046ad9111f98f7c32840",
+      "originalPath": "/tmp/spinel-dependabot-2026-11-11/spn123-ack-format-check-v2.log",
+      "originalSHA256": "265f4f00a8f0b55758da66ad9c926c98d1cb6575d582663415f951e7e1491221",
+      "historicalAssessmentArchive": false
+    }
+  ]
+}

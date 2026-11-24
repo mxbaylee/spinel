@@ -29,6 +29,13 @@ import { within } from './offline/shell.ts';
 import { signInPath } from './api.ts';
 import { clearDashboardNavigation } from './dashboardNavigation.ts';
 import { CreationUploadError } from './offline/creation.ts';
+import { captureDiagnostic, observe as observeDiagnostic } from '@spinel/diagnostics';
+import type {
+  ClientConnectionReason,
+  ClientDiagnosticOutcome,
+  DiagnosticScope,
+  DiagnosticSource,
+} from '@spinel/diagnostics';
 import { isAccessUpgrade } from '../src/shared/accessUpgrade.ts';
 
 interface Watch {
@@ -38,6 +45,7 @@ interface Watch {
 }
 
 interface Options {
+  diagnostics?: DiagnosticSource;
   univer: Univer;
   unitId: string;
   itemId: string;
@@ -114,13 +122,26 @@ export async function loadSpinelDocument(options: Options) {
   // canvas can take input or native capture can record a local mutation.
   await options.initializeAccess?.();
   if (!current()) throw closed();
+  attachSpinelSync(options, data.snapshot, data.revision, data.epoch ?? '');
+}
+
+/** Attach the existing authority/transport owner to a unit the native host created. */
+export function attachSpinelSync(
+  options: Options,
+  snapshot: IWorkbookData | IDocumentData,
+  revision: number,
+  epoch = '',
+) {
+  if (options.offline) options.offline.diagnostics = options.diagnostics;
   const binding = bind(
     options,
-    data.snapshot,
-    data.revision,
-    options.offline?.bundle ? (options.offline.bundle.maintenanceEpoch ?? '') : (data.epoch ?? ''),
+    snapshot,
+    revision,
+    options.offline?.bundle?.maintenanceEpoch ?? epoch,
   );
+  const { univer } = options;
   bindings.set(univer, binding);
+  return binding;
 }
 
 export function getSpinelSync(univer: Univer) {
@@ -148,6 +169,8 @@ function bind(
     options.offline.bundle.access === 'viewer';
   const path = documentSyncPath(itemId, spaceId);
   let disposed = false;
+  let quiet = false;
+  let stopping: Promise<void> | undefined;
   let denied = false;
   let started = false;
   let watcher: Watch | undefined;
@@ -162,6 +185,34 @@ function bind(
   let answerTimer: ReturnType<typeof setTimeout> | undefined;
   let readinessTimer: ReturnType<typeof setTimeout> | undefined;
   let requestId: string | undefined;
+  let connectionObservation:
+    { scope?: DiagnosticScope; at: number; reason: ClientConnectionReason } | undefined;
+  const beginConnection = (reason: ClientConnectionReason) => {
+    if (!connectionObservation)
+      connectionObservation = {
+        scope: captureDiagnostic(options.diagnostics),
+        at: performance.now(),
+        reason,
+      };
+  };
+  const finishConnection = (outcome: ClientDiagnosticOutcome) => {
+    const observation = connectionObservation;
+    connectionObservation = undefined;
+    if (observation?.scope)
+      observeDiagnostic(
+        observation.scope.sink,
+        {
+          name: 'sync.client.connection',
+          details: {
+            reason: observation.reason,
+            outcome,
+            durationMs: Math.max(0, performance.now() - observation.at),
+            ...client.diagnosticQueue(),
+          },
+        },
+        observation.scope.context,
+      );
+  };
   let retryDelay = 250;
   let denialMessage = '';
   let upgradeProblem = '';
@@ -188,7 +239,7 @@ function bind(
   const presenceListeners = new Set<(state: SyncPresenceState) => void>();
   const abort = new AbortController();
   const active = () =>
-    !disposed && !signal.aborted && isCurrent() && (options.offline?.current ?? true);
+    !disposed && !quiet && !signal.aborted && isCurrent() && (options.offline?.current ?? true);
   const request = (path: string, init?: RequestInit) =>
     options.offline ? options.offline.fetch(path, init) : fetch(path, init);
   const publishPresence = (next: SyncPresenceState) => {
@@ -325,7 +376,7 @@ function bind(
         clearTimeout(answerTimer);
         // An unanswered request remains immutable in the client. A fresh
         // connection resolves its durable receipt instead of inventing a new ID.
-        answerTimer = setTimeout(() => reconnect(), 15_000);
+        answerTimer = setTimeout(() => reconnect('timeout'), 15_000);
       }
     } catch {
       reconnect();
@@ -347,12 +398,26 @@ function bind(
         }),
       );
   };
+  // Native WebDriver contexts cannot install an initialization script before a
+  // Home Screen navigation. Evidence builds therefore also accept a scoped,
+  // read-only request for the same public snapshot already emitted above.
+  const readNativeEvidence = (event: Event) => {
+    if (
+      !evidence ||
+      !active() ||
+      (event as CustomEvent<{ unitId?: unknown }>).detail?.unitId !== unitId
+    )
+      return;
+    const snapshot = nativeSnapshot(univer, unitId);
+    observe(options.offline?.toCanonical(snapshot) ?? snapshot);
+  };
   const client = createNativeSyncClient({
     univer,
     unitId,
     kind: options.kind,
     snapshot,
     revision,
+    diagnostics: options.diagnostics,
     send,
     ...(options.offline
       ? {
@@ -419,6 +484,7 @@ function bind(
   });
 
   function endConnection() {
+    if (denied || maintenanceBlocked || state.resyncing) finishConnection('failure');
     generation++;
     clearMessages();
     connecting = false;
@@ -444,8 +510,9 @@ function bind(
     retryDelay = Math.min(retryDelay * 2, 5000);
   }
 
-  function reconnect() {
+  function reconnect(reason: ClientConnectionReason = 'transport') {
     if (!active() || denied) return;
+    beginConnection(reason);
     clearTimeout(reconnectTimer);
     reconnectTimer = undefined;
     endConnection();
@@ -594,6 +661,9 @@ function bind(
     const recoveryEpoch = explicit && maintenance?.available ? maintenance.epoch : maintenanceEpoch;
     recoveryRunning = true;
     recoveryAttempted = true;
+    const observation = captureDiagnostic(options.diagnostics);
+    const observedAt = performance.now();
+    let outcome: ClientDiagnosticOutcome = 'failure';
     try {
       await prepareRecoveryAction(true);
       recovery = { ...recovery!, phase: 'creating', message: undefined };
@@ -616,11 +686,25 @@ function bind(
         message: undefined,
       };
       report();
+      outcome = 'success';
     } catch (error) {
+      if (!active() || abort.signal.aborted) outcome = 'cancelled';
       if ((error as { status?: number })?.status === 401 && active()) await endAuthentication();
       recoveryError(error);
     } finally {
       recoveryRunning = false;
+      if (observation)
+        observeDiagnostic(
+          observation.sink,
+          {
+            name: 'offline.recovery',
+            details: {
+              outcome,
+              durationMs: Math.max(0, performance.now() - observedAt),
+            },
+          },
+          observation.context,
+        );
     }
   }
   async function exportRecovery() {
@@ -670,8 +754,15 @@ function bind(
   }
 
   /** A clean lifecycle change must not manufacture a retained edit checkpoint. */
-  async function transitionClean(action: 'refresh' | 'remove', restartPage = false) {
+  async function transitionClean(
+    action: 'refresh' | 'remove',
+    restartPage = false,
+    reason: 'retention' | 'access-change' | 'maintenance' = 'access-change',
+  ) {
     if (!cleanDownloaded()) return false;
+    const observation = action === 'refresh' ? captureDiagnostic(options.diagnostics) : undefined;
+    const observedAt = performance.now();
+    let outcome: 'handed-off' | 'failure' | 'cancelled' = 'failure';
     refreshingClean = true;
     endConnection();
     const verifyClean = () => {
@@ -686,13 +777,20 @@ function bind(
       verifyClean();
       if (action === 'remove') await options.offline!.removeClean(verifyClean);
       else await options.offline!.refreshClean(verifyClean);
-      if (!active()) return true;
+      if (!active()) {
+        outcome = 'cancelled';
+        return true;
+      }
       dispose();
       if (action === 'remove') options.lock?.();
       else if (restartPage) location.reload();
       else options.reload('stale', true);
+      outcome = 'handed-off';
     } catch {
-      if (!active()) return true;
+      if (!active()) {
+        outcome = 'cancelled';
+        return true;
+      }
       options.offline!.stopRemote(
         action === 'remove'
           ? 'Access changed. This device copy could not be removed. Reopen the document when connected.'
@@ -702,6 +800,21 @@ function bind(
       // that work; a network or disk failure with no edits only needs a notice.
       if (!cleanDownloaded()) client.refuse('stale');
       report();
+    } finally {
+      if (observation)
+        observeDiagnostic(
+          observation.sink,
+          {
+            name: 'sync.client.refresh',
+            details: {
+              reason,
+              outcome,
+              durationMs: Math.max(0, performance.now() - observedAt),
+              ...client.diagnosticQueue(),
+            },
+          },
+          observation.context,
+        );
     }
     return true;
   }
@@ -871,6 +984,7 @@ function bind(
       !navigator.onLine
     )
       return;
+    beginConnection('initial');
     connecting = true;
     roomReady = false;
     const current = ++generation;
@@ -923,7 +1037,7 @@ function bind(
       // An upgrade or initial replay can stall before any submit starts its
       // answer timeout. Pending local work must still get a fresh connection.
       readinessTimer = setTimeout(() => {
-        if (same()) reconnect();
+        if (same()) reconnect('timeout');
       }, 15_000);
       opened.onopen = () => {
         if (!same()) return opened.close();
@@ -983,7 +1097,7 @@ function bind(
               reconnect();
               return;
             }
-            await transitionClean('refresh');
+            await transitionClean('refresh', false, 'retention');
             return;
           }
           if (options.offline?.enabled) {
@@ -997,6 +1111,7 @@ function bind(
             clearTimeout(readinessTimer);
             readinessTimer = undefined;
             roomReady = !state.resyncing;
+            finishConnection(roomReady ? 'success' : 'failure');
             connecting = false;
             retryDelay = 250;
             publishPresence({ ...presence, connected: roomReady });
@@ -1053,6 +1168,7 @@ function bind(
       opened.onerror = () => opened.close();
       opened.onclose = () => {
         if (!same()) return;
+        beginConnection('transport');
         endConnection();
         report();
         void checkAccess();
@@ -1093,7 +1209,7 @@ function bind(
       if (options.offline?.enabled && cleanDownloaded() && options.canRefresh?.() !== false) {
         // Refresh the saved base under its clean-writer checks before opening a
         // new page. A React remount retains the old tab's immutable HTTP epoch.
-        await transitionClean('refresh', true);
+        await transitionClean('refresh', true, 'maintenance');
       } else if (
         !options.offline?.enabled &&
         !state.pending &&
@@ -1126,20 +1242,27 @@ function bind(
 
   const online = () => {
     retryDelay = 250;
-    reconnect();
+    reconnect('offline');
     void checkAccess();
   };
   const offline = () => {
+    finishConnection('cancelled');
     endConnection();
     report();
   };
   const foreground = () => {
-    if (document.visibilityState === 'visible') online();
+    if (document.visibilityState === 'visible') {
+      retryDelay = 250;
+      reconnect();
+      void checkAccess();
+    }
   };
   const downloaded = (event: Event) => {
     const detail = (event as CustomEvent).detail;
     if (
       !options.offline ||
+      // This editor's own checkpoint write must not reconcile and persist again.
+      detail?.checkpoint ||
       detail?.accountId !== options.offline.accountId ||
       detail?.itemId !== itemId ||
       !active() ||
@@ -1163,6 +1286,7 @@ function bind(
   };
   function dispose() {
     if (disposed) return;
+    finishConnection('cancelled');
     disposed = true;
     abort.abort();
     clearTimeout(reconnectTimer);
@@ -1177,12 +1301,24 @@ function bind(
     window.removeEventListener('offline', offline);
     window.removeEventListener('spinel-offline-changed', downloaded);
     window.removeEventListener('spinel-offline-prepared', prepared);
+    window.removeEventListener('spinel-sync-native-snapshot-read', readNativeEvidence);
     window.removeEventListener(maintenanceEvent, maintenanceNotice);
     document.removeEventListener('visibilitychange', foreground);
     signal.removeEventListener('abort', dispose);
     if (bindings.get(univer) === binding) bindings.delete(univer);
   }
   const binding = {
+    /** Stop producers, join the durable checkpoint, then relinquish the writer. */
+    stop() {
+      if (stopping) return stopping;
+      quiet = true;
+      abort.abort();
+      endConnection();
+      clearTimeout(reconnectTimer);
+      clearInterval(accessTimer);
+      stopping = (disposed ? Promise.resolve() : client.persistNow()).finally(dispose);
+      return stopping;
+    },
     watch(next: Watch) {
       watcher = next;
       if (evidence && !state.pending)
@@ -1192,6 +1328,8 @@ function bind(
         );
       if (!started) {
         started = true;
+        if (evidence)
+          window.addEventListener('spinel-sync-native-snapshot-read', readNativeEvidence);
         window.addEventListener('online', online);
         window.addEventListener('offline', offline);
         window.addEventListener('spinel-offline-changed', downloaded);

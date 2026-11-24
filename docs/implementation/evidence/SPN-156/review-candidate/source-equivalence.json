@@ -1,0 +1,95 @@
+{
+  "reviewBase": "ecef3c6d6ea5093bdd9fcf7c0a69c5e5218b4a6f",
+  "previouslyCheckedSource": "ff0f12018ea92caaa9b09f48064962326f8061ae",
+  "compiledSource": "229e97684d404f9bd0908650f095055b2d4d4e11",
+  "typecheckedHead": "018f712963ae7a5efe65769fe8ded0232fe57c93",
+  "allTicketRuntimeAndTestBlobsEqual": true,
+  "paths": [
+    {
+      "path": "e2e/offline-editing.spec.ts",
+      "gitBlob": "46bcd187e233516ed559ee49e8608af20ebdf453",
+      "workingSha256": "8ce42cb5431552e8765212d40626f4e1cb56b62498c9bda5f3531f3c0aa62dcd"
+    },
+    {
+      "path": "lib/sync-client/tests/headless-checkpoint.test.ts",
+      "gitBlob": "9e20388283d2732e0446123fadbe963688656957",
+      "workingSha256": "3ad5c6e2cb17b5dbd261f85a4e880e63e70795f24779fab6658d819b1de3d505"
+    },
+    {
+      "path": "src/ui/offlinePersistence.test.ts",
+      "gitBlob": "f5f8c399207cc3b6836beb4dcf9dbe0d68a1a1a6",
+      "workingSha256": "477d83133c560374c2c6f0c92fb7043cbb79950d8a694c81a75d6a384effea64"
+    },
+    {
+      "path": "src/ui/offlineReplay.test.ts",
+      "gitBlob": "1dc93d4cf022ddcf731b823e94a4106642840ca3",
+      "workingSha256": "67ed777d12300d470d49bf7b52cdecf8ecc23849be52ead043793cfb88ba4c27"
+    },
+    {
+      "path": "src/ui/offlineTransactionErrors.test.ts",
+      "gitBlob": "5aa360b211949af4051a59c47ae25137a752b139",
+      "workingSha256": "d983d2c15e64434a71c8c2ab555e8308ea8d53731cd26ad0059b6628125f35f8"
+    },
+    {
+      "path": "src/ui/offlineWriterHandoff.test.ts",
+      "gitBlob": "c3ecf953ce2d0b33387be1ef8ca0e1331e0c6590",
+      "workingSha256": "76a47a3b2c4044b33a48200b345d7d11c2aee7de450d542212ac66ce61e4af02"
+    },
+    {
+      "path": "src/ui/spinelSync.test.ts",
+      "gitBlob": "473477d223c3609ce06b65f9db5c8809874ccc03",
+      "workingSha256": "724158fd27a5e64badacbfc0c3e4be21d38abc7e21f4c5e40daef4822d386ba8"
+    },
+    {
+      "path": "web/Dashboard.tsx",
+      "gitBlob": "31c7e867a0ee8e06223aca62d201e1aa4ae26b43",
+      "workingSha256": "3c110290bd714d6dc75bcc6a0e2d1f4b74ff7ac1f35b04fa71d1fa03d059665d"
+    },
+    {
+      "path": "web/OfflineSpace.tsx",
+      "gitBlob": "ccdde5b2aad7a4982795388ee1ebc65586e849d4",
+      "workingSha256": "60628729657d69b9c2ebca7bfd61e8ee6414d91bb85866cb7eacf31d3356fe0b"
+    },
+    {
+      "path": "web/SpaceOfflineActions.tsx",
+      "gitBlob": "b7f6d83edeb1d3d79d962d60c38e0cebc0dca9e8",
+      "workingSha256": "7459ef3e5ba465c30894107df70d62e381b0927a97d166dc233f7f4810513804"
+    },
+    {
+      "path": "web/offline/OfflineSession.ts",
+      "gitBlob": "997786a2b12f7d5dde22f4f178a211812014417d",
+      "workingSha256": "8db952d50bb63e2e58bcf707f927d480930c8e9ad6de20931e77e4a9a15c003f"
+    },
+    {
+      "path": "web/offline/offlineStore.ts",
+      "gitBlob": "e78dbc12385176b77a8a29a4889df96df71450f5",
+      "workingSha256": "43caf0b391e73bea96102a0209cb74b14ebec64d96b5aaf6f46f21b49dc034b7"
+    },
+    {
+      "path": "web/offline/replay.ts",
+      "gitBlob": "e67c3df011b033063520896a88b0cc282d0a9fbc",
+      "workingSha256": "79c792b8e8f02b57f7073f49099ab35719afae644418a9dcf613ae5badaa5596"
+    },
+    {
+      "path": "web/offline/replayHost.ts",
+      "gitBlob": "7e0fe064b313445861d8a0f8949dbae518576760",
+      "workingSha256": "42cce15d6a9a0f95848ed6d59601575ac25b466bf5fa3a33b289cad9a5e9211d"
+    },
+    {
+      "path": "web/offline/useOfflineDownloads.ts",
+      "gitBlob": "90ae50032fba6b148ea28937ff2f641018d87559",
+      "workingSha256": "c42da30af67cdbd403af850eaf58f51b2169405f4382ec87afbf648ce3bc1bd2"
+    },
+    {
+      "path": "web/spinelSync.ts",
+      "gitBlob": "bde3273f3e4c745b1170f19a3732b85d9830952c",
+      "workingSha256": "0c5bde96419dabd18a23ff7a7ea935cbe1e6cb2ec004f0af97aab901880300ca"
+    }
+  ],
+  "typecheckEnvironment": {
+    "GOMEMLIMIT": "640MiB",
+    "GOGC": "50",
+    "GOMAXPROCS": "2"
+  },
+  "typecheckWorkingChanges": "Only maintained Markdown, SPN-156 ticket deletion, backlog.json counter and generated Markdown index; no TypeScript/config/source changes."
+}

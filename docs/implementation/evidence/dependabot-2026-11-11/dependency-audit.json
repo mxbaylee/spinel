@@ -1,0 +1,12 @@
+{
+  "source": "b77d14480d223b26f05fb6c4f7fe65e16391f75a",
+  "lockSha256": "268591be235eb52d14b907112c548d9a71b2c274bba0d756c8e8decae3ac94a6",
+  "baselines": [
+    "e4d361f0ce3c08d4a1e80b000e29f2c2f28f6670",
+    "f609961e4a2460bae0feedb62cedd722af270e86"
+  ],
+  "manifests": 8,
+  "changedInstalledRecords": 32,
+  "dockerSource": "21b6fa6fa96389664b0d83f85ac5f309ad3cf327",
+  "status": "passed"
+}

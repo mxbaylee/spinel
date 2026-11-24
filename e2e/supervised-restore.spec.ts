@@ -1,14 +1,39 @@
 import { randomUUID } from 'node:crypto';
-import { copyFile, chmod } from 'node:fs/promises';
+import { copyFile, chmod, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { expect, test } from '@playwright/test';
-import type { Browser, BrowserContext, Page, Request, TestInfo } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { test, startRestoreTrace, retainRestoreFailure } from './supervised-restore-tracing.ts';
+import { finishRestoreCrashCleanup } from '../src/server/maintenance/restore-crash-cleanup-fixture.ts';
+import type {
+  APIResponse,
+  Browser,
+  BrowserContext,
+  Page,
+  Request,
+  TestInfo,
+} from '@playwright/test';
 import type { MaintenancePublicStatus } from '../src/shared/maintenance.ts';
 import { startMaintenanceFixture } from './maintenance-fixture.ts';
+import { maintenanceErrorCode } from './maintenance-evidence.ts';
 
 /** SPN-112 and SPN-124 in real browsers against the Linux supervisor: catalog
  * selection, double-click, cancel, a lost confirmation reply, an admitted upload
  * outlasting its passkey window, and old clients meeting the restored workspace. */
+
+const startupEvidence = new WeakMap<BrowserContext, string[]>();
+async function observeStartup(context: BrowserContext) {
+  const events: string[] = [];
+  startupEvidence.set(context, events);
+  // The shared test fixture disables runner tracing; this is the sole owner.
+  await startRestoreTrace(context);
+  context.on('page', (page) => {
+    page.on('console', (message) => {
+      if (message.type() === 'error' && message.text().startsWith('[spinel:startup]'))
+        events.push(message.text());
+    });
+    page.on('pageerror', (error) => events.push(`pageerror: ${error.name}`));
+  });
+}
 
 type Fixture = Awaited<ReturnType<typeof startMaintenanceFixture>>;
 
@@ -126,6 +151,7 @@ async function enrollOperator(browser: Browser, app: Fixture) {
     colorScheme: 'light',
     reducedMotion: 'reduce',
   });
+  await observeStartup(context);
   const page = await context.newPage();
   page.setDefaultTimeout(15_000);
   const key = await passkey(context, page);
@@ -161,6 +187,7 @@ async function joinWorkspace(
     colorScheme: 'light',
     reducedMotion: 'reduce',
   });
+  await observeStartup(context);
   const page = await context.newPage();
   page.setDefaultTimeout(15_000);
   const key = await passkey(context, page);
@@ -224,31 +251,13 @@ async function chooseSavedBackup(page: Page) {
   return dialog;
 }
 
-async function attachFailure(browser: Browser | undefined, info: TestInfo) {
-  let index = 0;
-  for (const context of browser?.contexts() ?? [])
-    for (const page of context.pages()) {
-      if (page.isClosed()) continue;
-      await info.attach(`restore-failure-${index}`, {
-        body: await page.screenshot({ animations: 'disabled' }).catch(() => Buffer.alloc(0)),
-        contentType: 'image/png',
-      });
-      await info.attach(`restore-state-${index++}`, {
-        body: await page
-          .locator('body')
-          .ariaSnapshot()
-          .catch(() => 'Page unavailable.'),
-        contentType: 'text/plain',
-      });
-    }
-}
-
 const skipUnsupported = (info: TestInfo) =>
   test.skip(
     info.project.name !== 'supervised-restore' || process.platform !== 'linux',
     'Supervised restore uses the Linux production supervisor and a filesystem catalog.',
   );
 
+// Retain first-failure manual-context traces without changing configured retries.
 test('a catalog restore survives double-clicks, cancel and a lost reply, and fences old clients', async ({
   playwright,
 }, info) => {
@@ -256,7 +265,50 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
   test.setTimeout(600_000);
   const app = await startMaintenanceFixture({ catalog: true });
   let browser: Browser | undefined;
+  let primaryFailure: { error: unknown } | undefined;
   const failures: string[] = [];
+  let snapshotPhase = 'before-backup';
+  let snapshotReads = 0;
+  const snapshotRequests: {
+    sequence: number;
+    phase: string;
+    method: 'GET';
+    route: string;
+    startedAt: number;
+    completedAt: number;
+    status?: number;
+    error?: string;
+  }[] = [];
+  let failureEvidence:
+    Awaited<ReturnType<typeof app.diagnostics>> | { captureError: string } | undefined;
+  const snapshotRequest = async (kind: 'sheet' | 'doc', read: () => Promise<APIResponse>) => {
+    const observation = {
+      sequence: ++snapshotReads,
+      phase: snapshotPhase,
+      method: 'GET' as const,
+      route: `/api/items/:id/${kind}`,
+      startedAt: performance.now(),
+      completedAt: 0,
+    };
+    const retain = (outcome: { status?: number; error?: string }) => {
+      snapshotRequests.push({ ...observation, completedAt: performance.now(), ...outcome });
+      if (snapshotRequests.length > 32) snapshotRequests.shift();
+    };
+    try {
+      const response = await read();
+      retain({ status: response.status() });
+      return response;
+    } catch (error) {
+      retain({ error: maintenanceErrorCode(error) });
+      // Observe only the first attempt, before teardown. Never repeat or turn
+      // the failed product observation into setup recovery.
+      if (info.retry === 0 && !failureEvidence)
+        failureEvidence = await app.diagnostics(true).catch((captureError) => ({
+          captureError: maintenanceErrorCode(captureError),
+        }));
+      throw error;
+    }
+  };
   try {
     browser = await playwright.chromium.launch(info.project.use.launchOptions);
     const operator = await enrollOperator(browser, app);
@@ -282,7 +334,9 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
     for (const page of [owner.page, member])
       page.on('pageerror', (error) => failures.push(error.message));
     const remote = async () => {
-      const response = await memberContext.request.get(`/api/items/${item.id}/sheet`);
+      const response = await snapshotRequest('sheet', () =>
+        memberContext.request.get(`/api/items/${item.id}/sheet`, { maxRetries: 0 }),
+      );
       return response.ok() ? JSON.stringify((await response.json()).snapshot) : '';
     };
     await member.reload();
@@ -307,7 +361,9 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
     await expect.poll(remote).toContain('Kept by the saved backup');
 
     const docText = async () => {
-      const response = await owner.context.request.get(`/api/items/${owner.item.id}/doc`);
+      const response = await snapshotRequest('doc', () =>
+        owner.context.request.get(`/api/items/${owner.item.id}/doc`, { maxRetries: 0 }),
+      );
       return response.ok() ? String((await response.json()).snapshot?.body?.dataStream ?? '') : '';
     };
     const docTab = owner.page;
@@ -319,6 +375,7 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
     await expect.poll(docText, { timeout: 30_000 }).toContain('Owner plan in the backup.');
 
     await saveToCatalog(app, await downloadBackup(operator.page));
+    snapshotPhase = 'after-backup';
 
     await docEditor.locator('.univer-container').click({ position: { x: 130, y: 200 } });
     await docTab.keyboard.type(' Acknowledged Owner change.');
@@ -434,6 +491,7 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
       { timeout: 30_000 },
     );
     expect(await outbox(signedIn, accountId, item.id)).toContain('Queued offline after the backup');
+    snapshotPhase = 'after-restore';
     const restored = await remote();
     expect(restored).toContain('Kept by the saved backup');
     expect(restored).not.toContain('Acknowledged after the backup');
@@ -454,11 +512,48 @@ test('a catalog restore survives double-clicks, cancel and a lost reply, and fen
     expect(count('confirm')).toBe(2);
     expect(failures).toEqual([]);
   } catch (error) {
-    await attachFailure(browser, info);
-    throw error;
+    primaryFailure = { error: await retainRestoreFailure(browser, info, startupEvidence, error) };
+    throw primaryFailure.error;
   } finally {
-    await browser?.close();
-    await app.close();
+    await finishRestoreCrashCleanup(
+      [
+        async () => {
+          if (info.retry === 0) {
+            const path = info.outputPath('sync-diagnostics.json');
+            await writeFile(
+              path,
+              JSON.stringify(
+                {
+                  kind: 'supervised-restore-first-attempt',
+                  sourceSha: process.env.SOURCE_SHA ?? null,
+                  testedSha: process.env.GITHUB_SHA ?? null,
+                  retry: info.retry,
+                  capturedBeforeCleanup: true,
+                  snapshotReads,
+                  omittedSnapshotReads: snapshotReads - snapshotRequests.length,
+                  snapshotRequests,
+                  failureEvidence: failureEvidence ?? null,
+                  finalEvidence: await app.diagnostics(),
+                },
+                null,
+                2,
+              ),
+            );
+            await info.attach('supervised-restore-first-attempt', {
+              path,
+              contentType: 'application/json',
+            });
+          }
+        },
+        async () => {
+          await browser?.close();
+        },
+        async () => {
+          await app.close();
+        },
+      ],
+      primaryFailure,
+    );
   }
 });
 
@@ -469,6 +564,7 @@ test('an admitted upload outlasts its passkey check and can still be cancelled',
   test.setTimeout(600_000);
   const app = await startMaintenanceFixture();
   let browser: Browser | undefined;
+  let primaryFailure: { error: unknown } | undefined;
   const uploadGate = Promise.withResolvers<boolean>();
   const heldUploads: Promise<void>[] = [];
   let uploadHeldAt: number | undefined;
@@ -524,14 +620,25 @@ test('an admitted upload outlasts its passkey check and can still be cancelled',
     const status = await publicStatus(app.publicOrigin);
     expect([status.phase, status.epoch]).toEqual(['running', app.running.epoch]);
   } catch (error) {
-    await attachFailure(browser, info);
-    throw error;
+    primaryFailure = { error: await retainRestoreFailure(browser, info, startupEvidence, error) };
+    throw primaryFailure.error;
   } finally {
     // A failure before release aborts every intercepted request; never leave a
     // route handler suspended while browser and supervisor cleanup begins.
-    uploadGate.resolve(false);
-    await Promise.all(heldUploads.map((pending) => pending.catch(() => {})));
-    await browser?.close();
-    await app.close();
+    await finishRestoreCrashCleanup(
+      [
+        async () => {
+          uploadGate.resolve(false);
+          await Promise.all(heldUploads.map((pending) => pending.catch(() => {})));
+        },
+        async () => {
+          await browser?.close();
+        },
+        async () => {
+          await app.close();
+        },
+      ],
+      primaryFailure,
+    );
   }
 });

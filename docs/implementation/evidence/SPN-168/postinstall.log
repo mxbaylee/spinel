@@ -1,0 +1,13 @@
+
+> postinstall
+> node scripts/dependencies/patch-univer-core.ts && node scripts/dependencies/patch-univer-docs.ts && node scripts/dependencies/patch-univer-ui.ts && node scripts/dependencies/patch-univer-drawing.ts && node scripts/dependencies/patch-univer-docs-ui.ts && node scripts/dependencies/patch-playwright.ts
+
+file:///Users/mxbaylee/projects/spinel/scripts/dependencies/patch-univer-core.ts:255
+    throw new Error('Upgrading @univerjs/core: do SPN-099 first (docs/todo/SPN-099.md).');
+          ^
+
+Error: Upgrading @univerjs/core: do SPN-099 first (docs/todo/SPN-099.md).
+    at patchInstalledCore (file:///Users/mxbaylee/projects/spinel/scripts/dependencies/patch-univer-core.ts:255:11)
+    at async file:///Users/mxbaylee/projects/spinel/scripts/dependencies/patch-univer-core.ts:269:3
+
+Node.js v26.12.1

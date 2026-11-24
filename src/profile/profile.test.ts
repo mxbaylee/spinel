@@ -13,6 +13,39 @@ const renamedIcons = [
   ['music-2', 'eighth-note'],
   ['music-3', 'half-note'],
   ['music-4', 'sixteenth-notes'],
+  ['archive-restore', 'archive-arrow-up'],
+  ['badge-alert', 'badge-exclamation-point'],
+  ['battery-warning', 'battery-exclamation-point'],
+  ['book-alert', 'book-exclamation-point'],
+  ['alert-circle', 'circle-exclamation-point'],
+  ['circle-alert', 'circle-exclamation-point'],
+  ['copyright', 'circle-letter-c'],
+  ['parking-circle-off', 'circle-letter-p-off'],
+  ['circle-parking-off', 'circle-letter-p-off'],
+  ['parking-circle', 'circle-letter-p'],
+  ['circle-parking', 'circle-letter-p'],
+  ['clock-alert', 'clock-exclamation-point'],
+  ['cloud-alert', 'cloud-exclamation-point'],
+  ['bold', 'letter-b'],
+  ['heading', 'letter-h'],
+  ['mail-warning', 'mail-exclamation-point'],
+  ['mail-alert', 'mail-exclamation-point'],
+  ['message-circle-warning', 'message-circle-exclamation-point'],
+  ['message-circle-alert', 'message-circle-exclamation-point'],
+  ['message-square-warning', 'message-square-exclamation-point'],
+  ['message-square-alert', 'message-square-exclamation-point'],
+  ['alert-octagon', 'octagon-exclamation-point'],
+  ['octagon-alert', 'octagon-exclamation-point'],
+  ['search-alert', 'search-exclamation-point'],
+  ['shield-alert', 'shield-exclamation-point'],
+  ['m-square', 'square-letter-m'],
+  ['square-m', 'square-letter-m'],
+  ['parking-square-off', 'square-letter-p-off'],
+  ['square-parking-off', 'square-letter-p-off'],
+  ['parking-square', 'square-letter-p'],
+  ['square-parking', 'square-letter-p'],
+  ['alert-triangle', 'triangle-exclamation-point'],
+  ['triangle-alert', 'triangle-exclamation-point'],
 ] as const;
 
 test('item identity search combines icons and emoji names, keywords, typos and pasted sequences', () => {
@@ -131,4 +164,23 @@ test('only catalog avatar paths decode, without user identity', () => {
     '/profile-avatar/flower/not-a-color.svg',
   ])
     expect(avatarProfile(path)).toBeUndefined();
+});
+
+test('catalog metadata resolves upstream inheritance and groups before search', () => {
+  for (const icon of ICON_CATALOG) {
+    expect(
+      [...icon.tags, ...icon.categories].some((word) => /\$(?:extends|group):/.test(word)),
+    ).toBe(false);
+  }
+  expect(searchPersonIcons('unarchive').some((icon) => icon.name === 'archive-arrow-up')).toBe(
+    true,
+  );
+});
+
+test('saved emoji presentation sequences remain exact after the data upgrade', () => {
+  // Existing saved values are accepted unchanged even if upstream now omits redundant FE0F.
+  for (const emoji of ['👍', '👍️', '⌚', '⌚️', '👩🏽‍💻', '1️⃣']) {
+    expect(validIdentityIcon(emoji)).toBe(true);
+    expect(searchPersonIcons(emoji, 'Emojis', true).map((choice) => choice.value)).toEqual([emoji]);
+  }
 });

@@ -1,0 +1,1 @@
+{"name":"spn149-current-lint","args":["node_modules/.bin/oxlint","--deny-warnings","e2e/collaboration.spec.ts","e2e/session-revocation.ts","scripts/ci/session-revocation.test.ts"],"code":0,"signal":null,"reason":null,"elapsedMs":125,"peakKiB":0}

@@ -8,6 +8,12 @@ on:
     # Draft commits already run every check; becoming ready changes no code.
     types: [opened, edited, synchronize, reopened, labeled, unlabeled]
   workflow_dispatch:
+    inputs:
+      run_doc_editing_mobile:
+        description: 'Run the on-demand mobile Doc editing suite on this revision'
+        type: boolean
+        default: false
+        required: false
   schedule:
     - cron: '23 9 * * 1'
 
@@ -44,6 +50,8 @@ jobs:
       responsiveness_baseline: ${{ steps.changes.outputs.responsiveness_baseline }}
       callback_baseline: ${{ steps.changes.outputs.callback_baseline }}
       phone_compatibility: ${{ steps.changes.outputs.phone_compatibility }}
+      doc_editing_mobile: ${{ steps.changes.outputs.doc_editing_mobile }}
+      doc_editing_mobile_sha: ${{ steps.changes.outputs.doc_editing_mobile_sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -165,6 +173,9 @@ jobs:
   # ~260s, so one serial job could not finish within its hosted cap (SPN-112).
   unit-test-run:
     name: Unit tests (${{ matrix.suite }})
+    env:
+      SPINEL_CRASH_EVIDENCE_DIR: test-results/restore-crash
+      SPINEL_CRASH_EVIDENCE_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
     needs: changes
     if: needs.changes.outputs.unit_tests == 'true'
     runs-on: ubuntu-latest
@@ -188,6 +199,9 @@ jobs:
           node scripts/ci/prefer-ubuntu-archive.ts
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends tini
+      - name: Prepare distinct recovery crash receipts
+        if: matrix.suite == 'recovery'
+        run: node scripts/ci/restore-crash-evidence.ts begin
       # lib/ runs in its own partitions below.
       - name: Unit tests
         env:
@@ -213,6 +227,17 @@ jobs:
               exit 1
               ;;
           esac
+      - name: Require all recovery crash receipts
+        if: always() && matrix.suite == 'recovery'
+        run: node scripts/ci/restore-crash-evidence.ts verify
+      - name: Preserve safe recovery crash receipts
+        if: always() && matrix.suite == 'recovery'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: restore-crash-evidence
+          path: test-results/restore-crash/*.json
+          retention-days: 30
+          if-no-files-found: error
       - name: PDF collaboration overlap evidence
         if: always() && matrix.suite == 'remaining'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -437,8 +462,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { project: development, shard: 1/2 }
-          - { project: development, shard: 2/2 }
+          # SPN-154 validation exhausted the development budget on slower
+          # runners. Keep 20 minutes and one worker per job, and
+          # partition the same cases; production still fits its two owners.
+          - { project: development, shard: 1/3 }
+          - { project: development, shard: 2/3 }
+          - { project: development, shard: 3/3 }
           - { project: production, shard: 1/2 }
           - { project: production, shard: 2/2 }
           - { project: mobile-https, shard: '' }
@@ -476,23 +505,37 @@ jobs:
         if: matrix.project == 'offline-upgrade'
         working-directory: legacy-offline-source
         # Preserve the historical lock and postinstall patches for browser
-        # emission. The application server still uses the candidate install.
+        # emission. Legacy data is initially served by the genuine 1.1.0 backend.
+        run: npm ci
+      - name: Immutable last 1.1.0 offline host and backend
+        if: matrix.project == 'offline-upgrade'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: 3a0e2238fb5be3907d04120eabda2aafd6565d63
+          path: previous-offline-source
+          persist-credentials: false
+      - name: Install previous offline host dependencies
+        if: matrix.project == 'offline-upgrade'
+        working-directory: previous-offline-source
         run: npm ci
       - name: Build
         if: matrix.project != 'offline-upgrade'
         env:
           VITE_SYNC_EVIDENCE: ${{ startsWith(matrix.project, 'sync-') && '1' || '0' }}
-          VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
+          VITE_DOC_SELECTION_EVIDENCE: ${{ contains(fromJSON('["development","production"]'), matrix.project) && '1' || '0' }}
         run: npm run build
       - name: Playwright smoke
         env:
+          VITE_SYNC_EVIDENCE: ${{ startsWith(matrix.project, 'sync-') && '1' || '0' }}
           # Server-only provider credential; never passed to the Vite build.
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY || vars.UNSPLASH_ACCESS_KEY }}
           SPINEL_E2E_PROJECT: ${{ matrix.project }}
+          SOURCE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
           SPINEL_CI_FULL_COMPATIBILITY: ${{ needs.changes.outputs.phone_compatibility }}
           SHARD: ${{ matrix.shard }}
           SPINEL_CAPTURE_SCREENSHOTS: ${{ github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'visual-review') && '1' || '0' }}
-          VITE_DOC_SELECTION_EVIDENCE: ${{ matrix.project == 'production' && '1' || '0' }}
+          VITE_DOC_SELECTION_EVIDENCE: ${{ contains(fromJSON('["development","production"]'), matrix.project) && '1' || '0' }}
+          SPINEL_PREVIOUS_OFFLINE_SOURCE: ${{ matrix.project == 'offline-upgrade' && format('{0}/previous-offline-source', github.workspace) || '' }}
           SPINEL_LEGACY_OFFLINE_SOURCE: ${{ matrix.project == 'offline-upgrade' && format('{0}/legacy-offline-source', github.workspace) || '' }}
         run: npx playwright test --project="$SPINEL_E2E_PROJECT" ${SHARD:+--shard="$SHARD"}
       - name: Artifact name
@@ -520,15 +563,99 @@ jobs:
             test-results/**/spn-055-*.png
             test-results/**/spn-055-*.json
             test-results/**/sync-diagnostics.json
+            test-results/**/fixture-evidence.json
+            test-results/**/doc-editing-evidence.json
+            test-results/**/spn098-feedback-pair.json
             test-results/**/phone-doc-caret-events*.json
             test-results/**/phone-doc-selection-evidence*.json
             test-results/**/maintenance-views/*.png
             test-results/**/spn-059-*-soak.json
             test-results/**/error-context.md
             test-results/**/trace.zip
+            test-results/**/restore-first-failure-*.zip
+            test-results/**/restore-startup-*.json
+            test-results/**/restore-diagnostic-collection-failures*.json
+            test-results/**/restore-failure-*.png
+            test-results/**/restore-state-*.txt
+            test-results/**/supervised-restore-first-attempt*.json
             playwright-report/*.json
           retention-days: 7
           if-no-files-found: warn
+
+  # This worker is independent of full/fallback coverage. Only the immutable
+  # label-added or explicit manual request selects it, never a retained label.
+  doc-editing-mobile:
+    name: Doc editing mobile
+    needs: changes
+    if: needs.changes.outputs.doc_editing_mobile == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SPINEL_DOC_EDITING_MOBILE: '1'
+      SPINEL_E2E_PROJECT: doc-editing-mobile
+      VITE_SYNC_EVIDENCE: '0'
+      VITE_DOC_SELECTION_EVIDENCE: '1'
+      REQUESTED_SHA: ${{ needs.changes.outputs.doc_editing_mobile_sha }}
+      SOURCE_SHA: ${{ needs.changes.outputs.doc_editing_mobile_sha }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          # A later push cannot change the source of this one-shot request.
+          ref: ${{ needs.changes.outputs.doc_editing_mobile_sha }}
+          persist-credentials: false
+      - name: Verify requested source
+        run: test "$(git rev-parse HEAD)" = "$REQUESTED_SHA"
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version-file: .nvmrc
+          package-manager-cache: false
+      - name: Install
+        run: npm ci
+      - name: Install Chromium
+        run: |
+          node scripts/ci/prefer-ubuntu-archive.ts
+          npx playwright install --with-deps chromium
+      - name: Build
+        run: npm run build
+      - name: Record own-device build source
+        run: |
+          test -s dist/index.html
+          git rev-parse HEAD > doc-editing-mobile-build-revision.txt
+      - name: Retain own-device test build
+        # Publish immediately after a successful build, before a detecting
+        # editor failure can stop later steps. This is an artifact, not a deployment.
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: doc-editing-mobile-build
+          path: |
+            dist/
+            doc-editing-mobile-build-revision.txt
+          retention-days: 30
+          if-no-files-found: error
+      - name: Record requested collection
+        run: PLAYWRIGHT_JSON_OUTPUT_FILE=doc-editing-mobile-collection.json npx playwright test --project=doc-editing-mobile --list --reporter=json
+      - name: Mobile Doc editing
+        run: npx playwright test --project=doc-editing-mobile
+      - name: Require complete first-attempt mobile evidence
+        if: always()
+        run: node scripts/ci/doc-editing-mobile-result.ts doc-editing-mobile-collection.json playwright-report/doc-editing-mobile.json
+      - name: Retain requested mobile evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: doc-editing-mobile-evidence
+          path: |
+            doc-editing-mobile-collection.json
+            doc-editing-mobile-result.json
+            playwright-report/doc-editing-mobile.json
+            playwright-report/server-3110.json
+            playwright-report/reset-diagnostics-doc-editing-mobile.json
+            test-results/doc-editing-mobile/**/doc-editing*.json
+            test-results/doc-editing-mobile/**/trace.zip
+            test-results/doc-editing-mobile/**/test-failed-*.png
+            test-results/doc-editing-mobile/**/error-context.md
+          retention-days: 30
+          if-no-files-found: error
 
   # Pair each preset's immutable pre-fix baseline and candidate on one hosted
   # runner. The constrained local host aborted two-editor startup at its 2 GiB
@@ -575,7 +702,7 @@ jobs:
         if: needs.changes.outputs.responsiveness_baseline == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: 2c84a18449c7dae09e2817989fac6236be96ef98
+          ref: 96ae9e0a07d113c5de771f6e4e0f4ae83fae812d
           path: baseline-doc-source
           persist-credentials: false
       - name: Use identical browser workload on both sources
@@ -583,7 +710,7 @@ jobs:
         run: |
           cp e2e/doc-responsiveness*.ts baseline-doc-source/e2e/
           cp web/docResponsivenessEvidence.ts baseline-doc-source/web/
-          cp src/ui/docIdleEpisode.ts src/ui/nativeDocFlush.ts baseline-doc-source/src/ui/
+          cp src/ui/docIdleEpisode.ts src/ui/nativeDocFlush.ts src/ui/nativeDocFlushDiagnostic.ts baseline-doc-source/src/ui/
           cp playwright.config.ts baseline-doc-source/playwright.config.ts
           cp package-lock.json baseline-doc-source/package-lock.json
       - name: Install and build baseline
@@ -663,6 +790,10 @@ jobs:
           package-manager-cache: false
       - name: Install candidate
         run: npm ci
+      - name: Prepare pinned callback trace converter
+        run: |
+          node scripts/ci/doc-trace-processor.ts "$RUNNER_TEMP/spinel-trace-processor"
+          echo "SPINEL_TRACE_PROCESSOR=$RUNNER_TEMP/spinel-trace-processor" >> "$GITHUB_ENV"
       - name: Install Chromium
         run: |
           node scripts/ci/prefer-ubuntu-archive.ts
@@ -671,16 +802,16 @@ jobs:
         if: needs.changes.outputs.callback_baseline == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: 0e1df4725d9eccb77574d25e3eecdf678fe6ff44
+          ref: b75e3797a11ac2f53e3833b5615f68b6c0091727
           path: baseline-callback-source
           persist-credentials: false
       - name: Match callback workload and read-only observations
         if: needs.changes.outputs.callback_baseline == 'true'
         run: |
-          cp e2e/doc-responsiveness-callbacks.spec.ts e2e/doc-responsiveness-callback-sources.ts e2e/doc-responsiveness-callback-trace.ts e2e/doc-responsiveness-callback-progress.ts e2e/doc-responsiveness-fixture.ts e2e/doc-responsiveness.ts baseline-callback-source/e2e/
-          cp scripts/ci/doc-callback-lifetimes.ts baseline-callback-source/scripts/ci/
+          cp e2e/doc-responsiveness-callbacks.spec.ts e2e/doc-responsiveness-callback-sources.ts e2e/doc-responsiveness-callback-trace.ts e2e/doc-responsiveness-callback-proto.ts e2e/doc-responsiveness-callback-converter.ts e2e/doc-responsiveness-callback-progress.ts e2e/doc-responsiveness-fixture.ts e2e/doc-responsiveness.ts baseline-callback-source/e2e/
+          cp scripts/ci/doc-callback-lifetimes.ts scripts/ci/doc-trace-processor.ts baseline-callback-source/scripts/ci/
           cp web/docResponsivenessEvidence.ts baseline-callback-source/web/
-          cp src/ui/docIdleEpisode.ts src/ui/nativeDocFlush.ts baseline-callback-source/src/ui/
+          cp src/ui/docIdleEpisode.ts src/ui/nativeDocFlush.ts src/ui/nativeDocFlushDiagnostic.ts baseline-callback-source/src/ui/
           cp playwright.config.ts baseline-callback-source/playwright.config.ts
           cp package-lock.json baseline-callback-source/package-lock.json
       - name: Install and build baseline with source maps
@@ -787,6 +918,7 @@ jobs:
         sync-transition,
         doc-responsiveness,
         doc-callback-lifetimes,
+        doc-editing-mobile,
         restore-timing,
       ]
     if: always()
@@ -806,7 +938,7 @@ jobs:
           COVERAGE_PLAN: ${{ needs.changes.outputs.plan }}
           COVERAGE_PLAN_SHA256: ${{ needs.changes.outputs.plan_sha256 }}
           COVERAGE_GATE_RESULTS: '{"typecheck":"${{ needs.typecheck.result }}","unit-tests":"${{ needs.unit-tests.result }}","lib-tests":"${{ needs.lib-tests.result }}"}'
-          COVERAGE_RESULTS: '{"backlog":"${{ needs.backlog.result }}","pull-request":"${{ needs.pull-request.result }}","lint":"${{ needs.lint.result }}","typecheck":"${{ needs.typecheck.outputs.evidence }}","unit-tests":"${{ needs.unit-tests.outputs.evidence }}","lib-test-run":"${{ needs.lib-test-run.result }}","playwright-run":"${{ needs.playwright-run.result }}","container-smoke":"${{ needs.container-smoke.result }}","restore-timing":"${{ needs.restore-timing.result }}","sync-transition":"${{ needs.sync-transition.result }}","doc-responsiveness":"${{ needs.doc-responsiveness.result }}","doc-callback-lifetimes":"${{ needs.doc-callback-lifetimes.result }}"}'
+          COVERAGE_RESULTS: '{"backlog":"${{ needs.backlog.result }}","pull-request":"${{ needs.pull-request.result }}","lint":"${{ needs.lint.result }}","typecheck":"${{ needs.typecheck.outputs.evidence }}","unit-tests":"${{ needs.unit-tests.outputs.evidence }}","lib-test-run":"${{ needs.lib-test-run.result }}","playwright-run":"${{ needs.playwright-run.result }}","container-smoke":"${{ needs.container-smoke.result }}","restore-timing":"${{ needs.restore-timing.result }}","sync-transition":"${{ needs.sync-transition.result }}","doc-responsiveness":"${{ needs.doc-responsiveness.result }}","doc-callback-lifetimes":"${{ needs.doc-callback-lifetimes.result }}","doc-editing-mobile":"${{ needs.doc-editing-mobile.result }}"}'
         run: node scripts/ci/coverage-result.ts browser
       - name: Retain coverage result
         if: always()

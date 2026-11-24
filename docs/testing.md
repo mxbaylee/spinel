@@ -82,7 +82,58 @@ test invented to mirror the prose.
   traces. Performance acceptance uses its existing unprofiled first attempts;
   profiled diagnostics and successful retries cannot replace those samples.
 
+## 🔬 Callback trace conversion
+
+The callback lifetime project keeps its original420-second observation budget,
+categories,1GiB non-overwriting buffer and full native workload. SPN-144's guarded
+candidate retains original protobuf separately from derived Chrome JSON; both
+have stored/decoded hashes. Complete framing, pinned converter identity, strict
+parser statistics, source attribution and owned cleanup are all required. See
+[the implementation and acceptance checkpoint](implementation/SPN-144.md#-guarded-integration-decision).
+
+CI prepares the official pinned converter before either paired observation. For
+local capability work, explicitly install it into a new task-owned path with
+`node scripts/ci/doc-trace-processor.ts <new-binary-path>` and set
+`SPINEL_TRACE_PROCESSOR` to that absolute path. The harness verifies its platform
+hash before execution and never downloads during an observation. Only the pinned
+Linux x64 CI and macOS arm64 development binaries are supported. Installing the
+tool or passing a small retained-data probe does not establish native acceptance.
+
 ## Give each browser execution a reason
+
+### 🔌 Test HTTP client connection lifetime
+
+Spinel's pinned Playwright API request client uses a fresh HTTP(S) connection for
+each request. A server event-loop stall can otherwise let its idle timeout close
+a pooled socket before it reads the client's queued request. The narrow,
+version/hash-checked `scripts/dependencies/patch-playwright.ts` patch runs in
+postinstall; it does not change native browser connections, server timeouts,
+assertions or retries. Production-only installs may omit Playwright entirely.
+
+`scripts/dependencies/patch-playwright.test.ts` runs the real original and patched
+clients against a separate process using Spinel's HTTP server factory. It injects
+a bounded server stall across the unchanged idle deadline, requires the original
+reset and the patched success, and proves a reset POST is not replayed and HTTP
+503 still reaches the test. HTTPS independently checks the second agent branch.
+On a Playwright upgrade, review this patch and its negative control; do not
+silently drop the version/hash guard. The original hosted incident has no socket
+trace, so the reproduced mechanism must not be presented as packet-level proof
+of that historical event. See [SPN-168](implementation/SPN-168.md).
+
+### 🔄 Offline-upgrade worker ownership
+
+The existing Chromium `offline-upgrade` project owns emitted-worker activation.
+Its SPN-145 response-lifetime comparison uses the actual historical worker's
+`PREPARE_SHELL`/`cache.put` owner and the shared real HTTP proxy; it must not be
+replaced with an injected `waitUntil` or mock worker. The retained-client scenario
+keeps pending content, lazy assets, the missing-asset negative case, strict
+activation, access checks and existing budgets. Passive first-attempt worker
+diagnostics must be complete and owned cleanup must preserve the first failure.
+See [the repair and historical attribution limit](implementation/SPN-145.md#-original-incident-disposition-and-new-evidence).
+Retries and later green runs cannot establish the historical cause or waive a
+failed current-head worker.
+
+### Environment ownership
 
 Before adding a project, tag or duplicate execution, record which contract each
 environment owns: development/production, HTTP/HTTPS, ordinary/instrumented
@@ -103,7 +154,97 @@ removed execution and any pre-existing runtime inapplicability. Collection prove
 selection, not runtime behavior. A lower count or duration alone never justifies
 deletion, and emulation must not be described as physical-device evidence.
 
+## 🔌 Revocation closure evidence
+
+The revoked-login journey proves closure with a relay witness, not a browser event
+(see [collaboration](collaboration.md#access-lifecycle-and-recovery)). Keep these
+rules when changing it:
+
+- Navigation, a close-method call, a 401, a Playwright or CDP close event and
+  cleanup-only closure are never evidence by themselves. Only the physical close
+  of the exact tunnel counts, whoever initiated it (the relay also records whether
+  the server ended first, as a receipt); a reset or crashed server is marked failed and is never evidence.
+- Receipts keep ordinals, relative monotonic times, event kinds, counts and
+  status only: never URLs, request IDs, cookies, tickets, frame payloads or
+  authored content. They are bounded and are attached before cleanup, which is
+  reported separately from the first failure.
+- The 5,000 ms closure deadline, 60-second journey budget and fail-on-flaky gate
+  stay as they are. The two-login case runs once at retry zero in each existing
+  `development` and `production` owner, and configured retries are separate
+  failures. No sleeps, navigation blocker or deadline increase.
+- `e2e/socket-relay.spec.ts` needs only a browser, yet runs in both of those
+  owners on purpose: it is a small, app-independent boundary check and a failure
+  in either owner is a failure of that build's run.
+- In development Vite's HMR socket is refused as `unexpected`, so that count can
+  be non-zero there; production asserts zero.
+- Match is by count: the relay and CDP must agree how many sockets were
+  established before revocation, and every one of them must be closed with no
+  new one afterwards. A tunnel is not bound to one specific CDP socket, and when
+  navigation wins the relay proves physical closure but not who initiated it.
+
+## 🎲 Smoke flake diagnostics
+
+A smoke case that fails its first attempt and passes on retry still fails the job; find the
+cause, do not add retries or budgets. The CI reporter `e2e/reset-diagnostics-reporter.ts`
+(see [SPN-166](implementation/SPN-166.md)) logs one content-free `econnreset-diagnostic` line per
+connection reset, paired with the owned server's state. The `offline-upgrade` timeout error lists
+the held and pending Web Locks and the old worker's unfinished events
+(`e2e/worker-inflight.ts`, [SPN-167](implementation/SPN-167.md)). A later native
+capture identified Chromium restart/idle starvation;
+[SPN-169](implementation/SPN-169.md) was resolved **won't fix** as an upstream
+browser defect. This does not waive a failed test or change its activation budget.
+A wait that guards a page load shares that load's one budget:
+do not put a shorter default `expect` deadline ahead of it. These diagnostics are observe-only.
+
 ## Keep coverage routing complete
+
+### ⌨️ Request mobile Doc editing explicitly
+
+SPN-170's new editing matrix is **default off**. The existing phone, access,
+offline and performance owners keep their automatic coverage. Desktop editing
+is automatic in `e2e/documents.spec.ts` under `development` and `production`;
+both test builds enable the existing read-only selection observer.
+
+- **PR request:** add exactly `ci-doc-editing-mobile` to a same-repository PR.
+  The `labeled` event requests one run on the immutable head recorded in that
+  event. A later push, reopen or metadata edit with the label still present does
+  not request another run. Removing and re-adding it is a new explicit request;
+  preserve the earlier result and diagnose any failure before requesting again.
+- **Manual request:** run **💎 CI**, choose the intended branch/revision, and
+  explicitly select `run_doc_editing_mobile=true` (default `false`). The plan
+  records the resolved SHA. An unrelated manual/full run leaves this suite off.
+- **Local request**, using the pinned Node version and the shared serial/RSS
+  watchdog described in the [runbook](run-backlog.md#2-implement-one-ticket):
+
+  ```bash
+  VITE_SYNC_EVIDENCE=0 VITE_DOC_SELECTION_EVIDENCE=1 npm run build
+  SPINEL_DOC_EDITING_MOBILE=1 SPINEL_E2E_PROJECT=doc-editing-mobile npx playwright test --project=doc-editing-mobile
+  ```
+
+`@doc-editing-mobile` is excluded from every existing automatic owner. Only the
+exact runtime flag `SPINEL_DOC_EDITING_MOBILE=1` makes the dedicated project
+available. `ci-full`, `ci-performance`, schedules, main pushes, unknown diffs and
+full-plan fallbacks never enable it. Desktop editing is not behind this flag.
+
+The selected owner uses the production build with Chromium 390×844 touch/mobile
+emulation. It records native body/caret observations after real input, saved and
+reopened content, and separately labeled synthetic deletion events. It does not
+open a phone OS keyboard. The [bounded own-device checklist](implementation/SPN-170.md#-bounded-own-device-check)
+remains separate evidence.
+
+Inspect `ci-plan.json`, `doc-editing-mobile-result.json`, the exact collection
+and Playwright JSON reports, and each `doc-editing-evidence.json`. The worker
+checks out the requested source, permits no retries, and requires every selected
+case to pass on its first attempt. Missing cases, skips, cancellations, failed
+workers and source mismatches cannot pass the **Playwright smoke** aggregate.
+Unrequested work is explicitly inapplicable, never a mobile pass.
+
+The `doc-editing-mobile-evidence` artifact retains reports and first-failure
+traces. The separate `doc-editing-mobile-build` artifact contains the successful
+build's `dist/` and `doc-editing-mobile-build-revision.txt`, even if later editing
+tests fail. Both have 30-day retention; retain essential results and exact
+identities in the PR/implementation record before expiry. Neither artifact
+contains databases or authorizes deploying to production.
 
 Most new tests belong to an existing suite and need no new CI job. Check that
 their source and shared dependencies select that suite automatically. The
@@ -149,7 +290,7 @@ is the backstop, not a substitute for applicable PR coverage. Keep the seven
 stable required check names and isolated edit concurrency. PR edits currently
 run full validation. 🪶 [SPN-129's proposed metadata optimization was retired](implementation/SPN-129.md#retire-the-metadata-validation-system);
 there is no pending router setup or exception to these gates. Broad soak, retained
-transition, container, BrowserStack and live-provider scopes are not permission
+transition, container and live-provider scopes are not permission
 to narrow additional coverage without equivalent evidence.
 
 ## Verify once at the right scope and preserve the result

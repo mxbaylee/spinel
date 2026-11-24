@@ -1,0 +1,722 @@
+{
+  "schemaVersion": 1,
+  "repository": "mxbaylee/spinel",
+  "pullRequest": 229,
+  "purpose": "Bounded proof for the cached shared-folder preparation prerequisite found while validating SPN-128.",
+  "scope": {
+    "permanentChange": "Four added lines in openPreparedFolder: two explanatory comments and two assertions for loaded Folder contents and the empty-folder message. All current callers prepare initially empty folders.",
+    "meaning": "The contents signal proves synchronous view readiness before disconnect. It is not a new persistence or durability fence. Existing full-journey offline reload, content, authority, native-editor continuity and exactly-once publication assertions remain unchanged.",
+    "historicalFailureRecord": "docs/implementation/evidence/SPN-128-sync-production-first-attempt.json",
+    "historicalJobId": 124963417224,
+    "historicalArtifactId": 13100236508,
+    "historicalArtifactSha256": "40bee811d07d682add00956e8a6a7a0ad81fa8d99c8ca3a3ba14d191c4a5fc17",
+    "historicalAttributionLimit": "The original 180048ms CI timeout is retained, including its 21713ms passing automatic retry. Its first-attempt trace is absent. The controlled probes establish a real preparation race consistent with the original evidence; they do not reconstruct its exact interleaving or prove that teardown alone caused it.",
+    "remainingScope": "SPN-120 retains the broader fixture readiness, diagnostic and teardown audit. These bounded local cases do not replace final-head CI. SPN-116 separate actual process-restart journey is unchanged."
+  },
+  "predeclaredBudget": {
+    "heldFolderFreshContextProbes": 3,
+    "correctedCompleteFirstAttempts": 3,
+    "withheldReadinessNegativeAttempts": 1,
+    "retries": 0,
+    "unchangedBlindReruns": 0,
+    "additionalAttempts": 0
+  },
+  "source": {
+    "baseCommit": "f3bdf95e1355de5bebf8ee64332b31201555b9c5",
+    "specPath": "e2e/offline-creation.spec.ts",
+    "sourceIdentityMethod": "Contemporaneously retained spec copies and reproducible patches. Playwright reports contain actualWorkers metadata but no source hash; no report-embedded source identity is claimed.",
+    "sources": {
+      "unfixed": {
+        "path": "offline-creation.unfixed.ts",
+        "bytes": 51420,
+        "sha256": "85508f8d12a8216c29dc9fb43a87e4fa2576cdde7c3c5296a9a1672011fb5f0a"
+      },
+      "held": {
+        "path": "offline-creation.held.ts",
+        "bytes": 54311,
+        "sha256": "33e632aaa016eaa8b856146d3baf9b9445384784e11ab123c914df819f42c543"
+      },
+      "fixed": {
+        "path": "offline-creation.fixed.ts",
+        "bytes": 51773,
+        "sha256": "09de62743ff21514333113e1ebafc9b6714167e52084dc8cb70fc3cda074c0c0"
+      },
+      "withheld": {
+        "path": "offline-creation.withheld.ts",
+        "bytes": 53263,
+        "sha256": "aea6e94988f18756749fba314448f0dba8829ca1c3cb543fbf1feeb0cdc5a4ee"
+      }
+    },
+    "patches": [
+      {
+        "path": "docs/implementation/evidence/SPN-128-held-folder-probe.patch",
+        "bytes": 5041,
+        "sha256": "c598fce946f3d01f851af2047d3898b873baf3ea3c614260e42aef2b4ed08f5b"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-128-readiness-fix.patch",
+        "bytes": 946,
+        "sha256": "70aacc0fc62048048707d392813d94c3061a99f462546dc8f669102b4517baa4"
+      },
+      {
+        "path": "docs/implementation/evidence/SPN-128-withheld-readiness.patch",
+        "bytes": 2889,
+        "sha256": "7fa58504cb9fccf9a7c42838daba8e5c74f23c0d5a83c9e70a85c4b740815fbb"
+      }
+    ],
+    "reproduction": [
+      "Use baseCommit for application/runtime source. For before-fix probes apply SPN-128-held-folder-probe.patch to that base spec and set SPINEL_READINESS_PROBE=held-folder.",
+      "For complete corrected journeys restore the base spec and apply SPN-128-readiness-fix.patch. Run without SPINEL_READINESS_PROBE.",
+      "For the one negative case apply SPN-128-withheld-readiness.patch to the corrected spec and set SPINEL_READINESS_PROBE=withheld-readiness.",
+      "Restore the corrected spec after the negative case. The maintained production test contains no probe flags or interception additions."
+    ],
+    "unchangedRuntimeFiles": [
+      {
+        "path": "e2e/offline-fixture.ts",
+        "bytes": 21107,
+        "sha256": "ebec52f2752862e882429fd19b73b3064b364fbd332fb4960f76ed7011374736"
+      },
+      {
+        "path": "e2e/offline-creation-network.ts",
+        "bytes": 6166,
+        "sha256": "c910caaac969eacbe57aa59f3ede74bcf82db2353379a230be7b5ee52768d1e9"
+      },
+      {
+        "path": "web/Dashboard.tsx",
+        "bytes": 57624,
+        "sha256": "507fe70c30dd531e5fdfc157a7a0d8b90fcee9f8d28d57bb88b4ac53f1ff9655"
+      },
+      {
+        "path": "playwright.config.ts",
+        "bytes": 10232,
+        "sha256": "d55ba892cdf53d5b75cb76882673813bdeca4497f378a52212e9158abcdcaf37"
+      },
+      {
+        "path": "package.json",
+        "bytes": 4349,
+        "sha256": "a817f6510747557eeaaab490fb70d209bedb0a646ade837f87018a244ffcbe53"
+      },
+      {
+        "path": "package-lock.json",
+        "bytes": 361925,
+        "sha256": "9db82cdb7dda6b60eae51cc12a6ab82b35dcc8304ce75d083ccfda6d94349adf"
+      },
+      {
+        "path": "scripts/serial.ts",
+        "bytes": 5532,
+        "sha256": "4a445fa1346633085a36e162015b97c11932064e0314ceb383082fd941e6c1e1"
+      }
+    ],
+    "concurrentUnrelatedWorkingChanges": "Implementation/evidence documentation and the CI apt-mirror helper/test were being prepared separately. They are outside the application build and selected browser journey."
+  },
+  "environment": {
+    "node": "26.12.1",
+    "playwright": "1.64.1",
+    "browser": "Chrome Headless Shell",
+    "browserVersion": "156.0.8078.4",
+    "playwrightChromiumRevision": "1248",
+    "platform": "linux",
+    "browserBinary": "/tmp/spn098-browsers/chromium_headless_shell-1248/chrome-headless-shell-linux64/chrome-headless-shell",
+    "browserAvailability": "Matching browser already cached; no browser installation or download needed.",
+    "testServer": "http://localhost:3105",
+    "reuseExistingServer": false,
+    "isolation": "Each repeat creates a fresh isolated browser.newContext plus a fresh fixture DB and account. Playwright may reuse its Chromium process; separate persistent disk profiles or process restarts are not claimed.",
+    "resourcePolicy": {
+      "serialized": true,
+      "exclusiveLocalHeavyWorkloadSlot": true,
+      "processTreeRssLimitMiB": 2048,
+      "hardElapsedLimitSeconds": 475,
+      "rssSampleIntervalSeconds": 0.5,
+      "minimumAvailableMemoryAtStartMiB": 3072,
+      "minimumAvailableMemoryDuringRunMiB": 1024,
+      "hostEscalation": true,
+      "hostEscalationReason": "Use the host PID namespace for process-tree RSS and the shared serial lock; sandbox process IDs do not match the host /proc inventory.",
+      "watchdog": {
+        "path": "/workspace/scratch/2ba2d88e60a2/spn128-watchdog.py",
+        "bytes": 1648,
+        "sha256": "73420724b5d11dad444e0509312227c529db163358f0bec310de781c65226421"
+      }
+    }
+  },
+  "build": {
+    "command": {
+      "cwd": "/workspace/scratch/2ba2d88e60a2/spinel",
+      "environment": {
+        "VITE_SYNC_EVIDENCE": "1",
+        "NODE_OPTIONS": "--max-old-space-size=768 --max-semi-space-size=8"
+      },
+      "argv": [
+        "python",
+        "/workspace/scratch/2ba2d88e60a2/spn128-watchdog.py",
+        "/tmp/node-v26.12.1-linux-x64/bin/node",
+        "scripts/serial.ts",
+        "/tmp/node-v26.12.1-linux-x64/bin/node",
+        "node_modules/vite/bin/vite.js",
+        "build"
+      ],
+      "stdoutAndStderr": "/workspace/scratch/2ba2d88e60a2/validation/readiness-build.log",
+      "sandboxPermissions": "require_escalated"
+    },
+    "applicationSourceCommit": "f3bdf95e1355de5bebf8ee64332b31201555b9c5",
+    "reusedUnchangedBuildForAllPhases": true,
+    "watchdog": {
+      "exitCode": 0,
+      "peakProcessTreeRssMiB": 1514.9,
+      "elapsedSeconds": 3.54
+    },
+    "log": {
+      "path": "build.log",
+      "bytes": 4282,
+      "sha256": "3012be0ae13bbb66fbb50e2e239ca5b525af9879082ddd2cbb783a04ad6deca0"
+    },
+    "artifacts": [
+      {
+        "path": "dist/index.html",
+        "bytes": 3525,
+        "sha256": "3eb3ed8dc21308679848c715f4e4b12b151f98ba4d1204546366957882828a12"
+      },
+      {
+        "path": "dist/service-worker.js",
+        "bytes": 15394,
+        "sha256": "7ef46d24cd7c004f7b30d01892a2c7146af651f6e57beffb9e12b44d1804038b"
+      }
+    ]
+  },
+  "phases": [
+    {
+      "phase": "held",
+      "interpretation": "Controlled false-readiness reproduction; intentionally abbreviated probes, not complete journey passes.",
+      "specSourceSha256": "33e632aaa016eaa8b856146d3baf9b9445384784e11ab123c914df819f42c543",
+      "command": {
+        "cwd": "/workspace/scratch/2ba2d88e60a2/spinel",
+        "environment": {
+          "SPINEL_E2E_PROJECT": "sync-production",
+          "PLAYWRIGHT_BROWSERS_PATH": "/tmp/spn098-browsers",
+          "NODE_OPTIONS": "--max-old-space-size=256 --max-semi-space-size=8",
+          "SPINEL_READINESS_PROBE": "held-folder",
+          "PLAYWRIGHT_JSON_OUTPUT_FILE": "/workspace/scratch/2ba2d88e60a2/validation/readiness/held/test-report.json"
+        },
+        "argv": [
+          "python",
+          "/workspace/scratch/2ba2d88e60a2/spn128-watchdog.py",
+          "/tmp/node-v26.12.1-linux-x64/bin/node",
+          "scripts/serial.ts",
+          "/tmp/node-v26.12.1-linux-x64/bin/node",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "e2e/offline-creation.spec.ts",
+          "--project=sync-production",
+          "--grep",
+          "sheet: create in a cached shared folder, edit, reload twice offline and upload once$",
+          "--repeat-each=3",
+          "--retries=0",
+          "--workers=1",
+          "--reporter=line,json",
+          "--output=/workspace/scratch/2ba2d88e60a2/validation/readiness/held/output"
+        ],
+        "stdoutAndStderr": "/workspace/scratch/2ba2d88e60a2/validation/readiness-held.log",
+        "sandboxPermissions": "require_escalated"
+      },
+      "configuration": {
+        "project": "sync-production",
+        "workers": 1,
+        "repeatEach": 3,
+        "retries": 0,
+        "testTimeoutMs": 180000,
+        "assertionTimeoutMs": 5000,
+        "localFailOnFlakyTests": false
+      },
+      "reportStats": {
+        "startTime": "2026-11-01T20:50:14.161Z",
+        "duration": 33053.397000000004,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "watchdog": {
+        "exitCode": 0,
+        "peakProcessTreeRssMiB": 1708.8,
+        "elapsedSeconds": 34.8
+      },
+      "report": {
+        "path": "held/test-report.json",
+        "bytes": 13310,
+        "sha256": "a5ca35c9e67714858f40fe21988d8f8b52b2fb1ae474fb87be8f19fb4ab76d6d"
+      },
+      "commandLog": {
+        "path": "held/command.log",
+        "bytes": 1494,
+        "sha256": "6183c7037750d8ee6da1e4bd88d69646a089db6b9d545ff164d7145e4a671a39"
+      },
+      "attempts": [
+        {
+          "repeatEachIndex": 0,
+          "retry": 0,
+          "startTime": "2026-11-01T20:50:23.002Z",
+          "durationMs": 7076,
+          "status": "passed",
+          "expectedStatus": "passed",
+          "reportClassification": "expected",
+          "errors": [],
+          "diagnostics": {
+            "observedPageCount": 1,
+            "applicationErrors": [],
+            "consoleErrorCounts": {
+              "Failed to load resource: net::ERR_INTERNET_DISCONNECTED": 1
+            },
+            "offlineCreatePostCounts": {
+              "blocked": 1,
+              "forwarded": 0
+            }
+          },
+          "supplementaryArtifacts": [
+            {
+              "path": "held/output/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production/readiness-probe.json",
+              "bytes": 473,
+              "sha256": "eceb46db8d883807d74799dce48b19d392514ae0b2b58d6633b7f572370d0b95"
+            },
+            {
+              "path": "held/output/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production/sync-diagnostics.json",
+              "bytes": 13145,
+              "sha256": "b70d1c7798ab21eddb319fda15abacea0b5c2812fba1af1ab3de16f4ebb9408a"
+            }
+          ],
+          "readinessProbe": {
+            "probe": "held-folder",
+            "repeatEachIndex": 0,
+            "retry": 0,
+            "stage": "false-readiness-reproduced",
+            "folderRequestHeld": true,
+            "readyReached": true,
+            "beforeDisconnect": {
+              "headingVisible": true,
+              "newButtons": 1,
+              "contents": 0,
+              "loadingVisible": true,
+              "folderViewPrepared": false,
+              "sharedFolderAccess": "editor"
+            },
+            "afterDisconnect": {
+              "missing": true,
+              "newButtons": 0
+            },
+            "disconnectProbeSent": true,
+            "created": false
+          }
+        },
+        {
+          "repeatEachIndex": 1,
+          "retry": 0,
+          "startTime": "2026-11-01T20:50:32.106Z",
+          "durationMs": 5511,
+          "status": "passed",
+          "expectedStatus": "passed",
+          "reportClassification": "expected",
+          "errors": [],
+          "diagnostics": {
+            "observedPageCount": 1,
+            "applicationErrors": [],
+            "consoleErrorCounts": {
+              "Failed to load resource: net::ERR_INTERNET_DISCONNECTED": 1
+            },
+            "offlineCreatePostCounts": {
+              "blocked": 1,
+              "forwarded": 0
+            }
+          },
+          "supplementaryArtifacts": [
+            {
+              "path": "held/output/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production-repeat1/readiness-probe.json",
+              "bytes": 473,
+              "sha256": "1071bd1221735be8a3cc7382c02cb87ec19b1e1805fe16369ef2e8108b184f14"
+            },
+            {
+              "path": "held/output/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production-repeat1/sync-diagnostics.json",
+              "bytes": 13141,
+              "sha256": "914c6852170e50c67213f023fae65bd8fb47cfe374b2da8dce1671ccd4a21dee"
+            }
+          ],
+          "readinessProbe": {
+            "probe": "held-folder",
+            "repeatEachIndex": 1,
+            "retry": 0,
+            "stage": "false-readiness-reproduced",
+            "folderRequestHeld": true,
+            "readyReached": true,
+            "beforeDisconnect": {
+              "headingVisible": true,
+              "newButtons": 1,
+              "contents": 0,
+              "loadingVisible": true,
+              "folderViewPrepared": false,
+              "sharedFolderAccess": "editor"
+            },
+            "afterDisconnect": {
+              "missing": true,
+              "newButtons": 0
+            },
+            "disconnectProbeSent": true,
+            "created": false
+          }
+        },
+        {
+          "repeatEachIndex": 2,
+          "retry": 0,
+          "startTime": "2026-11-01T20:50:41.132Z",
+          "durationMs": 5786,
+          "status": "passed",
+          "expectedStatus": "passed",
+          "reportClassification": "expected",
+          "errors": [],
+          "diagnostics": {
+            "observedPageCount": 1,
+            "applicationErrors": [],
+            "consoleErrorCounts": {
+              "Failed to load resource: net::ERR_INTERNET_DISCONNECTED": 1
+            },
+            "offlineCreatePostCounts": {
+              "blocked": 1,
+              "forwarded": 0
+            }
+          },
+          "supplementaryArtifacts": [
+            {
+              "path": "held/output/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production-repeat2/readiness-probe.json",
+              "bytes": 473,
+              "sha256": "ca2b8d49fa9626b1887932900d63180336e4c4d57d3e8405c5c539822f5fc3a8"
+            },
+            {
+              "path": "held/output/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production-repeat2/sync-diagnostics.json",
+              "bytes": 13145,
+              "sha256": "40f4a651929557948d809fd1437e9d859a84233d2ac427333af89a4a86c3721f"
+            }
+          ],
+          "readinessProbe": {
+            "probe": "held-folder",
+            "repeatEachIndex": 2,
+            "retry": 0,
+            "stage": "false-readiness-reproduced",
+            "folderRequestHeld": true,
+            "readyReached": true,
+            "beforeDisconnect": {
+              "headingVisible": true,
+              "newButtons": 1,
+              "contents": 0,
+              "loadingVisible": true,
+              "folderViewPrepared": false,
+              "sharedFolderAccess": "editor"
+            },
+            "afterDisconnect": {
+              "missing": true,
+              "newButtons": 0
+            },
+            "disconnectProbeSent": true,
+            "created": false
+          }
+        }
+      ]
+    },
+    {
+      "phase": "corrected",
+      "interpretation": "Complete original sheet/shared-folder journey, with only the permanent readiness assertions added.",
+      "specSourceSha256": "09de62743ff21514333113e1ebafc9b6714167e52084dc8cb70fc3cda074c0c0",
+      "command": {
+        "cwd": "/workspace/scratch/2ba2d88e60a2/spinel",
+        "environment": {
+          "SPINEL_E2E_PROJECT": "sync-production",
+          "PLAYWRIGHT_BROWSERS_PATH": "/tmp/spn098-browsers",
+          "NODE_OPTIONS": "--max-old-space-size=256 --max-semi-space-size=8",
+          "PLAYWRIGHT_JSON_OUTPUT_FILE": "/workspace/scratch/2ba2d88e60a2/validation/readiness/corrected/test-report.json"
+        },
+        "argv": [
+          "python",
+          "/workspace/scratch/2ba2d88e60a2/spn128-watchdog.py",
+          "/tmp/node-v26.12.1-linux-x64/bin/node",
+          "scripts/serial.ts",
+          "/tmp/node-v26.12.1-linux-x64/bin/node",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "e2e/offline-creation.spec.ts",
+          "--project=sync-production",
+          "--grep",
+          "sheet: create in a cached shared folder, edit, reload twice offline and upload once$",
+          "--repeat-each=3",
+          "--retries=0",
+          "--workers=1",
+          "--reporter=line,json",
+          "--output=/workspace/scratch/2ba2d88e60a2/validation/readiness/corrected/output"
+        ],
+        "stdoutAndStderr": "/workspace/scratch/2ba2d88e60a2/validation/readiness-corrected.log",
+        "sandboxPermissions": "require_escalated"
+      },
+      "configuration": {
+        "project": "sync-production",
+        "workers": 1,
+        "repeatEach": 3,
+        "retries": 0,
+        "testTimeoutMs": 180000,
+        "assertionTimeoutMs": 5000,
+        "localFailOnFlakyTests": false
+      },
+      "reportStats": {
+        "startTime": "2026-11-01T20:52:03.369Z",
+        "duration": 80584.106,
+        "expected": 3,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "watchdog": {
+        "exitCode": 0,
+        "peakProcessTreeRssMiB": 2031.9,
+        "elapsedSeconds": 81.88
+      },
+      "report": {
+        "path": "corrected/test-report.json",
+        "bytes": 13369,
+        "sha256": "692fc88ab04ce46f2eeed62c4c04d39d230b0d6044aca51a755cc164562a6687"
+      },
+      "commandLog": {
+        "path": "corrected/command.log",
+        "bytes": 1494,
+        "sha256": "fac39795e1d6640902877c1d575f1a747c1d80f1d0b7f72ddf49723743e25d55"
+      },
+      "attempts": [
+        {
+          "repeatEachIndex": 0,
+          "retry": 0,
+          "startTime": "2026-11-01T20:52:10.150Z",
+          "durationMs": 23894,
+          "status": "passed",
+          "expectedStatus": "passed",
+          "reportClassification": "expected",
+          "errors": [],
+          "diagnostics": {
+            "observedPageCount": 1,
+            "applicationErrors": [],
+            "consoleErrorCounts": {
+              "Failed to load resource: net::ERR_INTERNET_DISCONNECTED": 9
+            },
+            "offlineCreatePostCounts": {
+              "blocked": 1,
+              "forwarded": 1
+            }
+          },
+          "supplementaryArtifacts": [
+            {
+              "path": "corrected/output/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production/sync-diagnostics.json",
+              "bytes": 25272,
+              "sha256": "d14af198f4391f4f783287ed97ea068d569fc78a6d53020d65d75d1432a7d171"
+            }
+          ]
+        },
+        {
+          "repeatEachIndex": 1,
+          "retry": 0,
+          "startTime": "2026-11-01T20:52:35.861Z",
+          "durationMs": 22051,
+          "status": "passed",
+          "expectedStatus": "passed",
+          "reportClassification": "expected",
+          "errors": [],
+          "diagnostics": {
+            "observedPageCount": 1,
+            "applicationErrors": [],
+            "consoleErrorCounts": {
+              "Failed to load resource: net::ERR_INTERNET_DISCONNECTED": 7
+            },
+            "offlineCreatePostCounts": {
+              "blocked": 1,
+              "forwarded": 1
+            }
+          },
+          "supplementaryArtifacts": [
+            {
+              "path": "corrected/output/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production-repeat1/sync-diagnostics.json",
+              "bytes": 24776,
+              "sha256": "38ea66d8de871d27a6ffd6064bb524f4fd50413a6f5c22d6861d5d4abce74bec"
+            }
+          ]
+        },
+        {
+          "repeatEachIndex": 2,
+          "retry": 0,
+          "startTime": "2026-11-01T20:52:59.537Z",
+          "durationMs": 24135,
+          "status": "passed",
+          "expectedStatus": "passed",
+          "reportClassification": "expected",
+          "errors": [],
+          "diagnostics": {
+            "observedPageCount": 1,
+            "applicationErrors": [],
+            "consoleErrorCounts": {
+              "Failed to load resource: net::ERR_INTERNET_DISCONNECTED": 8
+            },
+            "offlineCreatePostCounts": {
+              "blocked": 1,
+              "forwarded": 1
+            }
+          },
+          "supplementaryArtifacts": [
+            {
+              "path": "corrected/output/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production-repeat2/sync-diagnostics.json",
+              "bytes": 24954,
+              "sha256": "cb07132cb6c0395a708e2ac83847419173de74a4f441b5a6525769fb24774367"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "phase": "withheld",
+      "interpretation": "Intentionally withheld folder response. Actual unexpected test failure and command exit 1, retained as negative evidence; not marked expected-to-fail in Playwright.",
+      "specSourceSha256": "aea6e94988f18756749fba314448f0dba8829ca1c3cb543fbf1feeb0cdc5a4ee",
+      "command": {
+        "cwd": "/workspace/scratch/2ba2d88e60a2/spinel",
+        "environment": {
+          "SPINEL_E2E_PROJECT": "sync-production",
+          "PLAYWRIGHT_BROWSERS_PATH": "/tmp/spn098-browsers",
+          "NODE_OPTIONS": "--max-old-space-size=256 --max-semi-space-size=8",
+          "SPINEL_READINESS_PROBE": "withheld-readiness",
+          "PLAYWRIGHT_JSON_OUTPUT_FILE": "/workspace/scratch/2ba2d88e60a2/validation/readiness/withheld/test-report.json"
+        },
+        "argv": [
+          "python",
+          "/workspace/scratch/2ba2d88e60a2/spn128-watchdog.py",
+          "/tmp/node-v26.12.1-linux-x64/bin/node",
+          "scripts/serial.ts",
+          "/tmp/node-v26.12.1-linux-x64/bin/node",
+          "node_modules/@playwright/test/cli.js",
+          "test",
+          "e2e/offline-creation.spec.ts",
+          "--project=sync-production",
+          "--grep",
+          "sheet: create in a cached shared folder, edit, reload twice offline and upload once$",
+          "--repeat-each=1",
+          "--retries=0",
+          "--workers=1",
+          "--reporter=line,json",
+          "--output=/workspace/scratch/2ba2d88e60a2/validation/readiness/withheld/output"
+        ],
+        "stdoutAndStderr": "/workspace/scratch/2ba2d88e60a2/validation/readiness-withheld.log",
+        "sandboxPermissions": "require_escalated"
+      },
+      "configuration": {
+        "project": "sync-production",
+        "workers": 1,
+        "repeatEach": 1,
+        "retries": 0,
+        "testTimeoutMs": 180000,
+        "assertionTimeoutMs": 5000,
+        "localFailOnFlakyTests": false
+      },
+      "reportStats": {
+        "startTime": "2026-11-01T20:55:05.631Z",
+        "duration": 32595.182999999997,
+        "expected": 0,
+        "skipped": 0,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "watchdog": {
+        "exitCode": 1,
+        "peakProcessTreeRssMiB": 1692.1,
+        "elapsedSeconds": 45.17
+      },
+      "report": {
+        "path": "withheld/test-report.json",
+        "bytes": 16057,
+        "sha256": "9406bb08442c7e894cbe8aaa0005c50fef550aa60e5261e214b8feb6c05c64f7"
+      },
+      "commandLog": {
+        "path": "withheld/command.log",
+        "bytes": 3144,
+        "sha256": "a0da2a544db21f13887989feb914534d2acb50f765f6d536c7838cafe1c76f43"
+      },
+      "attempts": [
+        {
+          "repeatEachIndex": 0,
+          "retry": 0,
+          "startTime": "2026-11-01T20:55:25.734Z",
+          "durationMs": 12224,
+          "status": "failed",
+          "expectedStatus": "passed",
+          "reportClassification": "unexpected",
+          "errors": [
+            {
+              "location": {
+                "file": "e2e/offline-creation.spec.ts",
+                "column": 84,
+                "line": 138
+              },
+              "message": "Error: expect(locator).toHaveCount(expected) failed\n\nLocator:  getByRole('list', { name: 'Folder contents', exact: true })\nExpected: 1\nReceived: 0\nTimeout:  5000ms\n\nCall log:\n  - Expect \"toHaveCount\" getByRole('list', { name: 'Folder contents', exact: true }) with timeout 5000ms\n  - waiting for getByRole('list', { name: 'Folder contents', exact: true })\n    14 × locator resolved to 0 elements\n       - unexpected value \"0\"\n\n\n  136 |   // The heading and New can use the shared-list row while the folder request\n  137 |   // is still pending. Load this empty folder's actual contents before disconnecting.\n> 138 |   await expect(f.page.getByRole('list', { name: 'Folder contents', exact: true })).toHaveCount(1);\n      |                                                                                    ^\n  139 |   await expect(f.page.getByText('This folder is empty.', { exact: true })).toBeVisible();\n  140 | }\n  141 |\n    at openPreparedFolder (e2e/offline-creation.spec.ts:138:84)\n    at e2e/offline-creation.spec.ts:431:11"
+            }
+          ],
+          "diagnostics": {
+            "observedPageCount": 1,
+            "applicationErrors": [],
+            "consoleErrorCounts": {
+              "Failed to load resource: net::ERR_INTERNET_DISCONNECTED": 1
+            },
+            "offlineCreatePostCounts": {
+              "blocked": 0,
+              "forwarded": 0
+            }
+          },
+          "supplementaryArtifacts": [
+            {
+              "path": "withheld/output/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production/error-context.md",
+              "bytes": 10580,
+              "sha256": "5e74517508192801c8278afb9ae8b1bdfcab30dba960ed366d207e85867de4f5"
+            },
+            {
+              "path": "withheld/output/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production/readiness-probe.json",
+              "bytes": 893,
+              "sha256": "3d97778b56bb948a67da2435851a0a5f91e9c1863b9e894795501a6b9816b4fc"
+            },
+            {
+              "path": "withheld/output/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production/sync-diagnostics.json",
+              "bytes": 13164,
+              "sha256": "61b8ff37262b6debae26a24b49ea938705b5cd81c694037eb921903654727805"
+            },
+            {
+              "path": "withheld/output/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production/test-failed-1.png",
+              "bytes": 29576,
+              "sha256": "a2ce64aad852733b974870481af6d206ee68a6a0d1a5b4b8bd319b2a35bff36f"
+            },
+            {
+              "path": "withheld/output/offline-creation-documents-038c0-ice-offline-and-upload-once-sync-production/withheld-readiness.png",
+              "bytes": 60321,
+              "sha256": "c9067e840a710b808450e52cff80dda8fcfeee251a8b6917f5082fdc63cd2b12"
+            }
+          ],
+          "readinessProbe": {
+            "probe": "withheld-readiness",
+            "repeatEachIndex": 0,
+            "retry": 0,
+            "stage": "opening-folder",
+            "readyReached": false,
+            "folderRequestHeld": true,
+            "failure": "expect(locator).toHaveCount(expected) failed\n\nLocator:  getByRole('list', { name: 'Folder contents', exact: true })\nExpected: 1\nReceived: 0\nTimeout:  5000ms\n\nCall log:\n  - Expect \"toHaveCount\" getByRole('list', { name: 'Folder contents', exact: true }) with timeout 5000ms\n  - waiting for getByRole('list', { name: 'Folder contents', exact: true })\n    14 × locator resolved to 0 elements\n       - unexpected value \"0\"\n",
+            "disconnectProbeSent": false,
+            "created": false
+          }
+        }
+      ]
+    }
+  ],
+  "acceptance": {
+    "held": "All three probes returned from the original helper while the heading and New were available, Folder contents was absent, loading remained visible, and the persisted folder view was absent. Each then disconnected/aborted the held response and observed the missing-item state with no New control. No item was created.",
+    "corrected": "All three complete first attempts passed with one forwarded offline-create POST and one blocked outage probe each. Original native content, local offline edit/reloads, shared access, appearance, server receipt, no-remount, reconnect and exactly-once checks remained active.",
+    "negative": "The only withheld-readiness attempt failed at the new Folder contents count assertion with its existing 5000ms timeout. readyReached=false, disconnectProbeSent=false and created=false. The 12224ms whole-test duration and 45.17s watchdog elapsed time include setup/teardown and are not assertion-timeout values.",
+    "finalSpecRestoredSha256": "09de62743ff21514333113e1ebafc9b6714167e52084dc8cb70fc3cda074c0c0"
+  },
+  "evidenceRetention": {
+    "maintained": "This complete bounded attempt summary and three text patches retain source identities, commands/configuration, all test statuses/errors, controlled observations and hashes without document payloads or credentials.",
+    "supplementaryScratchRoot": "/workspace/scratch/2ba2d88e60a2/validation/readiness",
+    "supplementaryLimit": "Raw Playwright reports, diagnostics and screenshots remain supplementary scratch evidence and may expire. Their hashes are retained here. Raw native document snapshots, stored bundles, focus markup, request bodies and account/item IDs are intentionally omitted from this maintained summary.",
+    "errorNormalization": "ANSI color escapes are removed and the repository prefix is removed from stack paths. Other report error text and probe failure text are retained."
+  }
+}

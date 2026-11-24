@@ -1,12 +1,22 @@
 import { emptyAppearance } from '../shared/appearance.ts';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import {
+  applyPendingChange,
   downloadSummary,
   hasOfflineEdits,
   hasStoredEdits,
   isKnownOfflineOutbox,
   OfflineStore,
+  retainsWork,
 } from '../../web/offline/offlineStore.ts';
+import {
+  itemNeedsSync,
+  needsSync,
+  pendingBadge,
+  pendingFirst,
+  syncPhase,
+  syncSummary,
+} from '../../web/OfflineStatus.tsx';
 import type { OfflineOutbox, StoredItem } from '../../web/offline/offlineStore.ts';
 
 const account = 'protected-account';
@@ -42,7 +52,7 @@ function cleanCopy(): StoredItem {
       readOnly: false,
       revision: 3,
       revisionOffset: 0,
-      sdkVersion: '1.1.0',
+      sdkVersion: '1.3.1',
       images: [],
       snapshot: { id: itemId, body: { dataStream: 'Original notes\r\n' }, documentStyle: {} },
     },
@@ -159,6 +169,44 @@ test('only a known empty queue is clean; in-flight native work is retained even 
     uncertain: true,
     available: false,
   });
+});
+
+test('ordinary pending edits are not retained; unverifiable, failed or recovery state is', () => {
+  const ordinary = pendingCopy();
+  const summary = downloadSummary(ordinary, account, itemId);
+  expect(summary.pending).toBe(true);
+  expect(summary.retained).toBeUndefined();
+  expect(downloadSummary(cleanCopy(), account, itemId).retained).toBeUndefined();
+
+  const unknown = { ...cleanCopy(), outbox: { ...cleanOutbox(), version: 2 } as never };
+  expect(downloadSummary(unknown, account, itemId)).toMatchObject({
+    pending: true,
+    retained: true,
+  });
+
+  for (const recovery of ['recoverySnapshot', 'recoveryMissing'] as const) {
+    const failed = pendingCopy();
+    Object.assign(failed.outbox.checkpoint, {
+      failure: 'refused',
+      ...(recovery === 'recoveryMissing'
+        ? { recoveryMissing: true }
+        : { recoverySnapshot: failed.outbox.checkpoint.snapshot }),
+    });
+    const failedSummary = downloadSummary(failed, account, itemId);
+    expect(failedSummary).toMatchObject({ pending: true, retained: true });
+    expect(failedSummary.uncertain).toBeFalsy();
+  }
+
+  const withRecovery = {
+    ...pendingCopy(),
+    recovery: {
+      recoveryId: '11111111-1111-4111-8111-111111111111',
+      filename: 'Recovered notes.univer.json',
+      snapshot: cleanCopy().bundle.snapshot,
+      possibleReplayCrash: false,
+    },
+  };
+  expect(downloadSummary(withRecovery, account, itemId).retained).toBe(true);
 });
 
 const unknownQueues = [
@@ -560,4 +608,226 @@ test('download summaries retain appearance only within the verified account and 
   expect(downloadSummary(copy, account, itemId).appearance).toEqual(copy.bundle.appearance);
   expect(downloadSummary(copy, 'another-account', itemId).appearance).toBeUndefined();
   expect(downloadSummary(copy, account, 'another-item').appearance).toBeUndefined();
+});
+
+test('a pending notice drops retained only when new work starts, never on delivery', () => {
+  const row = (extra: object) =>
+    ({
+      itemId,
+      name: 'Doc',
+      kind: 'doc',
+      readOnly: false,
+      revision: 1,
+      downloadedAt: 0,
+      pending: true,
+      ...extra,
+    }) as never;
+  // Delivery keeps the mark: it is inert while nothing is pending, and a recovery record that
+  // outlives delivery keeps its Recover link until the summary is re-read.
+  expect(applyPendingChange(row({ retained: true }), false)).toMatchObject({
+    pending: false,
+    retained: true,
+  });
+  expect(needsSync(applyPendingChange(row({ retained: true }), false))).toBe(false);
+  // A new edit on a settled row starts ordinary, so the notice and not the banner shows it.
+  expect(
+    applyPendingChange(row({ pending: false, retained: true }), true).retained,
+  ).toBeUndefined();
+  expect(applyPendingChange(row({ pending: false, retained: true }), true)).toMatchObject({
+    pending: true,
+  });
+  expect(applyPendingChange(row({}), true)).toMatchObject({ pending: true });
+  // Pending to pending changes nothing about retained work.
+  expect(applyPendingChange(row({ retained: true }), true).retained).toBe(true);
+  expect(
+    applyPendingChange(row({ pending: false, retained: true, uncertain: true }), true),
+  ).toMatchObject({ pending: true, retained: true });
+  expect(applyPendingChange(row({ retained: true, uncertain: true }), false)).toMatchObject({
+    pending: true,
+    retained: true,
+  });
+});
+
+test('saving a checkpoint announces a change only when work moves into or out of recovery', async () => {
+  const scope = {
+    account,
+    item: itemId,
+    unitId: itemId,
+    revisionOffset: 0,
+  };
+  const save = async (stored: unknown, next: object) => {
+    const changes: unknown[] = [];
+    const notice = (event: Event) => changes.push((event as CustomEvent).detail);
+    (window as unknown as EventTarget).addEventListener('spinel-offline-changed', notice);
+    const f = heldStorage();
+    const saving = f.store.saveCheckpoint(
+      scope,
+      { ...pendingCopy().outbox.checkpoint, ...next } as never,
+      () => {},
+    );
+    await f.answer(stored);
+    f.complete();
+    await saving;
+    (window as unknown as EventTarget).removeEventListener('spinel-offline-changed', notice);
+    return changes;
+  };
+  // Already pending, then failed: pending is unchanged, retained flips, so a plain notice follows.
+  expect(await save(pendingCopy(), { failure: { message: 'refused' } })).toEqual([
+    { accountId: account, itemId, checkpoint: true },
+  ]);
+  // An ordinary keystroke save while pending changes neither flag and announces nothing.
+  expect(await save(pendingCopy(), {})).toEqual([]);
+});
+
+test('only ordinary pending files need to sync, and they are pinned first in a stable order', () => {
+  const row = (name: string, extra: object = {}) =>
+    ({
+      itemId: name,
+      name,
+      kind: 'doc',
+      readOnly: false,
+      revision: 1,
+      downloadedAt: 0,
+      pending: false,
+      ...extra,
+    }) as never;
+  const downloads = new Map(
+    [
+      row('folder-sibling'),
+      row('ordinary', { pending: true }),
+      row('retained', { pending: true, retained: true }),
+      row('creation', { pending: true, creation: { parentId: null, createdAt: 0 } }),
+      row('also-ordinary', { pending: true }),
+    ].map((download) => [(download as { itemId: string }).itemId, download] as const),
+  );
+  const listed = ['folder-sibling', 'ordinary', 'retained', 'creation', 'also-ordinary'].map(
+    (id) => ({ id }),
+  );
+  expect(listed.map((item) => needsSync(downloads.get(item.id)))).toEqual([
+    false,
+    true,
+    false,
+    false,
+    true,
+  ]);
+  expect(needsSync(undefined)).toBe(false);
+  expect(
+    pendingFirst(listed, (item) => needsSync(downloads.get(item.id))).map((item) => item.id),
+  ).toEqual(['ordinary', 'also-ordinary', 'folder-sibling', 'retained', 'creation']);
+  expect(
+    pendingFirst([{ id: 'unknown' }, ...listed], (item) => needsSync(downloads.get(item.id)))[0],
+  ).toEqual({ id: 'ordinary' });
+});
+
+test('only a failed, recovering or missing checkpoint retains work for a choice', () => {
+  const base = { version: 1, unitId: 'u', revision: 1, sent: null, inflight: [], buffer: [] };
+  const checkpoint = (extra: object) => ({ ...base, snapshot: {}, ...extra }) as never;
+  expect(retainsWork(checkpoint({}))).toBe(false);
+  expect(retainsWork(checkpoint({ failure: { message: 'refused' } }))).toBe(true);
+  expect(retainsWork(checkpoint({ recoverySnapshot: {} }))).toBe(true);
+  expect(retainsWork(checkpoint({ recoveryMissing: true }))).toBe(true);
+  expect(retainsWork(checkpoint({ recoveryMissing: false }))).toBe(false);
+});
+
+test('a Space needs to sync when any of its page copies does, and a plain file only by itself', () => {
+  const page = (id: string, spaceId: string, extra: object) =>
+    ({
+      itemId: id,
+      spaceId,
+      name: id,
+      kind: 'sheet',
+      readOnly: false,
+      revision: 1,
+      downloadedAt: 0,
+      pending: false,
+      ...extra,
+    }) as never;
+  const downloads = new Map(
+    [
+      page('quiet', 'space-a', {}),
+      page('edited', 'space-a', { pending: true }),
+      page('recovering', 'space-b', { pending: true, retained: true }),
+    ].map((copy) => [(copy as { itemId: string }).itemId, copy]),
+  );
+  expect(itemNeedsSync({ id: 'space-a', kind: 'space' }, downloads)).toBe(true);
+  // Retained pages ask for a choice elsewhere, so they never make their Space "needs to sync".
+  expect(itemNeedsSync({ id: 'space-b', kind: 'space' }, downloads)).toBe(false);
+  expect(itemNeedsSync({ id: 'quiet', kind: 'sheet' }, downloads)).toBe(false);
+  expect(itemNeedsSync({ id: 'edited', kind: 'sheet' }, downloads)).toBe(true);
+  // A folder is never a Space, even if an id matches a page's space.
+  expect(itemNeedsSync({ id: 'space-a', kind: 'folder' }, downloads)).toBe(false);
+});
+
+test('the sync summary separates files needing a choice from the queue, and phases follow the connection', () => {
+  const row = (name: string, extra: object = {}) =>
+    ({
+      itemId: name,
+      name,
+      kind: 'doc',
+      readOnly: false,
+      revision: 1,
+      downloadedAt: 0,
+      pending: true,
+      ...extra,
+    }) as never;
+  const downloads = [
+    row('zebra', { retained: true }),
+    row('ordinary'),
+    row('apple', { retained: true }),
+    row('also-ordinary'),
+    row('creation', { creation: { parentId: null, createdAt: 0 } }),
+    row('clean', { pending: false }),
+  ];
+  // Recover entries are sorted by name; creations, clean and ordinary files are not among them.
+  expect(syncSummary(downloads, 'offline').recover.map((entry) => entry.name)).toEqual([
+    'apple',
+    'zebra',
+  ]);
+  // Both lines can apply together; the queue counts ordinary pending files only.
+  expect(syncSummary(downloads, 'offline').queued).toEqual({ phase: 'waiting', count: 2 });
+  expect(syncSummary(downloads, 'reconnecting').queued?.phase).toBe('waiting');
+  expect(syncSummary(downloads, 'online').queued).toEqual({ phase: 'syncing', count: 2 });
+  expect(syncPhase('online')).toBe('syncing');
+  // Nothing saved: neither line.
+  expect(syncSummary([row('clean', { pending: false })], 'online')).toEqual({
+    recover: [],
+    queued: undefined,
+  });
+});
+
+test('the row badge follows creation, retained and ordinary pending work, and the connection', () => {
+  const copy = (extra: object = {}) =>
+    ({ itemId: 'x', name: 'x', kind: 'doc', readOnly: false, pending: true, ...extra }) as never;
+  expect(pendingBadge(undefined, false, 'online')).toBeNull();
+  expect(pendingBadge(copy({ creation: { parentId: null, createdAt: 0 } }), false, 'online')).toBe(
+    'not-synced',
+  );
+  expect(
+    pendingBadge(
+      copy({ creation: { parentId: null, createdAt: 0, problem: 'folder-missing' } }),
+      false,
+      'online',
+    ),
+  ).toBe('needs-attention');
+  expect(pendingBadge(copy({ retained: true }), false, 'online')).toBe('needs-attention');
+  expect(pendingBadge(copy(), true, 'offline')).toBe('waiting');
+  expect(pendingBadge(copy(), true, 'reconnecting')).toBe('waiting');
+  expect(pendingBadge(copy(), true, 'online')).toBe('syncing');
+  expect(pendingBadge(copy({ pending: false }), false, 'online')).toBeNull();
+});
+
+test('a read-only pending copy that is not retained still reads as waiting or syncing (recorded edge)', () => {
+  const readOnly = {
+    itemId: 'r',
+    name: 'r',
+    kind: 'doc',
+    readOnly: true,
+    revision: 1,
+    downloadedAt: 0,
+    pending: true,
+  } as never;
+  expect(syncSummary([readOnly], 'offline')).toEqual({
+    recover: [],
+    queued: { phase: 'waiting', count: 1 },
+  });
 });

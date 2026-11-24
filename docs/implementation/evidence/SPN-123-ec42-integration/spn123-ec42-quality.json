@@ -1,0 +1,23 @@
+{
+  "name": "spn123-ec42-quality",
+  "args": [
+    "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+    "node_modules/prettier/bin/prettier.cjs",
+    "--check",
+    "src/server/diagnostics/store.ts",
+    "src/server/diagnostics/routes.ts",
+    "src/server/diagnostics/supervisor.test.ts",
+    "e2e/diagnostics.spec.ts",
+    "lib/sync-client/src/client.ts",
+    "lib/sync-client/tests/diagnostics.test.ts",
+    "docs/diagnostics.md",
+    "docs/implementation/SPN-123.md",
+    "docs/todo/backlog.json",
+    "docs/implementation/evidence/SPN-123-ec42-integration"
+  ],
+  "code": 1,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 535,
+  "peakKiB": 298656
+}

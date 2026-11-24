@@ -7,6 +7,7 @@ import { WorkspaceStore } from '../src/server/workspace/store.ts';
 import { DocumentStore } from '../src/server/workspace/documents.ts';
 import { SheetStore } from '../src/server/workspace/sheets.ts';
 import { downloadPdf, inspectPdf } from './pdfEvidence.ts';
+import { permissionNotices, recordPermissionNotices } from './permission-notices.ts';
 
 for (const kind of ['sheet', 'doc'] as const) {
   test(`${kind} PDF downloads for every current reader with worksheet selection and guest privacy`, async ({
@@ -96,6 +97,7 @@ for (const kind of ['sheet', 'doc'] as const) {
           viewport: { width: 1280, height: 960 },
         });
         const page = await context.newPage();
+        await recordPermissionNotices(context);
         const failures: string[] = [];
         page.on('pageerror', (error) => failures.push(error.message));
         page.setDefaultTimeout(20_000);
@@ -133,10 +135,10 @@ for (const kind of ['sheet', 'doc'] as const) {
           const protectedMessage = 'This content is protected. This action is not allowed.';
           const protectedNotice = page.getByText(protectedMessage, { exact: true });
           const startupProtectionNotice = await protectedNotice.isVisible();
-          // Native Doc initialization attempts an on-open field refresh even
-          // for readers. Record that existing startup notice separately; any
-          // new warning from Export, theme/viewport changes or download fails.
-          await expect(protectedNotice).toBeHidden({ timeout: 6000 });
+          // Startup and subsequent Export phases remain separate evidence. The
+          // pre-navigation observer also catches warnings that already vanished.
+          expect(await permissionNotices(page)).toEqual([]);
+          expect(startupProtectionNotice).toBe(false);
           await page.evaluate((message) => {
             const notices: string[] = [];
             const state = { phase: 'open-export', notices };

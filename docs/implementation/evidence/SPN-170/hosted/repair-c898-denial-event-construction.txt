@@ -1,0 +1,145 @@
+A7 source corroboration for c898d24b1506a8536964c5194f20dab03e7ea007
+
+Installed playwright-core version: 1.64.1
+Committed package-lock playwright-core version: 1.64.1
+Version equality: True
+Local bundled source SHA256: 829521b67ed7be90c7d6d6098ff39f2241562d47e4ad7ccab13710924a56001d
+
+The event-type map does not include beforeinput or input. The dispatch default constructs new Event, whose recognized EventInit fields exclude inputType/data/isComposing. This corroborates the exact hosted denial receipts where these fields are absent.
+
+    this._eventTypes = /* @__PURE__ */ new Map([
+      ["auxclick", "mouse"],
+      ["click", "mouse"],
+      ["dblclick", "mouse"],
+      ["mousedown", "mouse"],
+      ["mouseeenter", "mouse"],
+      ["mouseleave", "mouse"],
+      ["mousemove", "mouse"],
+      ["mouseout", "mouse"],
+      ["mouseover", "mouse"],
+      ["mouseup", "mouse"],
+      ["mouseleave", "mouse"],
+      ["mousewheel", "mouse"],
+      ["keydown", "keyboard"],
+      ["keyup", "keyboard"],
+      ["keypress", "keyboard"],
+      ["textInput", "keyboard"],
+      ["touchstart", "touch"],
+      ["touchmove", "touch"],
+      ["touchend", "touch"],
+      ["touchcancel", "touch"],
+      ["pointerover", "pointer"],
+      ["pointerout", "pointer"],
+      ["pointerenter", "pointer"],
+      ["pointerleave", "pointer"],
+      ["pointerdown", "pointer"],
+      ["pointerup", "pointer"],
+      ["pointermove", "pointer"],
+      ["pointercancel", "pointer"],
+      ["gotpointercapture", "pointer"],
+      ["lostpointercapture", "pointer"],
+      ["focus", "focus"],
+      ["blur", "focus"],
+      ["drag", "drag"],
+      ["dragstart", "drag"],
+      ["dragend", "drag"],
+      ["dragover", "drag"],
+      ["dragenter", "drag"],
+      ["dragleave", "drag"],
+      ["dragexit", "drag"],
+      ["drop", "drag"],
+      ["wheel", "wheel"],
+      ["deviceorientation", "deviceorientation"],
+      ["deviceorientationabsolute", "deviceorientation"],
+      ["devicemotion", "devicemotion"]
+    ]);
+
+  dispatchEvent(node, type, eventInitObj) {
+    var _a, _b, _c, _d, _e;
+    let event;
+    const eventInit = { bubbles: true, cancelable: true, composed: true, ...eventInitObj };
+    switch (this._eventTypes.get(type)) {
+      case "mouse":
+        event = new MouseEvent(type, eventInit);
+        break;
+      case "keyboard":
+        event = new KeyboardEvent(type, eventInit);
+        break;
+      case "touch": {
+        if (this._browserName === "webkit") {
+          const createTouch = (t) => {
+            var _a2, _b2, _c2;
+            if (t instanceof Touch)
+              return t;
+            let pageX = t.pageX;
+            if (pageX === void 0 && t.clientX !== void 0)
+              pageX = t.clientX + (((_a2 = this.document.scrollingElement) == null ? void 0 : _a2.scrollLeft) || 0);
+            let pageY = t.pageY;
+            if (pageY === void 0 && t.clientY !== void 0)
+              pageY = t.clientY + (((_b2 = this.document.scrollingElement) == null ? void 0 : _b2.scrollTop) || 0);
+            return this.document.createTouch(this.window, (_c2 = t.target) != null ? _c2 : node, t.identifier, pageX, pageY, t.screenX, t.screenY, t.radiusX, t.radiusY, t.rotationAngle, t.force);
+          };
+          const createTouchList = (touches) => {
+            if (touches instanceof TouchList || !touches)
+              return touches;
+            return this.document.createTouchList(...touches.map(createTouch));
+          };
+          (_a = eventInit.target) != null ? _a : eventInit.target = node;
+          eventInit.touches = createTouchList(eventInit.touches);
+          eventInit.targetTouches = createTouchList(eventInit.targetTouches);
+          eventInit.changedTouches = createTouchList(eventInit.changedTouches);
+          event = new TouchEvent(type, eventInit);
+        } else {
+          (_b = eventInit.target) != null ? _b : eventInit.target = node;
+          eventInit.touches = (_c = eventInit.touches) == null ? void 0 : _c.map((t) => {
+            var _a2;
+            return t instanceof Touch ? t : new Touch({ ...t, target: (_a2 = t.target) != null ? _a2 : node });
+          });
+          eventInit.targetTouches = (_d = eventInit.targetTouches) == null ? void 0 : _d.map((t) => {
+            var _a2;
+            return t instanceof Touch ? t : new Touch({ ...t, target: (_a2 = t.target) != null ? _a2 : node });
+          });
+          eventInit.changedTouches = (_e = eventInit.changedTouches) == null ? void 0 : _e.map((t) => {
+            var _a2;
+            return t instanceof Touch ? t : new Touch({ ...t, target: (_a2 = t.target) != null ? _a2 : node });
+          });
+          event = new TouchEvent(type, eventInit);
+        }
+        break;
+      }
+      case "pointer":
+        event = new PointerEvent(type, eventInit);
+        break;
+      case "focus":
+        event = new FocusEvent(type, eventInit);
+        break;
+      case "drag":
+        event = new DragEvent(type, eventInit);
+        break;
+      case "wheel":
+        event = new WheelEvent(type, eventInit);
+        break;
+      case "deviceorientation":
+        try {
+          event = new DeviceOrientationEvent(type, eventInit);
+        } catch {
+          const { bubbles, cancelable, alpha, beta, gamma, absolute } = eventInit;
+          event = this.document.createEvent("DeviceOrientationEvent");
+          event.initDeviceOrientationEvent(type, bubbles, cancelable, alpha, beta, gamma, absolute);
+        }
+        break;
+      case "devicemotion":
+        try {
+          event = new DeviceMotionEvent(type, eventInit);
+        } catch {
+          const { bubbles, cancelable, acceleration, accelerationIncludingGravity, rotationRate, interval } = eventInit;
+          event = this.document.createEvent("DeviceMotionEvent");
+          event.initDeviceMotionEvent(type, bubbles, cancelable, acceleration, accelerationIncludingGravity, rotationRate, interval);
+        }
+        break;
+      default:
+        event = new Event(type, eventInit);
+        break;
+    }
+    node.dispatchEvent(event);
+  }

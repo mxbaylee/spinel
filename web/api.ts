@@ -1,6 +1,7 @@
 import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
 import { clearDashboardNavigation } from './dashboardNavigation.ts';
 import { spaceReviewSignInPath } from '../src/shared/spaceReviewRoute.ts';
+import { SESSION_REQUEST_DEADLINE_MS } from './offline/deadlines.ts';
 
 // An assistant connection carries only its opaque transaction ID through sign-in.
 export function connectionRequest(): string | null {
@@ -35,13 +36,19 @@ export async function api<T>(
   } = {},
 ): Promise<T> {
   verifyCurrent();
+  const checkingSession = path === 'session' && body === undefined;
   const headers: Record<string, string> = {};
   if (body !== undefined) headers['Content-Type'] = 'application/json';
   if (options.accountId) headers['X-Spinel-Account'] = options.accountId;
   const response = await fetch(
     `/api/auth/${path}`,
     body === undefined
-      ? { signal: options.signal ?? AbortSignal.timeout(15_000), headers }
+      ? {
+          signal:
+            options.signal ??
+            AbortSignal.timeout(checkingSession ? SESSION_REQUEST_DEADLINE_MS : 15_000),
+          headers,
+        }
       : {
           signal: options.signal,
           method: 'POST',
@@ -52,7 +59,16 @@ export async function api<T>(
   // Consume a dispatched response before retiring its authentication owner.
   // A stale-generation check must not release the transition at headers while
   // an earlier credential request is still settling in the browser.
-  const data = response.status === 204 ? await response.text() : await response.json();
+  const data = await (response.status === 204 ? response.text() : response.json()).catch(
+    (failure: unknown) => {
+      if (!checkingSession || response.status !== 401) throw failure;
+      // Headers already denied this session. A stalled/malformed error body must
+      // not turn that authority into an outage that reopens private device data.
+      // Still settle the body and fence the owner before handling the denial.
+      verifyCurrent();
+      return { error: 'Sign in to continue.' };
+    },
+  );
   try {
     verifyCurrent();
   } catch (failure) {

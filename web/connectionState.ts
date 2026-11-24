@@ -1,4 +1,8 @@
 import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
+/** Asks the connection probe and the offline replay owner to try again right now. */
+export const CONNECTION_CHECK_EVENT = 'spinel-connection-check';
+/** Sent when a check started by Try now has an answer. */
+export const CONNECTION_CHECKED_EVENT = 'spinel-connection-checked';
 export type ConnectionState = 'online' | 'offline' | 'reconnecting';
 export type RoomConnectionStatus = 'idle' | 'joining' | 'offline' | 'online';
 export type EditorSyncStatus = 'active' | 'offline' | 'not-started';
@@ -132,6 +136,17 @@ export function watchServerConnection(
     cancel();
     report('offline');
   };
+  /** Try now: forget what the browser last said and ask the server again. */
+  const check = async () => {
+    browserOnline = navigator.onLine;
+    cancel();
+    // Already online: keep saying so until the probe says otherwise, so syncing doesn't flicker.
+    if (!browserOnline || previous !== 'online') report(browserOnline ? 'reconnecting' : 'offline');
+    await probe();
+    // A newer check replaced this probe: it will answer instead.
+    if (!stopped && !pending) window.dispatchEvent(new Event(CONNECTION_CHECKED_EVENT));
+  };
+  const onCheck = () => void check();
   const polling = setInterval(() => void probe(), 3000);
   function dispose() {
     if (stopped) return;
@@ -140,9 +155,11 @@ export function watchServerConnection(
     clearInterval(polling);
     window.removeEventListener('online', online);
     window.removeEventListener('offline', offline);
+    window.removeEventListener(CONNECTION_CHECK_EVENT, onCheck);
   }
   window.addEventListener('online', online);
   window.addEventListener('offline', offline);
+  window.addEventListener(CONNECTION_CHECK_EVENT, onCheck);
   report(browserOnline ? 'reconnecting' : 'offline');
   void probe();
   return dispose;

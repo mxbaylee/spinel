@@ -1,0 +1,9 @@
+{
+  "command": "node",
+  "args": ["node_modules/typescript/bin/tsc", "-p", "."],
+  "code": 0,
+  "signal": null,
+  "failure": null,
+  "peakKiB": 1830096,
+  "elapsedMs": 5272
+}

@@ -1,0 +1,17 @@
+{
+  "name": "spn156-cross-tab-lifecycle-repair",
+  "args": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/ui/offlineLifecycle.test.ts",
+    "--cache=false",
+    "--fsModuleCachePath",
+    "/tmp/spn156-cross-tab-cache"
+  ],
+  "code": 0,
+  "signal": null,
+  "reason": null,
+  "elapsedMs": 1379,
+  "peakKiB": 735248
+}

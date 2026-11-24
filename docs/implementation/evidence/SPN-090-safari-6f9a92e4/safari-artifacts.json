@@ -1,0 +1,23 @@
+{
+  "artifacts": [
+    {
+      "id": 13410608977,
+      "name": "browserstack-capability-42020011460-1",
+      "size_in_bytes": 101210,
+      "url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13410608977",
+      "archive_download_url": "https://api.github.com/repos/mxbaylee/spinel/actions/artifacts/13410608977/zip",
+      "expired": false,
+      "created_at": "2026-11-05T11:36:02Z",
+      "expires_at": "2026-11-19T11:36:01Z",
+      "updated_at": "2026-11-05T11:36:02Z",
+      "digest": "sha256:63c2115ab05c0c4012511ae23f019347c674edefb09e7d3062d28be355c4609e",
+      "workflow_run": {
+        "id": 42020011460,
+        "repository_id": 1423484121,
+        "head_repository_id": 1423484121,
+        "head_branch": "codex/spn-090-real-devices",
+        "head_sha": "6f9a92e41996f8fca7b8e90ede61bbbb3242ce4b"
+      }
+    }
+  ]
+}

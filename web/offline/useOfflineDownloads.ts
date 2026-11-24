@@ -4,6 +4,7 @@ import { offlineErrorMessage } from '../../src/shared/offlineError.ts';
 import { DownloadError, downloadForOffline } from './download.ts';
 import type { LocalStart } from './localStart.ts';
 import {
+  applyPendingChange,
   openOfflineStore,
   openExistingOfflineStore,
   offlinePreparation,
@@ -23,8 +24,17 @@ import type {
 } from './offlineStore.ts';
 import { prepareShell } from './shell.ts';
 import { isRuntimeCompatible } from './runtime.ts';
-import { readDeviceInventory, removeDeviceCopy, requestPersistence } from './deviceStorage.ts';
+import {
+  readDeviceInventory,
+  removeDeviceCopy,
+  requestPersistence,
+  type PersistenceState,
+} from './deviceStorage.ts';
 import { createOfflineDocument, relocateOfflineCreation } from './creation.ts';
+import { watchOfflineReplay } from './replay.ts';
+import { answeredMessage, protectionDetail } from './protection.ts';
+import { useDiagnostics } from '../useDiagnostics.tsx';
+import { diagnosticSource } from '../operationDiagnostics.ts';
 
 export type OfflineMessage = {
   text: string;
@@ -37,14 +47,16 @@ export type OfflineMessage = {
 /**
  * This account's downloads on this device. Online, it downloads and removes
  * items, keeps the last-synced catalog once the device is prepared, and
- * refreshes each download in the background. In local mode it only reads.
+ * refreshes each download in the background. Local mode reads the retained
+ * catalog; account-scoped replay can commit queued edits after reconnecting.
  */
 export function useOfflineDownloads(
   user: OfflineUser,
   local: LocalStart | null | undefined,
   catalog: () => OfflineCatalog | null,
-  options: { spaceRoot?: SpaceFile } = {},
+  options: { spaceRoot?: SpaceFile; foregroundItemId?: string | null } = {},
 ) {
+  const diagnostics = useDiagnostics();
   const [downloads, setDownloads] = useState(
     () =>
       new Map(
@@ -60,6 +72,7 @@ export function useOfflineDownloads(
   const latestAccount = useRef(user.id);
   const summaryRead = useRef(0);
   const noticeSequence = useRef(0);
+  const refreshTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const pendingNotices = useRef(new Map<string, { sequence: number; pending: boolean }>());
   latestAccount.current = user.id;
   function preparation(reportFailure = false) {
@@ -85,6 +98,26 @@ export function useOfflineDownloads(
   latestCatalog.current = catalog;
   const latestRoot = useRef(options.spaceRoot);
   latestRoot.current = options.spaceRoot;
+  const replay = useRef<ReturnType<typeof watchOfflineReplay> | null>(null);
+  useLayoutEffect(() => {
+    const owner = watchOfflineReplay(user.id, options.foregroundItemId ?? null, (download) =>
+      diagnosticSource(diagnostics, {
+        component: 'dashboard',
+        fileId: download.itemId,
+        ...(download.spaceId
+          ? { spaceId: download.spaceId, route: '/spaces/:id' as const }
+          : { route: '/files' as const }),
+      }),
+    );
+    replay.current = owner;
+    return () => {
+      owner.dispose();
+      if (replay.current === owner) replay.current = null;
+    };
+  }, [user.id]);
+  useLayoutEffect(() => {
+    replay.current?.foreground(options.foregroundItemId ?? null);
+  }, [user.id, options.foregroundItemId]);
   // The server admits one transfer at a time; run refreshes and toggles in turn.
   const queue = useRef<Promise<unknown>>(Promise.resolve());
   function serially<T>(
@@ -131,6 +164,12 @@ export function useOfflineDownloads(
     });
   }
 
+  // A reconnect can finish many files at once; one read after they settle is enough.
+  function refreshSoon() {
+    clearTimeout(refreshTimer.current);
+    refreshTimer.current = setTimeout(() => void refreshSummaries().catch(() => {}), 250);
+  }
+
   async function refreshSummaries() {
     const scope = preparation();
     if (!scope) return;
@@ -173,21 +212,24 @@ export function useOfflineDownloads(
       const scope = preparation();
       if (!scope?.isCurrent()) return;
       if (typeof change.pending === 'boolean') {
+        const pending = change.pending;
+        const wasPending = pendingNotices.current.get(change.itemId)?.pending;
         pendingNotices.current.set(change.itemId, {
           sequence: ++noticeSequence.current,
-          pending: change.pending,
+          pending,
         });
         // A checkpoint transition already committed. Keep verified availability
         // and update only this known row, without rehashing images per keystroke.
         setDownloads((previous) => {
           const item = previous.get(change.itemId);
           return item && scope.isCurrent()
-            ? new Map(previous).set(change.itemId, {
-                ...item,
-                pending: item.uncertain || change.pending,
-              })
+            ? new Map(previous).set(change.itemId, applyPendingChange(item, pending))
             : previous;
         });
+        // The row above is an optimistic update. Re-read the summary when work starts
+        // or finishes: it may arrive already failed, or a recovery record may remain.
+        // These are transitions, not keystrokes.
+        if (wasPending !== pending) refreshSoon();
       } else {
         pendingNotices.current.delete(change.itemId);
         void refreshSummaries().catch(() => {});
@@ -211,6 +253,7 @@ export function useOfflineDownloads(
     void refreshSummaries().catch(() => {});
     const close = () => {
       if (mounted.current === lifetime) mounted.current = null;
+      clearTimeout(refreshTimer.current);
       stopChanges();
       window.removeEventListener('focus', foreground);
       window.removeEventListener('pageshow', foreground);
@@ -357,22 +400,12 @@ export function useOfflineDownloads(
     setBusy(item.id);
     setMessage(null);
     let outcome: 'prepared' | 'removed' | 'needs-recovery' | undefined;
-    let detail: string | undefined;
-    let storageHelp = false;
+    // Firefox answers persist() through a prompt the person may ignore, and
+    // some browsers never show it at all, so the download never waits for it.
+    // The result reports the answer if it came first, or updates once it comes.
+    let protection: PersistenceState | null = null;
+    const asked = downloaded ? null : requestPersistence().then((state) => (protection = state));
     try {
-      if (!downloaded) {
-        const protection = await requestPersistence();
-        verify(scope)();
-        storageHelp = protection !== 'granted';
-        detail =
-          protection === 'granted'
-            ? 'Your browser granted storage protection. Device copies are not a backup.'
-            : protection === 'denied'
-              ? 'Your browser did not grant storage protection. It may clear offline documents when space runs low.'
-              : protection === 'unsupported'
-                ? 'This browser does not offer storage protection. It may clear offline documents.'
-                : 'Storage protection could not be requested. Offline documents may still be cleared.';
-      }
       await serially(
         scope,
         async (store) => {
@@ -407,8 +440,8 @@ export function useOfflineDownloads(
         !downloaded,
       );
       if (scope.isCurrent()) await refreshSummaries();
-      if (scope.isCurrent())
-        setMessage({
+      if (scope.isCurrent()) {
+        const result: OfflineMessage = {
           text:
             outcome === 'needs-recovery'
               ? 'Changes are saved on this device. Recover them or choose how to remove them in This device.'
@@ -417,8 +450,15 @@ export function useOfflineDownloads(
                 : `${item.name} is available offline on this device.`,
           failed: false,
           ...(outcome === 'needs-recovery' ? { recoveryItemId: item.id } : {}),
-          ...(outcome === 'prepared' ? { detail, storageHelp } : {}),
-        });
+          ...(outcome === 'prepared' ? protectionDetail(protection) : {}),
+        };
+        setMessage(result);
+        if (outcome === 'prepared' && protection === null && asked) {
+          void asked.then((state) =>
+            setMessage((shown) => answeredMessage(shown, result, state, scope.isCurrent())),
+          );
+        }
+      }
     } catch (error) {
       if (scope.isCurrent())
         await serially(scope, (store) => scope.clearIfEmpty(store)).catch(() => {});

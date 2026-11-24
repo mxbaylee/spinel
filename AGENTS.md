@@ -5,8 +5,8 @@ the open-source [Univer](https://github.com/dream-num/univer) SDK, for about two
 people at a time. The product has no AI features.
 
 Spinel is pre-production until SPN-038 launches `spinel.baylee.dev`; that is the
-last launch prerequisite, with optional CSV import (SPN-093) and document/format plugins
-(SPN-094) after launch. SQLite is the current implementation, not a permanent
+last launch prerequisite, with optional CSV/TSV import (SPN-093) after launch. Document/format plugins
+(SPN-094) were dropped on 2026-11-22. SQLite is the current implementation, not a permanent
 storage constraint. Reconsider it before launch without inventing a live-data
 migration requirement. See [development](docs/development.md#deployment-stage).
 Owner, chat 2026-10-21.
@@ -41,6 +41,12 @@ that isn't waiting on another is next.
   implementation/review/integration/evidence branch after rechecking its head
   and active PR ownership. Record access-blocked cleanup explicitly. Owner, chat
   2026-10-29; [evidence and cleanup](docs/implementation/grooming-2026-10-29.md#evidence-and-branch-completion).
+- **Maintain diagnostics with the code they describe.** For changes to observed
+  operations, saving, sync, checkpoints, maintenance or runtime sampling, check
+  the emitter contract and update [its inventory](docs/diagnostics.md#emitter-maintenance-inventory)
+  and regression evidence when it changes. Explain diagnostic impact in the PR,
+  including a reasoned no-impact choice. Keep observations content-free, bounded,
+  truthful across retries and unable to affect the operation. Owner, chat 2026-10-29.
 - **Weigh every persona** in [docs/product/personas.md](docs/product/personas.md)
   when deciding anything, and log the decision as described in process.md.
 - **Decisions live in `docs/implementation/SPN-NNN.md`**, beside implementation notes, following [the record convention](docs/implementation/README.md). Link them from ticket Rules; [SPN-096's inventory](docs/implementation/SPN-096.md) maps legacy issues to canonical records with original provenance. Owner, chat 2026-10-22.
@@ -109,3 +115,9 @@ that isn't waiting on another is next.
   chat 2026-11-02–03; [ordering and evidence](docs/implementation/grooming-2026-11-02.md#review-before-push).
   The seventh, Lib tests, runs `lib/` on its own and passes at once when nothing it
   tests changed. Owner, chat 2026-10-22.
+- **Reviews never deduct for CI, and run as a loop.** Reviewers never deduct for CI results (pending, missing or failing); required checks gate
+  the merge. They do run the tests related to the work locally and grade those. Owner, chat 2026-11-06; [decision](docs/implementation/backlog-workflow.md#reviewers-do-not-deduct-for-ci-results).
+  Run the review as a loop: reviewers list every step to 100, repair, recommit and review
+  again until both exceed 95; if every remaining deduction is hosted-only or an owner
+  decision, ask for a recorded one-time push exception instead. Owner, chat 2026-11-06;
+  [decision](docs/implementation/backlog-workflow.md#reviewrepair-loop-before-a-validation-push).

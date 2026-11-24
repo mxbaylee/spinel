@@ -1,0 +1,117 @@
+{
+  "source": "20acc281e1fb04e2a970b40c19dc9a6cbf671f11",
+  "previous": "ae39bab3c1ba89460418f934765b67327cd601ec",
+  "base": "c1d0d6e8ded33c10cf555ed2ed05ffd9ebc3a423",
+  "clean": true,
+  "changedPaths": [
+    "docs/implementation/SPN-106.md",
+    "docs/review-assets/spn-106-guest-storybook-20261114/README.md",
+    "docs/review-assets/spn-106-production-20261114/README.md"
+  ],
+  "checks": [
+    {
+      "step": "diff-links",
+      "guard": {
+        "name": "spn106-prose-diff-links-first-20261114",
+        "args": [
+          "/bin/zsh",
+          "-c",
+          "git diff --check && test -f docs/review-assets/spn-106-guest-storybook-20261114/README.md && test -f docs/implementation/evidence/SPN-106-production-20261114/receipt.json && test -f docs/implementation/evidence/SPN-106-guest-storybook-20261114/receipt.json && test -f e2e/documents.spec.ts"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 73,
+        "peakKiB": 0
+      },
+      "log": "{\"name\":\"spn106-prose-diff-links-first-20261114\",\"args\":[\"/bin/zsh\",\"-c\",\"git diff --check && test -f docs/review-assets/spn-106-guest-storybook-20261114/README.md && test -f docs/implementation/evidence/SPN-106-production-20261114/receipt.json && test -f docs/implementation/evidence/SPN-106-guest-storybook-20261114/receipt.json && test -f e2e/documents.spec.ts\"],\"code\":0,\"signal\":null,\"reason\":null,\"elapsedMs\":73,\"peakKiB\":0}\n"
+    },
+    {
+      "step": "backlog",
+      "guard": {
+        "name": "spn106-prose-backlog-first-20261114",
+        "args": [
+          "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+          "scripts/backlog/cli.ts",
+          "check"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 151,
+        "peakKiB": 0
+      },
+      "log": "warning: SPN-038.md: 70 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-068.md: 66 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-087.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-089.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-093.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-094.md: 64 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-099.md: 73 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-110.md: 55 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-114.md: 52 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-119.md: 58 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-120.md: 61 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-122.md: 60 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-123.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-147.md: 59 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-154.md: 54 lines; tickets aim for 50 or fewer, consider splitting or trimming\nwarning: SPN-156.md: 53 lines; tickets aim for 50 or fewer, consider splitting or trimming\nbacklog ok: 24 open tickets\n{\"name\":\"spn106-prose-backlog-first-20261114\",\"args\":[\"/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node\",\"scripts/backlog/cli.ts\",\"check\"],\"code\":0,\"signal\":null,\"reason\":null,\"elapsedMs\":151,\"peakKiB\":0}\n"
+    },
+    {
+      "step": "pr",
+      "guard": {
+        "name": "spn106-prose-pr-first-20261114",
+        "args": [
+          "/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node",
+          "scripts/backlog/cli.ts",
+          "pr",
+          "--base",
+          "origin/main",
+          "--title",
+          "🔕 SPN-106 Avoid a protection warning when opening view-only Docs"
+        ],
+        "code": 0,
+        "signal": null,
+        "reason": null,
+        "elapsedMs": 382,
+        "peakKiB": 182912
+      },
+      "log": "pull request ok\n{\"name\":\"spn106-prose-pr-first-20261114\",\"args\":[\"/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node\",\"scripts/backlog/cli.ts\",\"pr\",\"--base\",\"origin/main\",\"--title\",\"🔕 SPN-106 Avoid a protection warning when opening view-only Docs\"],\"code\":0,\"signal\":null,\"reason\":null,\"elapsedMs\":382,\"peakKiB\":182912}\n"
+    }
+  ],
+  "originalReviewFiles": [
+    {
+      "path": "/tmp/spn106-review-ae39bab3-a.md",
+      "sha256": "9202163209181df9a48b849816413bcbe474dd8e42ca7f80d593eb41f6f1cc7c"
+    },
+    {
+      "path": "/tmp/spn106-review-ae39bab3-b.md",
+      "sha256": "3218147bd164078fba019c026ac2910c2543c87c76d2048eb9b1c3f119efb4ea"
+    }
+  ],
+  "verifiedImageCount": 8,
+  "images": [
+    {
+      "path": "docs/review-assets/spn-106-production-20261114/spn-106-account-desktop-light.png",
+      "sha256": "74bfc6803ce43ca3e3556f44c7ff8ca9ee1f6f77b11eba3745b8e4bc62fa53d4"
+    },
+    {
+      "path": "docs/review-assets/spn-106-production-20261114/spn-106-account-desktop-dark.png",
+      "sha256": "d1e90b9c321f2f5e7ac64e29c824969e363dfd8c2dd380bd076923b5c0fd3f98"
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/spn-106-guest-390px-light.png",
+      "sha256": "f004ebda1e74233483a148c0b94e0d66668bff25bd4b2f8126181b2c830c1db6"
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/spn-106-guest-390px-dark.png",
+      "sha256": "2206b4c0c9c850c95ce71b9f9ce56e11b5b2ca63dcba7f89caf66e2a07141a8c"
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-phone.png",
+      "sha256": "509e159d02827c3d843d76323a5bdf7662cbd20f151778ec3e273edd5e78d7c8"
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-denied-edit-phone.png",
+      "sha256": "3e199e2ce34a0db95dfbbc6a6a541daf5a9dac48a5faa73ef40e5c349d77511f"
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-phone-dark.png",
+      "sha256": "e54cb5a1f51720db0fc07741fe38c61b4217338aa8e9b4980e01242a1cf2b62c"
+    },
+    {
+      "path": "docs/review-assets/spn-106-guest-storybook-20261114/docs-mobile--viewer-denied-edit-phone-dark.png",
+      "sha256": "5e07692f4a8bd81cf10cd148176c4ae90d655476f20d1e685486c64b6a247fb4"
+    }
+  ],
+  "runtimeRepeated": false,
+  "rawEvidenceRewritten": false,
+  "metadataOrRemoteActions": false,
+  "limits": "Short checks below200 ms report0 KiB because no RSS sampling tick occurred; not a zero-memory claim. Both reviewers must assess the new exact head; no prior grade inherited."
+}

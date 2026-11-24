@@ -1,0 +1,10 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn-156
+
+
+ Test Files  1 passed (1)
+      Tests  5 passed | 9 skipped (14)
+   Start at  21:02:32
+   Duration  2.05s (transform 68%, import 31%, tests 1%)
+
+{"name":"spn156-host-session-first","args":["/tmp/spinel-dependabot-2026-11-11/node-v26.13.0-darwin-arm64/bin/node","node_modules/vitest/vitest.mjs","run","src/ui/offlinePersistence.test.ts","-t","actual background session|background admission|background host never binds","--cache=false","--fsModuleCachePath","/tmp/spn156-vitest-host"],"code":0,"signal":null,"reason":null,"elapsedMs":2307,"peakKiB":1032848}

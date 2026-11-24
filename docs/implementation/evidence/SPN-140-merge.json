@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "head": "8335bfb4 (documents-mode change on 61682f19); sourceSha256 describes this source state, and a later evidence-only commit may follow",
+  "main": "7858b26a5b4a0037340c66d6a98f4072461181d6",
+  "sourceSha256": {
+    "scripts/ci/desktop-safari-identity.ts": "ad4b67e7c743250ab5bd629cbff1811d2745826a4846c8f369c7605229ceaea6",
+    "scripts/ci/desktop-profile-probe.ts": "7508335d62f707bd5bad27763cd78c3ca582cf5c43ce5b5fdfbee8551628f03c",
+    "scripts/ci/desktop-safari-identity.test.ts": "3e43682fe9f57ee1ac25d2b1e33179c90b71c83d3643da905cc83eb59141d4ed"
+  },
+  "local": {
+    "environment": "macOS, node v26.13.0",
+    "safariIdentityControls": "65 tests, 65 pass, 0 fail",
+    "typecheck": "tsc -p . clean",
+    "oxlintScriptsCi": "clean (--deny-warnings)",
+    "prettier": "scripts/ci, docs/todo/backlog.json, docs/implementation/SPN-140.md clean",
+    "backlogCheck": "backlog ok: 21 open tickets (size and grooming warnings only)",
+    "ciScriptSuite": "485 tests, 483 pass, 2 fail",
+    "knownFailures": "offline-upgrade-dependencies.test.ts compares /var to /private/var on macOS; the same 2 fail on main 7858b26a (7 pass, 2 fail in that file)"
+  },
+  "notClaimed": "No native workflow, hosted CI or exact-head review result is recorded here.",
+  "reviewedSourceStatus": "superseded: sources differ from 3c3fc7d8751da18beb401c59e1cf89a40ff86aa3 by the waitForSafariConsentTitle extraction and the read-only documents request mode",
+  "hostedNativeAttempt1": {
+    "head": "61682f19b663b8c8a2292a35dd02e5f58ec2aaf8",
+    "run": 42926948513,
+    "chrome": "pass",
+    "firefox": "pass",
+    "safari": "fail: documents[0] missing after restart, Can't get object (-1728), request evaluate pid 4704",
+    "retained": true,
+    "job": 130215720488
+  }
+}
