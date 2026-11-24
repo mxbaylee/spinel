@@ -1,0 +1,85 @@
+{
+  "budgets": {
+    "flushP95Ms": 50,
+    "flushMaxMs": 100,
+    "inputP95Ms": 200,
+    "longTaskMaxMs": 500
+  },
+  "rows": [
+    {
+      "variant": "previous",
+      "pair": 1,
+      "exitCode": 0,
+      "flushP95": 16.80000000000291,
+      "flushMax": 38.89999999999418,
+      "pairedFlushMax": 38.89999999999418,
+      "longestTask": 250,
+      "inputP95": 110.5,
+      "sha": "83b7c9780e3c",
+      "budget": "pass",
+      "order": "first"
+    },
+    {
+      "variant": "patched",
+      "pair": 1,
+      "exitCode": 0,
+      "flushP95": 17.099999999976717,
+      "flushMax": 30.100000000034925,
+      "pairedFlushMax": 30.100000000034925,
+      "longestTask": 212,
+      "inputP95": 124.5,
+      "sha": "788566fd844a",
+      "budget": "pass",
+      "order": "second"
+    },
+    {
+      "variant": "patched",
+      "pair": 2,
+      "exitCode": 0,
+      "flushP95": 13.5,
+      "flushMax": 28.29999999993015,
+      "pairedFlushMax": 28.29999999993015,
+      "longestTask": 160,
+      "inputP95": 115.59999999997672,
+      "sha": "788566fd844a",
+      "budget": "pass",
+      "order": "first"
+    },
+    {
+      "variant": "previous",
+      "pair": 2,
+      "exitCode": null,
+      "flushP95": null,
+      "flushMax": null,
+      "pairedFlushMax": null,
+      "longestTask": null,
+      "inputP95": null,
+      "sha": "83b7c9780e3c",
+      "budget": "n/a",
+      "order": "second"
+    }
+  ],
+  "problems": [
+    "pair-2-previous: missing spn108-metrics.json",
+    "previous: 1 of 8 expected pairs produced metrics",
+    "patched: 2 of 8 expected pairs produced metrics"
+  ],
+  "tally": {
+    "previous": {
+      "runs": 2,
+      "measured": 1,
+      "overBudget": 0,
+      "nonZeroExit": 1
+    },
+    "patched": {
+      "runs": 2,
+      "measured": 2,
+      "overBudget": 0,
+      "nonZeroExit": 0
+    }
+  },
+  "cpuThrottles": [
+    4
+  ],
+  "stressProcesses": 2
+}

@@ -1,0 +1,1895 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-11-05T02:27:23.323Z",
+  "phase": "terminal-rejected-B",
+  "repository": "mxbaylee/spinel",
+  "pullRequest": 260,
+  "sourceSha": "95d52be36061315bff866dec615544104ca4767c",
+  "baseSha": "5c565b61e11ce29780581f33410749436ecef42f",
+  "testedSha": "679ad75636799820e47bf0214ade771c3fe859e2",
+  "sourceTree": "43bac9fbd53c842b8d5796560f19076edacd38b7",
+  "testedTree": "43bac9fbd53c842b8d5796560f19076edacd38b7",
+  "workflow": {
+    "id": 41948253612,
+    "name": "\ud83d\udc8e CI",
+    "event": "pull_request",
+    "attempt": 1,
+    "status": "completed",
+    "conclusion": "failure",
+    "createdAt": "2026-11-05T01:23:59Z",
+    "completedUpdatedAt": "2026-11-05T02:23:16Z",
+    "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612"
+  },
+  "classification": {
+    "jobId": 126985718528,
+    "planSha256": "ba0f1dc6aaa5ce0c37436fa57ea5382dd7ed7fef3c2d2149d4972491f56a3c83",
+    "planArtifactId": 13379896610,
+    "planArtifactBytes": 944,
+    "planArtifactSha256": "1d9b25e4c67cb1dc393c959e3c478fb54f13277aa5608cfda0b6842247a77351",
+    "plan": {
+      "version": 1,
+      "event": "pull_request",
+      "action": "synchronize",
+      "base": "5c565b61e11ce29780581f33410749436ecef42f",
+      "head": "95d52be36061315bff866dec615544104ca4767c",
+      "tested": "679ad75636799820e47bf0214ade771c3fe859e2",
+      "mode": "full",
+      "labels": [
+        "storybook-preview",
+        "visual-review"
+      ],
+      "paths": null,
+      "suites": {
+        "backlog": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "pull-request": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "lint": {
+          "selected": true,
+          "dependencies": [
+            "complete immutable change range and current event metadata"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "typecheck": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "unit-tests": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "lib-test-run": {
+          "selected": true,
+          "dependencies": [
+            "lib/**",
+            "scripts/dependencies/**",
+            "package{,-lock}.json",
+            "vitest.config.ts",
+            "tsconfig.json",
+            ".nvmrc",
+            ".github/workflows/ci.yml"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "playwright-run": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "container-smoke": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "restore-timing": {
+          "selected": true,
+          "dependencies": [
+            "server/**",
+            "src/{server,shared}/**",
+            "lib/**",
+            "web/** and src/ui/** (shared application/authentication bundle)",
+            "e2e restore/shared helpers",
+            "runtime/build/dependency/workflow inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "sync-transition": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "doc-responsiveness": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "doc-callback-lifetimes": {
+          "selected": true,
+          "dependencies": [
+            "all application, auth, persistence, sync, runtime, build, dependency and harness inputs"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "responsiveness-baseline": {
+          "selected": true,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "callback-baseline": {
+          "selected": true,
+          "dependencies": [
+            "web/**",
+            "server/**",
+            "lib/**",
+            "e2e/**",
+            "src/shared/**",
+            "src/server/{sync,history,collaboration}/**",
+            "scripts/{ci,dependencies,sync-transition}/**",
+            "build/runtime/dependency/workflow configuration"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        },
+        "phone-compatibility": {
+          "selected": true,
+          "dependencies": [
+            "full plan backstop; ordinary phone owners remain in routine browser coverage"
+          ],
+          "inputs": [],
+          "reason": "Immutable range or event labels unavailable; full coverage."
+        }
+      }
+    },
+    "verification": "Archive size/SHA256 and every selected ZIP entry CRC checked; exact parsed plan equals the classification log; API-tested merge tree equals reviewed source tree."
+  },
+  "jobInventory": {
+    "totalReported": 33,
+    "returned": 33,
+    "pagesRead": 1,
+    "perPage": 100,
+    "counts": {
+      "success": 29,
+      "failure": 4
+    }
+  },
+  "gates": [
+    {
+      "name": "Backlog",
+      "id": 126985936184,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936184"
+    },
+    {
+      "name": "Pull request",
+      "id": 126985717691,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985717691"
+    },
+    {
+      "name": "Lint",
+      "id": 126985936436,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936436"
+    },
+    {
+      "name": "Typecheck",
+      "id": 126985936158,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936158"
+    },
+    {
+      "name": "Unit tests",
+      "id": 126994868347,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126994868347"
+    },
+    {
+      "name": "Lib tests",
+      "id": 126994132230,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126994132230"
+    },
+    {
+      "name": "Playwright smoke",
+      "id": 127005657297,
+      "status": "completed",
+      "conclusion": "failure",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/127005657297"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 126985717691,
+      "name": "Pull request",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:24:03Z",
+      "completedAt": "2026-11-05T01:24:48Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985717691",
+      "failedSteps": []
+    },
+    {
+      "id": 126985718528,
+      "name": "Classify changes (41948253612)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:24:03Z",
+      "completedAt": "2026-11-05T01:24:34Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985718528",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936158,
+      "name": "Typecheck",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:24:57Z",
+      "completedAt": "2026-11-05T01:25:29Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936158",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936184,
+      "name": "Backlog",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:24:37Z",
+      "completedAt": "2026-11-05T01:24:49Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936184",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936187,
+      "name": "Unit tests (remaining)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:25:24Z",
+      "completedAt": "2026-11-05T01:30:06Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936187",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936196,
+      "name": "Sized restore acceptance",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:24:51Z",
+      "completedAt": "2026-11-05T01:31:08Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936196",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936203,
+      "name": "Retained sync transition",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:24:50Z",
+      "completedAt": "2026-11-05T01:25:23Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936203",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936207,
+      "name": "Unit tests (recovery)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:25:08Z",
+      "completedAt": "2026-11-05T01:31:23Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936207",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936222,
+      "name": "Doc callback lifetimes (desktop)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:27:59Z",
+      "completedAt": "2026-11-05T01:37:09Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936222",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936231,
+      "name": "Lib tests (mixed-fuzz)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:28:03Z",
+      "completedAt": "2026-11-05T01:33:39Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936231",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936249,
+      "name": "Lib tests (cells)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:24:45Z",
+      "completedAt": "2026-11-05T01:29:55Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936249",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936268,
+      "name": "Lib tests (dense-cells)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:35:21Z",
+      "completedAt": "2026-11-05T01:40:50Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936268",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936291,
+      "name": "Container smoke",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:35:47Z",
+      "completedAt": "2026-11-05T01:37:04Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936291",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936338,
+      "name": "Unit tests (supervisor)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:40:25Z",
+      "completedAt": "2026-11-05T01:49:10Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936338",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936342,
+      "name": "Doc callback lifetimes (mobile)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:30:41Z",
+      "completedAt": "2026-11-05T01:40:22Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936342",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936436,
+      "name": "Lint",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:38:58Z",
+      "completedAt": "2026-11-05T01:39:34Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936436",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936441,
+      "name": "Playwright smoke (sync-soak-doc)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:27:27Z",
+      "completedAt": "2026-11-05T01:28:58Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936441",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936443,
+      "name": "Playwright smoke (supervised-restore)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:31:10Z",
+      "completedAt": "2026-11-05T01:38:36Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936443",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936454,
+      "name": "Playwright smoke (sync-production)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:37:34Z",
+      "completedAt": "2026-11-05T01:52:03Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936454",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936486,
+      "name": "Playwright smoke (offline-upgrade)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:30:09Z",
+      "completedAt": "2026-11-05T01:31:58Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936486",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936494,
+      "name": "Doc responsiveness (mobile)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "startedAt": "2026-11-05T01:38:49Z",
+      "completedAt": "2026-11-05T02:18:57Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936494",
+      "failedSteps": [
+        {
+          "number": 12,
+          "name": "Verify candidate responsiveness and boundaries",
+          "startedAt": "2026-11-05T02:03:27Z",
+          "completedAt": "2026-11-05T02:18:54Z"
+        }
+      ]
+    },
+    {
+      "id": 126985936508,
+      "name": "Playwright smoke (development 2/2)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "startedAt": "2026-11-05T01:37:38Z",
+      "completedAt": "2026-11-05T01:43:05Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936508",
+      "failedSteps": [
+        {
+          "number": 10,
+          "name": "Playwright smoke",
+          "startedAt": "2026-11-05T01:38:32Z",
+          "completedAt": "2026-11-05T01:43:01Z"
+        }
+      ]
+    },
+    {
+      "id": 126985936551,
+      "name": "Playwright smoke (sync-development)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:35:29Z",
+      "completedAt": "2026-11-05T01:39:52Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936551",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936564,
+      "name": "Playwright smoke (mobile-https)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:35:33Z",
+      "completedAt": "2026-11-05T01:37:35Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936564",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936574,
+      "name": "Playwright smoke (production 2/2)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "startedAt": "2026-11-05T01:37:34Z",
+      "completedAt": "2026-11-05T01:53:50Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936574",
+      "failedSteps": [
+        {
+          "number": 10,
+          "name": "Playwright smoke",
+          "startedAt": "2026-11-05T01:38:38Z",
+          "completedAt": "2026-11-05T01:53:44Z"
+        }
+      ]
+    },
+    {
+      "id": 126985936585,
+      "name": "Playwright smoke (development 1/2)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:40:01Z",
+      "completedAt": "2026-11-05T01:54:55Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936585",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936606,
+      "name": "Lib tests (remaining)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:40:52Z",
+      "completedAt": "2026-11-05T01:47:05Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936606",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936625,
+      "name": "Playwright smoke (production 1/2)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:31:26Z",
+      "completedAt": "2026-11-05T01:43:55Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936625",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936635,
+      "name": "Doc responsiveness (desktop)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:38:38Z",
+      "completedAt": "2026-11-05T01:51:37Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936635",
+      "failedSteps": []
+    },
+    {
+      "id": 126985936641,
+      "name": "Playwright smoke (sync-soak-sheet)",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:39:36Z",
+      "completedAt": "2026-11-05T01:41:49Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126985936641",
+      "failedSteps": []
+    },
+    {
+      "id": 126994132230,
+      "name": "Lib tests",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:47:08Z",
+      "completedAt": "2026-11-05T01:47:23Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126994132230",
+      "failedSteps": []
+    },
+    {
+      "id": 126994868347,
+      "name": "Unit tests",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-05T01:49:13Z",
+      "completedAt": "2026-11-05T01:49:31Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/126994868347",
+      "failedSteps": []
+    },
+    {
+      "id": 127005657297,
+      "name": "Playwright smoke",
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "failure",
+      "startedAt": "2026-11-05T02:22:59Z",
+      "completedAt": "2026-11-05T02:23:15Z",
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/job/127005657297",
+      "failedSteps": [
+        {
+          "number": 4,
+          "name": "Verify selected evidence and publish result",
+          "startedAt": "2026-11-05T02:23:11Z",
+          "completedAt": "2026-11-05T02:23:11Z"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 13382423595,
+      "name": "ci-results-browser",
+      "bytes": 470,
+      "sha256": "6d0c70bce367324484b40593c15b3cf4a863e08f83eda783e35edf6f4e19a602",
+      "createdAt": "2026-11-05T02:23:12Z",
+      "expiresAt": "2026-12-05T02:23:11Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13382423595"
+    },
+    {
+      "id": 13382342973,
+      "name": "doc-responsiveness-mobile",
+      "bytes": 2831298,
+      "sha256": "b1d6d17d1b5f71e29c6149c4a85c649ce184699a8d934ba7eca3ebb8e6805b49",
+      "createdAt": "2026-11-05T02:18:55Z",
+      "expiresAt": "2026-11-12T02:18:54Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13382342973"
+    },
+    {
+      "id": 13381350572,
+      "name": "ci-results-unit",
+      "bytes": 1166,
+      "sha256": "ac136871e6b34c3773e6e7fa5406a7446bd13a15a1797c178447f22a1d06b7c3",
+      "createdAt": "2026-11-05T01:49:27Z",
+      "expiresAt": "2026-12-05T01:49:26Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13381350572"
+    },
+    {
+      "id": 13381320968,
+      "name": "doc-responsiveness-desktop",
+      "bytes": 1143448,
+      "sha256": "0f3b048e6a15346aa5cbf480384f0724455d1a17018e996bd04cf76ff264d9c4",
+      "createdAt": "2026-11-05T01:51:33Z",
+      "expiresAt": "2026-11-12T01:51:31Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13381320968"
+    },
+    {
+      "id": 13381245098,
+      "name": "theme-screenshots-production-1",
+      "bytes": 36065981,
+      "sha256": "3def09d720fd4146ef55cfdcdebc0c9b16a67ad36948bb9aa0f7c46b9f21df3b",
+      "createdAt": "2026-11-05T01:43:51Z",
+      "expiresAt": "2026-11-12T01:43:48Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13381245098"
+    },
+    {
+      "id": 13381137616,
+      "name": "theme-screenshots-development-1",
+      "bytes": 33823164,
+      "sha256": "d76a549dacd8e7aa06d9032f4d91df6cdcb2689a95938770ae09541222c00f54",
+      "createdAt": "2026-11-05T01:54:52Z",
+      "expiresAt": "2026-11-12T01:54:49Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13381137616"
+    },
+    {
+      "id": 13381012788,
+      "name": "theme-screenshots-production-2",
+      "bytes": 22322815,
+      "sha256": "baf065842766fd404ff820ac78ef63eff7863b8c2509ac7ff1c2ea1ca0ca90f7",
+      "createdAt": "2026-11-05T01:53:47Z",
+      "expiresAt": "2026-11-12T01:53:44Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13381012788"
+    },
+    {
+      "id": 13380985419,
+      "name": "theme-screenshots-supervised-restore",
+      "bytes": 277341,
+      "sha256": "5457087ea94cc2cf30e749eeb185e4708cdff809e6e90c5da8aed12ae4119f67",
+      "createdAt": "2026-11-05T01:38:32Z",
+      "expiresAt": "2026-11-12T01:38:30Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13380985419"
+    },
+    {
+      "id": 13380981775,
+      "name": "ci-results-lib",
+      "bytes": 1187,
+      "sha256": "71bf43b3b533a975bb8d07f149f172e82fed1d3362bf5919cd3505a6b15f47e6",
+      "createdAt": "2026-11-05T01:47:20Z",
+      "expiresAt": "2026-12-05T01:47:19Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13380981775"
+    },
+    {
+      "id": 13380941959,
+      "name": "sheet-pdf-evidence",
+      "bytes": 736829,
+      "sha256": "b216c6a22fe558b740809b890616ebfd36ccf62449e6e3d476fba60086839a18",
+      "createdAt": "2026-11-05T01:47:00Z",
+      "expiresAt": "2026-11-12T01:46:59Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13380941959"
+    },
+    {
+      "id": 13380772409,
+      "name": "doc-pdf-evidence",
+      "bytes": 8594204,
+      "sha256": "24e6136d29d7721c40706178afc966eae17dbb7c3f6f34e8a479643e2e2260d7",
+      "createdAt": "2026-11-05T01:47:02Z",
+      "expiresAt": "2026-11-12T01:47:01Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13380772409"
+    },
+    {
+      "id": 13380593526,
+      "name": "theme-screenshots-sync-production",
+      "bytes": 5018185,
+      "sha256": "f186abb47383cbe8967e64db2350554849b1cff691dc91392e99dc073bc90667",
+      "createdAt": "2026-11-05T01:52:01Z",
+      "expiresAt": "2026-11-12T01:52:00Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13380593526"
+    },
+    {
+      "id": 13380590048,
+      "name": "sized-restore-acceptance",
+      "bytes": 68788,
+      "sha256": "b6e56f0b8561b0146f9c51af6fc098ce69fb7f15e48bb199bbe9582f8a0cd032",
+      "createdAt": "2026-11-05T01:31:05Z",
+      "expiresAt": "2026-11-19T01:31:05Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13380590048"
+    },
+    {
+      "id": 13380450796,
+      "name": "theme-screenshots-offline-upgrade",
+      "bytes": 283780,
+      "sha256": "0ba354ec65d6dbd88d1b778a77dcfb29b63bc02adf9b859de0a80501053be573",
+      "createdAt": "2026-11-05T01:31:56Z",
+      "expiresAt": "2026-11-12T01:31:56Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13380450796"
+    },
+    {
+      "id": 13380392351,
+      "name": "theme-screenshots-sync-soak-sheet",
+      "bytes": 372049,
+      "sha256": "94aa622dfcf1bb83798118b4397e3cbaf9d7026a9b36eb1a46b08d4a57d6b3d8",
+      "createdAt": "2026-11-05T01:41:46Z",
+      "expiresAt": "2026-11-12T01:41:46Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13380392351"
+    },
+    {
+      "id": 13380263233,
+      "name": "theme-screenshots-sync-development",
+      "bytes": 2252205,
+      "sha256": "a42b3cc4f9b4ac6b204864a0dc865ed2247526b2301f9690fa79fb90d0a29068",
+      "createdAt": "2026-11-05T01:39:49Z",
+      "expiresAt": "2026-11-12T01:39:48Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13380263233"
+    },
+    {
+      "id": 13379978325,
+      "name": "theme-screenshots-development-2",
+      "bytes": 5933894,
+      "sha256": "d572e3e5d0a9d04334bfbc7e2efd8d3d30e33ab9cdb5e4e95b6881e16b79b0e6",
+      "createdAt": "2026-11-05T01:43:02Z",
+      "expiresAt": "2026-11-12T01:43:01Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13379978325"
+    },
+    {
+      "id": 13379896610,
+      "name": "ci-plan",
+      "bytes": 944,
+      "sha256": "1d9b25e4c67cb1dc393c959e3c478fb54f13277aa5608cfda0b6842247a77351",
+      "createdAt": "2026-11-05T01:24:31Z",
+      "expiresAt": "2026-12-05T01:24:31Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13379896610"
+    },
+    {
+      "id": 13379803632,
+      "name": "doc-callback-lifetimes-mobile",
+      "bytes": 109934526,
+      "sha256": "79439f35e786bf521168df14a4a703cb3b29391a91f2ca6ff2c1fa26696e8382",
+      "createdAt": "2026-11-05T01:40:19Z",
+      "expiresAt": "2026-11-12T01:40:14Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13379803632"
+    },
+    {
+      "id": 13379783073,
+      "name": "theme-screenshots-sync-soak-doc",
+      "bytes": 383541,
+      "sha256": "688ddc2f18022909c81fc339cad5f7824cb10aa3403f4eb697889ac6a4eed188",
+      "createdAt": "2026-11-05T01:28:55Z",
+      "expiresAt": "2026-11-12T01:28:54Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13379783073"
+    },
+    {
+      "id": 13379619899,
+      "name": "theme-screenshots-mobile-https",
+      "bytes": 1639262,
+      "sha256": "37f5c0e339bbe344d4210e82c433392203240ac143d91db1120cd597ccd408ee",
+      "createdAt": "2026-11-05T01:37:33Z",
+      "expiresAt": "2026-11-12T01:37:32Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13379619899"
+    },
+    {
+      "id": 13379453638,
+      "name": "doc-callback-lifetimes-desktop",
+      "bytes": 124732580,
+      "sha256": "13595c2e8e0c8da9a8b165e777603efa36b6cf12edea25e69599ef49bca1ee2c",
+      "createdAt": "2026-11-05T01:37:05Z",
+      "expiresAt": "2026-11-12T01:36:57Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13379453638"
+    },
+    {
+      "id": 13379273000,
+      "name": "pdf-collaboration-overlap",
+      "bytes": 164526,
+      "sha256": "344e1185d7c1d0cc5b966779de7aca2cff4679e639e5913973dca6d66ded8380",
+      "createdAt": "2026-11-05T01:30:03Z",
+      "expiresAt": "2026-11-12T01:30:01Z",
+      "expired": false,
+      "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13379273000"
+    }
+  ],
+  "browserAggregate": {
+    "jobId": 127005657297,
+    "conclusion": "failure",
+    "error": "Incomplete coverage playwright-run: selected=true, result=failure",
+    "coverageResults": {
+      "backlog": "success",
+      "pull-request": "success",
+      "lint": "success",
+      "typecheck": "success",
+      "unit-tests": "success",
+      "lib-test-run": "success",
+      "playwright-run": "failure",
+      "container-smoke": "success",
+      "restore-timing": "success",
+      "sync-transition": "success",
+      "doc-responsiveness": "failure",
+      "doc-callback-lifetimes": "success"
+    },
+    "coverageArtifactId": 13382423595
+  },
+  "frozenPriorCheckpoint": {
+    "path": "ci-rejected-checkpoint.json",
+    "bytes": 47231,
+    "sha256": "c20f307fefa0fd95b44ff848ff0dde350e7ab6603a792f31c823768edb35394f",
+    "unchanged": true,
+    "scope": "Earlier partial B checkpoint at01:56:50Z. This new file records later actual outcomes and does not overwrite it."
+  },
+  "acceptance": {
+    "passed": false,
+    "strictFirstAttemptSatisfied": false,
+    "cancelledJobs": 0,
+    "workflowReruns": 0,
+    "disposition": "B is rejected: deterministic history actor locator failed in development/production and the independent mobile capacity-flush maximum failed. Passing native, visual, Storybook and other workers cannot substitute. Proposed identity repair does not repair performance."
+  },
+  "limitations": [
+    "All artifacts are listed from the final API page; download/hash verification is scoped to the independently inspected receipts, not claimed for every listed raw artifact.",
+    "Development native-copy cases currently have exact completed worker/log evidence; production has independently verified structured report evidence.",
+    "This receipt is for B only. No future source, follow-up ticket, successful comparison or causal repair is asserted."
+  ],
+  "focusedAcceptance": {
+    "historyDevelopment": {
+      "sourceSha": "95d52be36061315bff866dec615544104ca4767c",
+      "runId": 41948253612,
+      "jobId": 126985936508,
+      "stats": {
+        "startTime": "2026-11-05T01:38:33.850Z",
+        "duration": 267223.201,
+        "expected": 11,
+        "skipped": 64,
+        "unexpected": 1,
+        "flaky": 0
+      },
+      "historyCases": [
+        {
+          "title": "sheet versions can be named, renamed, unnamed and read by a viewer",
+          "file": "history.spec.ts",
+          "line": 9,
+          "project": "development",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "failed",
+              "duration": 17418,
+              "startTime": "2026-11-05T01:41:59.557Z"
+            },
+            {
+              "retry": 1,
+              "status": "failed",
+              "duration": 25106,
+              "startTime": "2026-11-05T01:42:17.565Z"
+            },
+            {
+              "retry": 2,
+              "status": "failed",
+              "duration": 17233,
+              "startTime": "2026-11-05T01:42:43.568Z"
+            }
+          ]
+        },
+        {
+          "title": "doc versions can be named, renamed, unnamed and read by a viewer",
+          "file": "history.spec.ts",
+          "line": 9,
+          "project": "development",
+          "expectedStatus": "passed",
+          "status": "skipped",
+          "results": []
+        }
+      ],
+      "assertion": {
+        "path": "e2e/history.spec.ts",
+        "line": 112,
+        "locator": "getByRole('link', { name: 'Your profile' })",
+        "expected": "Version viewer",
+        "timeoutMs": 5000,
+        "actual": "element(s) not found",
+        "allThreeSheetAttempts": "failed at this same assertion"
+      },
+      "skippedOwnership": "64 cases, including Doc history, have empty results and no explicit skip annotations because development maxFailures=1 stopped the shard. They did not run and provide no acceptance."
+    },
+    "historyProduction": {
+      "jobId": 126985936574,
+      "project": "production",
+      "shard": "2/2",
+      "stats": {
+        "startTime": "2026-11-05T01:38:39.873Z",
+        "duration": 904027.6190000001,
+        "expected": 82,
+        "skipped": 0,
+        "unexpected": 2,
+        "flaky": 0
+      },
+      "historyCases": [
+        {
+          "title": "sheet versions can be named, renamed, unnamed and read by a viewer",
+          "file": "history.spec.ts",
+          "line": 9,
+          "project": "production",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "failed",
+              "duration": 12006,
+              "startTime": "2026-11-05T01:40:02.414Z",
+              "error": "Missing Your profile link; expected Version viewer; 5000ms; e2e/history.spec.ts:112"
+            },
+            {
+              "retry": 1,
+              "status": "failed",
+              "duration": 14522,
+              "startTime": "2026-11-05T01:40:15.004Z",
+              "error": "Missing Your profile link; expected Version viewer; 5000ms; e2e/history.spec.ts:112"
+            },
+            {
+              "retry": 2,
+              "status": "failed",
+              "duration": 12210,
+              "startTime": "2026-11-05T01:40:30.304Z",
+              "error": "Missing Your profile link; expected Version viewer; 5000ms; e2e/history.spec.ts:112"
+            }
+          ]
+        },
+        {
+          "title": "doc versions can be named, renamed, unnamed and read by a viewer",
+          "file": "history.spec.ts",
+          "line": 9,
+          "project": "production",
+          "expectedStatus": "passed",
+          "status": "unexpected",
+          "results": [
+            {
+              "retry": 0,
+              "status": "failed",
+              "duration": 12021,
+              "startTime": "2026-11-05T01:40:43.121Z",
+              "error": "Missing Your profile link; expected Version viewer; 5000ms; e2e/history.spec.ts:112"
+            },
+            {
+              "retry": 1,
+              "status": "failed",
+              "duration": 13975,
+              "startTime": "2026-11-05T01:40:55.739Z",
+              "error": "Missing Your profile link; expected Version viewer; 5000ms; e2e/history.spec.ts:112"
+            },
+            {
+              "retry": 2,
+              "status": "failed",
+              "duration": 11990,
+              "startTime": "2026-11-05T01:41:10.454Z",
+              "error": "Missing Your profile link; expected Version viewer; 5000ms; e2e/history.spec.ts:112"
+            }
+          ]
+        }
+      ],
+      "reportEntry": {
+        "path": "playwright-report/production-2-of-2.json",
+        "bytes": 1606992,
+        "sha256": "76e51b0738fa52c03777144f547dffa6751391e232edbfc07b075cb32e9b3dde",
+        "crc32": "3b05e6cb"
+      },
+      "verification": "Archive size/SHA-256 and all ZIP-entry CRCs verified. Sheet and Doc each failed retry0/1/2 at the same current-source profile navigation locator; no workflow rerun. All other82cases passed. Raw original report/ZIP/session-bearing traces remain scratch-only."
+    },
+    "nativeCopyProduction": {
+      "jobId": 126985936625,
+      "project": "production",
+      "shard": "1/2",
+      "stats": {
+        "startTime": "2026-11-05T01:32:31.448Z",
+        "duration": 676906.46,
+        "expected": 81,
+        "skipped": 3,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "copyCases": [
+        {
+          "title": "native Sheet copying waits for saved online content, keeps images, and edits an independent same-folder copy",
+          "file": "copy.spec.ts",
+          "line": 147,
+          "project": "production",
+          "expectedStatus": "passed",
+          "status": "expected",
+          "annotations": [],
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 6743,
+              "startTime": "2026-11-05T01:36:46.674Z"
+            }
+          ]
+        },
+        {
+          "title": "a phone Doc viewer retains a copy after dismissing its busy native drawer and losing source access",
+          "file": "copy.spec.ts",
+          "line": 341,
+          "project": "production",
+          "expectedStatus": "passed",
+          "status": "expected",
+          "annotations": [],
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 7952,
+              "startTime": "2026-11-05T01:36:53.436Z"
+            }
+          ]
+        }
+      ],
+      "skippedCases": [
+        {
+          "title": "phone Doc typing keeps the rendered caret above the emulated keyboard",
+          "file": "doc-mobile.spec.ts",
+          "line": 501,
+          "project": "production",
+          "expectedStatus": "skipped",
+          "status": "skipped",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 505,
+                "column": 8
+              }
+            }
+          ],
+          "results": [
+            {
+              "retry": 0,
+              "status": "skipped",
+              "duration": 1,
+              "startTime": "2026-11-05T01:39:55.966Z"
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves queued phone writing and the owner grant",
+          "file": "doc-mobile.spec.ts",
+          "line": 980,
+          "project": "production",
+          "expectedStatus": "skipped",
+          "status": "skipped",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ],
+          "results": [
+            {
+              "retry": 0,
+              "status": "skipped",
+              "duration": 1,
+              "startTime": "2026-11-05T01:40:22.114Z"
+            }
+          ]
+        },
+        {
+          "title": "a peer-protocol page-layout change preserves native phone composition and the owner grant",
+          "file": "doc-mobile.spec.ts",
+          "line": 980,
+          "project": "production",
+          "expectedStatus": "skipped",
+          "status": "skipped",
+          "annotations": [
+            {
+              "type": "skip",
+              "description": "Requires the VITE_SYNC_EVIDENCE read observer enabled by the native sync projects.",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/doc-mobile.spec.ts",
+                "line": 984,
+                "column": 10
+              }
+            }
+          ],
+          "results": [
+            {
+              "retry": 0,
+              "status": "skipped",
+              "duration": 0,
+              "startTime": "2026-11-05T01:40:22.123Z"
+            }
+          ]
+        }
+      ],
+      "reportEntry": {
+        "path": "playwright-report/production-1-of-2.json",
+        "bytes": 1501760,
+        "sha256": "4091a589d3df7797431f8aa10ccd3eb85b6e9096605dbbd55aa5381c8bd00d93",
+        "crc32": "9c5f3b1c"
+      },
+      "verification": "Archive size/SHA-256 and all ZIP-entry CRCs verified; job checkout source/tested identities verified. All copy cases passed one retry0 execution. No workflow rerun."
+    },
+    "nativeCopyDevelopment": {
+      "jobId": 126985936585,
+      "project": "development",
+      "shard": "1/2",
+      "passed": 74,
+      "explicitObserverSkips": 3,
+      "failures": 0,
+      "cases": [
+        {
+          "file": "copy.spec.ts",
+          "line": 147,
+          "title": "native Sheet copying waits for saved online content, keeps images, and edits an independent same-folder copy"
+        },
+        {
+          "file": "copy.spec.ts",
+          "line": 341,
+          "title": "a phone Doc viewer retains a copy after dismissing its busy native drawer and losing source access"
+        }
+      ],
+      "verification": "Both exact case lines occur once in completed successful worker log; no retry/failure markers. Structured report was not independently downloaded for this worker. Three deliberate observation-dependent phone cases are owned by sync projects; no missing history cases counted as deliberate skips."
+    },
+    "offlineUpgrade": {
+      "schemaVersion": 1,
+      "observedAt": "2026-11-05T01:34:37.041949+00:00",
+      "sourceSha": "95d52be36061315bff866dec615544104ca4767c",
+      "baseSha": "5c565b61e11ce29780581f33410749436ecef42f",
+      "testedSha": "679ad75636799820e47bf0214ade771c3fe859e2",
+      "runId": 41948253612,
+      "attempt": 1,
+      "jobId": 126985936486,
+      "project": "offline-upgrade",
+      "stats": {
+        "startTime": "2026-11-05T01:31:12.636Z",
+        "duration": 43382.752,
+        "expected": 2,
+        "skipped": 0,
+        "unexpected": 0,
+        "flaky": 0
+      },
+      "cases": [
+        {
+          "title": "the actual SPN-054 eager client keeps its pending Doc and lazy files during new-host adoption",
+          "file": "offline-upgrade.spec.ts",
+          "line": 202,
+          "project": "offline-upgrade",
+          "expectedStatus": "passed",
+          "status": "expected",
+          "annotations": [
+            {
+              "type": "serial",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/offline-upgrade.spec.ts",
+                "line": 0,
+                "column": 0
+              }
+            }
+          ],
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 11544,
+              "startTime": "2026-11-05T01:31:13.728Z"
+            }
+          ]
+        },
+        {
+          "title": "interrupted emitted updates preserve exact native work, a live old client and cold offline startup",
+          "file": "offline-upgrade.spec.ts",
+          "line": 576,
+          "project": "offline-upgrade",
+          "expectedStatus": "passed",
+          "status": "expected",
+          "annotations": [
+            {
+              "type": "serial",
+              "location": {
+                "file": "/home/runner/work/spinel/spinel/e2e/offline-upgrade.spec.ts",
+                "line": 0,
+                "column": 0
+              }
+            }
+          ],
+          "results": [
+            {
+              "retry": 0,
+              "status": "passed",
+              "duration": 23258,
+              "startTime": "2026-11-05T01:31:32.663Z"
+            }
+          ]
+        }
+      ],
+      "artifact": {
+        "id": 13380450796,
+        "name": "theme-screenshots-offline-upgrade",
+        "bytes": 283780,
+        "sha256": "0ba354ec65d6dbd88d1b778a77dcfb29b63bc02adf9b859de0a80501053be573",
+        "createdAt": "2026-11-05T01:31:56Z",
+        "expiresAt": "2026-11-12T01:31:56Z",
+        "expired": false,
+        "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13380450796"
+      },
+      "reportEntry": {
+        "path": "playwright-report/offline-upgrade.json",
+        "bytes": 1407447,
+        "sha256": "86fdca24b93781683ccef874174a28eb462564a6d105c52f1f67e5faf3c962c3",
+        "crc32": "339b4e71"
+      },
+      "verification": "Archive size/SHA-256 and every ZIP-entry CRC verified. Job checkout source/tested identities confirmed; both tests passed on retry 0. No workflow rerun.",
+      "historicalDisposition": "Fresh reviewed-source acceptance; does not identify or causally repair retained ee996e95 waiting-worker activation anomaly owned by SPN-144."
+    },
+    "callbackLifetimes": {
+      "schemaVersion": 1,
+      "observedAt": "2026-11-05T01:42:41.595541+00:00",
+      "sourceSha": "95d52be36061315bff866dec615544104ca4767c",
+      "baseSha": "5c565b61e11ce29780581f33410749436ecef42f",
+      "testedSha": "679ad75636799820e47bf0214ade771c3fe859e2",
+      "runId": 41948253612,
+      "attempt": 1,
+      "presets": [
+        {
+          "preset": "desktop",
+          "jobId": 126985936222,
+          "accepted": true,
+          "failures": [],
+          "artifact": {
+            "id": 13379453638,
+            "name": "doc-callback-lifetimes-desktop",
+            "bytes": 124732580,
+            "sha256": "13595c2e8e0c8da9a8b165e777603efa36b6cf12edea25e69599ef49bca1ee2c",
+            "expiresAt": "2026-11-12T01:36:57Z",
+            "createdAt": "2026-11-05T01:37:05Z",
+            "expired": false,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13379453638"
+          },
+          "comparisonEntry": {
+            "path": "test-results/spn113-comparison-desktop.json",
+            "bytes": 970242,
+            "sha256": "f58ee7384048f60ac905904f3ef9092d6e098f048ad044743184a44563334e93",
+            "crc32": "25d83015"
+          },
+          "roles": {
+            "baseline": {
+              "source": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+              "testAttempt": 0,
+              "stats": {
+                "startTime": "2026-11-05T01:29:07.459Z",
+                "duration": 224706.636,
+                "expected": 1,
+                "skipped": 0,
+                "unexpected": 0,
+                "flaky": 0
+              },
+              "keyDowns": 2086,
+              "bounded": false,
+              "caps": {
+                "cursor": 4,
+                "zoom-init": 1,
+                "zoom-update": 1
+              },
+              "pendingHighWater": {
+                "cursor": 5783,
+                "zoom-init": 1,
+                "zoom-update": 1426
+              },
+              "pendingAfterDisposal": {
+                "cursor": 8,
+                "zoom-init": 0,
+                "zoom-update": 0
+              },
+              "callbacksAfterDisposal": {
+                "cursor": 8,
+                "zoom-init": 0,
+                "zoom-update": 0
+              },
+              "pendingAtEnd": {
+                "cursor": 0,
+                "zoom-init": 0,
+                "zoom-update": 0
+              },
+              "cleanup": {
+                "sessionDetached": true,
+                "fixtureClosed": true
+              },
+              "progress": {
+                "schema": 1,
+                "phase": "fixture-cleanup-complete",
+                "firstFailure": null,
+                "persistenceFailure": null,
+                "terminal": "passed",
+                "droppedEvents": 0
+              },
+              "trace": {
+                "file": "spn113-trace.json.gz",
+                "completion": {
+                  "dataLossOccurred": false,
+                  "stream": "1",
+                  "traceFormat": "json",
+                  "streamCompression": "none"
+                },
+                "bytes": 52240307,
+                "sha256": "b7f3a2fce9a27b56053e669f9d5c5ae2d1c31ac91f7425da433099cc858f3ab6",
+                "storage": {
+                  "compression": "gzip",
+                  "producer": "node:zlib",
+                  "level": 1
+                },
+                "transport": {
+                  "bytes": 666960809,
+                  "sha256": "ad187ab30c3bf359ff8cb4957a2cc310faeabf6c8522ee775cb4d901fea9af56"
+                }
+              },
+              "maxTraceBufferFraction": 0.4879065454006195,
+              "instrumentation": {
+                "streamFormat": "json",
+                "streamCompression": "none",
+                "storage": {
+                  "compression": "gzip",
+                  "producer": "node:zlib",
+                  "level": 1
+                },
+                "cpuThrottle": 1,
+                "mountedEditors": 1,
+                "latencyBudgetsEnforced": false,
+                "postDisposalMs": 1200
+              },
+              "evidenceEntry": {
+                "path": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+                "bytes": 23935320,
+                "sha256": "ae3864cf55b19090d662e79efad61a919dee0fed544d3cdb9f057277d11b4f5b",
+                "crc32": "3fa0c457"
+              }
+            },
+            "candidate": {
+              "source": "679ad75636799820e47bf0214ade771c3fe859e2",
+              "testAttempt": 0,
+              "stats": {
+                "startTime": "2026-11-05T01:32:58.378Z",
+                "duration": 218448.40800000002,
+                "expected": 1,
+                "skipped": 0,
+                "unexpected": 0,
+                "flaky": 0
+              },
+              "keyDowns": 2086,
+              "bounded": true,
+              "caps": {
+                "cursor": 4,
+                "zoom-init": 1,
+                "zoom-update": 1
+              },
+              "pendingHighWater": {
+                "cursor": 4,
+                "zoom-init": 1,
+                "zoom-update": 1
+              },
+              "pendingAfterDisposal": {
+                "cursor": 0,
+                "zoom-init": 0,
+                "zoom-update": 0
+              },
+              "callbacksAfterDisposal": {
+                "cursor": 0,
+                "zoom-init": 0,
+                "zoom-update": 0
+              },
+              "pendingAtEnd": {
+                "cursor": 0,
+                "zoom-init": 0,
+                "zoom-update": 0
+              },
+              "cleanup": {
+                "sessionDetached": true,
+                "fixtureClosed": true
+              },
+              "progress": {
+                "schema": 1,
+                "phase": "fixture-cleanup-complete",
+                "firstFailure": null,
+                "persistenceFailure": null,
+                "terminal": "passed",
+                "droppedEvents": 0
+              },
+              "trace": {
+                "file": "spn113-trace.json.gz",
+                "completion": {
+                  "dataLossOccurred": false,
+                  "stream": "1",
+                  "traceFormat": "json",
+                  "streamCompression": "none"
+                },
+                "bytes": 50687696,
+                "sha256": "5a9febf7660af63246788453bbf415452126029b13c112046a44cf9b34bb00ef",
+                "storage": {
+                  "compression": "gzip",
+                  "producer": "node:zlib",
+                  "level": 1
+                },
+                "transport": {
+                  "bytes": 674057900,
+                  "sha256": "c0bf025b940235b829eb423d1b0bbdd44bf8521191e616a936d7b7a01f73d906"
+                }
+              },
+              "maxTraceBufferFraction": 0.5071927905082703,
+              "instrumentation": {
+                "streamFormat": "json",
+                "streamCompression": "none",
+                "storage": {
+                  "compression": "gzip",
+                  "producer": "node:zlib",
+                  "level": 1
+                },
+                "cpuThrottle": 1,
+                "mountedEditors": 1,
+                "latencyBudgetsEnforced": false,
+                "postDisposalMs": 1200
+              },
+              "evidenceEntry": {
+                "path": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-2a47a-p-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+                "bytes": 18317136,
+                "sha256": "50a49fb0b36f3fdc4e15ca7406373c28baecb44f7a9cb25a1e6a3a1f7af384b7",
+                "crc32": "a3aeb6b3"
+              }
+            }
+          }
+        },
+        {
+          "preset": "mobile",
+          "jobId": 126985936342,
+          "accepted": true,
+          "failures": [],
+          "artifact": {
+            "id": 13379803632,
+            "name": "doc-callback-lifetimes-mobile",
+            "bytes": 109934526,
+            "sha256": "79439f35e786bf521168df14a4a703cb3b29391a91f2ca6ff2c1fa26696e8382",
+            "expiresAt": "2026-11-12T01:40:14Z",
+            "createdAt": "2026-11-05T01:40:19Z",
+            "expired": false,
+            "url": "https://github.com/mxbaylee/spinel/actions/runs/41948253612/artifacts/13379803632"
+          },
+          "comparisonEntry": {
+            "path": "test-results/spn113-comparison-mobile.json",
+            "bytes": 965510,
+            "sha256": "911dc9678297ad701dd7b3ec6809bd1affb32207bc81d2e205a72f8783171d9b",
+            "crc32": "9f5952f9"
+          },
+          "roles": {
+            "baseline": {
+              "source": "0e1df4725d9eccb77574d25e3eecdf678fe6ff44",
+              "testAttempt": 0,
+              "stats": {
+                "startTime": "2026-11-05T01:31:36.730Z",
+                "duration": 293604.284,
+                "expected": 1,
+                "skipped": 0,
+                "unexpected": 0,
+                "flaky": 0
+              },
+              "keyDowns": 2086,
+              "bounded": false,
+              "caps": {
+                "cursor": 4,
+                "zoom-init": 1,
+                "zoom-update": 1
+              },
+              "pendingHighWater": {
+                "cursor": 7752,
+                "zoom-init": 1,
+                "zoom-update": 1824
+              },
+              "pendingAfterDisposal": {
+                "cursor": 8,
+                "zoom-init": 0,
+                "zoom-update": 0
+              },
+              "callbacksAfterDisposal": {
+                "cursor": 8,
+                "zoom-init": 0,
+                "zoom-update": 0
+              },
+              "pendingAtEnd": {
+                "cursor": 0,
+                "zoom-init": 0,
+                "zoom-update": 0
+              },
+              "cleanup": {
+                "sessionDetached": true,
+                "fixtureClosed": true
+              },
+              "progress": {
+                "schema": 1,
+                "phase": "fixture-cleanup-complete",
+                "firstFailure": null,
+                "persistenceFailure": null,
+                "terminal": "passed",
+                "droppedEvents": 0
+              },
+              "trace": {
+                "file": "spn113-trace.json.gz",
+                "completion": {
+                  "dataLossOccurred": false,
+                  "stream": "1",
+                  "traceFormat": "json",
+                  "streamCompression": "none"
+                },
+                "bytes": 45672483,
+                "sha256": "e788e2f4fb5d1131ad2733a960d4e01615cf3c113fe82c4d97371fa64be73814",
+                "storage": {
+                  "compression": "gzip",
+                  "producer": "node:zlib",
+                  "level": 1
+                },
+                "transport": {
+                  "bytes": 588999732,
+                  "sha256": "c169eb9c842cc67797d92f7720579f3bc11f5514e78b9d014c387b3a5cae8ffc"
+                }
+              },
+              "maxTraceBufferFraction": 0.4334879219532013,
+              "instrumentation": {
+                "streamFormat": "json",
+                "streamCompression": "none",
+                "storage": {
+                  "compression": "gzip",
+                  "producer": "node:zlib",
+                  "level": 1
+                },
+                "cpuThrottle": 4,
+                "mountedEditors": 1,
+                "latencyBudgetsEnforced": false,
+                "postDisposalMs": 1200
+              },
+              "evidenceEntry": {
+                "path": "baseline-callback-source/test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+                "bytes": 21437969,
+                "sha256": "6d3be0bf5e10cc0ab288c7a61016d15ba5989a380763a90e5504a04d86f5a846",
+                "crc32": "3be164f8"
+              }
+            },
+            "candidate": {
+              "source": "679ad75636799820e47bf0214ade771c3fe859e2",
+              "testAttempt": 0,
+              "stats": {
+                "startTime": "2026-11-05T01:36:34.463Z",
+                "duration": 209640.128,
+                "expected": 1,
+                "skipped": 0,
+                "unexpected": 0,
+                "flaky": 0
+              },
+              "keyDowns": 2086,
+              "bounded": true,
+              "caps": {
+                "cursor": 4,
+                "zoom-init": 1,
+                "zoom-update": 1
+              },
+              "pendingHighWater": {
+                "cursor": 4,
+                "zoom-init": 1,
+                "zoom-update": 1
+              },
+              "pendingAfterDisposal": {
+                "cursor": 0,
+                "zoom-init": 0,
+                "zoom-update": 0
+              },
+              "callbacksAfterDisposal": {
+                "cursor": 0,
+                "zoom-init": 0,
+                "zoom-update": 0
+              },
+              "pendingAtEnd": {
+                "cursor": 0,
+                "zoom-init": 0,
+                "zoom-update": 0
+              },
+              "cleanup": {
+                "sessionDetached": true,
+                "fixtureClosed": true
+              },
+              "progress": {
+                "schema": 1,
+                "phase": "fixture-cleanup-complete",
+                "firstFailure": null,
+                "persistenceFailure": null,
+                "terminal": "passed",
+                "droppedEvents": 0
+              },
+              "trace": {
+                "file": "spn113-trace.json.gz",
+                "completion": {
+                  "dataLossOccurred": false,
+                  "stream": "1",
+                  "traceFormat": "json",
+                  "streamCompression": "none"
+                },
+                "bytes": 42678748,
+                "sha256": "f4a00836bcb993d58d39faecc14df49d6a59100004247267ed0d37c7529eae39",
+                "storage": {
+                  "compression": "gzip",
+                  "producer": "node:zlib",
+                  "level": 1
+                },
+                "transport": {
+                  "bytes": 579334355,
+                  "sha256": "764eec363fc6994b237776fc9e75d4cfbf14d2daf7657b56f04ef6e99d9f1ec8"
+                }
+              },
+              "maxTraceBufferFraction": 0.4412260353565216,
+              "instrumentation": {
+                "streamFormat": "json",
+                "streamCompression": "none",
+                "storage": {
+                  "compression": "gzip",
+                  "producer": "node:zlib",
+                  "level": 1
+                },
+                "cpuThrottle": 4,
+                "mountedEditors": 1,
+                "latencyBudgetsEnforced": false,
+                "postDisposalMs": 1200
+              },
+              "evidenceEntry": {
+                "path": "test-results/doc-callback-lifetimes/doc-responsiveness-callbac-8f749-e-native-callback-lifetimes-doc-callback-lifetimes/spn113-evidence.json",
+                "bytes": 15797905,
+                "sha256": "3541448d6bd66ddb6fe9963636ea4919546a8d6383e06a7454e0e9475a7232e4",
+                "crc32": "2f5dfdf4"
+              }
+            }
+          }
+        }
+      ],
+      "timingBoundary": "Traced callback observations are descriptive; unchanged unprofiled SPN-108 gates remain required.",
+      "verification": "Full artifact size/SHA-256 and every ZIP entry CRC verified. Each stored gzip trace byte count/SHA-256 independently verified; raw transport hashes are retained from CI parser records, not a repeated local trace analysis. Both actual browser cases passed retry 0 with terminal cleanup success. Traced wall-time observations are not unprofiled responsiveness acceptance."
+    },
+    "mobileResponsiveness": {
+      "jobId": 126985936494,
+      "baselineCases": 4,
+      "candidatePassed": 6,
+      "candidateFailed": 1,
+      "retryAttempts": 0,
+      "failedCase": {
+        "case": "mobile sustained native typing plain-1",
+        "definition": "e2e/doc-responsiveness.spec.ts:320",
+        "assertion": "e2e/doc-responsiveness.spec.ts:718",
+        "retry": 0,
+        "startTime": "2026-11-05T02:03:31.810Z",
+        "durationMs": 193362,
+        "expectedMaximumMs": 100,
+        "observedMaximumMs": 129.10000000009313,
+        "disposition": "Valid unprofiled first-attempt capacity-flush maximum failure. No retry, budget waiver or causal repair claimed."
+      },
+      "failedPair": {
+        "zeroBasedIndex": 20,
+        "policyObservation": {
+          "reason": "capacity",
+          "startedAt": 34259.89999999991,
+          "durationMs": 129.10000000009313,
+          "history": 32,
+          "collaboration": 32
+        },
+        "nativePhases": [
+          {
+            "sequence": 62,
+            "phase": "history",
+            "origin": "policy-capacity",
+            "startedAt": 34259.89999999991,
+            "endedAt": 34319.69999999995,
+            "before": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "after": {
+              "history": 0,
+              "collaboration": 32
+            },
+            "outcome": "returned",
+            "completedStates": 672,
+            "durationMs": 59.800000000046566
+          },
+          {
+            "sequence": 63,
+            "phase": "collaboration",
+            "origin": "policy-capacity",
+            "startedAt": 34319.80000000005,
+            "endedAt": 34389,
+            "before": {
+              "history": 0,
+              "collaboration": 32
+            },
+            "after": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "outcome": "returned",
+            "completedStates": 672,
+            "durationMs": 69.19999999995343
+          },
+          {
+            "sequence": 61,
+            "phase": "pair",
+            "origin": "policy-capacity",
+            "startedAt": 34259.89999999991,
+            "endedAt": 34389,
+            "before": {
+              "history": 32,
+              "collaboration": 32
+            },
+            "after": {
+              "history": 0,
+              "collaboration": 0
+            },
+            "outcome": "returned",
+            "completedStates": 672,
+            "durationMs": 129.10000000009313
+          }
+        ],
+        "overlappingLongTasks": [
+          {
+            "startedAt": 34255.69999999995,
+            "durationMs": 186
+          }
+        ]
+      },
+      "pairedComparison": {
+        "baselineObservationCasesPassed": 4,
+        "candidateCasesPassed": 6,
+        "candidateCasesFailed": 1,
+        "comparisonStep": "Verify candidate evidence and selected paired comparison",
+        "comparisonStepConclusion": "skipped",
+        "completedPairedAcceptance": false,
+        "reason": "Required candidate plain-1 failed before completed evidence; four baseline observations and six other cases do not replace it."
+      },
+      "retainedReceipt": {
+        "path": "mobile-responsiveness-safe-evidence/receipt.json",
+        "bytes": 38740,
+        "sha256": "becc4db59574fef1f83c5dd6ea33229310689a226a5f17d683e9025aa51e1703"
+      }
+    },
+    "nativeDesktop": {
+      "runId": 41948253550,
+      "attempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "browserResults": [
+        {
+          "name": "Chrome",
+          "jobId": 126985717545,
+          "stagesPassed": 37
+        },
+        {
+          "name": "Firefox",
+          "jobId": 126985717242,
+          "stagesPassed": 37
+        },
+        {
+          "name": "Safari",
+          "jobId": 126985717405,
+          "stagesPassed": 39
+        }
+      ],
+      "eachBrowserDeletionOperationsPassed": 10,
+      "eachBrowserFinalLocalStorageEntries": 0,
+      "ownedBrowserAndDriverCleanup": true,
+      "receipt": {
+        "path": "native-terminal.json",
+        "bytes": 15676,
+        "sha256": "3e45924e57f6b7ceec4f55553698925c5efdae6de8cacde73474abe35d08baea"
+      },
+      "boundary": "These separately successful native results do not replace failed ordinary CI; historical native failure cause is not established by this pass."
+    }
+  },
+  "otherVerifiedCounts": {
+    "nodeScriptControls": 589,
+    "vitestRemaining": 2015,
+    "vitestRecovery": 607,
+    "vitestSupervisor": 131,
+    "libTests": 1065,
+    "libExistingOptInDiagnosticSkips": 3,
+    "syncDevelopment": 21,
+    "syncProduction": 98,
+    "syncSoakDoc": 1,
+    "syncSoakSheet": 1,
+    "mobileHttpsPassed": 10,
+    "mobileHttpsObserverSkips": 3,
+    "supervisedRestore": 2,
+    "desktopResponsivenessBaseline": 4,
+    "desktopResponsivenessCandidate": 7,
+    "boundary": "Counts are distinct suite/report or completed-log scopes; not summed as a whole-repository unique test total. Performance baselines and profiled cases have their explicit owners."
+  }
+}

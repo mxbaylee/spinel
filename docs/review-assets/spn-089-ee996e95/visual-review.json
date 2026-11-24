@@ -1,0 +1,49 @@
+{
+  "source": "ee996e95e5a1ca117f4144e5e3950341eb97c6da",
+  "testedMerge": "39a9b6227e0eb4339adbe1b9e99606318e90ef21",
+  "tree": "dca595ca8ef725b5f51af4732d7499af2346f4cc",
+  "reviewer": "/root/dialog_audit",
+  "mode": "agent review only",
+  "disposition": "Approved: earlier P2 title-cue vertical alignment finding closed on exact repaired source.",
+  "basis": "Fresh unmodified hosted artifact 13370111549 from run 41927434933 and completed stock screenshot runner: 40/40 checks, 40 PNGs, zero failures. Prior CSS-injection diagnosis is not the acceptance basis.",
+  "inspected": [
+    "redesign-controls--long-modal-title-phone.png",
+    "redesign-controls--emoji-modal-title-light.png",
+    "redesign-controls--emoji-modal-title-phone-dark.png",
+    "docs-formulas--insert-phone.png",
+    "docs-formulas--edit-dark.png",
+    "account-profile--icon-picker-light.png",
+    "account-profile--icon-picker-phone-dark.png",
+    "redesign-appearance--icon-or-emoji-picker-open-light.png",
+    "redesign-appearance--icon-or-emoji-picker-open-phone-dark.png",
+    "space-review--pages-drawer-phone.png",
+    "redesign-native-editors--make-copy-dialog-light.png",
+    "redesign-native-editors--make-copy-dialog-dark.png",
+    "redesign-native-editors--make-copy-dialog-phone.png",
+    "redesign-native-editors--make-copy-dialog-phone-dark.png",
+    "redesign-native-editors--make-copy-dialog-tablet.png",
+    "redesign-controls--long-modal-title-dark.png",
+    "space-review--pages-drawer-phone-dark.png"
+  ],
+  "findings": [
+    {
+      "severity": "P2",
+      "status": "closed",
+      "detail": "Shared SVG/emoji and native title owners align with the first text line; no remaining vertical drift, multiline-centering error, new overlap or clipping in inspected current-source views."
+    },
+    {
+      "severity": "P3",
+      "status": "retained nonblocking fixture-fidelity limitation",
+      "detail": "Compact native Storybook Name input retains square/default field styling that differs from the rounded field in earlier production native-flow captures. This predates the title repair and does not affect the approved title region. Keep the caveat attached to these preview images."
+    }
+  ],
+  "independentVerification": [
+    "Archive SHA-256 7a0610a58fa49ca6d8d3f5c60c0b8b065ccffbe330e37098ad23abcd1a0b60a7; 6,193,053 bytes; all 363 extracted files byte-match archive.",
+    "Embedded source/tested identities and separately read GitHub tested-merge tree match reviewed source tree.",
+    "All 114 inventory IDs exist in the 1,056-story catalogue.",
+    "Manifest has all 40 expected checks and 40 PNGs, no missing combinations/files/failures.",
+    "Screenshot and serial runners match reviewed commit; only environment syscall adapter, no CSS injection/application request interception.",
+    "Watchdog: 61.516 seconds, 1,252,664 KiB peak, exit 0, no abort."
+  ],
+  "boundary": "Current-source visual acceptance only. Full hosted catalogue and required CI/native results have independent acceptance gates; source grades do not substitute for them."
+}

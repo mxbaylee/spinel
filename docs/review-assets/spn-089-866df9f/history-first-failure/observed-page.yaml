@@ -1,0 +1,41 @@
+- banner:
+  - link "Spinel Your docs":
+    - /url: /
+    - img "Spinel"
+    - text: Your docs
+  - status "Connection status": Online
+  - button "Online — connected to Spinel"
+  - button "Collapse navigation" [expanded]
+  - navigation "File places":
+    - button "My files"
+    - button "Shared with me"
+  - radiogroup "Appearance":
+    - radio "Follow system" [checked]
+    - radio "Light"
+    - radio "Dark"
+  - link "Your profile":
+    - /url: /profile
+    - text: Version viewer
+  - button "Sign out"
+- main:
+  - region "Your files":
+    - heading "My files" [level=1]
+    - button "More actions for My files": ···
+    - button "New"
+    - region "Search your workspace":
+      - text: Search files
+      - searchbox "Search files"
+      - button "Search options"
+      - radiogroup "File view":
+        - radio "List" [checked]
+        - radio "Grid"
+      - group: Search help
+      - paragraph:
+        - text: "Searching:"
+        - strong: All accessible files
+    - list "Folder contents":
+      - listitem:
+        - button "Trash Recently deleted files":
+          - strong: Trash
+          - text: Recently deleted files
+    - paragraph: This folder is empty.

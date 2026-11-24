@@ -1,0 +1,17 @@
+{
+  "startedAt": "2026-11-04T21:16:29.952Z",
+  "finishedAt": "2026-11-04T21:16:39.489Z",
+  "node": "v26.12.1",
+  "cwd": "/workspace/scratch/ce40e94380e1/spinel",
+  "command": "node",
+  "args": [
+    "scripts/serial.ts",
+    "node",
+    "/workspace/scratch/ce40e94380e1/validation/native-copy-dev-probe.ts"
+  ],
+  "elapsedMs": 9536,
+  "peakKiB": 2138112,
+  "code": 1,
+  "signal": null,
+  "aborted": "process tree exceeded 2 GiB"
+}

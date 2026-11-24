@@ -34,6 +34,10 @@ export async function openNativeCopy(
     has: page.getByRole('form', { name: 'Make a copy', exact: true }),
   });
   await expect(dialog).toBeVisible();
+  await expect(dialog).toHaveAccessibleName('Make a copy');
+  await expect(dialog.locator('.sp-modal-title')).toHaveText('Make a copy');
+  await expect(dialog.locator('.sp-modal-title-icon')).toHaveAttribute('aria-hidden', 'true');
+  await expect(dialog.locator('.sp-modal-title-icon')).toBeVisible();
   await expect(dialog.getByRole('textbox', { name: 'Name', exact: true })).toBeVisible();
   return dialog;
 }

@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 import type { DocDrainWitness, DocResponsivenessEvidence } from './doc-responsiveness.ts';
-import type { observeNativeDocComposition } from '../src/ui/nativeDocFlushDiagnostic.ts';
 
 export const NATIVE_WINDOW = { start: 384, end: 448, total: 2086 } as const;
 export type NativeWindowInput = { action: 'type' | 'enter'; text: string; completed: number };
@@ -36,9 +35,18 @@ export function nativeWindowInput(paragraphs: readonly string[]): NativeWindowIn
   return result;
 }
 
-export type NativeWindowSnapshot = ReturnType<
-  ReturnType<typeof observeNativeDocComposition>['snapshot']
->;
+/** Retained scalar boundary contract for archived native observations. */
+export interface NativeWindowSnapshot {
+  unitId: string;
+  states: number;
+  phases: number;
+  dropped: number;
+  errors: string[];
+  activePair: number | null;
+  stopped: boolean;
+  ownsMethods: boolean;
+  phasesReturned: boolean;
+}
 
 /** Validate an actual native witness, never infer completion from keyboard requests. */
 export function validateNativeWindowBoundary(

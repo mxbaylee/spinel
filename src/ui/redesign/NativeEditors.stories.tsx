@@ -5,6 +5,8 @@ import { useRef, useState } from 'react';
 import { NativeEditor } from './NativeEditors.tsx';
 import type { NativeEditorHandle, NativeEditorProps } from './NativeEditors.tsx';
 import { Button } from './Controls.tsx';
+import { assertDialogCueAlignment, assertDialogTitle } from '../../../.storybook/dialogBounds.ts';
+import { MAKE_COPY_COMMAND } from '../../../web/nativeCopy.tsx';
 
 /** Observation belongs to the isolated story, never a production global. */
 function NativeEditorStory(props: NativeEditorProps) {
@@ -78,7 +80,7 @@ const meta = {
     docs: {
       description: {
         component:
-          'Real open-source Univer editors with local fixture data. One active editor at a time; no collaboration, accounts, server requests or persistence.',
+          'Real open-source Univer editors with local fixture data. Copy dialogs use the production addon with local API fixtures. One active editor at a time; no collaboration, accounts or persistence.',
       },
     },
   },
@@ -89,6 +91,72 @@ export const Sheet: Story = { args: { kind: 'sheet' } };
 export const Doc: Story = { args: { kind: 'doc' } };
 export const SheetViewer: Story = { args: { kind: 'sheet', readOnly: true } };
 export const DocViewer: Story = { args: { kind: 'doc', readOnly: true } };
+
+const copyFileId = '00000000-0000-4000-8000-000000000089';
+const copyApi = {
+  [`GET /api/items/${copyFileId}/copy-options`]: {
+    name: 'Autumn plans (copy)',
+    parentId: null,
+    destinations: [],
+  },
+};
+
+export const MakeCopyDialog: Story = {
+  args: { kind: 'doc', copyFileId },
+  parameters: { api: copyApi },
+  render: (args) => (
+    <NativeEditor
+      {...args}
+      onReady={({ api }) => {
+        // Global dialog parts can mount after the document renderer is ready.
+        // Real toolbar clicks and phone taps remain covered by e2e/copy.spec.ts.
+        const steady = api.Enum.LifecycleStages.Steady;
+        const open = () => {
+          void api.executeCommand(MAKE_COPY_COMMAND);
+        };
+        if (api.getCurrentLifecycleStage() >= steady) {
+          open();
+          return;
+        }
+        const listener = api.disposeWithMe(
+          api.addEvent(api.Event.LifeCycleChanged, ({ stage }) => {
+            if (stage >= steady) {
+              listener.dispose();
+              open();
+            }
+          }),
+        );
+      }}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    await waitFor(
+      () => expect(canvasElement.querySelector('[data-native-stage="ready"]')).toBeInTheDocument(),
+      { timeout: 30_000 },
+    );
+    const document = canvasElement.ownerDocument;
+    const mobile = canvasElement.querySelector<HTMLElement>('[data-u-comp="mobile-more-trigger"]');
+    const page = within(document.body);
+    const dialog = await page.findByRole('dialog', { name: 'Make a copy' }, { timeout: 30_000 });
+    await waitFor(() => expect(dialog).toBeVisible());
+    if (mobile) {
+      // Univer's mobile drawer owns a plain title region, not a heading.
+      // Keep its app-scoped accessible name and verify our actual title content.
+      await expect(dialog).toHaveAccessibleName('Make a copy');
+      const title = dialog.querySelector('.sp-modal-title');
+      await expect(title).toBeVisible();
+      await expect(title).toHaveTextContent(/^Make a copy$/);
+      const cue = dialog.querySelector('.sp-modal-title-icon');
+      await expect(cue).toBeVisible();
+      await expect(cue).toHaveAttribute('aria-hidden', 'true');
+      expect(cue?.textContent?.trim() || cue?.querySelector('svg')).toBeTruthy();
+      await assertDialogCueAlignment(cue);
+    } else await assertDialogTitle(dialog, 'Make a copy');
+    await expect(await within(dialog).findByRole('textbox', { name: 'Name' })).toHaveValue(
+      'Autumn plans (copy)',
+    );
+  },
+};
 
 export const SheetFormula: Story = {
   args: { kind: 'sheet' },

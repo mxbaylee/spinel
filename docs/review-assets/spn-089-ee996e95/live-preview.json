@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-11-04T22:50:46.139Z",
+  "url": "https://mxbaylee.github.io/spinel/sha.json",
+  "cacheControl": "no-cache plus unique query string",
+  "identity": {
+    "sha": "ee996e95e5a1ca117f4144e5e3950341eb97c6da",
+    "checkedOutSha": "39a9b6227e0eb4339adbe1b9e99606318e90ef21",
+    "branch": "codex/spn-089-dialog-title-icons",
+    "pullRequest": 260,
+    "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41927434933",
+    "builtAt": "2026-11-04T22:42:52.210Z"
+  },
+  "boundary": "Shared Pages URL can be replaced by a later deployment; match its source identity before claiming current evidence."
+}

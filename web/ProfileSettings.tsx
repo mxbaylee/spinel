@@ -3,7 +3,7 @@ import { api } from './api.ts';
 import { type Profile } from '../src/profile/profile.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { ICON_CATEGORIES, searchPersonIcons } from '../src/profile/person-icon-search.ts';
-import { Modal } from '../src/ui/redesign/Controls.tsx';
+import { Modal, ModalTitleContent } from '../src/ui/redesign/Controls.tsx';
 import './profile.css';
 import { fillPresets } from '../src/ui/palette.ts';
 
@@ -53,10 +53,10 @@ export function IconPicker({
       aria-labelledby="icon-picker-title"
     >
       <h2 id="icon-picker-title" className="sp-modal-title">
-        <span className="sp-modal-title-icon" aria-hidden="true">
-          <ProfileIcon icon="lucide:shapes" size={20} />
-        </span>
-        <span>{includeEmojis ? 'Choose an icon or emoji' : 'Choose your icon'}</span>
+        <ModalTitleContent
+          title={includeEmojis ? 'Choose an icon or emoji' : 'Choose your icon'}
+          icon="shapes"
+        />
       </h2>
       <label>
         {includeEmojis ? 'Search icons and emojis' : 'Search icons'}

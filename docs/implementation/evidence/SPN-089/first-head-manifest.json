@@ -1,0 +1,1668 @@
+{
+  "reviewedAt": "2026-11-04T21:06:35.482Z",
+  "durationMs": 163095,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "all",
+  "theme": "all",
+  "variants": [
+    "light",
+    "dark",
+    "phone",
+    "phone-dark",
+    "tablet"
+  ],
+  "requested": [
+    "redesign-controls--default",
+    "redesign-controls--long-modal-title",
+    "redesign-controls--emoji-modal-title",
+    "redesign-controls--pending-modal",
+    "redesign-controls--error-modal",
+    "docs-formulas--insert",
+    "docs-formulas--edit",
+    "docs-formulas--loading-sources",
+    "docs-formulas--no-sources",
+    "docs-formulas--source-error",
+    "docs-formulas--save-cancel-pending",
+    "docs-formulas--save-escape-pending",
+    "docs-formulas--save-returns-focus",
+    "docs-formulas--cancel-returns-focus",
+    "docs-formulas--save-busy",
+    "redesign-appearance--appearance-open",
+    "redesign-appearance--page-cover-open",
+    "redesign-appearance--icon-or-emoji-picker-open",
+    "redesign-appearance--connected-loading",
+    "redesign-appearance--connected-error",
+    "redesign-appearance--connected-offline",
+    "redesign-appearance--connected-read-only",
+    "account-profile--color-picker",
+    "account-profile--icon-picker",
+    "space-review--pages-drawer",
+    "space-review--offline-copies",
+    "dashboard-searchpanel--search-options",
+    "admin-adminusers--passkeys",
+    "history-browser--name-saved",
+    "editor-frame--editable-formulas",
+    "editor-frame--offline-formulas",
+    "redesign-native-editors--make-copy-dialog"
+  ],
+  "checked": [
+    {
+      "id": "redesign-controls--default",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "light"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "light"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "light"
+    },
+    {
+      "id": "docs-formulas--loading-sources",
+      "variant": "light"
+    },
+    {
+      "id": "docs-formulas--no-sources",
+      "variant": "light"
+    },
+    {
+      "id": "docs-formulas--source-error",
+      "variant": "light"
+    },
+    {
+      "id": "docs-formulas--save-cancel-pending",
+      "variant": "light"
+    },
+    {
+      "id": "docs-formulas--save-escape-pending",
+      "variant": "light"
+    },
+    {
+      "id": "docs-formulas--save-returns-focus",
+      "variant": "light"
+    },
+    {
+      "id": "docs-formulas--cancel-returns-focus",
+      "variant": "light"
+    },
+    {
+      "id": "docs-formulas--save-busy",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-appearance--appearance-open",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-appearance--page-cover-open",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-appearance--icon-or-emoji-picker-open",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-appearance--connected-offline",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-appearance--connected-read-only",
+      "variant": "light"
+    },
+    {
+      "id": "account-profile--color-picker",
+      "variant": "light"
+    },
+    {
+      "id": "account-profile--icon-picker",
+      "variant": "light"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "light"
+    },
+    {
+      "id": "space-review--offline-copies",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "light"
+    },
+    {
+      "id": "admin-adminusers--passkeys",
+      "variant": "light"
+    },
+    {
+      "id": "history-browser--name-saved",
+      "variant": "light"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "light"
+    },
+    {
+      "id": "editor-frame--offline-formulas",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "dark"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "dark"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "dark"
+    },
+    {
+      "id": "docs-formulas--loading-sources",
+      "variant": "dark"
+    },
+    {
+      "id": "docs-formulas--no-sources",
+      "variant": "dark"
+    },
+    {
+      "id": "docs-formulas--source-error",
+      "variant": "dark"
+    },
+    {
+      "id": "docs-formulas--save-cancel-pending",
+      "variant": "dark"
+    },
+    {
+      "id": "docs-formulas--save-escape-pending",
+      "variant": "dark"
+    },
+    {
+      "id": "docs-formulas--save-returns-focus",
+      "variant": "dark"
+    },
+    {
+      "id": "docs-formulas--cancel-returns-focus",
+      "variant": "dark"
+    },
+    {
+      "id": "docs-formulas--save-busy",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-appearance--appearance-open",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-appearance--page-cover-open",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-appearance--icon-or-emoji-picker-open",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-appearance--connected-offline",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-appearance--connected-read-only",
+      "variant": "dark"
+    },
+    {
+      "id": "account-profile--color-picker",
+      "variant": "dark"
+    },
+    {
+      "id": "account-profile--icon-picker",
+      "variant": "dark"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "dark"
+    },
+    {
+      "id": "space-review--offline-copies",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "dark"
+    },
+    {
+      "id": "admin-adminusers--passkeys",
+      "variant": "dark"
+    },
+    {
+      "id": "history-browser--name-saved",
+      "variant": "dark"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "dark"
+    },
+    {
+      "id": "editor-frame--offline-formulas",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "phone"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "phone"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "phone"
+    },
+    {
+      "id": "docs-formulas--loading-sources",
+      "variant": "phone"
+    },
+    {
+      "id": "docs-formulas--no-sources",
+      "variant": "phone"
+    },
+    {
+      "id": "docs-formulas--source-error",
+      "variant": "phone"
+    },
+    {
+      "id": "docs-formulas--save-cancel-pending",
+      "variant": "phone"
+    },
+    {
+      "id": "docs-formulas--save-escape-pending",
+      "variant": "phone"
+    },
+    {
+      "id": "docs-formulas--save-returns-focus",
+      "variant": "phone"
+    },
+    {
+      "id": "docs-formulas--cancel-returns-focus",
+      "variant": "phone"
+    },
+    {
+      "id": "docs-formulas--save-busy",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-appearance--appearance-open",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-appearance--page-cover-open",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-appearance--icon-or-emoji-picker-open",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-appearance--connected-offline",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-appearance--connected-read-only",
+      "variant": "phone"
+    },
+    {
+      "id": "account-profile--color-picker",
+      "variant": "phone"
+    },
+    {
+      "id": "account-profile--icon-picker",
+      "variant": "phone"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "phone"
+    },
+    {
+      "id": "space-review--offline-copies",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "phone"
+    },
+    {
+      "id": "admin-adminusers--passkeys",
+      "variant": "phone"
+    },
+    {
+      "id": "history-browser--name-saved",
+      "variant": "phone"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "phone"
+    },
+    {
+      "id": "editor-frame--offline-formulas",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--loading-sources",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--no-sources",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--source-error",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--save-cancel-pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--save-escape-pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--save-returns-focus",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--cancel-returns-focus",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "docs-formulas--save-busy",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-appearance--appearance-open",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-appearance--page-cover-open",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-appearance--icon-or-emoji-picker-open",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-appearance--connected-offline",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-appearance--connected-read-only",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile--color-picker",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "account-profile--icon-picker",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--offline-copies",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-adminusers--passkeys",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "history-browser--name-saved",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--offline-formulas",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "tablet"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "tablet"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "tablet"
+    },
+    {
+      "id": "docs-formulas--loading-sources",
+      "variant": "tablet"
+    },
+    {
+      "id": "docs-formulas--no-sources",
+      "variant": "tablet"
+    },
+    {
+      "id": "docs-formulas--source-error",
+      "variant": "tablet"
+    },
+    {
+      "id": "docs-formulas--save-cancel-pending",
+      "variant": "tablet"
+    },
+    {
+      "id": "docs-formulas--save-escape-pending",
+      "variant": "tablet"
+    },
+    {
+      "id": "docs-formulas--save-returns-focus",
+      "variant": "tablet"
+    },
+    {
+      "id": "docs-formulas--cancel-returns-focus",
+      "variant": "tablet"
+    },
+    {
+      "id": "docs-formulas--save-busy",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-appearance--appearance-open",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-appearance--page-cover-open",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-appearance--icon-or-emoji-picker-open",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-appearance--connected-offline",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-appearance--connected-read-only",
+      "variant": "tablet"
+    },
+    {
+      "id": "account-profile--color-picker",
+      "variant": "tablet"
+    },
+    {
+      "id": "account-profile--icon-picker",
+      "variant": "tablet"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "tablet"
+    },
+    {
+      "id": "space-review--offline-copies",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "tablet"
+    },
+    {
+      "id": "admin-adminusers--passkeys",
+      "variant": "tablet"
+    },
+    {
+      "id": "history-browser--name-saved",
+      "variant": "tablet"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "tablet"
+    },
+    {
+      "id": "editor-frame--offline-formulas",
+      "variant": "tablet"
+    }
+  ],
+  "captures": [
+    {
+      "id": "redesign-controls--default",
+      "variant": "light",
+      "filename": "redesign-controls--default-light.png",
+      "title": "Current production/Controls / Default"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "light",
+      "filename": "redesign-controls--long-modal-title-light.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "light",
+      "filename": "redesign-controls--emoji-modal-title-light.png",
+      "title": "Current production/Controls / Emoji Modal Title"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "light",
+      "filename": "redesign-controls--pending-modal-light.png",
+      "title": "Current production/Controls / Pending Modal"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "light",
+      "filename": "redesign-controls--error-modal-light.png",
+      "title": "Current production/Controls / Error Modal"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "light",
+      "filename": "docs-formulas--insert-light.png",
+      "title": "Current production/Docs/Formulas / Insert"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "light",
+      "filename": "docs-formulas--edit-light.png",
+      "title": "Current production/Docs/Formulas / Edit"
+    },
+    {
+      "id": "docs-formulas--loading-sources",
+      "variant": "light",
+      "filename": "docs-formulas--loading-sources-light.png",
+      "title": "Current production/Docs/Formulas / Loading Sources"
+    },
+    {
+      "id": "docs-formulas--no-sources",
+      "variant": "light",
+      "filename": "docs-formulas--no-sources-light.png",
+      "title": "Current production/Docs/Formulas / No Sources"
+    },
+    {
+      "id": "docs-formulas--source-error",
+      "variant": "light",
+      "filename": "docs-formulas--source-error-light.png",
+      "title": "Current production/Docs/Formulas / Source Error"
+    },
+    {
+      "id": "docs-formulas--save-cancel-pending",
+      "variant": "light",
+      "filename": "docs-formulas--save-cancel-pending-light.png",
+      "title": "Current production/Docs/Formulas / Save Cancel Pending"
+    },
+    {
+      "id": "docs-formulas--save-escape-pending",
+      "variant": "light",
+      "filename": "docs-formulas--save-escape-pending-light.png",
+      "title": "Current production/Docs/Formulas / Save Escape Pending"
+    },
+    {
+      "id": "docs-formulas--save-returns-focus",
+      "variant": "light",
+      "filename": "docs-formulas--save-returns-focus-light.png",
+      "title": "Current production/Docs/Formulas / Save Returns Focus"
+    },
+    {
+      "id": "docs-formulas--cancel-returns-focus",
+      "variant": "light",
+      "filename": "docs-formulas--cancel-returns-focus-light.png",
+      "title": "Current production/Docs/Formulas / Cancel Returns Focus"
+    },
+    {
+      "id": "docs-formulas--save-busy",
+      "variant": "light",
+      "filename": "docs-formulas--save-busy-light.png",
+      "title": "Current production/Docs/Formulas / Save Busy"
+    },
+    {
+      "id": "redesign-appearance--appearance-open",
+      "variant": "light",
+      "filename": "redesign-appearance--appearance-open-light.png",
+      "title": "Current production/Appearance / Appearance Open"
+    },
+    {
+      "id": "redesign-appearance--page-cover-open",
+      "variant": "light",
+      "filename": "redesign-appearance--page-cover-open-light.png",
+      "title": "Current production/Appearance / Page Cover Open"
+    },
+    {
+      "id": "redesign-appearance--icon-or-emoji-picker-open",
+      "variant": "light",
+      "filename": "redesign-appearance--icon-or-emoji-picker-open-light.png",
+      "title": "Current production/Appearance / Icon Or Emoji Picker Open"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "light",
+      "filename": "redesign-appearance--connected-loading-light.png",
+      "title": "Current production/Appearance / Connected Loading"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "light",
+      "filename": "redesign-appearance--connected-error-light.png",
+      "title": "Current production/Appearance / Connected Error"
+    },
+    {
+      "id": "redesign-appearance--connected-offline",
+      "variant": "light",
+      "filename": "redesign-appearance--connected-offline-light.png",
+      "title": "Current production/Appearance / Connected Offline"
+    },
+    {
+      "id": "redesign-appearance--connected-read-only",
+      "variant": "light",
+      "filename": "redesign-appearance--connected-read-only-light.png",
+      "title": "Current production/Appearance / Connected Read Only"
+    },
+    {
+      "id": "account-profile--color-picker",
+      "variant": "light",
+      "filename": "account-profile--color-picker-light.png",
+      "title": "Current production/Account/Profile / Color Picker"
+    },
+    {
+      "id": "account-profile--icon-picker",
+      "variant": "light",
+      "filename": "account-profile--icon-picker-light.png",
+      "title": "Current production/Account/Profile / Icon Picker"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "light",
+      "filename": "space-review--pages-drawer-light.png",
+      "title": "Current production/Spaces/Space / Pages Drawer"
+    },
+    {
+      "id": "space-review--offline-copies",
+      "variant": "light",
+      "filename": "space-review--offline-copies-light.png",
+      "title": "Current production/Spaces/Space / Offline Copies"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "light",
+      "filename": "dashboard-searchpanel--search-options-light.png",
+      "title": "Current production/Dashboard/SearchPanel / Search Options"
+    },
+    {
+      "id": "admin-adminusers--passkeys",
+      "variant": "light",
+      "filename": "admin-adminusers--passkeys-light.png",
+      "title": "Current production/Admin/AdminUsers / Passkeys"
+    },
+    {
+      "id": "history-browser--name-saved",
+      "variant": "light",
+      "filename": "history-browser--name-saved-light.png",
+      "title": "Current production/History/Browser / Name Saved"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "light",
+      "filename": "editor-frame--editable-formulas-light.png",
+      "title": "Current production/Editor/Frame / Editable Formulas"
+    },
+    {
+      "id": "editor-frame--offline-formulas",
+      "variant": "light",
+      "filename": "editor-frame--offline-formulas-light.png",
+      "title": "Current production/Editor/Frame / Offline Formulas"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "light",
+      "filename": "redesign-native-editors--make-copy-dialog-light.png",
+      "title": "Native fixtures/Editors / Make Copy Dialog"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "dark",
+      "filename": "redesign-controls--default-dark.png",
+      "title": "Current production/Controls / Default"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "dark",
+      "filename": "redesign-controls--long-modal-title-dark.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "dark",
+      "filename": "redesign-controls--emoji-modal-title-dark.png",
+      "title": "Current production/Controls / Emoji Modal Title"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "dark",
+      "filename": "redesign-controls--pending-modal-dark.png",
+      "title": "Current production/Controls / Pending Modal"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "dark",
+      "filename": "redesign-controls--error-modal-dark.png",
+      "title": "Current production/Controls / Error Modal"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "dark",
+      "filename": "docs-formulas--insert-dark.png",
+      "title": "Current production/Docs/Formulas / Insert"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "dark",
+      "filename": "docs-formulas--edit-dark.png",
+      "title": "Current production/Docs/Formulas / Edit"
+    },
+    {
+      "id": "docs-formulas--loading-sources",
+      "variant": "dark",
+      "filename": "docs-formulas--loading-sources-dark.png",
+      "title": "Current production/Docs/Formulas / Loading Sources"
+    },
+    {
+      "id": "docs-formulas--no-sources",
+      "variant": "dark",
+      "filename": "docs-formulas--no-sources-dark.png",
+      "title": "Current production/Docs/Formulas / No Sources"
+    },
+    {
+      "id": "docs-formulas--source-error",
+      "variant": "dark",
+      "filename": "docs-formulas--source-error-dark.png",
+      "title": "Current production/Docs/Formulas / Source Error"
+    },
+    {
+      "id": "docs-formulas--save-cancel-pending",
+      "variant": "dark",
+      "filename": "docs-formulas--save-cancel-pending-dark.png",
+      "title": "Current production/Docs/Formulas / Save Cancel Pending"
+    },
+    {
+      "id": "docs-formulas--save-escape-pending",
+      "variant": "dark",
+      "filename": "docs-formulas--save-escape-pending-dark.png",
+      "title": "Current production/Docs/Formulas / Save Escape Pending"
+    },
+    {
+      "id": "docs-formulas--save-returns-focus",
+      "variant": "dark",
+      "filename": "docs-formulas--save-returns-focus-dark.png",
+      "title": "Current production/Docs/Formulas / Save Returns Focus"
+    },
+    {
+      "id": "docs-formulas--cancel-returns-focus",
+      "variant": "dark",
+      "filename": "docs-formulas--cancel-returns-focus-dark.png",
+      "title": "Current production/Docs/Formulas / Cancel Returns Focus"
+    },
+    {
+      "id": "docs-formulas--save-busy",
+      "variant": "dark",
+      "filename": "docs-formulas--save-busy-dark.png",
+      "title": "Current production/Docs/Formulas / Save Busy"
+    },
+    {
+      "id": "redesign-appearance--appearance-open",
+      "variant": "dark",
+      "filename": "redesign-appearance--appearance-open-dark.png",
+      "title": "Current production/Appearance / Appearance Open"
+    },
+    {
+      "id": "redesign-appearance--page-cover-open",
+      "variant": "dark",
+      "filename": "redesign-appearance--page-cover-open-dark.png",
+      "title": "Current production/Appearance / Page Cover Open"
+    },
+    {
+      "id": "redesign-appearance--icon-or-emoji-picker-open",
+      "variant": "dark",
+      "filename": "redesign-appearance--icon-or-emoji-picker-open-dark.png",
+      "title": "Current production/Appearance / Icon Or Emoji Picker Open"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "dark",
+      "filename": "redesign-appearance--connected-loading-dark.png",
+      "title": "Current production/Appearance / Connected Loading"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "dark",
+      "filename": "redesign-appearance--connected-error-dark.png",
+      "title": "Current production/Appearance / Connected Error"
+    },
+    {
+      "id": "redesign-appearance--connected-offline",
+      "variant": "dark",
+      "filename": "redesign-appearance--connected-offline-dark.png",
+      "title": "Current production/Appearance / Connected Offline"
+    },
+    {
+      "id": "redesign-appearance--connected-read-only",
+      "variant": "dark",
+      "filename": "redesign-appearance--connected-read-only-dark.png",
+      "title": "Current production/Appearance / Connected Read Only"
+    },
+    {
+      "id": "account-profile--color-picker",
+      "variant": "dark",
+      "filename": "account-profile--color-picker-dark.png",
+      "title": "Current production/Account/Profile / Color Picker"
+    },
+    {
+      "id": "account-profile--icon-picker",
+      "variant": "dark",
+      "filename": "account-profile--icon-picker-dark.png",
+      "title": "Current production/Account/Profile / Icon Picker"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "dark",
+      "filename": "space-review--pages-drawer-dark.png",
+      "title": "Current production/Spaces/Space / Pages Drawer"
+    },
+    {
+      "id": "space-review--offline-copies",
+      "variant": "dark",
+      "filename": "space-review--offline-copies-dark.png",
+      "title": "Current production/Spaces/Space / Offline Copies"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "dark",
+      "filename": "dashboard-searchpanel--search-options-dark.png",
+      "title": "Current production/Dashboard/SearchPanel / Search Options"
+    },
+    {
+      "id": "admin-adminusers--passkeys",
+      "variant": "dark",
+      "filename": "admin-adminusers--passkeys-dark.png",
+      "title": "Current production/Admin/AdminUsers / Passkeys"
+    },
+    {
+      "id": "history-browser--name-saved",
+      "variant": "dark",
+      "filename": "history-browser--name-saved-dark.png",
+      "title": "Current production/History/Browser / Name Saved"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "dark",
+      "filename": "editor-frame--editable-formulas-dark.png",
+      "title": "Current production/Editor/Frame / Editable Formulas"
+    },
+    {
+      "id": "editor-frame--offline-formulas",
+      "variant": "dark",
+      "filename": "editor-frame--offline-formulas-dark.png",
+      "title": "Current production/Editor/Frame / Offline Formulas"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "dark",
+      "filename": "redesign-native-editors--make-copy-dialog-dark.png",
+      "title": "Native fixtures/Editors / Make Copy Dialog"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "phone",
+      "filename": "redesign-controls--default-phone.png",
+      "title": "Current production/Controls / Default"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone",
+      "filename": "redesign-controls--long-modal-title-phone.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "phone",
+      "filename": "redesign-controls--emoji-modal-title-phone.png",
+      "title": "Current production/Controls / Emoji Modal Title"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "phone",
+      "filename": "redesign-controls--pending-modal-phone.png",
+      "title": "Current production/Controls / Pending Modal"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "phone",
+      "filename": "redesign-controls--error-modal-phone.png",
+      "title": "Current production/Controls / Error Modal"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "phone",
+      "filename": "docs-formulas--insert-phone.png",
+      "title": "Current production/Docs/Formulas / Insert"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "phone",
+      "filename": "docs-formulas--edit-phone.png",
+      "title": "Current production/Docs/Formulas / Edit"
+    },
+    {
+      "id": "docs-formulas--loading-sources",
+      "variant": "phone",
+      "filename": "docs-formulas--loading-sources-phone.png",
+      "title": "Current production/Docs/Formulas / Loading Sources"
+    },
+    {
+      "id": "docs-formulas--no-sources",
+      "variant": "phone",
+      "filename": "docs-formulas--no-sources-phone.png",
+      "title": "Current production/Docs/Formulas / No Sources"
+    },
+    {
+      "id": "docs-formulas--source-error",
+      "variant": "phone",
+      "filename": "docs-formulas--source-error-phone.png",
+      "title": "Current production/Docs/Formulas / Source Error"
+    },
+    {
+      "id": "docs-formulas--save-cancel-pending",
+      "variant": "phone",
+      "filename": "docs-formulas--save-cancel-pending-phone.png",
+      "title": "Current production/Docs/Formulas / Save Cancel Pending"
+    },
+    {
+      "id": "docs-formulas--save-escape-pending",
+      "variant": "phone",
+      "filename": "docs-formulas--save-escape-pending-phone.png",
+      "title": "Current production/Docs/Formulas / Save Escape Pending"
+    },
+    {
+      "id": "docs-formulas--save-returns-focus",
+      "variant": "phone",
+      "filename": "docs-formulas--save-returns-focus-phone.png",
+      "title": "Current production/Docs/Formulas / Save Returns Focus"
+    },
+    {
+      "id": "docs-formulas--cancel-returns-focus",
+      "variant": "phone",
+      "filename": "docs-formulas--cancel-returns-focus-phone.png",
+      "title": "Current production/Docs/Formulas / Cancel Returns Focus"
+    },
+    {
+      "id": "docs-formulas--save-busy",
+      "variant": "phone",
+      "filename": "docs-formulas--save-busy-phone.png",
+      "title": "Current production/Docs/Formulas / Save Busy"
+    },
+    {
+      "id": "redesign-appearance--appearance-open",
+      "variant": "phone",
+      "filename": "redesign-appearance--appearance-open-phone.png",
+      "title": "Current production/Appearance / Appearance Open"
+    },
+    {
+      "id": "redesign-appearance--page-cover-open",
+      "variant": "phone",
+      "filename": "redesign-appearance--page-cover-open-phone.png",
+      "title": "Current production/Appearance / Page Cover Open"
+    },
+    {
+      "id": "redesign-appearance--icon-or-emoji-picker-open",
+      "variant": "phone",
+      "filename": "redesign-appearance--icon-or-emoji-picker-open-phone.png",
+      "title": "Current production/Appearance / Icon Or Emoji Picker Open"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "phone",
+      "filename": "redesign-appearance--connected-loading-phone.png",
+      "title": "Current production/Appearance / Connected Loading"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "phone",
+      "filename": "redesign-appearance--connected-error-phone.png",
+      "title": "Current production/Appearance / Connected Error"
+    },
+    {
+      "id": "redesign-appearance--connected-offline",
+      "variant": "phone",
+      "filename": "redesign-appearance--connected-offline-phone.png",
+      "title": "Current production/Appearance / Connected Offline"
+    },
+    {
+      "id": "redesign-appearance--connected-read-only",
+      "variant": "phone",
+      "filename": "redesign-appearance--connected-read-only-phone.png",
+      "title": "Current production/Appearance / Connected Read Only"
+    },
+    {
+      "id": "account-profile--color-picker",
+      "variant": "phone",
+      "filename": "account-profile--color-picker-phone.png",
+      "title": "Current production/Account/Profile / Color Picker"
+    },
+    {
+      "id": "account-profile--icon-picker",
+      "variant": "phone",
+      "filename": "account-profile--icon-picker-phone.png",
+      "title": "Current production/Account/Profile / Icon Picker"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "phone",
+      "filename": "space-review--pages-drawer-phone.png",
+      "title": "Current production/Spaces/Space / Pages Drawer"
+    },
+    {
+      "id": "space-review--offline-copies",
+      "variant": "phone",
+      "filename": "space-review--offline-copies-phone.png",
+      "title": "Current production/Spaces/Space / Offline Copies"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "phone",
+      "filename": "dashboard-searchpanel--search-options-phone.png",
+      "title": "Current production/Dashboard/SearchPanel / Search Options"
+    },
+    {
+      "id": "admin-adminusers--passkeys",
+      "variant": "phone",
+      "filename": "admin-adminusers--passkeys-phone.png",
+      "title": "Current production/Admin/AdminUsers / Passkeys"
+    },
+    {
+      "id": "history-browser--name-saved",
+      "variant": "phone",
+      "filename": "history-browser--name-saved-phone.png",
+      "title": "Current production/History/Browser / Name Saved"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "phone",
+      "filename": "editor-frame--editable-formulas-phone.png",
+      "title": "Current production/Editor/Frame / Editable Formulas"
+    },
+    {
+      "id": "editor-frame--offline-formulas",
+      "variant": "phone",
+      "filename": "editor-frame--offline-formulas-phone.png",
+      "title": "Current production/Editor/Frame / Offline Formulas"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "phone — FAILED",
+      "filename": "failed-redesign-native-editors--make-copy-dialog-phone.png",
+      "title": "Failed capture: Native fixtures/Editors"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "phone-dark",
+      "filename": "redesign-controls--default-phone-dark.png",
+      "title": "Current production/Controls / Default"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone-dark",
+      "filename": "redesign-controls--long-modal-title-phone-dark.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "phone-dark",
+      "filename": "redesign-controls--emoji-modal-title-phone-dark.png",
+      "title": "Current production/Controls / Emoji Modal Title"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "phone-dark",
+      "filename": "redesign-controls--pending-modal-phone-dark.png",
+      "title": "Current production/Controls / Pending Modal"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "phone-dark",
+      "filename": "redesign-controls--error-modal-phone-dark.png",
+      "title": "Current production/Controls / Error Modal"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "phone-dark",
+      "filename": "docs-formulas--insert-phone-dark.png",
+      "title": "Current production/Docs/Formulas / Insert"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "phone-dark",
+      "filename": "docs-formulas--edit-phone-dark.png",
+      "title": "Current production/Docs/Formulas / Edit"
+    },
+    {
+      "id": "docs-formulas--loading-sources",
+      "variant": "phone-dark",
+      "filename": "docs-formulas--loading-sources-phone-dark.png",
+      "title": "Current production/Docs/Formulas / Loading Sources"
+    },
+    {
+      "id": "docs-formulas--no-sources",
+      "variant": "phone-dark",
+      "filename": "docs-formulas--no-sources-phone-dark.png",
+      "title": "Current production/Docs/Formulas / No Sources"
+    },
+    {
+      "id": "docs-formulas--source-error",
+      "variant": "phone-dark",
+      "filename": "docs-formulas--source-error-phone-dark.png",
+      "title": "Current production/Docs/Formulas / Source Error"
+    },
+    {
+      "id": "docs-formulas--save-cancel-pending",
+      "variant": "phone-dark",
+      "filename": "docs-formulas--save-cancel-pending-phone-dark.png",
+      "title": "Current production/Docs/Formulas / Save Cancel Pending"
+    },
+    {
+      "id": "docs-formulas--save-escape-pending",
+      "variant": "phone-dark",
+      "filename": "docs-formulas--save-escape-pending-phone-dark.png",
+      "title": "Current production/Docs/Formulas / Save Escape Pending"
+    },
+    {
+      "id": "docs-formulas--save-returns-focus",
+      "variant": "phone-dark",
+      "filename": "docs-formulas--save-returns-focus-phone-dark.png",
+      "title": "Current production/Docs/Formulas / Save Returns Focus"
+    },
+    {
+      "id": "docs-formulas--cancel-returns-focus",
+      "variant": "phone-dark",
+      "filename": "docs-formulas--cancel-returns-focus-phone-dark.png",
+      "title": "Current production/Docs/Formulas / Cancel Returns Focus"
+    },
+    {
+      "id": "docs-formulas--save-busy",
+      "variant": "phone-dark",
+      "filename": "docs-formulas--save-busy-phone-dark.png",
+      "title": "Current production/Docs/Formulas / Save Busy"
+    },
+    {
+      "id": "redesign-appearance--appearance-open",
+      "variant": "phone-dark",
+      "filename": "redesign-appearance--appearance-open-phone-dark.png",
+      "title": "Current production/Appearance / Appearance Open"
+    },
+    {
+      "id": "redesign-appearance--page-cover-open",
+      "variant": "phone-dark",
+      "filename": "redesign-appearance--page-cover-open-phone-dark.png",
+      "title": "Current production/Appearance / Page Cover Open"
+    },
+    {
+      "id": "redesign-appearance--icon-or-emoji-picker-open",
+      "variant": "phone-dark",
+      "filename": "redesign-appearance--icon-or-emoji-picker-open-phone-dark.png",
+      "title": "Current production/Appearance / Icon Or Emoji Picker Open"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "phone-dark",
+      "filename": "redesign-appearance--connected-loading-phone-dark.png",
+      "title": "Current production/Appearance / Connected Loading"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "phone-dark",
+      "filename": "redesign-appearance--connected-error-phone-dark.png",
+      "title": "Current production/Appearance / Connected Error"
+    },
+    {
+      "id": "redesign-appearance--connected-offline",
+      "variant": "phone-dark",
+      "filename": "redesign-appearance--connected-offline-phone-dark.png",
+      "title": "Current production/Appearance / Connected Offline"
+    },
+    {
+      "id": "redesign-appearance--connected-read-only",
+      "variant": "phone-dark",
+      "filename": "redesign-appearance--connected-read-only-phone-dark.png",
+      "title": "Current production/Appearance / Connected Read Only"
+    },
+    {
+      "id": "account-profile--color-picker",
+      "variant": "phone-dark",
+      "filename": "account-profile--color-picker-phone-dark.png",
+      "title": "Current production/Account/Profile / Color Picker"
+    },
+    {
+      "id": "account-profile--icon-picker",
+      "variant": "phone-dark",
+      "filename": "account-profile--icon-picker-phone-dark.png",
+      "title": "Current production/Account/Profile / Icon Picker"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "phone-dark",
+      "filename": "space-review--pages-drawer-phone-dark.png",
+      "title": "Current production/Spaces/Space / Pages Drawer"
+    },
+    {
+      "id": "space-review--offline-copies",
+      "variant": "phone-dark",
+      "filename": "space-review--offline-copies-phone-dark.png",
+      "title": "Current production/Spaces/Space / Offline Copies"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "phone-dark",
+      "filename": "dashboard-searchpanel--search-options-phone-dark.png",
+      "title": "Current production/Dashboard/SearchPanel / Search Options"
+    },
+    {
+      "id": "admin-adminusers--passkeys",
+      "variant": "phone-dark",
+      "filename": "admin-adminusers--passkeys-phone-dark.png",
+      "title": "Current production/Admin/AdminUsers / Passkeys"
+    },
+    {
+      "id": "history-browser--name-saved",
+      "variant": "phone-dark",
+      "filename": "history-browser--name-saved-phone-dark.png",
+      "title": "Current production/History/Browser / Name Saved"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "phone-dark",
+      "filename": "editor-frame--editable-formulas-phone-dark.png",
+      "title": "Current production/Editor/Frame / Editable Formulas"
+    },
+    {
+      "id": "editor-frame--offline-formulas",
+      "variant": "phone-dark",
+      "filename": "editor-frame--offline-formulas-phone-dark.png",
+      "title": "Current production/Editor/Frame / Offline Formulas"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "phone-dark — FAILED",
+      "filename": "failed-redesign-native-editors--make-copy-dialog-phone-dark.png",
+      "title": "Failed capture: Native fixtures/Editors"
+    },
+    {
+      "id": "redesign-controls--default",
+      "variant": "tablet",
+      "filename": "redesign-controls--default-tablet.png",
+      "title": "Current production/Controls / Default"
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "tablet",
+      "filename": "redesign-controls--long-modal-title-tablet.png",
+      "title": "Current production/Controls / Long Modal Title"
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "tablet",
+      "filename": "redesign-controls--emoji-modal-title-tablet.png",
+      "title": "Current production/Controls / Emoji Modal Title"
+    },
+    {
+      "id": "redesign-controls--pending-modal",
+      "variant": "tablet",
+      "filename": "redesign-controls--pending-modal-tablet.png",
+      "title": "Current production/Controls / Pending Modal"
+    },
+    {
+      "id": "redesign-controls--error-modal",
+      "variant": "tablet",
+      "filename": "redesign-controls--error-modal-tablet.png",
+      "title": "Current production/Controls / Error Modal"
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "tablet",
+      "filename": "docs-formulas--insert-tablet.png",
+      "title": "Current production/Docs/Formulas / Insert"
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "tablet",
+      "filename": "docs-formulas--edit-tablet.png",
+      "title": "Current production/Docs/Formulas / Edit"
+    },
+    {
+      "id": "docs-formulas--loading-sources",
+      "variant": "tablet",
+      "filename": "docs-formulas--loading-sources-tablet.png",
+      "title": "Current production/Docs/Formulas / Loading Sources"
+    },
+    {
+      "id": "docs-formulas--no-sources",
+      "variant": "tablet",
+      "filename": "docs-formulas--no-sources-tablet.png",
+      "title": "Current production/Docs/Formulas / No Sources"
+    },
+    {
+      "id": "docs-formulas--source-error",
+      "variant": "tablet",
+      "filename": "docs-formulas--source-error-tablet.png",
+      "title": "Current production/Docs/Formulas / Source Error"
+    },
+    {
+      "id": "docs-formulas--save-cancel-pending",
+      "variant": "tablet",
+      "filename": "docs-formulas--save-cancel-pending-tablet.png",
+      "title": "Current production/Docs/Formulas / Save Cancel Pending"
+    },
+    {
+      "id": "docs-formulas--save-escape-pending",
+      "variant": "tablet",
+      "filename": "docs-formulas--save-escape-pending-tablet.png",
+      "title": "Current production/Docs/Formulas / Save Escape Pending"
+    },
+    {
+      "id": "docs-formulas--save-returns-focus",
+      "variant": "tablet",
+      "filename": "docs-formulas--save-returns-focus-tablet.png",
+      "title": "Current production/Docs/Formulas / Save Returns Focus"
+    },
+    {
+      "id": "docs-formulas--cancel-returns-focus",
+      "variant": "tablet",
+      "filename": "docs-formulas--cancel-returns-focus-tablet.png",
+      "title": "Current production/Docs/Formulas / Cancel Returns Focus"
+    },
+    {
+      "id": "docs-formulas--save-busy",
+      "variant": "tablet",
+      "filename": "docs-formulas--save-busy-tablet.png",
+      "title": "Current production/Docs/Formulas / Save Busy"
+    },
+    {
+      "id": "redesign-appearance--appearance-open",
+      "variant": "tablet",
+      "filename": "redesign-appearance--appearance-open-tablet.png",
+      "title": "Current production/Appearance / Appearance Open"
+    },
+    {
+      "id": "redesign-appearance--page-cover-open",
+      "variant": "tablet",
+      "filename": "redesign-appearance--page-cover-open-tablet.png",
+      "title": "Current production/Appearance / Page Cover Open"
+    },
+    {
+      "id": "redesign-appearance--icon-or-emoji-picker-open",
+      "variant": "tablet",
+      "filename": "redesign-appearance--icon-or-emoji-picker-open-tablet.png",
+      "title": "Current production/Appearance / Icon Or Emoji Picker Open"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "tablet",
+      "filename": "redesign-appearance--connected-loading-tablet.png",
+      "title": "Current production/Appearance / Connected Loading"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "tablet",
+      "filename": "redesign-appearance--connected-error-tablet.png",
+      "title": "Current production/Appearance / Connected Error"
+    },
+    {
+      "id": "redesign-appearance--connected-offline",
+      "variant": "tablet",
+      "filename": "redesign-appearance--connected-offline-tablet.png",
+      "title": "Current production/Appearance / Connected Offline"
+    },
+    {
+      "id": "redesign-appearance--connected-read-only",
+      "variant": "tablet",
+      "filename": "redesign-appearance--connected-read-only-tablet.png",
+      "title": "Current production/Appearance / Connected Read Only"
+    },
+    {
+      "id": "account-profile--color-picker",
+      "variant": "tablet",
+      "filename": "account-profile--color-picker-tablet.png",
+      "title": "Current production/Account/Profile / Color Picker"
+    },
+    {
+      "id": "account-profile--icon-picker",
+      "variant": "tablet",
+      "filename": "account-profile--icon-picker-tablet.png",
+      "title": "Current production/Account/Profile / Icon Picker"
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "tablet",
+      "filename": "space-review--pages-drawer-tablet.png",
+      "title": "Current production/Spaces/Space / Pages Drawer"
+    },
+    {
+      "id": "space-review--offline-copies",
+      "variant": "tablet",
+      "filename": "space-review--offline-copies-tablet.png",
+      "title": "Current production/Spaces/Space / Offline Copies"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "tablet",
+      "filename": "dashboard-searchpanel--search-options-tablet.png",
+      "title": "Current production/Dashboard/SearchPanel / Search Options"
+    },
+    {
+      "id": "admin-adminusers--passkeys",
+      "variant": "tablet",
+      "filename": "admin-adminusers--passkeys-tablet.png",
+      "title": "Current production/Admin/AdminUsers / Passkeys"
+    },
+    {
+      "id": "history-browser--name-saved",
+      "variant": "tablet",
+      "filename": "history-browser--name-saved-tablet.png",
+      "title": "Current production/History/Browser / Name Saved"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "tablet",
+      "filename": "editor-frame--editable-formulas-tablet.png",
+      "title": "Current production/Editor/Frame / Editable Formulas"
+    },
+    {
+      "id": "editor-frame--offline-formulas",
+      "variant": "tablet",
+      "filename": "editor-frame--offline-formulas-tablet.png",
+      "title": "Current production/Editor/Frame / Offline Formulas"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "tablet — FAILED",
+      "filename": "failed-redesign-native-editors--make-copy-dialog-tablet.png",
+      "title": "Failed capture: Native fixtures/Editors"
+    }
+  ],
+  "verifications": [
+    "light: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "dark: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "phone: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "phone-dark: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "tablet: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal"
+  ],
+  "failures": [
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "phone",
+      "message": "Error: redesign-native-editors--make-copy-dialog: no swallowed play exceptions\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  -    1\n+ Received  + 1329\n\n- Array []\n+ Array [\n+   Object {\n+     \"message\": \"Unable to find role=\\\"dialog\\\" and name \\\"Make a copy\\\"\n+\n+ Ignored nodes: comments, script, style\n+ <body\n+   class=\\\"sb-main-fullscreen sb-show-main\\\"\n+ >\n+   \n+     \n+   <div\n+     class=\\\"sb-preparing-story sb-wrapper\\\"\n+   >\n+     \n+   \n+     <div\n+       class=\\\"sb-loader\\\"\n+     />\n+     \n+\n+   </div>\n+   \n+\n+\n+   <div\n+     class=\\\"sb-preparing-docs sb-wrapper\\\"\n+   >\n+     \n+   \n+     <div\n+       class=\\\"sb-previewBlock\\\"\n+     >\n+       \n+     \n+       <div\n+         class=\\\"sb-previewBlock_header\\\"\n+       >\n+         \n+       \n+         <div\n+           class=\\\"sb-previewBlock_icon\\\"\n+         />\n+         \n+       \n+         <div\n+           class=\\\"sb-previewBlock_icon\\\"\n+         />\n+         \n+       \n+         <div\n+           class=\\\"sb-previewBlock_icon\\\"\n+         />\n+         \n+       \n+         <div\n+           class=\\\"sb-previewBlock_icon\\\"\n+         />\n+         \n+     \n+       </div>\n+       \n+     \n+       <div\n+         class=\\\"sb-previewBlock_body\\\"\n+       >\n+         \n+       \n+         <div\n+           class=\\\"sb-loader\\\"\n+         />\n+         \n+     \n+       </div>\n+       \n+   \n+     </div>\n+     \n+   \n+     <table\n+       aria-hidden=\\\"true\\\"\n+       class=\\\"sb-argstableBlock\\\"\n+     >\n+       \n+     \n+       <thead\n+         class=\\\"sb-argstableBlock-head\\\"\n+       >\n+         \n+       \n+         <tr>\n+           \n+         \n+           <th>\n+             <span>\n+               Name\n+             </span>\n+           </th>\n+           \n+         \n+           <th>\n+             <span>\n+               Description\n+             </span>\n+           </th>\n+           \n+         \n+           <th>\n+             <span>\n+               Default\n+             </span>\n+           </th>\n+           \n+         \n+           <th>\n+             <span>\n+               Control \n+             </span>\n+           </th>\n+           \n+       \n+         </tr>\n+         \n+     \n+       </thead>\n+       \n+     \n+       <tbody\n+         class=\\\"sb-argstableBlock-body\\\"\n+       >\n+         \n+       \n+         <tr>\n+           \n+         \n+           <td>\n+             <span>\n+               propertyName\n+             </span>\n+             <span\n+               title=\\\"Required\\\"\n+             >\n+               *\n+             </span>\n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span>\n+                 This is a short description\n+               </span>\n+             </div>\n+             \n+           \n+             <div\n+               class=\\\"sb-argstableBlock-summary\\\"\n+             >\n+               \n+             \n+               <div>\n+                 <span\n+                   class=\\\"sb-argstableBlock-code\\\"\n+                 >\n+                   summary\n+                 </span>\n+               </div>\n+               \n+           \n+             </div>\n+             \n+         \n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span\n+                 class=\\\"sb-argstableBlock-code\\\"\n+               >\n+                 defaultValue\n+               </span>\n+             </div>\n+             \n+         \n+           </td>\n+           \n+         \n+           <td>\n+             <button>\n+               Set string\n+             </button>\n+           </td>\n+           \n+       \n+         </tr>\n+         \n+       \n+         <tr>\n+           \n+         \n+           <td>\n+             <span>\n+               propertyName\n+             </span>\n+             <span>\n+               *\n+             </span>\n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span>\n+                 This is a short description\n+               </span>\n+             </div>\n+             \n+           \n+             <div\n+               class=\\\"sb-argstableBlock-summary\\\"\n+             >\n+               \n+             \n+               <div>\n+                 <span\n+                   class=\\\"sb-argstableBlock-code\\\"\n+                 >\n+                   summary\n+                 </span>\n+               </div>\n+               \n+           \n+             </div>\n+             \n+         \n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span\n+                 class=\\\"sb-argstableBlock-code\\\"\n+               >\n+                 defaultValue\n+               </span>\n+             </div>\n+             \n+         \n+           </td>\n+           \n+         \n+           <td>\n+             <button>\n+               Set string\n+             </button>\n+           </td>\n+           \n+       \n+         </tr>\n+         \n+       \n+         <tr>\n+           \n+         \n+           <td>\n+             <span>\n+               propertyName\n+             </span>\n+             <span>\n+               *\n+             </span>\n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span>\n+                 This is a short description\n+               </span>\n+             </div>\n+             \n+           \n+             <div\n+               class=\\\"sb-argstableBlock-summary\\\"\n+             >\n+               \n+             \n+               <div>\n+                 <span\n+                   class=\\\"sb-argstableBlock-code\\\"\n+                 >\n+                   summary\n+                 </span>\n+               </div>\n+               \n+           \n+             </div>\n+             \n+         \n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span\n+                 class=\\\"sb-argstableBlock-co",
+      "filename": "failed-redesign-native-editors--make-copy-dialog-phone.png"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "phone-dark",
+      "message": "Error: redesign-native-editors--make-copy-dialog: no swallowed play exceptions\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  -    1\n+ Received  + 1329\n\n- Array []\n+ Array [\n+   Object {\n+     \"message\": \"Unable to find role=\\\"dialog\\\" and name \\\"Make a copy\\\"\n+\n+ Ignored nodes: comments, script, style\n+ <body\n+   class=\\\"sb-main-fullscreen sb-show-main\\\"\n+ >\n+   \n+     \n+   <div\n+     class=\\\"sb-preparing-story sb-wrapper\\\"\n+   >\n+     \n+   \n+     <div\n+       class=\\\"sb-loader\\\"\n+     />\n+     \n+\n+   </div>\n+   \n+\n+\n+   <div\n+     class=\\\"sb-preparing-docs sb-wrapper\\\"\n+   >\n+     \n+   \n+     <div\n+       class=\\\"sb-previewBlock\\\"\n+     >\n+       \n+     \n+       <div\n+         class=\\\"sb-previewBlock_header\\\"\n+       >\n+         \n+       \n+         <div\n+           class=\\\"sb-previewBlock_icon\\\"\n+         />\n+         \n+       \n+         <div\n+           class=\\\"sb-previewBlock_icon\\\"\n+         />\n+         \n+       \n+         <div\n+           class=\\\"sb-previewBlock_icon\\\"\n+         />\n+         \n+       \n+         <div\n+           class=\\\"sb-previewBlock_icon\\\"\n+         />\n+         \n+     \n+       </div>\n+       \n+     \n+       <div\n+         class=\\\"sb-previewBlock_body\\\"\n+       >\n+         \n+       \n+         <div\n+           class=\\\"sb-loader\\\"\n+         />\n+         \n+     \n+       </div>\n+       \n+   \n+     </div>\n+     \n+   \n+     <table\n+       aria-hidden=\\\"true\\\"\n+       class=\\\"sb-argstableBlock\\\"\n+     >\n+       \n+     \n+       <thead\n+         class=\\\"sb-argstableBlock-head\\\"\n+       >\n+         \n+       \n+         <tr>\n+           \n+         \n+           <th>\n+             <span>\n+               Name\n+             </span>\n+           </th>\n+           \n+         \n+           <th>\n+             <span>\n+               Description\n+             </span>\n+           </th>\n+           \n+         \n+           <th>\n+             <span>\n+               Default\n+             </span>\n+           </th>\n+           \n+         \n+           <th>\n+             <span>\n+               Control \n+             </span>\n+           </th>\n+           \n+       \n+         </tr>\n+         \n+     \n+       </thead>\n+       \n+     \n+       <tbody\n+         class=\\\"sb-argstableBlock-body\\\"\n+       >\n+         \n+       \n+         <tr>\n+           \n+         \n+           <td>\n+             <span>\n+               propertyName\n+             </span>\n+             <span\n+               title=\\\"Required\\\"\n+             >\n+               *\n+             </span>\n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span>\n+                 This is a short description\n+               </span>\n+             </div>\n+             \n+           \n+             <div\n+               class=\\\"sb-argstableBlock-summary\\\"\n+             >\n+               \n+             \n+               <div>\n+                 <span\n+                   class=\\\"sb-argstableBlock-code\\\"\n+                 >\n+                   summary\n+                 </span>\n+               </div>\n+               \n+           \n+             </div>\n+             \n+         \n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span\n+                 class=\\\"sb-argstableBlock-code\\\"\n+               >\n+                 defaultValue\n+               </span>\n+             </div>\n+             \n+         \n+           </td>\n+           \n+         \n+           <td>\n+             <button>\n+               Set string\n+             </button>\n+           </td>\n+           \n+       \n+         </tr>\n+         \n+       \n+         <tr>\n+           \n+         \n+           <td>\n+             <span>\n+               propertyName\n+             </span>\n+             <span>\n+               *\n+             </span>\n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span>\n+                 This is a short description\n+               </span>\n+             </div>\n+             \n+           \n+             <div\n+               class=\\\"sb-argstableBlock-summary\\\"\n+             >\n+               \n+             \n+               <div>\n+                 <span\n+                   class=\\\"sb-argstableBlock-code\\\"\n+                 >\n+                   summary\n+                 </span>\n+               </div>\n+               \n+           \n+             </div>\n+             \n+         \n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span\n+                 class=\\\"sb-argstableBlock-code\\\"\n+               >\n+                 defaultValue\n+               </span>\n+             </div>\n+             \n+         \n+           </td>\n+           \n+         \n+           <td>\n+             <button>\n+               Set string\n+             </button>\n+           </td>\n+           \n+       \n+         </tr>\n+         \n+       \n+         <tr>\n+           \n+         \n+           <td>\n+             <span>\n+               propertyName\n+             </span>\n+             <span>\n+               *\n+             </span>\n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span>\n+                 This is a short description\n+               </span>\n+             </div>\n+             \n+           \n+             <div\n+               class=\\\"sb-argstableBlock-summary\\\"\n+             >\n+               \n+             \n+               <div>\n+                 <span\n+                   class=\\\"sb-argstableBlock-code\\\"\n+                 >\n+                   summary\n+                 </span>\n+               </div>\n+               \n+           \n+             </div>\n+             \n+         \n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span\n+                 class=\\\"sb-argstableBlock-co",
+      "filename": "failed-redesign-native-editors--make-copy-dialog-phone-dark.png"
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "tablet",
+      "message": "Error: redesign-native-editors--make-copy-dialog: no swallowed play exceptions\n\nexpect(received).toEqual(expected) // deep equality\n\n- Expected  -    1\n+ Received  + 1329\n\n- Array []\n+ Array [\n+   Object {\n+     \"message\": \"Unable to find role=\\\"dialog\\\" and name \\\"Make a copy\\\"\n+\n+ Ignored nodes: comments, script, style\n+ <body\n+   class=\\\"sb-main-fullscreen sb-show-main\\\"\n+ >\n+   \n+     \n+   <div\n+     class=\\\"sb-preparing-story sb-wrapper\\\"\n+   >\n+     \n+   \n+     <div\n+       class=\\\"sb-loader\\\"\n+     />\n+     \n+\n+   </div>\n+   \n+\n+\n+   <div\n+     class=\\\"sb-preparing-docs sb-wrapper\\\"\n+   >\n+     \n+   \n+     <div\n+       class=\\\"sb-previewBlock\\\"\n+     >\n+       \n+     \n+       <div\n+         class=\\\"sb-previewBlock_header\\\"\n+       >\n+         \n+       \n+         <div\n+           class=\\\"sb-previewBlock_icon\\\"\n+         />\n+         \n+       \n+         <div\n+           class=\\\"sb-previewBlock_icon\\\"\n+         />\n+         \n+       \n+         <div\n+           class=\\\"sb-previewBlock_icon\\\"\n+         />\n+         \n+       \n+         <div\n+           class=\\\"sb-previewBlock_icon\\\"\n+         />\n+         \n+     \n+       </div>\n+       \n+     \n+       <div\n+         class=\\\"sb-previewBlock_body\\\"\n+       >\n+         \n+       \n+         <div\n+           class=\\\"sb-loader\\\"\n+         />\n+         \n+     \n+       </div>\n+       \n+   \n+     </div>\n+     \n+   \n+     <table\n+       aria-hidden=\\\"true\\\"\n+       class=\\\"sb-argstableBlock\\\"\n+     >\n+       \n+     \n+       <thead\n+         class=\\\"sb-argstableBlock-head\\\"\n+       >\n+         \n+       \n+         <tr>\n+           \n+         \n+           <th>\n+             <span>\n+               Name\n+             </span>\n+           </th>\n+           \n+         \n+           <th>\n+             <span>\n+               Description\n+             </span>\n+           </th>\n+           \n+         \n+           <th>\n+             <span>\n+               Default\n+             </span>\n+           </th>\n+           \n+         \n+           <th>\n+             <span>\n+               Control \n+             </span>\n+           </th>\n+           \n+       \n+         </tr>\n+         \n+     \n+       </thead>\n+       \n+     \n+       <tbody\n+         class=\\\"sb-argstableBlock-body\\\"\n+       >\n+         \n+       \n+         <tr>\n+           \n+         \n+           <td>\n+             <span>\n+               propertyName\n+             </span>\n+             <span\n+               title=\\\"Required\\\"\n+             >\n+               *\n+             </span>\n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span>\n+                 This is a short description\n+               </span>\n+             </div>\n+             \n+           \n+             <div\n+               class=\\\"sb-argstableBlock-summary\\\"\n+             >\n+               \n+             \n+               <div>\n+                 <span\n+                   class=\\\"sb-argstableBlock-code\\\"\n+                 >\n+                   summary\n+                 </span>\n+               </div>\n+               \n+           \n+             </div>\n+             \n+         \n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span\n+                 class=\\\"sb-argstableBlock-code\\\"\n+               >\n+                 defaultValue\n+               </span>\n+             </div>\n+             \n+         \n+           </td>\n+           \n+         \n+           <td>\n+             <button>\n+               Set string\n+             </button>\n+           </td>\n+           \n+       \n+         </tr>\n+         \n+       \n+         <tr>\n+           \n+         \n+           <td>\n+             <span>\n+               propertyName\n+             </span>\n+             <span>\n+               *\n+             </span>\n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span>\n+                 This is a short description\n+               </span>\n+             </div>\n+             \n+           \n+             <div\n+               class=\\\"sb-argstableBlock-summary\\\"\n+             >\n+               \n+             \n+               <div>\n+                 <span\n+                   class=\\\"sb-argstableBlock-code\\\"\n+                 >\n+                   summary\n+                 </span>\n+               </div>\n+               \n+           \n+             </div>\n+             \n+         \n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span\n+                 class=\\\"sb-argstableBlock-code\\\"\n+               >\n+                 defaultValue\n+               </span>\n+             </div>\n+             \n+         \n+           </td>\n+           \n+         \n+           <td>\n+             <button>\n+               Set string\n+             </button>\n+           </td>\n+           \n+       \n+         </tr>\n+         \n+       \n+         <tr>\n+           \n+         \n+           <td>\n+             <span>\n+               propertyName\n+             </span>\n+             <span>\n+               *\n+             </span>\n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span>\n+                 This is a short description\n+               </span>\n+             </div>\n+             \n+           \n+             <div\n+               class=\\\"sb-argstableBlock-summary\\\"\n+             >\n+               \n+             \n+               <div>\n+                 <span\n+                   class=\\\"sb-argstableBlock-code\\\"\n+                 >\n+                   summary\n+                 </span>\n+               </div>\n+               \n+           \n+             </div>\n+             \n+         \n+           </td>\n+           \n+         \n+           <td>\n+             \n+           \n+             <div>\n+               <span\n+                 class=\\\"sb-argstableBlock-co",
+      "filename": "failed-redesign-native-editors--make-copy-dialog-tablet.png"
+    }
+  ]
+}

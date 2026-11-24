@@ -1,0 +1,227 @@
+{
+  "reviewedAt": "2026-11-24T01:04:03.094Z",
+  "durationMs": 14049,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "all",
+  "theme": "all",
+  "variants": [
+    "light",
+    "dark",
+    "phone",
+    "phone-dark",
+    "tablet"
+  ],
+  "requested": [
+    "redesign-appearance--connected-loading",
+    "redesign-appearance--connected-error",
+    "dashboard-searchpanel--search-options",
+    "editor-frame--editable-formulas"
+  ],
+  "checked": [
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "light"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "light"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "dark"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "dark"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "phone"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "phone"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "tablet"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "tablet"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "tablet"
+    }
+  ],
+  "captures": [
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "light",
+      "filename": "redesign-appearance--connected-loading-light.png",
+      "title": "Current production/Appearance / Connected Loading"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "light",
+      "filename": "redesign-appearance--connected-error-light.png",
+      "title": "Current production/Appearance / Connected Error"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "light",
+      "filename": "dashboard-searchpanel--search-options-light.png",
+      "title": "Current production/Dashboard/SearchPanel / Search Options"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "light",
+      "filename": "editor-frame--editable-formulas-light.png",
+      "title": "Current production/Editor/Frame / Editable Formulas"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "dark",
+      "filename": "redesign-appearance--connected-loading-dark.png",
+      "title": "Current production/Appearance / Connected Loading"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "dark",
+      "filename": "redesign-appearance--connected-error-dark.png",
+      "title": "Current production/Appearance / Connected Error"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "dark",
+      "filename": "dashboard-searchpanel--search-options-dark.png",
+      "title": "Current production/Dashboard/SearchPanel / Search Options"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "dark",
+      "filename": "editor-frame--editable-formulas-dark.png",
+      "title": "Current production/Editor/Frame / Editable Formulas"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "phone",
+      "filename": "redesign-appearance--connected-loading-phone.png",
+      "title": "Current production/Appearance / Connected Loading"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "phone",
+      "filename": "redesign-appearance--connected-error-phone.png",
+      "title": "Current production/Appearance / Connected Error"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "phone",
+      "filename": "dashboard-searchpanel--search-options-phone.png",
+      "title": "Current production/Dashboard/SearchPanel / Search Options"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "phone",
+      "filename": "editor-frame--editable-formulas-phone.png",
+      "title": "Current production/Editor/Frame / Editable Formulas"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "phone-dark",
+      "filename": "redesign-appearance--connected-loading-phone-dark.png",
+      "title": "Current production/Appearance / Connected Loading"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "phone-dark",
+      "filename": "redesign-appearance--connected-error-phone-dark.png",
+      "title": "Current production/Appearance / Connected Error"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "phone-dark",
+      "filename": "dashboard-searchpanel--search-options-phone-dark.png",
+      "title": "Current production/Dashboard/SearchPanel / Search Options"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "phone-dark",
+      "filename": "editor-frame--editable-formulas-phone-dark.png",
+      "title": "Current production/Editor/Frame / Editable Formulas"
+    },
+    {
+      "id": "redesign-appearance--connected-loading",
+      "variant": "tablet",
+      "filename": "redesign-appearance--connected-loading-tablet.png",
+      "title": "Current production/Appearance / Connected Loading"
+    },
+    {
+      "id": "redesign-appearance--connected-error",
+      "variant": "tablet",
+      "filename": "redesign-appearance--connected-error-tablet.png",
+      "title": "Current production/Appearance / Connected Error"
+    },
+    {
+      "id": "dashboard-searchpanel--search-options",
+      "variant": "tablet",
+      "filename": "dashboard-searchpanel--search-options-tablet.png",
+      "title": "Current production/Dashboard/SearchPanel / Search Options"
+    },
+    {
+      "id": "editor-frame--editable-formulas",
+      "variant": "tablet",
+      "filename": "editor-frame--editable-formulas-tablet.png",
+      "title": "Current production/Editor/Frame / Editable Formulas"
+    }
+  ],
+  "verifications": [],
+  "failures": []
+}

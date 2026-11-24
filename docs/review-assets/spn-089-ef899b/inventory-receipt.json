@@ -1,0 +1,534 @@
+{
+  "scope": "Read-only availability comparison of the documented production dialog previews against the final hosted Storybook index; rendering/play results are recorded separately.",
+  "source": {
+    "head": "ef899b8004c650f8564d6f1fc3fa7d9bf9623076",
+    "testedMerge": "b928c3848847eca3433171524a3ed8d331e295e4",
+    "tree": "19d726f7eeb41c581a7bd96ee221e49215a02f13",
+    "mergeTreeMatchesHead": true
+  },
+  "hostedBuild": {
+    "workflowRun": 41918564629,
+    "artifactId": 13366516366,
+    "archiveSha256": "a39ef7084e29999b2da37c6764dcd90ffa6c5ced5d5cb9b0fcb17c23332906d6",
+    "indexSha256": "0b3279bc24df52ae9557f9053058b93827f00211a1fa33c97cfcbce4dc208be1",
+    "indexVersion": 5,
+    "fullCatalogueStories": 1056
+  },
+  "inventoryDocument": {
+    "path": "docs/implementation/SPN-089.md",
+    "commit": "ef899b8004c650f8564d6f1fc3fa7d9bf9623076",
+    "gitBlob": "735afbba53e27b33266e42b3b2b908428601ccd4",
+    "sha256": "71caa42e2e256704a2363538e27fa54e81daaf25b7e1ff859241ec07ef49ee54"
+  },
+  "result": {
+    "productionRows": 45,
+    "expectedStories": 114,
+    "matchedStories": 114,
+    "missingIds": [],
+    "nonStoryIds": [],
+    "mismatchedIds": [],
+    "affectedRows": []
+  },
+  "rows": [
+    {
+      "number": 1,
+      "owner": "Access details — `web/AccessDetails.tsx`",
+      "storyIds": [
+        "sharing-access-details--inherited-folder",
+        "sharing-access-details--loading",
+        "sharing-access-details--unavailable",
+        "sharing-access-details--long-names"
+      ]
+    },
+    {
+      "number": 2,
+      "owner": "Delete account offline data — `web/AccountExit.tsx`",
+      "storyIds": [
+        "account-exit--delete-confirmation"
+      ]
+    },
+    {
+      "number": 3,
+      "owner": "Account reactivation / transfer — `web/AdminAccountRecovery.tsx`",
+      "storyIds": [
+        "admin-account-recovery--confirm-reactivation",
+        "admin-account-recovery--transfer-ready"
+      ]
+    },
+    {
+      "number": 4,
+      "owner": "Truncate diagnostics — `web/AdminDiagnostics.tsx`",
+      "storyIds": [
+        "current-production-admin-diagnostics--confirmation",
+        "current-production-admin-diagnostics--clearing"
+      ]
+    },
+    {
+      "number": 5,
+      "owner": "Create invite — `web/AdminInvites.tsx`",
+      "storyIds": [
+        "admin-admininvites--recovery-invite",
+        "admin-admininvites--create-failed"
+      ]
+    },
+    {
+      "number": 6,
+      "owner": "Account passkeys — `web/AdminUsers.tsx`",
+      "storyIds": [
+        "admin-adminusers--passkeys"
+      ]
+    },
+    {
+      "number": 7,
+      "owner": "Disable account / remove passkey — `web/AdminUsers.tsx`",
+      "storyIds": [
+        "admin-adminusers--confirm-disable",
+        "admin-adminusers--confirm-passkey-removal"
+      ]
+    },
+    {
+      "number": 8,
+      "owner": "Appearance — `web/Appearance.tsx`",
+      "storyIds": [
+        "redesign-appearance--appearance-open"
+      ]
+    },
+    {
+      "number": 9,
+      "owner": "Page cover — `web/Appearance.tsx`",
+      "storyIds": [
+        "redesign-appearance--page-cover-open"
+      ]
+    },
+    {
+      "number": 10,
+      "owner": "Connected Appearance fallback — `web/Appearance.tsx`",
+      "storyIds": [
+        "redesign-appearance--connected-loading",
+        "redesign-appearance--connected-error",
+        "redesign-appearance--connected-offline",
+        "redesign-appearance--connected-read-only"
+      ]
+    },
+    {
+      "number": 11,
+      "owner": "Prepare / download encrypted backup — `web/BackupDownloads.tsx`",
+      "storyIds": [
+        "admin-backupdownloads--fresh-passkey-required",
+        "admin-backupdownloads--ready"
+      ]
+    },
+    {
+      "number": 12,
+      "owner": "Prepare / continue encrypted upload — `web/BackupRestore.tsx`",
+      "storyIds": [
+        "admin-backuprestore--manual-upload",
+        "admin-backuprestore--uploading"
+      ]
+    },
+    {
+      "number": 13,
+      "owner": "Restore workspace — `web/BackupRestore.tsx`",
+      "storyIds": [
+        "admin-backuprestore--confirmation-review"
+      ]
+    },
+    {
+      "number": 14,
+      "owner": "People in this document — `web/Collaborators.tsx`",
+      "storyIds": [
+        "editor-collaborators--guest-labels-open",
+        "editor-collaborators--long-names-open",
+        "editor-collaborators--empty-open"
+      ]
+    },
+    {
+      "number": 15,
+      "owner": "Recover admin access help — `web/ConsoleRecovery.tsx`",
+      "storyIds": [
+        "account-console-recovery--help"
+      ]
+    },
+    {
+      "number": 16,
+      "owner": "Dashboard Make a copy — `web/Dashboard.tsx`",
+      "storyIds": [
+        "dashboard-dashboard--make-copy"
+      ]
+    },
+    {
+      "number": 17,
+      "owner": "Dashboard create / rename / move / file / relocate draft — `web/Dashboard.tsx`",
+      "storyIds": [
+        "dashboard-dashboard--new-item",
+        "dashboard-dashboard--new-doc",
+        "dashboard-dashboard--new-sheet",
+        "dashboard-dashboard--new-space",
+        "dashboard-dashboard--cancel-admin-move-while-loading",
+        "dashboard-dashboard--file-admin-no-destinations",
+        "dashboard-dashboard--personal-filing-dialog",
+        "dashboard-dashboard--choose-creation-folder"
+      ]
+    },
+    {
+      "number": 18,
+      "owner": "Remove / keep / discard device data — `web/DeviceStoragePanel.tsx`",
+      "storyIds": [
+        "offline-device-storage--clean-removal",
+        "offline-device-storage--pending-removal",
+        "offline-device-storage--discard-confirmation",
+        "offline-device-storage--removing"
+      ]
+    },
+    {
+      "number": 19,
+      "owner": "Formula readout — `web/DocFormulas.tsx`",
+      "storyIds": [
+        "editor-frame--offline-formulas"
+      ]
+    },
+    {
+      "number": 20,
+      "owner": "Document tags — `web/DocumentTags.tsx`",
+      "storyIds": [
+        "dashboard-documenttags--several-tags",
+        "dashboard-documenttags--adding",
+        "dashboard-documenttags--add-failed"
+      ]
+    },
+    {
+      "number": 21,
+      "owner": "Versions / Formulas / Export / guest PDF — `web/EditorTools.tsx`",
+      "storyIds": [
+        "editor-frame--versions-dialog",
+        "editor-frame--editable-formulas",
+        "editor-frame--export-dialog",
+        "editor-frame--guest-pdf"
+      ]
+    },
+    {
+      "number": 22,
+      "owner": "Access to workspace — `web/EntryHelp.tsx`",
+      "storyIds": [
+        "account-entry--help",
+        "account-entry--operator-help"
+      ]
+    },
+    {
+      "number": 23,
+      "owner": "Change expiry / disable guest link — `web/GuestLinks.tsx`",
+      "storyIds": [
+        "current-production-account-guest-links--change-expiry",
+        "current-production-account-guest-links--turn-off-space"
+      ]
+    },
+    {
+      "number": 24,
+      "owner": "Name current / saved version — `web/HistoryBrowser.tsx`",
+      "storyIds": [
+        "history-browser--name-current",
+        "history-browser--name-saved",
+        "history-browser--name-failure"
+      ]
+    },
+    {
+      "number": 25,
+      "owner": "Import file — `web/ImportFile.tsx`",
+      "storyIds": [
+        "dashboard-importfile--dialog",
+        "dashboard-importfile--importing-dialog",
+        "dashboard-importfile--archive-importing"
+      ]
+    },
+    {
+      "number": 26,
+      "owner": "Pause / schedule / cancel maintenance — `web/Maintenance.tsx`",
+      "storyIds": [
+        "maintenance-controls--confirm-pause",
+        "maintenance-controls--notice-form",
+        "maintenance-controls--cancel-notice-without-paused-proof",
+        "maintenance-controls--scheduled"
+      ]
+    },
+    {
+      "number": 27,
+      "owner": "Remove / add passkey / sign out devices — `web/PasskeySettings.tsx`",
+      "storyIds": [
+        "current-production-account-passkey-security--confirm-removal",
+        "current-production-account-passkey-security--verify-before-adding",
+        "current-production-account-passkey-security--sign-out-others"
+      ]
+    },
+    {
+      "number": 28,
+      "owner": "Choose your color — `web/ProfileSettings.tsx`",
+      "storyIds": [
+        "account-profile--color-picker"
+      ]
+    },
+    {
+      "number": 29,
+      "owner": "Browse files — `web/Rail.tsx`",
+      "storyIds": [
+        "shell-rail--files-drawer"
+      ]
+    },
+    {
+      "number": 30,
+      "owner": "Search options — `web/SearchControls.tsx`",
+      "storyIds": [
+        "dashboard-searchpanel--search-options"
+      ]
+    },
+    {
+      "number": 31,
+      "owner": "Whole Space / replace / turn off share link — `web/ShareLink.tsx`",
+      "storyIds": [
+        "sharing-sharelink--confirm-whole-space",
+        "sharing-sharelink--confirm-replacement-edit-link",
+        "sharing-sharelink--confirm-turn-off-space-link"
+      ]
+    },
+    {
+      "number": 32,
+      "owner": "Share item — `web/Sharing.tsx`",
+      "storyIds": [
+        "sharing-sharing--with-people",
+        "sharing-sharing--loading",
+        "sharing-sharing--failed",
+        "sharing-sharing--whole-space"
+      ]
+    },
+    {
+      "number": 33,
+      "owner": "Offline copies — `web/Space.tsx`",
+      "storyIds": [
+        "space-review--offline-copies"
+      ]
+    },
+    {
+      "number": 34,
+      "owner": "Space create / reorder / trash / rename — `web/SpaceItemDialog.tsx`",
+      "storyIds": [
+        "space-review--new-space",
+        "space-review--new-doc",
+        "space-review--new-sheet",
+        "space-review--new-folder",
+        "space-review--move-or-reorder",
+        "space-review--trash-subtree-confirmation",
+        "space-review--mutation-failure"
+      ]
+    },
+    {
+      "number": 35,
+      "owner": "Rename / move / trash Space — `web/SpaceRootActions.tsx`",
+      "storyIds": [
+        "spaces-root-actions--rename",
+        "spaces-root-actions--move",
+        "spaces-root-actions--whole-space-trash"
+      ]
+    },
+    {
+      "number": 36,
+      "owner": "Permanently delete Space subtree — `web/SpaceTrash.tsx`",
+      "storyIds": [
+        "space-review--delete-confirmation"
+      ]
+    },
+    {
+      "number": 37,
+      "owner": "Empty trash — `web/Trash.tsx`",
+      "storyIds": [
+        "dashboard-trash--confirm-empty",
+        "dashboard-trash--confirm-empty-held-items"
+      ]
+    },
+    {
+      "number": 38,
+      "owner": "Restore version — `web/VersionPreview.tsx`",
+      "storyIds": [
+        "history-browser--restore-confirmation",
+        "history-browser--restore-failure",
+        "history-browser--restoring"
+      ]
+    },
+    {
+      "number": 39,
+      "owner": "Export all my files — `web/WorkspaceArchive.tsx`",
+      "storyIds": [
+        "dashboard-workspacearchive--confirmation",
+        "dashboard-workspacearchive--starting",
+        "dashboard-workspacearchive--export-failed"
+      ]
+    },
+    {
+      "number": 40,
+      "owner": "Offline availability — `web/offline/OfflineAvailability.tsx`",
+      "storyIds": [
+        "offline-availability--protection-granted",
+        "offline-availability--protection-error",
+        "editor-frame--offline-availability-failure"
+      ]
+    },
+    {
+      "number": 41,
+      "owner": "About device storage — `web/offline/StorageHelp.tsx`",
+      "storyIds": [
+        "offline-device-storage--about-storage",
+        "offline-availability--storage-guidance"
+      ]
+    },
+    {
+      "number": 42,
+      "owner": "Native Insert / Edit formula — `web/DocFormulas.tsx`",
+      "storyIds": [
+        "docs-formulas--insert",
+        "docs-formulas--edit",
+        "docs-formulas--save-busy",
+        "docs-formulas--save-unavailable",
+        "docs-formulas--loading-sources",
+        "docs-formulas--source-error"
+      ]
+    },
+    {
+      "number": 43,
+      "owner": "Native icon / emoji picker — `web/ProfileSettings.tsx`",
+      "storyIds": [
+        "account-profile--icon-picker",
+        "account-icon-picker--browse",
+        "redesign-appearance--icon-or-emoji-picker-open"
+      ]
+    },
+    {
+      "number": 44,
+      "owner": "Space contents drawer — `web/SpaceShell.tsx`",
+      "storyIds": [
+        "space-review--pages-drawer",
+        "space-guest--phone-contents"
+      ]
+    },
+    {
+      "number": 45,
+      "owner": "Native editor Make a copy — `web/nativeCopy.tsx`",
+      "storyIds": [
+        "redesign-native-editors--make-copy-dialog"
+      ]
+    }
+  ],
+  "uniqueStoryIds": [
+    "account-console-recovery--help",
+    "account-entry--help",
+    "account-entry--operator-help",
+    "account-exit--delete-confirmation",
+    "account-icon-picker--browse",
+    "account-profile--color-picker",
+    "account-profile--icon-picker",
+    "admin-account-recovery--confirm-reactivation",
+    "admin-account-recovery--transfer-ready",
+    "admin-admininvites--create-failed",
+    "admin-admininvites--recovery-invite",
+    "admin-adminusers--confirm-disable",
+    "admin-adminusers--confirm-passkey-removal",
+    "admin-adminusers--passkeys",
+    "admin-backupdownloads--fresh-passkey-required",
+    "admin-backupdownloads--ready",
+    "admin-backuprestore--confirmation-review",
+    "admin-backuprestore--manual-upload",
+    "admin-backuprestore--uploading",
+    "current-production-account-guest-links--change-expiry",
+    "current-production-account-guest-links--turn-off-space",
+    "current-production-account-passkey-security--confirm-removal",
+    "current-production-account-passkey-security--sign-out-others",
+    "current-production-account-passkey-security--verify-before-adding",
+    "current-production-admin-diagnostics--clearing",
+    "current-production-admin-diagnostics--confirmation",
+    "dashboard-dashboard--cancel-admin-move-while-loading",
+    "dashboard-dashboard--choose-creation-folder",
+    "dashboard-dashboard--file-admin-no-destinations",
+    "dashboard-dashboard--make-copy",
+    "dashboard-dashboard--new-doc",
+    "dashboard-dashboard--new-item",
+    "dashboard-dashboard--new-sheet",
+    "dashboard-dashboard--new-space",
+    "dashboard-dashboard--personal-filing-dialog",
+    "dashboard-documenttags--add-failed",
+    "dashboard-documenttags--adding",
+    "dashboard-documenttags--several-tags",
+    "dashboard-importfile--archive-importing",
+    "dashboard-importfile--dialog",
+    "dashboard-importfile--importing-dialog",
+    "dashboard-searchpanel--search-options",
+    "dashboard-trash--confirm-empty",
+    "dashboard-trash--confirm-empty-held-items",
+    "dashboard-workspacearchive--confirmation",
+    "dashboard-workspacearchive--export-failed",
+    "dashboard-workspacearchive--starting",
+    "docs-formulas--edit",
+    "docs-formulas--insert",
+    "docs-formulas--loading-sources",
+    "docs-formulas--save-busy",
+    "docs-formulas--save-unavailable",
+    "docs-formulas--source-error",
+    "editor-collaborators--empty-open",
+    "editor-collaborators--guest-labels-open",
+    "editor-collaborators--long-names-open",
+    "editor-frame--editable-formulas",
+    "editor-frame--export-dialog",
+    "editor-frame--guest-pdf",
+    "editor-frame--offline-availability-failure",
+    "editor-frame--offline-formulas",
+    "editor-frame--versions-dialog",
+    "history-browser--name-current",
+    "history-browser--name-failure",
+    "history-browser--name-saved",
+    "history-browser--restore-confirmation",
+    "history-browser--restore-failure",
+    "history-browser--restoring",
+    "maintenance-controls--cancel-notice-without-paused-proof",
+    "maintenance-controls--confirm-pause",
+    "maintenance-controls--notice-form",
+    "maintenance-controls--scheduled",
+    "offline-availability--protection-error",
+    "offline-availability--protection-granted",
+    "offline-availability--storage-guidance",
+    "offline-device-storage--about-storage",
+    "offline-device-storage--clean-removal",
+    "offline-device-storage--discard-confirmation",
+    "offline-device-storage--pending-removal",
+    "offline-device-storage--removing",
+    "redesign-appearance--appearance-open",
+    "redesign-appearance--connected-error",
+    "redesign-appearance--connected-loading",
+    "redesign-appearance--connected-offline",
+    "redesign-appearance--connected-read-only",
+    "redesign-appearance--icon-or-emoji-picker-open",
+    "redesign-appearance--page-cover-open",
+    "redesign-native-editors--make-copy-dialog",
+    "sharing-access-details--inherited-folder",
+    "sharing-access-details--loading",
+    "sharing-access-details--long-names",
+    "sharing-access-details--unavailable",
+    "sharing-sharelink--confirm-replacement-edit-link",
+    "sharing-sharelink--confirm-turn-off-space-link",
+    "sharing-sharelink--confirm-whole-space",
+    "sharing-sharing--failed",
+    "sharing-sharing--loading",
+    "sharing-sharing--whole-space",
+    "sharing-sharing--with-people",
+    "shell-rail--files-drawer",
+    "space-guest--phone-contents",
+    "space-review--delete-confirmation",
+    "space-review--move-or-reorder",
+    "space-review--mutation-failure",
+    "space-review--new-doc",
+    "space-review--new-folder",
+    "space-review--new-sheet",
+    "space-review--new-space",
+    "space-review--offline-copies",
+    "space-review--pages-drawer",
+    "space-review--trash-subtree-confirmation",
+    "spaces-root-actions--move",
+    "spaces-root-actions--rename",
+    "spaces-root-actions--whole-space-trash"
+  ]
+}

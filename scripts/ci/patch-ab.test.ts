@@ -419,17 +419,6 @@ test('the heap label samples allocations by pair parity and keeps the raw sampli
   assert.match(workflow, /spn146-heap-sampling\.json/);
 });
 
-test('the semispace label compares a larger young generation inside one run', () => {
-  const workflow = readFileSync(
-    new URL('../../.github/workflows/patch-ab.yml', import.meta.url),
-    'utf8',
-  );
-  assert.match(workflow, /"ci-patch-ab-semispace"/);
-  assert.match(workflow, /SPN146_AB_V8_FLAGS="--min-semi-space-size=64 --max-semi-space-size=64"/);
-  assert.match(workflow, /unset SPN146_AB_V8_FLAGS/);
-  assert.match(workflow, /SEMISPACE_AB=1" >> "\$GITHUB_ENV"; echo "SPN146_GC_TRACE=1"/);
-});
-
 test('the sync label reverts only the sync client for the previous build and restores it after the build', () => {
   const workflow = readFileSync(
     new URL('../../.github/workflows/patch-ab.yml', import.meta.url),

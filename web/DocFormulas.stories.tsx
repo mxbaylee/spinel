@@ -6,6 +6,7 @@ import { failure, pending } from '../.storybook/api.ts';
 import { FormulaDialog, FormulaResultView } from './DocFormulas.tsx';
 import type { FormulaDefinition } from '@spinel/doc-formulas';
 import { FormulaSaveError, type FormulaFailureReason } from '@spinel/doc-formulas';
+import { assertDialogTitle } from '../.storybook/dialogBounds.ts';
 
 const id = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 const sources = `/api/items/${id}/formulas/sources`;
@@ -25,6 +26,8 @@ async function sourcesReady(canvasElement: HTMLElement) {
     expect(within(canvasElement).getByLabelText('Spreadsheet')).toHaveTextContent('Budget'),
   );
 }
+const formulaTitle = (canvasElement: HTMLElement, title: 'Insert formula' | 'Edit formula') =>
+  assertDialogTitle(within(canvasElement).getByRole('dialog', { name: title }), title);
 const definition: FormulaDefinition = {
   version: 1,
   expression: '=Budget.Summary.A1',
@@ -46,12 +49,18 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 export const Insert: Story = {
   parameters: { api: { ...formulaApi, ...availableSources } },
-  play: ({ canvasElement }) => sourcesReady(canvasElement),
+  play: async ({ canvasElement }) => {
+    await sourcesReady(canvasElement);
+    await formulaTitle(canvasElement, 'Insert formula');
+  },
 };
 export const Edit: Story = {
   args: { initial: { id: 'formula', start: 0, end: 18, definition } },
   parameters: { api: { ...formulaApi, ...availableSources } },
-  play: ({ canvasElement }) => sourcesReady(canvasElement),
+  play: async ({ canvasElement }) => {
+    await sourcesReady(canvasElement);
+    await formulaTitle(canvasElement, 'Edit formula');
+  },
 };
 
 function FormulaFocusReturn(args: ComponentProps<typeof FormulaDialog>) {
@@ -376,6 +385,7 @@ export const LoadingSources: Story = {
     await userEvent.click(canvas.getByText('Find a cell or range', { exact: true }));
     await expect(await canvas.findByText('Loading spreadsheets…', { exact: true })).toBeVisible();
     await expect(canvas.queryByLabelText('Spreadsheet')).not.toBeInTheDocument();
+    await formulaTitle(canvasElement, 'Insert formula');
   },
 };
 export const NoSources: Story = {
@@ -392,6 +402,7 @@ export const NoSources: Story = {
     await expect(within(canvas.getByLabelText('Spreadsheet')).getAllByRole('option')).toHaveLength(
       1,
     );
+    await formulaTitle(canvasElement, 'Insert formula');
   },
 };
 export const SourceError: Story = {
@@ -405,6 +416,7 @@ export const SourceError: Story = {
     await expect(within(canvas.getByLabelText('Spreadsheet')).getAllByRole('option')).toHaveLength(
       1,
     );
+    await formulaTitle(canvasElement, 'Insert formula');
   },
 };
 export const Dark: Story = {

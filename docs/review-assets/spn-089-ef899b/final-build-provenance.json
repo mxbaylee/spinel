@@ -1,0 +1,21 @@
+{
+  "artifactId": 13366516366,
+  "workflowRun": 41918564629,
+  "size": 6192507,
+  "sha256": "a39ef7084e29999b2da37c6764dcd90ffa6c5ced5d5cb9b0fcb17c23332906d6",
+  "identity": {
+    "sha": "ef899b8004c650f8564d6f1fc3fa7d9bf9623076",
+    "checkedOutSha": "b928c3848847eca3433171524a3ed8d331e295e4",
+    "branch": "codex/spn-089-dialog-title-icons",
+    "pullRequest": 260,
+    "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41918564629",
+    "builtAt": "2026-11-04T21:46:14.360Z"
+  },
+  "headTree": "19d726f7eeb41c581a7bd96ee221e49215a02f13",
+  "mergeTreeMatchesHead": true,
+  "storyCount": 1056,
+  "inventoryRows": 45,
+  "inventoryIds": 114,
+  "missingOrMismatchedIds": [],
+  "directory": "/workspace/scratch/ce40e94380e1/final/storybook-static"
+}

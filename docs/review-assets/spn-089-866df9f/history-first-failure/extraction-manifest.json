@@ -1,0 +1,30 @@
+[
+  {
+    "archivePath": "test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development/error-context.md",
+    "file": "error-context.md",
+    "bytes": 8485,
+    "sha256": "55f9371be33e6219477f34f0931e8af57a6d23ca292b2fd7acd6ea8fc893d06a",
+    "crc32": 3642467166
+  },
+  {
+    "archivePath": "test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development/test-failed-1.png",
+    "file": "failure.png",
+    "bytes": 51131,
+    "sha256": "d9c0b34992ad739b42165cdcc77b3cfea990e7217be8abc36ef0eec9e6c0cc97",
+    "crc32": 3755336027
+  },
+  {
+    "archivePath": "test-results/development/history-sheet-versions-can-dc7f4-nnamed-and-read-by-a-viewer-development-retry1/trace.zip",
+    "file": "retry1-trace.zip",
+    "bytes": 2301781,
+    "sha256": "1ed6c18b70066dc9c3e70a1d6301adadb4671f7ceea90c267cd235a139c4f2e2",
+    "crc32": 2016784414
+  },
+  {
+    "archivePath": "playwright-report/development-2-of-2.json",
+    "file": "raw-report.json",
+    "bytes": 1577312,
+    "sha256": "53fcbe891792a4e14b06349bffdb9c852eb179c4fec0e837c33e00bca3af6157",
+    "crc32": 776441573
+  }
+]

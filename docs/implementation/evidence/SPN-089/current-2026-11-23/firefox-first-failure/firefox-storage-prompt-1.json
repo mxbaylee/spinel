@@ -1,0 +1,3 @@
+{
+  "error": "Error: Native command failed: {\"program\":\"/usr/bin/osascript\",\"code\":1,\"signal\":null,\"killed\":false,\"timeoutMs\":10000,\"stdout\":\"\",\"stderr\":\"firefox identity: {\\\"pid\\\":2622,\\\"name\\\":\\\"plugin-container\\\",\\\"bundleIdentifier\\\":\\\"org.mozilla.plugincontainer\\\"}\\nexecution error: Error: Error: The owned process is not the expected Firefox bundle: {\\\"pid\\\":2622,\\\"name\\\":\\\"plugin-container\\\",\\\"bundleIdentifier\\\":\\\"org.mozilla.plugincontainer\\\"} (-2700)\\n\"}"
+}

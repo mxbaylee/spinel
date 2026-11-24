@@ -1,0 +1,1447 @@
+{
+  "identity": {
+    "sha": "ef899b8004c650f8564d6f1fc3fa7d9bf9623076",
+    "checkedOutSha": "b928c3848847eca3433171524a3ed8d331e295e4",
+    "branch": "codex/spn-089-dialog-title-icons",
+    "pullRequest": 260,
+    "workflowUrl": "https://github.com/mxbaylee/spinel/actions/runs/41918564629",
+    "builtAt": "2026-11-04T21:46:14.360Z"
+  },
+  "purpose": "Diagnostic CSS injection into exact previous hosted artifact; not repaired-source acceptance",
+  "candidate": ".sp-modal-title-icon { margin-top: 0; align-items: center; justify-content: center; block-size: 1lh; font-size: 20px; line-height: 1lh; }\n.profile-icon-dialog > h2.sp-modal-title { align-items: flex-start; }",
+  "observations": [
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "light",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-controls--long-modal-title",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Delete the household planning folder and all its contents permanently?",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 3,
+          "textTop": 346.4140625,
+          "textHeight": 24,
+          "cueTop": 346.4140625,
+          "cueHeight": 20,
+          "slotTop": 346.4140625,
+          "slotHeight": 20,
+          "delta": -2
+        }
+      ],
+      "after": [
+        {
+          "title": "Delete the household planning folder and all its contents permanently?",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 30px system-ui, sans-serif",
+          "lineCount": 3,
+          "textTop": 346.4140625,
+          "textHeight": 24,
+          "cueTop": 348.4140625,
+          "cueHeight": 20,
+          "slotTop": 343.4140625,
+          "slotHeight": 30,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "light",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-controls--emoji-modal-title",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Keep this workspace on your device?",
+          "kind": "emoji",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 2,
+          "textTop": 384.609375,
+          "textHeight": 24,
+          "cueTop": 382.609375,
+          "cueHeight": 24,
+          "slotTop": 384.609375,
+          "slotHeight": 20,
+          "delta": -2
+        }
+      ],
+      "after": [
+        {
+          "title": "Keep this workspace on your device?",
+          "kind": "emoji",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 30px system-ui, sans-serif",
+          "lineCount": 2,
+          "textTop": 384.609375,
+          "textHeight": 24,
+          "cueTop": 384.609375,
+          "cueHeight": 24,
+          "slotTop": 381.609375,
+          "slotHeight": 30,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "light",
+      "lifecycle": {
+        "result": {
+          "storyId": "docs-formulas--insert",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Insert formula",
+          "kind": "emoji",
+          "titleFont": "700 22px ui-rounded, system-ui, sans-serif",
+          "cueFont": "700 20px / 20px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 182.359375,
+          "textHeight": 25,
+          "cueTop": 183.359375,
+          "cueHeight": 24,
+          "slotTop": 185.359375,
+          "slotHeight": 20,
+          "delta": 0.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Insert formula",
+          "kind": "emoji",
+          "titleFont": "700 22px ui-rounded, system-ui, sans-serif",
+          "cueFont": "700 20px / 25px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 182.359375,
+          "textHeight": 25,
+          "cueTop": 182.359375,
+          "cueHeight": 24,
+          "slotTop": 182.359375,
+          "slotHeight": 25,
+          "delta": -0.5
+        }
+      ]
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "light",
+      "lifecycle": {
+        "result": {
+          "storyId": "docs-formulas--edit",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Edit formula",
+          "kind": "emoji",
+          "titleFont": "700 22px ui-rounded, system-ui, sans-serif",
+          "cueFont": "700 20px / 20px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 182.359375,
+          "textHeight": 25,
+          "cueTop": 183.359375,
+          "cueHeight": 24,
+          "slotTop": 185.359375,
+          "slotHeight": 20,
+          "delta": 0.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Edit formula",
+          "kind": "emoji",
+          "titleFont": "700 22px ui-rounded, system-ui, sans-serif",
+          "cueFont": "700 20px / 25px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 182.359375,
+          "textHeight": 25,
+          "cueTop": 182.359375,
+          "cueHeight": 24,
+          "slotTop": 182.359375,
+          "slotHeight": 25,
+          "delta": -0.5
+        }
+      ]
+    },
+    {
+      "id": "account-profile--icon-picker",
+      "variant": "light",
+      "lifecycle": {
+        "result": {
+          "storyId": "account-profile--icon-picker",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Choose your icon",
+          "kind": "svg",
+          "titleFont": "650 18px / 27px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 127.796875,
+          "textHeight": 21,
+          "cueTop": 129.796875,
+          "cueHeight": 20,
+          "slotTop": 129.796875,
+          "slotHeight": 20,
+          "delta": 1.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Choose your icon",
+          "kind": "svg",
+          "titleFont": "650 18px / 27px system-ui, sans-serif",
+          "cueFont": "650 20px / 27px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 127.796875,
+          "textHeight": 21,
+          "cueTop": 128.296875,
+          "cueHeight": 20,
+          "slotTop": 124.796875,
+          "slotHeight": 27,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "redesign-appearance--icon-or-emoji-picker-open",
+      "variant": "light",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-appearance--icon-or-emoji-picker-open",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Appearance · Field notes",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 330.8046875,
+          "textHeight": 24,
+          "cueTop": 330.8046875,
+          "cueHeight": 20,
+          "slotTop": 330.8046875,
+          "slotHeight": 20,
+          "delta": -2
+        },
+        {
+          "title": "Choose an icon or emoji",
+          "kind": "svg",
+          "titleFont": "650 18px / 27px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 249.796875,
+          "textHeight": 21,
+          "cueTop": 251.796875,
+          "cueHeight": 20,
+          "slotTop": 251.796875,
+          "slotHeight": 20,
+          "delta": 1.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Appearance · Field notes",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 30px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 330.8046875,
+          "textHeight": 24,
+          "cueTop": 332.8046875,
+          "cueHeight": 20,
+          "slotTop": 327.8046875,
+          "slotHeight": 30,
+          "delta": 0
+        },
+        {
+          "title": "Choose an icon or emoji",
+          "kind": "svg",
+          "titleFont": "650 18px / 27px system-ui, sans-serif",
+          "cueFont": "650 20px / 27px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 249.796875,
+          "textHeight": 21,
+          "cueTop": 250.296875,
+          "cueHeight": 20,
+          "slotTop": 246.796875,
+          "slotHeight": 27,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "light",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-native-editors--make-copy-dialog",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Make a copy",
+          "kind": "svg",
+          "titleFont": "600 18px / 28px ui-rounded, system-ui, sans-serif",
+          "cueFont": "600 20px / 20px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 310.40625,
+          "textHeight": 21,
+          "cueTop": 310.40625,
+          "cueHeight": 20,
+          "slotTop": 310.40625,
+          "slotHeight": 20,
+          "delta": -0.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Make a copy",
+          "kind": "svg",
+          "titleFont": "600 18px / 28px ui-rounded, system-ui, sans-serif",
+          "cueFont": "600 20px / 28px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 310.40625,
+          "textHeight": 21,
+          "cueTop": 311.40625,
+          "cueHeight": 20,
+          "slotTop": 307.40625,
+          "slotHeight": 28,
+          "delta": 0.5
+        }
+      ]
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "dark",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-controls--long-modal-title",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Delete the household planning folder and all its contents permanently?",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 3,
+          "textTop": 346.4140625,
+          "textHeight": 24,
+          "cueTop": 346.4140625,
+          "cueHeight": 20,
+          "slotTop": 346.4140625,
+          "slotHeight": 20,
+          "delta": -2
+        }
+      ],
+      "after": [
+        {
+          "title": "Delete the household planning folder and all its contents permanently?",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 30px system-ui, sans-serif",
+          "lineCount": 3,
+          "textTop": 346.4140625,
+          "textHeight": 24,
+          "cueTop": 348.4140625,
+          "cueHeight": 20,
+          "slotTop": 343.4140625,
+          "slotHeight": 30,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "dark",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-controls--emoji-modal-title",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Keep this workspace on your device?",
+          "kind": "emoji",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 2,
+          "textTop": 384.609375,
+          "textHeight": 24,
+          "cueTop": 382.609375,
+          "cueHeight": 24,
+          "slotTop": 384.609375,
+          "slotHeight": 20,
+          "delta": -2
+        }
+      ],
+      "after": [
+        {
+          "title": "Keep this workspace on your device?",
+          "kind": "emoji",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 30px system-ui, sans-serif",
+          "lineCount": 2,
+          "textTop": 384.609375,
+          "textHeight": 24,
+          "cueTop": 384.609375,
+          "cueHeight": 24,
+          "slotTop": 381.609375,
+          "slotHeight": 30,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "dark",
+      "lifecycle": {
+        "result": {
+          "storyId": "docs-formulas--insert",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Insert formula",
+          "kind": "emoji",
+          "titleFont": "700 22px ui-rounded, system-ui, sans-serif",
+          "cueFont": "700 20px / 20px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 182.359375,
+          "textHeight": 25,
+          "cueTop": 183.359375,
+          "cueHeight": 24,
+          "slotTop": 185.359375,
+          "slotHeight": 20,
+          "delta": 0.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Insert formula",
+          "kind": "emoji",
+          "titleFont": "700 22px ui-rounded, system-ui, sans-serif",
+          "cueFont": "700 20px / 25px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 182.359375,
+          "textHeight": 25,
+          "cueTop": 182.359375,
+          "cueHeight": 24,
+          "slotTop": 182.359375,
+          "slotHeight": 25,
+          "delta": -0.5
+        }
+      ]
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "dark",
+      "lifecycle": {
+        "result": {
+          "storyId": "docs-formulas--edit",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Edit formula",
+          "kind": "emoji",
+          "titleFont": "700 22px ui-rounded, system-ui, sans-serif",
+          "cueFont": "700 20px / 20px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 182.359375,
+          "textHeight": 25,
+          "cueTop": 183.359375,
+          "cueHeight": 24,
+          "slotTop": 185.359375,
+          "slotHeight": 20,
+          "delta": 0.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Edit formula",
+          "kind": "emoji",
+          "titleFont": "700 22px ui-rounded, system-ui, sans-serif",
+          "cueFont": "700 20px / 25px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 182.359375,
+          "textHeight": 25,
+          "cueTop": 182.359375,
+          "cueHeight": 24,
+          "slotTop": 182.359375,
+          "slotHeight": 25,
+          "delta": -0.5
+        }
+      ]
+    },
+    {
+      "id": "account-profile--icon-picker",
+      "variant": "dark",
+      "lifecycle": {
+        "result": {
+          "storyId": "account-profile--icon-picker",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Choose your icon",
+          "kind": "svg",
+          "titleFont": "650 18px / 27px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 127.796875,
+          "textHeight": 21,
+          "cueTop": 129.796875,
+          "cueHeight": 20,
+          "slotTop": 129.796875,
+          "slotHeight": 20,
+          "delta": 1.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Choose your icon",
+          "kind": "svg",
+          "titleFont": "650 18px / 27px system-ui, sans-serif",
+          "cueFont": "650 20px / 27px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 127.796875,
+          "textHeight": 21,
+          "cueTop": 128.296875,
+          "cueHeight": 20,
+          "slotTop": 124.796875,
+          "slotHeight": 27,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "redesign-appearance--icon-or-emoji-picker-open",
+      "variant": "dark",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-appearance--icon-or-emoji-picker-open",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Appearance · Field notes",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 330.8046875,
+          "textHeight": 24,
+          "cueTop": 330.8046875,
+          "cueHeight": 20,
+          "slotTop": 330.8046875,
+          "slotHeight": 20,
+          "delta": -2
+        },
+        {
+          "title": "Choose an icon or emoji",
+          "kind": "svg",
+          "titleFont": "650 18px / 27px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 249.796875,
+          "textHeight": 21,
+          "cueTop": 251.796875,
+          "cueHeight": 20,
+          "slotTop": 251.796875,
+          "slotHeight": 20,
+          "delta": 1.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Appearance · Field notes",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 30px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 330.8046875,
+          "textHeight": 24,
+          "cueTop": 332.8046875,
+          "cueHeight": 20,
+          "slotTop": 327.8046875,
+          "slotHeight": 30,
+          "delta": 0
+        },
+        {
+          "title": "Choose an icon or emoji",
+          "kind": "svg",
+          "titleFont": "650 18px / 27px system-ui, sans-serif",
+          "cueFont": "650 20px / 27px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 249.796875,
+          "textHeight": 21,
+          "cueTop": 250.296875,
+          "cueHeight": 20,
+          "slotTop": 246.796875,
+          "slotHeight": 27,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "dark",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-native-editors--make-copy-dialog",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Make a copy",
+          "kind": "svg",
+          "titleFont": "600 18px / 28px ui-rounded, system-ui, sans-serif",
+          "cueFont": "600 20px / 20px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 310.40625,
+          "textHeight": 21,
+          "cueTop": 310.40625,
+          "cueHeight": 20,
+          "slotTop": 310.40625,
+          "slotHeight": 20,
+          "delta": -0.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Make a copy",
+          "kind": "svg",
+          "titleFont": "600 18px / 28px ui-rounded, system-ui, sans-serif",
+          "cueFont": "600 20px / 28px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 310.40625,
+          "textHeight": 21,
+          "cueTop": 311.40625,
+          "cueHeight": 20,
+          "slotTop": 307.40625,
+          "slotHeight": 28,
+          "delta": 0.5
+        }
+      ]
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-controls--long-modal-title",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Delete the household planning folder and all its contents permanently?",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 5,
+          "textTop": 305.21875,
+          "textHeight": 24,
+          "cueTop": 305.21875,
+          "cueHeight": 20,
+          "slotTop": 305.21875,
+          "slotHeight": 20,
+          "delta": -2
+        }
+      ],
+      "after": [
+        {
+          "title": "Delete the household planning folder and all its contents permanently?",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 30px system-ui, sans-serif",
+          "lineCount": 5,
+          "textTop": 305.21875,
+          "textHeight": 24,
+          "cueTop": 307.21875,
+          "cueHeight": 20,
+          "slotTop": 302.21875,
+          "slotHeight": 30,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "phone",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-controls--emoji-modal-title",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Keep this workspace on your device?",
+          "kind": "emoji",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 3,
+          "textTop": 369.609375,
+          "textHeight": 24,
+          "cueTop": 367.609375,
+          "cueHeight": 24,
+          "slotTop": 369.609375,
+          "slotHeight": 20,
+          "delta": -2
+        }
+      ],
+      "after": [
+        {
+          "title": "Keep this workspace on your device?",
+          "kind": "emoji",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 30px system-ui, sans-serif",
+          "lineCount": 3,
+          "textTop": 369.609375,
+          "textHeight": 24,
+          "cueTop": 369.609375,
+          "cueHeight": 24,
+          "slotTop": 366.609375,
+          "slotHeight": 30,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "phone",
+      "lifecycle": {
+        "result": {
+          "storyId": "docs-formulas--insert",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Insert formula",
+          "kind": "emoji",
+          "titleFont": "700 22px ui-rounded, system-ui, sans-serif",
+          "cueFont": "700 20px / 20px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 118.453125,
+          "textHeight": 25,
+          "cueTop": 119.453125,
+          "cueHeight": 24,
+          "slotTop": 121.453125,
+          "slotHeight": 20,
+          "delta": 0.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Insert formula",
+          "kind": "emoji",
+          "titleFont": "700 22px ui-rounded, system-ui, sans-serif",
+          "cueFont": "700 20px / 25px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 118.453125,
+          "textHeight": 25,
+          "cueTop": 118.453125,
+          "cueHeight": 24,
+          "slotTop": 118.453125,
+          "slotHeight": 25,
+          "delta": -0.5
+        }
+      ]
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "phone",
+      "lifecycle": {
+        "result": {
+          "storyId": "docs-formulas--edit",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Edit formula",
+          "kind": "emoji",
+          "titleFont": "700 22px ui-rounded, system-ui, sans-serif",
+          "cueFont": "700 20px / 20px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 118.453125,
+          "textHeight": 25,
+          "cueTop": 119.453125,
+          "cueHeight": 24,
+          "slotTop": 121.453125,
+          "slotHeight": 20,
+          "delta": 0.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Edit formula",
+          "kind": "emoji",
+          "titleFont": "700 22px ui-rounded, system-ui, sans-serif",
+          "cueFont": "700 20px / 25px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 118.453125,
+          "textHeight": 25,
+          "cueTop": 118.453125,
+          "cueHeight": 24,
+          "slotTop": 118.453125,
+          "slotHeight": 25,
+          "delta": -0.5
+        }
+      ]
+    },
+    {
+      "id": "account-profile--icon-picker",
+      "variant": "phone",
+      "lifecycle": {
+        "result": {
+          "storyId": "account-profile--icon-picker",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Choose your icon",
+          "kind": "svg",
+          "titleFont": "650 18px / 27px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 123.296875,
+          "textHeight": 21,
+          "cueTop": 125.296875,
+          "cueHeight": 20,
+          "slotTop": 125.296875,
+          "slotHeight": 20,
+          "delta": 1.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Choose your icon",
+          "kind": "svg",
+          "titleFont": "650 18px / 27px system-ui, sans-serif",
+          "cueFont": "650 20px / 27px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 123.296875,
+          "textHeight": 21,
+          "cueTop": 123.796875,
+          "cueHeight": 20,
+          "slotTop": 120.296875,
+          "slotHeight": 27,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "redesign-appearance--icon-or-emoji-picker-open",
+      "variant": "phone",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-appearance--icon-or-emoji-picker-open",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Appearance · Field notes",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 2,
+          "textTop": 285.8046875,
+          "textHeight": 24,
+          "cueTop": 285.8046875,
+          "cueHeight": 20,
+          "slotTop": 285.8046875,
+          "slotHeight": 20,
+          "delta": -2
+        },
+        {
+          "title": "Choose an icon or emoji",
+          "kind": "svg",
+          "titleFont": "650 18px / 27px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 213.296875,
+          "textHeight": 21,
+          "cueTop": 215.296875,
+          "cueHeight": 20,
+          "slotTop": 215.296875,
+          "slotHeight": 20,
+          "delta": 1.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Appearance · Field notes",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 30px system-ui, sans-serif",
+          "lineCount": 2,
+          "textTop": 285.8046875,
+          "textHeight": 24,
+          "cueTop": 287.8046875,
+          "cueHeight": 20,
+          "slotTop": 282.8046875,
+          "slotHeight": 30,
+          "delta": 0
+        },
+        {
+          "title": "Choose an icon or emoji",
+          "kind": "svg",
+          "titleFont": "650 18px / 27px system-ui, sans-serif",
+          "cueFont": "650 20px / 27px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 213.296875,
+          "textHeight": 21,
+          "cueTop": 213.796875,
+          "cueHeight": 20,
+          "slotTop": 210.296875,
+          "slotHeight": 27,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "phone",
+      "lifecycle": {
+        "result": {
+          "storyId": "space-review--pages-drawer",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Space contents",
+          "kind": "svg",
+          "titleFont": "650 16px / 24px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 45,
+          "textHeight": 19,
+          "cueTop": 46,
+          "cueHeight": 20,
+          "slotTop": 46,
+          "slotHeight": 20,
+          "delta": 1.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Space contents",
+          "kind": "svg",
+          "titleFont": "650 16px / 24px system-ui, sans-serif",
+          "cueFont": "650 20px / 24px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 45,
+          "textHeight": 19,
+          "cueTop": 45,
+          "cueHeight": 20,
+          "slotTop": 43,
+          "slotHeight": 24,
+          "delta": 0.5
+        }
+      ]
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "phone",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-native-editors--make-copy-dialog",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Make a copy",
+          "kind": "svg",
+          "titleFont": "600 16px / 24px system-ui, sans-serif",
+          "cueFont": "600 20px / 20px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 202,
+          "textHeight": 19,
+          "cueTop": 203,
+          "cueHeight": 20,
+          "slotTop": 203,
+          "slotHeight": 20,
+          "delta": 1.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Make a copy",
+          "kind": "svg",
+          "titleFont": "600 16px / 24px system-ui, sans-serif",
+          "cueFont": "600 20px / 24px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 202,
+          "textHeight": 19,
+          "cueTop": 202,
+          "cueHeight": 20,
+          "slotTop": 200,
+          "slotHeight": 24,
+          "delta": 0.5
+        }
+      ]
+    },
+    {
+      "id": "redesign-controls--long-modal-title",
+      "variant": "phone-dark",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-controls--long-modal-title",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Delete the household planning folder and all its contents permanently?",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 5,
+          "textTop": 305.21875,
+          "textHeight": 24,
+          "cueTop": 305.21875,
+          "cueHeight": 20,
+          "slotTop": 305.21875,
+          "slotHeight": 20,
+          "delta": -2
+        }
+      ],
+      "after": [
+        {
+          "title": "Delete the household planning folder and all its contents permanently?",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 30px system-ui, sans-serif",
+          "lineCount": 5,
+          "textTop": 305.21875,
+          "textHeight": 24,
+          "cueTop": 307.21875,
+          "cueHeight": 20,
+          "slotTop": 302.21875,
+          "slotHeight": 30,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "redesign-controls--emoji-modal-title",
+      "variant": "phone-dark",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-controls--emoji-modal-title",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Keep this workspace on your device?",
+          "kind": "emoji",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 3,
+          "textTop": 369.609375,
+          "textHeight": 24,
+          "cueTop": 367.609375,
+          "cueHeight": 24,
+          "slotTop": 369.609375,
+          "slotHeight": 20,
+          "delta": -2
+        }
+      ],
+      "after": [
+        {
+          "title": "Keep this workspace on your device?",
+          "kind": "emoji",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 30px system-ui, sans-serif",
+          "lineCount": 3,
+          "textTop": 369.609375,
+          "textHeight": 24,
+          "cueTop": 369.609375,
+          "cueHeight": 24,
+          "slotTop": 366.609375,
+          "slotHeight": 30,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "docs-formulas--insert",
+      "variant": "phone-dark",
+      "lifecycle": {
+        "result": {
+          "storyId": "docs-formulas--insert",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Insert formula",
+          "kind": "emoji",
+          "titleFont": "700 22px ui-rounded, system-ui, sans-serif",
+          "cueFont": "700 20px / 20px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 118.453125,
+          "textHeight": 25,
+          "cueTop": 119.453125,
+          "cueHeight": 24,
+          "slotTop": 121.453125,
+          "slotHeight": 20,
+          "delta": 0.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Insert formula",
+          "kind": "emoji",
+          "titleFont": "700 22px ui-rounded, system-ui, sans-serif",
+          "cueFont": "700 20px / 25px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 118.453125,
+          "textHeight": 25,
+          "cueTop": 118.453125,
+          "cueHeight": 24,
+          "slotTop": 118.453125,
+          "slotHeight": 25,
+          "delta": -0.5
+        }
+      ]
+    },
+    {
+      "id": "docs-formulas--edit",
+      "variant": "phone-dark",
+      "lifecycle": {
+        "result": {
+          "storyId": "docs-formulas--edit",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Edit formula",
+          "kind": "emoji",
+          "titleFont": "700 22px ui-rounded, system-ui, sans-serif",
+          "cueFont": "700 20px / 20px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 118.453125,
+          "textHeight": 25,
+          "cueTop": 119.453125,
+          "cueHeight": 24,
+          "slotTop": 121.453125,
+          "slotHeight": 20,
+          "delta": 0.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Edit formula",
+          "kind": "emoji",
+          "titleFont": "700 22px ui-rounded, system-ui, sans-serif",
+          "cueFont": "700 20px / 25px ui-rounded, system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 118.453125,
+          "textHeight": 25,
+          "cueTop": 118.453125,
+          "cueHeight": 24,
+          "slotTop": 118.453125,
+          "slotHeight": 25,
+          "delta": -0.5
+        }
+      ]
+    },
+    {
+      "id": "account-profile--icon-picker",
+      "variant": "phone-dark",
+      "lifecycle": {
+        "result": {
+          "storyId": "account-profile--icon-picker",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Choose your icon",
+          "kind": "svg",
+          "titleFont": "650 18px / 27px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 123.296875,
+          "textHeight": 21,
+          "cueTop": 125.296875,
+          "cueHeight": 20,
+          "slotTop": 125.296875,
+          "slotHeight": 20,
+          "delta": 1.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Choose your icon",
+          "kind": "svg",
+          "titleFont": "650 18px / 27px system-ui, sans-serif",
+          "cueFont": "650 20px / 27px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 123.296875,
+          "textHeight": 21,
+          "cueTop": 123.796875,
+          "cueHeight": 20,
+          "slotTop": 120.296875,
+          "slotHeight": 27,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "redesign-appearance--icon-or-emoji-picker-open",
+      "variant": "phone-dark",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-appearance--icon-or-emoji-picker-open",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Appearance · Field notes",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 2,
+          "textTop": 285.8046875,
+          "textHeight": 24,
+          "cueTop": 285.8046875,
+          "cueHeight": 20,
+          "slotTop": 285.8046875,
+          "slotHeight": 20,
+          "delta": -2
+        },
+        {
+          "title": "Choose an icon or emoji",
+          "kind": "svg",
+          "titleFont": "650 18px / 27px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 213.296875,
+          "textHeight": 21,
+          "cueTop": 215.296875,
+          "cueHeight": 20,
+          "slotTop": 215.296875,
+          "slotHeight": 20,
+          "delta": 1.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Appearance · Field notes",
+          "kind": "svg",
+          "titleFont": "650 20px / 30px system-ui, sans-serif",
+          "cueFont": "650 20px / 30px system-ui, sans-serif",
+          "lineCount": 2,
+          "textTop": 285.8046875,
+          "textHeight": 24,
+          "cueTop": 287.8046875,
+          "cueHeight": 20,
+          "slotTop": 282.8046875,
+          "slotHeight": 30,
+          "delta": 0
+        },
+        {
+          "title": "Choose an icon or emoji",
+          "kind": "svg",
+          "titleFont": "650 18px / 27px system-ui, sans-serif",
+          "cueFont": "650 20px / 27px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 213.296875,
+          "textHeight": 21,
+          "cueTop": 213.796875,
+          "cueHeight": 20,
+          "slotTop": 210.296875,
+          "slotHeight": 27,
+          "delta": 0
+        }
+      ]
+    },
+    {
+      "id": "space-review--pages-drawer",
+      "variant": "phone-dark",
+      "lifecycle": {
+        "result": {
+          "storyId": "space-review--pages-drawer",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Space contents",
+          "kind": "svg",
+          "titleFont": "650 16px / 24px system-ui, sans-serif",
+          "cueFont": "650 20px / 20px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 45,
+          "textHeight": 19,
+          "cueTop": 46,
+          "cueHeight": 20,
+          "slotTop": 46,
+          "slotHeight": 20,
+          "delta": 1.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Space contents",
+          "kind": "svg",
+          "titleFont": "650 16px / 24px system-ui, sans-serif",
+          "cueFont": "650 20px / 24px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 45,
+          "textHeight": 19,
+          "cueTop": 45,
+          "cueHeight": 20,
+          "slotTop": 43,
+          "slotHeight": 24,
+          "delta": 0.5
+        }
+      ]
+    },
+    {
+      "id": "redesign-native-editors--make-copy-dialog",
+      "variant": "phone-dark",
+      "lifecycle": {
+        "result": {
+          "storyId": "redesign-native-editors--make-copy-dialog",
+          "status": "success",
+          "reporters": []
+        },
+        "errors": []
+      },
+      "before": [
+        {
+          "title": "Make a copy",
+          "kind": "svg",
+          "titleFont": "600 16px / 24px system-ui, sans-serif",
+          "cueFont": "600 20px / 20px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 202,
+          "textHeight": 19,
+          "cueTop": 203,
+          "cueHeight": 20,
+          "slotTop": 203,
+          "slotHeight": 20,
+          "delta": 1.5
+        }
+      ],
+      "after": [
+        {
+          "title": "Make a copy",
+          "kind": "svg",
+          "titleFont": "600 16px / 24px system-ui, sans-serif",
+          "cueFont": "600 20px / 24px system-ui, sans-serif",
+          "lineCount": 1,
+          "textTop": 202,
+          "textHeight": 19,
+          "cueTop": 202,
+          "cueHeight": 20,
+          "slotTop": 200,
+          "slotHeight": 24,
+          "delta": 0.5
+        }
+      ]
+    }
+  ],
+  "failures": []
+}

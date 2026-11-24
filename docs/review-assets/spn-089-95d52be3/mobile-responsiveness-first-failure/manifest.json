@@ -1,0 +1,81 @@
+{
+  "source": "95d52be36061315bff866dec615544104ca4767c",
+  "artifactId": 13382342973,
+  "artifactSha256": "b1d6d17d1b5f71e29c6149c4a85c649ce184699a8d934ba7eca3ebb8e6805b49",
+  "files": [
+    {
+      "path": "error-context-excerpt.md",
+      "bytes": 269,
+      "sha256": "91bec70216a358aedb6c4e941068110f542159e1a16b7a870678ee8b6faaa699"
+    },
+    {
+      "path": "failed-plain-1-metrics.json.gz",
+      "bytes": 40813,
+      "sha256": "bff1b5f4fb79e7bfb523fe2fdf8d2614cb2bfe0bc1f9e4dcc2a6955975193a2a"
+    },
+    {
+      "path": "failure-log.txt",
+      "bytes": 3605,
+      "sha256": "c4de544de1b2e72aa0fd58d8aa13f4f6931d9877de842f4833db327e5a4477bc"
+    },
+    {
+      "path": "failure-log.txt.raw.gz",
+      "bytes": 909,
+      "sha256": "c1ddce072dab93929e1d9ec117df3bad6eb51ef50df78c307d15bc3936f5d801"
+    },
+    {
+      "path": "original-safe-evidence-manifest.json",
+      "bytes": 1421,
+      "sha256": "a0bcb619805ec2019cfc3ed351105e1f5d44df697c16f20d9bf5f8cd68f9840a"
+    },
+    {
+      "path": "peer-failure.png",
+      "bytes": 71242,
+      "sha256": "47923590e015949f71837f5d667e348a884b55612804165a9cc913a976cf27c0"
+    },
+    {
+      "path": "receipt.json",
+      "bytes": 38740,
+      "sha256": "becc4db59574fef1f83c5dd6ea33229310689a226a5f17d683e9025aa51e1703"
+    },
+    {
+      "path": "sender-failure.png",
+      "bytes": 79438,
+      "sha256": "914fe3da474f52bad8f09ee7379b58e25a6b202b73b100af34a95ab6f9c74056"
+    },
+    {
+      "path": "source-overlap.json",
+      "bytes": 6236,
+      "sha256": "d627c004d689424c1bfb6cc956940c7af3b206947e3440adc057648f6371dcc3"
+    }
+  ],
+  "rawInputsExcluded": [
+    "original ZIP",
+    "full Playwright reports",
+    "raw error-context test source",
+    "separate CPU profiles"
+  ],
+  "adjustment": {
+    "reason": "git diff --cached --check rejected one newly added blank line at EOF in the readable failure log; all test data and words remain unchanged.",
+    "original": {
+      "file": "failure-log.txt",
+      "bytes": 3606,
+      "sha256": "1779ab2ad57f44dd75c45eab041965bb5392d59ea2b1a5d9810f8d440280af29",
+      "preservedAs": "failure-log.txt.raw.gz",
+      "gzipBytes": 909,
+      "gzipSha256": "c1ddce072dab93929e1d9ec117df3bad6eb51ef50df78c307d15bc3936f5d801"
+    },
+    "readable": {
+      "file": "failure-log.txt",
+      "bytes": 3605,
+      "sha256": "c4de544de1b2e72aa0fd58d8aa13f4f6931d9877de842f4833db327e5a4477bc",
+      "change": "Only two final newline characters become one."
+    },
+    "originalManifest": {
+      "file": "original-safe-evidence-manifest.json",
+      "bytes": 1421,
+      "sha256": "a0bcb619805ec2019cfc3ed351105e1f5d44df697c16f20d9bf5f8cd68f9840a"
+    },
+    "receiptBoundary": "receipt.json and its entryDerivations remain verbatim source-extraction evidence; their original failure-log identity is exactly recoverable from the raw gzip. This manifest records the later readable representation."
+  }
+}

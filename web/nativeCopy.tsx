@@ -13,6 +13,7 @@ import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { BehaviorSubject } from 'rxjs';
 import { MessageType } from '@univerjs/design';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
+import { ModalTitleContent } from '../src/ui/redesign/Controls.tsx';
 import type { SaveState } from '../src/shared/autosave.ts';
 import type { WorkspaceItem } from '../src/shared/workspace.ts';
 import { CopyFileForm, type CopyOutcome } from './CopyFile.tsx';
@@ -133,7 +134,13 @@ export class NativeCopyPlugin extends Plugin {
           open = true;
           dialogs.open({
             id: dialogId,
-            title: { title: 'Make a copy' },
+            title: {
+              title: (
+                <span className="sp-modal-title">
+                  <ModalTitleContent title="Make a copy" icon="copy" />
+                </span>
+              ),
+            },
             children: {
               title: (
                 <NativeCopyForm
