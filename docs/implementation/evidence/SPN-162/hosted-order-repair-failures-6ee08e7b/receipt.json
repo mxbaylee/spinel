@@ -19,12 +19,31 @@
   },
   "sha256": {
     "failed-dashboard-copyfile--completed-while-offline-phone.png": "e66ae23ab3cf2ff13be498a8e93ab0b17b11493869a4d48539a4801627615fdb",
+    "typecheck-first-failure.txt": "c7138a6fdc447c3f4b27f912be1f94df8b99ae5a87f00390341342636608e277",
     "failed-dashboard-copyfile--completed-after-dismissal-phone.json": "6042785dff4a2afd33f4d17c83e38d9635e0241624e39a7e9ff3f39622cac594",
     "failed-dashboard-copyfile--completed-after-dismissal-phone.png": "98f9736c8676a090b3942eef19d7b34444940f1da2ad6f03d581cd3a64fd9a50",
+    "focused-typecheck-pass.txt": "f650bcc1265e6855629a5bf0ab6693409520dd093ede0073268a2248f5ce66e4",
     "manifest-excerpt.json": "6a2bb56ca2e8ae87ed9caf19fc05ceb155c790997aca856a958f9fd37ef01679",
     "failed-current-production-admin-diagnostics--confirmation-phone.json": "e185eb1816ad1114dc9318ee2aae3c8d07816092c64c051874c508e2dfc6e481",
     "failed-current-production-admin-diagnostics--confirmation-phone.png": "910e76e042540ce0cee2216fbdab0ac3cce7bfc91e7fa2353a1fe2277c0b04fe",
+    "focused-typecheck-config.txt": "473a41f61790039a43b1c8f517fbf63d47827649aa07db8f0c48f90cd955dc37",
     "failed-dashboard-copyfile--completed-while-offline-phone.json": "fd44764724f2868cf59b119059940a4f31c94b4566e2e3785d3595f82d5356bd",
     "supervisor-port-failure.txt": "2c3c099d8acad67074b9acd37bb0384d565de60b533540cefe92100e9af0f2bd"
-  }
+  },
+  "typingRepair": {
+    "cause": "Playwright evaluate no-argument overload supplies void, incompatible with optionalParentNode callback",
+    "repair": "Explicit undefined secondargument selectscompatibleoverload; browserdefaultdocumentbehaviorunchanged",
+    "focusedCheck": {
+      "passed": true,
+      "peakKiB": 223440,
+      "scope": "scripts/screenshots.ts and .storybook/dialogActionOrder.ts with project compiler options; not full project check"
+    },
+    "sourceSha256": {
+      "scripts/screenshots.ts": "3e04aeca522dbce4834d668faa400cd9f6eece306d1c83a4dd85dfa1f00c5404",
+      ".storybook/dialogActionOrder.ts": "b692b83a24e340ffa65b0378383703d2fab9b9d5d85ae8e9150db9fcafebf16e",
+      "web/CopyFile.tsx": "991a739aa60679eca778bf274aa7b47d2dd06f7090bca42b01c9934d9f85d868",
+      "web/AdminDiagnostics.stories.tsx": "df3744cbb8e805e89ee35d20ed5e423ea70023f0c2579f33757dad87f66c1fe2"
+    }
+  },
+  "rawLogWhitespace": "Original supervisor log preserves timestamp-line trailing spaces; focused source whitespace checks pass, unrestricted diff check reports those retained log bytes."
 }

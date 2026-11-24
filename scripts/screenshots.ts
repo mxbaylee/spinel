@@ -88,7 +88,7 @@ try {
           await orderProbe.setContent(
             `<div class="sp-modal"><div style="display:flex;flex-direction:${direction}">${reversed ? cancel + primary : primary + cancel}</div></div>`,
           );
-          const result = await orderProbe.evaluate(inspectDialogActionOrder);
+          const result = await orderProbe.evaluate(inspectDialogActionOrder, undefined);
           expect(result.checked).toBe(1);
           expect(result.violations.length > 0).toBe(reversed);
           if (reversed) expect(() => assertDialogActionOrder(result, true)).toThrow();
@@ -98,18 +98,18 @@ try {
       await orderProbe.setContent(
         `<div class="sp-modal"><div style="display:flex;flex-direction:row-reverse">${primary + cancel}</div></div>`,
       );
-      expect((await orderProbe.evaluate(inspectDialogActionOrder)).violations).toContain(
+      expect((await orderProbe.evaluate(inspectDialogActionOrder, undefined)).violations).toContain(
         'dismissal precedes affirmative visually',
       );
     }
     await orderProbe.setContent(
       '<div class="sp-modal" hidden><button class="sp-primary">Save</button><button>Cancel</button></div><div><button>Cancel</button><button class="sp-primary">Save</button></div><div class="sp-modal"><button>Cancel preparation</button></div>',
     );
-    expect((await orderProbe.evaluate(inspectDialogActionOrder)).checked).toBe(0);
+    expect((await orderProbe.evaluate(inspectDialogActionOrder, undefined)).checked).toBe(0);
     await orderProbe.setContent(
       '<div class="sp-modal"><div><button disabled>Cancel</button></div></div>',
     );
-    const missing = await orderProbe.evaluate(inspectDialogActionOrder);
+    const missing = await orderProbe.evaluate(inspectDialogActionOrder, undefined);
     assertDialogActionOrder(missing);
     expect(() => assertDialogActionOrder(missing, true)).toThrow(
       'Required dialog action pair is missing',
@@ -230,7 +230,7 @@ try {
         );
         await waitForStory(page, id);
         assertDialogActionOrder(
-          await page.evaluate(inspectDialogActionOrder),
+          await page.evaluate(inspectDialogActionOrder, undefined),
           requiredActionPairs.has(id),
         );
         if (id.startsWith('docs-native-formulas--')) {
