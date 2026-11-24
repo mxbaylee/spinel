@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import type { ReactNode, RefObject } from 'react';
 import { Dialog } from '@base-ui/react/dialog';
-import { GemLogo, replayGemWiggle } from '../src/ui/GemLogo.tsx';
+import { GemLogo, replayGemWiggle } from '../src/ui/GemLogo.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { ThemeMenu } from '../src/ui/redesign/ThemeMenu.tsx';
 import { Button } from '../src/ui/redesign/Controls.tsx';

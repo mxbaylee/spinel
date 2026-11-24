@@ -1,0 +1,10 @@
+
+ RUN  v5.1.0 /Users/mxbaylee/projects/spinel-spn150
+
+
+ Test Files  3 passed (3)
+      Tests  13 passed (13)
+   Start at  19:06:14
+   Duration  463ms (tests 61%, transform 19%, import 14%, worker 6%)
+
+WATCHDOG peakKiB=0 aborted=false

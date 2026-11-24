@@ -2,7 +2,7 @@ import { SaveStatus } from './SaveStatus.tsx';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { GemLogo } from '../src/ui/GemLogo.tsx';
+import { GemLogo } from '../src/ui/GemLogo.ts';
 import { ConnectionStatus } from './ConnectionStatus.tsx';
 
 const meta = {

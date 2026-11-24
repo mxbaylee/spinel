@@ -1,5 +1,5 @@
 import { useId } from 'react';
-import { GemLogo } from '../src/ui/GemLogo.tsx';
+import { GemLogo } from '../src/ui/GemLogo.ts';
 import { Button } from '../src/ui/redesign/Controls.tsx';
 import { ThemeMenu } from '../src/ui/redesign/ThemeMenu.tsx';
 import './accessState.css';

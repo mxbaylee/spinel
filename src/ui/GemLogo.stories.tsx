@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { useState } from 'react';
-import { GemLogo, replayGemWiggle } from './GemLogo.tsx';
+import { GemLogo, replayGemWiggle } from './GemLogo.ts';
 
 const meta = {
   id: 'shell-gemlogo',

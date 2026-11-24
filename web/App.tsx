@@ -1,5 +1,5 @@
-import { GemLogo } from '../src/ui/GemLogo.tsx';
-import { StartupScreen } from '../src/ui/StartupScreen.tsx';
+import { GemLogo } from '../src/ui/GemLogo.ts';
+import { StartupScreen } from '../src/ui/StartupScreen.ts';
 import { AuthEntry } from './AuthEntry.tsx';
 import { MaintenanceShell } from './Maintenance.tsx';
 import { ProfilePage } from './ProfilePage.tsx';

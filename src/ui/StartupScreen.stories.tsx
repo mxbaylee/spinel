@@ -3,7 +3,7 @@ import { showStartupFailure } from './startupFailure.ts';
 import { offlineHtml } from './offlinePage.ts';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within, waitFor } from 'storybook/test';
-import { StartupScreen } from './StartupScreen.tsx';
+import { StartupScreen } from './StartupScreen.ts';
 
 const meta = {
   title: 'Current production/Shell/Startup',

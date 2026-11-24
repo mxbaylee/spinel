@@ -1,6 +1,6 @@
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { StartupScreen } from '../ui/StartupScreen.tsx';
+import { StartupScreen } from '../ui/StartupScreen.ts';
 import { initialThemeCss, initialThemeScript } from '../ui/initialTheme.ts';
 
 /** Build/dev HTML only: no React or private application dependency in the bootstrap. */

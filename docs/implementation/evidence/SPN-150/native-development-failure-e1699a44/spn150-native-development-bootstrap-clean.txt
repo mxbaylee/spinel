@@ -1,0 +1,11 @@
+
+Running 1 test using 1 worker
+
+(node:80119) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+
+[1/1] [development] › e2e/branding.spec.ts:97:1 › initial HTML and app admission retain the brand, chosen theme and reduced motion
+WATCHDOG abort rss=932512 pressure=2
+serial: SIGTERM; killing the run.
+WATCHDOG peakKiB=932512 aborted=true

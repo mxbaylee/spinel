@@ -1,0 +1,5 @@
+[WebServer] {"kind":"owned-server-failure","ownerPid":79632,"runId":"9364790a-0ed3-4002-8a0f-b0e46b687f8e","pid":79634,"ready":false,"expectedClose":true,"exited":true,"unexpectedExit":true,"closed":true,"firstFailure":"App exited before ready (code 1, signal none).","exitCode":1,"signal":null,"stdout":{"bytes":0,"tail":""},"stderr":{"bytes":1623,"tail":"[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\nEADDRINUSE Error\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\nEADDRINUSE\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]\n[output redacted]"}}
+
+Error: Process from config.webServer was not able to start. Exit code: 1
+
+WATCHDOG peakKiB=468256 aborted=false

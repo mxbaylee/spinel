@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vite';
 import type { Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
-import { startupHtml } from './src/build/startupHtml.tsx';
+import { startupHtml } from './src/build/startupHtml.ts';
 import sharp from 'sharp';
 import { CURRENT_SDK_VERSION, shellFiles, SHELL_PLACEHOLDER } from './src/shared/offlineShell.ts';
 import type { RuntimeCompatibility, ShellManifest } from './src/shared/offlineShell.ts';
