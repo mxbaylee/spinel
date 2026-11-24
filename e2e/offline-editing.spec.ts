@@ -32,6 +32,7 @@ import {
 } from './offline-fixture.ts';
 import { beginWriting, textPoint } from './doc-touch.ts';
 import { recordNativeSnapshots } from './sync-snapshot.ts';
+import { observeConnectionOpening } from './connection-observation.ts';
 
 async function phoneText(page: Page, unitId: string) {
   return page.evaluate((id) => {
@@ -699,8 +700,66 @@ test.describe('downloaded native editors', () => {
           await expect.poll(pixels, { timeout: 25_000 }).toBe(true);
         }
         if (phone) expect(await f.read()).toEqual(baseline);
-        await f.network.setOffline(false);
-        await synced(f.page);
+        if (phone) {
+          const observation = await observeConnectionOpening(f.page);
+          let pendingAtList: boolean | undefined;
+          let pendingAtOpen: boolean | undefined;
+          try {
+            await f.page.getByRole('button', { name: 'Back to files', exact: true }).tap();
+            pendingAtList = pending(
+              (await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint,
+            );
+            expect(pendingAtList).toBe(true);
+            await observation.mark('pending-offline-list');
+            await f.network.setOffline(false);
+            await observation.mark('reconnected-list');
+            pendingAtOpen = pending(
+              (await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint,
+            );
+            // Do not wait for background replay or the health probe before the
+            // original pending-list-to-editor handoff. Record what actually won.
+            await observation.mark('opening-doc');
+            await f.page.getByRole('button', { name: `${f.item.name} Doc`, exact: true }).tap();
+            await synced(f.page);
+            await expect(
+              f.page.getByRole('status', { name: 'Connection status', exact: true }),
+            ).toHaveText('Online');
+            await observation.mark('room-ready');
+            const trace = await observation.read();
+            expect(trace.overflow || trace.readinessOverflow).toBe(false);
+            const opening = trace.events.filter((event) =>
+              ['opening-doc', 'room-ready'].includes(event.phase),
+            );
+            expect(opening.some((event) => event.owner === 'editor')).toBe(true);
+            expect(opening.some((event) => event.state === 'offline' && event.browserOnline)).toBe(
+              false,
+            );
+            expect(
+              trace.readiness.some((event) => event.route === 'access' && event.status === 200),
+            ).toBe(true);
+            expect(
+              trace.readiness.some((event) => event.route === 'ticket' && event.status === 200),
+            ).toBe(true);
+          } finally {
+            try {
+              await info.attach('spn-155-phone-open-connection-transitions', {
+                body: JSON.stringify({
+                  physicalPhone: false,
+                  viewport: { width: 390, height: 844 },
+                  pendingAtList,
+                  pendingAtOpen,
+                  ...(await observation.read()),
+                }),
+                contentType: 'application/json',
+              });
+            } finally {
+              await observation.close();
+            }
+          }
+        } else {
+          await f.network.setOffline(false);
+          await synced(f.page);
+        }
         const committed = await f.read();
         expect(committed.revision).toBe(baseline.revision + 1);
         expect(pending((await stored(f.page, f.actor.id, f.item.id))!.outbox!.checkpoint)).toBe(

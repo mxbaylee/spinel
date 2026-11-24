@@ -493,6 +493,60 @@ async function collectedAccount(initialCollectionFails = false) {
   };
 }
 
+test('a downloaded Doc reports connecting while opening online and preserves real offline transitions', async () => {
+  let at = 0;
+  const transitions: { elapsedMs: number; state: ConnectionState; browserOnline: boolean }[] = [];
+  const f = await fixture({
+    downloaded: true,
+    clock: () => at,
+    onConnection(state) {
+      if (transitions.at(-1)?.state !== state)
+        transitions.push({ elapsedMs: at, state, browserOnline: navigator.onLine });
+    },
+  });
+  f.pending();
+  const resume = {
+    type: 'resume',
+    version: 1,
+    unitId: 'unit',
+    fromRevision: 8,
+    revision: 8,
+    edits: [],
+  };
+  at = 10;
+  f.socket().open();
+  expect(f.connections).not.toContain('offline');
+  expect(f.connections).not.toContain('online');
+  at = 20;
+  f.socket().frame(resume);
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.connections.at(-1)).toBe('online');
+  at = 30;
+  vi.stubGlobal('navigator', { onLine: false });
+  window.dispatchEvent(new Event('offline'));
+  expect(f.connections.at(-1)).toBe('offline');
+  at = 40;
+  vi.stubGlobal('navigator', { onLine: true });
+  window.dispatchEvent(new Event('online'));
+  await vi.advanceTimersByTimeAsync(300);
+  at = 50;
+  f.socket().open();
+  expect(f.connections.at(-1)).toBe('reconnecting');
+  at = 60;
+  f.socket().frame(resume);
+  await vi.advanceTimersByTimeAsync(0);
+  // Opening and room readiness must not announce a disconnection. A genuine
+  // browser disconnection still reports Offline immediately, without a grace timer.
+  expect(transitions).toEqual([
+    { elapsedMs: 0, state: 'reconnecting', browserOnline: true },
+    { elapsedMs: 20, state: 'online', browserOnline: true },
+    { elapsedMs: 30, state: 'offline', browserOnline: false },
+    { elapsedMs: 40, state: 'reconnecting', browserOnline: true },
+    { elapsedMs: 60, state: 'online', browserOnline: true },
+  ]);
+  console.info('SPN-155 controlled connection trace', JSON.stringify(transitions));
+});
+
 test('actual account collection retains open and transport reconnect observations through native room reports', async () => {
   let at = 100;
   const collection = await collectedAccount();

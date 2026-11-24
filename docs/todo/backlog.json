@@ -13,7 +13,8 @@
       "SPN-087",
       "SPN-089",
       "SPN-162",
-      "SPN-150"
+      "SPN-150",
+      "SPN-155"
     ]
   },
   "size": {
@@ -31,7 +32,7 @@
     ]
   },
   "pr_title_exceptions": [
-    "\ud83e\uddf9 Groom backlog",
-    "\u2b06\ufe0f Bump"
+    "🧹 Groom backlog",
+    "⬆️ Bump"
   ]
 }

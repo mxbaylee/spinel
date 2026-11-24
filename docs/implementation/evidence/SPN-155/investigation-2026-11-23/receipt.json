@@ -1,0 +1,55 @@
+{
+  "base": "235c14d69e30967fe7cf470308fdb39798e0fca5",
+  "productionChanged": false,
+  "acceptance": "Pending actual pending-Doc/list/reconnect/open phone-viewport journey. Original physical-phone symptom remains unreproduced; cause unknown.",
+  "controlledContracts": {
+    "tests": 119,
+    "durationMs": 864,
+    "peakKiB": 255040,
+    "clock": "deterministic fixture clock; not measured runtime latency"
+  },
+  "observerProbe": {
+    "transientOfflineDetected": true,
+    "overflowDetected": true,
+    "eventLimit": 200,
+    "peakKiB": 448240,
+    "environment": "neutral Chromium page, not product acceptance"
+  },
+  "build": {
+    "durationSeconds": 2.76,
+    "peakKiB": 891072,
+    "environment": {
+      "VITE_SYNC_EVIDENCE": "1",
+      "VITE_DOC_SELECTION_EVIDENCE": "1"
+    }
+  },
+  "resourceAttempts": [
+    {
+      "peakKiB": 1049360,
+      "pressure": 2,
+      "result": "watchdog aborted; no journey pass"
+    },
+    {
+      "peakKiB": 596576,
+      "pressure": 2,
+      "result": "watchdog aborted; no journey pass",
+      "harnessNodeOptions": "--max-old-space-size=192 --max-semi-space-size=4"
+    }
+  ],
+  "sourceSha256": {
+    "web/spinelSync.ts": "286c18563822b3ab07c9d8068f807998869c5c6f0027ba85d7c23b4496bfd260",
+    "web/connectionState.ts": "c8a4c4195f7f3eca350604d0b683e5a29e0c3e7cac77b4f31c0d2aaa8bb11e3b",
+    "web/useConnectionStatus.ts": "05a3ae05b05267632f596893704902bfa371942fe880d5d193d404d0ff41b731",
+    "web/App.tsx": "c572ec06c24bc4ab122673860ecaf5b20eb7df437f99136b73d42477a1f63187",
+    "web/DocEditor.tsx": "dfacd4994d3d2b66189c38b802f18d5f0ea8676355988b137e72c12e7b053bdb",
+    "src/ui/spinelSync.test.ts": "82b9b19c6e72eb569d6adc9220cf2a4fda6b610f85cdf5a78133ab181455c277",
+    "src/ui/connectionState.test.ts": "22c4ddcef4a04dfeb984f74bc6ae0cc5bb936a32170216544cdd184f1efd3ad8",
+    "e2e/connection-observation.ts": "ffe169422056cda35083a9ae860eb38e2a70175bba2c1a3df0a646fe04b23260",
+    "e2e/offline-editing.spec.ts": "52a6a174220a463d0bb3761369339f36b3c7d737d4318b1ab33cc549630a1f35"
+  },
+  "fileSha256": {
+    "observer-negative-control.txt": "c144ce2e0d41101c2a95532da2b20e0e1e8952c0ad431c53febb352a98dc944f",
+    "resource-attempts.txt": "45f0952588243a5ef897d482d8b984b6ad4b98d08c1d2fc7149e744a5f808090",
+    "controlled-contracts.txt": "a8ba974f58a9dfcadc73abb77bf3e8c55bb3a2b119906a533c1532b7e7b42da1"
+  }
+}
