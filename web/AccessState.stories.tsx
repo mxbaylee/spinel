@@ -55,7 +55,18 @@ export const RevokedWithUnsavedInput: Story = {
     await expect(canvas.queryByRole('link')).not.toBeInTheDocument();
   },
 };
-export const Loading: Story = { args: { kind: 'loading' } };
+export const Loading: Story = {
+  args: { kind: 'loading' },
+  play: async (context) => {
+    const { canvasElement } = context;
+    await meta.play(context);
+    await expect(
+      getComputedStyle(canvasElement.querySelector('.sp-startup-gem')!).animationName,
+    ).toBe(
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'none' : 'sp-startup-pulse',
+    );
+  },
+};
 export const UnsupportedBrowser: Story = { args: { kind: 'unsupported' } };
 export const Offline: Story = { args: { kind: 'offline', onRetry: fn() } };
 export const MissingGuestPage: Story = { args: { kind: 'missing' } };

@@ -4,7 +4,6 @@ import { offlineHtml } from './offlinePage.ts';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within, waitFor } from 'storybook/test';
 import { StartupScreen } from './StartupScreen.tsx';
-import './startup.css';
 
 const meta = {
   title: 'Current production/Shell/Startup',

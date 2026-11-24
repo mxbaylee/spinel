@@ -1,0 +1,10 @@
+
+(!) build.outDir must not be the same directory of root or a parent directory of root as this could cause Vite to overwriting source files with build outputs.
+
+{"id":"space-review--app-loading","motion":"no-preference","pulse":"sp-startup-pulse","passed":true}
+{"id":"guest-guestapp--loading","motion":"no-preference","pulse":"sp-startup-pulse","passed":true}
+{"id":"current-production-guest-accessstate--loading","motion":"no-preference","pulse":"sp-startup-pulse","passed":true}
+{"id":"space-review--app-loading","motion":"reduce","pulse":"none","passed":true}
+{"id":"guest-guestapp--loading","motion":"reduce","pulse":"none","passed":true}
+{"id":"current-production-guest-accessstate--loading","motion":"reduce","pulse":"none","passed":true}
+WATCHDOG peakKiB=767520 aborted=false

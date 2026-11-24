@@ -1,0 +1,5 @@
+{
+  "source": "9e78af8c2dab28bafd53ba1ce7ce95ef6e0b0fcb",
+  "disposition": "Direct App/Guest stories omitted application startup.css. Shared preview now imports the same stylesheet beside theme.css. Independent style assertions and actual normal/reduced probes detect missing styling.",
+  "sha256": "1c4ef79f4057d42c5ca64f320e66de8243e99a068614ce0a7b2c4926a27e6e92"
+}

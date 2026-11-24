@@ -1,3 +1,4 @@
+import { GemLogo } from '../src/ui/GemLogo.tsx';
 import { StartupScreen } from '../src/ui/StartupScreen.tsx';
 import { AuthEntry } from './AuthEntry.tsx';
 import { MaintenanceShell } from './Maintenance.tsx';
@@ -665,12 +666,24 @@ function AccountApp() {
     if (unreachable)
       return (
         <main className="space-bootstrap">
+          <div className="space-entry-brand">
+            <span aria-hidden="true">
+              <GemLogo size={36} />
+            </span>
+            <strong>spinel</strong>
+          </div>
           <OfflineUnreachable />
         </main>
       );
     if (!user || user.isAdmin)
       return (
         <main className="space-bootstrap">
+          <div className="space-entry-brand">
+            <span aria-hidden="true">
+              <GemLogo size={36} />
+            </span>
+            <strong>spinel</strong>
+          </div>
           <p role="alert">This Space is not available.</p>
         </main>
       );

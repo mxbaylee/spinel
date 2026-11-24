@@ -64,6 +64,11 @@ export const Loading: Story = {
     await expect(within(canvasElement).getByRole('status')).toHaveTextContent(
       'Opening shared document…',
     );
+    await expect(
+      getComputedStyle(canvasElement.querySelector('.sp-startup-gem')!).animationName,
+    ).toBe(
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'none' : 'sp-startup-pulse',
+    );
   },
 };
 /** The link was revoked or replaced: any 401, 403 or 404 ends the page. */

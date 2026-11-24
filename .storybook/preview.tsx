@@ -1,5 +1,6 @@
 import type { Decorator, Preview } from '@storybook/react-vite';
 import '../src/ui/theme.css';
+import '../src/ui/startup.css';
 import { initializeTheme, setPreference } from '../src/ui/theme.ts';
 import type { ThemeMode } from '../src/ui/palette.ts';
 import { mockFetch } from './api.ts';

@@ -1,0 +1,82 @@
+
+(!) build.outDir must not be the same directory of root or a parent directory of root as this could cause Vite to overwriting source files with build outputs.
+
+space-review--app-loading {
+  animation: 'none',
+  rootDisplay: 'block',
+  sheets: [
+    null,
+    null,
+    'http://127.0.0.1:6007/assets/iframe-duNaKdeL.css',
+    'http://127.0.0.1:6007/assets/controls-6GPmlRwP.css',
+    'http://127.0.0.1:6007/assets/ThemeMenu-DuS3AFhY.css',
+    'http://127.0.0.1:6007/assets/entryJourney-CJkqs_bu.css',
+    'http://127.0.0.1:6007/assets/EntryFrame-DB9fT3Gz.css',
+    'http://127.0.0.1:6007/assets/administration-WlSsYuOZ.css',
+    'http://127.0.0.1:6007/assets/Maintenance-Dp-3-dvQ.css',
+    'http://127.0.0.1:6007/assets/feedback-MPF2wMh7.css',
+    'http://127.0.0.1:6007/assets/AdminUsers-Dw5gyxPH.css',
+    'http://127.0.0.1:6007/assets/BackupDownloads-CKFNrv5F.css',
+    'http://127.0.0.1:6007/assets/BackupRestore-hs9pB6ZK.css',
+    'http://127.0.0.1:6007/assets/ServerHealth-EMdq8Hsl.css',
+    'http://127.0.0.1:6007/assets/profile-DeEBLEXH.css',
+    'http://127.0.0.1:6007/assets/Rail-BPy1inxF.css',
+    'http://127.0.0.1:6007/assets/AccessState-DDJakJk4.css',
+    'http://127.0.0.1:6007/assets/Appearance-DXI6v1kJ.css',
+    'http://127.0.0.1:6007/assets/fileDialog-BUnPxS8B.css',
+    'http://127.0.0.1:6007/assets/ShareLink-DvalkekD.css',
+    'http://127.0.0.1:6007/assets/DashboardFiles-ByGYJez6.css',
+    'http://127.0.0.1:6007/assets/SearchPanel-BHfYMFX1.css',
+    'http://127.0.0.1:6007/assets/SpaceRootActions-CuJND89q.css',
+    'http://127.0.0.1:6007/assets/editorFrame-D-t9WQDO.css',
+    'http://127.0.0.1:6007/assets/StorageHelp-Kf7OmaC_.css',
+    'http://127.0.0.1:6007/assets/SyncStatus-DjVMJLYv.css',
+    'http://127.0.0.1:6007/assets/CopyFile-BQQaXgft.css',
+    'http://127.0.0.1:6007/assets/Dashboard-Bhx56Aht.css',
+    'http://127.0.0.1:6007/assets/space-CV4UEuTW.css',
+    'http://127.0.0.1:6007/assets/spaceOffline-CnyEf_hy.css',
+    'http://127.0.0.1:6007/assets/OfflineRecoveryEntry-Dfr7d7jS.css',
+    'http://127.0.0.1:6007/assets/DeviceStoragePanel-C2NJxWkV.css',
+    'http://127.0.0.1:6007/assets/GuestLinks-7b9btl2K.css',
+    'http://127.0.0.1:6007/assets/RestoreNotice-3ZmiKG4W.css',
+    null,
+    null
+  ]
+}
+guest-guestapp--loading {
+  animation: 'none',
+  rootDisplay: null,
+  sheets: [
+    null,
+    null,
+    'http://127.0.0.1:6007/assets/iframe-duNaKdeL.css',
+    'http://127.0.0.1:6007/assets/controls-6GPmlRwP.css',
+    'http://127.0.0.1:6007/assets/ThemeMenu-DuS3AFhY.css',
+    'http://127.0.0.1:6007/assets/AccessState-DDJakJk4.css',
+    'http://127.0.0.1:6007/assets/administration-WlSsYuOZ.css',
+    'http://127.0.0.1:6007/assets/Maintenance-Dp-3-dvQ.css',
+    'http://127.0.0.1:6007/assets/profile-DeEBLEXH.css',
+    'http://127.0.0.1:6007/assets/Appearance-DXI6v1kJ.css',
+    'http://127.0.0.1:6007/assets/editorFrame-D-t9WQDO.css',
+    'http://127.0.0.1:6007/assets/fileDialog-BUnPxS8B.css',
+    'http://127.0.0.1:6007/assets/ShareLink-DvalkekD.css',
+    'http://127.0.0.1:6007/assets/SpaceRootActions-CuJND89q.css',
+    'http://127.0.0.1:6007/assets/feedback-MPF2wMh7.css',
+    'http://127.0.0.1:6007/assets/space-CV4UEuTW.css',
+    'http://127.0.0.1:6007/assets/StorageHelp-Kf7OmaC_.css',
+    'http://127.0.0.1:6007/assets/spaceOffline-CnyEf_hy.css',
+    null
+  ]
+}
+current-production-shell-startup--loading {
+  animation: 'sp-startup-pulse',
+  rootDisplay: 'grid',
+  sheets: [
+    null,
+    null,
+    'http://127.0.0.1:6007/assets/iframe-duNaKdeL.css',
+    'http://127.0.0.1:6007/assets/StartupScreen-BxaZt1Yi.css',
+    null
+  ]
+}
+WATCHDOG peakKiB=729120 aborted=false

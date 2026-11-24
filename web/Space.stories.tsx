@@ -302,6 +302,14 @@ export const AppLoading: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(await canvas.findByRole('status')).toHaveTextContent('Loading your workspace…');
+    await expect(getComputedStyle(canvasElement.querySelector('.sp-startup')!).display).toBe(
+      'grid',
+    );
+    await expect(
+      getComputedStyle(canvasElement.querySelector('.sp-startup-gem')!).animationName,
+    ).toBe(
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'none' : 'sp-startup-pulse',
+    );
     await expect(canvas.queryByRole('region', { name: 'Space pages' })).not.toBeInTheDocument();
   },
 };
@@ -313,6 +321,7 @@ export const AppUnreachable: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(await canvas.findByRole('heading', { name: "You're offline" })).toBeVisible();
+    await expect(canvas.getByText('spinel', { exact: true })).toBeVisible();
     const retry = canvas.getByRole('button', { name: 'Try again' });
     await expect(retry).toBeEnabled();
     const bounds = retry.getBoundingClientRect();
@@ -348,6 +357,7 @@ export const AppUnavailable: Story = {
     await expect(await canvas.findByRole('alert')).toHaveTextContent(
       'This Space is not available.',
     );
+    await expect(canvas.getByText('spinel', { exact: true })).toBeVisible();
     await expect(canvas.queryByRole('region', { name: 'Space pages' })).not.toBeInTheDocument();
     await expect(canvas.queryByRole('button', { name: 'New Space' })).not.toBeInTheDocument();
   },
