@@ -875,9 +875,6 @@ export function BackupRestore({
             </Button>
           )}
           <div className="admin-dialog-actions">
-            <Button disabled={phase === 'creating'} onClick={cancelDialog}>
-              Cancel
-            </Button>
             <Button
               primary
               disabled={
@@ -891,6 +888,9 @@ export function BackupRestore({
               onClick={() => void prepare()}
             >
               {job?.state === 'uploading' ? 'Upload encrypted backup' : 'Verify and prepare'}
+            </Button>
+            <Button disabled={phase === 'creating'} onClick={cancelDialog}>
+              Cancel
             </Button>
           </div>
         </div>
@@ -940,15 +940,15 @@ export function BackupRestore({
         {phase === 'confirming' && <p role="status">Recording restore confirmation…</p>}
         {error && <p role="alert">{error}</p>}
         <div className="admin-dialog-actions" ref={confirmationActions}>
-          <Button disabled={phase === 'confirming'} onClick={cancelDialog}>
-            Cancel
-          </Button>
           <Button
             className="sp-destructive"
             disabled={!acknowledged || phase !== 'idle' || !!notice || originalExpired}
             onClick={() => void confirm()}
           >
             {retry ? 'Retry confirmed restore' : 'Verify and restore workspace'}
+          </Button>
+          <Button disabled={phase === 'confirming'} onClick={cancelDialog}>
+            Cancel
           </Button>
         </div>
       </Modal>

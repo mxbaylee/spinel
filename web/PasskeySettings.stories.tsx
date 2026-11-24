@@ -421,3 +421,18 @@ export const AccountChangedDuringRegistration: Story = {
     await expect(args.onAdd).not.toHaveBeenCalled();
   },
 };
+
+export const SigningOutOthers: Story = {
+  parameters: { api: { ...read, 'POST /api/auth/sign-out-others': pending() } },
+  play: async (context) => {
+    await SignOutOthers.play!(context);
+    const dialog = within(
+      within(context.canvasElement.ownerDocument.body).getByRole('dialog', {
+        name: 'Sign out other devices?',
+      }),
+    );
+    await userEvent.click(dialog.getByRole('button', { name: 'Sign out other devices' }));
+    await expect(await dialog.findByRole('button', { name: 'Signing out…' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+  },
+};

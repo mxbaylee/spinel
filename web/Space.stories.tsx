@@ -898,6 +898,13 @@ export const MetadataDialogFocus: Story = {
       await userEvent.click(await page.findByRole('menuitem', { name: mode + '…' }));
       const dialog = await page.findByRole('dialog', { name: mode + ' Welcome' });
       await expect(page.getAllByRole('dialog')).toHaveLength(1);
+      // Shared dialog convention: the primary action precedes Cancel in DOM
+      // and visual order, including a form reached from the phone contents panel.
+      await expect(
+        Array.from(dialog.querySelectorAll('.sp-actions button')).map(
+          (button) => button.textContent,
+        ),
+      ).toEqual(['Save', 'Cancel']);
       await expect(page.queryByRole('dialog', { name: 'Space contents' })).not.toBeInTheDocument();
       await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
       await waitFor(() =>
@@ -947,11 +954,15 @@ export const TrashSubtreeConfirmation: Story = {
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.click(navigation.getByRole('button', { name: 'More actions for Welcome' }));
     await userEvent.click(await page.findByRole('menuitem', { name: 'Move to Trash' }));
-    const dialog = within(await page.findByRole('dialog', { name: 'Trash Welcome' }));
+    const panel = await page.findByRole('dialog', { name: 'Trash Welcome' });
+    const dialog = within(panel);
     await expect(
       dialog.getByText(/Move Welcome and its 2 descendants to Space Trash/),
     ).toBeVisible();
     await expect(dialog.getByRole('button', { name: 'Move to Trash' })).toBeEnabled();
+    await expect(
+      Array.from(panel.querySelectorAll('.sp-actions button')).map((button) => button.textContent),
+    ).toEqual(['Move to Trash', 'Cancel']);
   },
 };
 
@@ -1196,5 +1207,49 @@ export const FileAdmin: Story = {
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
     await contents(canvasElement);
     await expect(page.getByRole('button', { name: 'Add page' })).toBeVisible();
+  },
+};
+
+export const CreatingSpace: Story = {
+  parameters: {
+    ...NewSpace.parameters,
+    api: { ...NewSpace.parameters!.api, 'POST /api/spaces': pending() },
+  },
+  play: async (context) => {
+    await NewSpace.play!(context);
+    const dialog = within(
+      within(context.canvasElement.ownerDocument.body).getByRole('dialog', { name: 'New Space' }),
+    );
+    await userEvent.click(dialog.getByRole('button', { name: 'Create' }));
+    await expect(await dialog.findByRole('button', { name: 'Creating…' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+  },
+};
+export const CreatingDoc: Story = {
+  parameters: { api: { ...treeApi(), ['POST /api/spaces/' + root + '/items']: pending() } },
+  play: async (context) => {
+    await createMember('Doc')(context);
+    const dialog = within(
+      within(context.canvasElement.ownerDocument.body).getByRole('dialog', { name: 'New Doc' }),
+    );
+    await userEvent.click(dialog.getByRole('button', { name: 'Create' }));
+    await expect(await dialog.findByRole('button', { name: 'Creating…' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+  },
+};
+export const TrashingSubtree: Story = {
+  parameters: {
+    api: { ...treeApi(), ['DELETE /api/spaces/' + root + '/items/' + id(1)]: pending() },
+  },
+  play: async (context) => {
+    await TrashSubtreeConfirmation.play!(context);
+    const dialog = within(
+      within(context.canvasElement.ownerDocument.body).getByRole('dialog', {
+        name: 'Trash Welcome',
+      }),
+    );
+    await userEvent.click(dialog.getByRole('button', { name: 'Move to Trash' }));
+    await expect(await dialog.findByRole('button', { name: 'Moving to Trash…' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
   },
 };

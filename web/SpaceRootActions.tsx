@@ -296,7 +296,13 @@ export function SpaceRootActions({
                       !owned.some((folder) => folder.id === destination))
                   }
                 >
-                  {busy ? 'Saving…' : mode === 'trash' ? 'Move Space to Trash' : 'Save'}
+                  {busy
+                    ? mode === 'trash'
+                      ? 'Moving to Trash…'
+                      : 'Saving…'
+                    : mode === 'trash'
+                      ? 'Move Space to Trash'
+                      : 'Save'}
                 </Button>
                 <Button type="button" disabled={busy} onClick={close}>
                   Cancel

@@ -373,3 +373,18 @@ export const FileAdminNoDestinations: Story = {
     await expect(within(dialog).getByLabelText('Destination')).toBeDisabled();
   },
 };
+
+export const TrashingSpace: Story = {
+  parameters: { api: { [`POST /api/items/${item.id}/trash`]: pending() } },
+  play: async ({ canvasElement }) => {
+    await choose(canvasElement, 'Move to Trash');
+    const panel = await within(canvasElement.ownerDocument.body).findByRole('dialog', {
+      name: 'Move Space to Trash?',
+    });
+    const dialog = within(panel);
+    await userEvent.click(dialog.getByRole('button', { name: 'Move Space to Trash' }));
+    await expect(await dialog.findByRole('button', { name: 'Moving to Trash…' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+    await assertDialogControls(panel);
+  },
+};

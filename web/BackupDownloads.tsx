@@ -550,15 +550,15 @@ export function BackupDownloads({
         {maintenanceNotice && <p role="status">{maintenanceNotice}</p>}
         {error && !maintenanceNotice && <p role="alert">{error}</p>}
         <div className="admin-dialog-actions">
-          <Button disabled={phase === 'requesting'} onClick={cancelAction}>
-            Cancel
-          </Button>
           <Button
             primary
             disabled={phase !== 'idle' || !policy.manualDownload || !!maintenanceNotice}
             onClick={() => void perform()}
           >
             {action?.kind === 'download' ? 'Verify and download' : 'Verify and prepare backup'}
+          </Button>
+          <Button disabled={phase === 'requesting'} onClick={cancelAction}>
+            Cancel
           </Button>
         </div>
       </Modal>

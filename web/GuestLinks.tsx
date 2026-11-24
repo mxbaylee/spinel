@@ -303,13 +303,23 @@ export function GuestLinks() {
                 This link changed. Close this dialog and review its current status.
               </p>
             )}
-            {busy && <p role="status">Saving guest link…</p>}
+            {busy && (
+              <p role="status">
+                {action.kind === 'off' ? 'Turning off guest link…' : 'Saving guest link…'}
+              </p>
+            )}
             <div className="guest-link-actions">
+              <Button primary disabled={busy || loading || !!changed} onClick={() => void save()}>
+                {busy
+                  ? action.kind === 'off'
+                    ? 'Turning off link…'
+                    : 'Saving…'
+                  : action.kind === 'off'
+                    ? 'Turn off link'
+                    : 'Save expiry'}
+              </Button>
               <Button disabled={busy} onClick={() => setAction(null)}>
                 Cancel
-              </Button>
-              <Button primary disabled={busy || loading || !!changed} onClick={() => void save()}>
-                {busy ? 'Saving…' : action.kind === 'off' ? 'Turn off link' : 'Save expiry'}
               </Button>
             </div>
           </div>

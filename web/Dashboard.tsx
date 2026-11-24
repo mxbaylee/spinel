@@ -1605,7 +1605,9 @@ export function Dashboard({
                 }
               >
                 {busy
-                  ? 'Saving…'
+                  ? action.mode === 'new'
+                    ? 'Creating…'
+                    : 'Saving…'
                   : action.mode === 'new'
                     ? 'Create'
                     : action.mode === 'relocate-creation'

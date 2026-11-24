@@ -8,6 +8,10 @@ import { chromium, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 import { selectStorybookReview } from './ci/storybook-review.ts';
 import { verifyStoryStyleIsolation } from './ci/storybook-style-isolation.ts';
+import {
+  assertDialogActionOrder,
+  inspectDialogActionOrder,
+} from '../.storybook/dialogActionOrder.ts';
 
 if (
   process.platform === 'darwin' &&
@@ -37,7 +41,85 @@ const verifications: string[] = [];
 const checked: { id: string; variant: string }[] = [];
 const nativeFailures: unknown[] = [];
 const captureFailures: { id: string; variant: string; message: string; filename?: string }[] = [];
+// These production plays finish with a required form or confirmation open.
+const requiredActionPairs = new Set([
+  'space-review--trash-subtree-confirmation',
+  'space-review--delete-confirmation',
+  'space-review--creating-space',
+  'space-review--creating-doc',
+  'space-review--trashing-subtree',
+  'spaces-root-actions--trashing-space',
+  'dashboard-dashboard--creating-folder',
+  'current-production-account-passkey-security--signing-out-others',
+  'current-production-account-guest-links--turning-off',
+  'sharing-sharelink--creating-space-link',
+  'sharing-sharelink--turning-off-space-link',
+  'redesign-appearance--updating-cover',
+  'redesign-appearance--appearance-open',
+  'redesign-appearance--page-cover-open',
+  'account-exit--delete-confirmation',
+  'admin-account-recovery--confirm-reactivation',
+  'admin-admininvites--recovery-invite',
+  'current-production-admin-diagnostics--confirmation',
+  'admin-backupdownloads--fresh-passkey-required',
+  'admin-backuprestore--manual-upload',
+  'admin-backuprestore--confirmation-review',
+  'dashboard-copyfile--making-copy',
+  'history-browser--name-current',
+  'history-browser--restoring',
+  'maintenance-controls--confirm-pause',
+  'sharing-sharing--access-saving',
+]);
+for (const id of requiredActionPairs) {
+  if (index.entries[id]?.type !== 'story')
+    throw new Error(`Missing required dialog action story: ${id}`);
+}
+
 try {
+  // Prove the shared order check rejects reversed DOM and visual order before
+  // accepting catalogue states. Use an isolated page, never a product controller.
+  const orderProbe = await browser.newPage();
+  try {
+    for (const disabled of ['', 'disabled']) {
+      const primary = `<button class="sp-primary" ${disabled}>Save</button>`;
+      const cancel = `<button ${disabled}>Cancel</button>`;
+      for (const direction of ['row', 'column', 'row;width:50px;flex-wrap:wrap']) {
+        for (const reversed of [false, true]) {
+          await orderProbe.setContent(
+            `<div class="sp-modal"><div style="display:flex;flex-direction:${direction}">${reversed ? cancel + primary : primary + cancel}</div></div>`,
+          );
+          const result = await orderProbe.evaluate(inspectDialogActionOrder);
+          expect(result.checked).toBe(1);
+          expect(result.violations.length > 0).toBe(reversed);
+          if (reversed) expect(() => assertDialogActionOrder(result, true)).toThrow();
+          else assertDialogActionOrder(result, true);
+        }
+      }
+      await orderProbe.setContent(
+        `<div class="sp-modal"><div style="display:flex;flex-direction:row-reverse">${primary + cancel}</div></div>`,
+      );
+      expect((await orderProbe.evaluate(inspectDialogActionOrder)).violations).toContain(
+        'dismissal precedes affirmative visually',
+      );
+    }
+    await orderProbe.setContent(
+      '<div class="sp-modal" hidden><button class="sp-primary">Save</button><button>Cancel</button></div><div><button>Cancel</button><button class="sp-primary">Save</button></div><div class="sp-modal"><button>Cancel preparation</button></div>',
+    );
+    expect((await orderProbe.evaluate(inspectDialogActionOrder)).checked).toBe(0);
+    await orderProbe.setContent(
+      '<div class="sp-modal"><div><button disabled>Cancel</button></div></div>',
+    );
+    const missing = await orderProbe.evaluate(inspectDialogActionOrder);
+    assertDialogActionOrder(missing);
+    expect(() => assertDialogActionOrder(missing, true)).toThrow(
+      'Required dialog action pair is missing',
+    );
+    verifications.push(
+      'dialog action order: positive, disabled, vertical and reversed DOM/visual negative controls passed',
+    );
+  } finally {
+    await orderProbe.close();
+  }
   for (const kind of review.nativeEditorKinds) {
     for (const readOnly of [false, true]) {
       const id = `redesign-native-editors--${kind}${readOnly ? '-viewer' : ''}`;
@@ -147,6 +229,10 @@ try {
           `http://127.0.0.1:6007/iframe.html?id=${id}&viewMode=story&globals=theme:${theme}`,
         );
         await waitForStory(page, id);
+        assertDialogActionOrder(
+          await page.evaluate(inspectDialogActionOrder),
+          requiredActionPairs.has(id),
+        );
         if (id.startsWith('docs-native-formulas--')) {
           // The component's dynamic viewer can still be booting after Storybook
           // finishes its synchronous render. Capture the native result, not its skeleton.

@@ -1424,3 +1424,19 @@ export const ClearEmptyGlobalScope: Story = {
     await expect(canvas.queryByText('All accessible files')).not.toBeInTheDocument();
   },
 };
+
+export const CreatingFolder: Story = {
+  parameters: { api: { ...populated, 'POST /api/items': pending() } },
+  play: async (context) => {
+    await NewItem.play!(context);
+    const panel = within(context.canvasElement.ownerDocument.body).getByRole('dialog', {
+      name: 'New folder',
+    });
+    const dialog = within(panel);
+    await userEvent.type(dialog.getByRole('textbox', { name: 'Name' }), 'Planning');
+    await userEvent.click(dialog.getByRole('button', { name: 'Create' }));
+    await expect(await dialog.findByRole('button', { name: 'Creating…' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+    await assertDialogControls(panel);
+  },
+};

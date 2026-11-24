@@ -440,7 +440,7 @@ export function PasskeySettings({
                     : phase === 'saving'
                       ? action.kind === 'remove'
                         ? 'Removing…'
-                        : 'Saving…'
+                        : 'Signing out…'
                       : needsProof
                         ? 'Verify with a passkey'
                         : action.kind === 'remove'

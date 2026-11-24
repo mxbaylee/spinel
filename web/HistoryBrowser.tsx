@@ -479,11 +479,11 @@ export function HistoryBrowser() {
             </label>
             {nameError && <p role="alert">{nameError}</p>}
             <div className="sp-actions">
-              <Button disabled={savingName} onClick={() => setNaming(null)}>
-                Cancel
-              </Button>
               <Button type="submit" primary disabled={savingName || !name.trim()}>
                 {savingName ? 'Saving…' : 'Save version name'}
+              </Button>
+              <Button disabled={savingName} onClick={() => setNaming(null)}>
+                Cancel
               </Button>
             </div>
           </form>

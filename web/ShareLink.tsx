@@ -263,7 +263,7 @@ export function ShareLink({
               </Button>
             </>
           )}
-          {busy && <p role="status">Saving guest link…</p>}
+          {busy && <p role="status">Updating guest link…</p>}
           {notice && <p role="status">{notice}</p>}
           {error && !confirmationOpen && (
             <p role="alert">{error} The last confirmed link access is shown above.</p>
@@ -345,6 +345,21 @@ export function ShareLink({
           <p role="alert">{error} The last confirmed link access is unchanged in this view.</p>
         )}
         <div className="sharing-link-actions">
+          <Button primary disabled={busy} onClick={() => void change(pending)}>
+            {busy
+              ? pending.role === null
+                ? 'Turning off link…'
+                : pending.replacing
+                  ? 'Replacing link…'
+                  : 'Creating link…'
+              : failed
+                ? 'Retry link update'
+                : pending.role === null
+                  ? 'Turn off link'
+                  : pending.replacing
+                    ? 'Replace link'
+                    : `Create ${pending.role === 'editor' ? 'edit' : 'view'} link`}
+          </Button>
           <Button
             disabled={busy}
             onClick={() => {
@@ -354,17 +369,6 @@ export function ShareLink({
             }}
           >
             Cancel
-          </Button>
-          <Button primary disabled={busy} onClick={() => void change(pending)}>
-            {busy
-              ? 'Saving…'
-              : failed
-                ? 'Retry link update'
-                : pending.role === null
-                  ? 'Turn off link'
-                  : pending.replacing
-                    ? 'Replace link'
-                    : `Create ${pending.role === 'editor' ? 'edit' : 'view'} link`}
           </Button>
         </div>
       </Modal>

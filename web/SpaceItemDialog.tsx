@@ -204,9 +204,6 @@ export function SpaceItemDialog({
           {error && <p role="alert">{error}</p>}
         </div>
         <div className="sp-actions">
-          <Button type="button" disabled={busy} onClick={onCancel}>
-            Cancel
-          </Button>
           <Button
             type="submit"
             primary
@@ -216,7 +213,16 @@ export function SpaceItemDialog({
               (action.mode !== 'move' && action.mode !== 'trash' && !name.trim())
             }
           >
-            {busy ? 'Saving…' : submitLabel}
+            {busy
+              ? action.mode === 'trash'
+                ? 'Moving to Trash…'
+                : action.mode === 'root' || action.mode === 'add'
+                  ? 'Creating…'
+                  : 'Saving…'
+              : submitLabel}
+          </Button>
+          <Button type="button" disabled={busy} onClick={onCancel}>
+            Cancel
           </Button>
         </div>
       </form>

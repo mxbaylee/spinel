@@ -332,15 +332,15 @@ export function AdminDiagnostics({ onBusyChange }: { onBusyChange?: (busy: boole
             </p>
             <p>Clearing records may not shrink the database file immediately.</p>
             <div className="admin-dialog-actions">
-              <Button disabled={busy !== null} onClick={() => setConfirmation(null)}>
-                Cancel
-              </Button>
               <Button
                 className="sp-destructive"
                 disabled={busy !== null}
                 onClick={() => void truncate()}
               >
                 {busy === 'truncate' ? 'Clearing…' : 'Truncate diagnostics'}
+              </Button>
+              <Button disabled={busy !== null} onClick={() => setConfirmation(null)}>
+                Cancel
               </Button>
             </div>
           </div>
