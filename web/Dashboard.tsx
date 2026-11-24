@@ -907,6 +907,30 @@ export function Dashboard({
           disabled: shared.busy,
         });
     }
+    if (item.kind === 'sheet' || item.kind === 'doc')
+      result.push({
+        label:
+          offline.busy === item.id
+            ? 'Updating offline copy…'
+            : offline.downloads.has(item.id)
+              ? 'Remove from device'
+              : 'Make available offline',
+        disabled: offline.busy !== null,
+        onClick: (trigger) => {
+          offlineFocus.current = trigger ?? null;
+          void offline.toggle(item);
+        },
+      });
+    if (item.kind === 'folder')
+      result.push({
+        label: 'Refresh folder',
+        onClick: () => {
+          setRefresh((value) => value + 1);
+          void reloadItems().catch((failure) => setError(failure.message));
+          void shared.refresh();
+        },
+        disabled: busy,
+      });
     if (canAdminister(item.access)) {
       result.push({
         label: 'Appearance…',
@@ -933,32 +957,6 @@ export function Dashboard({
         });
       }
     }
-    if (item.kind === 'sheet' || item.kind === 'doc')
-      result.push({
-        label:
-          offline.busy === item.id
-            ? offline.downloads.has(item.id)
-              ? 'Removing…'
-              : 'Downloading…'
-            : offline.downloads.has(item.id)
-              ? 'Remove from device'
-              : 'Make available offline',
-        disabled: offline.busy !== null,
-        onClick: (trigger) => {
-          offlineFocus.current = trigger ?? null;
-          void offline.toggle(item);
-        },
-      });
-    if (item.kind === 'folder')
-      result.push({
-        label: 'Refresh folder',
-        onClick: () => {
-          setRefresh((value) => value + 1);
-          void reloadItems().catch((failure) => setError(failure.message));
-          void shared.refresh();
-        },
-        disabled: busy,
-      });
     return result;
   }
   function returnToFiles() {

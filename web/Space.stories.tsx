@@ -869,7 +869,7 @@ export const MetadataDialogFocus: Story = {
     for (const mode of ['Rename', 'Move or reorder']) {
       const navigation = await contents(canvasElement);
       await userEvent.click(navigation.getByRole('button', { name: 'More actions for Welcome' }));
-      await userEvent.click(await page.findByRole('menuitem', { name: mode }));
+      await userEvent.click(await page.findByRole('menuitem', { name: mode + '…' }));
       const dialog = await page.findByRole('dialog', { name: mode + ' Welcome' });
       await expect(page.getAllByRole('dialog')).toHaveLength(1);
       await expect(page.queryByRole('dialog', { name: 'Space contents' })).not.toBeInTheDocument();

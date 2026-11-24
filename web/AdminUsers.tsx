@@ -397,9 +397,6 @@ export function AdminUsers({
                 : 'This account’s sessions and open editor connections will end. Its documents and shares will remain, including access for other collaborators.'}
             </p>
             <div className="admin-dialog-actions">
-              <Button disabled={busy} onClick={() => setAction(null)}>
-                Cancel
-              </Button>
               <Button primary disabled={busy} onClick={() => void perform()}>
                 {busy
                   ? action.key
@@ -408,6 +405,9 @@ export function AdminUsers({
                   : action.key
                     ? 'Remove passkey'
                     : 'Disable account'}
+              </Button>
+              <Button disabled={busy} onClick={() => setAction(null)}>
+                Cancel
               </Button>
             </div>
           </div>

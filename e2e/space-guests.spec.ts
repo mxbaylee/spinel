@@ -254,7 +254,9 @@ async function action(f: Fixture, name: string, mode: 'Rename' | 'Move or reorde
   )
     .getByRole('button', { name: `More actions for ${name}`, exact: true })
     .click();
-  await f.page.getByRole('menuitem', { name: mode, exact: true }).click();
+  await f.page
+    .getByRole('menuitem', { name: mode === 'Trash' ? 'Move to Trash' : mode + '…', exact: true })
+    .click();
   const dialog = f.page.getByRole('dialog', { name: `${mode} ${name}`, exact: true });
   await expect(dialog).toBeVisible();
   return dialog;

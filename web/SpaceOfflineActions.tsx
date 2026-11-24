@@ -47,16 +47,16 @@ export function SpaceOfflineActions({
             disabled={offline.busy !== null || (!downloaded && !saved)}
             aria-describedby={!downloaded && !saved ? hint : undefined}
             aria-label={
-              downloaded
-                ? `Remove ${current.name} from this device`
-                : `Make ${current.name} available offline on this device`
+              offline.busy === current.id
+                ? `Updating offline copy for ${current.name}`
+                : downloaded
+                  ? `Remove ${current.name} from this device`
+                  : `Make ${current.name} available offline on this device`
             }
             onClick={() => void offline.toggle(current, root.id)}
           >
             {offline.busy === current.id
-              ? downloaded
-                ? 'Removing…'
-                : 'Downloading…'
+              ? 'Updating offline copy…'
               : downloaded
                 ? 'Remove from device'
                 : 'Make available offline'}

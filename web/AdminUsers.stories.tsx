@@ -139,6 +139,11 @@ export const ConfirmPasskeyRemoval: Story = {
     await userEvent.click(await body.findByRole('button', { name: 'Actions for passkey Phone' }));
     await userEvent.click(await body.findByRole('menuitem', { name: 'Remove passkey…' }));
     const dialog = await body.findByRole('dialog', { name: 'Remove Phone?' });
+    const buttons = within(dialog).getAllByRole('button');
+    await expect(buttons.slice(-2).map((button) => button.textContent)).toEqual([
+      'Remove passkey',
+      'Cancel',
+    ]);
     await expect(within(dialog).getByRole('button', { name: 'Remove passkey' })).toBeEnabled();
   },
 };

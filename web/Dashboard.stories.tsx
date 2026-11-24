@@ -381,8 +381,16 @@ export const ActionMenuLabels: Story = {
     await expect(
       screen.queryByRole('menuitem', { name: 'Available offline on this device' }),
     ).not.toBeInTheDocument();
+    await expect(screen.getAllByRole('menuitem').at(-1)).toHaveTextContent('Move to Trash');
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(trigger).toHaveFocus());
+    const folderTrigger = canvas.getByRole('button', {
+      name: `More actions for ${household.name}`,
+    });
+    await userEvent.click(folderTrigger);
+    await expect(await screen.findByRole('menuitem', { name: 'Refresh folder' })).toBeEnabled();
+    await expect(screen.getAllByRole('menuitem').at(-1)).toHaveTextContent('Move to Trash');
+    await userEvent.keyboard('{Escape}');
     await userEvent.click(trigger);
   },
 };
