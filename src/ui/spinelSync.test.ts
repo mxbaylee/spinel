@@ -493,7 +493,7 @@ async function collectedAccount(initialCollectionFails = false) {
   };
 }
 
-test('a downloaded Doc reports connecting while opening online and preserves real offline transitions', async () => {
+test('spinelSync stays reconnecting until the room is ready and reports a real browser disconnection as offline immediately', async () => {
   let at = 0;
   const transitions: { elapsedMs: number; state: ConnectionState; browserOnline: boolean }[] = [];
   const f = await fixture({
@@ -535,8 +535,9 @@ test('a downloaded Doc reports connecting while opening online and preserves rea
   at = 60;
   f.socket().frame(resume);
   await vi.advanceTimersByTimeAsync(0);
-  // Opening and room readiness must not announce a disconnection. A genuine
-  // browser disconnection still reports Offline immediately, without a grace timer.
+  // The sync client reports no disconnection while opening or becoming ready; DocEditor's
+  // own first paint is covered by the browser journey. A genuine browser disconnection
+  // still reports Offline immediately, without a grace timer.
   expect(transitions).toEqual([
     { elapsedMs: 0, state: 'reconnecting', browserOnline: true },
     { elapsedMs: 20, state: 'online', browserOnline: true },
@@ -544,7 +545,6 @@ test('a downloaded Doc reports connecting while opening online and preserves rea
     { elapsedMs: 40, state: 'reconnecting', browserOnline: true },
     { elapsedMs: 60, state: 'online', browserOnline: true },
   ]);
-  console.info('SPN-155 controlled connection trace', JSON.stringify(transitions));
 });
 
 test('actual account collection retains open and transport reconnect observations through native room reports', async () => {

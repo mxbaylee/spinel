@@ -32,7 +32,12 @@ import {
 } from './offline-fixture.ts';
 import { beginWriting, textPoint } from './doc-touch.ts';
 import { recordNativeSnapshots } from './sync-snapshot.ts';
-import { observeConnectionOpening } from './connection-observation.ts';
+import {
+  anyCurrentOffline,
+  falseOffline,
+  observeConnectionOpening,
+  offlineInPhase,
+} from './connection-observation.ts';
 
 async function phoneText(page: Page, unitId: string) {
   return page.evaluate((id) => {
@@ -79,11 +84,7 @@ test.describe('downloaded native editors', () => {
         });
         await observation.mark('room-ready');
         const recovered = await observation.read();
-        expect(
-          recovered.events.some(
-            (event) => !event.historical && event.state === 'offline' && event.browserOnline,
-          ),
-        ).toBe(false);
+        expect(falseOffline(recovered.events)).toBe(false);
         expect(
           recovered.events.some(
             (event) =>
@@ -807,6 +808,9 @@ test.describe('downloaded native editors', () => {
             await observation.mark('pending-offline-list');
             await f.network.setOffline(false);
             await observation.mark('reconnected-list');
+            // Verified live, so later phases cannot rely on a cached connectivity stamp. This phase
+            // keeps the stamp-based check: its queued events predate the online event by design.
+            expect(await f.page.evaluate(() => navigator.onLine)).toBe(true);
             pendingAtOpen = pending(
               (await stored(f.page, f.actor.id, f.item.id))?.outbox?.checkpoint,
             );
@@ -819,15 +823,27 @@ test.describe('downloaded native editors', () => {
               f.page.getByRole('status', { name: 'Connection status', exact: true }),
             ).toHaveText('Online');
             await observation.mark('room-ready');
+            // A late false Offline after readiness must also be seen (bounded 4 s window).
+            await f.page.waitForTimeout(4000);
+            expect(await f.page.evaluate(() => navigator.onLine)).toBe(true);
+            await observation.mark('settled');
             const trace = await observation.read();
             expect(trace.overflow || trace.readinessOverflow).toBe(false);
-            const opening = trace.events.filter(
-              (event) => !event.historical && ['opening-doc', 'room-ready'].includes(event.phase),
+            const live = trace.events.filter(
+              (event) =>
+                !event.historical &&
+                ['reconnected-list', 'opening-doc', 'room-ready', 'settled'].includes(event.phase),
             );
-            expect(opening.some((event) => event.owner === 'editor')).toBe(true);
-            expect(opening.some((event) => event.state === 'offline' && event.browserOnline)).toBe(
-              false,
-            );
+            expect(live.some((event) => event.owner === 'editor')).toBe(true);
+            expect(falseOffline(live)).toBe(false);
+            // The browser was verified online before these phases began, so no cached
+            // connectivity stamp is needed to call an Offline status false.
+            expect(
+              anyCurrentOffline(live.filter((event) => event.phase !== 'reconnected-list')),
+            ).toBe(false);
+            // Real offline is still reported while the browser is genuinely offline.
+            expect(offlineInPhase(trace.events, 'pending-offline-list', false)).toBe(true);
+            expect(offlineInPhase(trace.events, 'pending-offline-list', true)).toBe(false);
             expect(
               trace.readiness.some((event) => event.route === 'access' && event.status === 200),
             ).toBe(true);

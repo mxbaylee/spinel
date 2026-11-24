@@ -1,0 +1,12 @@
+# Mutation proof (scratch edit of web/ConnectionStatus.tsx, reverted): status shows Offline for 30 ms, 800 ms after the Doc opens, while online
+# command: SPINEL_E2E_PROJECT=sync-production npx playwright test --project=sync-production e2e/offline-editing.spec.ts -g 'phone doc: durable edits' --workers=1 --reporter=line
+# patch: mutation-offline-800ms-after-open.patch (30 ms pulse, applied to web/ConnectionStatus.tsx, then reverted)
+# Before the settle window this slipped past (an independent review round); with it the journey fails:
+[1/1] [sync-production] › e2e/offline-editing.spec.ts:695:5 › downloaded native editors › phone doc: durable edits survive two offline reloads and reconnect exactly once
+  1) [sync-production] › e2e/offline-editing.spec.ts:695:5 › downloaded native editors › phone doc: durable edits survive two offline reloads and reconnect exactly once 
+    Error: expect(received).toBe(expected) // Object.is equality
+    Expected: false
+    Received: true
+        at e2e/offline-editing.spec.ts:836:40
+    test-results/sync-production/offline-editing-downloaded-65664--and-reconnect-exactly-once-sync-production/test-failed-1.png
+    Error Context: test-results/sync-production/offline-editing-downloaded-65664--and-reconnect-exactly-once-sync-production/error-context.md

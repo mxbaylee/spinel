@@ -1,6 +1,36 @@
 import { expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
+type Observed = { historical: boolean; state: string; browserOnline: boolean | null };
+
+/** A current (never historical) Offline status stamped while the browser reported online. */
+export function falseOffline(events: Observed[]) {
+  return events.some(
+    (event) => !event.historical && event.state === 'offline' && event.browserOnline,
+  );
+}
+
+/** A current Offline status in one phase, stamped with the given browser connectivity. */
+export function offlineInPhase(
+  events: (Observed & { phase: string })[],
+  phase: string,
+  browserOnline: boolean,
+) {
+  return events.some(
+    (event) =>
+      !event.historical &&
+      event.phase === phase &&
+      event.state === 'offline' &&
+      event.browserOnline === browserOnline,
+  );
+}
+
+/** A current Offline status regardless of the cached connectivity stamp. Use only in phases where
+ * the test has itself verified `navigator.onLine`, so a missed online event cannot hide it. */
+export function anyCurrentOffline(events: Observed[]) {
+  return events.some((event) => !event.historical && event.state === 'offline');
+}
+
 /** Content-free, bounded observation of the real list/editor status handoff. */
 export async function observeConnectionOpening(page: Page) {
   const handle = await page.evaluateHandle(() => {

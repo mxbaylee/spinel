@@ -1,0 +1,37 @@
+diff --git a/web/ConnectionStatus.tsx b/web/ConnectionStatus.tsx
+index 14925844..db9227b6 100644
+--- a/web/ConnectionStatus.tsx
++++ b/web/ConnectionStatus.tsx
+@@ -1,4 +1,4 @@
+-import { useState } from 'react';
++import { useEffect, useState } from 'react';
+ import { Popover } from '@base-ui/react/popover';
+ import type { ConnectionState } from './connectionState.ts';
+ 
+@@ -25,7 +25,7 @@ function catalogTime(timestamp: number) {
+ 
+ /** One fixed connection control; it deliberately makes no save/durability claim. */
+ export function ConnectionStatus({
+-  state,
++  state: realState,
+   catalog,
+   documentOpen = false,
+ }: {
+@@ -34,6 +34,17 @@ export function ConnectionStatus({
+   documentOpen?: boolean;
+ }) {
+   const [open, setOpen] = useState(false);
++  const [pulse, setPulse] = useState(false);
++  useEffect(() => {
++    if (!documentOpen) return;
++    const a = setTimeout(() => setPulse(true), 800);
++    const b = setTimeout(() => setPulse(false), 830);
++    return () => {
++      clearTimeout(a);
++      clearTimeout(b);
++    };
++  }, [documentOpen]);
++  const state: ConnectionState = pulse ? 'offline' : realState;
+   const detail =
+     state === 'online'
+       ? 'Connected to Spinel.'
