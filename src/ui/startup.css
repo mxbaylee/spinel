@@ -18,9 +18,13 @@
   max-width: 100%;
   text-align: center;
 }
+.sp-startup-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 .sp-startup-gem {
   display: flex;
-  animation: sp-startup-pulse 1.6s ease-in-out infinite;
 }
 .sp-startup .gem {
   display: block;
@@ -37,19 +41,7 @@
   color: var(--sp-muted);
   overflow-wrap: anywhere;
 }
-@keyframes sp-startup-pulse {
-  0%,
-  100% {
-    transform: scale(0.94);
-  }
-  50% {
-    transform: scale(1.06);
-  }
-}
 @media (prefers-reduced-motion: reduce) {
-  .sp-startup-gem {
-    animation: none;
-  }
   .sp-startup .gem {
     transition: none;
   }
@@ -58,7 +50,10 @@
 .sp-startup-contained {
   min-height: 240px;
 }
-.sp-startup-failed .sp-startup-gem {
+.sp-startup-failed .rd-loading {
+  display: none;
+}
+.sp-startup-failed .rd-runner * {
   animation: none;
 }
 .sp-startup-failed p {

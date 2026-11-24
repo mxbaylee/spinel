@@ -48,6 +48,10 @@
   color: var(--sp-muted);
   margin: 0;
 }
+.access-state-content .rd-loading {
+  padding: 0;
+  max-width: 100%;
+}
 .access-state > footer {
   color: var(--sp-muted);
   font-size: 0.6875rem;

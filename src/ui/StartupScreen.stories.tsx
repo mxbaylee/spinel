@@ -4,6 +4,7 @@ import { offlineHtml } from './offlinePage.ts';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within, waitFor } from 'storybook/test';
 import { StartupScreen } from './StartupScreen.ts';
+import { checkLoadingRunner } from '../../.storybook/loadingChecks.ts';
 
 const meta = {
   title: 'Current production/Shell/Startup',
@@ -17,9 +18,10 @@ export const Loading: Story = {
     const canvas = within(canvasElement);
     await expect(canvas.getByRole('status')).toHaveTextContent('spinelLoading your workspace…');
     await expect(canvas.queryByRole('img')).not.toBeInTheDocument();
-    const gem = canvasElement.querySelector('.sp-startup-gem')!;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    await expect(getComputedStyle(gem).animationName).toBe(reduced ? 'none' : 'sp-startup-pulse');
+    await checkLoadingRunner(canvasElement);
+    await expect(
+      getComputedStyle(canvasElement.querySelector('.sp-startup-gem')!).animationName,
+    ).toBe('none');
     await expect(canvasElement.scrollWidth).toBeLessThanOrEqual(window.innerWidth);
   },
 };
@@ -42,6 +44,8 @@ export const Failed: Story = {
     const canvas = within(canvasElement);
     await expect(await canvas.findByRole('alert')).toHaveTextContent('Spinel could not start.');
     await expect(canvas.getByText('spinel', { exact: true })).toBeVisible();
+    await expect(canvasElement.querySelector('.rd-runner')).not.toBeVisible();
+    await expect(canvas.queryByRole('status')).not.toBeInTheDocument();
     await expect(
       getComputedStyle(canvasElement.querySelector('.sp-startup-gem')!).animationName,
     ).toBe('none');

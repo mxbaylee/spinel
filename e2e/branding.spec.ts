@@ -122,28 +122,41 @@ test('initial HTML and app admission retain the brand, chosen theme and reduced 
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     await expect(startup.locator('.sp-startup-gem')).toHaveCSS('animation-name', 'none');
     await expect(startup.locator('.gem')).toHaveCSS('transform', 'matrix(-1, 0, 0, -1, 0, 0)');
+    await expect(startup.locator('.rd-runner')).toHaveCount(1);
+    await expect(startup.locator('.rd-runner')).toHaveAttribute('aria-hidden', 'true');
+    await expect(startup.locator('.rd-runner-light').first()).toHaveCSS('display', 'none');
+    await expect(startup.locator('.rd-runner-dark').first()).toHaveCSS('display', 'inline');
+    await expect(startup.locator('.rd-runner-bounce')).toHaveCSS('animation-name', 'none');
     await page.emulateMedia({ reducedMotion: 'no-preference' });
-    await expect(startup.locator('.sp-startup-gem')).toHaveCSS(
+    await expect(startup.locator('.rd-runner-bounce')).toHaveCSS(
       'animation-name',
-      'sp-startup-pulse',
+      'rd-runner-bounce',
     );
-    await expect(startup.locator('.sp-startup-gem')).toHaveCSS('animation-duration', '1.6s');
-    const firstScale = await startup
-      .locator('.sp-startup-gem')
+    await expect(startup.locator('.rd-runner-bounce')).toHaveCSS('animation-duration', '0.6s');
+    await expect(startup.locator('.rd-runner-leg-front')).toHaveCSS(
+      'animation-name',
+      'rd-runner-stride',
+    );
+    const firstPose = await startup
+      .locator('.rd-runner-bounce')
       .evaluate((element) => getComputedStyle(element).transform);
     await expect
       .poll(() =>
         startup
-          .locator('.sp-startup-gem')
+          .locator('.rd-runner-bounce')
           .evaluate((element) => getComputedStyle(element).transform),
       )
-      .not.toBe(firstScale);
+      .not.toBe(firstPose);
     await page.emulateMedia({ reducedMotion: 'reduce' });
     const request = page.waitForRequest('**/api/auth/session');
     releaseScripts();
     await request;
     await expect(startup.getByRole('status')).toContainText('Loading your workspace…');
+    await expect(startup.locator('.rd-runner')).toHaveCount(1);
+    await expect(startup.locator('.rd-runner-light').first()).toHaveCSS('display', 'none');
+    await expect(startup.locator('.rd-runner-dark').first()).toHaveCSS('display', 'inline');
     await expect(startup.locator('.sp-startup-gem')).toHaveCSS('animation-name', 'none');
+    await expect(startup.locator('.rd-runner-bounce')).toHaveCSS('animation-name', 'none');
     releaseSession();
     await expect(page.getByRole('button', { name: 'Sign in with a passkey' })).toBeVisible();
     await expect(startup).toHaveCount(0);

@@ -105,7 +105,12 @@ export default defineConfig(({ mode }) => {
       {
         name: 'spinel-startup-html',
         transformIndexHtml: (html) =>
-          startupHtml(html, readFileSync(new URL('./src/ui/startup.css', import.meta.url), 'utf8')),
+          startupHtml(
+            html,
+            ['src/ui/startup.css', 'src/ui/redesign/loadingReview.css']
+              .map((path) => readFileSync(new URL(path, import.meta.url), 'utf8'))
+              .join('\n'),
+          ),
       },
       offlineShell(compatibility, mode === 'offline-upgrade' ? format : undefined),
     ],

@@ -2,6 +2,7 @@ import { useId } from 'react';
 import { GemLogo } from '../src/ui/GemLogo.ts';
 import { Button } from '../src/ui/redesign/Controls.tsx';
 import { ThemeMenu } from '../src/ui/redesign/ThemeMenu.tsx';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 import './accessState.css';
 
 export type AccessStateKind = 'loading' | 'offline' | 'revoked' | 'unsupported' | 'missing';
@@ -36,9 +37,11 @@ export function AccessState({
       <div role={kind === 'revoked' || kind === 'missing' ? 'alert' : undefined}>
         <h1 id={titleId}>{copy[0]}</h1>
       </div>
-      <p role={kind === 'loading' ? 'status' : kind === 'unsupported' ? 'alert' : undefined}>
-        {copy[1]}
-      </p>
+      {kind === 'loading' ? (
+        <LoadingReview label={copy[1]} />
+      ) : (
+        <p role={kind === 'unsupported' ? 'alert' : undefined}>{copy[1]}</p>
+      )}
       {kind === 'offline' && onRetry && (
         <Button primary onClick={onRetry}>
           Try again
@@ -59,7 +62,7 @@ export function AccessState({
     <div className="sp-ui access-state">
       <header className="access-state-header">
         <span className="access-state-brand">
-          <span className={kind === 'loading' ? 'sp-startup-gem' : undefined} aria-hidden="true">
+          <span aria-hidden="true">
             <GemLogo size={32} />
           </span>
           <strong>spinel</strong>

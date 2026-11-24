@@ -279,8 +279,8 @@ editors need the full height and the member sees it again on returning to a list
 A short `role="status"` line in the region that will fill ("Loading your
 files…"). No spinners over the whole page, no skeletons that resize when the
 content arrives. The [loading pattern](states.md#loading) also defines the
-proposed theme-aware runner in compact and page contexts; it is not yet a
-production-wide replacement.
+shared theme-aware runner in compact and page contexts. SPN-150 adopts it for
+workspace and guest admission; it is not a production-wide replacement.
 
 ## Storybook
 

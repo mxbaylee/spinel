@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
+import { checkLoadingRunner } from '../.storybook/loadingChecks.ts';
 import type { SpaceNode, SpaceTreeData } from '../src/shared/spaces.ts';
 import { Space } from './Space.tsx';
 import { EditorTools } from './EditorTools.tsx';
@@ -254,6 +255,7 @@ export const Loading: Story = {
     const status = await canvas.findByRole('status');
     await expect(status).toHaveTextContent('Opening shared document…');
     await expect(status).toBeVisible();
+    await checkLoadingRunner(canvasElement);
     await expect(
       canvas.queryByRole('region', { name: 'Guest editor body fixture' }),
     ).not.toBeInTheDocument();

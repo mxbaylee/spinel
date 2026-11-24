@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { failure, pending } from '../.storybook/api.ts';
+import { checkLoadingRunner } from '../.storybook/loadingChecks.ts';
 import { assertDialogTitle } from '../.storybook/dialogBounds.ts';
 import type {
   SpaceDeletePreview,
@@ -306,11 +307,7 @@ export const AppLoading: Story = {
     await expect(getComputedStyle(canvasElement.querySelector('.sp-startup')!).display).toBe(
       'grid',
     );
-    await expect(
-      getComputedStyle(canvasElement.querySelector('.sp-startup-gem')!).animationName,
-    ).toBe(
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'none' : 'sp-startup-pulse',
-    );
+    await checkLoadingRunner(canvasElement);
     await expect(canvas.queryByRole('region', { name: 'Space pages' })).not.toBeInTheDocument();
   },
 };

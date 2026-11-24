@@ -42,7 +42,7 @@ Use one visible, specific status label in the region being loaded, such as
 stable as content replaces it. Loading is not an empty result, error, offline
 state or save confirmation.
 
-**Runner proposal, owner direction 2026-10-21:** `LoadingReview` adds a decorative
+**Runner, owner direction 2026-10-21 and 2026-11-23:** `LoadingReview` adds a decorative
 vector running silhouette to the same single status label. The light silhouette
 has heart-shaped pigtails and round boots; the dark silhouette has sharper hair
 and boot shapes. Both use the same proportions, stride and run-cycle timing;
@@ -59,15 +59,21 @@ theme changes alter the silhouette, not the meaning or pace of loading.
 - **Reduced motion:** show a still running pose with the same visible label when
   the system requests reduced motion. A still specimen also exists for review;
   the system preference always takes precedence over requested animation.
-- **Scope:** this is a Storybook proposal, not a claim that every production
-  loading state has changed. Do not add a runner beside every pending button or
+- **Scope:** SPN-150 reuses this existing silhouette for initial HTML, workspace
+  admission and guest document/Space admission, alongside its existing native-editor
+  use. Keep the gem and wordmark stationary; the runner is the one loading animation.
+  Startup failure hides it and retains the brand and recovery sentence. This is
+  not a production-wide loader replacement. Do not add a runner beside every pending button or
   native Univer loader. Screen migrations choose one appropriate indicator for
   the affected region and preserve existing loading/error/retry behavior.
 
-Review `Redesign/Loading` Page, Compact, ReducedMotion, BothThemes and
-LoadingContext in light, dark and phone widths. Verify the moving cycle as well
+Review `Current production/Loading` Page, Compact and Still, plus the actual
+`Shell/Startup`, `Guest/AccessState` and `Guest/GuestApp` loading stories in light,
+dark and phone widths. Verify the moving cycle as well
 as static screenshots, legible labels, bounded artwork, no layout jump and a
 still pose under the real reduced-motion preference before accepting it.
+The [SPN-150 refinement](../implementation/SPN-150.md#-reuse-the-existing-runner-for-admission)
+records the scope and the shared native-Node rendering boundary.
 
 ### Inline errors
 
@@ -172,12 +178,14 @@ keeps the existing accessible title and keyboard behavior.
 ### 💎 Startup branding (SPN-150)
 
 Before usable application navigation exists, the initial HTML and admitted app
-reuse the existing 52 px gem, lowercase wordmark and one region-local loading
-status. This implements the owner's accepted startup composition, not the runner
-proposal above. A visible, gentle 1.6-second pulse (94%–106% scale) decorates the gem wrapper; its
-independent dark-theme inversion remains intact. Reduced motion shows a still
-gem. The label makes no progress, connectivity or persistence claim. Existing
-workspace navigation remains usable when only its content is loading.
+share one composition: a stationary 32 px gem and lowercase wordmark row, then
+the existing running silhouette above one region-local loading status. This
+follows the owner's 2026-11-23 refinement; the runner's shared 600 ms stride and
+theme variants replace the earlier gem pulse. The gem keeps its dark-theme
+inversion. Reduced motion shows the same still running pose and visible label;
+startup failure hides the runner while retaining the brand and recovery alert.
+The label makes no progress, connectivity or persistence claim. Existing workspace
+navigation remains usable when only its content is loading.
 
 New/Add page choices reuse the approved Doc/Sheet/Space type artwork beside
 unchanged text; folders retain a functional folder icon. Saved item identity
