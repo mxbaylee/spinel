@@ -217,7 +217,7 @@ export function workspaceRoutes(
         const user = owner(request);
         const item = await files.import(
           user,
-          payload(request, ['filename', 'parentId', 'snapshot']),
+          payload(request, ['filename', 'parentId', 'snapshot', 'text']),
           () => {
             if (owner(request) !== user || response.destroyed)
               throw new AuthError(401, 'Sign in to continue.');

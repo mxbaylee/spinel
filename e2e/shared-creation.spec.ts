@@ -145,7 +145,7 @@ test('collaborator creates and edits in a shared folder; owner refreshes the sam
     await other.reload();
     await expect(other.getByRole('heading', { name: folder.name, exact: true })).toBeVisible();
     await expect(other.getByRole('button', { name: 'New', exact: true })).toHaveCount(0);
-    await expect(other.getByLabel('Univer file or archive')).toHaveCount(0);
+    await expect(other.getByLabel('Univer, CSV or TSV file or archive')).toHaveCount(0);
     const denied = await second.request.post('/api/items', {
       headers: { Origin: baseURL! },
       data: { name: 'Cannot create', kind: 'doc', parentId: folder.id },

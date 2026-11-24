@@ -52,7 +52,7 @@ export function ImportFile({
     setNotice('');
     setResult(null);
     if (files.length !== 1) {
-      setError('Import one Univer file or Spinel ZIP archive at a time.');
+      setError('Import one Univer, CSV or TSV file or Spinel ZIP archive at a time.');
       return;
     }
     const file = files[0];
@@ -62,9 +62,10 @@ export function ImportFile({
       setError('Open My files to import a Spinel ZIP archive.');
       return;
     }
-    if (!archive && !/\.(?:json|univer)$/i.test(file.name)) {
+    const table = /\.(?:csv|tsv)$/i.test(file.name);
+    if (!archive && !table && !/\.(?:json|univer)$/i.test(file.name)) {
       setError(
-        'Choose a Univer JSON file or Spinel ZIP archive. PDF, Office and CSV files are not supported.',
+        'Choose a Univer JSON, CSV or TSV file or a Spinel ZIP archive. PDF and Office files are not supported.',
       );
       return;
     }
@@ -88,16 +89,30 @@ export function ImportFile({
         onArchiveImported?.(imported);
         return;
       }
-      let snapshot: unknown;
-      try {
-        snapshot = JSON.parse(await file.text());
-      } catch {
-        throw new Error('Only valid Univer JSON files can be imported.');
+      let body: { snapshot: unknown } | { text: string };
+      if (table) {
+        // The server parses it; here only decode strictly, since a lossy decode would
+        // quietly change the data. ignoreBOM keeps the mark for the server to drop.
+        try {
+          body = {
+            text: new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(
+              await file.arrayBuffer(),
+            ),
+          };
+        } catch {
+          throw new Error('This file is not UTF-8 text. Save it as UTF-8 and try again.');
+        }
+      } else {
+        try {
+          body = { snapshot: JSON.parse(await file.text()) };
+        } catch {
+          throw new Error('Only valid Univer JSON files can be imported.');
+        }
       }
       const { item } = await itemsRequest<{ item: WorkspaceItem }>('/import', 'POST', {
         filename: file.name,
         parentId,
-        snapshot,
+        ...body,
       });
       if (!current()) return;
       onImported(item);
@@ -168,12 +183,12 @@ export function ImportFile({
         hidden
         style={{ display: 'none' }}
         ref={input}
-        aria-label="Univer file or archive"
+        aria-label="Univer, CSV or TSV file or archive"
         type="file"
         accept={
           parentId === null
-            ? '.json,.univer,.zip,application/json,application/zip'
-            : '.json,.univer,application/json'
+            ? '.json,.univer,.csv,.tsv,.zip,application/json,text/csv,text/tab-separated-values,application/zip'
+            : '.json,.univer,.csv,.tsv,application/json,text/csv,text/tab-separated-values'
         }
         disabled={Boolean(busy)}
         onChange={(event) => void upload(event.currentTarget.files)}
@@ -187,8 +202,8 @@ export function ImportFile({
       ) : (
         <p>
           {parentId === null
-            ? 'Drop a Univer JSON file or Spinel ZIP archive anywhere in My files.'
-            : 'Drop a Univer JSON file anywhere in this folder, up to 20 MiB.'}
+            ? 'Drop a Univer JSON, CSV or TSV file or Spinel ZIP archive anywhere in My files.'
+            : 'Drop a Univer JSON, CSV or TSV file anywhere in this folder, up to 20 MiB.'}
         </p>
       )}
       {result && (
@@ -205,6 +220,12 @@ export function ImportFile({
           Univer files can be up to 20 MiB. Spinel ZIP archives can be up to 8 GiB and import into
           My files as new items, preserving folders and whole Spaces. Sharing and history are not
           included.
+        </p>
+        <p>
+          A CSV (comma) or TSV (tab) file must be UTF-8 and becomes a new Sheet with one worksheet.
+          Every field stays exactly as written: numbers, dates and text that starts with = are not
+          converted or calculated, and the first row is data. The type comes from the file name; it
+          is not guessed. Up to 100,000 rows, 1,024 columns and 100,000 non-empty cells.
         </p>
         <p>
           Up to 100 sheets, each with 100,000 rows and 1,024 columns; totals of 250,000 rows, 4,096

@@ -66,6 +66,30 @@ test('file routes enforce sessions, CSRF, access, parser limits and admission th
         )
       ).status,
     ).toBe(413);
+    // SPN-093: CSV/TSV text uses the same session, CSRF, admission and body limits.
+    const table = (filename: string, text: unknown, supplied = headers) =>
+      upload(supplied, JSON.stringify({ filename, parentId: null, text }));
+    for (const [credential, status] of [
+      ['', 401],
+      [cookie(admin.id), 403],
+    ] as const)
+      expect((await table('t.csv', 'a,b\n', { ...headers, Cookie: credential })).status).toBe(
+        status,
+      );
+    expect(
+      (await table('t.csv', 'a,b\n', { ...headers, Origin: 'https://evil.example' })).status,
+    ).toBe(403);
+    const csv = await table('t.csv', 'a,b\n007,"x\ny"\n');
+    expect(csv.status).toBe(201);
+    expect((await csv.json()).item).toMatchObject({ kind: 'sheet', name: 't' });
+    const unsupported = await table('t.txt', 'a,b\n');
+    expect(unsupported.status).toBe(400);
+    expect((await unsupported.json()).error).toContain('.csv (comma) or .tsv (tab)');
+    const malformed = await table('t.tsv', 'a\t"b\n');
+    expect(malformed.status).toBe(400);
+    expect((await malformed.json()).error).toContain('never closed');
+    expect((await table('t.csv', 'x'.repeat(20 * 1024 * 1024 + 8192))).status).toBe(413);
+    expect(workspace.list(owner.id).filter((entry) => entry.name === 't')).toHaveLength(1);
     const imported = await upload();
     expect(imported.status).toBe(201);
     const { item } = await imported.json();

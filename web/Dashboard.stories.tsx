@@ -505,7 +505,9 @@ export const SharedFolderViewer: Story = {
     await userEvent.click(await canvas.findByRole('button', { name: 'Trip 2027 Folder' }));
     await expect(await canvas.findByRole('heading', { name: 'Trip 2027' })).toBeVisible();
     await expect(canvas.queryByRole('button', { name: 'New' })).not.toBeInTheDocument();
-    await expect(canvas.queryByLabelText('Univer file or archive')).not.toBeInTheDocument();
+    await expect(
+      canvas.queryByLabelText('Univer, CSV or TSV file or archive'),
+    ).not.toBeInTheDocument();
   },
 };
 export const NewInSharedFolder: Story = {

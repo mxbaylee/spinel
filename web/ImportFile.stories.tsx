@@ -17,7 +17,7 @@ type Story = StoryObj<typeof meta>;
 
 const pick = async (canvasElement: HTMLElement, ...files: File[]) => {
   const input = within(canvasElement.ownerDocument.body).getByLabelText<HTMLInputElement>(
-    'Univer file or archive',
+    'Univer, CSV or TSV file or archive',
     {
       selector: 'input',
     },
@@ -75,6 +75,76 @@ export const ImportFailed: Story = {
   play: ({ canvasElement }) => pick(canvasElement, univerFile()),
 };
 
+const table = (name: string, text: string | Uint8Array) =>
+  new File([text as BlobPart], name, {
+    type: name.endsWith('.tsv') ? 'text/tab-separated-values' : 'text/csv',
+  });
+
+/** CSV and TSV import as one literal Sheet; the dialog stays open and busy while it runs. */
+export const TableImportingDialog: Story = {
+  args: { dialogOpen: true },
+  parameters: { api: { 'POST /api/items/import': pending() } },
+  play: async ({ canvasElement }) => {
+    await pick(canvasElement, table('orders.csv', 'id,note\n007,"a,b"\n'));
+    const screen = within(canvasElement.ownerDocument.body);
+    await expect(screen.getByRole('status')).toHaveTextContent('Importing…');
+    await assertDialogControls(screen.getByRole('dialog', { name: 'Import file' }));
+  },
+};
+export const TableImported: Story = {
+  args: { dialogOpen: true, onImported: fn(), onDialogOpenChange: fn() },
+  parameters: { api: { 'POST /api/items/import': { result: { item: { id: 'sheet-from-csv' } } } } },
+  play: async ({ canvasElement, args }) => {
+    await pick(canvasElement, table('orders.tsv', 'id\tnote\n007\tx\n'));
+    await waitFor(() => expect(args.onImported).toHaveBeenCalledOnce());
+  },
+};
+export const TableLimitsOpen: Story = {
+  args: { dialogOpen: true },
+  play: async ({ canvasElement }) => {
+    const screen = within(canvasElement.ownerDocument.body);
+    const details = await screen.findByText('Import limits');
+    await userEvent.click(details);
+    await expect(
+      screen.getByText(/A CSV \(comma\) or TSV \(tab\) file must be UTF-8/),
+    ).toBeVisible();
+    await assertDialogControls(screen.getByRole('dialog', { name: 'Import file' }));
+  },
+};
+export const UnsupportedTable: Story = {
+  args: { dialogOpen: true },
+  play: async ({ canvasElement }) => {
+    await pick(canvasElement, table('orders.txt', 'a,b\n'));
+    await expect(within(canvasElement.ownerDocument.body).getByRole('alert')).toHaveTextContent(
+      'Choose a Univer JSON, CSV or TSV file or a Spinel ZIP archive.',
+    );
+  },
+};
+export const TableNotUtf8: Story = {
+  args: { dialogOpen: true },
+  play: async ({ canvasElement }) => {
+    await pick(canvasElement, table('orders.csv', new Uint8Array([0x61, 0x2c, 0xff, 0xc3, 0x28])));
+    await expect(within(canvasElement.ownerDocument.body).getByRole('alert')).toHaveTextContent(
+      'This file is not UTF-8 text. Save it as UTF-8 and try again.',
+    );
+  },
+};
+export const MalformedTable: Story = {
+  args: { dialogOpen: true },
+  parameters: {
+    api: {
+      'POST /api/items/import': failure(
+        'This file is not valid CSV or TSV (line 2): a quoted field is never closed',
+      ),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    await pick(canvasElement, table('orders.csv', 'a,b\n"c,d\n'));
+    const screen = within(canvasElement.ownerDocument.body);
+    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('never closed'));
+    await assertDialogControls(screen.getByRole('dialog', { name: 'Import file' }));
+  },
+};
 const archive = () => new File(['ZIP fixture'], 'my-files.zip', { type: 'application/zip' });
 
 export const ArchiveImporting: Story = {
