@@ -1,0 +1,77 @@
+{
+  "implementationHead": "df8ebe26cd717d2baba94883be02636d83011f4c",
+  "base": "235c14d69e30967fe7cf470308fdb39798e0fca5",
+  "storybookRun": 45316153143,
+  "artifacts": [
+    {
+      "artifactId": 14886617316,
+      "zipSha256": "6690b1c1a5298339dade8f25b5c6fd6bb9b773a0df48a06f9cab1136e8bdb1ee",
+      "expiresAt": "2026-12-08",
+      "variant": "light"
+    },
+    {
+      "artifactId": 14886617406,
+      "zipSha256": "9b8bea5a4f46d6b7d97a36e73e89c4dbbcbec99349c573d7dca23e843fb60385",
+      "expiresAt": "2026-12-08",
+      "variant": "dark"
+    },
+    {
+      "artifactId": 14886452312,
+      "zipSha256": "5a426378bf6fb5e5fcf42af5f44a2918e6f89d368620db526ea2789ca1390f25",
+      "expiresAt": "2026-12-08",
+      "variant": "phone"
+    }
+  ],
+  "capturePurpose": "Current production Storybook states; desktop light/dark and mobile light. Not physical phone screenshots. Independent visual review is recorded in PR308; capture success alone is not approval.",
+  "sha256": {
+    "spaces-root-actions--menu-labels-phone.png": "8d9e9b09bc5439d3b9288a22763f889721088d9de1f58e31ce92e19dd1ae27c8",
+    "admin-adminusers--confirm-passkey-removal-light.png": "cd579d75c569b2d811c39f2f0f7439cdef16e99f1769ac938eb0db2c7b1f43d2",
+    "dashboard-trash--empty-pending-dark.png": "bacc155928a6287d7e7f73c52b6f3d390c3c069c54c328a7049c3be3ccf3d27f",
+    "dashboard-dashboard--rename-pending-phone.png": "e5674a7b0ee12d01b5767ae36daf8444dce1f0270d830fa20240a5d350678d9f",
+    "current-production-account-passkey-security--saving-dark.png": "25aa2b59c19b2f9ea042ab7617b7839708fb379770a834441c6e42131aa8dce9",
+    "space-review--trash-subtree-confirmation-dark.png": "9c84567b70d39db77393af2df01224706ca9ef9509b6d43e0ca7130275b60c62",
+    "admin-adminusers--disable-pending-light.png": "30e24e719ddc4bae3a0e916516fa177c1a6496d8759f1c7facb157f6b952676c",
+    "manifest-phone-excerpt.json": "cc9890c9d2dc2ef688d46b84976e6db5eb2b70f1c4da281bb2450d8d8099fc62",
+    "admin-adminusers--disable-pending-phone.png": "ed2b7f4d143e269bc5f98823b7c40bde63dc82c6e14b1568e1d408cbbb4c1649",
+    "space-review--metadata-dialog-focus-dark.png": "90487e0d4baa361061bf1b4836eac2287c4910e1fa35ba72eb6beec5d7fca087",
+    "dashboard-dashboard--rename-pending-light.png": "1b0693ca141f5d1a5abad41270a8e91ce6a608668667769c3966bfb05b701dd2",
+    "admin-adminusers--confirm-passkey-removal-phone.png": "974db3b8328c79c011bc0163d3b532a2c647475c0cb67caa92b55ce18e8d322e",
+    "spaces-root-actions--menu-labels-light.png": "880f4605c914dfc8deab996b9518ecd7fcf6577b6e73cbd5cf70b3bd6d6e71e5",
+    "dashboard-dashboard--action-menu-labels-phone.png": "a3e405f0303f70c7f637dc4e5724f3d632bfc4f3b4ec3f2487b1e3d6b5d28487",
+    "space-review--metadata-dialog-focus-light.png": "9fc89a1d1b90bfa51341ed89fe553511d28b518e3878023003aa4f684c3eb313",
+    "current-production-account-passkey-security--confirm-removal-light.png": "090e839b33f04c668280a2549fa255d00981a8f8f9d5f2846ea26ea8d08ed772",
+    "current-production-account-passkey-security--confirm-removal-dark.png": "97fea6b6f03b99b8cc7cccf6a2f83f4567431262f7d7051e99f35523d82ca3e7",
+    "space-offline-actions--removal-inventory-refresh-phone.png": "d5a3b4b9b517b2d8baff059c5c0fbeaf8fefb8329cc464c9cf882bcc92c09036",
+    "current-production-account-passkey-security--saving-phone.png": "6ef6b32d56b9ac0118fa52311658440890307922fcd77c48a7951789f28ec11f",
+    "dashboard-dashboard--rename-pending-dark.png": "19fe0b379c23b36724e40a193557e4f99deb6f4ad973fe1a651ee011a6fff702",
+    "current-production-account-passkey-security--saving-light.png": "ee9a355750bff94dc4a574ec589b4f8b9cdeecd1f0671e22877ebb3c8123480f",
+    "space-offline-actions--removal-inventory-refresh-light.png": "f33ce80538f8a894433e7660a79146a90f5cf43a82bb6ea17140065bca2f2a20",
+    "spaces-root-actions--menu-labels-dark.png": "324a07cf557ce4ed57f0686682504cec82500886840c822d2d9e586a8a3e9f17",
+    "dashboard-dashboard--action-menu-labels-dark.png": "6c8cbe6f599e7728aa06fd46457990aa97e2365482372c0a2d9ff7bf082cd654",
+    "current-production-account-passkey-security--confirm-removal-phone.png": "eddb9aa0b2085b690b6adb6fea8ff1eb9ec90554cb1262a173daa1f498cd8e0e",
+    "manifest-dark-excerpt.json": "6bd4522b8d289de26c6b9e512ba02f2f24279e729d394d77043315acf62a450c",
+    "admin-adminusers--disable-pending-dark.png": "c977d9dc08bb289fa81f67ac0c79929480ddfe8d9edb598354b45a314cd78095",
+    "dashboard-dashboard--action-menu-labels-light.png": "083706e4b589014deab66bc7750973cc550efe1665d99a784d87eec420421e81",
+    "space-review--metadata-dialog-focus-phone.png": "2aba81c6febbc3bd2f13d25ac6ce74d15f75c0f9f91a6d9ec585cf81480d7fff",
+    "dashboard-trash--empty-pending-phone.png": "b067959c6b9b1680b79ffb06802230e3a9fa2a38f15d035d3a0fc6313481fcd5",
+    "dashboard-trash--confirm-empty-light.png": "bd99814be5bf7f7bb202332a847b78757b6617fc243ce84ca2faaaafb70f9b57",
+    "space-review--deep-tree-dark.png": "c495b46aa0df6656d81c359f7d2024ca81c3d500628fc98bf377b38ace5d600e",
+    "space-review--trash-subtree-confirmation-light.png": "a0e859c581ed055fd8de2207760ff0f440e14f8a6a4a226b96744024e2f0c94b",
+    "admin-adminusers--confirm-passkey-removal-dark.png": "dea3ce1f3c47494d535903c6d948fd597eec84d404a05d051e3f854c8300d57f",
+    "space-review--deep-tree-phone.png": "8ddab14d53d78c735305057150fa668479acb3945f05d90cd66e552e0451c9f5",
+    "space-offline-actions--removal-inventory-refresh-dark.png": "c3e40853ee702c82283f4b22c25c695b58395016683c63bbb057c3f85c1a4ef1",
+    "space-review--deep-tree-light.png": "407f2e25381786f62e8b20651600a43617cc7c630d86acd92c928c6ea150e938",
+    "space-review--trash-subtree-confirmation-phone.png": "13e52ebfabfd7a408c17333f2230397db394f1350229b803999bd23e5c318994",
+    "dashboard-trash--confirm-empty-phone.png": "9a3b17dbaa10258b5466eedb9d86e90e92d73c36a9d74ff715ec05bc77c2dec1",
+    "dashboard-trash--empty-pending-light.png": "cc836c6d96a8068e76940e3233d8f39e94472499bb501bed73c9c1b15948fae7",
+    "dashboard-trash--confirm-empty-dark.png": "09f04f806b13ed1d5b4298d10a14a981242c7aeba9bb5991d56b46d67a5e0dc9",
+    "manifest-light-excerpt.json": "cb462ad670cd8be9c21e7ecf9d494fdd94ae06048c0045b9e47a049b70bc3da0",
+    "storybook-build-identity.json": "f62126a6333aed58cb97d35e55775d8e5f0b60782c7df23dde47a6244c68d469"
+  },
+  "testedMerge": "9eb283f634890e9b2264f4a08846f9fdd7a01d66",
+  "implementationAndTestedMergeTree": "3e1886497b87bbb655af0275fda318253324f668",
+  "buildArtifact": {
+    "id": 14884973677,
+    "sha256": "1e7d29d2fb6dae5c26f19687c45021ef02df0ca48298af7a0d5a04a5ebe1eaf2"
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "reviewedAt": "2026-11-24T03:17:50.835Z",
+  "durationMs": 555010,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "desktop",
+  "theme": "light",
+  "variants": [
+    "light"
+  ],
+  "verifications": [
+    "sheet: native keyboard edit saved in local snapshot",
+    "sheet: native viewer rejects keyboard edits",
+    "doc: native keyboard edit saved in local snapshot",
+    "doc: native viewer rejects keyboard edits",
+    "light: docs-native-formulas--inline-and-table native formula viewer settled before capture",
+    "light: docs-native-formulas--private native formula viewer settled before capture",
+    "light: docs-native-formulas--dark native formula viewer settled before capture",
+    "light: docs-native-formulas--phone native formula viewer settled before capture",
+    "light: docs-native-formulas--thirty-rows native formula viewer settled before capture",
+    "light: docs-native-formulas--styled-scalar native formula viewer settled before capture",
+    "light: redesign-native-editors--sheet native toolbar remains visible after content scroll",
+    "light: redesign-native-editors--doc native toolbar remains visible after content scroll",
+    "light: menu/selector keyboard navigation, Escape/focus return, dialog containment and nested themed portal",
+    "light: Appearance styles survive a same-document Controls visit"
+  ],
+  "failures": [],
+  "originalManifestSha256": "e7df4b9526e838d9fcf26edefeffad5ed7703b76ecef4a9f6a3a390129d0df72",
+  "totalChecked": 1155,
+  "totalCaptures": 1159,
+  "checked": [
+    {
+      "id": "admin-adminusers--confirm-passkey-removal",
+      "variant": "light"
+    },
+    {
+      "id": "admin-adminusers--disable-pending",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--action-menu-labels",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--rename-pending",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-account-passkey-security--confirm-removal",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-account-passkey-security--saving",
+      "variant": "light"
+    },
+    {
+      "id": "space-review--deep-tree",
+      "variant": "light"
+    },
+    {
+      "id": "space-review--metadata-dialog-focus",
+      "variant": "light"
+    },
+    {
+      "id": "space-review--trash-subtree-confirmation",
+      "variant": "light"
+    },
+    {
+      "id": "space-offline-actions--removal-inventory-refresh",
+      "variant": "light"
+    },
+    {
+      "id": "spaces-root-actions--menu-labels",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-trash--confirm-empty",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-trash--empty-pending",
+      "variant": "light"
+    }
+  ],
+  "captures": [
+    {
+      "id": "admin-adminusers--confirm-passkey-removal",
+      "variant": "light",
+      "filename": "admin-adminusers--confirm-passkey-removal-light.png",
+      "title": "Current production/Admin/AdminUsers / Confirm Passkey Removal"
+    },
+    {
+      "id": "admin-adminusers--disable-pending",
+      "variant": "light",
+      "filename": "admin-adminusers--disable-pending-light.png",
+      "title": "Current production/Admin/AdminUsers / Disable Pending"
+    },
+    {
+      "id": "dashboard-dashboard--action-menu-labels",
+      "variant": "light",
+      "filename": "dashboard-dashboard--action-menu-labels-light.png",
+      "title": "Current production/Dashboard/Dashboard / Action Menu Labels"
+    },
+    {
+      "id": "dashboard-dashboard--rename-pending",
+      "variant": "light",
+      "filename": "dashboard-dashboard--rename-pending-light.png",
+      "title": "Current production/Dashboard/Dashboard / Rename Pending"
+    },
+    {
+      "id": "current-production-account-passkey-security--confirm-removal",
+      "variant": "light",
+      "filename": "current-production-account-passkey-security--confirm-removal-light.png",
+      "title": "Current production/Account/Passkey security / Confirm Removal"
+    },
+    {
+      "id": "current-production-account-passkey-security--saving",
+      "variant": "light",
+      "filename": "current-production-account-passkey-security--saving-light.png",
+      "title": "Current production/Account/Passkey security / Saving"
+    },
+    {
+      "id": "space-review--deep-tree",
+      "variant": "light",
+      "filename": "space-review--deep-tree-light.png",
+      "title": "Current production/Spaces/Space / Deep Tree"
+    },
+    {
+      "id": "space-review--metadata-dialog-focus",
+      "variant": "light",
+      "filename": "space-review--metadata-dialog-focus-light.png",
+      "title": "Current production/Spaces/Space / Metadata Dialog Focus"
+    },
+    {
+      "id": "space-review--trash-subtree-confirmation",
+      "variant": "light",
+      "filename": "space-review--trash-subtree-confirmation-light.png",
+      "title": "Current production/Spaces/Space / Trash Subtree Confirmation"
+    },
+    {
+      "id": "space-offline-actions--removal-inventory-refresh",
+      "variant": "light",
+      "filename": "space-offline-actions--removal-inventory-refresh-light.png",
+      "title": "Current production/Spaces/Offline availability / Removal Inventory Refresh"
+    },
+    {
+      "id": "spaces-root-actions--menu-labels",
+      "variant": "light",
+      "filename": "spaces-root-actions--menu-labels-light.png",
+      "title": "Current production/Spaces/Root actions / Menu Labels"
+    },
+    {
+      "id": "dashboard-trash--confirm-empty",
+      "variant": "light",
+      "filename": "dashboard-trash--confirm-empty-light.png",
+      "title": "Current production/Dashboard/Trash / Confirm Empty"
+    },
+    {
+      "id": "dashboard-trash--empty-pending",
+      "variant": "light",
+      "filename": "dashboard-trash--empty-pending-light.png",
+      "title": "Current production/Dashboard/Trash / Empty Pending"
+    }
+  ]
+}
