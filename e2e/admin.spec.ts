@@ -153,7 +153,7 @@ test('operator removes a passkey from an open editor, then disables the account 
       .click();
     await page.getByRole('menuitem', { name: 'Remove passkey…' }).click();
     observation.beforeRevoke();
-    await dialog.getByRole('button', { name: 'Confirm removal' }).click();
+    await dialog.getByRole('button', { name: 'Remove passkey' }).click();
     await expect(passkeys.getByText('Lost browser', { exact: true })).toHaveCount(0);
     observation.checkpoint('revocation-written');
     await expectRevoked();
@@ -183,7 +183,7 @@ test('operator removes a passkey from an open editor, then disables the account 
     observation.beforeRevoke();
     await page
       .getByRole('dialog', { name: `Disable ${user.name}?`, exact: true })
-      .getByRole('button', { name: 'Confirm removal' })
+      .getByRole('button', { name: 'Disable account' })
       .click();
     await expect(account.getByText('Member · Disabled', { exact: true })).toBeVisible();
     observation.checkpoint('revocation-written');

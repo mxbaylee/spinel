@@ -407,11 +407,11 @@ export function AppearanceDialog({
         )}
         {error && <p role="alert">{error}</p>}
         <div className="sp-actions">
-          <Button disabled={busy} onClick={close}>
-            Cancel
-          </Button>
           <Button primary disabled={busy} onClick={() => void submit()}>
             {busy ? 'Saving…' : 'Save appearance'}
+          </Button>
+          <Button disabled={busy} onClick={close}>
+            Cancel
           </Button>
         </div>
       </div>
@@ -722,11 +722,11 @@ export function CoverDialog({
             <Button disabled={busy} onClick={() => void commit(true)}>
               Remove cover
             </Button>
+            <Button primary disabled={busy || !ready} onClick={() => void commit()}>
+              {busy ? 'Updating cover…' : 'Save cover'}
+            </Button>
             <Button disabled={busy} onClick={close}>
               Cancel
-            </Button>
-            <Button primary disabled={busy || !ready} onClick={() => void commit()}>
-              {busy ? 'Saving…' : 'Save cover'}
             </Button>
           </div>
         </div>

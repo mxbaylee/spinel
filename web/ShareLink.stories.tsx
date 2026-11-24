@@ -312,7 +312,7 @@ export const Replacing: Story = {
     await userEvent.click(dialog.getByRole('button', { name: 'Replace link' }));
     await expect(dialog.getByLabelText('Link access')).toBeDisabled();
     await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
-    await expect(dialog.getByRole('button', { name: 'Saving…' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Replacing link…' })).toBeDisabled();
     await expect(canvas.getByText('Guests can view.')).toBeInTheDocument();
     await expect(canvas.queryByLabelText('Guest link address')).not.toBeInTheDocument();
   },
@@ -463,5 +463,43 @@ export const FailedTurnOff: Story = {
       'Could not turn off the link.',
     );
     await expect(canvas.getByText('Guests can edit.')).toBeVisible();
+  },
+};
+
+export const CreatingSpaceLink: Story = {
+  args: { space: true },
+  parameters: {
+    api: { [link]: { enabled: false, role: 'viewer' }, [`PUT /api/items/${id}/link`]: pending() },
+  },
+  play: async (context) => {
+    await ConfirmWholeSpace.play!(context);
+    const dialog = within(
+      within(context.canvasElement.ownerDocument.body).getByRole('dialog', {
+        name: 'Share the whole Space?',
+      }),
+    );
+    await userEvent.click(dialog.getByRole('button', { name: 'Create view link' }));
+    await expect(await dialog.findByRole('button', { name: 'Creating link…' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+  },
+};
+export const TurningOffSpaceLink: Story = {
+  args: { space: true },
+  parameters: {
+    api: {
+      [link]: { enabled: true, role: 'editor', url },
+      [`PUT /api/items/${id}/link`]: pending(),
+    },
+  },
+  play: async (context) => {
+    await ConfirmTurnOffSpaceLink.play!(context);
+    const dialog = within(
+      within(context.canvasElement.ownerDocument.body).getByRole('dialog', {
+        name: 'Turn off this Space link?',
+      }),
+    );
+    await userEvent.click(dialog.getByRole('button', { name: 'Turn off link' }));
+    await expect(await dialog.findByRole('button', { name: 'Turning off link…' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
   },
 };

@@ -345,3 +345,52 @@ export const SignOutDuringDownload: Story = {
   render: () => <DelayedDownload change="sign-out" />,
   play: ({ canvasElement }) => cancelDownload(canvasElement),
 };
+
+/** The copy map changes before inventory finishes; busy wording must not reverse direction. */
+export const RemovalInventoryRefresh: Story = {
+  parameters: { prepared: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText('Device copy needs attention');
+    const original = Object.getOwnPropertyDescriptor(navigator.storage, 'estimate');
+    let release!: () => void;
+    const held = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const estimate = fn(async () => {
+      await held;
+      return {};
+    });
+    Object.defineProperty(navigator.storage, 'estimate', { configurable: true, value: estimate });
+    try {
+      await userEvent.click(
+        canvas.getByRole('button', { name: 'Remove Project notes from this device' }),
+      );
+      // Unset has removed this copy, but the real inventory read is still held.
+      await canvas.findByText('On this device (1)');
+      await waitFor(() => expect(estimate).toHaveBeenCalled());
+      const pending = canvas.getByRole('button', {
+        name: 'Updating offline copy for Project notes',
+      });
+      await expect(pending).toHaveTextContent('Updating offline copy…');
+      await expect(pending).toBeDisabled();
+      await expect(
+        canvas.queryByRole('button', {
+          name: 'Make Project notes available offline on this device',
+        }),
+      ).not.toBeInTheDocument();
+      release();
+      await waitFor(() =>
+        expect(
+          canvas.getByRole('button', {
+            name: 'Make Project notes available offline on this device',
+          }),
+        ).toBeEnabled(),
+      );
+    } finally {
+      release();
+      if (original) Object.defineProperty(navigator.storage, 'estimate', original);
+      else Reflect.deleteProperty(navigator.storage, 'estimate');
+    }
+  },
+};

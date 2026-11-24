@@ -1,0 +1,635 @@
+{
+  "reviewedAt": "2026-11-24T01:55:12.504Z",
+  "durationMs": 35940,
+  "captureScreenshots": true,
+  "fixtureTime": "2026-10-20T16:00:00Z",
+  "viewport": "all",
+  "theme": "all",
+  "variants": [
+    "light",
+    "dark",
+    "phone",
+    "phone-dark",
+    "tablet"
+  ],
+  "requested": [
+    "dashboard-dashboard--action-menu-labels",
+    "dashboard-dashboard--rename-pending",
+    "spaces-root-actions--menu-labels",
+    "admin-adminusers--confirm-passkey-removal",
+    "admin-adminusers--disable-pending",
+    "space-review--trash-subtree-confirmation",
+    "current-production-account-passkey-security--confirm-removal",
+    "current-production-account-passkey-security--saving",
+    "dashboard-trash--confirm-empty",
+    "dashboard-trash--empty-pending",
+    "space-review--metadata-dialog-focus",
+    "space-offline-actions--removal-inventory-refresh"
+  ],
+  "checked": [
+    {
+      "id": "dashboard-dashboard--action-menu-labels",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--rename-pending",
+      "variant": "light"
+    },
+    {
+      "id": "spaces-root-actions--menu-labels",
+      "variant": "light"
+    },
+    {
+      "id": "admin-adminusers--confirm-passkey-removal",
+      "variant": "light"
+    },
+    {
+      "id": "admin-adminusers--disable-pending",
+      "variant": "light"
+    },
+    {
+      "id": "space-review--trash-subtree-confirmation",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-account-passkey-security--confirm-removal",
+      "variant": "light"
+    },
+    {
+      "id": "current-production-account-passkey-security--saving",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-trash--confirm-empty",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-trash--empty-pending",
+      "variant": "light"
+    },
+    {
+      "id": "space-review--metadata-dialog-focus",
+      "variant": "light"
+    },
+    {
+      "id": "space-offline-actions--removal-inventory-refresh",
+      "variant": "light"
+    },
+    {
+      "id": "dashboard-dashboard--action-menu-labels",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--rename-pending",
+      "variant": "dark"
+    },
+    {
+      "id": "spaces-root-actions--menu-labels",
+      "variant": "dark"
+    },
+    {
+      "id": "admin-adminusers--confirm-passkey-removal",
+      "variant": "dark"
+    },
+    {
+      "id": "admin-adminusers--disable-pending",
+      "variant": "dark"
+    },
+    {
+      "id": "space-review--trash-subtree-confirmation",
+      "variant": "dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--confirm-removal",
+      "variant": "dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--saving",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-trash--confirm-empty",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-trash--empty-pending",
+      "variant": "dark"
+    },
+    {
+      "id": "space-review--metadata-dialog-focus",
+      "variant": "dark"
+    },
+    {
+      "id": "space-offline-actions--removal-inventory-refresh",
+      "variant": "dark"
+    },
+    {
+      "id": "dashboard-dashboard--action-menu-labels",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-dashboard--rename-pending",
+      "variant": "phone"
+    },
+    {
+      "id": "spaces-root-actions--menu-labels",
+      "variant": "phone"
+    },
+    {
+      "id": "admin-adminusers--confirm-passkey-removal",
+      "variant": "phone"
+    },
+    {
+      "id": "admin-adminusers--disable-pending",
+      "variant": "phone"
+    },
+    {
+      "id": "space-review--trash-subtree-confirmation",
+      "variant": "phone"
+    },
+    {
+      "id": "current-production-account-passkey-security--confirm-removal",
+      "variant": "phone"
+    },
+    {
+      "id": "current-production-account-passkey-security--saving",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-trash--confirm-empty",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-trash--empty-pending",
+      "variant": "phone"
+    },
+    {
+      "id": "space-review--metadata-dialog-focus",
+      "variant": "phone"
+    },
+    {
+      "id": "space-offline-actions--removal-inventory-refresh",
+      "variant": "phone"
+    },
+    {
+      "id": "dashboard-dashboard--action-menu-labels",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--rename-pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "spaces-root-actions--menu-labels",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-adminusers--confirm-passkey-removal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "admin-adminusers--disable-pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--trash-subtree-confirmation",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--confirm-removal",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "current-production-account-passkey-security--saving",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-trash--confirm-empty",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-trash--empty-pending",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-review--metadata-dialog-focus",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "space-offline-actions--removal-inventory-refresh",
+      "variant": "phone-dark"
+    },
+    {
+      "id": "dashboard-dashboard--action-menu-labels",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-dashboard--rename-pending",
+      "variant": "tablet"
+    },
+    {
+      "id": "spaces-root-actions--menu-labels",
+      "variant": "tablet"
+    },
+    {
+      "id": "admin-adminusers--confirm-passkey-removal",
+      "variant": "tablet"
+    },
+    {
+      "id": "admin-adminusers--disable-pending",
+      "variant": "tablet"
+    },
+    {
+      "id": "space-review--trash-subtree-confirmation",
+      "variant": "tablet"
+    },
+    {
+      "id": "current-production-account-passkey-security--confirm-removal",
+      "variant": "tablet"
+    },
+    {
+      "id": "current-production-account-passkey-security--saving",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-trash--confirm-empty",
+      "variant": "tablet"
+    },
+    {
+      "id": "dashboard-trash--empty-pending",
+      "variant": "tablet"
+    },
+    {
+      "id": "space-review--metadata-dialog-focus",
+      "variant": "tablet"
+    },
+    {
+      "id": "space-offline-actions--removal-inventory-refresh",
+      "variant": "tablet"
+    }
+  ],
+  "captures": [
+    {
+      "id": "dashboard-dashboard--action-menu-labels",
+      "variant": "light",
+      "filename": "dashboard-dashboard--action-menu-labels-light.png",
+      "title": "Current production/Dashboard/Dashboard / Action Menu Labels"
+    },
+    {
+      "id": "dashboard-dashboard--rename-pending",
+      "variant": "light",
+      "filename": "dashboard-dashboard--rename-pending-light.png",
+      "title": "Current production/Dashboard/Dashboard / Rename Pending"
+    },
+    {
+      "id": "spaces-root-actions--menu-labels",
+      "variant": "light",
+      "filename": "spaces-root-actions--menu-labels-light.png",
+      "title": "Current production/Spaces/Root actions / Menu Labels"
+    },
+    {
+      "id": "admin-adminusers--confirm-passkey-removal",
+      "variant": "light",
+      "filename": "admin-adminusers--confirm-passkey-removal-light.png",
+      "title": "Current production/Admin/AdminUsers / Confirm Passkey Removal"
+    },
+    {
+      "id": "admin-adminusers--disable-pending",
+      "variant": "light",
+      "filename": "admin-adminusers--disable-pending-light.png",
+      "title": "Current production/Admin/AdminUsers / Disable Pending"
+    },
+    {
+      "id": "space-review--trash-subtree-confirmation",
+      "variant": "light",
+      "filename": "space-review--trash-subtree-confirmation-light.png",
+      "title": "Current production/Spaces/Space / Trash Subtree Confirmation"
+    },
+    {
+      "id": "current-production-account-passkey-security--confirm-removal",
+      "variant": "light",
+      "filename": "current-production-account-passkey-security--confirm-removal-light.png",
+      "title": "Current production/Account/Passkey security / Confirm Removal"
+    },
+    {
+      "id": "current-production-account-passkey-security--saving",
+      "variant": "light",
+      "filename": "current-production-account-passkey-security--saving-light.png",
+      "title": "Current production/Account/Passkey security / Saving"
+    },
+    {
+      "id": "dashboard-trash--confirm-empty",
+      "variant": "light",
+      "filename": "dashboard-trash--confirm-empty-light.png",
+      "title": "Current production/Dashboard/Trash / Confirm Empty"
+    },
+    {
+      "id": "dashboard-trash--empty-pending",
+      "variant": "light",
+      "filename": "dashboard-trash--empty-pending-light.png",
+      "title": "Current production/Dashboard/Trash / Empty Pending"
+    },
+    {
+      "id": "space-review--metadata-dialog-focus",
+      "variant": "light",
+      "filename": "space-review--metadata-dialog-focus-light.png",
+      "title": "Current production/Spaces/Space / Metadata Dialog Focus"
+    },
+    {
+      "id": "space-offline-actions--removal-inventory-refresh",
+      "variant": "light",
+      "filename": "space-offline-actions--removal-inventory-refresh-light.png",
+      "title": "Current production/Spaces/Offline availability / Removal Inventory Refresh"
+    },
+    {
+      "id": "dashboard-dashboard--action-menu-labels",
+      "variant": "dark",
+      "filename": "dashboard-dashboard--action-menu-labels-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Action Menu Labels"
+    },
+    {
+      "id": "dashboard-dashboard--rename-pending",
+      "variant": "dark",
+      "filename": "dashboard-dashboard--rename-pending-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Rename Pending"
+    },
+    {
+      "id": "spaces-root-actions--menu-labels",
+      "variant": "dark",
+      "filename": "spaces-root-actions--menu-labels-dark.png",
+      "title": "Current production/Spaces/Root actions / Menu Labels"
+    },
+    {
+      "id": "admin-adminusers--confirm-passkey-removal",
+      "variant": "dark",
+      "filename": "admin-adminusers--confirm-passkey-removal-dark.png",
+      "title": "Current production/Admin/AdminUsers / Confirm Passkey Removal"
+    },
+    {
+      "id": "admin-adminusers--disable-pending",
+      "variant": "dark",
+      "filename": "admin-adminusers--disable-pending-dark.png",
+      "title": "Current production/Admin/AdminUsers / Disable Pending"
+    },
+    {
+      "id": "space-review--trash-subtree-confirmation",
+      "variant": "dark",
+      "filename": "space-review--trash-subtree-confirmation-dark.png",
+      "title": "Current production/Spaces/Space / Trash Subtree Confirmation"
+    },
+    {
+      "id": "current-production-account-passkey-security--confirm-removal",
+      "variant": "dark",
+      "filename": "current-production-account-passkey-security--confirm-removal-dark.png",
+      "title": "Current production/Account/Passkey security / Confirm Removal"
+    },
+    {
+      "id": "current-production-account-passkey-security--saving",
+      "variant": "dark",
+      "filename": "current-production-account-passkey-security--saving-dark.png",
+      "title": "Current production/Account/Passkey security / Saving"
+    },
+    {
+      "id": "dashboard-trash--confirm-empty",
+      "variant": "dark",
+      "filename": "dashboard-trash--confirm-empty-dark.png",
+      "title": "Current production/Dashboard/Trash / Confirm Empty"
+    },
+    {
+      "id": "dashboard-trash--empty-pending",
+      "variant": "dark",
+      "filename": "dashboard-trash--empty-pending-dark.png",
+      "title": "Current production/Dashboard/Trash / Empty Pending"
+    },
+    {
+      "id": "space-review--metadata-dialog-focus",
+      "variant": "dark",
+      "filename": "space-review--metadata-dialog-focus-dark.png",
+      "title": "Current production/Spaces/Space / Metadata Dialog Focus"
+    },
+    {
+      "id": "space-offline-actions--removal-inventory-refresh",
+      "variant": "dark",
+      "filename": "space-offline-actions--removal-inventory-refresh-dark.png",
+      "title": "Current production/Spaces/Offline availability / Removal Inventory Refresh"
+    },
+    {
+      "id": "dashboard-dashboard--action-menu-labels",
+      "variant": "phone",
+      "filename": "dashboard-dashboard--action-menu-labels-phone.png",
+      "title": "Current production/Dashboard/Dashboard / Action Menu Labels"
+    },
+    {
+      "id": "dashboard-dashboard--rename-pending",
+      "variant": "phone",
+      "filename": "dashboard-dashboard--rename-pending-phone.png",
+      "title": "Current production/Dashboard/Dashboard / Rename Pending"
+    },
+    {
+      "id": "spaces-root-actions--menu-labels",
+      "variant": "phone",
+      "filename": "spaces-root-actions--menu-labels-phone.png",
+      "title": "Current production/Spaces/Root actions / Menu Labels"
+    },
+    {
+      "id": "admin-adminusers--confirm-passkey-removal",
+      "variant": "phone",
+      "filename": "admin-adminusers--confirm-passkey-removal-phone.png",
+      "title": "Current production/Admin/AdminUsers / Confirm Passkey Removal"
+    },
+    {
+      "id": "admin-adminusers--disable-pending",
+      "variant": "phone",
+      "filename": "admin-adminusers--disable-pending-phone.png",
+      "title": "Current production/Admin/AdminUsers / Disable Pending"
+    },
+    {
+      "id": "space-review--trash-subtree-confirmation",
+      "variant": "phone",
+      "filename": "space-review--trash-subtree-confirmation-phone.png",
+      "title": "Current production/Spaces/Space / Trash Subtree Confirmation"
+    },
+    {
+      "id": "current-production-account-passkey-security--confirm-removal",
+      "variant": "phone",
+      "filename": "current-production-account-passkey-security--confirm-removal-phone.png",
+      "title": "Current production/Account/Passkey security / Confirm Removal"
+    },
+    {
+      "id": "current-production-account-passkey-security--saving",
+      "variant": "phone",
+      "filename": "current-production-account-passkey-security--saving-phone.png",
+      "title": "Current production/Account/Passkey security / Saving"
+    },
+    {
+      "id": "dashboard-trash--confirm-empty",
+      "variant": "phone",
+      "filename": "dashboard-trash--confirm-empty-phone.png",
+      "title": "Current production/Dashboard/Trash / Confirm Empty"
+    },
+    {
+      "id": "dashboard-trash--empty-pending",
+      "variant": "phone",
+      "filename": "dashboard-trash--empty-pending-phone.png",
+      "title": "Current production/Dashboard/Trash / Empty Pending"
+    },
+    {
+      "id": "space-review--metadata-dialog-focus",
+      "variant": "phone",
+      "filename": "space-review--metadata-dialog-focus-phone.png",
+      "title": "Current production/Spaces/Space / Metadata Dialog Focus"
+    },
+    {
+      "id": "space-offline-actions--removal-inventory-refresh",
+      "variant": "phone",
+      "filename": "space-offline-actions--removal-inventory-refresh-phone.png",
+      "title": "Current production/Spaces/Offline availability / Removal Inventory Refresh"
+    },
+    {
+      "id": "dashboard-dashboard--action-menu-labels",
+      "variant": "phone-dark",
+      "filename": "dashboard-dashboard--action-menu-labels-phone-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Action Menu Labels"
+    },
+    {
+      "id": "dashboard-dashboard--rename-pending",
+      "variant": "phone-dark",
+      "filename": "dashboard-dashboard--rename-pending-phone-dark.png",
+      "title": "Current production/Dashboard/Dashboard / Rename Pending"
+    },
+    {
+      "id": "spaces-root-actions--menu-labels",
+      "variant": "phone-dark",
+      "filename": "spaces-root-actions--menu-labels-phone-dark.png",
+      "title": "Current production/Spaces/Root actions / Menu Labels"
+    },
+    {
+      "id": "admin-adminusers--confirm-passkey-removal",
+      "variant": "phone-dark",
+      "filename": "admin-adminusers--confirm-passkey-removal-phone-dark.png",
+      "title": "Current production/Admin/AdminUsers / Confirm Passkey Removal"
+    },
+    {
+      "id": "admin-adminusers--disable-pending",
+      "variant": "phone-dark",
+      "filename": "admin-adminusers--disable-pending-phone-dark.png",
+      "title": "Current production/Admin/AdminUsers / Disable Pending"
+    },
+    {
+      "id": "space-review--trash-subtree-confirmation",
+      "variant": "phone-dark",
+      "filename": "space-review--trash-subtree-confirmation-phone-dark.png",
+      "title": "Current production/Spaces/Space / Trash Subtree Confirmation"
+    },
+    {
+      "id": "current-production-account-passkey-security--confirm-removal",
+      "variant": "phone-dark",
+      "filename": "current-production-account-passkey-security--confirm-removal-phone-dark.png",
+      "title": "Current production/Account/Passkey security / Confirm Removal"
+    },
+    {
+      "id": "current-production-account-passkey-security--saving",
+      "variant": "phone-dark",
+      "filename": "current-production-account-passkey-security--saving-phone-dark.png",
+      "title": "Current production/Account/Passkey security / Saving"
+    },
+    {
+      "id": "dashboard-trash--confirm-empty",
+      "variant": "phone-dark",
+      "filename": "dashboard-trash--confirm-empty-phone-dark.png",
+      "title": "Current production/Dashboard/Trash / Confirm Empty"
+    },
+    {
+      "id": "dashboard-trash--empty-pending",
+      "variant": "phone-dark",
+      "filename": "dashboard-trash--empty-pending-phone-dark.png",
+      "title": "Current production/Dashboard/Trash / Empty Pending"
+    },
+    {
+      "id": "space-review--metadata-dialog-focus",
+      "variant": "phone-dark",
+      "filename": "space-review--metadata-dialog-focus-phone-dark.png",
+      "title": "Current production/Spaces/Space / Metadata Dialog Focus"
+    },
+    {
+      "id": "space-offline-actions--removal-inventory-refresh",
+      "variant": "phone-dark",
+      "filename": "space-offline-actions--removal-inventory-refresh-phone-dark.png",
+      "title": "Current production/Spaces/Offline availability / Removal Inventory Refresh"
+    },
+    {
+      "id": "dashboard-dashboard--action-menu-labels",
+      "variant": "tablet",
+      "filename": "dashboard-dashboard--action-menu-labels-tablet.png",
+      "title": "Current production/Dashboard/Dashboard / Action Menu Labels"
+    },
+    {
+      "id": "dashboard-dashboard--rename-pending",
+      "variant": "tablet",
+      "filename": "dashboard-dashboard--rename-pending-tablet.png",
+      "title": "Current production/Dashboard/Dashboard / Rename Pending"
+    },
+    {
+      "id": "spaces-root-actions--menu-labels",
+      "variant": "tablet",
+      "filename": "spaces-root-actions--menu-labels-tablet.png",
+      "title": "Current production/Spaces/Root actions / Menu Labels"
+    },
+    {
+      "id": "admin-adminusers--confirm-passkey-removal",
+      "variant": "tablet",
+      "filename": "admin-adminusers--confirm-passkey-removal-tablet.png",
+      "title": "Current production/Admin/AdminUsers / Confirm Passkey Removal"
+    },
+    {
+      "id": "admin-adminusers--disable-pending",
+      "variant": "tablet",
+      "filename": "admin-adminusers--disable-pending-tablet.png",
+      "title": "Current production/Admin/AdminUsers / Disable Pending"
+    },
+    {
+      "id": "space-review--trash-subtree-confirmation",
+      "variant": "tablet",
+      "filename": "space-review--trash-subtree-confirmation-tablet.png",
+      "title": "Current production/Spaces/Space / Trash Subtree Confirmation"
+    },
+    {
+      "id": "current-production-account-passkey-security--confirm-removal",
+      "variant": "tablet",
+      "filename": "current-production-account-passkey-security--confirm-removal-tablet.png",
+      "title": "Current production/Account/Passkey security / Confirm Removal"
+    },
+    {
+      "id": "current-production-account-passkey-security--saving",
+      "variant": "tablet",
+      "filename": "current-production-account-passkey-security--saving-tablet.png",
+      "title": "Current production/Account/Passkey security / Saving"
+    },
+    {
+      "id": "dashboard-trash--confirm-empty",
+      "variant": "tablet",
+      "filename": "dashboard-trash--confirm-empty-tablet.png",
+      "title": "Current production/Dashboard/Trash / Confirm Empty"
+    },
+    {
+      "id": "dashboard-trash--empty-pending",
+      "variant": "tablet",
+      "filename": "dashboard-trash--empty-pending-tablet.png",
+      "title": "Current production/Dashboard/Trash / Empty Pending"
+    },
+    {
+      "id": "space-review--metadata-dialog-focus",
+      "variant": "tablet",
+      "filename": "space-review--metadata-dialog-focus-tablet.png",
+      "title": "Current production/Spaces/Space / Metadata Dialog Focus"
+    },
+    {
+      "id": "space-offline-actions--removal-inventory-refresh",
+      "variant": "tablet",
+      "filename": "space-offline-actions--removal-inventory-refresh-tablet.png",
+      "title": "Current production/Spaces/Offline availability / Removal Inventory Refresh"
+    }
+  ],
+  "verifications": [],
+  "failures": []
+}

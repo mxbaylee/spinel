@@ -213,9 +213,7 @@ test('offline exit locks both tabs, keeps exact Space changes, drains before an 
     await profile
       .getByRole('button', { name: `More actions for ${nextItem.name}`, exact: true })
       .click();
-    await profile
-      .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
-      .click();
+    await profile.getByRole('menuitem', { name: 'Make available offline', exact: true }).click();
     await expect(
       profile
         .getByRole('status')

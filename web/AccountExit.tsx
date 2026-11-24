@@ -149,11 +149,11 @@ export function AccountExitView({
       >
         {state.error && <p role="alert">{state.error}</p>}
         <div className="sp-actions">
-          <Button disabled={state.deleting} onClick={() => setConfirm(false)}>
-            Keep offline data
-          </Button>
           <Button primary disabled={state.deleting} onClick={onDelete}>
             {state.deleting ? 'Deleting…' : 'Delete offline data'}
+          </Button>
+          <Button disabled={state.deleting} onClick={() => setConfirm(false)}>
+            Keep offline data
           </Button>
         </div>
       </Modal>

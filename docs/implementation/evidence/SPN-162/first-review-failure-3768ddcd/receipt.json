@@ -1,0 +1,10 @@
+{
+  "source": "3768ddcd37d68d9059ded43b68b905465f2d8f02",
+  "reviewer": "/root/spn089_review_b",
+  "failure": "Exact Rename selector no longer matched Rename\u2026; same source audit found guest helper drift. Assertions/authority retained during repair.",
+  "files": {
+    "failed-space-review--metadata-dialog-focus-phone.json": "5ffa3e14113949548502b54d69ca4b36c2582ac43c979d660d4612f4f9808751",
+    "failed-space-review--metadata-dialog-focus-phone.png": "8ca6948b80601da02cc6941449fc85431ee7fb1c25d1d7a499aead1f22c4aab5",
+    "manifest.json": "871f2a0a04d7faa3cd7d34bdadbc597650dd90e14437491316ed34f58e444221"
+  }
+}

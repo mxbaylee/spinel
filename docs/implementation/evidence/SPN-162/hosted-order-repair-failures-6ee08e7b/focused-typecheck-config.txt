@@ -1,0 +1,1 @@
+{"extends": "/Users/mxbaylee/projects/spinel-spn162/tsconfig.json", "compilerOptions": {"typeRoots": ["/Users/mxbaylee/projects/spinel-spn162/node_modules/@types"]}, "include": ["/Users/mxbaylee/projects/spinel-spn162/scripts/screenshots.ts", "/Users/mxbaylee/projects/spinel-spn162/.storybook/dialogActionOrder.ts"]}

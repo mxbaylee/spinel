@@ -155,6 +155,13 @@ export const ConfirmPasskeyRemoval: Story = {
     await userEvent.click(await body.findByRole('menuitem', { name: 'Manage passkeys' }));
     await userEvent.click(await body.findByRole('button', { name: 'Actions for passkey Phone' }));
     await userEvent.click(await body.findByRole('menuitem', { name: 'Remove passkey…' }));
+    const dialog = await body.findByRole('dialog', { name: 'Remove Phone?' });
+    const buttons = within(dialog).getAllByRole('button');
+    await expect(buttons.slice(-2).map((button) => button.textContent)).toEqual([
+      'Remove passkey',
+      'Cancel',
+    ]);
+    await expect(within(dialog).getByRole('button', { name: 'Remove passkey' })).toBeEnabled();
   },
 };
 /** The confirmation stays open and shows the server's reason. */
@@ -175,6 +182,21 @@ export const RemovalFailed: Story = {
       await within(document.body).findByRole('menuitem', { name: 'Disable account…' }),
     );
     const dialog = await within(document.body).findByRole('dialog', { name: 'Disable Alex Kim?' });
-    await userEvent.click(within(dialog).getByRole('button', { name: 'Confirm removal' }));
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Disable account' }));
+  },
+};
+
+export const DisablePending: Story = {
+  parameters: { api: { ...loaded, 'POST /api/auth/admin/users/u-alex/disable': pending() } },
+  play: async ({ canvasElement }) => {
+    const account = await within(canvasElement).findByRole('region', { name: 'Alex Kim account' });
+    await userEvent.click(within(account).getByRole('button', { name: 'Actions for Alex Kim' }));
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await body.findByRole('menuitem', { name: 'Disable account…' }));
+    const dialog = within(await body.findByRole('dialog', { name: 'Disable Alex Kim?' }));
+    await userEvent.click(dialog.getByRole('button', { name: 'Disable account' }));
+    await expect(await dialog.findByRole('button', { name: 'Disabling…' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+    await expect(dialog.getByRole('button', { name: 'Close dialog' })).toBeDisabled();
   },
 };

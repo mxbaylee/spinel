@@ -1,0 +1,53 @@
+[
+  {
+    "traceFile": "test.trace",
+    "event": {
+      "type": "before",
+      "callId": "vtqn@415",
+      "startTime": 210378.221,
+      "class": "Test",
+      "method": "pw:api",
+      "title": "Click",
+      "subtitle": "getByRole('menuitem', { name: 'Make available offline', exact: true })",
+      "params": {
+        "locator": "getByRole('menuitem', { name: 'Make available offline', exact: true })"
+      },
+      "stack": [
+        {
+          "file": "/home/runner/work/spinel/spinel/e2e/offline-fixture.ts",
+          "line": 426,
+          "column": 12,
+          "function": "Object.download"
+        },
+        {
+          "file": "/home/runner/work/spinel/spinel/e2e/offline-upgrade.spec.ts",
+          "line": 316,
+          "column": 5
+        }
+      ]
+    }
+  },
+  {
+    "traceFile": "2-trace.trace",
+    "event": {
+      "type": "before",
+      "callId": "vtqn@415",
+      "startTime": 210378.365,
+      "class": "Frame",
+      "method": "click",
+      "params": {
+        "selector": "internal:role=menuitem[name=\"Make available offline\"s]",
+        "strict": true
+      }
+    }
+  },
+  {
+    "traceFile": "2-trace.trace",
+    "event": {
+      "type": "log",
+      "callId": "vtqn@415",
+      "time": 210380.171,
+      "message": "waiting for getByRole('menuitem', { name: 'Make available offline', exact: true })"
+    }
+  }
+]

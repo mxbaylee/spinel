@@ -1,4 +1,5 @@
 import { expect, within } from 'storybook/test';
+import { inspectDialogActionOrder } from './dialogActionOrder.ts';
 
 /** Align the actual cue with the first text line, including wrapped titles. */
 export async function assertDialogCueAlignment(cue: Element | null) {
@@ -39,6 +40,7 @@ export async function assertDialogTitle(dialog: HTMLElement, title: string) {
 
 /** Portals must keep real target sizes without depending on a workspace ancestor. */
 export async function assertDialogControls(dialog: HTMLElement) {
+  await expect(inspectDialogActionOrder(dialog).violations).toEqual([]);
   const phone = matchMedia('(pointer: coarse), (max-width: 640px)').matches;
   for (const control of dialog.querySelectorAll<HTMLElement>(
     'button, input, select, textarea, summary',

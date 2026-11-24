@@ -94,7 +94,7 @@ test('sharing keeps confirmed access on failure, retries, traps focus and return
       exact: true,
     });
     await trigger.click();
-    await page.getByRole('menuitem', { name: 'Share', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
     const dialog = page.getByRole('dialog', {
       name: `Share ${item.name}`,
       exact: true,
@@ -156,7 +156,7 @@ test('sharing keeps confirmed access on failure, retries, traps focus and return
     await expect(dialog).toBeHidden();
     await expect(trigger).toBeFocused();
     await trigger.press('Enter');
-    await page.getByRole('menuitem', { name: 'Share', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
     await expect(edit).toContainText('View only');
     // Real arrow-key tab activation discards an unfinished editor draft.
     await edit.click();
@@ -206,7 +206,7 @@ test('sharing keeps confirmed access on failure, retries, traps focus and return
     expect(linkWrites).toBe(1);
     await dialog.getByRole('button', { name: 'Close dialog', exact: true }).click();
     await trigger.click();
-    await page.getByRole('menuitem', { name: 'Share', exact: true }).click();
+    await page.getByRole('menuitem', { name: 'Share…', exact: true }).click();
     await expect(peopleTab).toHaveAttribute('aria-selected', 'true');
     await linkTab.click();
     const replaceAction = link.getByRole('button', { name: 'Replace link…', exact: true });

@@ -1,0 +1,71 @@
+Run45321162160 job138200154104 source6ee08e7bddf308c9c5b2475d0ca0279ad68de01a
+
+2026-11-24T03:45:06.7186202Z node:net:2390
+2026-11-24T03:45:06.7186759Z     const ex = new UVExceptionWithHostPort(err, 'listen', address, port);
+2026-11-24T03:45:06.7187169Z                ^
+2026-11-24T03:45:06.7187300Z 
+2026-11-24T03:45:06.7187567Z Error: listen EADDRINUSE: address already in use 127.0.0.1:39617
+2026-11-24T03:45:06.7188064Z     at Server.setupListenHandle [as _listen2] (node:net:2390:16)
+2026-11-24T03:45:06.7188820Z     at listenInCluster (node:net:2499:12)
+2026-11-24T03:45:06.7189121Z     at node:net:2728:7
+2026-11-24T03:45:06.7190036Z     at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+2026-11-24T03:45:06.7191271Z   code: 'EADDRINUSE',
+2026-11-24T03:45:06.7191663Z   errno: -98,
+2026-11-24T03:45:06.7191993Z   syscall: 'listen',
+2026-11-24T03:45:06.7192344Z   address: '127.0.0.1',
+2026-11-24T03:45:06.7192697Z   port: 39617
+2026-11-24T03:45:06.7193003Z }
+2026-11-24T03:45:06.7193164Z 
+2026-11-24T03:45:06.7193296Z Node.js v26.13.0
+2026-11-24T03:45:07.8296477Z Identifier "rpc.remote-sync.service" already exists. Returning the cached identifier decorator.
+2026-11-24T03:45:07.8300125Z Identifier "univer.remote-instance-service" already exists. Returning the cached identifier decorator.
+2026-11-24T03:45:07.8301813Z Identifier "IRPCChannelService" already exists. Returning the cached identifier decorator.
+
+2026-11-24T03:48:53.0012109Z [31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+2026-11-24T03:48:53.0012374Z 
+2026-11-24T03:48:53.0013315Z [41m[1m FAIL [22m[49m src/server/maintenance/supervisor.test.ts[2m > [22mcomplete application and authenticated archive commit and release the selected candidate: failed-freeze-publication
+2026-11-24T03:48:53.0014579Z [31m[1mError[22m: Maintenance could not complete this operation. Check its current status with the recovery CLI.[39m
+2026-11-24T03:48:53.0015522Z [36m [2m❯[22m MaintenanceSupervisor.failure src/server/maintenance/supervisor.ts:[2m952:30[22m[39m
+2026-11-24T03:48:53.0016205Z     [90m950|[39m     this.drainWaiter?.reject(new Error(safeError));
+2026-11-24T03:48:53.0016661Z     [90m951|[39m     this.drainWaiter = undefined;
+2026-11-24T03:48:53.0017126Z     [90m952|[39m     this.startWaiter?.reject(new Error(safeError));
+2026-11-24T03:48:53.0017579Z     [90m   |[39m                              [31m^[39m
+2026-11-24T03:48:53.0017972Z     [90m953|[39m     this.startWaiter = undefined;
+2026-11-24T03:48:53.0018692Z     [90m954|[39m     this.restoreWaiter?.reject(new Error(safeError));
+2026-11-24T03:48:53.0019560Z [90m [2m❯[22m MaintenanceSupervisor.childControlFailed src/server/maintenance/supervisor.ts:[2m813:12[22m[39m
+2026-11-24T03:48:53.0020702Z [90m [2m❯[22m MaintenanceSupervisor.sendChild src/server/maintenance/supervisor.ts:[2m818:12[22m[39m
+2026-11-24T03:48:53.0021591Z [90m [2m❯[22m MaintenanceSupervisor.sendState src/server/maintenance/supervisor.ts:[2m831:12[22m[39m
+2026-11-24T03:48:53.0022480Z [90m [2m❯[22m MaintenanceSupervisor.transition src/server/maintenance/supervisor.ts:[2m789:10[22m[39m
+2026-11-24T03:48:53.0023358Z [90m [2m❯[22m MaintenanceSupervisor.failure src/server/maintenance/supervisor.ts:[2m946:12[22m[39m
+2026-11-24T03:48:53.0024190Z [90m [2m❯[22m ChildProcess.<anonymous> src/server/maintenance/supervisor.ts:[2m3230:14[22m[39m
+2026-11-24T03:48:53.0024566Z 
+2026-11-24T03:48:53.0024792Z [31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+2026-11-24T03:48:53.0024991Z 
+2026-11-24T03:48:53.0024999Z 
+2026-11-24T03:48:53.0025398Z [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+2026-11-24T03:48:53.0026062Z [2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m130 passed[39m[22m[90m (131)[39m
+2026-11-24T03:48:53.0026582Z [2m   Start at [22m 03:42:23
+2026-11-24T03:48:53.0026952Z [2m   Duration [22m 389.14s[2m (tests 100%)[22m
+2026-11-24T03:48:53.0027167Z 
+2026-11-24T03:48:53.0027172Z 
+2026-11-24T03:48:53.0052711Z ##[error]Error: Maintenance could not complete this operation. Check its current status with the recovery CLI.
+ ❯ MaintenanceSupervisor.failure src/server/maintenance/supervisor.ts:952:30
+ ❯ MaintenanceSupervisor.childControlFailed src/server/maintenance/supervisor.ts:813:12
+ ❯ MaintenanceSupervisor.sendChild src/server/maintenance/supervisor.ts:818:12
+ ❯ MaintenanceSupervisor.sendState src/server/maintenance/supervisor.ts:831:12
+ ❯ MaintenanceSupervisor.transition src/server/maintenance/supervisor.ts:789:10
+ ❯ MaintenanceSupervisor.failure src/server/maintenance/supervisor.ts:946:12
+ ❯ ChildProcess.<anonymous> src/server/maintenance/supervisor.ts:3230:14
+
+
+2026-11-24T03:48:53.0380975Z ##[error]Process completed with exit code 1.
+2026-11-24T03:48:53.0560806Z Post job cleanup.
+2026-11-24T03:48:53.1411099Z [command]/usr/bin/git version
+2026-11-24T03:48:53.1491887Z git version 2.56.1
+2026-11-24T03:48:53.1533956Z Temporarily overriding HOME='/home/runner/work/_temp/8411987e-4c21-48fa-9541-f3a754cbc099' before making global git config changes
+2026-11-24T03:48:53.1535526Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-24T03:48:53.1539110Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/spinel/spinel
+2026-11-24T03:48:53.1574914Z Removing SSH command configuration
+2026-11-24T03:48:53.1581576Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-24T03:48:53.1621002Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+

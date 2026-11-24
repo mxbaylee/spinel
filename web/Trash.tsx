@@ -82,12 +82,15 @@ export function Trash({ onChanged }: { onChanged(): Promise<void> }) {
                 ))}
               </ul>
               <Button
+                primary
                 disabled={busy}
                 onClick={() =>
                   void change('/trash/empty', { version: confirmation.version }, 'Trash emptied.')
                 }
               >
-                Permanently delete {deletionCount} {deletionCount === 1 ? 'item' : 'items'}
+                {busy
+                  ? 'Deleting…'
+                  : `Permanently delete ${deletionCount} ${deletionCount === 1 ? 'item' : 'items'}`}
               </Button>
               <Button disabled={busy} onClick={() => setConfirmation(null)}>
                 Cancel

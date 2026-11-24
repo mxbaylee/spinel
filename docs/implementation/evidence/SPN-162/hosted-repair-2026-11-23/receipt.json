@@ -1,0 +1,23 @@
+{
+  "parent": "854163373f1562e57fcd9d7be24cb0980b2400fc",
+  "sources": {
+    "web/Space.stories.tsx": "d76c979aef380b61d49ad4a1ad004cb94523712e1e85f824c53ca1a30f8aab67",
+    "e2e/offline-fixture.ts": "39a03f425c7bb58ca996fde9115baf397ca710c6432041095828c77eaf17ab6f",
+    "e2e/offline-upgrade.spec.ts": "9ff375f6ab45655f0517afbc9fb9f926eb32b88c6d70ee45bb384d1b0ed56278"
+  },
+  "files": {
+    "deep-tree-light.png": "65c1b1f6bfb1151b918f0f66006c14147df6ec88ac5f39bb64cb733900537999",
+    "spn162-deep-tree-repair-only.txt": "b70ee265a2348f22e2c464d989b5365f08291ec8478369470d1d80e7f945845a",
+    "spn162-hosted-repair-build.txt": "2e679d13ab0e597bf3ed02743ffc9c832d1dfa9c925d2d175c1f432d6d6670a5",
+    "spn162-menu-repair-2.txt": "98579325a641bd1b20e3d52f5eaa91526cf1d9d6f57aa76852c90efe4e4fe249"
+  },
+  "localBuild": "Supported Storybook test/preview-only build passed; peak 1256112 KiB.",
+  "localPlays": "Nine desktop-light menu/metadata stories passed; subsequent dark variant resource-aborted. Full selection is not passed.",
+  "visualBasis": "Production UI source unchanged from parent; earlier 36 approved screenshots remain current for rendering. Fresh DeepTree light image verifies the changed play.",
+  "pending": [
+    "Local typecheck/broader rendering subject to resource availability",
+    "Independent reviews",
+    "Integration of merged SPN-089",
+    "Current-head hosted seven gates, full Storybook catalogue and retained offline upgrade"
+  ]
+}

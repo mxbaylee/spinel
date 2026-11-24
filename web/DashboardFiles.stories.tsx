@@ -74,7 +74,7 @@ const actionsFor: NonNullable<DashboardFilesProps['actionsFor']> = (item) => [
         { label: 'Share…', onClick: action },
         { label: 'Rename…', onClick: action },
         { label: 'Move…', onClick: action },
-        { label: 'Trash', onClick: action, destructive: true },
+        { label: 'Move to Trash', onClick: action, destructive: true },
       ]
     : [{ label: 'File into folder…', onClick: action }]),
 ];
@@ -166,7 +166,9 @@ export const OwnerMenu: Story = {
       within(canvasElement).getByRole('button', { name: 'More actions for Quarterly budget' }),
     );
     await expect(
-      await within(canvasElement.ownerDocument.body).findByRole('menuitem', { name: 'Trash' }),
+      await within(canvasElement.ownerDocument.body).findByRole('menuitem', {
+        name: 'Move to Trash',
+      }),
     ).toBeVisible();
   },
 };
@@ -177,7 +179,7 @@ export const ViewerMenu: Story = {
     );
     const page = within(canvasElement.ownerDocument.body);
     await expect(await page.findByRole('menuitem', { name: 'File into folder…' })).toBeVisible();
-    await expect(page.queryByRole('menuitem', { name: 'Trash' })).not.toBeInTheDocument();
+    await expect(page.queryByRole('menuitem', { name: 'Move to Trash' })).not.toBeInTheDocument();
   },
 };
 export const FileAdminMenu: Story = {

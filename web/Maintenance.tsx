@@ -817,9 +817,6 @@ export function MaintenanceControls({
               <p className="sp-muted">Verify your Operator passkey before continuing.</p>
             )}
             <div className="admin-dialog-actions">
-              <Button disabled={busy === 'submit'} onClick={cancelVerification}>
-                Cancel
-              </Button>
               {verifiedUntil > now ? (
                 <Button
                   primary
@@ -833,6 +830,9 @@ export function MaintenanceControls({
                   {busy === 'verify' ? 'Verifying…' : 'Verify with a passkey'}
                 </Button>
               ) : null}
+              <Button disabled={busy === 'submit'} onClick={cancelVerification}>
+                Cancel
+              </Button>
             </div>
           </div>
         </Modal>

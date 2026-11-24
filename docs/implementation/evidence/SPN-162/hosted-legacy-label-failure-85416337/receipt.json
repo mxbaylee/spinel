@@ -1,0 +1,15 @@
+{
+  "source": "854163373f1562e57fcd9d7be24cb0980b2400fc",
+  "run": 45309230898,
+  "attempt": 1,
+  "job": 138161175776,
+  "artifact": 14883647535,
+  "artifactSha256": "0b0ba536583a6e283e8c7140c1f25b19ed439fb238e5f4066381c8b5ebbdd850",
+  "failure": "All three attempts timed out in retained SPN-054 fixture download. Retry trace action vtqn@415 waits for new Make available offline name while real historical client still uses Available offline on this device.",
+  "disposition": "Pass the historical exact label explicitly only in the retained-source test. Default fixture continues requiring the current exact label; no regex/probing/fallback accepts an unintended production name. Full retained upgrade acceptance remains mandatory on repaired head.",
+  "files": {
+    "test-failed-1.png": "162bb1bc3b48ca2af985959d093c5d9e73bf5573d3388ff135dea69fe28843a2",
+    "selector-trace.json": "131e40204d2b95d3666380fab3b71c0ef2eb39dd8601f26ae36c25533eaa5286",
+    "error-context.md": "f7f83cda04d6b05f171f501a9d7124ef46b3cf593279ec3a6aa62477c2ab72fe"
+  }
+}

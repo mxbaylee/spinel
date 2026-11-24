@@ -195,9 +195,7 @@ test.describe('downloaded native editors', () => {
         await f.page
           .getByRole('button', { name: `More actions for ${item.name}`, exact: true })
           .click();
-        await f.page
-          .getByRole('menuitem', { name: 'Available offline on this device', exact: true })
-          .click();
+        await f.page.getByRole('menuitem', { name: 'Make available offline', exact: true }).click();
         await expect(
           f.page.getByRole('status').filter({ hasText: `${item.name} is available offline` }),
         ).toHaveText(`${item.name} is available offline on this device.`, { timeout: 120_000 });
