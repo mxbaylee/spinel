@@ -1,11 +1,13 @@
 import { fork, spawn, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { once } from 'node:events';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import {
   appendFileSync,
   chmodSync,
+  existsSync,
   linkSync,
+  lstatSync,
   mkdirSync,
   readFileSync,
   readlinkSync,
@@ -22,6 +24,7 @@ import { afterEach, expect, test, vi } from 'vitest';
 import { RecoveryJournal, fileIdentity, processIdentity } from './journal.ts';
 import { isCommittedRestoreJob, RestoreJobs } from './restore-jobs.ts';
 import type { RestoreJobRecord } from './restore-jobs.ts';
+import { pruneRestoreEvidence } from './restore-prune.ts';
 import { restoreTrialReference } from './restore-trial.ts';
 import type { RestoreTrialStopRequest } from './restore-trial-stop.ts';
 import type { RestoreTrialPermit } from './restore-trial.ts';
@@ -1776,4 +1779,284 @@ linux.each(['success', 'publication', 'expiry'] as const)(
       ),
     ).toThrow();
   },
+);
+
+// SPN-125: supervised pruning of resolved restore evidence. One real committed
+// record (the same chain as the trial tests) is cloned with fresh IDs and ages,
+// so each case reads and validates actual retained records without repeating a
+// full preparation per permutation.
+async function committedTemplate() {
+  const f = await readyTrialFixture();
+  const id = f.record.intent.id,
+    hash = f.record.intentHash;
+  const committed = f.jobs.markCandidateCommitted(id, hash, f.record.revision, f.reference);
+  Object.assign(f.journal.state, {
+    phase: 'stopped',
+    child: null,
+    operation: null,
+    restoreStop: null,
+    restoreJob: null,
+    completedOperationId: null,
+  });
+  f.journal.write();
+  return { f, committed };
+}
+
+/** Write one resolved record and a small evidence tree for it. `age` only moves
+ * updatedAt later, which every committed-record relation permits. */
+function seedResolved(
+  f: { root: string; statePath: (id: string) => string },
+  template: RestoreJobRecord,
+  age: number,
+) {
+  const id = randomUUID();
+  const base = JSON.parse(
+    JSON.stringify(template).replaceAll(template.intent.id, id),
+  ) as RestoreJobRecord;
+  const hash = restoreIntentHash(base.intent);
+  const record = JSON.parse(
+    JSON.stringify(base).replaceAll(template.intentHash, hash),
+  ) as RestoreJobRecord;
+  record.updatedAt = template.updatedAt + age;
+  mkdirSync(join(f.root, 'restore-jobs', id), { mode: 0o700 });
+  writeFileSync(f.statePath(id), JSON.stringify(record), { mode: 0o600 });
+  seedEvidence(f.root, id);
+  expect(isCommittedRestoreJob(record)).toBe(true);
+  return id;
+}
+function seedEvidence(root: string, id: string) {
+  const directory = join(root, `restore-${id}`);
+  mkdirSync(join(directory, 'original'), { recursive: true, mode: 0o700 });
+  mkdirSync(join(directory, 'failed-1', 'raw'), { recursive: true, mode: 0o700 });
+  writeFileSync(join(directory, 'source.spinel.enc'), `source ${id}`, { mode: 0o600 });
+  writeFileSync(join(directory, 'original', 'spinel.sqlite'), `original ${id}`, { mode: 0o600 });
+  writeFileSync(join(directory, 'failed-1', 'raw', 'spinel.sqlite'), `raw ${id}`, { mode: 0o600 });
+}
+/** Byte fingerprint of every file under a restore's evidence and record. */
+function fingerprint(root: string, id: string) {
+  const hash = createHash('sha256');
+  const walk = (path: string) => {
+    for (const name of readdirSync(path).sort()) {
+      const file = join(path, name);
+      if (lstatSync(file).isDirectory()) {
+        hash.update(`dir ${file}\n`);
+        walk(file);
+      } else hash.update(`file ${file}\n`).update(readFileSync(file));
+    }
+  };
+  for (const path of [join(root, `restore-${id}`), join(root, 'restore-jobs', id)]) walk(path);
+  return hash.digest('hex');
+}
+const resolvedIds = (jobs: RestoreJobs) =>
+  jobs
+    .list()
+    .filter(isCommittedRestoreJob)
+    .sort((a, b) => a.updatedAt - b.updatedAt || a.intent.id.localeCompare(b.intent.id))
+    .map((record) => record.intent.id);
+
+linux(
+  'pruning removes resolved restores past retention oldest first with their records',
+  async () => {
+    const { f, committed } = await committedTemplate();
+    seedEvidence(f.root, committed.intent.id);
+    const seeded = Array.from({ length: 11 }, (_, n) => seedResolved(f, committed, 1000 + n));
+    // The template is the oldest of 12; seeded IDs are newer in index order.
+    const order = [committed.intent.id, ...seeded];
+    expect(resolvedIds(f.jobs)).toEqual(order);
+    const kept = order.slice(4);
+    const before = new Map(kept.map((id) => [id, fingerprint(f.root, id)]));
+    expect(pruneRestoreEvidence(f.journal, f.jobs)).toEqual({ removed: order.slice(0, 4) });
+    expect(resolvedIds(f.jobs)).toEqual(kept);
+    expect(readdirSync(join(f.root, 'restore-pruned'))).toEqual([]);
+    for (const id of order.slice(0, 4)) {
+      expect(existsSync(join(f.root, `restore-${id}`))).toBe(false);
+      expect(existsSync(join(f.root, 'restore-jobs', id))).toBe(false);
+    }
+    for (const id of kept) expect(fingerprint(f.root, id)).toBe(before.get(id));
+    // Idempotent: nothing further is past the policy.
+    expect(pruneRestoreEvidence(f.journal, f.jobs)).toEqual({ removed: [] });
+  },
+);
+
+linux(
+  'an equal age is ordered by ID and the completed restore named by the journal is kept',
+  async () => {
+    const { f, committed } = await committedTemplate();
+    seedEvidence(f.root, committed.intent.id);
+    const seeded = Array.from({ length: 9 }, () => seedResolved(f, committed, 5));
+    const sameAge = [...seeded].sort();
+    const order = [committed.intent.id, ...sameAge];
+    // Protect the oldest: it is the journal's completed restore.
+    f.journal.state.completedOperationId = committed.intent.id;
+    f.journal.write();
+    const protectedPrint = fingerprint(f.root, committed.intent.id);
+    expect(pruneRestoreEvidence(f.journal, f.jobs)).toEqual({ removed: [order[1]] });
+    expect(fingerprint(f.root, committed.intent.id)).toBe(protectedPrint);
+    expect(resolvedIds(f.jobs)).toHaveLength(9);
+  },
+);
+
+linux('unresolved, referenced and ambiguous evidence is never removed', async () => {
+  const { f, committed } = await committedTemplate();
+  seedEvidence(f.root, committed.intent.id);
+  const seeded = Array.from({ length: 11 }, (_, n) => seedResolved(f, committed, 1000 + n));
+  const all = [committed.intent.id, ...seeded];
+  const prints = () => new Map(all.map((id) => [id, fingerprint(f.root, id)]));
+  const before = prints();
+  const unchanged = () => expect(prints()).toEqual(before);
+
+  // An in-flight admission anywhere stops the whole run.
+  const pending = f.jobs.admit(f.intent()).record;
+  expect(pruneRestoreEvidence(f.journal, f.jobs)).toEqual({ removed: [], refused: 'unresolved' });
+  unchanged();
+  f.jobs.checkpoint(pending.intent.id, pending.intentHash, pending.revision, 'failed');
+
+  // A journal reference to a restore (current or stopping) stops it too.
+  for (const patch of [
+    { restoreJob: { jobId: committed.intent.id, intentHash: committed.intentHash } },
+    { operation: { id: randomUUID() } },
+  ]) {
+    const saved = structuredClone(f.journal.state);
+    Object.assign(f.journal.state, patch);
+    expect(pruneRestoreEvidence(f.journal, f.jobs)).toEqual({ removed: [], refused: 'referenced' });
+    Object.assign(f.journal.state, saved);
+  }
+  unchanged();
+
+  // Evidence that is not the expected private directory is ambiguous. It stops
+  // the run before any newer restore is touched.
+  const evidence = join(f.root, `restore-${committed.intent.id}`);
+  renameSync(evidence, evidence + '.held');
+  for (const make of [
+    () => symlinkSync(evidence + '.held', evidence),
+    () => writeFileSync(evidence, 'not a directory'),
+    () => undefined, // missing entirely
+  ]) {
+    make();
+    expect(pruneRestoreEvidence(f.journal, f.jobs)).toEqual({ removed: [], refused: 'ambiguous' });
+    rmSync(evidence, { force: true });
+  }
+  renameSync(evidence + '.held', evidence);
+  unchanged();
+
+  // An unreadable record means the inventory cannot be trusted: refuse loudly.
+  writeFileSync(f.statePath(seeded[0]!), 'not json');
+  expect(() => pruneRestoreEvidence(f.journal, f.openJobs())).toThrow();
+  expect(existsSync(join(f.root, `restore-${committed.intent.id}`))).toBe(true);
+});
+
+linux('tombstone residue that is not a recognised name is refused, never deleted', async () => {
+  const { f, committed } = await committedTemplate();
+  seedEvidence(f.root, committed.intent.id);
+  mkdirSync(join(f.root, 'restore-pruned'), { mode: 0o700 });
+  writeFileSync(join(f.root, 'restore-pruned', 'keep-me'), 'x');
+  expect(() => pruneRestoreEvidence(f.journal, f.jobs)).toThrow('unexpected state');
+  expect(readFileSync(join(f.root, 'restore-pruned', 'keep-me'), 'utf8')).toBe('x');
+  expect(existsSync(join(f.root, `restore-${committed.intent.id}`))).toBe(true);
+});
+
+linux(
+  'the 65th restore is admitted after pruning, and refused before it',
+  async () => {
+    const { f, committed } = await committedTemplate();
+    seedEvidence(f.root, committed.intent.id);
+    const seeded = Array.from({ length: 63 }, (_, n) => seedResolved(f, committed, 1000 + n));
+    const all = [committed.intent.id, ...seeded];
+    expect(f.jobs.list()).toHaveLength(64);
+    expect(() => f.jobs.admit(f.intent())).toThrow('inventory is full');
+    const protectedIds = all.slice(-8);
+    const before = new Map(protectedIds.map((id) => [id, fingerprint(f.root, id)]));
+    expect(pruneRestoreEvidence(f.journal, f.jobs).removed).toEqual(all.slice(0, 56));
+    const intent = f.intent();
+    expect(f.jobs.admit(intent)).toMatchObject({ created: true, record: { phase: 'accepted' } });
+    expect(f.jobs.list()).toHaveLength(9);
+    for (const id of protectedIds) expect(fingerprint(f.root, id)).toBe(before.get(id));
+  },
+  30_000,
+);
+
+// Real-process interruption: the child kills itself with SIGKILL after each
+// durable pruning step; a fresh process is the restart. SIGKILL proves restart
+// safety of the on-disk protocol, not power-loss durability of fsync ordering.
+const pruneCuts = [
+  'tombstone-dir',
+  'evidence-moved',
+  'job-moved',
+  'evidence-deleted',
+  'done',
+] as const;
+linux.each(pruneCuts)(
+  'pruning interrupted at %s resumes without loss',
+  async (cut) => {
+    const { f, committed } = await committedTemplate();
+    seedEvidence(f.root, committed.intent.id);
+    const seeded = Array.from({ length: 10 }, (_, n) => seedResolved(f, committed, 1000 + n));
+    const order = [committed.intent.id, ...seeded];
+    const eligible = order.slice(0, 3);
+    const kept = order.slice(3);
+    const before = new Map(kept.map((id) => [id, fingerprint(f.root, id)]));
+    f.jobs.close();
+    await f.journal.close();
+    const run = (cutName: string | undefined) =>
+      new Promise<{ signal: NodeJS.Signals | null; code: number | null; out: string }>(
+        (resolve, reject) => {
+          const child = spawn(
+            process.execPath,
+            [
+              fileURLToPath(new URL('./restore-prune-crash-fixture.ts', import.meta.url)),
+              f.root,
+              f.journal.databasePath,
+              cutName ?? '',
+              eligible[0]!,
+            ],
+            { stdio: ['ignore', 'pipe', 'inherit'] },
+          );
+          let out = '';
+          child.stdout.on('data', (chunk: Buffer) => (out += chunk));
+          const timer = setTimeout(() => child.kill('SIGKILL'), 20_000);
+          child.once('error', reject);
+          child.once('exit', (code, signal) => {
+            clearTimeout(timer);
+            resolve({ signal, code, out });
+          });
+        },
+      );
+    const killed = await run(cut);
+    expect(killed.signal).toBe('SIGKILL');
+    // What a restart finds: kept evidence untouched, and no record without its
+    // evidence unless the evidence tombstone explains it.
+    for (const id of kept) expect(fingerprint(f.root, id)).toBe(before.get(id));
+    const pruned = existsSync(join(f.root, 'restore-pruned'))
+      ? readdirSync(join(f.root, 'restore-pruned')).sort()
+      : [];
+    const first = eligible[0]!;
+    const expected = {
+      'tombstone-dir': [],
+      'evidence-moved': [`${first}.evidence`],
+      'job-moved': [`${first}.evidence`, `${first}.job`],
+      'evidence-deleted': [`${first}.job`],
+      done: [],
+    }[cut];
+    expect(pruned).toEqual(expected);
+    const restarted = await run(undefined);
+    expect(restarted).toMatchObject({ signal: null, code: 0 });
+    const result = JSON.parse(restarted.out) as { removed: string[] };
+    // Roll-forward finishes the interrupted restore first, then removes the rest.
+    expect(result.removed).toEqual(cut === 'tombstone-dir' ? eligible : eligible.slice(1));
+    const journal = await RecoveryJournal.open(f.root, f.journal.databasePath);
+    const jobs = new RestoreJobs(journal);
+    try {
+      expect(resolvedIds(jobs)).toEqual(kept);
+      for (const id of eligible) {
+        expect(existsSync(join(f.root, `restore-${id}`))).toBe(false);
+        expect(existsSync(join(f.root, 'restore-jobs', id))).toBe(false);
+      }
+      expect(readdirSync(join(f.root, 'restore-pruned'))).toEqual([]);
+      for (const id of kept) expect(fingerprint(f.root, id)).toBe(before.get(id));
+    } finally {
+      jobs.close();
+      await journal.close();
+    }
+  },
+  60_000,
 );
