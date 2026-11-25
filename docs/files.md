@@ -80,7 +80,8 @@ extensions are refused with the supported types named.
 - **Malformed input is refused** with its line: an unterminated quote, a quote inside
   an unquoted field, text after a closing quote, or a NUL character.
 - **Limits.** The 20 MiB transfer cap and the 10 MiB native-content cap above, plus
-  at most 100,000 rows, 1,024 columns and 100,000 non-empty cells. Parsing stops at the
+  at most 100,000 rows, 1,024 columns, 100,000 non-empty cells and 2,000,000 fields in
+  all (empty ones count here, not as cells). Parsing stops at the
   first limit, and the shared transfer admission covers it, so it is bounded like a
   native import. No remote URLs are fetched.
 - **Atomic.** The server parses the text and publishes through the native import path:

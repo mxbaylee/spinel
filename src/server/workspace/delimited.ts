@@ -13,6 +13,8 @@ export type Delimiter = ',' | '\t';
 export const DELIMITED_MAX_ROWS = 100_000;
 export const DELIMITED_MAX_COLUMNS = 1_024;
 export const DELIMITED_MAX_CELLS = 100_000;
+// Empty fields spend no cell budget, so a file of bare delimiters needs its own bound.
+export const DELIMITED_MAX_FIELDS = 2_000_000;
 
 const SUPPORTED = 'Choose a .csv (comma) or .tsv (tab) file.';
 
@@ -39,7 +41,7 @@ const tooLarge = (what: string) =>
  * Parse RFC 4180-style text with one explicit delimiter. Quoted fields may contain
  * the delimiter, line breaks and `""` for a quote. Rows may differ in length. Parsing
  * stops at the first limit or error, so a hostile file cannot grow memory past the
- * bounded row, column and populated-cell counts (plus the text it arrived in).
+ * bounded row, column, populated-cell and total-field counts (plus the text it arrived in).
  */
 export function parseDelimited(input: unknown, delimiter: Delimiter): string[][] {
   if (typeof input !== 'string') throw new AuthError(400, `Choose a file to import. ${SUPPORTED}`);
@@ -54,6 +56,7 @@ export function parseDelimited(input: unknown, delimiter: Delimiter): string[][]
   let row: string[] = [];
   let field = '';
   let populated = 0;
+  let fields = 0;
   let line = 1;
   // 'start' = at the first character of a field, 'plain' = inside an unquoted field,
   // 'quoted' = inside quotes, 'closed' = just after a closing quote.
@@ -68,6 +71,8 @@ export function parseDelimited(input: unknown, delimiter: Delimiter): string[][]
     if (state === 'plain') field = text.slice(start, end);
     if (field.length && ++populated > DELIMITED_MAX_CELLS)
       throw tooLarge(`more than ${DELIMITED_MAX_CELLS.toLocaleString('en-US')} non-empty cells`);
+    if (++fields > DELIMITED_MAX_FIELDS)
+      throw tooLarge(`more than ${DELIMITED_MAX_FIELDS.toLocaleString('en-US')} fields in total`);
     row.push(field);
     if (row.length > DELIMITED_MAX_COLUMNS)
       throw tooLarge(`more than ${DELIMITED_MAX_COLUMNS.toLocaleString('en-US')} columns`);

@@ -229,7 +229,8 @@ export function ImportFile({
           A CSV (comma) or TSV (tab) file must be UTF-8 and becomes a new Sheet with one worksheet.
           Every field stays exactly as written: numbers, dates and text that starts with = are not
           converted or calculated, and the first row is data. The type comes from the file name; it
-          is not guessed. Up to 100,000 rows, 1,024 columns and 100,000 non-empty cells.
+          is not guessed. Up to 100,000 rows, 1,024 columns and 100,000 non-empty cells, and
+          2,000,000 fields in all, empty ones included.
         </p>
         <p>
           Up to 100 sheets, each with 100,000 rows and 1,024 columns; totals of 250,000 rows, 4,096

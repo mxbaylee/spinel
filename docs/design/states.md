@@ -64,7 +64,9 @@ theme changes alter the silhouette, not the meaning or pace of loading.
   use. Keep the gem and wordmark stationary; the runner is the one loading animation.
   The import dialog (SPN-093) uses the compact runner for its one waiting row, native and archive.
   Startup failure hides it and retains the brand and recovery sentence. This is
-  not a production-wide loader replacement. Do not add a runner beside every pending button or
+  not a replacement for the native Univer loader. Any new waiting row, dialog or region with a
+  status label uses this runner; a text-only status or a new spinner is a review defect. Do not
+  add a runner beside every pending button or
   native Univer loader. Screen migrations choose one appropriate indicator for
   the affected region and preserve existing loading/error/retry behavior.
 

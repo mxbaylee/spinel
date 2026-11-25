@@ -2,6 +2,7 @@ import { expect, test } from 'vitest';
 import {
   DELIMITED_MAX_CELLS,
   DELIMITED_MAX_COLUMNS,
+  DELIMITED_MAX_FIELDS,
   DELIMITED_MAX_ROWS,
   delimitedWorkbook,
   delimiterFor,
@@ -131,6 +132,14 @@ test('row, column, populated-cell and byte limits refuse without parsing further
   expect(
     parseDelimited(`${','.repeat(DELIMITED_MAX_COLUMNS - 1)}\n`.repeat(1000), ','),
   ).toHaveLength(1000);
+  // Bare delimiters spend no cell budget, so total fields are bounded too.
+  const bare = (rows: number) => `${','.repeat(999)}\n`.repeat(rows);
+  expect(parseDelimited(bare(DELIMITED_MAX_FIELDS / 1000), ',').flat()).toHaveLength(
+    DELIMITED_MAX_FIELDS,
+  );
+  expect(() => parseDelimited(bare(DELIMITED_MAX_FIELDS / 1000 + 1), ',')).toThrow(
+    '2,000,000 fields',
+  );
   expect(() => parseDelimited('x'.repeat(20 * 1024 * 1024 + 1), ',')).toThrow('20 MiB');
   // The cap is in bytes, not characters: 7,000,000 euro signs are 21 MB.
   expect(() => parseDelimited('€'.repeat(7_000_000), ',')).toThrow('20 MiB');
