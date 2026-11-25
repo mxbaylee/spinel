@@ -34,6 +34,7 @@ import type {
   ConfirmedRestoreAdmission,
   RestoreObservation,
 } from './restore-control.ts';
+import { readImageStamp, readKey, STAMP_HEAD_BYTES } from './archive.ts';
 import { hasDestination } from './config.ts';
 import type { BackupConfig } from './config.ts';
 import { createDestination } from './destination.ts';
@@ -122,6 +123,11 @@ export interface RestoreRegistryOptions {
   configuration(): Promise<BackupConfig | undefined>;
   remote?: (config: BackupConfig) => RemoteStore;
 }
+/** Advisory: whether this image can restore a point. Full verification still decides. */
+export type ImageMark = 'compatible' | 'incompatible' | 'unknown';
+// Each mark is one bounded read from the destination, so only the newest points
+// are marked; the rest stay unknown and verify fully when selected.
+const MARKED_POINTS = 50;
 type Source = { kind: 'upload'; key: Buffer } | { kind: 'catalog'; artifactId: string };
 interface Job {
   public: RestorePreparation;
@@ -474,6 +480,41 @@ export class RestoreRegistry {
       .filter((point): point is { key: string; time: Date } => point.time !== null)
       .sort((a, b) => b.time.getTime() - a.time.getTime() || b.key.localeCompare(a.key));
   }
+  /**
+   * Marks come only from the MAC'd stamp written at backup time, never from the
+   * object name. A missing, forged, unreadable or renamed point is `unknown`.
+   * Marks never gate preparation: `create` and `prepareCatalog` verify fully.
+   */
+  private async mark(
+    config: BackupConfig,
+    remote: RemoteStore,
+    points: { key: string; time: Date }[],
+  ): Promise<ImageMark[]> {
+    const marks = points.map((): ImageMark => 'unknown');
+    const image = this.options.image;
+    if (!image || !remote.head) return marks;
+    const signal = AbortSignal.timeout(30_000);
+    const keys: Buffer[] = [];
+    try {
+      for (const path of [config.keyFile, ...Object.values(config.retainedKeyFiles ?? {})])
+        keys.push(await readKey(path));
+    } catch {
+      return marks;
+    }
+    for (let i = 0; i < Math.min(points.length, MARKED_POINTS) && !signal.aborted; i++) {
+      try {
+        const stamp = readImageStamp(
+          await remote.head(points[i].key, STAMP_HEAD_BYTES, signal),
+          keys,
+        );
+        if (stamp && Date.parse(stamp.createdAt) === points[i].time.getTime())
+          marks[i] = stamp.image === image ? 'compatible' : 'incompatible';
+      } catch {
+        /* An unreadable head leaves this point unknown; it never fails the catalog. */
+      }
+    }
+    return marks;
+  }
   async catalog() {
     let remote: RemoteStore | undefined;
     try {
@@ -481,10 +522,12 @@ export class RestoreRegistry {
       if (!config || !hasDestination(config)) return { entries: [] };
       remote = this.options.remote?.(config) ?? createDestination(config);
       const points = await this.points(config, remote, AbortSignal.timeout(30_000));
+      const marks = await this.mark(config, remote, points);
       return {
-        entries: points.map(({ key, time }) => ({
+        entries: points.map(({ key, time }, index) => ({
           id: artifactId(config, key),
           createdAt: time.getTime(),
+          image: marks[index],
         })),
       };
     } catch {

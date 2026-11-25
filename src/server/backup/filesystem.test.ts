@@ -206,3 +206,18 @@ test('a killed publisher leaves no visible point and restart cleanup removes its
     }
   }
 }, 10_000);
+
+test('head returns only a bounded prefix of a private published backup', async () => {
+  const f = await fixture(),
+    id = key();
+  await f.store.put(id, f.source, f.hash, signal());
+  expect(await f.store.head(id, 6, signal())).toEqual(f.bytes.subarray(0, 6));
+  // Shorter than the bound: the whole object, never padding.
+  expect(await f.store.head(id, 1024, signal())).toEqual(f.bytes);
+  // Only published backups in this prefix can be read.
+  await expect(f.store.head('fixture/other.txt', 6, signal())).rejects.toThrow('Not a backup');
+  await expect(f.store.head(key(), 6, signal())).rejects.toThrow();
+  // A group- or world-readable file is not a private published backup.
+  await chmod(join(f.root, id), 0o644);
+  await expect(f.store.head(id, 6, signal())).rejects.toThrow('Invalid published backup');
+});

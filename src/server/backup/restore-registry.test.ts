@@ -13,6 +13,7 @@ import type { RestoreJobRecord } from '../maintenance/restore-jobs.ts';
 import type { RestoreJobIntent } from '../maintenance/restore-job-intent.ts';
 import { restoreIntentHash } from '../maintenance/restore-job-intent.ts';
 import { BackupService } from './service.ts';
+import { makeArchive, STAMP_HEAD_BYTES } from './archive.ts';
 import { RestoreRegistry } from './restore-registry.ts';
 import { restoreRoutes } from './restore-routes.ts';
 import { RecoveryResourceError } from './resource-error.ts';
@@ -1436,5 +1437,193 @@ test.each([false, true])(
     } finally {
       f.db.setWriteGuard(() => {});
     }
+  },
+);
+
+// SPN-127: the catalog marks which points this image can restore from the MAC'd
+// stamp written at backup time. The mark is advisory: it never gates preparation.
+async function markFixture() {
+  const f = await fixture();
+  const keyFile = join(f.directory, 'deployment.key'),
+    retainedFile = join(f.directory, 'retained.key'),
+    env = join(f.directory, 'runtime.env');
+  const key = randomBytes(32),
+    retained = randomBytes(32);
+  await writeFile(keyFile, key, { mode: 0o600 });
+  await writeFile(retainedFile, retained, { mode: 0o600 });
+  await writeFile(env, 'PRIVATE_RUNTIME=value\n', { mode: 0o600 });
+  const info = await stat(f.directory, { bigint: true });
+  const configPath = join(f.directory, 'backup.json');
+  await writeFile(
+    configPath,
+    JSON.stringify({
+      type: 'filesystem',
+      root: f.directory,
+      rootDevice: String(info.dev),
+      rootInode: String(info.ino),
+      prefix: 'workspace',
+      keyFile,
+      runtimeEnvironmentFile: env,
+      automatic: false,
+      manualDownload: false,
+      retainedKeyFiles: { retained: retainedFile },
+    }),
+    { mode: 0o600 },
+  );
+  f.service.options.configPath = configPath;
+  const heads = new Map<string, Buffer>(),
+    headCalls: string[] = [];
+  const point = (createdAt: string, bytes: Buffer) => {
+    const name = `workspace/${createdAt.replaceAll(':', '-')}-${randomUUID()}.spinel`;
+    heads.set(name, bytes);
+    return name;
+  };
+  // A real archive's bounded prefix, as the destination would return it.
+  const head = async (
+    sealingKey: Buffer,
+    archiveImage: string,
+    createdAt: string,
+  ): Promise<Buffer> => {
+    const made = await makeArchive(f.db, f.directory, sealingKey, {
+      format: 1,
+      createdAt,
+      origin,
+      image: archiveImage,
+      runtimeEnvironment: 'PRIVATE_RUNTIME=value\n',
+      keyId: 'default',
+    });
+    try {
+      return (await readFile(made.archive)).subarray(0, STAMP_HEAD_BYTES);
+    } finally {
+      await made.dispose();
+    }
+  };
+  const remote = (download?: (key: string, path: string) => Promise<void>) =>
+    (f.service.restores.options.remote = () => ({
+      put: async () => {},
+      remove: async () => {},
+      list: async () => [...heads.keys()],
+      head: async (key, bytes) => {
+        headCalls.push(key);
+        const value = heads.get(key);
+        if (!value) throw new Error('head failed');
+        return value.subarray(0, bytes);
+      },
+      download: async (key, path) => {
+        await download?.(key, path);
+        return key;
+      },
+    }));
+  return { f, key, retained, heads, headCalls, point, head, remote };
+}
+const other = `sha256:${'b'.repeat(64)}`;
+const marked = (catalog: { entries: { createdAt: number; image: string }[] }) =>
+  Object.fromEntries(
+    catalog.entries.map((entry) => [new Date(entry.createdAt).toISOString(), entry.image]),
+  );
+
+test('catalog marks compatible and incompatible points from authenticated stamps only', async () => {
+  const m = await markFixture();
+  const at = (n: number) => `2026-10-2${n}T01:02:03.000Z`;
+  m.point(at(1), await m.head(m.key, image, at(1)));
+  m.point(at(2), await m.head(m.key, other, at(2)));
+  // A rotation key still marks.
+  m.point(at(3), await m.head(m.retained, image, at(3)));
+  // Missing: an archive from before stamps, or any bytes without one.
+  m.point(at(4), Buffer.from('SPINEL01-no-stamp-in-this-header'));
+  // Forged: a stamp sealed by someone without the deployment key.
+  m.point(at(5), await m.head(randomBytes(32), image, at(5)));
+  // Renamed: a genuine stamp whose time disagrees with the object name.
+  m.point(at(6), await m.head(m.key, image, at(7)));
+  // An unreadable head leaves the point unknown without failing the catalog.
+  m.heads.set(`workspace/2026-10-28T01-02-03.000Z-${randomUUID()}.spinel`, Buffer.alloc(0));
+  m.remote();
+  const catalog = await m.f.service.restores.catalog();
+  expect(marked(catalog)).toMatchObject({
+    [at(1)]: 'compatible',
+    [at(2)]: 'incompatible',
+    [at(3)]: 'compatible',
+    [at(4)]: 'unknown',
+    [at(5)]: 'unknown',
+    [at(6)]: 'unknown',
+    '2026-10-28T01:02:03.000Z': 'unknown',
+  });
+  // The image identity never leaves the server: only the three-state mark does.
+  expect(JSON.stringify(catalog)).not.toContain('sha256:');
+  expect(Object.keys(catalog.entries[0]).sort()).toEqual(['createdAt', 'id', 'image']);
+});
+
+test('catalog learns nothing without a stamp-capable destination or a running image', async () => {
+  const m = await markFixture();
+  const at = '2026-10-21T01:02:03.000Z';
+  m.point(at, await m.head(m.key, image, at));
+  m.remote();
+  m.f.service.restores.options.image = undefined;
+  expect(marked(await m.f.service.restores.catalog())).toEqual({ [at]: 'unknown' });
+  expect(m.headCalls).toEqual([]);
+  m.f.service.restores.options.image = image;
+  const remote = m.f.service.restores.options.remote!;
+  m.f.service.restores.options.remote = (config) => {
+    const store = remote(config);
+    delete store.head;
+    return store;
+  };
+  expect(marked(await m.f.service.restores.catalog())).toEqual({ [at]: 'unknown' });
+});
+
+test('catalog bounds marking reads to the newest points', async () => {
+  const m = await markFixture();
+  for (let i = 0; i < 52; i++) {
+    const at = new Date(Date.UTC(2026, 9, 1, 0, i)).toISOString();
+    m.point(at, await m.head(m.key, image, at));
+  }
+  m.remote();
+  const catalog = await m.f.service.restores.catalog();
+  expect(catalog.entries).toHaveLength(52);
+  expect(m.headCalls).toHaveLength(50);
+  // Entries are newest first. The two oldest are unmarked, not hidden: they
+  // verify fully when selected.
+  expect(catalog.entries.slice(0, 50).every((entry) => entry.image === 'compatible')).toBe(true);
+  expect(catalog.entries.slice(50).map((entry) => entry.image)).toEqual(['unknown', 'unknown']);
+});
+
+// The central safety property: a mark, even a trusted "compatible" one, is not
+// verification. Preparation runs the same full verifier for every point and its
+// refusal decides, so a swapped body under a genuine stamp still fails.
+test.each(['compatible', 'incompatible', 'unknown'] as const)(
+  'a point marked %s still goes through full verification before any restore is offered',
+  async (mark) => {
+    const m = await markFixture();
+    const at = '2026-10-22T01:02:03.000Z';
+    m.point(
+      at,
+      mark === 'unknown'
+        ? Buffer.from('forged-or-missing')
+        : await m.head(m.key, mark === 'compatible' ? image : other, at),
+    );
+    m.remote((_key, path) =>
+      writeFile(path, Buffer.from('ciphertext-not-matching-its-header'), { mode: 0o600 }),
+    );
+    const catalog = await m.f.service.restores.catalog();
+    expect(catalog.entries[0].image).toBe(mark);
+    m.f.prepare.mockImplementation(async () => {
+      throw new RecoveryResourceError('backup-unreadable');
+    });
+    const prepared = await m.f.service.restores.create(randomUUID(), m.f.proof(), {
+      kind: 'catalog',
+      artifactId: catalog.entries[0].id,
+    });
+    await expect
+      .poll(
+        () => m.f.service.restores.status(prepared.id, m.f.actor.id, m.f.session.token_hash).state,
+      )
+      .not.toBe('preparing');
+    expect(m.f.prepare).toHaveBeenCalled();
+    expect(
+      m.f.service.restores.status(prepared.id, m.f.actor.id, m.f.session.token_hash),
+    ).toMatchObject({
+      state: 'failed',
+      error: new RecoveryResourceError('backup-unreadable').message,
+    });
   },
 );

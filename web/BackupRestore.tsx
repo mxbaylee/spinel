@@ -23,7 +23,17 @@ import './administration.css';
 import './backup-restore.css';
 
 type Status = RestoreStatus;
-type Entry = { id: string; createdAt: number };
+// `image` is advisory, from authenticated metadata written at backup time.
+// Every point still verifies fully when prepared; only a confirmed mismatch is
+// not selectable, because this image would refuse it after preparation.
+type Entry = { id: string; createdAt: number; image: 'compatible' | 'incompatible' | 'unknown' };
+const imageNote = {
+  compatible: 'made by this image',
+  incompatible: 'made by another image, cannot be restored here',
+  unknown: 'image not confirmed',
+} as const;
+const FRESH_HOST_GUIDE =
+  'https://github.com/mxbaylee/spinel/blob/main/docs/backups.md#restore-onto-a-fresh-host';
 type Phase = 'idle' | 'verifying' | 'creating' | 'uploading' | 'confirming' | 'cancelling';
 const MAX_ARCHIVE_BYTES = 5 * 1024 ** 3;
 // The server owns each immutable, session-capped deadline. This only bounds the
@@ -847,7 +857,11 @@ export function BackupRestore({
                   disabled={phase !== 'idle'}
                   options={[
                     { value: '', label: 'Choose a recovery point' },
-                    ...entries.map((entry) => ({ value: entry.id, label: time(entry.createdAt) })),
+                    ...entries.map((entry) => ({
+                      value: entry.id,
+                      label: `${time(entry.createdAt)}, ${imageNote[entry.image]}`,
+                      disabled: entry.image === 'incompatible',
+                    })),
                   ]}
                   onChange={setSelection}
                 />
@@ -857,6 +871,15 @@ export function BackupRestore({
                   instead.
                 </p>
               ) : null}
+              {entries?.some((entry) => entry.image === 'incompatible') && (
+                <p className="sp-muted">
+                  Backups made by another application image cannot be restored by this one. To use
+                  one, restore it onto a fresh host running the image that made it.{' '}
+                  <a href={FRESH_HOST_GUIDE} target="_blank" rel="noopener noreferrer">
+                    Restore onto a fresh host
+                  </a>
+                </p>
+              )}
               {catalogError && <p role="alert">{catalogError}</p>}
               <Button
                 disabled={catalogLoading || phase !== 'idle'}

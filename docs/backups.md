@@ -428,8 +428,43 @@ The parent removes its owned verification target even after killing the worker.
 The source artifact and last good verification remain available on failure.
 Older SPINEL01 bundles still work with offline `restore`; bundles without the new
 inventory cannot claim complete weekly verification and are reported as failed.
+New bundles are SPINEL02: the header also carries an [image stamp](#image-stamp-and-restore-catalog-marks).
+Restore reads both formats.
 Verification requires the recorded origin and current compatible image metadata;
 test an older image separately rather than silently accepting a version mismatch.
+
+## Image stamp and restore catalog marks
+
+🏷️ SPN-127. The restore catalog tells the Operator which saved backups this running
+image can restore, before selection, so nobody uploads and verifies a backup only
+to learn it needs another image. The reasoning is in
+[the SPN-127 record](implementation/SPN-127.md#decision-an-authenticated-stamp-in-the-archive-header).
+
+- **Written at backup time.** A SPINEL02 header carries a short stamp (image
+  reference, creation time, key ID) and its MAC. The MAC is HMAC-SHA256 under a key
+  derived from the backup key with a fixed label, so the encryption key is not
+  reused. The stamp holds no origin, runtime environment, path or secret. The whole
+  header is also the GCM additional data, so a stamp moved onto other bytes fails
+  full verification.
+- **Read without decrypting.** The catalog reads at most 454 bytes of each of the
+  newest 50 points (a ranged read on Spaces, a bounded read on the filesystem) and
+  trusts a stamp only if its MAC verifies under the active or a retained key and its
+  time matches the object name. The response carries `compatible`, `incompatible`
+  or `unknown`, never the image reference.
+- **`unknown` is not a verdict.** A missing stamp (a SPINEL01 backup or one with an
+  image name too long to stamp), a forged or wrong-key stamp, a renamed object, an
+  unreadable head, a point beyond the newest 50, or an unset running image are all
+  `unknown`. They stay selectable and verify fully like any other point. An object
+  name or tag is a hint and never authority.
+- **A mark never replaces verification.** Preparation is unchanged: every point,
+  including one marked `compatible`, goes through the full encrypted
+  authentication, inventory, origin and image check before any restore is offered,
+  and a direct request for an `incompatible` point is still refused by that same
+  check. The only effect of `incompatible` is that Administration will not offer it
+  for selection and shows the fresh-host path.
+- **Personas.** The Operator sees the marks. Owner and Collaborator are protected
+  from a restore that cannot succeed and see nothing new. Link guests are
+  unaffected. Agent judgment, 2026-11-25.
 
 ## Credential and encryption-key rotation
 
@@ -474,7 +509,11 @@ deployment.
    needs the complete `.spinel` bundle, at most 5 GiB, and its separate original
    32-byte recovery key. It needs no automatic backup destination. A bare SQLite
    file is not accepted. Catalog recovery uses the deployment's configured active
-   and retained keys; it does not ask the browser for provider credentials.
+   and retained keys; it does not ask the browser for provider credentials. Each
+   point says in words whether this image made it, and a point made by another image
+   is not selectable and points to
+   [Restore onto a fresh host](#restore-onto-a-fresh-host). See
+   [image stamp and catalog marks](#image-stamp-and-restore-catalog-marks).
 2. Complete the fresh Operator passkey check. Its five-minute window admits the
    preparation; upload, verification and the preview then have one 30-minute
    deadline, capped by the initiating session's expiry. The deadline cannot be

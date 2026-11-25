@@ -142,6 +142,24 @@ export class SpacesStore implements RemoteStore {
         await this.remove(key, signal);
     }
   }
+  async head(key: string, bytes: number, signal: AbortSignal) {
+    this.validKey(key);
+    const bounded = AbortSignal.any([signal, AbortSignal.timeout(30_000)]);
+    const result = await this.client.send(
+      new GetObjectCommand({ Bucket: this.config.bucket, Key: key, Range: `bytes=0-${bytes - 1}` }),
+      { abortSignal: bounded },
+    );
+    if (!result.Body) throw new Error('Backup is empty.');
+    const chunks: Buffer[] = [];
+    let length = 0;
+    // A server that ignored the range must not make this read the whole object.
+    for await (const chunk of result.Body as Readable) {
+      chunks.push(chunk as Buffer);
+      length += (chunk as Buffer).length;
+      if (length >= bytes) break;
+    }
+    return Buffer.concat(chunks).subarray(0, bytes);
+  }
   async remove(key: string, signal: AbortSignal) {
     this.validKey(key, true);
     signal.throwIfAborted();
