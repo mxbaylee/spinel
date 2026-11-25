@@ -288,7 +288,9 @@ it before writing one: a text-only "Loading…" or a new spinner in new or chang
 UI is a review defect, so reuse the shared component for any new loading concept.
 The standalone text-only rows that load or open content moved to the runner in
 SPN-093 (owner, chat 2026-11-24); progress lines for an action beside its pending
-button ("Waiting for your passkey…", "Sending feedback…") stay text. The
+button ("Waiting for your passkey…", "Sending feedback…") and loading text that shares one
+status line with a result or access message (PDF export, appearance access, search count,
+the worksheet picker placeholder) stay text. The
 runner still does not go beside every pending button or on the native Univer
 loader. Owner, chat 2026-11-24 (SPN-093).
 

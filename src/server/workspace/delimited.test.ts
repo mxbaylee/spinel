@@ -14,6 +14,7 @@ import {
 
 test('the filename alone selects comma or tab, and nothing else is guessed', () => {
   expect(delimiterFor('a.csv')).toBe(',');
+  expect(delimiterFor('A.CSV')).toBe(',');
   expect(delimiterFor('A.TSV')).toBe('\t');
   expect(delimiterFor('a.tsv.csv')).toBe(',');
   for (const name of ['a.txt', 'a', 'a.csv.json', 'a.tab', 'a.xlsx', '.csv.bak', undefined, 7])

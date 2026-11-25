@@ -83,7 +83,8 @@ approval of a proposed conclusion.
   return focus to a sensible place? Are names and states understandable without
   relying on color, an icon alone or hover?
 - Does every new or changed waiting state use the shared `LoadingReview` runner, not plain
-  text or a new spinner? Do loading, errors, long names, retry, empty data and narrow viewports retain
+  text or a new spinner?
+- Do loading, errors, long names, retry, empty data and narrow viewports retain
   stable geometry and a clear next step? Does theme switching preserve meaning?
 - Do the shared controls, color tokens, spacing and modal title icons follow the
   playbook? Does a departure solve a demonstrated problem?
