@@ -15,10 +15,8 @@ test('hosted ordinary and opt-in startup owners receive the exact build evidence
     );
   }
 });
-import {
-  createBootstrapJournal,
-  sanitizeBootstrapSnapshot,
-} from '../../src/shared/bootstrapEvidence.ts';
+import { createBootstrapJournal } from '../../src/shared/bootstrapEvidence.ts';
+import { sanitizeBootstrapSnapshot } from '../../e2e/bootstrap-snapshot.ts';
 
 test('initial bootstrap evidence distinguishes pending work and failure without mutable or later-operation contamination', () => {
   let clock = 100;

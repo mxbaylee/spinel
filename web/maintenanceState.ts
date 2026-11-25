@@ -57,8 +57,6 @@ function publish(next: Snapshot) {
 }
 
 export const getMaintenanceStatus = () => snapshot.status;
-export const getMaintenanceEpoch = () =>
-  snapshot.status?.available && snapshot.status.epoch ? snapshot.status.epoch : undefined;
 
 export function refreshMaintenanceStatus(): Promise<MaintenancePublicStatus | null> {
   if (active) return active;

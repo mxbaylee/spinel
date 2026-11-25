@@ -16,7 +16,7 @@ import { SpaceStore } from '../src/server/workspace/spaces.ts';
 import { syncNetwork } from './sync-network.ts';
 import { assertDocSoakContent, docSoakInsertion } from './sync-soak-intent.ts';
 import type { DocSoakInsertion } from './sync-soak-intent.ts';
-import { sanitizeBootstrapSnapshot } from '../src/shared/bootstrapEvidence.ts';
+import { sanitizeBootstrapSnapshot } from './bootstrap-snapshot.ts';
 import { downloadPdf, inspectPdf } from './pdfEvidence.ts';
 import {
   recordNativeSnapshots,

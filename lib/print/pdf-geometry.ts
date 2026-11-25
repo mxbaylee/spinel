@@ -10,28 +10,9 @@ function unsupported(): never {
  * with a standard incremental PDF update. Only this pinned backend's plain xref
  * output is accepted. Streams and original byte offsets are never rewritten.
  * This is not an importer or a general PDF parser.
+ *
+ * Preserves the individually stored section frame for every physical page.
  */
-export function preservePdfPageGeometry(
-  bytes: Uint8Array,
-  width: number,
-  height: number,
-  expectedPages: number,
-  check: () => void = () => {},
-): Uint8Array {
-  if (
-    !Number.isSafeInteger(expectedPages) ||
-    expectedPages < 1 ||
-    expectedPages > PRINT_LIMITS.pages
-  )
-    unsupported();
-  return preservePdfPageGeometries(
-    bytes,
-    Array.from({ length: expectedPages }, () => ({ width, height })),
-    check,
-  );
-}
-
-/** Preserve the individually stored section frame for every physical page. */
 export function preservePdfPageGeometries(
   bytes: Uint8Array,
   frames: readonly { width: number; height: number }[],
