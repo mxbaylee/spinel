@@ -89,6 +89,10 @@ test('file routes enforce sessions, CSRF, access, parser limits and admission th
     expect(malformed.status).toBe(400);
     expect((await malformed.json()).error).toContain('never closed');
     expect((await table('t.csv', 'x'.repeat(20 * 1024 * 1024 + 8192))).status).toBe(413);
+    // 12 MiB of line breaks is under 20 MiB raw but about 24 MiB as JSON, and says so.
+    const escaped = await table('t.csv', '\n'.repeat(12 * 1024 * 1024));
+    expect(escaped.status).toBe(413);
+    expect((await escaped.json()).error).toContain('many quotes or line breaks');
     expect(workspace.list(owner.id).filter((entry) => entry.name === 't')).toHaveLength(1);
     const imported = await upload();
     expect(imported.status).toBe(201);

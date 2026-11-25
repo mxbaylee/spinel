@@ -76,10 +76,11 @@ extensions are refused with the supported types named.
   converted nor calculated. The first row is data: there is no header detection.
 - **Shape.** Fields, quoted delimiters and line breaks, `""` escapes, CRLF/LF and
   Unicode keep their order. Empty fields stay empty (no cell is written). Rows keep
-  their own length; the worksheet is as wide as the widest row.
+  their own length; the worksheet is at least 20 columns wide, and wider when a row needs it.
 - **Malformed input is refused** with its line: an unterminated quote, a quote inside
   an unquoted field, text after a closing quote, or a NUL character.
-- **Limits.** The 20 MiB transfer cap and the 10 MiB native-content cap above, plus
+- **Limits.** The 20 MiB transfer cap (a little less for a file with many quotes or line
+  breaks, because the text travels as JSON) and the 10 MiB native-content cap above, plus
   at most 100,000 rows, 1,024 columns, 100,000 non-empty cells and 2,000,000 fields in
   all (empty ones count here, not as cells). Parsing stops at the
   first limit, and the shared transfer admission covers it, so it is bounded like a

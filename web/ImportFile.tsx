@@ -72,7 +72,11 @@ export function ImportFile({
     }
     if (file.size > (archive ? ARCHIVE_LIMIT : PORTABLE_LIMIT)) {
       setError(
-        archive ? 'Spinel archives must be at most 8 GiB.' : 'Univer files must be at most 20 MiB.',
+        archive
+          ? 'Spinel archives must be at most 8 GiB.'
+          : table
+            ? 'CSV and TSV files must be at most 20 MiB.'
+            : 'Univer files must be at most 20 MiB.',
       );
       return;
     }

@@ -137,7 +137,8 @@ test('row, column, populated-cell and byte limits refuse without parsing further
   expect(parseDelimited(bare(DELIMITED_MAX_FIELDS / 1000), ',').flat()).toHaveLength(
     DELIMITED_MAX_FIELDS,
   );
-  expect(() => parseDelimited(bare(DELIMITED_MAX_FIELDS / 1000 + 1), ',')).toThrow(
+  // One blank row past the limit is exactly 2,000,001 fields.
+  expect(() => parseDelimited(`${bare(DELIMITED_MAX_FIELDS / 1000)}\n`, ',')).toThrow(
     '2,000,000 fields',
   );
   expect(() => parseDelimited('x'.repeat(20 * 1024 * 1024 + 1), ',')).toThrow('20 MiB');
