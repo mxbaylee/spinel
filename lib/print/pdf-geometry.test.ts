@@ -1,6 +1,7 @@
 import { PDFDocument } from '@napi-rs/canvas';
 import { expect, test } from 'vitest';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
+import { PRINT_LIMITS } from './contract.ts';
 import { preservePdfPageGeometries } from './pdf-geometry.ts';
 import { retainPdf } from './native-test-support.ts';
 
@@ -37,6 +38,7 @@ test('does not change an integral frame and refuses mismatched or malformed nati
     ],
     [{ width: NaN, height: 526 }],
     [],
+    Array.from({ length: PRINT_LIMITS.pages + 1 }, () => ({ width: 451, height: 526 })),
   ])
     expect(() => preservePdfPageGeometries(original, frames)).toThrow(
       'page geometry cannot be preserved',
