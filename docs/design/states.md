@@ -66,8 +66,8 @@ theme changes alter the silhouette, not the meaning or pace of loading.
   Startup failure hides it and retains the brand and recovery sentence. This is
   not a replacement for the native Univer loader. Any new or changed waiting row, dialog or region
   with a status label uses this runner; a text-only status or a new spinner in new or changed UI
-  is a review defect, and the earlier standalone text-only loading rows moved to it in SPN-093
-  (owner, chat 2026-11-24). Do not add a runner beside every pending button or on
+  is a review defect, and the earlier standalone text-only rows that load or open content moved to it in
+  SPN-093 (owner, chat 2026-11-24); an action's progress line beside its pending button stays text. Do not add a runner beside every pending button or on
   the native Univer loader. Screen migrations choose one appropriate indicator for the affected
   region and preserve existing loading/error/retry behavior.
 

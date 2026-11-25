@@ -89,6 +89,11 @@ test('no value is trimmed, typed or evaluated', () => {
   const sheet = delimitedWorkbook([fields], 'T').sheets['sheet-1'];
   fields.forEach((value, column) => expect(sheet.cellData[0][column]).toEqual({ v: value, t: 1 }));
   expect(JSON.stringify(sheet)).not.toContain('"f"');
+  // Quoting does not license trimming either.
+  expect(parseDelimited('"  padded  ", ,"\t"\n', ',')).toEqual([['  padded  ', ' ', '\t']]);
+  const quoted = delimitedWorkbook([['  padded  ', ' ']], 'T').sheets['sheet-1'];
+  expect(quoted.cellData[0][0]).toEqual({ v: '  padded  ', t: 1 });
+  expect(quoted.cellData[0][1]).toEqual({ v: ' ', t: 1 });
 });
 
 test.each([
