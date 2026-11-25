@@ -1,7 +1,8 @@
 import { PDFDocument } from '@napi-rs/canvas';
 import { expect, test } from 'vitest';
 import { getDocument } from 'pdfjs-dist/legacy/build/pdf.mjs';
-import { preservePdfPageGeometries, preservePdfPageGeometry } from './pdf-geometry.ts';
+import { PRINT_LIMITS } from './contract.ts';
+import { preservePdfPageGeometries } from './pdf-geometry.ts';
 import { retainPdf } from './native-test-support.ts';
 
 function pdfBytes(width = 451, height = 526) {
@@ -18,7 +19,7 @@ function pdfBytes(width = 451, height = 526) {
 
 test('preserves fractional stored geometry without rewriting any native stream', async () => {
   const original = pdfBytes();
-  const adjusted = preservePdfPageGeometry(original, 450.625, 525.375, 1);
+  const adjusted = preservePdfPageGeometries(original, [{ width: 450.625, height: 525.375 }]);
   expect(Buffer.from(adjusted.subarray(0, original.length))).toEqual(Buffer.from(original));
   const pages = await retainPdf('fractional-frame', adjusted, 'output/pdf/spn-102');
   expect(pages[0].view).toEqual([0, 0, 450.625, 525.375]);
@@ -28,20 +29,26 @@ test('preserves fractional stored geometry without rewriting any native stream',
 
 test('does not change an integral frame and refuses mismatched or malformed native output', async () => {
   const original = pdfBytes();
-  expect(preservePdfPageGeometry(original, 451, 526, 1)).toBe(original);
-  for (const [width, height, count] of [
-    [450, 526, 1],
-    [451, 526, 2],
-    [NaN, 526, 1],
+  expect(preservePdfPageGeometries(original, [{ width: 451, height: 526 }])).toBe(original);
+  for (const frames of [
+    [{ width: 450, height: 526 }],
+    [
+      { width: 451, height: 526 },
+      { width: 451, height: 526 },
+    ],
+    [{ width: NaN, height: 526 }],
+    [],
+    Array.from({ length: PRINT_LIMITS.pages + 1 }, () => ({ width: 451, height: 526 })),
   ])
-    expect(() => preservePdfPageGeometry(original, width, height, count)).toThrow(
+    expect(() => preservePdfPageGeometries(original, frames)).toThrow(
       'page geometry cannot be preserved',
     );
   const altered = Buffer.from(original);
   const tail = altered.lastIndexOf('startxref');
   altered[tail + 10] = 57;
-  expect(() => preservePdfPageGeometry(altered, 450.625, 525.375, 1)).toThrow();
-  expect(() => preservePdfPageGeometry(original.slice(0, -16), 450.625, 525.375, 1)).toThrow();
+  const stored = [{ width: 450.625, height: 525.375 }];
+  expect(() => preservePdfPageGeometries(altered, stored)).toThrow();
+  expect(() => preservePdfPageGeometries(original.slice(0, -16), stored)).toThrow();
   const loading = getDocument({ data: new Uint8Array(original) });
   try {
     expect((await loading.promise).numPages).toBe(1);
