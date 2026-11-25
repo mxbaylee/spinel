@@ -19,6 +19,7 @@ import {
   loadBacklog,
   renderIndex,
   scores,
+  serializeConfig,
   staleScores,
   validateBacklog,
   withScore,
@@ -141,7 +142,7 @@ Then <result>.
 `,
   );
   config.next_id += 1;
-  writeFileSync(configPath, `${JSON.stringify(config, null, 2)}\n`);
+  writeFileSync(configPath, serializeConfig(config));
   console.log(`created ${file}; next_id is now ${config.next_id}`);
 } else if (command === 'pr') {
   const opts = args(rest);

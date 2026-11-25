@@ -67,6 +67,19 @@ export interface Result {
 }
 
 export const CONFIG_PATH = 'docs/todo/backlog.json';
+
+// The one way to write backlog.json. Non-ASCII characters (the emoji in
+// pr_title_exceptions) are kept as lowercase \uXXXX escapes, which is how the file
+// is committed. Plain JSON.stringify writes them as raw emoji, so every
+// `backlog:new` rewrote those two lines and the next edit put them back. Never
+// serialize the config any other way; a test pins the committed file to this output.
+export function serializeConfig(config: BacklogConfig): string {
+  const json = JSON.stringify(config, null, 2).replace(
+    /[\u0080-￿]/g,
+    (c) => `\\u${c.charCodeAt(0).toString(16).padStart(4, '0')}`,
+  );
+  return `${json}\n`;
+}
 export const EFFORT_SIZES: readonly string[] = ['S', 'M', 'L', 'XL'];
 export const IMPACT_SIZES: readonly string[] = ['S', 'M', 'L'];
 export const EFFORT_POINTS: Record<Effort, number> = { S: 0, M: 1, L: 2, XL: 3 };

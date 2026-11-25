@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
   changedLines,
   checkPullRequest,
@@ -9,6 +10,7 @@ import {
   renderIndex,
   baseScore,
   scores,
+  serializeConfig,
   staleScores,
   withScore,
   validateBacklog,
@@ -819,4 +821,17 @@ test('reservation creation is grooming-only and does not make the ticket impleme
     }).errors.join(),
     /not an open ticket on the base/,
   );
+});
+
+test('backlog.json keeps its \\u escapes: the writer escapes non-ASCII and the committed file matches it', () => {
+  const written = serializeConfig({
+    pr_title_exceptions: ['🧹 Groom backlog', '⬆️ Bump'],
+  } as unknown as BacklogConfig);
+  assert.match(written, /"\\ud83e\\uddf9 Groom backlog"/);
+  assert.match(written, /"\\u2b06\\ufe0f Bump"/);
+  assert.doesNotMatch(written, /[\u0080-￿]/);
+  assert.ok(written.endsWith('}\n'));
+  // Fails when anyone, human or agent, rewrites the file with raw emoji or by another serializer.
+  const committed = readFileSync('docs/todo/backlog.json', 'utf8');
+  assert.equal(committed, serializeConfig(JSON.parse(committed) as BacklogConfig));
 });
