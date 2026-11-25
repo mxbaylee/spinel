@@ -282,11 +282,13 @@ content arrives. The [loading pattern](states.md#loading) also defines the
 shared theme-aware runner in compact and page contexts. SPN-150 adopts it for
 workspace and guest admission.
 
-**Every waiting state with a status label uses that runner** (`LoadingReview`:
-compact in a row or dialog, page for a whole region). Check for it before writing
-a waiting state: a text-only "Loading…" or a new spinner is a review defect, so
-reuse the shared component for any new loading concept. The runner still does not
-go beside every pending button or on the native Univer loader.
+**A new or changed waiting state with a status label uses that runner**
+(`LoadingReview`: compact in a row or dialog, page for a whole region). Check for
+it before writing one: a text-only "Loading…" or a new spinner in new or changed
+UI is a review defect, so reuse the shared component for any new loading concept.
+Existing text-only waiting states migrate when their screen is next changed. The
+runner still does not go beside every pending button or on the native Univer
+loader. Owner, chat 2026-11-24 (SPN-093).
 
 ## Storybook
 
