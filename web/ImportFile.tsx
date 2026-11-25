@@ -7,6 +7,7 @@ import type { WorkspaceItem } from '../src/shared/workspace.ts';
 import { itemsRequest } from './itemsApi.ts';
 import { refreshMaintenanceStatus } from './maintenanceState.ts';
 import { Button, Modal } from '../src/ui/redesign/Controls.tsx';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 import { ArchiveRequestError, importWorkspaceArchive } from './workspaceArchiveApi.ts';
 import './fileDialog.css';
 
@@ -194,11 +195,14 @@ export function ImportFile({
         onChange={(event) => void upload(event.currentTarget.files)}
       />
       {busy ? (
-        <p role="status">
-          {busy === 'archive'
-            ? `Importing ${filename}. Your files will appear together when the archive is ready.`
-            : 'Importing…'}
-        </p>
+        <LoadingReview
+          size="compact"
+          label={
+            busy === 'archive'
+              ? `Importing ${filename}. Your files will appear together when the archive is ready.`
+              : 'Importing…'
+          }
+        />
       ) : (
         <p>
           {parentId === null

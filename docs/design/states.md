@@ -62,6 +62,7 @@ theme changes alter the silhouette, not the meaning or pace of loading.
 - **Scope:** SPN-150 reuses this existing silhouette for initial HTML, workspace
   admission and guest document/Space admission, alongside its existing native-editor
   use. Keep the gem and wordmark stationary; the runner is the one loading animation.
+  The import dialog (SPN-093) uses the compact runner for its one waiting row, native and archive.
   Startup failure hides it and retains the brand and recovery sentence. This is
   not a production-wide loader replacement. Do not add a runner beside every pending button or
   native Univer loader. Screen migrations choose one appropriate indicator for
