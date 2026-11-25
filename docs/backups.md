@@ -603,18 +603,27 @@ the original operation deadline for failed-trial evidence and original-content
 recovery as well as the successful candidate path.
 
 The private journal retains at most **64 restore IDs**, including completed and
-failed attempts. Successful source/custody evidence is deliberately retained;
-there is no automatic pruning or supported journal-deletion shortcut. A 65th
-new ID is refused. Keep these records and plan recovery-root capacity accordingly;
-changing that bound or retention policy requires a separately reviewed recovery
-design ([SPN-125](todo/SPN-125.md)). Each attempt that reached activation keeps
+failed attempts. Evidence for **resolved** restores, meaning a committed backup
+or a recovered original, is pruned automatically: the supervisor keeps the newest
+**8** resolved restores and removes older ones oldest first, each with its journal
+record, when it starts and when the Operator starts a new preparation. The removal
+is a supervisor-owned, journaled operation with its own crash cuts, never a file
+deletion by the application or an Operator shortcut; see the
+[maintenance runbook](maintenance.md#resolved-restore-evidence). Unresolved,
+ambiguous or in-flight evidence is never removed, and neither are restores that
+failed before replacing the workspace: those IDs and their retained sources stay,
+so a deployment with 56 or more of them still refuses a new ID. Keep these records
+and plan recovery-root capacity accordingly; changing the keep window or the
+64-ID bound requires a separately reviewed recovery design
+([SPN-125](implementation/SPN-125.md)). Each attempt that reached activation keeps
 its encrypted source (the archive's size, at most 5 GiB), the preserved original
 database files and a frozen comparison copy (each about the live database's
 size), plus one more database-sized capture for each failed trial. Plan at least
-the archive size plus three times the database size per restore you expect before
-retention lands, and after a rehearsal measure the recovery root with
+the archive size plus three times the database size for each retained restore:
+the 8 resolved restores, every failed attempt, and one more for the restore in
+progress. After a rehearsal measure the recovery root with
 `du -sh <recovery root>` rather than relying on this estimate. Preparation's
-disk estimate covers the next attempt only, not this accumulation. The supported layout mounts the application directory as one filesystem:
+disk estimate covers the next attempt only, not this retained total. The supported layout mounts the application directory as one filesystem:
 the database and any WAL/SHM files must share its device. The recovery root may
 use a separate volume. Free bytes are counted once per device, while the existing
 application and recovery safety reserves both remain required on a shared volume.

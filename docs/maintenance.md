@@ -195,6 +195,35 @@ field, without inheriting application credentials. Unknown state remains in
 maintenance. The proxy can continue explaining the outage while application auth
 and ordinary jobs are unavailable.
 
+## Resolved restore evidence
+
+A restore that committed a backup or recovered the original keeps its encrypted
+source, preserved originals and frozen copy until the supervisor prunes them.
+
+> 🗄️ **Retention:** the newest **8** resolved restores are kept; older ones are
+> pruned automatically.
+
+The supervisor keeps the newest **8** resolved restores and removes the older
+ones, oldest first, together with each one's journal record. It does this at
+startup and whenever the Operator starts a new preparation, so the 64-ID bound
+does not stop a healthy workspace. Restores that failed before replacing the
+workspace are not resolved by this policy and are kept.
+
+Nothing is removed while any restore is unresolved, referenced by the journal, or
+has evidence that is not the expected private directory; the run stops before it
+touches a newer restore. Each removal moves the evidence, then its record, into
+`restore-pruned/` under the recovery root and then deletes both. If the
+supervisor stops partway, the next start or new preparation finishes the removal from what is on
+disk. Leave `restore-pruned/` alone: it holds only evidence already past the
+policy, and an unrecognised name in it makes pruning refuse and the next
+preparation fail with _Restore evidence pruning refused an unexpected state_ until
+the cause is investigated. Never delete `restore-*` directories or journals by
+hand, even for old restores; use the supervisor so a record never outlives, or
+is removed before, its evidence. To see the remaining capacity, count the IDs in
+`restore-jobs/` (at most 64) and measure the recovery root with
+`du -sh <recovery root>`; [backups](backups.md#restore-through-admin) gives the
+per-restore estimate.
+
 ## An unresolved restore
 
 Admin reports an unresolved or unknown restore outcome, the workspace stays in

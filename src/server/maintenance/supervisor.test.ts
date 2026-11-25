@@ -38,6 +38,20 @@ import {
 import type { RestoreCapacityVolume } from './restore-capacity.ts';
 import { estimateRestoreCapacity } from './restore-capacity.ts';
 import type { RestoreAdmission } from './supervisor.ts';
+
+// SPN-125 wiring only: the real pruning runs; this counts its calls. Behavior is
+// owned by the restore-jobs store tests and their real-process interruption cuts.
+const pruneSpy = vi.hoisted(() => ({ calls: 0 }));
+vi.mock('./restore-prune.ts', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./restore-prune.ts')>();
+  return {
+    ...actual,
+    pruneRestoreEvidence: (...args: Parameters<typeof actual.pruneRestoreEvidence>) => {
+      pruneSpy.calls++;
+      return actual.pruneRestoreEvidence(...args);
+    },
+  };
+});
 import type { RestoreObservation } from '../backup/restore-control.ts';
 import { assertWorkspaceHandlesClosed, MaintenanceSupervisor } from './supervisor.ts';
 import { processResourcesReleased } from './process-exit.ts';
@@ -3192,6 +3206,38 @@ test('admission durably retains source before ACK and exact retries reuse its co
     f.supervisor.admitPreparedRestore({ ...f.request, id: randomUUID() }),
   ).rejects.toThrow('current restore');
   expect(f.supervisor.status()).toEqual(before);
+});
+
+test('a new preparation prunes first; an exact retry does not, and a refused prune admits nothing', async () => {
+  const f = await admissionFixture();
+  const junk = join(f.root, 'restore-pruned', 'not-a-tombstone');
+  await mkdir(join(f.root, 'restore-pruned'), { mode: 0o700 });
+  await writeFile(junk, 'x');
+  pruneSpy.calls = 0;
+  await expect(f.supervisor.admitPreparedRestore(f.request)).rejects.toThrow('unexpected state');
+  expect(pruneSpy.calls).toBe(1);
+  // Refusal came before any record or journal reference existed.
+  expect(await readdir(join(f.root, 'restore-jobs'))).toEqual([]);
+  expect(f.supervisor.journal.state.restoreJob).toBeNull();
+  expect(await readFile(junk, 'utf8')).toBe('x');
+  await rm(junk);
+  const admitted = await f.supervisor.admitPreparedRestore(f.request);
+  expect(admitted.record.phase).toBe('source-retained');
+  expect(pruneSpy.calls).toBe(2);
+  await f.supervisor.admitPreparedRestore(f.request);
+  expect(pruneSpy.calls).toBe(2);
+});
+
+test('startup retention runs but a refused prune never keeps the workspace closed', async () => {
+  const f = await fixture();
+  await mkdir(join(f.root, 'restore-jobs'), { mode: 0o700 });
+  await mkdir(join(f.root, 'restore-pruned'), { mode: 0o700 });
+  await writeFile(join(f.root, 'restore-pruned', 'not-a-tombstone'), 'x');
+  pruneSpy.calls = 0;
+  const supervisor = await f.supervisor();
+  expect(pruneSpy.calls).toBe(1);
+  expect(supervisor.journal.state.lastFailure).not.toBe('restore-job-pending');
+  expect(await readFile(join(f.root, 'restore-pruned', 'not-a-tombstone'), 'utf8')).toBe('x');
 });
 
 test.each(['copy', 'revocation'])(

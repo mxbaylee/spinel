@@ -75,6 +75,7 @@ import {
   restoreJobOperation,
 } from './restore-jobs.ts';
 import type { RestoreJobRecord } from './restore-jobs.ts';
+import { pruneRestoreEvidence } from './restore-prune.ts';
 import { coldRecoveryPriorGenerations } from './restore-cold-state.ts';
 import { restoreIntentHash } from './restore-job-intent.ts';
 import type { RestoreJobIntent } from './restore-job-intent.ts';
@@ -486,6 +487,7 @@ export class MaintenanceSupervisor {
       if (this.journal.state.databaseIdentity) this.assertGeneration();
       this.transition({ child: null, verifier: null });
     }
+    let restoresReconciled = false;
     try {
       if (!reconciliationFailure) {
         await this.reconcileCommittedRestore(previous);
@@ -495,9 +497,11 @@ export class MaintenanceSupervisor {
         await this.reconcileUnexecutedRestore();
       }
       this.journal.assertNoPendingRestoreJobs();
+      restoresReconciled = true;
     } catch {
       this.failure('restore-job-pending');
     }
+    if (restoresReconciled) this.pruneRestoreEvidenceAtStartup();
     this.reconcileNotice(true);
     this.observePhase();
     // Only expose cold commands after every startup reconciliation has finished;
@@ -527,6 +531,20 @@ export class MaintenanceSupervisor {
       }
     }, 1000);
     this.noticeTimer.unref();
+  }
+  /** Retention run. Failure never keeps the workspace closed: the next new
+   * preparation repeats the work and refuses there if it still cannot finish. */
+  private pruneRestoreEvidenceAtStartup() {
+    let jobs: RestoreJobs | undefined;
+    try {
+      lstatSync(this.journal.path('restore-jobs'));
+      jobs = new RestoreJobs(this.journal, this.now);
+      pruneRestoreEvidence(this.journal, jobs);
+    } catch {
+      // ENOENT means no restore ever ran; anything else is retried at admission.
+    } finally {
+      jobs?.close();
+    }
   }
   /** A preexecution admission cannot own database mutation or an opening
    * permit. On restart, fail only its exact closed target; never manufacture new
@@ -1845,6 +1863,10 @@ export class MaintenanceSupervisor {
       await this.recheckRestoreAuthorityOwned(request.id, request.authority);
       assertActive();
       signal.throwIfAborted();
+      // A new ID may need room: remove resolved evidence past retention first.
+      // The supervisor owns this journaled removal; refusal here changes nothing.
+      if (!existing) pruneRestoreEvidence(this.journal, jobs);
+      assertActive();
       publicationStarted = true;
       let record = jobs.admit(intent).record;
       if (token) this.restoreContinuation = { id: request.id, intentHash: hash, token };

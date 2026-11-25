@@ -418,6 +418,74 @@ test.each([false, true])(
   },
 );
 
+test.each(['settles', 'times out'] as const)(
+  'a stopped background replay keeps its sent request alive until it %s, even when stopped twice',
+  async (how) => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    const download = downloaded();
+    download.outbox = {
+      version: 1,
+      ...scope,
+      checkpoint: { ...structuredClone(checkpoint), buffer: [[insertText('Saved offline')]] },
+    };
+    session(download);
+    type Watcher = Parameters<ReturnType<typeof binding.attachSpinelSync>['watch']>[0];
+    const watching = Promise.withResolvers<Watcher>();
+    const stopped = vi.fn();
+    vi.spyOn(binding, 'attachSpinelSync').mockImplementation((options) => {
+      const dispose = () => options.offline?.dispose();
+      return {
+        watch(watcher: Watcher) {
+          watching.resolve(watcher);
+          return { retry() {}, recover() {}, exportRecovery() {}, discardRecovery() {}, dispose };
+        },
+        async stop() {
+          stopped();
+        },
+        dispose,
+      };
+    });
+    const replay = replayOfflineItem(
+      scope.account,
+      {
+        itemId: scope.item,
+        spaceId: scope.spaceId,
+        name: bundle.name,
+        kind: 'doc',
+        readOnly: false,
+        revision: bundle.revision,
+        downloadedAt: 0,
+        pending: true,
+      },
+      () => true,
+    );
+    try {
+      const watcher = await watching.promise;
+      let released = false;
+      void replay.stop().then(() => {
+        released = true;
+      });
+      // Opening the editor stops it from the file list and again from editor admission.
+      void replay.stop();
+      // Opening the editor asked it to stop, but the sent request may be committed with its
+      // receipt still in flight. Yielding now would leave the editor a stale base.
+      await vi.advanceTimersByTimeAsync(1_999);
+      expect(stopped).not.toHaveBeenCalled();
+      expect(released).toBe(false);
+      if (how === 'settles')
+        watcher.publish({ local: 'synced' } as Parameters<Watcher['publish']>[0]);
+      else await vi.advanceTimersByTimeAsync(1);
+      await replay.done;
+      expect(stopped).toHaveBeenCalledOnce();
+      expect(released).toBe(true);
+    } finally {
+      await replay.stop();
+      await replay.done.catch(() => {});
+      vi.useRealTimers();
+    }
+  },
+);
+
 test.each(['account change', 'copy removal'] as const)(
   'background admission stops after delayed device lookup and %s',
   async (change) => {

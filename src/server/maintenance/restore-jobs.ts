@@ -1128,6 +1128,23 @@ export class RestoreJobs {
     this.clock(snapshot);
     return { record: structuredClone(record), created: true };
   }
+  /** Supervisor-owned retirement of one resolved record (SPN-125). One atomic
+   * rename takes the whole job directory out of the inventory; the caller owns
+   * the destination tombstone and its deletion. The record must still be the
+   * committed one named by `hash`. An uncertain rename poisons this instance.
+   */
+  retire(id: string, hash: string, destination: string) {
+    const current = this.read(id);
+    if (!current || current.intentHash !== hash || !isCommittedRestoreJob(current)) throw refused();
+    this.check();
+    try {
+      renameSync(this.path(id), destination);
+      fsyncSync(this.descriptor);
+    } catch (error) {
+      this.uncertain = true;
+      throw error;
+    }
+  }
   /** Only pre-mutation admission checkpoints exist yet. Source custody must have
    * been independently verified before recording source-retained. This method
    * does not establish authority or authorize the next workspace operation.
