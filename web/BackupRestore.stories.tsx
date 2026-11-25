@@ -465,6 +465,17 @@ export const SavedBackupsImageMarks: Story = {
     );
   },
 };
+// The same state with the list left open, so the disabled mismatch is visible in captures.
+export const SavedBackupsImageMarksOpen: Story = {
+  ...SavedBackupsImageMarks,
+  play: async ({ canvasElement }) => {
+    const dialog = await openCatalog(canvasElement);
+    await userEvent.click(await dialog.findByRole('combobox', { name: 'Saved backup' }));
+    await expect(
+      await within(document.body).findByRole('option', { name: /made by another image/ }),
+    ).toHaveAttribute('aria-disabled', 'true');
+  },
+};
 export const SavedBackupsEmpty: Story = {
   parameters: { api: { ...read(null), 'GET /api/admin/restores/catalog': { entries: [] } } },
   play: async ({ canvasElement }) => {

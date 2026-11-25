@@ -1609,6 +1609,7 @@ test.each(['compatible', 'incompatible', 'unknown'] as const)(
     m.f.prepare.mockImplementation(async () => {
       throw new RecoveryResourceError('backup-unreadable');
     });
+    const before = m.f.prepare.mock.calls.length;
     const prepared = await m.f.service.restores.create(randomUUID(), m.f.proof(), {
       kind: 'catalog',
       artifactId: catalog.entries[0].id,
@@ -1618,7 +1619,8 @@ test.each(['compatible', 'incompatible', 'unknown'] as const)(
         () => m.f.service.restores.status(prepared.id, m.f.actor.id, m.f.session.token_hash).state,
       )
       .not.toBe('preparing');
-    expect(m.f.prepare).toHaveBeenCalled();
+    // Every mark, including incompatible, reaches full preparation: no short-circuit.
+    expect(m.f.prepare.mock.calls.length).toBeGreaterThan(before);
     expect(
       m.f.service.restores.status(prepared.id, m.f.actor.id, m.f.session.token_hash),
     ).toMatchObject({
