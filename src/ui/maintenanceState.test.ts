@@ -19,7 +19,7 @@ describe('public maintenance state', () => {
     vi.stubGlobal('fetch', fetch);
     const state = await import('../../web/maintenanceState.ts');
     await state.refreshMaintenanceStatus();
-    expect(state.getMaintenanceEpoch()).toBe(paused.epoch);
+    expect(state.getMaintenanceStatus()?.epoch).toBe(paused.epoch);
     for (const response of [
       new Response(null, { status: 404 }),
       Response.json({ error: 'Service unavailable' }, { status: 503 }),

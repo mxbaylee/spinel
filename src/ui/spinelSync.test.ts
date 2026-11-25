@@ -26,7 +26,6 @@ const maintenance = vi.hoisted(() => ({ status: null as MaintenancePublicStatus 
 vi.mock('../../web/maintenanceState.ts', () => ({
   maintenanceEvent: 'spinel-maintenance',
   getMaintenanceStatus: () => maintenance.status,
-  getMaintenanceEpoch: () => (maintenance.status?.available ? maintenance.status.epoch : undefined),
   refreshMaintenanceStatus: async () => maintenance.status,
 }));
 
