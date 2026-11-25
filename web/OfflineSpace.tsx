@@ -15,6 +15,7 @@ import { readSpaceLocation, spaceHref } from './spaceNavigation.ts';
 import type { SpaceLocation } from './spaceNavigation.ts';
 import './spaceOffline.css';
 import type { ConnectionState } from './connectionState.ts';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 const OfflineViewer = lazy(() =>
   import('./OfflineViewer.tsx').then((module) => ({ default: module.OfflineViewer })),
@@ -63,7 +64,7 @@ export function OfflineSpace({
       onProfile={onProfile}
       connection={connection ?? 'offline'}
       renderViewer={(selected, spaceId) => (
-        <Suspense fallback={<p role="status">Opening offline copy…</p>}>
+        <Suspense fallback={<LoadingReview size="compact" label="Opening offline copy…" />}>
           <OfflineViewer
             key={spaceId + ':' + selected.itemId}
             accountId={user.id}

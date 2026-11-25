@@ -4,6 +4,7 @@ import { accessLabel } from '../src/shared/workspace.ts';
 import type { SourceSharingReview, SourceSharingTarget } from '../src/shared/sourceSharing.ts';
 import { Button } from '../src/ui/redesign/Controls.tsx';
 import { itemsRequest } from './itemsApi.ts';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 function SourceList({
   targets,
@@ -142,9 +143,7 @@ export function SharingSources({
       aria-busy={loading}
     >
       {loading ? (
-        <p role="status" className="sp-muted">
-          Checking sources…
-        </p>
+        <LoadingReview size="compact" label="Checking sources…" />
       ) : error ? (
         <>
           <p role="alert">

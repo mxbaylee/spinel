@@ -6,6 +6,7 @@ import { ActionMenu, Button, Modal } from '../src/ui/redesign/Controls.tsx';
 import { itemsRequest } from './itemsApi.ts';
 import { Sharing } from './Sharing.tsx';
 import './spaceRootActions.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 export type SpaceRootActionMode = 'share' | 'rename' | 'move' | 'trash';
 type Mode = SpaceRootActionMode;
@@ -236,7 +237,7 @@ export function SpaceRootActions({
                     stay together.
                   </p>
                   {loading ? (
-                    <p role="status">Loading your folders…</p>
+                    <LoadingReview size="compact" label="Loading your folders…" />
                   ) : (
                     <label>
                       Destination

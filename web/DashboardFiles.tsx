@@ -9,6 +9,7 @@ import { ActionMenu } from '../src/ui/redesign/Controls.tsx';
 import type { Action } from '../src/ui/redesign/Controls.tsx';
 import { OfflineBadge } from './OfflineStatus.tsx';
 import './DashboardFiles.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 export type DashboardFileLayout = 'list' | 'grid';
 export type DashboardOfflineState =
@@ -71,9 +72,9 @@ export function DashboardFiles<T extends FileItem>({
     );
   if (loading)
     return (
-      <p className="dashboard-files-state" role="status">
-        Loading files…
-      </p>
+      <div className="dashboard-files-state">
+        <LoadingReview size="compact" label="Loading files…" />
+      </div>
     );
   return (
     <div className="dashboard-files-section">

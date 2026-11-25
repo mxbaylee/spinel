@@ -5,6 +5,7 @@ import { ActionMenu, Button, Modal } from '../src/ui/redesign/Controls.tsx';
 import { api } from './api.ts';
 import { offlineEpoch } from './offline/offlineStore.ts';
 import './profile.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 type Passkey = {
   id: string;
@@ -308,7 +309,7 @@ export function PasskeySettings({
     <section className="profile-key-settings sp-ui" aria-labelledby="passkeys-heading">
       <h2 id="passkeys-heading">Your passkeys</h2>
       <p>Add a passkey from another device or password manager so you can sign in there too.</p>
-      {loading && <p role="status">Loading passkeys…</p>}
+      {loading && <LoadingReview size="compact" label="Loading passkeys…" />}
       {!action && error && <p role="alert">{error}</p>}
       {!action && notice && <p role="status">{notice}</p>}
       {!action && reloadRequired && (

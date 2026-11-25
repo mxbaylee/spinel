@@ -3,6 +3,7 @@ import type { ItemAccessDetails } from '../src/shared/workspace.ts';
 import { Modal } from '../src/ui/redesign/Controls.tsx';
 import { itemsRequest } from './itemsApi.ts';
 import './fileDialog.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 export interface AccessDetailsTarget {
   id: string;
@@ -124,7 +125,7 @@ export function AccessDetails({
             <button onClick={() => setRetry((value) => value + 1)}>Retry access check</button>
           </>
         ) : !details ? (
-          <p role="status">Checking your access…</p>
+          <LoadingReview size="compact" label="Checking your access…" />
         ) : null}
       </div>
     </Modal>

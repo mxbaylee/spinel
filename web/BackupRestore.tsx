@@ -21,6 +21,7 @@ import {
 import { api } from './api.ts';
 import './administration.css';
 import './backup-restore.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 type Status = RestoreStatus;
 type Entry = { id: string; createdAt: number };
@@ -650,7 +651,7 @@ export function BackupRestore({
         contents stay private.
       </p>
       <div className="restore-status" aria-live="polite" aria-atomic="true">
-        {loading && <p role="status">Loading restore status…</p>}
+        {loading && <LoadingReview size="compact" label="Loading restore status…" />}
         {known && !available && (
           <p role="status">
             Supervised restore is unavailable. Follow the recovery guide to check this deployment.
@@ -839,7 +840,7 @@ export function BackupRestore({
           ) : (
             <>
               {catalogLoading ? (
-                <p role="status">Loading saved backups…</p>
+                <LoadingReview size="compact" label="Loading saved backups…" />
               ) : entries?.length ? (
                 <Choice
                   label="Saved backup"

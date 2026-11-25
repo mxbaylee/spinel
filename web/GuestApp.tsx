@@ -11,6 +11,7 @@ import type { ConnectionState } from './connectionState.ts';
 import { useBrowserOnline } from './useConnectionStatus.ts';
 import { Space } from './Space.tsx';
 import { startupDone } from './startupStage.ts';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 const Sheet = lazy(() => import('./SheetEditor.tsx').then((m) => ({ default: m.SheetEditor })));
 const Doc = lazy(() => import('./DocEditor.tsx').then((m) => ({ default: m.DocEditor })));
 
@@ -218,7 +219,7 @@ function GuestContent() {
           onExit={() => {}}
           onConnectionState={setEditorConnection}
           renderEditor={({ spaceId, item: page, onDirty, onConnectionState, saveStatusTarget }) => (
-            <Suspense fallback={<p role="status">Opening page…</p>}>
+            <Suspense fallback={<LoadingReview size="compact" label="Opening page…" />}>
               {page.kind === 'doc' ? (
                 <Doc
                   registerGuestEditor={registerGuestEditor}
@@ -274,7 +275,7 @@ function GuestContent() {
             : (editorConnection ?? 'reconnecting')
         }
       >
-        <Suspense fallback={<p role="status">Opening document…</p>}>
+        <Suspense fallback={<LoadingReview size="compact" label="Opening document…" />}>
           {item.kind === 'sheet' ? (
             <Sheet
               registerGuestEditor={registerGuestEditor}

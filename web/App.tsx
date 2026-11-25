@@ -63,6 +63,7 @@ import {
   offlineAccountEvent,
   offlineEpoch,
 } from './offline/offlineStore.ts';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 const HistoryBrowser = lazy(() =>
   import('./HistoryBrowser.tsx').then((m) => ({ default: m.HistoryBrowser })),
@@ -709,7 +710,7 @@ function AccountApp() {
           onExit={() => location.assign(rememberedFileHref(user.id))}
           onConnectionState={setEditorConnection}
           renderEditor={({ spaceId, item, onDirty, onConnectionState, saveStatusTarget }) => (
-            <Suspense fallback={<p role="status">Opening page…</p>}>
+            <Suspense fallback={<LoadingReview size="compact" label="Opening page…" />}>
               {item.kind === 'doc' ? (
                 <SpaceDocEditor
                   key={spaceId + ':' + item.id}
@@ -811,7 +812,7 @@ function AccountApp() {
           ) : user.isAdmin ? (
             <AdminPage key={user.id} currentId={user.id} />
           ) : location.pathname === '/preview' ? (
-            <Suspense fallback={<p>Loading preview…</p>}>
+            <Suspense fallback={<LoadingReview size="compact" label="Loading preview…" />}>
               <HistoryBrowser />
             </Suspense>
           ) : location.pathname === '/' &&

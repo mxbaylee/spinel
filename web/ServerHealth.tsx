@@ -8,6 +8,7 @@ import { Button } from '../src/ui/redesign/Controls.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { adminResponse, operatorDenied } from './adminRequest.ts';
 import './diagnostics.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 export function healthBytes(value: number | null) {
   if (value === null) return 'Unavailable';
@@ -158,7 +159,7 @@ export function ServerHealth() {
           Refresh server health
         </Button>
       </div>
-      {loading && <p role="status">Loading server health…</p>}
+      {loading && <LoadingReview size="compact" label="Loading server health…" />}
       {error && <p role="alert">{error}</p>}
       {data && (
         <>

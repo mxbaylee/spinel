@@ -10,6 +10,7 @@ import {
   useMaintenanceStatus,
 } from './maintenanceState.ts';
 import './administration.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 export interface BackupCheckStatus {
   lastGood: number | null;
   lastAttempt: number | null;
@@ -161,7 +162,7 @@ export function BackupStatus({ currentId }: { currentId?: string }) {
           resumes.
         </p>
       )}
-      {loading && <p role="status">Loading backup status…</p>}
+      {loading && <LoadingReview size="compact" label="Loading backup status…" />}
       {error ? (
         <p role="alert">{error}</p>
       ) : status ? (
@@ -245,7 +246,7 @@ export function BackupStatus({ currentId }: { currentId?: string }) {
             {verification?.overdue && (
               <p role="alert">A successful restore verification is overdue.</p>
             )}
-            {verification?.running && <p role="status">Checking recovery…</p>}
+            {verification?.running && <LoadingReview size="compact" label="Checking recovery…" />}
             <p>Last successful restore check: {timestamp(verification?.lastGood ?? null)}</p>
             <p>Last restore check attempt: {timestamp(verification?.lastAttempt ?? null)}</p>
             {verification?.keyId && <p>Verified encryption key: {verification.keyId}</p>}

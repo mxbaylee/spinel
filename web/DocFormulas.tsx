@@ -29,6 +29,7 @@ import type { DiagnosticContext } from '@spinel/diagnostics';
 import { useDiagnostics } from './useDiagnostics.tsx';
 import type { DiagnosticOperation } from './diagnosticsAccount.ts';
 import { observedFormulaParse } from './formulaDiagnostics.ts';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 // Univer's document is paper even when the surrounding application uses dark mode.
 export const formulaPaperColors = {
@@ -563,7 +564,7 @@ export function FormulaDialog({
         <details className="formula-source-picker">
           <summary>Find a cell or range</summary>
           {loadingSources ? (
-            <p role="status">Loading spreadsheets…</p>
+            <LoadingReview size="compact" label="Loading spreadsheets…" />
           ) : (
             <>
               <label>

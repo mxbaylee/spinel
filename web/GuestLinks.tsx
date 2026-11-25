@@ -7,6 +7,7 @@ import { clearDashboardNavigation } from './dashboardNavigation.ts';
 import { maintenanceFetch } from './maintenanceFetch.ts';
 import { spaceHref } from './spaceNavigation.ts';
 import './guestLinks.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 type Action = { kind: 'expiry' | 'off'; item: GuestLinkEntry };
 const timestamp = (value: number) => new Date(value).toLocaleString();
@@ -185,7 +186,7 @@ export function GuestLinks() {
       </div>
       <p className="sp-muted">Links on files you own. Secret addresses are never listed.</p>
       <div className="guest-links-feedback">
-        {loading && <p role="status">Loading guest links…</p>}
+        {loading && <LoadingReview size="compact" label="Loading guest links…" />}
         {notice && <p role="status">{notice}</p>}
         {error && <p role="alert">{error}</p>}
       </div>

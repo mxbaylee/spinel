@@ -6,6 +6,7 @@ import { ICON_CATEGORIES, searchPersonIcons } from '../src/profile/person-icon-s
 import { Modal, ModalTitleContent } from '../src/ui/redesign/Controls.tsx';
 import './profile.css';
 import { fillPresets } from '../src/ui/palette.ts';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 export function IconPicker({
   value,
@@ -197,7 +198,11 @@ export function ProfileSettings({
       <p>Your name and icon help collaborators recognize you.</p>
       {error && <p role="alert">{error}</p>}
       {!profile ? (
-        <p role="status">{error ? 'Reload to try again.' : 'Loading profile…'}</p>
+        error ? (
+          <p role="status">Reload to try again.</p>
+        ) : (
+          <LoadingReview size="compact" label="Loading profile…" />
+        )
       ) : (
         <form
           onSubmit={async (event) => {

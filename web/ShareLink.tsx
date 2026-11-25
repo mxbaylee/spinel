@@ -3,6 +3,7 @@ import { itemsRequest } from './itemsApi.ts';
 import { ActionMenu, Button, Modal } from '../src/ui/redesign/Controls.tsx';
 import { SharingAddress } from './SharingAddress.tsx';
 import './sharing.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 type Role = 'viewer' | 'editor';
 type State = {
@@ -196,7 +197,7 @@ export function ShareLink({
         )}
       </div>
       {loading ? (
-        <p role="status">Loading guest link…</p>
+        <LoadingReview size="compact" label="Loading guest link…" />
       ) : !loaded ? (
         <>
           <p role="alert">{error}</p>
