@@ -127,7 +127,9 @@ for (const kind of ['sheet', 'doc'] as const) {
       await page.getByRole('button', { name: 'New', exact: true }).click();
       await page.getByRole('menuitem', { name: 'Import file…', exact: true }).click();
       await expect(page.getByRole('button', { name: 'Choose file', exact: true })).toBeVisible();
-      await expect(page.getByLabel('Univer file or archive', { exact: true })).toBeHidden();
+      await expect(
+        page.getByLabel('Univer, CSV or TSV file or archive', { exact: true }),
+      ).toBeHidden();
       await page
         .getByRole('dialog', { name: 'Import file', exact: true })
         .getByRole('button', { name: 'Close dialog', exact: true })
@@ -150,7 +152,7 @@ for (const kind of ['sheet', 'doc'] as const) {
       // The empty folder pane and sibling file list must both handle drops.
       await drop('section.dashboard-content', 'not-a-univer.pdf', '%PDF-');
       await expect(page.getByRole('alert')).toContainText(
-        'Choose a Univer JSON file or Spinel ZIP archive',
+        'Choose a Univer JSON, CSV or TSV file or a Spinel ZIP archive',
       );
       await page
         .getByRole('dialog', { name: 'Import file', exact: true })
@@ -190,6 +192,163 @@ for (const kind of ['sheet', 'doc'] as const) {
     } finally {
       await page.goto('/sign-in').catch(() => {});
       // Folder parents use RESTRICT; remove this fixture's children first.
+      db.prepare('DELETE FROM workspace_items WHERE owner_id=? AND parent_id=?').run(
+        user.id,
+        folder.id,
+      );
+      db.prepare('DELETE FROM workspace_items WHERE owner_id=?').run(user.id);
+      db.prepare('DELETE FROM auth_users WHERE id=?').run(user.id);
+      db.close();
+    }
+  });
+}
+
+// SPN-093. Parser cases live in delimited.test.ts; the browser proves only that the exact
+// cells reach the native editor, survive an edit and reload, and that a refused file adds nothing.
+const TABLE = [
+  ['id', 'note', 'code'],
+  ['007', 'a,b', '=1+1'],
+  ['', 'two\nlines', '2026-01-02'],
+];
+const delimited = (kind: 'csv' | 'tsv') => {
+  const quote = (field: string) =>
+    /[",\t\r\n]/.test(field) ? `"${field.replaceAll('"', '""')}"` : field;
+  return `﻿${TABLE.map((row) => row.map(quote).join(kind === 'csv' ? ',' : '\t')).join('\r\n')}\r\n`;
+};
+
+for (const [kind, how] of [
+  ['csv', 'choose'],
+  ['tsv', 'drop'],
+] as const) {
+  test(`${kind} file is ${how === 'choose' ? 'chosen' : 'dropped'} as a literal new Sheet that edits and reloads`, async ({
+    page,
+    context,
+    baseURL,
+  }, info) => {
+    test.setTimeout(120_000);
+    page.setDefaultTimeout(10_000);
+    await page.setViewportSize({ width: 1440, height: 1100 });
+    const db = openDatabase(`test-results/${info.project.name}/app.sqlite`);
+    const auth = new AuthStore(db),
+      workspace = new WorkspaceStore(auth);
+    // Each case owns its user and folder, so retries and projects never share imported items.
+    const user = auth.createUser(`Table ${kind} ${info.testId}`);
+    const folder = workspace.create(user.id, { name: 'Tables', kind: 'folder', parentId: null });
+    await context.addCookies([
+      {
+        name: COOKIE_NAME,
+        value: auth.createSession(user.id).token,
+        url: baseURL!.replace('http:', 'https:'),
+        secure: true,
+        httpOnly: true,
+        sameSite: 'Strict',
+      },
+    ]);
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.stack ?? error.message));
+    const children = () => workspace.list(user.id).filter((entry) => entry.parentId === folder.id);
+    const closeDialog = () =>
+      page
+        .getByRole('dialog', { name: 'Import file', exact: true })
+        .getByRole('button', { name: 'Close dialog', exact: true })
+        .click();
+    try {
+      await page.goto(`/?item=${folder.id}`);
+      await page.getByRole('button', { name: 'New', exact: true }).click();
+      await page.getByRole('menuitem', { name: 'Import file…', exact: true }).click();
+      const input = page.getByLabel('Univer, CSV or TSV file or archive', { exact: true });
+      // Refusals first: each must explain itself and leave the folder empty.
+      await input.setInputFiles({
+        name: 'plain.txt',
+        mimeType: 'text/plain',
+        buffer: Buffer.from('a,b\n'),
+      });
+      await expect(page.getByRole('alert')).toContainText(
+        'Choose a Univer JSON, CSV or TSV file or a Spinel ZIP archive',
+      );
+      await input.setInputFiles({
+        name: 'latin1.csv',
+        mimeType: 'text/csv',
+        buffer: Buffer.from([0x61, 0x2c, 0xff, 0xc3, 0x28]),
+      });
+      await expect(page.getByRole('alert')).toContainText('not UTF-8 text');
+      await input.setInputFiles({
+        name: 'broken.tsv',
+        mimeType: 'text/tab-separated-values',
+        buffer: Buffer.from('a\t"b\n'),
+      });
+      await expect(page.getByRole('alert')).toContainText('never closed');
+      expect(children()).toHaveLength(0);
+      const file = {
+        name: `orders-${kind}.${kind}`,
+        mimeType: kind === 'csv' ? 'text/csv' : 'text/tab-separated-values',
+        buffer: Buffer.from(delimited(kind)),
+      };
+      if (how === 'choose') await input.setInputFiles(file);
+      else {
+        await closeDialog();
+        const transfer = await page.evaluateHandle(
+          ({ name, text }) => {
+            const data = new DataTransfer();
+            data.items.add(new File([text], name));
+            return data;
+          },
+          { name: file.name, text: file.buffer.toString() },
+        );
+        try {
+          await page
+            .locator('section.dashboard-content')
+            .dispatchEvent('drop', { dataTransfer: transfer });
+        } finally {
+          await transfer.dispose();
+        }
+      }
+      await expect.poll(() => children().length).toBe(1);
+      const [sheet] = children();
+      expect(sheet).toMatchObject({ kind: 'sheet', name: `orders-${kind}` });
+      const cells = async () => {
+        const { snapshot } = await (
+          await context.request.get(`/api/items/${sheet.id}/sheet`)
+        ).json();
+        expect(snapshot.sheetOrder).toHaveLength(1);
+        return snapshot.sheets[snapshot.sheetOrder[0]].cellData;
+      };
+      const expectLiteral = async (edited: boolean) => {
+        const data = await cells();
+        const at = (row: number, column: number) => data[row]?.[column]?.v;
+        expect([at(0, 0), at(0, 1), at(0, 2)]).toEqual([
+          edited ? 'Edited by test' : 'id',
+          'note',
+          'code',
+        ]);
+        expect([at(1, 0), at(1, 1), at(1, 2)]).toEqual(['007', 'a,b', '=1+1']);
+        expect([at(2, 0), at(2, 1), at(2, 2)]).toEqual([undefined, 'two\nlines', '2026-01-02']);
+        expect(JSON.stringify(data)).not.toContain('"f"');
+      };
+      await expectLiteral(false);
+      await page.goto(`/?item=${sheet.id}`);
+      const region = page.getByRole('region', { name: 'Sheet document', exact: true });
+      const saved = () =>
+        expect(region.getByRole('status', { name: 'Save status' })).toHaveText(
+          'All changes saved.',
+          {
+            timeout: 25_000,
+          },
+        );
+      await saved();
+      const box = region.getByRole('textbox').nth(2);
+      await box.fill('A1');
+      await box.press('Enter');
+      await page.keyboard.type('Edited by test');
+      await page.keyboard.press('Enter');
+      await expect.poll(async () => (await cells())[0]?.[0]?.v).toBe('Edited by test');
+      await saved();
+      await page.reload();
+      await saved();
+      await expectLiteral(true);
+      expect(errors).toEqual([]);
+    } finally {
+      await page.goto('/sign-in').catch(() => {});
       db.prepare('DELETE FROM workspace_items WHERE owner_id=? AND parent_id=?').run(
         user.id,
         folder.id,

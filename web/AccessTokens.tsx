@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { api } from './api.ts';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 type Token = {
   id: string;
@@ -169,7 +170,7 @@ export function AccessTokens({ admin = false }: { admin?: boolean }) {
         Refresh access tokens
       </button>
       {loading ? (
-        <p role="status">Loading access tokens…</p>
+        <LoadingReview size="compact" label="Loading access tokens…" />
       ) : tokens?.length ? (
         <ul aria-label="Access tokens">
           {tokens.map((token) => (

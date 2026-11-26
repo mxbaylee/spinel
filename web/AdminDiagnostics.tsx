@@ -5,6 +5,7 @@ import { AdminRequestError, adminResponse, operatorDenied } from './adminRequest
 import { healthBytes } from './ServerHealth.tsx';
 import './diagnostics.css';
 import { diagnosticsClearedEvent } from './AdminFeedback.tsx';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 export function AdminDiagnostics({ onBusyChange }: { onBusyChange?: (busy: boolean) => void }) {
   const [status, setStatus] = useState<DiagnosticsStatus | null>(null);
@@ -227,7 +228,7 @@ export function AdminDiagnostics({ onBusyChange }: { onBusyChange?: (busy: boole
         user and file IDs, but no document titles, content or credentials. Submitted feedback, when
         present, is included.
       </p>
-      {loading && <p role="status">Loading diagnostics status…</p>}
+      {loading && <LoadingReview size="compact" label="Loading diagnostics status…" />}
       {busy === 'download' && (
         <p role="status">
           Preparing and downloading the snapshot…{' '}

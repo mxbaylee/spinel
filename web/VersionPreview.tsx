@@ -8,6 +8,7 @@ import type { WorkspaceItem } from '../src/shared/workspace.ts';
 import { historyRequest } from './historyApi.ts';
 import { spaceHref } from './spaceNavigation.ts';
 import { openSnapshotViewer } from './snapshotViewer.ts';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 type Preview = { snapshot: IDocumentData | IWorkbookData; item: WorkspaceItem; unitId: string };
 
@@ -146,7 +147,7 @@ export function VersionPreview({
       {!ready && error && (
         <Button onClick={() => setRefresh((value) => value + 1)}>Try again</Button>
       )}
-      {!ready && !error && <p role="status">Loading preview…</p>}
+      {!ready && !error && <LoadingReview size="compact" label="Loading preview…" />}
       {ready && <FormulaReadout states={formulaStates} />}
       <div
         className="univer-container"

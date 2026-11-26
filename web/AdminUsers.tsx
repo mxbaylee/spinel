@@ -8,6 +8,7 @@ import { AdminFeedbackDownloads, useFeedbackFlags } from './AdminFeedback.tsx';
 import type { FeedbackScope } from '../src/shared/feedback.ts';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import './administration.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 type User = {
   id: string;
@@ -179,18 +180,14 @@ export function AdminUsers({
       <p className="sp-muted">Manage the instance. Document content stays private.</p>
       {error && !action && <p role="alert">{error}</p>}
       {notice && <p role="status">{notice}</p>}
-      {feedback.loading && (
-        <p className="sp-muted" role="status">
-          Checking feedback…
-        </p>
-      )}
+      {feedback.loading && <LoadingReview size="compact" label="Checking feedback…" />}
       {feedback.error && (
         <p role="alert">
           Feedback status is unavailable.{' '}
           <Button onClick={feedback.reload}>Retry feedback status</Button>
         </p>
       )}
-      {loading && <p role="status">Loading users…</p>}
+      {loading && <LoadingReview size="compact" label="Loading users…" />}
       {loaded && !loading && !users.length && <p>No accounts are available.</p>}
       <ul className="admin-people-list">
         {users.map((user) => (

@@ -7,6 +7,7 @@ import { kindLabel } from '../src/shared/workspace.ts';
 import { EntityIcon } from '../src/ui/EntityIcon.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { ActionMenu, Button, Modal } from '../src/ui/redesign/Controls.tsx';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 export function SpaceTrash({
   listing,
@@ -62,7 +63,7 @@ export function SpaceTrash({
         </div>
       )}
       {!listing ? (
-        !error && <p role="status">Loading Space Trash…</p>
+        !error && <LoadingReview size="compact" label="Loading Space Trash…" />
       ) : listing.items.length ? (
         <div role="list" aria-label="Deleted pages and folders">
           {listing.items.map((item) => (

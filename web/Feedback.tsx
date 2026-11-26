@@ -11,6 +11,7 @@ import { ActionMenu, Button, Modal } from '../src/ui/redesign/Controls.tsx';
 import { maintenanceFetch } from './maintenanceFetch.ts';
 import { feedbackPageContext } from './feedbackContext.ts';
 import './feedback.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 class FeedbackRequestError extends Error {
   readonly status: number;
@@ -238,7 +239,7 @@ export function FeedbackDialog({
             </span>
           </div>
         )}
-        {busy === 'loading' && <p role="status">Connecting feedback…</p>}
+        {busy === 'loading' && <LoadingReview size="compact" label="Connecting feedback…" />}
         {busy === 'sending' && <p role="status">Sending feedback…</p>}
         {attempted && !sent && !stale && (
           <p className="sp-muted">

@@ -4,6 +4,7 @@ import { EntryFrame } from './EntryFrame.tsx';
 import { exitCurrentBrowser, finishAccountExit, watchAccountExit } from './offline/accountExit.ts';
 import type { AccountExit } from './offline/accountExit.ts';
 import { readOfflineExitCounts, deleteOfflineExitData } from './offline/deviceStorage.ts';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 export type ExitCounts = { downloads: number; pending: number; uncertain: number };
 export type ExitViewState = {
@@ -82,7 +83,7 @@ export function AccountExitView({
                 : 'The sign-out request could not be saved on this device. Keep this tab open and try again when connected.'}
       </p>
       {state.checking ? (
-        <p role="status">Checking saved changes on this device…</p>
+        <LoadingReview size="compact" label="Checking saved changes on this device…" />
       ) : state.choice === 'deleted' ? (
         <p>
           Offline data for this account was deleted from this device. Server documents were not

@@ -11,6 +11,7 @@ import { SharingSources } from './SharingSources.tsx';
 import { itemsRequest } from './itemsApi.ts';
 import { spaceHref } from './spaceNavigation.ts';
 import './sharing.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 type Draft = { personId: string; role: GrantRole | null };
 
@@ -249,7 +250,7 @@ export function Sharing({
       </div>
       <section aria-label="People with access" aria-busy={loading || saving}>
         {loading ? (
-          <p role="status">Loading access…</p>
+          <LoadingReview size="compact" label="Loading access…" />
         ) : (
           <>
             {people.map((person) => (

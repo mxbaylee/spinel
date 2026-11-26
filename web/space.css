@@ -395,7 +395,8 @@
 .space-trash {
   padding: 24px;
 }
-.space-trash > p {
+.space-trash > p,
+.space-trash > .rd-loading {
   margin-bottom: 16px;
   color: var(--sp-muted);
 }

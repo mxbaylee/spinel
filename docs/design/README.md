@@ -280,7 +280,19 @@ A short `role="status"` line in the region that will fill ("Loading your
 files…"). No spinners over the whole page, no skeletons that resize when the
 content arrives. The [loading pattern](states.md#loading) also defines the
 shared theme-aware runner in compact and page contexts. SPN-150 adopts it for
-workspace and guest admission; it is not a production-wide replacement.
+workspace and guest admission.
+
+**A new or changed waiting state with a status label uses that runner**
+(`LoadingReview`: compact in a row or dialog, page for a whole region). Check for
+it before writing one: a text-only "Loading…" or a new spinner in new or changed
+UI is a review defect, so reuse the shared component for any new loading concept.
+The standalone text-only rows that load or open content moved to the runner in
+SPN-093 (owner, chat 2026-11-24); progress lines for an action beside its pending
+button ("Waiting for your passkey…", "Sending feedback…") and loading text that shares one
+status line with a result or access message (PDF export, appearance access, search count,
+the worksheet picker placeholder) stay text. The
+runner still does not go beside every pending button or on the native Univer
+loader. Owner, chat 2026-11-24 (SPN-093).
 
 ## Storybook
 

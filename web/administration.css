@@ -109,7 +109,8 @@
 .admin-passkeys p {
   margin: 4px 0;
 }
-.admin-person > p {
+.admin-person > p,
+.admin-person > .rd-loading {
   margin-top: 12px;
 }
 .admin-invite-form,

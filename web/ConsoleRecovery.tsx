@@ -3,6 +3,7 @@ import { GemLogo } from '../src/ui/GemLogo.ts';
 import { Button, Modal } from '../src/ui/redesign/Controls.tsx';
 import { ThemeMenu } from '../src/ui/redesign/ThemeMenu.tsx';
 import '../src/ui/redesign/entryJourney.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 type Props = {
   name: string;
@@ -48,7 +49,7 @@ export function ConsoleRecovery({
           <h1 id="recovery-title">Recover admin access</h1>
           <p className="ej-intro">Create a new passkey for your existing admin account.</p>
           {loading ? (
-            <p role="status">Checking the recovery link…</p>
+            <LoadingReview size="compact" label="Checking the recovery link…" />
           ) : name ? (
             <div className="ej-form" aria-busy={busy}>
               <div className="ej-context">

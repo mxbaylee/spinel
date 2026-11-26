@@ -17,6 +17,7 @@ import { maintenanceInstants, maintenanceOffset, maintenanceTime } from './maint
 import { useMaintenanceDismissal } from './useMaintenanceDismissal.ts';
 import './administration.css';
 import './maintenance.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 const guide = 'https://github.com/mxbaylee/spinel/blob/main/docs/maintenance.md';
 const unavailable: MaintenanceAdminStatus = {
@@ -608,7 +609,7 @@ export function MaintenanceControls({
           )}
         </div>
       </div>
-      {loading && !status && <p role="status">Loading maintenance status…</p>}
+      {loading && !status && <LoadingReview size="compact" label="Loading maintenance status…" />}
       {status?.available && (
         <>
           <p className="admin-health-state" role="status">

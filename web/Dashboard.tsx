@@ -62,6 +62,7 @@ import { SyncStatus } from './SyncStatus.tsx';
 import { spaceCopies } from './offline/spaceCopies.ts';
 import type { ItemAppearance } from '../src/shared/appearance.ts';
 import { CopyFileForm } from './CopyFile.tsx';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 const SheetEditor = lazy(() =>
   import('./SheetEditor.tsx').then((module) => ({ default: module.SheetEditor })),
 );
@@ -1262,9 +1263,11 @@ export function Dashboard({
       )}
       {!framedEditor && sharedFailure}
       {(!loaded && !deviceOpen) || viewLoading || currentId !== viewId ? (
-        <p role="status">
-          {error ? 'Your files could not be loaded. Reload to try again.' : 'Loading your files…'}
-        </p>
+        error ? (
+          <p role="status">Your files could not be loaded. Reload to try again.</p>
+        ) : (
+          <LoadingReview size="compact" label="Loading your files…" />
+        )
       ) : currentId === TRASH_VIEW ? (
         <Trash onChanged={reloadItems} />
       ) : missingView ? (
@@ -1379,7 +1382,7 @@ export function Dashboard({
                 {!local && <button onClick={() => openFile(current)}>Open Space</button>}
               </p>
             ) : localEditor && offlineKind(current) ? (
-              <Suspense fallback={<p role="status">Loading offline copy…</p>}>
+              <Suspense fallback={<LoadingReview size="compact" label="Loading offline copy…" />}>
                 <OfflineViewer
                   key={current.id}
                   accountId={user.id}
@@ -1390,7 +1393,7 @@ export function Dashboard({
                 />
               </Suspense>
             ) : current.kind === 'sheet' ? (
-              <Suspense fallback={<p role="status">Loading spreadsheet…</p>}>
+              <Suspense fallback={<LoadingReview size="compact" label="Loading spreadsheet…" />}>
                 <SheetEditor
                   key={current.id}
                   id={current.id}
@@ -1402,7 +1405,7 @@ export function Dashboard({
                 />
               </Suspense>
             ) : (
-              <Suspense fallback={<p role="status">Loading document…</p>}>
+              <Suspense fallback={<LoadingReview size="compact" label="Loading document…" />}>
                 <DocEditor
                   key={current.id}
                   id={current.id}
@@ -1587,7 +1590,7 @@ export function Dashboard({
             {action.mode === 'move' &&
               action.item?.access === 'admin' &&
               (loadingDestinations ? (
-                <p role="status">Loading authorized folders…</p>
+                <LoadingReview size="compact" label="Loading authorized folders…" />
               ) : moveFolders.length === 0 ? (
                 <p role="status">
                   No authorized folders are available. Ask the Owner to grant File admin access to a

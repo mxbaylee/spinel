@@ -62,10 +62,14 @@ theme changes alter the silhouette, not the meaning or pace of loading.
 - **Scope:** SPN-150 reuses this existing silhouette for initial HTML, workspace
   admission and guest document/Space admission, alongside its existing native-editor
   use. Keep the gem and wordmark stationary; the runner is the one loading animation.
+  The import dialog (SPN-093) uses the compact runner for its one waiting row, native and archive.
   Startup failure hides it and retains the brand and recovery sentence. This is
-  not a production-wide loader replacement. Do not add a runner beside every pending button or
-  native Univer loader. Screen migrations choose one appropriate indicator for
-  the affected region and preserve existing loading/error/retry behavior.
+  not a replacement for the native Univer loader. Any new or changed waiting row, dialog or region
+  with a status label uses this runner; a text-only status or a new spinner in new or changed UI
+  is a review defect, and the earlier standalone text-only rows that load or open content moved to it in
+  SPN-093 (owner, chat 2026-11-24); an action's progress line beside its pending button, and loading text that shares one status line with a result or access message, stay text. Do not add a runner beside every pending button or on
+  the native Univer loader. Screen migrations choose one appropriate indicator for the affected
+  region and preserve existing loading/error/retry behavior.
 
 Review `Current production/Loading` Page, Compact and Still, plus the actual
 `Shell/Startup`, `Guest/AccessState` and `Guest/GuestApp` loading stories in light,

@@ -3,6 +3,7 @@ import { Button } from '../src/ui/redesign/Controls.tsx';
 import { ProfileIcon } from '../src/profile/ProfileIcon.tsx';
 import { EntryFrame } from './EntryFrame.tsx';
 import { EntryHelp } from './EntryHelp.tsx';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 export function AuthEntry({
   mode,
@@ -92,7 +93,10 @@ export function AuthEntry({
       }
     >
       {loading ? (
-        <p role="status">{invitation ? 'Checking the invitation…' : 'Loading…'}</p>
+        <LoadingReview
+          size="compact"
+          label={invitation ? 'Checking the invitation…' : 'Loading…'}
+        />
       ) : unreachable ? (
         <Button onClick={() => location.reload()}>Try again</Button>
       ) : !available ? (

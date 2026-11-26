@@ -570,3 +570,151 @@ test.each(['malformed resource', 'invalid source', 'foreign image'])(
     expect(f.db.prepare('SELECT count(*) AS n FROM doc_images').get()!.n).toBe(0);
   },
 );
+
+// SPN-093: CSV/TSV reaches the same creation, access and rollback path as JSON.
+const delimitedInput = (filename: string, text: unknown, parentId: unknown = null) => ({
+  filename,
+  parentId,
+  text,
+});
+
+test('CSV and TSV import as a new one-worksheet Sheet with fresh IDs and literal cells', async () => {
+  const f = fixture();
+  const csv = '﻿id,note\r\n007,"a,b"\r\n,"two\nlines"\r\n=1+1,"say ""hi"""\r\n';
+  const first = await f.files.import(f.owner.id, delimitedInput('Orders.csv', csv), () => {});
+  const second = await f.files.import(
+    f.owner.id,
+    delimitedInput('Orders.tsv', csv.replaceAll(',', '\t').replace('a\tb', 'a,b')),
+    () => {},
+  );
+  expect(first.kind).toBe('sheet');
+  expect(first.name).toBe('Orders');
+  expect(second.id).not.toBe(first.id);
+  for (const item of [first, second]) {
+    const snapshot = f.files.sheets.load(f.owner.id, item.id).snapshot!;
+    expect(snapshot.id).toBe(item.id);
+    expect(snapshot.sheetOrder).toHaveLength(1);
+    const cells = snapshot.sheets[snapshot.sheetOrder[0]].cellData!;
+    const value = (row: number, column: number) => cells[row]?.[column]?.v;
+    expect([value(0, 0), value(0, 1), value(1, 0), value(1, 1)]).toEqual([
+      'id',
+      'note',
+      '007',
+      'a,b',
+    ]);
+    expect(cells[2]).toEqual({ 1: { v: 'two\nlines', t: 1 } });
+    expect([value(3, 0), value(3, 1)]).toEqual(['=1+1', 'say "hi"']);
+    expect(JSON.stringify(cells)).not.toContain('"f"');
+  }
+  expect(f.workspace.list(f.owner.id)).toHaveLength(2);
+});
+
+test('an import never replaces an item with the same name', async () => {
+  const f = fixture();
+  const a = await f.files.import(f.owner.id, delimitedInput('Same.csv', 'x\n'), () => {});
+  const b = await f.files.import(f.owner.id, delimitedInput('Same.csv', 'y\n'), () => {});
+  expect(b.id).not.toBe(a.id);
+  const cell = (id: string) => f.files.sheets.load(f.owner.id, id).snapshot!.sheets['sheet-1'] ?? 0;
+  expect(JSON.stringify(cell(a.id))).toContain('"x"');
+  expect(JSON.stringify(cell(b.id))).toContain('"y"');
+});
+
+test('unsupported types, malformed text, oversized tables and a missing body leave no item or asset', async () => {
+  const f = fixture();
+  const folder = f.workspace.create(f.owner.id, { name: 'Dest', kind: 'folder', parentId: null });
+  const before = () => [
+    f.db.prepare('SELECT * FROM workspace_items').all(),
+    f.db.prepare('SELECT * FROM workspace_item_creators').all(),
+    f.db.prepare('SELECT * FROM sheet_snapshots').all(),
+    f.db.prepare('SELECT * FROM doc_images').all(),
+  ];
+  const baseline = before();
+  for (const [input, message] of [
+    [delimitedInput('a.txt', 'a,b\n', folder.id), 'not supported'],
+    [delimitedInput('a', 'a,b\n', folder.id), 'not supported'],
+    [delimitedInput('a.csv', 'a,"b\n', folder.id), 'never closed'],
+    [delimitedInput('a.csv', 'a,b"c\n', folder.id), 'unquoted'],
+    [delimitedInput('a.csv', '', folder.id), 'empty'],
+    [delimitedInput('a.csv', undefined, folder.id), 'Choose a file'],
+    [delimitedInput('a.csv', '\n'.repeat(100_001), folder.id), '100,000 rows'],
+    [delimitedInput('a.csv', 'x'.repeat(PORTABLE_LIMIT + 1), folder.id), '20 MiB'],
+  ] as const)
+    await expect(f.files.import(f.owner.id, input, () => {})).rejects.toThrow(message);
+  expect(before()).toEqual(baseline);
+  expect(f.workspace.list(f.owner.id).map((item) => item.name)).toEqual(['Dest']);
+});
+
+test('lost creation access or a revoked session leaves no partial Sheet and other files unchanged', async () => {
+  const f = fixture();
+  const folder = f.workspace.create(f.owner.id, { name: 'Shared', kind: 'folder', parentId: null });
+  const existing = await f.files.import(
+    f.owner.id,
+    delimitedInput('Keep.csv', 'keep\n', folder.id),
+    () => {},
+  );
+  f.workspace.share(f.owner.id, folder.id, f.other.id, 'editor');
+  const snapshotOf = () => f.db.prepare('SELECT * FROM sheet_snapshots').all();
+  const state = () => [f.db.prepare('SELECT * FROM workspace_items').all(), snapshotOf()];
+  const baseline = state();
+  // Creation access is lost while the request is in flight.
+  const pending = f.files.import(
+    f.other.id,
+    delimitedInput('Late.csv', 'a,b\n', folder.id),
+    () => {},
+  );
+  f.workspace.share(f.owner.id, folder.id, f.other.id, null);
+  await expect(pending).rejects.toThrow();
+  // The session is revoked after parsing, inside the publishing transaction.
+  await expect(
+    f.files.import(f.owner.id, delimitedInput('Gone.tsv', 'a\tb\n', folder.id), () => {
+      throw new Error('Session revoked');
+    }),
+  ).rejects.toThrow('Session revoked');
+  // A viewer, and a folder owned by someone else, cannot create at all.
+  f.workspace.share(f.owner.id, folder.id, f.other.id, 'viewer');
+  await expect(
+    f.files.import(f.other.id, delimitedInput('Nope.csv', 'a\n', folder.id), () => {}),
+  ).rejects.toThrow('cannot edit');
+  const foreign = f.workspace.create(f.other.id, {
+    name: 'Private',
+    kind: 'folder',
+    parentId: null,
+  });
+  await expect(
+    f.files.import(f.owner.id, delimitedInput('Nope.csv', 'a\n', foreign.id), () => {}),
+  ).rejects.toThrow();
+  const after = state();
+  expect(after[0].filter((row) => row.name !== 'Private')).toEqual(baseline[0]);
+  expect(after[1]).toEqual(baseline[1]);
+  expect(f.files.sheets.load(f.owner.id, existing.id).snapshot!.sheets['sheet-1']).toBeDefined();
+  // The same failure does not poison the next valid import.
+  f.workspace.share(f.owner.id, folder.id, f.other.id, 'editor');
+  expect(
+    (await f.files.import(f.other.id, delimitedInput('Next.csv', 'a\n', folder.id), () => {})).name,
+  ).toBe('Next');
+});
+
+test('a body that is too wide or too long for the native sheet limits is refused before publishing', async () => {
+  const f = fixture();
+  await expect(
+    f.files.import(
+      f.owner.id,
+      delimitedInput('wide.csv', Array(1_025).fill('x').join(',')),
+      () => {},
+    ),
+  ).rejects.toThrow('1,024 columns');
+  expect(f.workspace.list(f.owner.id)).toEqual([]);
+});
+
+test('a table within the transfer cap but over the 10 MiB native content cap is refused atomically', async () => {
+  const f = fixture();
+  // About 11 MiB of text passes the 20 MiB transfer check; the native save limit refuses it
+  // inside the publishing transaction, so the already-created item must roll back.
+  const text = `big\n${'x'.repeat(11 * 1024 * 1024)}\n`;
+  await expect(
+    f.files.import(f.owner.id, delimitedInput('Huge.csv', text), () => {}),
+  ).rejects.toThrow('10 MiB');
+  expect(f.workspace.list(f.owner.id)).toEqual([]);
+  expect(f.db.prepare('SELECT count(*) AS n FROM sheet_snapshots').get()!.n).toBe(0);
+  expect(f.db.prepare('SELECT count(*) AS n FROM workspace_item_creators').get()!.n).toBe(0);
+});

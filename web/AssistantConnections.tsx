@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { api } from './api.ts';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 type Connection = {
   id: string;
@@ -103,7 +104,7 @@ export function AssistantConnections({ admin = false }: { admin?: boolean }) {
         Refresh connected assistants
       </button>
       {loading ? (
-        <p role="status">Loading connected assistants…</p>
+        <LoadingReview size="compact" label="Loading connected assistants…" />
       ) : connections?.length ? (
         <ul aria-label="Assistant connections">
           {connections.map((connection) => (
