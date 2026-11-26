@@ -244,7 +244,7 @@ test('exports owned nested files and whole Spaces, then imports their contents i
     await importedPage.getByRole('menuitem', { name: 'Import file…', exact: true }).click();
     const importing = importedPage.getByRole('dialog', { name: 'Import file', exact: true });
     await importing
-      .getByLabel('Univer file or archive', { exact: true })
+      .getByLabel('Univer, CSV or TSV file or archive', { exact: true })
       .setInputFiles(archivePath);
     await expect(importing.getByRole('status')).toHaveText(
       'Imported 4 files, 5 folders and 1 Space into My files.',

@@ -5,6 +5,7 @@ import { documentPath } from './documentAccess.ts';
 import { maintenanceFetch as fetch } from './maintenanceFetch.ts';
 import './fileDialog.css';
 import './copyFile.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 export interface CopyOptions {
   name: string;
@@ -226,7 +227,7 @@ export function CopyFileForm({
               </p>
             </>
           ) : !error ? (
-            <p role="status">Loading folders…</p>
+            <LoadingReview size="compact" label="Loading folders…" />
           ) : null}
           {unavailable && <p role="status">{unavailable}</p>}
           {error && <p role="alert">{error}</p>}

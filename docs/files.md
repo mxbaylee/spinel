@@ -56,19 +56,44 @@ Operator's backup for server recovery.
 
 Open an owned folder (or My files) and choose **Import file**, or drop one
 file anywhere in its file pane. A `.json` or `.univer` file becomes a new item owned
-by you in that folder. Import never replaces an existing item. PDF, Office, CSV and
-TSV uploads are currently refused. Optional CSV/TSV import is post-launch SPN-093. The built-in
-Office import/export proposal SPN-035 was retired on 2026-10-21, and document-type/
-converter plugins SPN-094 were dropped on 2026-11-22. No XLSX or other proprietary
-format support is planned. Core Sheets, Docs and native backup/import stay supported.
+by you in that folder. Import never replaces an existing item. PDF and Office uploads
+are refused. The built-in Office import/export proposal SPN-035 was retired on
+2026-10-21, and document-type/converter plugins SPN-094 were dropped on 2026-11-22.
+No XLSX or other proprietary format support is planned. Core Sheets, Docs and native
+backup/import stay supported.
 
-**Planned CSV/TSV semantics (SPN-093):** preserve UTF-8 fields literally, including
-leading zeros, empty values, quoted content and the first row as data. Do not
-infer formulas, dates, numbers or headers. Future typing options require a
-separate decision; the initial importer reuses existing creation/access/cleanup
-and resource limits. This remains backlog acceptance, not current import
-support. Decided 2026-10-21 in
-[decision #130](implementation/SPN-093.md#legacy-decision-130-literal-bounded-csv-import).
+## Import a CSV or TSV table as a Sheet
+
+A `.csv` (comma) or `.tsv` (tab) file imports through the same **Import file** dialog
+or folder drop (SPN-093). It becomes a new Sheet with one worksheet named `Sheet1`,
+owned like any imported item, in a folder where you may create a Sheet. The file
+name alone selects the delimiter; Spinel never guesses it, so `.txt` and other
+extensions are refused with the supported types named.
+
+- **Literal values.** The text must be UTF-8 (an optional byte-order mark is
+  dropped; other encodings are refused, not repaired). Every non-empty field is a text
+  cell exactly as written, so `007`, `2026-01-02`, `1e3` and `=SUM(A1)` are neither
+  converted nor calculated. The first row is data: there is no header detection.
+- **Shape.** Fields, quoted delimiters and line breaks, `""` escapes, CRLF/LF and
+  Unicode keep their order. Empty fields stay empty (no cell is written). Rows keep
+  their own length; the worksheet is at least 20 columns wide, and wider when a row needs it.
+- **Malformed input is refused** with its line: an unterminated quote, a quote inside
+  an unquoted field, text after a closing quote, or a NUL character.
+- **Limits.** The 20 MiB transfer cap (a little less for a file with many quotes or line
+  breaks, because the text travels as JSON) and the 10 MiB native-content cap above, plus
+  at most 100,000 rows, 1,024 columns, 100,000 non-empty cells and 2,000,000 fields in
+  all (empty ones count here, not as cells). Parsing stops at the
+  first limit, and the shared transfer admission covers it, so it is bounded like a
+  native import. No remote URLs are fetched.
+- **Atomic.** The server parses the text and publishes through the native import path:
+  creation access is checked again after parsing, and a refusal, lost access or
+  revoked session adds no item and changes no other file. Guests and Operators
+  cannot import.
+
+CSV/TSV export is not available. Decisions:
+[#130](implementation/SPN-093.md#legacy-decision-130-literal-bounded-csv-import),
+[CSV and TSV scope](implementation/SPN-093.md#-csv-and-tsv-scope),
+[delivery record](implementation/SPN-093.md#-delivery-record-2026-11-24).
 
 Files are capped at 20 MiB, including embedded images. Native content after image
 extraction must fit the existing 10 MiB save limit. Images must be static PNG,
@@ -243,7 +268,7 @@ A validation rejection adds no files. If the browser loses the final response,
 the import is reported as unconfirmed: refresh My files before trying again,
 because the transaction may already have committed. This archive is independent
 of Operator disaster-recovery backups and does not restore history. CSV/TSV import
-retains its separate SPN-093 scope; no plugin framework is planned. See the
+is separate, single-file and parsed on the server; no plugin framework is planned. See the
 [SPN-067 decision record](implementation/SPN-067.md).
 
 ## Doc formulas in files

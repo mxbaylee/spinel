@@ -108,7 +108,8 @@
 .maintenance-controls h3 {
   margin: 0;
 }
-.maintenance-controls > p {
+.maintenance-controls > p,
+.maintenance-controls > .rd-loading {
   margin: 12px 0;
 }
 .maintenance-controls > .admin-health-state {

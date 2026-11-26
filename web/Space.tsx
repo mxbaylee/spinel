@@ -52,6 +52,7 @@ import { SpaceOfflineActions } from './SpaceOfflineActions.tsx';
 import { AccessState } from './AccessState.tsx';
 import { AccessDetails } from './AccessDetails.tsx';
 import type { AccessDetailsTarget } from './AccessDetails.tsx';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 export interface SpaceEditorProps {
   spaceId: string;
@@ -865,9 +866,9 @@ export function Space({
         </>
       )}
       {loading && !currentTree && !bootstrap && (
-        <p className="space-content" role="status">
-          Loading Space…
-        </p>
+        <div className="space-content">
+          <LoadingReview size="compact" label="Loading Space…" />
+        </div>
       )}
       {loadError && (
         <div className="space-error" role="alert">

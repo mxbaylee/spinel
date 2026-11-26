@@ -9,6 +9,7 @@ import {
   openExistingOfflineStore,
 } from './offline/offlineStore.ts';
 import './offlineRecovery.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 const OfflineViewer = lazy(() =>
   import('./OfflineViewer.tsx').then((m) => ({ default: m.OfflineViewer })),
@@ -86,7 +87,7 @@ export function OfflineRecoveryEntry({
         <button onClick={back}>My files</button>
       </section>
     );
-  if (!item) return <p role="status">Opening offline changes…</p>;
+  if (!item) return <LoadingReview size="compact" label="Opening offline changes…" />;
   return (
     <EditorFrame
       name={item.name}
@@ -96,7 +97,7 @@ export function OfflineRecoveryEntry({
       onBack={back}
       backLabel={item.creation ? 'Back to files' : 'My files'}
     >
-      <Suspense fallback={<p role="status">Opening offline changes…</p>}>
+      <Suspense fallback={<LoadingReview size="compact" label="Opening offline changes…" />}>
         <OfflineViewer
           accountId={accountId}
           itemId={itemId}

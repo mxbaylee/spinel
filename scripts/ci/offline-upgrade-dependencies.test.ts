@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { realpathSync } from 'node:fs';
 import { cp, mkdir, mkdtemp, readFile, realpath, rm, symlink, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
@@ -7,6 +8,10 @@ import { test } from 'node:test';
 import type { TestContext } from 'node:test';
 import { pathToFileURL } from 'node:url';
 import { linkLegacyOfflineDependencies } from '../../e2e/offline-upgrade-dependencies.ts';
+
+// Node reports resolved modules by real path, and on macOS the temp directory
+// is a symlink (/var is /private/var), so canonicalize each expected path.
+const real = (path: string) => realpathSync(path);
 
 async function fixture(t: TestContext) {
   const root = await mkdtemp(join(tmpdir(), 'spinel-legacy-dependencies-'));
@@ -75,7 +80,7 @@ test('archived workspace imports preserve the eager contract and transitive sour
   await cp(f.source, leaking, { recursive: true });
   await symlink(join(f.installed, 'node_modules'), join(leaking, 'node_modules'), 'dir');
   const currentEntry = createRequire(join(leaking, 'probe.ts')).resolve('@spinel/sync-client');
-  assert.equal(currentEntry, join(f.installed, 'lib/sync-client/index.ts'));
+  assert.equal(currentEntry, real(join(f.installed, 'lib/sync-client/index.ts')));
   const current = await import(pathToFileURL(currentEntry).href);
   let received: unknown;
   current.persist((value: unknown) => {
@@ -96,16 +101,22 @@ test('archived workspace imports preserve the eager contract and transitive sour
   await linkLegacyOfflineDependencies(f.source, f.installed);
   const resolve = createRequire(join(f.source, 'probe.ts')).resolve;
   const archivedEntry = resolve('@spinel/sync-client');
-  assert.equal(archivedEntry, join(f.source, 'lib/sync-client/index.ts'));
-  assert.equal(resolve('@spinel/sync-client/detail'), join(f.source, 'lib/sync-client/detail.ts'));
-  assert.equal(resolve('@spinel/sync-transform'), join(f.source, 'lib/sync-transform/index.ts'));
+  assert.equal(archivedEntry, real(join(f.source, 'lib/sync-client/index.ts')));
+  assert.equal(
+    resolve('@spinel/sync-client/detail'),
+    real(join(f.source, 'lib/sync-client/detail.ts')),
+  );
+  assert.equal(
+    resolve('@spinel/sync-transform'),
+    real(join(f.source, 'lib/sync-transform/index.ts')),
+  );
   const archived = await import(pathToFileURL(archivedEntry).href);
   archived.persist((value: unknown) => {
     received = value;
   });
   assert.deepEqual(received, { unitId: 'archived' });
   assert.equal(archived.revision, 'archived');
-  assert.equal(resolve('external'), join(f.installed, 'node_modules/external/index.ts'));
+  assert.equal(resolve('external'), real(join(f.installed, 'node_modules/external/index.ts')));
   await assert.rejects(realpath(join(f.source, 'node_modules/.vite')), { code: 'ENOENT' });
   for (const { path, bytes } of originals)
     assert.deepEqual(await readFile(join(f.source, path)), bytes);
@@ -160,18 +171,21 @@ test('an isolated historical install preserves transitive externals when the can
   await linkLegacyOfflineDependencies(f.source, historical);
   const resolve = createRequire(join(f.source, 'probe.ts')).resolve;
   const external = resolve('external');
-  assert.equal(external, join(historical, 'node_modules/external/index.ts'));
+  assert.equal(external, real(join(historical, 'node_modules/external/index.ts')));
   // An external package's real path controls its transitive imports; a lone
   // historical parser beside links into the candidate tree would not suffice.
   const historicalParser = createRequire(external).resolve('body-parser');
-  assert.equal(historicalParser, join(historical, parser, 'index.ts'));
+  assert.equal(historicalParser, real(join(historical, parser, 'index.ts')));
   assert.equal(await readFile(historicalParser, 'utf8'), "export const version = '2.3.0';");
   const current = createRequire(join(f.installed, 'probe.ts')).resolve('external');
   const currentParser = createRequire(current).resolve('body-parser');
-  assert.equal(currentParser, join(f.installed, parser, 'index.ts'));
+  assert.equal(currentParser, real(join(f.installed, parser, 'index.ts')));
   assert.equal(await readFile(currentParser, 'utf8'), "export const version = '2.4.0';");
-  assert.equal(resolve('@spinel/sync-client'), join(f.source, 'lib/sync-client/index.ts'));
-  assert.equal(resolve('@spinel/sync-transform'), join(f.source, 'lib/sync-transform/index.ts'));
+  assert.equal(resolve('@spinel/sync-client'), real(join(f.source, 'lib/sync-client/index.ts')));
+  assert.equal(
+    resolve('@spinel/sync-transform'),
+    real(join(f.source, 'lib/sync-transform/index.ts')),
+  );
 });
 
 test('an uninstalled historical checkout fails before linking with setup guidance', async (t) => {

@@ -16,6 +16,12 @@ import { isUuid, observe } from '@spinel/diagnostics';
 import type { FormulaDiagnostics } from '../formulas/routes.ts';
 
 import { PORTABLE_LIMIT } from '../../shared/portable.ts';
+import {
+  delimitedWorkbook,
+  delimiterFor,
+  parseDelimited,
+  unsupportedDelimitedType,
+} from './delimited.ts';
 export { PORTABLE_LIMIT };
 type Snapshot = IDocumentData | IWorkbookData;
 type ObjectValue = Record<string, unknown>;
@@ -126,16 +132,29 @@ export class PortableFiles {
   }
   async import(
     user: string,
-    input: { filename?: unknown; parentId?: unknown; snapshot?: unknown },
+    input: { filename?: unknown; parentId?: unknown; snapshot?: unknown; text?: unknown },
     verify: () => void,
   ) {
     this.workspace.owner(user);
     this.workspace.creationDestination(user, input.parentId);
-    const prepared = await this.prepare(input);
+    if (input.text !== undefined && !delimiterFor(input.filename)) throw unsupportedDelimitedType();
+    // CSV/TSV (SPN-093) becomes an ordinary native workbook here, so it shares the
+    // account, destination, limit and one-transaction publication path with JSON.
+    const prepared = await this.prepare(
+      delimiterFor(input.filename) ? this.delimitedInput(input) : input,
+    );
     return this.workspace.auth.transaction(() => {
       verify();
       return this.publish(user, prepared, input.parentId);
     });
+  }
+  /** Parse one bounded CSV/TSV upload into the native input `prepare` already validates. */
+  private delimitedInput(input: { filename?: unknown; text?: unknown }) {
+    const delimiter = delimiterFor(input.filename);
+    if (!delimiter || typeof input.filename !== 'string') throw unsupportedDelimitedType();
+    const name = this.workspace.name(input.filename.replace(/\.(?:csv|tsv)$/i, ''));
+    const snapshot = delimitedWorkbook(parseDelimited(input.text, delimiter), name);
+    return { filename: `${name}.univer.json`, snapshot };
   }
   /** Same-instance recovery publishes only already-downloaded bytes, never the original. */
   async recover(

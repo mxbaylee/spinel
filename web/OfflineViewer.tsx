@@ -9,6 +9,7 @@ import {
 import { checkBundle } from './offline/download.ts';
 import { isRuntimeCompatible } from './offline/runtime.ts';
 import type { ConnectionState } from './connectionState.ts';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 /**
  * The same native editors restore their own durable queue on an offline launch.
@@ -91,7 +92,7 @@ export function OfflineViewer({
         {name ?? 'This document'} needs a connection. It isn’t downloaded on this device.
       </p>
     );
-  if (!item) return <p role="status">Opening offline copy…</p>;
+  if (!item) return <LoadingReview size="compact" label="Opening offline copy…" />;
   const Editor = item.kind === 'sheet' ? SheetEditor : DocEditor;
   return (
     <section aria-label="Offline copy">

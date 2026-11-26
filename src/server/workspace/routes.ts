@@ -217,7 +217,7 @@ export function workspaceRoutes(
         const user = owner(request);
         const item = await files.import(
           user,
-          payload(request, ['filename', 'parentId', 'snapshot']),
+          payload(request, ['filename', 'parentId', 'snapshot', 'text']),
           () => {
             if (owner(request) !== user || response.destroyed)
               throw new AuthError(401, 'Sign in to continue.');
@@ -527,11 +527,13 @@ export function workspaceRoutes(
           : accessDenied
             ? 'This document is not available.'
             : status === 413
-              ? request.path === '/import' || request.path === '/offline-recovery'
-                ? 'Univer files must be at most 20 MiB.'
-                : request.path.endsWith('/images')
-                  ? 'Choose an image no larger than 5 MiB.'
-                  : 'This document is too large to save. Changes have not been saved.'
+              ? request.path === '/import'
+                ? 'Files must be at most 20 MiB. A CSV or TSV with many quotes or line breaks counts as larger when sent.'
+                : request.path === '/offline-recovery'
+                  ? 'Univer files must be at most 20 MiB.'
+                  : request.path.endsWith('/images')
+                    ? 'Choose an image no larger than 5 MiB.'
+                    : 'This document is too large to save. Changes have not been saved.'
               : 'Could not save this change. Try again.',
     });
   });

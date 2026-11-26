@@ -279,6 +279,27 @@ that same scaffold; existing backlog and reference/design files keep their
 formatting. All TypeScript, including existing scripts/reference code, extends
 the root `tsconfig.json` and is checked by `npm run typecheck`.
 
+## 🪓 Removing dead code
+
+Rules from SPN-171 (continuing SPN-087; owner, chat 2026-11-23; record:
+[SPN-171](implementation/SPN-171.md)):
+
+- A no-reference search is not proof of dead code. Before removing an export, branch,
+  flag or test-only path, check imports, lazy modules, SDK/plugin registration, scripts,
+  config (including `vite.config.ts` and `playwright.config.ts`), stories, selectors and
+  dynamic or template-built names, and record the proof. Reviews grade removals under the
+  [code removal rubric](implementation/SPN-087.md#decision-code-removal-in-the-review-rubric).
+- Keep evidence assets and externally consumed entry points. SPN-089 owns the SPN-146
+  diagnostics and doc-native scripts. Do not revive retired Redesign screens.
+- Dropping `export` from a helper that its own file still uses is not dead-code removal.
+  Code only a test or story calls moves next to that consumer or stays; a story is a
+  consumer.
+- Use plain modules and no cleanup framework. Preserve or explicitly reassess the
+  [diagnostic contracts](diagnostics.md#emitter-maintenance-inventory).
+- Fewer lines or fewer tests is not acceptance. Give behavioral evidence from the owning
+  test layer plus typecheck and lint. CSS or story changes add the full Storybook suite and
+  five-variant before/after captures.
+
 ## Reviewed dependency updates
 
 [Dependabot configuration](../.github/dependabot.yml) proposes weekly updates on

@@ -13,6 +13,7 @@ import {
 import type { HistoryVersion } from '../src/shared/historyNavigation.ts';
 import { historyHref, historyRequest } from './historyApi.ts';
 import { VersionPreview } from './VersionPreview.tsx';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 /** History browsing stays in the isolated preview tab, outside the live editor. */
 export function HistoryBrowser() {
@@ -217,7 +218,7 @@ export function HistoryBrowser() {
           )}
         </div>
       )}
-      {!loaded && loading && <p role="status">Loading history…</p>}
+      {!loaded && loading && <LoadingReview size="compact" label="Loading history…" />}
       {loaded && !versions.length && !error && (
         <div className="history-empty">
           <h2>No versions yet</h2>
@@ -425,7 +426,7 @@ export function HistoryBrowser() {
         </aside>
         <div className="history-preview-pane">
           {!loading && !error && current && selected !== rendered && (
-            <p role="status">Loading selected snapshot…</p>
+            <LoadingReview size="compact" label="Loading selected snapshot…" />
           )}
           <div hidden={selected !== rendered || Boolean(error) || loading}>
             {rendered && !error && !loading && (

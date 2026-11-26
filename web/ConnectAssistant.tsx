@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { api } from './api.ts';
 import { Button } from '../src/ui/redesign/Controls.tsx';
 import { EntryFrame } from './EntryFrame.tsx';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 type PendingConnection = {
   request: string;
@@ -126,7 +127,7 @@ export function ConnectAssistant({
             assistant.
           </p>
         ) : loading ? (
-          <p role="status">Loading connection request…</p>
+          <LoadingReview size="compact" label="Loading connection request…" />
         ) : (
           <>
             {pending && (

@@ -4,6 +4,7 @@ import { Button, Choice, Modal } from '../src/ui/redesign/Controls.tsx';
 import { api } from './api.ts';
 import { adminAccountLabel } from './adminAccountLabel.ts';
 import './admin-recovery.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 export type RecoveryAccount = { id: string; name: string; isAdmin: boolean; disabled: boolean };
 export type RecoveryAction = {
@@ -152,7 +153,7 @@ export function AdminAccountRecovery({
     >
       <div className="admin-recovery">
         {error && <p role="alert">{error}</p>}
-        {loading && <p role="status">Loading account details…</p>}
+        {loading && <LoadingReview size="compact" label="Loading account details…" />}
         {refreshError && (
           <div role="alert">
             <p>{refreshError}</p>

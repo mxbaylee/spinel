@@ -4,6 +4,7 @@ import { Modal } from '../src/ui/redesign/Controls.tsx';
 import { StorageHelp } from './offline/StorageHelp.tsx';
 import type { DeviceInventory } from './offline/deviceStorage.ts';
 import './deviceStorage.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 export type DeviceItem = DeviceInventory['items'][number];
 export type DeviceStorageDialog =
@@ -104,7 +105,7 @@ export function DeviceStoragePanel({
         Downloads and saved offline changes for this account, in this browser.
       </p>
       {error && <p role="alert">{error}</p>}
-      {loading && !inventory && <p role="status">Checking this device…</p>}
+      {loading && !inventory && <LoadingReview size="compact" label="Checking this device…" />}
       {inventory && !locked && (
         <>
           <dl className="device-storage-usage">

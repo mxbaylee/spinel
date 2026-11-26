@@ -3,6 +3,7 @@ import { ActionMenu, Button, Modal } from '../src/ui/redesign/Controls.tsx';
 import { api } from './api.ts';
 import { adminAccountLabel } from './adminAccountLabel.ts';
 import './administration.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 type Invite = {
   id: string;
@@ -217,7 +218,7 @@ export function AdminInvites({
       )}
       {!formOpen && issues}
       {notice && <p role="status">{notice}</p>}
-      {loading && <p role="status">Loading invites…</p>}
+      {loading && <LoadingReview size="compact" label="Loading invites…" />}
       {fresh && invites.length ? (
         <ul aria-label="Invites" className="admin-invite-list">
           {invites.map((invite, index) => (
@@ -311,7 +312,7 @@ export function AdminInvites({
               This account is no longer eligible for recovery. Choose an active account.
             </p>
           )}
-          {loading && <p role="status">Loading invitation recipients…</p>}
+          {loading && <LoadingReview size="compact" label="Loading invitation recipients…" />}
           {issues}
           <div className="admin-dialog-actions">
             <Button primary type="submit" disabled={disabled || invalidRecipient}>

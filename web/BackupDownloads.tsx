@@ -10,6 +10,7 @@ import {
   useMaintenanceStatus,
 } from './maintenanceState.ts';
 import './backup-downloads.css';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 export interface BackupPolicy {
   automatic: boolean;
@@ -453,7 +454,7 @@ export function BackupDownloads({
         </Button>
       </div>
       <div className="admin-backup-job" aria-live="polite" aria-atomic="true">
-        {loading && <p role="status">Loading download status…</p>}
+        {loading && <LoadingReview size="compact" label="Loading download status…" />}
         {job && (
           <>
             <p role={state === 'failed' ? 'alert' : 'status'}>{messages[job.state]}</p>
@@ -488,7 +489,7 @@ export function BackupDownloads({
             <>
               <p>Download a complete backup from the configured destination.</p>
               {catalogLoading ? (
-                <p role="status">Loading saved backups…</p>
+                <LoadingReview size="compact" label="Loading saved backups…" />
               ) : entries?.length ? (
                 <Choice
                   label="Saved backup"

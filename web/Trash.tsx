@@ -6,6 +6,7 @@ import type { TrashListing } from '../src/shared/workspace.ts';
 import { itemsRequest } from './itemsApi.ts';
 import { TagLabels } from './DocumentTags.tsx';
 import { Button, Modal } from '../src/ui/redesign/Controls.tsx';
+import { LoadingReview } from '../src/ui/redesign/LoadingReview.tsx';
 
 export function Trash({ onChanged }: { onChanged(): Promise<void> }) {
   const [listing, setListing] = useState<TrashListing | null>(null);
@@ -132,7 +133,7 @@ export function Trash({ onChanged }: { onChanged(): Promise<void> }) {
           {!listing.items.length && <p>Your trash is empty.</p>}
         </>
       ) : (
-        <p role="status">Loading trash…</p>
+        <LoadingReview size="compact" label="Loading trash…" />
       )}
       {message && <p role="status">{message}</p>}
       {error && <p role="alert">{error}</p>}
