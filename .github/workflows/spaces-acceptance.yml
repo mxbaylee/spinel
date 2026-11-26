@@ -29,7 +29,12 @@ concurrency:
 jobs:
   spaces:
     name: 🦈 DigitalOcean Spaces
-    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    # Paused: the owner removed the cloud storage (2026-11-26).
+    # SPN-038 must restore it and remove only `false &&` before launch.
+    # Keep the original same-repository/manual eligibility when re-enabling.
+    if: >-
+      false &&
+      (github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

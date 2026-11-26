@@ -150,7 +150,14 @@ credential rotation and the [target-host and cold-recovery gate](todo/SPN-038.md
 A small synthetic provider round trip does not establish deployment capacity or
 host-loss recovery.
 
-For the GitHub Spaces acceptance workflow, set `DIGITAL_OCEAN_ENDPOINT` to the
+⏸️ **Live Spaces acceptance is paused** because the owner removed the cloud
+storage (2026-11-26). [SPN-038](todo/SPN-038.md) must restore it, refresh the
+credentials below and remove the temporary `false &&` job guard in
+`.github/workflows/spaces-acceptance.yml` before production launch. The pause
+covers automatic and manual runs; local backup/restore tests remain active.
+A skipped workflow or credential-format probe does not establish provider acceptance.
+
+When restoring the GitHub Spaces acceptance workflow, set `DIGITAL_OCEAN_ENDPOINT` to the
 HTTPS bucket origin, `https://BUCKET.REGION.digitaloceanspaces.com`.
 `DIGITAL_OCEAN_ACCESS_KEY` accepts a JSON pair with `accessKeyId` and
 `secretAccessKey`, or the documented DigitalOcean export with `access_key` and
