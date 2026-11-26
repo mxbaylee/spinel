@@ -81,6 +81,14 @@ test invented to mirror the prose.
   credentials or real user data. Keep the current result JSON, logs and failure
   traces. Performance acceptance uses its existing unprofiled first attempts;
   profiled diagnostics and successful retries cannot replace those samples.
+- 🍎 Compare resolved paths by real path. On macOS the temp directory is a symlink
+  (`/var` is `/private/var`), and Node reports a resolved module by its real path,
+  so wrap the expected path in `fs.realpathSync` instead of loosening the
+  comparison ([SPN-153](implementation/SPN-153.md#-test-plan-and-evidence-2026-11-25)).
+  That record also bounds an unexplained failure of the shipped-`@univerjs/core`
+  case in `scripts/dependencies/patch-univer-core.test.ts`: it passes normally, was
+  reproduced failing (5 s child limit) only when the machine was saturated, and its
+  original cause is unassigned.
 
 ## 🔬 Callback trace conversion
 
