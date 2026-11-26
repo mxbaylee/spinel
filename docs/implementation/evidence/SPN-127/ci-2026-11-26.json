@@ -1,0 +1,126 @@
+{
+  "head": "6fe23a9fb0c79cecf3a818d5067f4de454ef7678",
+  "tested_merge": "7d5f9a878e8ddabdb6252e23fcd5b75f2891140b",
+  "base": "c483004bd966c21a3cea412f7fd57dba164dade0",
+  "archive_expectations": {
+    "run": 45879943118,
+    "recovery_job": 140116833431,
+    "development_job": 140116833691,
+    "production_job": 140116833743,
+    "expected_before": "SPINEL01",
+    "observed": "SPINEL02",
+    "normal_output_assertions_repaired": 6
+  },
+  "ubuntu_mirror": {
+    "run": 45879942625,
+    "job": 140116994479,
+    "image_os": "ubuntu26",
+    "image_version": "20261122.9.1",
+    "input_bytes": 152,
+    "input_sha256": "1d37d869d0c853abf8b235c1935fa2ad67b208485f11c4ac5e7b8a04acc51146",
+    "observed_host": "http://us-west-2.ec2.archive.ubuntu.com/ubuntu/"
+  },
+  "mobile_latency": {
+    "run": 45879943118,
+    "job": 140116833560,
+    "sample": "plain-2",
+    "attempt": 0,
+    "test": "mobile sustained native typing plain-2",
+    "metric": "idleFlushPairMs.p95",
+    "limit_ms": 50,
+    "measured_ms": 71.09999999997672,
+    "sample_count": 1,
+    "terminal_native_phases": [
+      {
+        "sequence": 392,
+        "phase": "history",
+        "origin": "policy-idle",
+        "startedAt": 65227.59999999998,
+        "endedAt": 65290.79999999993,
+        "before": {
+          "history": 6,
+          "collaboration": 6
+        },
+        "after": {
+          "history": 0,
+          "collaboration": 6
+        },
+        "outcome": "returned",
+        "completedStates": 2086
+      },
+      {
+        "sequence": 393,
+        "phase": "collaboration",
+        "origin": "policy-idle",
+        "startedAt": 65290.79999999993,
+        "endedAt": 65298.59999999998,
+        "before": {
+          "history": 0,
+          "collaboration": 6
+        },
+        "after": {
+          "history": 0,
+          "collaboration": 0
+        },
+        "outcome": "returned",
+        "completedStates": 2086
+      },
+      {
+        "sequence": 391,
+        "phase": "pair",
+        "origin": "policy-idle",
+        "startedAt": 65227.59999999998,
+        "endedAt": 65298.59999999998,
+        "before": {
+          "history": 6,
+          "collaboration": 6
+        },
+        "after": {
+          "history": 0,
+          "collaboration": 0
+        },
+        "outcome": "returned",
+        "completedStates": 2086
+      }
+    ],
+    "overlapping_long_tasks": [
+      {
+        "startedAt": 65227.40000000002,
+        "durationMs": 106
+      }
+    ],
+    "budget_results": {
+      "inputP95": true,
+      "longestTask": true,
+      "capacityFlushP95": true,
+      "idleFlushP95": false,
+      "flushMaximum": true,
+      "boundedHistory": true,
+      "boundedCollaboration": true,
+      "observedCapacityFlushes": true,
+      "browserLocalDrainedWithinOneSecond": true
+    },
+    "correctness": "exact saved/live peer text, sender/peer selections, undo/redo and Online passed",
+    "errors": [],
+    "cause": "unassigned",
+    "other_unprofiled_idle_p95_ms": [
+      1.7999999999301508,
+      1.099999999976717
+    ],
+    "artifact_id": 15148735776,
+    "artifact_sha256": "c6b1aca954fbdbe8926c81c032f5ebc90d1032fdc50f9dbd41ad1584e191c0a0",
+    "artifact_expires_at": "2026-12-03T19:18:18Z",
+    "terminal_idle_episode": {
+      "startedAt": 65227.5,
+      "endedAt": 65298.59999999998,
+      "durationMs": 71.09999999997672,
+      "history": 6,
+      "collaboration": 6,
+      "origin": "policy-idle",
+      "nativeSequences": [
+        392,
+        393
+      ]
+    }
+  }
+}

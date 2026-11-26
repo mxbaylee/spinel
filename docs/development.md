@@ -422,8 +422,10 @@ see [the process](todo/process.md#pull-requests-and-main).
 
 Hosted Ubuntu setup uses `scripts/ci/prefer-ubuntu-archive.ts` to prefer the
 official archive within a validated Azure/archive or observed EC2/archive pair.
-The supported EC2 fallback is exactly `http://us-east-2.ec2.archive.ubuntu.com/ubuntu/`;
-other profiles require diagnosis, not provider/region inference. Before validation or
+The supported EC2 fallbacks are exactly `http://us-east-2.ec2.archive.ubuntu.com/ubuntu/`
+and `http://us-west-2.ec2.archive.ubuntu.com/ubuntu/`. The latter was captured in
+[PR #317's setup failure](https://github.com/mxbaylee/spinel/actions/runs/45879942625/job/140116994479)
+on 2026-11-26. Other profiles require diagnosis, not provider/region inference. Before validation or
 write it logs the input byte count/hash, exact recognized public Ubuntu mirror
 lines and separate environment image identity. Unknown text is redacted; runner
 headers remain a separate identity observation. Rejected input fails before

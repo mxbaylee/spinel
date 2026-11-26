@@ -24,6 +24,16 @@ const ec2Preferred =
   'http://us-east-2.ec2.archive.ubuntu.com/ubuntu/\tpriority:2\n' +
   'https://archive.ubuntu.com/ubuntu/\tpriority:1\n' +
   'https://security.ubuntu.com/ubuntu/\tpriority:3\n';
+// Exact rejected input from run 45879942625, job 140116994479:
+// ImageOS ubuntu26, ImageVersion 20261122.9.1.
+const westOriginal =
+  'http://us-west-2.ec2.archive.ubuntu.com/ubuntu/\tpriority:1\n' +
+  'https://archive.ubuntu.com/ubuntu/\tpriority:2\n' +
+  'https://security.ubuntu.com/ubuntu/\tpriority:3\n';
+const westPreferred =
+  'http://us-west-2.ec2.archive.ubuntu.com/ubuntu/\tpriority:2\n' +
+  'https://archive.ubuntu.com/ubuntu/\tpriority:1\n' +
+  'https://security.ubuntu.com/ubuntu/\tpriority:3\n';
 const entrypoint = readFileSync(new URL('./prefer-ubuntu-archive.ts', import.meta.url), 'utf8');
 const imports = [
   "import { execFileSync } from 'node:child_process';",
@@ -108,6 +118,30 @@ test('the observed EC2 pair changes only its preference and retains exact input 
   assert.deepEqual(unchanged.writes, []);
 });
 
+test('the observed us-west-2 EC2 pair preserves security, evidence and idempotence', () => {
+  assert.equal(Buffer.byteLength(westOriginal), 152);
+  assert.equal(
+    createHash('sha256').update(westOriginal).digest('hex'),
+    '1d37d869d0c853abf8b235c1935fa2ad67b208485f11c4ac5e7b8a04acc51146',
+  );
+  const result = inspect(westOriginal);
+  assert.equal(result.error, undefined);
+  assert.deepEqual(result.writes, [
+    {
+      command: 'sudo',
+      args: ['-n', 'tee', '--', '/etc/apt/apt-mirrors.txt'],
+      input: westPreferred,
+    },
+  ]);
+  assert.deepEqual(
+    JSON.parse(result.logs[0]).lines.map((line: { text: string }) => line.text),
+    westOriginal.split('\n'),
+  );
+  const unchanged = inspect(westPreferred);
+  assert.equal(unchanged.error, undefined);
+  assert.deepEqual(unchanged.writes, []);
+});
+
 test('line endings, spacing and unrelated entries survive unchanged', () => {
   const prefix = '# Maintained by the runner image\r\n\r\n';
   const suffix = 'https://other.example/ubuntu/\tpriority:4\r\n';
@@ -145,6 +179,26 @@ for (const [name, input] of [
     ),
   ],
   ['unknown replacement fallback', ec2Original.replace('us-east-2.ec2', 'unobserved.ec2')],
+  [
+    'duplicate west EC2',
+    westOriginal + 'http://us-west-2.ec2.archive.ubuntu.com/ubuntu/\tpriority:2\n',
+  ],
+  [
+    'west EC2 missing archive',
+    westOriginal.replace('https://archive.ubuntu.com/ubuntu/\tpriority:2\n', ''),
+  ],
+  ['west EC2 equal priorities', westOriginal.replace('priority:2', 'priority:1')],
+  ['west EC2 unsupported priority', westOriginal.replace('priority:1', 'priority:4')],
+  ['west EC2 malformed metadata', westOriginal.replace('priority:1', 'priority:1 private-token')],
+  [
+    'both EC2 fallbacks',
+    westOriginal + 'http://us-east-2.ec2.archive.ubuntu.com/ubuntu/\tpriority:2\n',
+  ],
+  [
+    'west EC2 and Azure fallbacks',
+    westOriginal + 'http://azure.archive.ubuntu.com/ubuntu/\tpriority:2\n',
+  ],
+  ['unobserved EC2 region', westOriginal.replace('us-west-2.ec2', 'us-west-1.ec2')],
 ] as const) {
   test(`${name} fails before any write and retains safe original-input evidence`, () => {
     const result = inspect(input);

@@ -225,7 +225,7 @@ test('supervised native downloads require a current capability, stay blocked whi
     Buffer.from(await delivered.arrayBuffer())
       .subarray(0, 8)
       .toString(),
-  ).toBe('SPINEL01');
+  ).toBe('SPINEL02');
   await vi.waitFor(() => expect(f.gate!.pending).toBe(0));
 });
 
@@ -314,7 +314,7 @@ test('manual-only HTTP export requires fresh session-bound Operator authority an
   expect(response.headers.get('cache-control')).toBe('no-store');
   expect(response.headers.get('content-length')).toBe(String(job.bytes));
   const encrypted = Buffer.from(await response.arrayBuffer());
-  expect(encrypted.subarray(0, 8).toString()).toBe('SPINEL01');
+  expect(encrypted.subarray(0, 8).toString()).toBe('SPINEL02');
   expect(encrypted.includes(Buffer.from('Private retained workspace'))).toBe(false);
   expect(encrypted.includes(Buffer.from('must-stay-encrypted'))).toBe(false);
   expect(encrypted.includes(f.key)).toBe(false);
