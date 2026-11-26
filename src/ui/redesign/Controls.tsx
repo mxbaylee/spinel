@@ -34,7 +34,7 @@ export function Choice({
 }: {
   label: string;
   value: string;
-  options: { value: string; label: string }[];
+  options: { value: string; label: string; disabled?: boolean }[];
   onChange: (value: string) => void;
   disabled?: boolean;
 }) {
@@ -59,7 +59,12 @@ export function Choice({
             <Select.Popup className="sp-popup">
               <Select.List>
                 {options.map((option) => (
-                  <Select.Item key={option.value} value={option.value} className="sp-option">
+                  <Select.Item
+                    key={option.value}
+                    value={option.value}
+                    disabled={option.disabled}
+                    className="sp-option"
+                  >
                     <Select.ItemText>{option.label}</Select.ItemText>
                     <Select.ItemIndicator>✓</Select.ItemIndicator>
                   </Select.Item>

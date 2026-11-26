@@ -199,7 +199,7 @@ test('a real scheduled filesystem backup is verified locally and never presented
     expect(archives.length).toBeGreaterThan(0);
     expect(
       (await readFile(join(root, 'browser-recovery', archives[0]))).subarray(0, 8).toString(),
-    ).toBe('SPINEL01');
+    ).toBe('SPINEL02');
 
     expect(
       (

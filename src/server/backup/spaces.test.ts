@@ -287,3 +287,39 @@ test('destination operations reject foreign, incomplete and arbitrary artifact k
   ).rejects.toThrow('instance prefix');
   expect(send).not.toHaveBeenCalled();
 });
+
+test('head requests a byte range and never reads past it if the range is ignored', async () => {
+  const f = await fixture();
+  const id = artifact();
+  const body = Buffer.alloc(4096, 7);
+  const send = vi.spyOn(f.remote.client, 'send').mockImplementation(async (command) => {
+    expect(command).toBeInstanceOf(GetObjectCommand);
+    expect((command as GetObjectCommand).input).toMatchObject({
+      Bucket: config.bucket,
+      Key: id,
+      Range: 'bytes=0-9',
+    });
+    // The server ignores the range and streams the whole object in chunks.
+    return { Body: Readable.from([body.subarray(0, 4), body.subarray(4, 20), body.subarray(20)]) };
+  });
+  expect(await f.remote.head(id, 10, AbortSignal.timeout(1000))).toEqual(body.subarray(0, 10));
+  // Stopping early is observable: an endless body must not be consumed past the bound.
+  let pulled = 0;
+  send.mockImplementation(async () => ({
+    Body: Readable.from(
+      (async function* () {
+        for (;;) {
+          pulled += 1;
+          yield body.subarray(0, 4);
+        }
+      })(),
+    ),
+  }));
+  expect(await f.remote.head(id, 10, AbortSignal.timeout(1000))).toEqual(body.subarray(0, 10));
+  expect(pulled).toBeLessThan(100);
+  await expect(f.remote.head('other/x.spinel', 10, AbortSignal.timeout(1000))).rejects.toThrow(
+    'Not a backup',
+  );
+  send.mockImplementation(async () => ({}));
+  await expect(f.remote.head(id, 10, AbortSignal.timeout(1000))).rejects.toThrow('empty');
+});

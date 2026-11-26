@@ -344,7 +344,7 @@ test('manual-only workspace export restores real WAL data and never claims autom
   expect((await settled(f.service)).state).toBe('ready');
   const delivery = await f.service.exports.claim('session-a', job.id);
   const bytes = await readFile(delivery.path);
-  expect(bytes.subarray(0, 8).toString()).toBe('SPINEL01');
+  expect(bytes.subarray(0, 8).toString()).toBe('SPINEL02');
   expect(bytes.includes(Buffer.from('Private workspace document'))).toBe(false);
   expect(bytes.includes(f.key)).toBe(false);
   expect((await stat(delivery.path)).mode & 0o777).toBe(0o600);

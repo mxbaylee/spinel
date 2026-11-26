@@ -178,7 +178,7 @@ test('Operator creates and downloads a real encrypted workspace without cloud cr
     expect(await download.failure()).toBeNull();
     await expect(downloads.getByText(/^Backup sent to your browser\./)).toBeVisible();
     const bytes = await readFile(archive);
-    expect(bytes.subarray(0, 8).toString()).toBe('SPINEL01');
+    expect(bytes.subarray(0, 8).toString()).toBe('SPINEL02');
     expect(bytes.includes(Buffer.from(file.name))).toBe(false);
     expect(bytes.includes(Buffer.from('encrypted-browser-fixture'))).toBe(false);
     expect(bytes.includes(key)).toBe(false);

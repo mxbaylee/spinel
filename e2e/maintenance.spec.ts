@@ -496,7 +496,7 @@ test('supervised maintenance keeps pending native work, fences old edits, and re
     expect(await download.failure()).toBeNull();
     const encrypted = await readFile(downloadPath!);
     expect(encrypted.byteLength).toBeGreaterThan(37);
-    expect(encrypted.subarray(0, 8).toString()).toBe('SPINEL01');
+    expect(encrypted.subarray(0, 8).toString()).toBe('SPINEL02');
     await expect(downloads.getByText(/^Backup sent to your browser\./)).toBeVisible();
     await operator.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }));
     await expect(banner(operator)).toHaveCount(0);

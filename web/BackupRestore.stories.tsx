@@ -415,8 +415,8 @@ export const SavedBackups: Story = {
       ...read(null),
       'GET /api/admin/restores/catalog': {
         entries: [
-          { id: 'c'.repeat(64), createdAt: now },
-          { id: 'd'.repeat(64), createdAt: now - 86400_000 },
+          { id: 'c'.repeat(64), createdAt: now, image: 'compatible' },
+          { id: 'd'.repeat(64), createdAt: now - 86400_000, image: 'compatible' },
         ],
       },
     },
@@ -425,6 +425,55 @@ export const SavedBackups: Story = {
     const dialog = await openCatalog(canvasElement);
     await expect(await dialog.findByRole('combobox', { name: 'Saved backup' })).toBeVisible();
     await expect(dialog.getByRole('button', { name: 'Verify and prepare' })).toBeDisabled();
+  },
+};
+// SPN-127: the mark is advisory and in words. Only a confirmed mismatch is not
+// selectable, and the fresh-host path is shown before any selection.
+export const SavedBackupsImageMarks: Story = {
+  parameters: {
+    api: {
+      ...read(null),
+      'GET /api/admin/restores/catalog': {
+        entries: [
+          { id: 'c'.repeat(64), createdAt: now, image: 'compatible' },
+          { id: 'd'.repeat(64), createdAt: now - 86400_000, image: 'incompatible' },
+          { id: 'e'.repeat(64), createdAt: now - 2 * 86400_000, image: 'unknown' },
+        ],
+      },
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const dialog = await openCatalog(canvasElement);
+    await expect(
+      await dialog.findByRole('link', { name: 'Restore onto a fresh host' }),
+    ).toHaveAttribute('href', expect.stringContaining('#restore-onto-a-fresh-host'));
+    await userEvent.click(await dialog.findByRole('combobox', { name: 'Saved backup' }));
+    const body = within(document.body);
+    await expect(await body.findByRole('option', { name: /made by this image/ })).toBeEnabled();
+    await expect(body.getByRole('option', { name: /image not confirmed/ })).toBeEnabled();
+    await expect(body.getByRole('option', { name: /made by another image/ })).toHaveAttribute(
+      'aria-disabled',
+      'true',
+    );
+    // A confirmed mismatch cannot be chosen, so nothing can be prepared from it.
+    await userEvent.click(body.getByRole('option', { name: /made by another image/ }));
+    await expect(dialog.getByRole('button', { name: 'Verify and prepare' })).toBeDisabled();
+    // An unconfirmed point stays selectable: full verification decides.
+    await userEvent.click(body.getByRole('option', { name: /image not confirmed/ }));
+    await waitFor(() =>
+      expect(dialog.getByRole('button', { name: 'Verify and prepare' })).toBeEnabled(),
+    );
+  },
+};
+// The same state with the list left open, so the disabled mismatch is visible in captures.
+export const SavedBackupsImageMarksOpen: Story = {
+  ...SavedBackupsImageMarks,
+  play: async ({ canvasElement }) => {
+    const dialog = await openCatalog(canvasElement);
+    await userEvent.click(await dialog.findByRole('combobox', { name: 'Saved backup' }));
+    await expect(
+      await within(document.body).findByRole('option', { name: /made by another image/ }),
+    ).toHaveAttribute('aria-disabled', 'true');
   },
 };
 export const SavedBackupsEmpty: Story = {

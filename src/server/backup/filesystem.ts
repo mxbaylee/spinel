@@ -220,6 +220,28 @@ export class FilesystemStore implements BackupDestination {
       }
     }
   }
+  async head(key: string, bytes: number, signal: AbortSignal) {
+    const name = this.name(key);
+    signal.throwIfAborted();
+    const directory = await this.directory();
+    let input: FileHandle | undefined;
+    try {
+      input = await open(join(directory.path, name), constants.O_RDONLY | constants.O_NOFOLLOW);
+      const info = await input.stat();
+      if (!info.isFile() || (info.mode & 0o077) !== 0)
+        throw new Error('Invalid published backup file.');
+      const prefix = Buffer.alloc(Math.min(bytes, info.size));
+      const { bytesRead } = await input.read(prefix, 0, prefix.length, 0);
+      await directory.check();
+      return prefix.subarray(0, bytesRead);
+    } finally {
+      try {
+        await input?.close();
+      } finally {
+        await directory.close();
+      }
+    }
+  }
   async remove(key: string, signal: AbortSignal) {
     const name = this.name(key);
     signal.throwIfAborted();

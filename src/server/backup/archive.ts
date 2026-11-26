@@ -1,4 +1,12 @@
-import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
+import {
+  createCipheriv,
+  createDecipheriv,
+  createHash,
+  createHmac,
+  hkdfSync,
+  randomBytes,
+  timingSafeEqual,
+} from 'node:crypto';
 import { constants, createReadStream, createWriteStream } from 'node:fs';
 import {
   appendFile,
@@ -21,8 +29,16 @@ import { verifyInventory, writeInventory } from './inventory.ts';
 import { RecoveryResourceError } from './resource-error.ts';
 import { MAX_ARCHIVE_BYTES } from './transfer.ts';
 
+// SPINEL01 is the original 20-byte header. SPINEL02 appends a short stamp and its
+// MAC; the whole header is the GCM AAD in both, so restore reads either.
 const MAGIC = Buffer.from('SPINEL01');
+const STAMPED = Buffer.from('SPINEL02');
 const HEADER_SIZE = 20;
+const MAX_STAMP = 400;
+const MAC_SIZE = 32;
+/** The most bytes of an object the catalog needs to read to learn its stamp. */
+export const STAMP_HEAD_BYTES = HEADER_SIZE + 2 + MAX_STAMP + MAC_SIZE;
+const IMAGE = /^(sha256:[a-f0-9]{64}|\S+@sha256:[a-f0-9]{64})$/;
 export interface Recovery {
   format: 1;
   createdAt: string;
@@ -40,12 +56,70 @@ export function validateRecovery(value: unknown): asserts value is Recovery {
     typeof r.origin !== 'string' ||
     new URL(r.origin).origin !== r.origin ||
     typeof r.image !== 'string' ||
-    !/^(sha256:[a-f0-9]{64}|\S+@sha256:[a-f0-9]{64})$/.test(r.image) ||
+    !IMAGE.test(r.image) ||
     typeof r.runtimeEnvironment !== 'string' ||
     (r.keyId !== undefined &&
       (typeof r.keyId !== 'string' || !/^[a-zA-Z0-9_-]{1,80}$/.test(r.keyId)))
   )
     throw new Error('Invalid recovery metadata.');
+}
+/**
+ * Non-secret facts the catalog may read without decrypting. Authenticated by a
+ * MAC under a key derived from the backup key, so only a holder of that key can
+ * write one; it is advisory and never replaces full verification.
+ */
+export interface ImageStamp {
+  image: string;
+  createdAt: string;
+  keyId: string;
+}
+const stampKey = (key: Buffer) =>
+  Buffer.from(hkdfSync('sha256', key, Buffer.alloc(0), 'spinel backup image stamp v1', 32));
+function sealStamp(key: Buffer, stamp: ImageStamp) {
+  const body = Buffer.from(JSON.stringify(stamp));
+  if (body.length > MAX_STAMP) return undefined;
+  const length = Buffer.alloc(2);
+  length.writeUInt16BE(body.length);
+  const mac = createHmac('sha256', stampKey(key)).update(body).digest();
+  return Buffer.concat([length, body, mac]);
+}
+/** The header at the start of `prefix`, or throws `backup-unreadable`. */
+function headerOf(prefix: Buffer) {
+  const magic = prefix.subarray(0, 8);
+  if (prefix.length >= HEADER_SIZE && magic.equals(MAGIC)) return prefix.subarray(0, HEADER_SIZE);
+  if (prefix.length >= HEADER_SIZE + 2 && magic.equals(STAMPED)) {
+    const total = HEADER_SIZE + 2 + prefix.readUInt16BE(HEADER_SIZE) + MAC_SIZE;
+    if (prefix.readUInt16BE(HEADER_SIZE) <= MAX_STAMP && prefix.length >= total)
+      return prefix.subarray(0, total);
+  }
+  throw new RecoveryResourceError('backup-unreadable');
+}
+/**
+ * The stamp in the first bytes of an archive if one is present and its MAC
+ * verifies under any of `keys`; otherwise undefined (missing, forged, unreadable).
+ */
+export function readImageStamp(prefix: Buffer, keys: Buffer[]): ImageStamp | undefined {
+  try {
+    const header = headerOf(prefix);
+    if (!header.subarray(0, 8).equals(STAMPED)) return undefined;
+    const body = header.subarray(HEADER_SIZE + 2, header.length - MAC_SIZE);
+    const mac = header.subarray(header.length - MAC_SIZE);
+    if (
+      !keys.some((key) =>
+        timingSafeEqual(createHmac('sha256', stampKey(key)).update(body).digest(), mac),
+      )
+    )
+      return undefined;
+    const stamp = JSON.parse(body.toString()) as ImageStamp;
+    return typeof stamp.image === 'string' &&
+      IMAGE.test(stamp.image) &&
+      typeof stamp.createdAt === 'string' &&
+      typeof stamp.keyId === 'string'
+      ? { image: stamp.image, createdAt: stamp.createdAt, keyId: stamp.keyId }
+      : undefined;
+  } catch {
+    return undefined;
+  }
 }
 export async function privateFile(path: string, maximum = 1024 * 1024) {
   const handle = await open(path, constants.O_RDONLY | constants.O_NOFOLLOW);
@@ -129,8 +203,14 @@ export async function makeArchive(
     } finally {
       snapshot.close();
     }
-    const header = Buffer.concat([MAGIC, randomBytes(12)]);
-    const cipher = createCipheriv('aes-256-gcm', key, header.subarray(8));
+    const iv = randomBytes(12);
+    const stamp = sealStamp(key, {
+      image: recovery.image,
+      createdAt: recovery.createdAt,
+      keyId: recovery.keyId ?? 'default',
+    });
+    const header = stamp ? Buffer.concat([STAMPED, iv, stamp]) : Buffer.concat([MAGIC, iv]);
+    const cipher = createCipheriv('aes-256-gcm', key, header.subarray(8, HEADER_SIZE));
     cipher.setAAD(header);
     const archive = join(directory, 'backup.spinel');
     await writeFile(archive, header, { mode: 0o600, flag: 'wx' });
@@ -209,15 +289,16 @@ export async function restoreArchive(
     try {
       size = (await handle.stat()).size;
       if (size < HEADER_SIZE + 17) throw new RecoveryResourceError('backup-unreadable');
-      header = Buffer.alloc(HEADER_SIZE);
+      const prefix = Buffer.alloc(Math.min(STAMP_HEAD_BYTES, size));
       tag = Buffer.alloc(16);
-      await handle.read(header, 0, header.length, 0);
+      await handle.read(prefix, 0, prefix.length, 0);
       await handle.read(tag, 0, tag.length, size - 16);
+      header = headerOf(prefix);
+      if (size < header.length + 17) throw new RecoveryResourceError('backup-unreadable');
     } finally {
       await handle.close();
     }
-    if (!header.subarray(0, 8).equals(MAGIC)) throw new RecoveryResourceError('backup-unreadable');
-    const decipher = createDecipheriv('aes-256-gcm', key, header.subarray(8));
+    const decipher = createDecipheriv('aes-256-gcm', key, header.subarray(8, HEADER_SIZE));
     decipher.setAAD(header);
     decipher.setAuthTag(tag);
     const copy = join(directory, 'spinel.sqlite');
@@ -249,7 +330,7 @@ export async function restoreArchive(
     });
     try {
       await pipeline(
-        createReadStream(archive, { start: HEADER_SIZE, end: size - 17 }),
+        createReadStream(archive, { start: header.length, end: size - 17 }),
         decipher,
         createGunzip(),
         bounded,

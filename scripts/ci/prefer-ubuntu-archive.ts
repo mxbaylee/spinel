@@ -25,10 +25,11 @@ const unexpected = `Unexpected ${mirrorFile}: expected one supported hosted/arch
 // Slow Azure OS-package transfers have exhausted browser-job budgets:
 // https://github.com/actions/runner-images/issues/14823
 // Lower numbers win. Keep both existing mirrors and all unrelated entries intact.
-// The exact EC2 fallback was captured in CI job 125363957600 (SPN-131).
+// The exact EC2 fallbacks were captured in CI jobs 125363957600 (us-east-2,
+// SPN-131) and 140116994479 (us-west-2, ubuntu26 image 20261122.9.1).
 // Select by observed file contents, never by provider or runner-region guesses.
 const updated = original.replace(
-  /^([ \t]*(?:http:\/\/(?:azure|us-east-2\.ec2)\.archive\.ubuntu\.com\/ubuntu\/|https:\/\/archive\.ubuntu\.com\/ubuntu\/))(?=\s|$)([^\r\n]*)(\r?)$/gm,
+  /^([ \t]*(?:http:\/\/(?:azure|us-east-2\.ec2|us-west-2\.ec2)\.archive\.ubuntu\.com\/ubuntu\/|https:\/\/archive\.ubuntu\.com\/ubuntu\/))(?=\s|$)([^\r\n]*)(\r?)$/gm,
   (line: string, address: string, metadata: string) => {
     const uri = address.trimStart();
     const priority = /^[ \t]+priority:([12])[ \t]*$/.exec(metadata)?.[1];
@@ -38,8 +39,8 @@ const updated = original.replace(
   },
 );
 
-// Require the archive and exactly one supported fallback before sudo. Both
-// fallbacks together are ambiguous; only priorities 1/2 or their inverse are known.
+// Require the archive and exactly one supported fallback before sudo. Multiple
+// fallbacks are ambiguous; only priorities 1/2 or their inverse are known.
 if (priorities.size !== 2 || !priorities.has(archive) || new Set(priorities.values()).size !== 2) {
   throw new Error(unexpected);
 }
